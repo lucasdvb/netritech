@@ -1,0 +1,91 @@
+@font-face {
+    font-family: 'Forma DJR Micro';
+    src: url('FormaDJRMicro-Bold.eot');
+    src: local('Forma DJR Micro Bold'), local('FormaDJRMicro-Bold'),
+        url('FormaDJRMicro-Bold.eot?#iefix') format('embedded-opentype'),
+        url('FormaDJRMicro-Bold.woff2') format('woff2'),
+        url('FormaDJRMicro-Bold.woff') format('woff'),
+        url('FormaDJRMicro-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Forma DJR Micro';
+    src: url('FormaDJRMicro-Light.eot');
+    src: local('Forma DJR Micro Light'), local('FormaDJRMicro-Light'),
+        url('FormaDJRMicro-Light.eot?#iefix') format('embedded-opentype'),
+        url('FormaDJRMicro-Light.woff2') format('woff2'),
+        url('FormaDJRMicro-Light.woff') format('woff'),
+        url('FormaDJRMicro-Light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Forma DJR Micro Extra';
+    src: url('FormaDJRMicro-ExtraLight.eot');
+    src: local('Forma DJR Micro Extra Light'), local('FormaDJRMicro-ExtraLight'),
+        url('FormaDJRMicro-ExtraLight.eot?#iefix') format('embedded-opentype'),
+        url('FormaDJRMicro-ExtraLight.woff2') format('woff2'),
+        url('FormaDJRMicro-ExtraLight.woff') format('woff'),
+        url('FormaDJRMicro-ExtraLight.ttf') format('truetype');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Forma DJR Micro';
+    src: url('FormaDJRMicro-Black.eot');
+    src: local('Forma DJR Micro Black'), local('FormaDJRMicro-Black'),
+        url('FormaDJRMicro-Black.eot?#iefix') format('embedded-opentype'),
+        url('FormaDJRMicro-Black.woff2') format('woff2'),
+        url('FormaDJRMicro-Black.woff') format('woff'),
+        url('FormaDJRMicro-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Forma DJR Micro';
+    src: url('FormaDJRMicro-Medium.eot');
+    src: local('Forma DJR Micro Medium'), local('FormaDJRMicro-Medium'),
+        url('FormaDJRMicro-Medium.eot?#iefix') format('embedded-opentype'),
+        url('FormaDJRMicro-Medium.woff2') format('woff2'),
+        url('FormaDJRMicro-Medium.woff') format('woff'),
+        url('FormaDJRMicro-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Forma DJR Micro Extra';
+    src: url('FormaDJRMicro-ExtraBold.eot');
+    src: local('Forma DJR Micro Extra Bold'), local('FormaDJRMicro-ExtraBold'),
+        url('FormaDJRMicro-ExtraBold.eot?#iefix') format('embedded-opentype'),
+        url('FormaDJRMicro-ExtraBold.woff2') format('woff2'),
+        url('FormaDJRMicro-ExtraBold.woff') format('woff'),
+        url('FormaDJRMicro-ExtraBold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Forma DJR Micro';
+    src: url('FormaDJRMicro-Regular.eot');
+    src: local('Forma DJR Micro Regular'), local('FormaDJRMicro-Regular'),
+        url('FormaDJRMicro-Regular.eot?#iefix') format('embedded-opentype'),
+        url('FormaDJRMicro-Regular.woff2') format('woff2'),
+        url('FormaDJRMicro-Regular.woff') format('woff'),
+        url('FormaDJRMicro-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
