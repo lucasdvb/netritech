@@ -1,7 +1,7 @@
 # Image generation
 
-- Default model for text-to-image AND image-to-image: **GPT Image 2.5 Sunburst** via KIE AI, 1K.
-  - KIE model IDs: `gpt-image-2-5-sunburst-text-to-image`, `gpt-image-2-5-sunburst-image-to-image`
+- Default model for text-to-image AND image-to-image: **GPT Image 2.5 Flare** via KIE AI, 1K.
+  - KIE model IDs: `gpt-image-2-5-flare-text-to-image`, `gpt-image-2-5-flare-image-to-image`
   - Use `scripts/kie_image.py "prompt" -a 21:9 -r 1K -o out.png` (add `-i <public image url>` for image-to-image). It reads the key from `KIE_AI_API_KEY` or `.mcp.json`.
 - The kie-ai MCP tools only offer Nano Banana; don't use them unless the user asks.
 - Result images are served from `tempfile.aiquickdraw.com`, which may be blocked by the sandbox network policy; if so, give the user the URL.

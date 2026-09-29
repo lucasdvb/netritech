@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate images with KIE AI GPT Image 2.5 Sunburst (default text-to-image / image-to-image model).
+"""Generate images with KIE AI GPT Image 2.5 Flare (default text-to-image / image-to-image model).
 
 Usage:
   kie_image.py "prompt" [-o out.png] [-a 21:9] [-r 1K] [-i ref1.png_url ...] [--background opaque]
@@ -9,8 +9,8 @@ API key: KIE_AI_API_KEY env var, else read from .mcp.json (kie-ai server env).
 import argparse, json, os, sys, time, urllib.request
 
 BASE = "https://api.kie.ai/api/v1/jobs"
-T2I = "gpt-image-2-5-sunburst-text-to-image"
-I2I = "gpt-image-2-5-sunburst-image-to-image"
+T2I = "gpt-image-2-5-flare-text-to-image"
+I2I = "gpt-image-2-5-flare-image-to-image"
 
 
 def api_key():
