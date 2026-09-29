@@ -45,16 +45,22 @@ while True:
 resp = d.get("response") or {}
 print("response:", json.dumps(resp)[:600])
 urls = resp.get("resultUrls") or []
-try:
-    hd = call("GET", f"/veo/get-1080p-video?taskId={task}")
-    print("1080p:", json.dumps(hd)[:400])
+# 1080p is a separate async job: the endpoint errors until it is ready.
+for _ in range(40):
+    try:
+        hd = call("GET", f"/veo/get-1080p-video?taskId={task}")
+    except Exception as e:
+        print("1080p not ready:", e)
+        time.sleep(15)
+        continue
     u = (hd.get("data") or {}).get("resultUrl")
     if u:
         urls = [u]
-except Exception as e:
-    print("1080p lookup failed:", e)
+        break
+    print("1080p:", hd.get("msg"))
+    time.sleep(15)
 if not urls:
     sys.exit("no result url")
 out = os.path.join(HERE, f"spm-hero-{MODEL}-{task[:8]}.mp4")
 urllib.request.urlretrieve(urls[0], out)
-print("saved", out)
+print("saved", out, "(has an audio track: strip with ffmpeg -an)")
