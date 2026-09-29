@@ -1,3 +1,7 @@
+# SPM brand
+
+- When talking about SPM (copy, design, images, strategy), read `docs/spm-brand-brief.md` first. It holds the full brand brief: identity, strategy, voice, logo, colors, typography and visual universe.
+
 # Image generation
 
 - Default model for text-to-image AND image-to-image: **GPT Image 2.5 Flare** via KIE AI, 1K.
