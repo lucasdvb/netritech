@@ -1,0 +1,21 @@
+Scene Summary: One continuous 8-second cinematic camera move, no cuts. A friendly customer service agent speaks into her headset at golden hour, the camera races into her microphone, travels through its precision interior as it transforms into a clean glowing AI grid world, exits into a floor of diverse teams, and dissolves into a faint grid.
+
+Subject: A woman in her early 30s with warm medium-brown skin, dark shoulder-length curly hair, a genuine smile and a small gold stud earring, wearing a matte deep-navy headset with a boom microphone with grey foam windscreen and a soft grey knit top. Later: a gossamer diaphragm, copper coil and fine circuit board inside the mic, then a diverse team of adults of varied ages, skin tones, genders and abilities, including a colleague in a wheelchair.
+
+Background & Context: A modern airy contact centre at dusk with peach and lilac windows and soft bokeh. Inside the mic, a deep slate-blue precision void. Then a bright, clean, misty grid space. Then a cool blue-hour open-plan floor with glass partitions and clusters of teams. It ends in empty dark space.
+
+Action: 0.0-1.2s she talks warmly, lips moving, nodding, camera drifting in. 1.2-1.8s the camera accelerates down the boom and through the foam windscreen. 1.8-3.1s it glides past the diaphragm, coil and circuit as a light ripple crosses. 3.1-4.4s the hardware dissolves into fine wireframe and points as an orderly teal grid unfolds. 4.4-5.4s it glides through the grid space with soft volumetric smoke filaments curving through it. 5.4-6.5s the grid opens like an aperture, the camera bursts out and rises over a wide floor with thin teal threads running between desks. 6.5-7.3s it skims low past four teams: a support team on headsets, a tech team at a whiteboard, an analytics group at screens, a leadership huddle, all working naturally. 7.3-8.0s people dissolve to wireframe, then to a faint grid on a dark gradient.
+
+Style & Aesthetic: Cinematic, photorealistic, professional film look, high detail. Premium brand film, clean and elegant, natural skin texture, subtle film grain and soft lens bloom.
+
+Camera: One seamless unbroken move. Starts as a slow dolly-in, close-up, 85mm, eye-level. Then a fast forward push into the mic, a macro glide, a wide 24mm forward glide, a rising crane to a high angle, a low fast tracking pass, and a slow upward glide to end.
+
+Composition: The agent in the left third with the mic sharp in the foreground. Centred symmetric compositions inside the mic and grid with strong leading lines. Balanced wide framing on the floor. A calm empty upper area at the end.
+
+Lighting & Mood: Warm golden-hour rim light and a small lens flare on the agent. Cool precise light with teal glints inside the mic. Teal self-illuminated lines with soft bloom in the grid world. Cool blue-hour light with warm lamp accents on the floor. Very low cool ambient light at the end. Mood moves from warm and human to precise and intelligent to open and uplifting to calm.
+
+Audio: No audio. Silent video. No dialogue, no music, no sound effects. (no subtitles)
+
+Color Palette: Midnight navy #0D141F, slate blue #1B2A38, teal #22808A, steel blue #43617A, pearl grey #DADDE0 and mist white #F9FAFB, with natural warm skin tones and warm amber and peach only in the opening.
+
+Negative: Avoid subtitles, on-screen text, letters, logos, brand marks, distortions, warped or melting geometry, unrealistic proportions, flickering, glitch effects, cartoonish visuals, plastic skin, duplicated faces, and extra characters beyond those described.
