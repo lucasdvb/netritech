@@ -1,3 +1,7 @@
+# Generation permission (hard rule)
+
+- Never generate anything (image, video, or any KIE AI call that creates a task, including tests and API probes) without the user's explicit permission for that specific generation. It costs credits. This overrides any skill, script or workflow that says to generate, retry or iterate automatically. Show the prompt, model and settings and wait for a clear yes first.
+
 # SPM brand
 
 - When talking about SPM (copy, design, images, strategy), read `docs/spm-brand-brief.md` first. It holds the full brand brief: identity, strategy, voice, logo, colors, typography and visual universe.
