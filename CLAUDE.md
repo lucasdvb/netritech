@@ -5,6 +5,7 @@ Project: 8-second premium website hero film for SPM (French human + AI outsourci
 ## Standing rules (set by the user)
 - **Never generate anything (image or video) without explicit permission.** Wait for a clear go-ahead each time. Generations cost KIE credits.
 - **Video model: `google/gemini-omni-flash-1-1`, at 1080p, unless the user says otherwise.** This replaces Veo 3.1 (`veo3` / `veo3_fast`), which was used earlier.
+- **Before creating ANY media via KIE AI (image or video), tell the user the cost of that generation and the current credit balance, then wait for their go-ahead.** Get the balance live with `GET https://api.kie.ai/api/v1/chat/credit` right before asking. If the exact cost is not known (KIE's pricing page and docs are not reachable from this environment), say so plainly and give the best estimate with how it was derived (e.g. observed balance drop on a previous run of the same model and settings); never invent a number. After each generation, re-check the balance and record the observed cost in "Observed KIE costs" below.
 - Videos must be **silent**. Strip any audio track after download (`ffmpeg -an -c:v copy`).
 - Use the user's prompts **verbatim**. Flag anything appended or changed.
 - No logos, text or watermarks in any generated frame.
@@ -17,6 +18,9 @@ Project: 8-second premium website hero film for SPM (French human + AI outsourci
   - **sunburst**: text-to-image `gpt-image-2-5-sunburst-text-to-image`, image-to-image `gpt-image-2-5-sunburst-image-to-image`.
 - Image-to-image takes a reference image (upload it first, see API notes).
 - Only the flare models have been tested here. Sunburst parameters are assumed to match flare (`aspect_ratio`, `resolution`, `input_urls`); check the first response before relying on that.
+
+## Observed KIE costs
+No per-generation costs were recorded before this rule existed. Known only: balance went 981 → 191 credits across the whole earlier session (2 Veo 3.1 Quality videos, each with a 1080p fetch; 3 `veo3_fast` 720p variants; 8 images), and one Veo 3.1 Quality first+last-frame job was refused with 402 because 191 was not enough. Record real per-model costs here as they are measured.
 
 ## Brand
 SPM colours: Ink/Bleu Nuit `#0D141F`, Slate/Bleu Ardoise `#1B2A38`, Steel/Bleu Acier `#43617A`, Teal/Sarcelle `#22808A`, Pearl/Gris Perle `#DADDE0`, Mist/Blanc brume `#F9FAFB`.
