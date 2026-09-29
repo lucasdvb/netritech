@@ -11,9 +11,12 @@ Project: 8-second premium website hero film for SPM (French human + AI outsourci
 - Report results honestly, including flaws. The user rejected the first Veo runs as "low quality AI slop".
 
 ## Image models (KIE, user-specified)
-- Text-to-image: `gpt-image-2-5-flare-text-to-image`, 2K.
-- Image-to-image: `gpt-image-2-5-flare-image-to-image`, 2K. Takes a reference image.
-- The user typically asks for **2 generations** per request.
+- **Defaults: 1 generation at 1K, unless the user states otherwise.** (Earlier requests explicitly asked for 2 generations at 2K; that was per-request, not the default.)
+- Two model families. Use the one the user names; if they do not name one, ask.
+  - **flare**: text-to-image `gpt-image-2-5-flare-text-to-image`, image-to-image `gpt-image-2-5-flare-image-to-image`.
+  - **sunburst**: text-to-image `gpt-image-2-5-sunburst-text-to-image`, image-to-image `gpt-image-2-5-sunburst-image-to-image`.
+- Image-to-image takes a reference image (upload it first, see API notes).
+- Only the flare models have been tested here. Sunburst parameters are assumed to match flare (`aspect_ratio`, `resolution`, `input_urls`); check the first response before relying on that.
 
 ## Brand
 SPM colours: Ink/Bleu Nuit `#0D141F`, Slate/Bleu Ardoise `#1B2A38`, Steel/Bleu Acier `#43617A`, Teal/Sarcelle `#22808A`, Pearl/Gris Perle `#DADDE0`, Mist/Blanc brume `#F9FAFB`.
