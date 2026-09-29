@@ -1,57 +1,46 @@
 # Products
 
-Two ways to register a product: URL fetch (auto-imports title, description, images) or manual (provide your own).
+A product card holds what the prompts need: name, what it is, key facts, and reference images. Two ways to build one: from a URL you read, or manually from the user's images and details.
 
-## URL fetch (default)
+## Product card
 
-```bash
-ID=$(higgsfield marketing-studio products fetch --url https://shop.example.com/sneakers --wait --json | jq -r .id)
+```
+PRODUCT CARD
+title:        {name}
+category:     {physical product | apparel | food | app/web | service}
+description:  {1-2 sentences}
+key facts:    {3-5 concrete benefits, materials, numbers}
+look:         {shape, colors, finish, packaging, label/logo position}
+images:       {3-5 public URLs: front, side, detail, in-use, packaging}
+audience:     {who it is for}
+tone:         {from the brand kit or the user}
 ```
 
-`--wait` polls until `status` is `completed` or `failed`. Default timeout 90s.
+Use the `look` line verbatim in prompts ("product exactly as in image 1: {look}").
 
-If `failed`, check `fail_reason` — usually invalid URL or scrape blocked.
+## From a URL (default)
 
-App Store URLs auto-route to `webproducts` (different endpoint). Use:
+1. Read the page (WebFetch if available; otherwise ask the user to paste the title, description and bullet points).
+2. Fill the card. Note image URLs from the page only as candidates: the user must confirm which to use and that they have the right to use them. Images are then already public URLs and can be passed to `-i` as they are.
+3. If the page can't be read (blocked, empty), say so and ask for text or images instead.
 
-```bash
-higgsfield marketing-studio webproducts fetch --url https://apps.apple.com/... --wait
-```
+## Manual (user images)
 
-## Manual
+1. The user provides 3-5 photos (clean, well lit, product filling the frame, neutral background) and the details.
+2. After the user's yes, upload: `python3 scripts/kie_upload.py shoe1.png shoe2.png`.
+3. Fill the card with the returned URLs.
 
-When the user has product photos and details:
+## App / web product
 
-```bash
-A=$(higgsfield upload create shoe1.png)
-B=$(higgsfield upload create shoe2.png)
-higgsfield marketing-studio products create \
-  --title "AeroRun Pro" \
-  --description "Lightweight running shoe" \
-  --image $A --image $B
-```
+For an App Store page or website: collect name, tagline, description, favicon/logo and 2-4 screenshots (desktop and mobile). Pass screenshots as `-i` and describe the screen in words; model-rendered UI text is unreliable, so for exact screen content composite real screenshots onto device mockups locally with Pillow.
 
-Returns the product entity directly (no polling needed).
+## Choosing reference images
 
-## Manual webproduct
-
-For App Store / web pages without URL fetch:
-
-```bash
-higgsfield marketing-studio webproducts create \
-  --url "https://example.com" \
-  --title "MyApp" \
-  --subtitle "Productivity for teams" \
-  --description "..." \
-  --favicon-url "https://example.com/favicon.png" \
-  --desktop "https://cdn/screenshot1.png" \
-  --mobile "https://cdn/mobile-screenshot.png"
-```
+- Order: hero angle first, then detail, then in-use.
+- A video accepts up to 7 images total (presenter and setting included); an image up to 16.
+- If the product has a logo or label, add one close-up of it and say "label and logo exactly as in image N; do not redraw".
+- Fewer, cleaner images beat many mixed ones.
 
 ## Listing
 
-```bash
-higgsfield marketing-studio products list
-higgsfield marketing-studio products list --json
-higgsfield marketing-studio webproducts list
-```
+Keep a short list of cards in the conversation (title + image URLs). Save as a small JSON file only if the user asks.

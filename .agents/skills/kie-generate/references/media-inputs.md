@@ -1,142 +1,60 @@
 # Media Inputs
 
-How to pass reference images, videos, audio, and videos for analysis. Mirrored from MCP server media-handling logic.
+How to pass reference images, keyframes and source videos to the two models.
 
-## Path or UUID — both work
+## Public URLs only
 
-Each media flag accepts either a local file path or a UUID. The CLI auto-uploads paths before submission and auto-detects whether a UUID is an upload id (from `higgsfield upload create`) or a previous job id.
-
-```bash
-# Local path — CLI uploads automatically
-higgsfield generate create nano_banana_flash --prompt "stylize in watercolor" --image ./photo.png --wait
-
-# Upload id (from higgsfield upload create)
-higgsfield generate create nano_banana_flash --prompt "..." --image <upload_id> --wait
-
-# Job id from a previous generation
-higgsfield generate create seedance_2_5 --prompt "anim" --mode omni_reference --start-image <previous_job_id> --wait
-
-# Video analysis — CLI uploads the file, Virality Predictor returns a text score/report plus an Open report link.
-# The output is text, but the task is still video analysis.
-higgsfield generate create brain_activity --video ./ad.mp4 --wait
-```
-
-Type auto-detected from extension:
-
-- Image: `png`, `jpg`/`jpeg`, `webp`, `gif`
-- Video: `mp4`, `mov`, `webm`
-- Audio: `mp3`, `wav`, `m4a`, `ogg`
-
-## Roles by model family
-
-Each model declares a closed set of accepted roles or `*_references` params. Pass the right flag; the CLI rejects unknown media locally before submission.
-
-| Model | Accepted roles | Notes |
-|---|---|---|
-| Most image models (`nano_banana_flash`, `flux_2`, `seedream_v4_5`, `gpt_image_2`, …) | `image` | 1+ references, often up to 8. |
-| `nano_banana_2_lite` | `image_references` | Up to 14 image references. Use repeated `--image-references` or short alias `--image`; `aspect_ratio=auto` requires at least one reference. |
-| `gemini_omni` | `image_references`, `video_references` | Fast reference-to-video. Use repeated `--image-references`/`--video-references` or aliases `--image`/`--video`. Max 1 video reference; max 7 image references, or max 5 when a video reference is included. |
-| `gpt_image_2_5` | `image_references` | Use repeated `--image-references` or the short alias `--image`. |
-| `seedance_2_5` | `start_image`, `end_image`, `image_references`, `video_references`, `audio_references` | Use `--mode omni_reference` for reference generation. `t2v` accepts no media. |
-| `seedance_2_0` | `image`, `start_image`, `end_image`, `video`, `audio` | Audio is via `medias` (role `audio`), NOT via `--generate-audio`. |
-| `brain_activity` | `video` | Virality Predictor analyzes one uploaded clip and returns a text score report plus an Open report link; no prompt required. Treat "analyze this video" / "score this ad" as this video-analysis flow even though the output is text. Raw `.glb` and `.bin` artifacts stay in JSON/debug output, not normal chat output. |
-| `grok_video_v15` | `start_image` | Required single start frame. CLI also accepts `--image` and maps it to `start_image`. |
-| `kling3_0` | `start_image`, `end_image` | Image-to-video with optional last-frame transition. |
-| `kling3_0_turbo` | `start_image` | Fast text-to-video or single start-frame animation. Max 1 reference; CLI also accepts `--image` and maps it to `start_image`. |
-| `kling2_6` | `start_image` | Single frame anchor. |
-| `veo3_1` | `start_image` | Max 1 reference. |
-| `veo3` | `image` | Single image-to-video. |
-| `marketing_studio_video` | `image`, `start_image`, `end_image` | Plus `avatars`, `product_ids`, `assets` as separate fields. |
-| `multi_image_to_3d` | `image` | 1–4 object/product reference images. Returns a 3D asset rather than an image/video. |
-| `seed_audio` | `audio_references` or `image_references` | Default text-to-audio model. Requires `--prompt`; optional references use repeated `--audio-references`/`--image-references` (short aliases: `--audio`/`--image`). Audio and image references are mutually exclusive. |
-| `mirelo_text_to_audio` | (none) | Text-to-audio / SFX generation. Pass `--prompt` and `--duration`; do not pass media inputs. |
-| `sonilo_music` | (none) | Text-to-music generation. Pass `--prompt` and `--duration`; do not pass media inputs. |
-| `z_image`, `recraft_v4_1`, `soul_cast`, `soul_location` | (none) | Prompt-only. Reject media inputs. |
-
-For simple image-to-video on a video model that only declares `image` (e.g. `veo3`), plain `--image` is auto-remapped to `start_image` by the CLI when unambiguous. When in doubt:
+Every input to `kie_image.py` and `kie_video.py` must be a **public URL**. Local files are hosted first (after the user's yes, per the Permission rule):
 
 ```bash
-higgsfield model get <model_id>   # shows the accepted media roles for this model
+python3 scripts/kie_upload.py path/to/file.png            # prints one public URL per file
+python3 scripts/kie_upload.py a.png b.png                  # several files
 ```
+
+Uploads are temporary (KIE deletes them after ~3 days). Don't upload confidential material without saying so. Files generated earlier (`url ...` printed by the scripts) are already public and can be reused directly as inputs. If a source video upload is refused, ask the user for a public link to it.
+
+Accepted types: images `png`, `jpg`/`jpeg`, `webp`; video `mp4`, `mov`, `webm`.
+
+## What each model accepts
+
+| Model | Flag | Meaning | Limits |
+|---|---|---|---|
+| Image (GPT Image 2.5 Flare) | `-i <url>` (repeat) | reference / source image(s); switches to image-to-image | up to 16 |
+| Video (Gemini Omni Flash 1.1) | `-i <url>` (repeat) | reference images for subject, product, style, scene | up to 7 |
+| Video | `--first-frame <url>` | image used as the first frame | 1 |
+| Video | `--last-frame <url>` | image used as the last frame | 1 |
+| Video | `--video-url <url>` | source video to extend or edit | 1 video; counts as 2 image slots (max 5 `-i` alongside it) |
+| Video | `--video-start S` / `--video-end S` | segment of the source video, in seconds | |
+| Video | `--audio-id <id>` / `--character-id <id>` | ids supplied by the user | max 3 each |
+
+There are no audio files, mask images or video-to-image inputs. Reference audio is not supported; describe the voice and sound in the prompt.
+
+## Referring to inputs in the prompt
+
+Refer by order: "image 1 is the product, image 2 is the presenter". State what must be preserved ("product label and shape exactly as in image 1") and what may change. For `--first-frame`, don't redescribe the frame, describe the motion.
+
+Same reference set on every call keeps identity, product and style consistent across variants and clips.
 
 ## Multiple images
 
-Most image models accept multiple references — repeat the `--image` flag:
-
 ```bash
-higgsfield generate create nano_banana_flash --prompt "..." \
-  --image ./a.png --image ./b.png --image <upload_id> \
-  --wait
+python3 scripts/kie_image.py "Place the sneaker from image 1 on the concrete step from image 2; keep both exactly" \
+  -a 4:5 -r 1K -o composite.png -i <sneaker url> -i <step url>
 ```
 
-Single-reference video models (`grok_video_v15`, `veo3`, `veo3_1`, `kling3_0_turbo`, `kling2_6`) reject extra images — the CLI errors locally before submission with `Model accepts only one image reference`.
-
-3D asset generation with `multi_image_to_3d` accepts 1–4 images. Repeat `--image` for front/side/back/detail views:
+## Getting frames out of a video (local)
 
 ```bash
-higgsfield generate create multi_image_to_3d \
-  --image ./front.png --image ./side.png --image ./back.png \
-  --should_texture true \
-  --wait
+ffmpeg -sseof -0.1 -i clip.mp4 -frames:v 1 last.png          # last frame
+ffmpeg -ss 3.2 -i clip.mp4 -frames:v 1 frame.png              # frame at 3.2 s
+ffmpeg -i clip.mp4 -vf "fps=1,scale=640:-1" frames/f_%02d.jpg # one frame per second (contact sheet source)
 ```
 
-## Audio reference (Seedance)
-
-`seedance_2_5` accepts `--audio-references` (or `--audio`) in `omni_reference` mode. Its `--generate_audio` flag separately controls output audio.
-
-For `seedance_2_0`, audio references work differently. Pass via `medias` with role `audio`:
-
-```bash
-higgsfield generate create seedance_2_0 \
-  --prompt "person speaking" \
-  --start-image ./headshot.png \
-  --audio ./voice.mp3 \
-  --duration 8 \
-  --wait
-```
-
-**Do NOT pass `--generate-audio` to `seedance_2_0`** — the model schema doesn't declare it. Use the audio media role instead.
-
-Seed Audio is the default text-to-audio model. It can run prompt-only, or use optional audio/image references:
-
-```bash
-higgsfield generate create seed_audio \
-  --prompt "glass breaking in a large hall" \
-  --wait
-
-higgsfield generate create seed_audio \
-  --prompt "same voice, calmer delivery" \
-  --audio-references ./voice.wav \
-  --wait
-```
-
-Sonilo and Mirelo are specialist/legacy alternatives. Use them only when the user names them or Seed Audio is not appropriate:
-
-```bash
-higgsfield generate create sonilo_music \
-  --prompt "cinematic synthwave track" \
-  --duration 12 \
-  --wait
-
-higgsfield generate create mirelo_text_to_audio \
-  --prompt "glass breaking in a large hall" \
-  --duration 4 \
-  --wait
-```
+To analyze a video (hook, pacing, shots), extract frames like this and read them, then write the breakdown yourself (see `marketing-ad-references.md`). There is no scoring model.
 
 ## Schema mismatches
 
-The CLI returns specific error messages for known shape mismatches:
-
-- `Model accepts only --image (no roles)` — the model uses the legacy `input_images` shape, not `medias` with roles. Drop role-prefixed flags and use plain `--image`.
-- `Model does not accept media inputs` — the model is prompt-only or non-media (`z_image`, `recraft_v4_1`, `mirelo_text_to_audio`, `sonilo_music`, `soul_location`, `soul_cast`, `wan2_6` for some configs). Drop all media flags.
-- `Unknown media role "<role>"` — the role isn't in this model's media schema. Run `higgsfield model get <model>` and check accepted media roles or `*_references` params.
-- `Missing required params: medias` for `brain_activity` — pass exactly one clip with `--video <path-or-id>`.
-
-## Seeing what a model accepts
-
-```bash
-higgsfield model get <model_id> --json | jq '{aspect_ratios, durations, parameters, medias}'
-```
-
-Returns the full schema: aspect ratios (closed enum or open), durations (closed list or `min/max` range), parameters (with descriptions and defaults), and media roles per slot.
+- More than 16 (image) or 7 (video) references -> trim; keep the most informative ones.
+- `--video-url` plus 6+ images -> drop images to 5 or fewer.
+- Non-public URL (local path, expiring private link) -> upload first.
+- Video aspect other than `16:9` / `9:16` -> the script rejects it; generate in the nearest supported ratio and crop.

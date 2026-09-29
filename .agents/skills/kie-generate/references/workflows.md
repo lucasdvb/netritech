@@ -1,96 +1,89 @@
-# Workflow Generation
+# Workflows
 
-Workflows are higher-level generation flows exposed separately from the model catalog. They still create normal generation jobs, so results are fetched with `higgsfield generate get` / `higgsfield generate wait`.
-
-## Discover workflows
-
-```bash
-higgsfield workflow list
-higgsfield workflow get draw_to_video
-higgsfield workflow get reframe --json
-```
-
-Use `workflow get` before creating a job when unsure about params. Do not expect workflows to appear in `higgsfield model list`.
-
-Current public workflows:
+Local recipes built on the two scripts plus `ffmpeg`. Each generation step follows the Permission rule (show prompt, model, aspect, duration/resolution, number of outputs; wait for a yes). The ffmpeg steps are local and need no permission.
 
 | Workflow | Use when |
 |---|---|
-| `draw_to_video` | Edit a source video using an edited sketch/image frame at a timestamp. Business name may be "Draw To Edit"; CLI name is `draw_to_video`. |
-| `reframe` | Reframe a source video to another aspect ratio and optional resolution. |
+| Long video | The piece is longer than 10 s |
+| Continuity chain | Several clips must share character, product and look |
+| Extend | Continue an existing clip |
+| Draw-to-edit | Edit a source video from an edited/sketched frame at a timestamp |
+| Reframe | Another aspect ratio for an existing video |
+| Crop to 1:1 / 4:5 / 21:9 | Feed or banner formats for new clips |
+| Still-to-video | Approve a still first, then animate it |
 
-Do not use or mention `game_character_creator` unless the current CLI exposes it publicly and the user explicitly asks for it.
+## Long video
 
-## Create jobs
+1. Write a clip plan: one row per clip (4/6/8/10 s), beat, camera, audio line. 15 s = 10 + 6, 20 s = 10 + 10, 30 s = 3 x 10.
+2. Give every prompt the same style block (look, palette, lens, lighting) and the same character/product wording.
+3. Generate clip 1. For each next clip, take the previous clip's last frame and pass it as the first frame:
+   ```bash
+   ffmpeg -sseof -0.1 -i clip1.mp4 -frames:v 1 last1.png
+   python3 scripts/kie_upload.py last1.png
+   python3 scripts/kie_video.py "<clip 2 prompt>" -a 9:16 -d 8 --first-frame <last1 url> -o clip2.mp4
+   ```
+   Add `-i <reference url>` for the character/product references on every clip.
+4. Join locally:
+   ```bash
+   printf "file 'clip1.mp4'\nfile 'clip2.mp4'\n" > list.txt
+   ffmpeg -f concat -safe 0 -i list.txt -c:v libx264 -crf 18 -c:a aac -movflags +faststart out.mp4
+   ```
+   Trim overshoot with `-t <seconds>` on the output. Crossfade audio between clips with `acrossfade` if the seam is audible.
 
-### Draw To Video
+## Extend
 
-Use when the user has:
-- a source video
-- an edited/sketched frame image
-- the timestamp for that frame
-- an edit instruction
-
-```bash
-higgsfield generate workflow draw_to_video \
-  --video ./source.mp4 \
-  --sketch ./frame.png \
-  --timestamp 3.2 \
-  --prompt "make the jacket red" \
-  --wait
-```
-
-`--image` is an alias for `--sketch`.
-
-### Reframe
-
-Use when the user wants a different video aspect ratio.
-
-```bash
-higgsfield generate workflow reframe \
-  --video ./source.mp4 \
-  --aspect-ratio 9:16 \
-  --resolution 720p \
-  --wait
-```
-
-Optional:
-- `--mode std|pro`; default `std`
-- `--start-image <path-or-id>`
-- `--image <path-or-id>` references for `--mode pro`; use 1-2 images
-- `--folder-id <folder_id>`
-
-## Cost
-
-Workflow cost uses `generate cost workflow`, not `generate workflow cost`.
+Continue a clip in the same scene:
 
 ```bash
-higgsfield generate cost workflow draw_to_video --duration 8.2 --resolution 720p
-higgsfield generate cost workflow reframe --duration 7.1 --resolution 1080p
+python3 scripts/kie_video.py "Continue the shot: the camera keeps pushing in as she opens the box; same room, same light, same voice" \
+  -a 9:16 -d 8 --video-url <clip url> --video-start 5 --video-end 8 -o clip_ext.mp4
 ```
 
-If the user asks "how much will this workflow cost?", run cost first and report credits before creating.
+The source counts as 2 image slots. Join the result to the original with the concat recipe.
+
+## Draw-to-edit (edit a video from an edited frame)
+
+Inputs: source video, an edited/sketched frame image, the timestamp of that frame, an instruction.
+
+1. Extract the frame at the timestamp (`ffmpeg -ss 3.2 -i source.mp4 -frames:v 1 frame.png`); the user edits or sketches it, or you edit it with the image model (image-to-image, "keep everything unchanged except ...").
+2. Generate the edit with the source segment plus the edited frame as reference:
+   ```bash
+   python3 scripts/kie_video.py "Apply the change shown in image 1 (red jacket) to the whole clip; keep motion, camera, timing and audio unchanged" \
+     -a 16:9 -d 8 --video-url <source url> --video-start 0 --video-end 8 -i <edited frame url> -o edited.mp4
+   ```
+3. Say honestly that this is a prompt-guided edit, not a frame-locked one; propose a rewording if the change is partial.
+
+## Reframe
+
+- **Crop** (fastest, exact framing you control), e.g. 16:9 to 9:16 centered on the subject:
+  ```bash
+  ffmpeg -i in.mp4 -vf "crop=ih*9/16:ih:(iw-ih*9/16)/2:0,scale=1080:1920" -c:a copy out_916.mp4
+  ```
+  Shift the x offset to follow the subject.
+- **Regenerate** when cropping loses the subject: extract a frame, recompose it with the image model (`-a 9:16`, "extend and recompose this frame as a vertical image, keep subject and style"), then run video with that image as `--first-frame` and `-a 9:16`, repeating the original prompt.
+
+## Crop to 1:1 / 4:5 / 21:9
+
+Generate in `16:9` or `9:16`, then crop:
+
+```bash
+ffmpeg -i in_916.mp4 -vf "crop=iw:iw*5/4:0:(ih-iw*5/4)/2" out_45.mp4      # 9:16 -> 4:5
+ffmpeg -i in_916.mp4 -vf "crop=iw:iw:0:(ih-iw)/2"          out_11.mp4      # 9:16 -> 1:1
+ffmpeg -i in_169.mp4 -vf "crop=ih:ih:(iw-ih)/2:0"          out_11.mp4      # 16:9 -> 1:1
+ffmpeg -i in_169.mp4 -vf "crop=iw:iw*9/21:0:(ih-iw*9/21)/2" out_219.mp4    # 16:9 -> 21:9
+```
+
+Leave safe margins in the prompt ("subject centered, room around it") when a crop is planned.
+
+## Still-to-video
+
+1. Generate and approve a still with the image model (correct aspect: 16:9 or 9:16 for video use).
+2. Upload it and pass it as `--first-frame`; the video prompt describes motion, camera and audio only.
+
+## Captions, logos, text (local)
+
+Model text in video is unreliable. Add captions with `ffmpeg` `drawtext` (or `subtitles` with an `.srt`), logos with `overlay`; for stills use Pillow.
 
 ## Results
 
-With `--wait`, the CLI waits for the workflow job and prints the result. Without `--wait`, it prints the job id; use normal generation job commands:
-
-```bash
-higgsfield generate get <job_id>
-higgsfield generate wait <job_id>
-```
-
-Do not tell the user to use `workflow get` for a job result. `workflow get` describes the workflow schema; `generate get` fetches the created job.
-
-## Maintainer note
-
-When FNF adds a public chain, document it here as a workflow:
-
-1. Verify it appears in `higgsfield workflow list`.
-2. Inspect params with `higgsfield workflow get <workflow_name> --json`.
-3. Add it to the Current public workflows table with a clear use case.
-4. Add a create example using `higgsfield generate workflow <workflow_name> ... --wait`.
-5. Add a cost example only when `workflow get` exposes `cost_params`.
-6. Keep result retrieval on `higgsfield generate get/wait <job_id>`.
-
-Do not add workflow-only items to `model-catalog.md`. Public docs say "workflow"; FNF source may say "chain".
+`kie_video.py` / `kie_image.py` print `url ...` and save `-o` when the download works; there is nothing to fetch later. Keep the printed URLs in the conversation so clips can be reused as inputs (they are public, temporary).

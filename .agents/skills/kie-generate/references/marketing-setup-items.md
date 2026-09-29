@@ -1,63 +1,49 @@
-# Marketing Studio Hooks And Settings
+# Hooks And Settings
 
-Marketing Studio setup items are optional reusable context for `marketing_studio_video`.
+Reusable prompt blocks for video ads. They are text templates in this file, not server objects.
 
-- **Hook** (`--hook_id`) sets the opening angle / ad hook. The hook prompt is prepended to the user prompt; it does not replace `--prompt`.
-- **Setting** (`--setting_id`) sets the scene or environment context.
-- Supported by `marketing_studio_video` only. Do not pass setup items to `marketing_studio_image`.
-- **Mode whitelist.** Setup items are valid only for these `--mode` values: `ugc`, `ugc_how_to`, `ugc_unboxing`, `product_review`, `ugc_virtual_try_on`. For `product_showcase`, `tv_spot`, `wild_card`, `virtual_try_on` — do not pass `--hook_id` / `--setting_id`. See `marketing-modes.md` for the full table.
-- **Mutually exclusive with ad references.** If the user is generating from an ad reference video, do **not** also pass `--hook_id` / `--setting_id`. The two paths (reference-driven vs composed-from-blocks) cannot be combined.
+- **Hook** sets the opening angle (first 2 seconds). The hook block is placed in the `HOOK:` slot of the generator (`marketing-modes.md`) and shapes `BEATS` 0-2s; it does not replace the rest of the prompt.
+- **Setting** sets the scene or environment; it fills the `SETTING:` slot.
+- **Mode whitelist.** Valid only for `ugc`, `ugc_how_to`, `ugc_unboxing`, `product_review`, `ugc_virtual_try_on`. For `product_showcase`, `tv_spot`, `wild_card`, `virtual_try_on` don't use them.
+- **Mutually exclusive with ad references.** If the user is rebuilding an ad reference (`marketing-ad-references.md`), don't also use hooks/settings. Either reference-driven or composed-from-blocks.
+- **Product context.** Hooks are designed to pivot into a product pitch and are weak without a product card (`marketing-products.md`).
 
-## Discover Items
+## Hook library
 
-```bash
-higgsfield marketing-studio hooks list
-higgsfield marketing-studio settings list
-```
+Pick by the angle the brief needs (or offer 3 and let the user choose). Each hook is a first line + first action; replace `{...}`.
 
-Use `--json` when the agent needs IDs:
+| Hook | Pattern (first 2 s) | Works for |
+|---|---|---|
+| Problem call-out | "Still {struggling with pain}?" while showing the annoying situation | any product with a clear pain |
+| Bold claim | "This {product} replaced my {old solution}." | consumer, review |
+| Curiosity gap | Presenter hides the product behind their back: "I wasn't going to show you this." | unboxing, reveal |
+| Story opener | "Three weeks ago I {situation}..." | testimonial, service |
+| Question | "What if {benefit} took {short time}?" | service, app |
+| Social proof | "Everyone keeps asking where I got this." | fashion, lifestyle |
+| Before/after tease | Split gesture: "This was me yesterday. This is today." | beauty, fitness, tools |
+| Myth-buster | "Everyone says {myth}. Not true." | expert, B2B |
+| POV | "POV: you finally {desired outcome}." with the point of view shot | social-first |
+| Direct offer | "{Offer} today only, here's why." | promo |
 
-```bash
-higgsfield marketing-studio hooks list --json
-higgsfield marketing-studio settings list --json
-```
+## Setting library
 
-Filter large lists with search:
+| Setting | Block |
+|---|---|
+| Kitchen morning | sunlit kitchen counter, coffee mug, soft window light, lived-in |
+| Bathroom mirror | tidy bathroom, mirror selfie angle, warm vanity light |
+| Home desk | desk with laptop and plant, daylight, natural clutter |
+| Open-plan office | bright modern office, glass walls, colleagues out of focus |
+| Car | parked car, front seat, daylight through windscreen |
+| Street | urban pavement, natural daylight, passers-by out of focus |
+| Gym | gym floor, bright overhead light, equipment behind |
+| Bedroom | bedroom, bed and lamp, soft evening light |
+| Studio white | seamless white or grey backdrop, soft key light (for polished modes) |
+| Outdoors | park or terrace, golden hour, greenery |
 
-```bash
-higgsfield marketing-studio hooks list --search sale --json
-higgsfield marketing-studio settings list --search office --json
-```
+Add specifics (props, time of day) to make it match the product. Custom hooks and settings from the user are used as written.
 
-The response shape is:
+## Using them
 
-- `items`: setup items with `id`, `name`, `prompt`, `source`, optional `type`, optional media URLs, and pin/status metadata.
-- `cursor`: cursor for the next page.
-- `has_more`: whether another page exists.
-
-## Generate With Setup Items
-
-Pass one or both IDs:
-
-```bash
-PRODUCT_IDS_JSON=$(mktemp)
-printf '["<product_id>"]' > "$PRODUCT_IDS_JSON"
-
-higgsfield generate create marketing_studio_video \
-  --prompt "..." \
-  --mode ugc \
-  --product_ids @"$PRODUCT_IDS_JSON" \
-  --hook_id <hook_id> \
-  --setting_id <setting_id> \
-  --duration 15 \
-  --aspect_ratio 9:16 \
-  --wait
-```
-
-When using `--hook_id`, pass product context whenever possible. Hooks are designed to transition into a product pitch and are weak without `product_ids`.
-
-`--mode` is optional; it defaults to `ugc`. Pass it only when the user wants a specific non-default style.
-
-For UGC modes, `--avatars` is optional if the brief clearly mentions a person; the backend can synthesize a Soul Character. Pass `--avatars` when the user selected a specific presenter.
-
-If the CLI returns `Unknown params: hook_id` or `Unknown params: setting_id`, do not retry with that flag for the selected `job_set_type`; its schema does not support setup items.
+1. Pick or write the hook and setting after the product card.
+2. Put them into the generator slots; keep the setting sentence identical across clips of the same ad.
+3. Do not copy the hook line into other slots; if the user wants it reinforced (e.g. said again at the end), write that beat explicitly.
