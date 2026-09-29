@@ -4,9 +4,9 @@ How to lay a MrBeast-style headline over the image and "bake" it into a flat PNG
 Two layers: (1) a **live HTML/CSS preview** to tune the text in a browser, (2) a
 **canvas bake** — the same look re-rendered to pixels at the image's native resolution.
 
-This is the implementation of the 5 overlay styles named in the skill's Text policy. The
-overlay is the DEFAULT delivery for headline text (zero generation credits, always legible);
-baking text INTO the generation is the fallback, only on an explicit ask.
+This is the implementation of the 5 overlay styles named in the skill's Text overlay section. The
+overlay is the DEFAULT delivery for headline text (local work, zero generation credits, always legible);
+baking text INTO the generation is the fallback, only on an explicit ask (a paid call that needs the user's yes).
 
 ## What makes text "MrBeast-y"
 
@@ -87,7 +87,7 @@ Feed the background into `--bg`, put the text in `<h1>`, tune it in a browser.
 > `paint-order: stroke fill` is critical. Without it the stroke paints ON TOP and "eats" half
 > the letter — the #1 bug in 90% of home-made MrBeast text.
 
-## 5 proven presets (swap the `.line` block) — same 5 as the skill's Text policy
+## 5 proven presets (swap the `.line` block) — same 5 as the skill's Text overlay section
 
 ### Beast — white + thick black stroke (default)
 ```css
@@ -220,16 +220,16 @@ Mechanics that are easy to forget:
   (`<input type=file>` → `URL.createObjectURL`) it isn't needed and CORS doesn't block.
 - Draw the shadow inside `save()/restore()`, else `shadowBlur` bleeds onto the fill and smears the color.
 
-## 4K / retina export
+## Native-resolution / retina export
 
 For a sharp PNG larger than the preview, compute everything from the image's NATIVE size,
 not from the preview viewport:
 
 ```js
-bake({ src: '4k_render.png', W: 3840, H: 2160, lines: [...] });
+bake({ src: 'render.png', W: 1920, H: 1080, lines: [...] });   // use the image's real pixel size
 ```
 
-Cap size, stroke and margins are all tied to `H` (in percent), so at 2160px everything scales itself.
+Cap size, stroke and margins are all tied to `H` (in percent), so at any size everything scales itself.
 
 ## Font menu (Anton is the default — these are the overrides)
 

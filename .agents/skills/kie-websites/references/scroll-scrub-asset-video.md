@@ -1,7 +1,7 @@
 # Scroll scrub video helper asset
 
-Read `references/scroll-scrub.md` first. Copy the fenced source to a temporary
-`scroll-scrub-video.sh` file and invoke it with `bash`.
+Read `references/scroll-scrub.md` first. Copy the fenced source to
+`site/refs/scroll-scrub-video.sh` and invoke it with `bash` (requires `ffmpeg` on PATH).
 
 ```bash
 #!/usr/bin/env bash

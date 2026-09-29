@@ -31,9 +31,9 @@ Supported modules:
 
 ## Plain branded poster
 
-Use GPT Image 2 for the finished graphic.
+Use GPT Image 2.5 Flare (`scripts/kie_image.py`, 1K unless asked) for the finished graphic. Show the final prompt and settings and wait for the user's yes before running it.
 
-Pass references through repeated CLI `--image` flags (`Image0` is the first flag, `Image1` the second, and so on; use local PNG/JPG paths, upload IDs, or completed job IDs — never an SVG path):
+Pass references through repeated `-i <public url>` flags (Image 1 is the first `-i`, Image 2 the second, and so on; use public URLs from `scripts/kie_upload.py` (with the user's yes) or the printed URL of an earlier result — never an SVG):
 
 - Exact approved logo variant
 - Approved typography specimen
@@ -48,41 +48,32 @@ The prompt must state:
 - Exact palette roles
 - Requested aspect ratio
 
-Never compose this flattened module with local Python/Pillow or runtime package installation. The controlled GPT Image 2 render is the deliverable; use the deterministic poster/banner module when exact editable typography is required.
+Never compose this flattened module with local Python/Pillow or runtime package installation. The controlled image render is the deliverable; use the deterministic poster/banner module when exact editable typography is required.
 
 ```bash
-higgsfield generate create gpt_image_2 \
-  --image "$BRANDKIT_WORKDIR/logo/approved-logo-2048.png" \
-  --image "$BRANDKIT_WORKDIR/reviews/approved-typography.png" \
-  --prompt "<exact social graphic prompt>" \
-  --aspect_ratio 3:4 \
-  --resolution 4k \
-  --wait --json
+python3 scripts/kie_image.py "<exact social graphic prompt>" \
+  -a 4:5 -r 1K -o "$BRANDKIT_WORKDIR/social/post-4x5-v1.png" \
+  -i "<public URL of the approved logo PNG>" \
+  -i "<public URL of the approved typography specimen PNG>"
 ```
 
-Omit the typography reference for a no-text graphic and use only live-schema ratio/resolution values. GPT Image 2 does not currently expose `4:5`; for an exact 4:5 feed post, compose with a centered 4:5 safe area, generate at `3:4`, download the result, then crop only the vertical excess:
-
-```bash
-magick generated-3x4.png -gravity center -crop '100%x93.75%+0+0' +repage final-4x5.png
-```
-
-`convert` may replace `magick`. Verify the final pixel ratio exactly equals 4:5 and that no locked logo or copy crosses the crop boundary.
+Omit the typography reference for a no-text graphic. Use the platform ratio directly with `-a` (1:1, 4:5, 9:16, 16:9, and so on); no cropping step is needed. Verify the output ratio and that no locked logo or copy sits on an edge.
 
 ## Mockup photography/application
 
 1. Create or use the mockup photograph first with its target surface blank. Follow `mockups.md` for the base scene.
-2. Pass that exact mockup job ID as the first `--image` (`Image0`).
-3. Pass the approved logo PNG as the second `--image` (`Image1`).
-4. Pass the approved typography specimen PNG as the third `--image` (`Image2`).
-5. GPT Image 2 adds the exact copy, logo, and approved typography to the blank surface.
+2. Pass that exact mockup's result URL as the first `-i` (Image 1).
+3. Pass the approved logo PNG URL as the second `-i` (Image 2).
+4. Pass the approved typography specimen PNG URL as the third `-i` (Image 3).
+5. The image model adds the exact copy, logo, and approved typography to the blank surface.
 
-Preserve Image0's camera, crop, people, pose, lighting, materials, folds, shadows, perspective, environment, and background exactly. Change only the controlled social artwork/application.
+Preserve Image 1's camera, crop, people, pose, lighting, materials, folds, shadows, perspective, environment, and background exactly. Change only the controlled social artwork/application.
 
 ## Typography fidelity
 
 The approved typography specimen is mandatory whenever text appears. Name the exact display/body families in the prompt; never infer typography from the logo or palette.
 
-After generation, check the output against the specimen. Retry once when the letterform character is visibly substituted. If GPT Image 2 still cannot reproduce the approved typography, report the limitation instead of presenting the output as exact.
+After generation, check the output against the specimen. Propose one corrected prompt (and ask before running it) when the letterform character is visibly substituted. If the model still cannot reproduce the approved typography, report the limitation instead of presenting the output as exact.
 
 ## Consistency and QA
 

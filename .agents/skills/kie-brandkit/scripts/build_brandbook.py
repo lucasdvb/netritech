@@ -65,7 +65,7 @@ def fetch_bytes(url: str, limit: int, redirects: int = 2) -> bytes:
         assert_public_host(parsed.hostname)
         try:
             response = opener.open(
-                Request(current, headers={"User-Agent": "higgsfield-brandkit/1"}),
+                Request(current, headers={"User-Agent": "kie-brandkit/1"}),
                 timeout=30,
             )
         except Exception as error:

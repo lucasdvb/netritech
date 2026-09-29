@@ -26,21 +26,20 @@ Use with `state --action approve_logo`. For a user-supplied official logo, use t
   "logo": {
     "name": "Northline symbol",
     "asset": {
-      "id": "replace-with-upload-or-job-id",
-      "url": "https://replace-with-exact-approved-logo.svg"
+      "path": "/absolute/path/to/brandkit/logo/candidate-2.png"
     },
     "geometry_fingerprint": "replace-with-logo-inspect-fingerprint"
   }
 }
 ```
 
-`logo.asset` is always an object, never a URL string. It requires at least one durable locator: `id`, `url`, or an absolute local `path`. For a user-supplied local SVG, use:
+`logo.asset` is always an object, never a URL string. It requires at least one durable locator: `id`, `url`, or an absolute local `path`. The approved asset is the selected PNG or the accepted traced SVG. For a user-supplied local SVG, use:
 
 ```json
 {"path": "/absolute/path/to/official-logo.svg"}
 ```
 
-Get `geometry_fingerprint` from `logo-inspect --source <exact SVG URL or absolute path>` before approval. This uses the same full-canvas-background handling as `logo-export`.
+Get `geometry_fingerprint` from `logo-inspect --source <exact absolute path or SVG URL>` before approval. For a PNG it is the file hash; for an SVG it uses the same full-canvas-background handling as `logo-export`.
 
 ## Palette
 

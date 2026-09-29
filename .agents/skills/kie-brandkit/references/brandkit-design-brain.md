@@ -3,7 +3,7 @@
 Internal art-direction layer between user input and Brandkit production. Never
 show this analysis as a separate concept or ask the user to approve it.
 
-The Design Brain does not render assets, write Recraft prompts, call tools, or
+The Design Brain does not render assets, write image prompts, call tools, or
 store approvals. It turns the current brief and selected draft elements into
 strong, coherent creative decisions for the next stage.
 
@@ -110,7 +110,7 @@ Return exactly three distinct symbol-only mechanisms. Each defines:
   requested more)
 - forbidden elements
 
-No wordmarks, taglines, descriptors, or Recraft prose. Prompt writing happens
+No wordmarks, taglines, descriptors, or prompt prose. Prompt writing happens
 afterwards under the `logo-prompt-enhancer.md` contract.
 
 Each mechanism contains one concept only. State its single visual idea in one
@@ -145,7 +145,7 @@ shapes.
 
 ### `PROPOSE_TYPOGRAPHY`
 
-Input: Creative DNA + selected draft palette + selected draft SVG mark.
+Input: Creative DNA + selected draft palette + selected draft mark.
 
 Return 2–3 font-pair proposals. Each defines:
 

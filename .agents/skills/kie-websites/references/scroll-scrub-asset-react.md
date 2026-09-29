@@ -1,11 +1,11 @@
 # Scroll scrub React asset
 
 Read `references/scroll-scrub.md` first. Copy the fenced source into
-`app/src/components/scroll-scrub/scroll-scrub.tsx`, then adapt scene data and
+`site/src/components/scroll-scrub/scroll-scrub.tsx`, then adapt scene data and
 composition without weakening the runtime invariants.
 
 ```tsx
-/* Scroll scrub React/TanStack reference implementation. */
+/* Scroll scrub React reference implementation. */
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
@@ -15,7 +15,7 @@ import "./scroll-scrub.css";
 export interface ScrollScrubScene {
   id: string;
   label: string;
-  /** Exact first frame of the deployed desktop clip. */
+  /** Exact first frame of the shipped desktop clip. */
   poster: string;
   /** Exact first frame of mobileClip; provide whenever mobileClip is set. */
   mobilePoster?: string;

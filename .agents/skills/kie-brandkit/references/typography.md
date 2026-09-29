@@ -43,7 +43,7 @@ Load `brandkit-design-brain.md` and run `PROPOSE_TYPOGRAPHY`, then render one bo
 - The proposed display/body pair
 - Standard or brand-relevant headline/body sample text
 - The approved palette when available
-- The approved mark in `logo_svg` when available
+- The approved mark in `logo_svg` when available (an SVG or PNG path)
 - The same font files used in later SVG/PPTX/HTML work
 - One shared `text_color` for both display and body text; it must differ from `background_color`
 
@@ -76,7 +76,7 @@ Do not create a user-facing type-role table, line-height system, letter-spacing 
 
 If exact typography matters, do not bake final text into a photographic generation. Generate the background/scene without final copy and add text in SVG/PPTX/HTML using the actual font.
 
-Use the Brandkit renderer for concept/type previews. GPT Image 2 typography is not evidence of font choice or exact letterforms.
+Use the Brandkit renderer for concept/type previews. Image-model typography is not evidence of font choice or exact letterforms.
 
 ## 6. Editable output caveats
 

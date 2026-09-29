@@ -1,9 +1,8 @@
 ---
-version: 0.13.0
-name: higgsfield-product-photoshoot
+name: kie-product-photoshoot
 description: |
-  Generate brand-quality product images through Higgsfield product-photoshoot
-  prompt enhancement on GPT Image 2 / gpt_image_2. Entry point for professional
+  Generate brand-quality product images with a local product-photoshoot prompt
+  generator on GPT Image 2.5 Flare via KIE AI. Entry point for professional
   brand/product visuals.
   Use when: "product photo", "studio shot", "lifestyle image", "Pinterest pin",
   "hero/banner", "carousel", "ad creative", "Meta ads", "virtual try-on",
@@ -12,38 +11,33 @@ description: |
   "seasonal/aesthetic variation", or any product, brand, or paid-social creative.
   Modes: product_shot, lifestyle_scene, closeup_product_with_person,
   moodboard_pin, hero_banner, social_carousel, ad_creative_pack,
-  virtual_model_tryout, conceptual_product, restyle. Backend assembles the final
-  prompt; never freehand it.
-  NOT for: no-product text-to-image (use higgsfield-generate), branded avatar
-  video (use higgsfield-generate Marketing Studio), marketplace listing cards
-  (use higgsfield-marketplace-cards), Soul Character training (use
-  higgsfield-soul-id).
+  virtual_model_tryout, conceptual_product, restyle. The prompt is assembled from
+  the skill's references (never freehanded).
+  NOT for: no-product text-to-image (use kie-generate), branded avatar/UGC video
+  (use kie-generate), marketplace listing cards (use kie-marketplace-cards).
 argument-hint: "[--mode <mode>] [--count N] [prompt]"
 allowed-tools: Bash
 ---
 
 # Product Photoshoot
 
-Brand-image generation via the `higgsfield product-photoshoot create` command. The CLI calls a backend prompt enhancer that holds mode-specific photography vocabulary and structural templates, then submits to `gpt_image_2` and returns image URLs.
+Brand-image generation in two local steps: assemble a mode-specific prompt from `references/`, then render it with GPT Image 2.5 Flare (KIE AI) through `scripts/kie_image.py`. The product photo is passed as a reference image (`-i`) so the product stays faithful.
 
-## Step 0 — Bootstrap
+Scripts (run from repo root): `scripts/kie_image.py`, `scripts/kie_upload.py`. The key comes from `KIE_AI_API_KEY` or `.mcp.json`.
 
-Before any other command:
+When the work is about SPM, read `docs/spm-brand-brief.md` first. SPM palette: Ink navy #0D141F, Deep navy #1B2A38, Steel blue #43617A, Teal #22808A, Light grey #DADDE0.
 
-1. If `higgsfield` is not on `$PATH`, install it:
-   ```bash
-   curl -fsSL https://raw.githubusercontent.com/higgsfield-ai/cli/main/install.sh | sh
-   ```
-2. If `higgsfield account status` fails with `Session expired` / `Not authenticated`, ask the user to run `higgsfield auth login` (interactive) and wait for confirmation.
+## Permission (generation costs credits)
+
+Before running `scripts/kie_image.py` (or uploading a file with `scripts/kie_upload.py`), show the user: the final prompt (full text), the model (GPT Image 2.5 Flare, text-to-image or image-to-image), aspect ratio, resolution, number of images, and which local files will be uploaded. Wait for an explicit yes. A yes covers only what was listed. Never batch variants or retry a failed/poor result without asking; propose the fix and ask first.
 
 ## UX Rules
 
-1. Be concise. Print only image URLs in the final reply.
-2. Detect language, respond in it. Mode names and CLI flags stay English.
-3. Ask at most 4 short questions before submitting. Use labeled options, never open-ended.
-4. Skip questions whose answer is obvious from context (uploaded image, prior turn, brand memory).
-5. Never write the gpt_image_2 prompt yourself — backend assembles it.
-6. Polling is silent. Wait until URLs are ready, then deliver.
+1. Be concise. Detect the user's language and respond in it. Mode names and script flags stay English.
+2. Ask at most 4 short questions before proposing the generation. Use labeled options, never open-ended.
+3. Skip questions whose answer is obvious from context (uploaded image, prior turn, brand memory, SPM brief).
+4. Never freehand the image prompt: assemble it from `references/prompt-assembly.md` and the mode's template in `references/mode-templates.md`.
+5. Show the assembled prompt at the permission step; after generation, deliver the URLs.
 
 ## Modes
 
@@ -83,7 +77,7 @@ Tie-breakers:
 
 ## Pre-generation interview
 
-Ask 3–4 short questions before submitting. Always labeled options, never open-ended. Skip a question whose answer is obvious from context.
+Ask 3–4 short questions before proposing the generation. Always labeled options, never open-ended. Skip a question whose answer is obvious from context.
 
 ### Type A — uploaded a product photo, "make me images / photoshoots"
 
@@ -135,81 +129,71 @@ After answers → return to the relevant Type A–E.
 
 ## Generation
 
-Single command. Backend assembles the final prompt and submits to `gpt_image_2`. URLs print on stdout.
+1. **Assemble the prompt.** Read `references/prompt-assembly.md` (slots, product-lock clause, vocabulary banks, variant and multi-slide rules), then the mode's section in `references/mode-templates.md`. Fill every slot from the interview answers and the product photo; write one prompt per output image.
+2. **Permission gate.** Show prompt(s) + model + aspect + resolution + count (see Permission above). Wait for yes.
+3. **Uploads.** Reference inputs must be public URLs. For each local file, after the yes: `python3 scripts/kie_upload.py path/to/product.png` prints a public URL (temporary, ~3 days). URLs the user already gave are used as-is.
+4. **Render, one call per image.**
 
 ```bash
-higgsfield product-photoshoot create \
-  --mode <mode> \
-  --prompt "<short user-intent description from interview answers>" \
-  [--image <path-or-upload-id>]... \
-  [--count <1-10>] \
-  [--aspect_ratio <override>]
+# with the product photo (image-to-image; up to 16 references, product photo first)
+python3 scripts/kie_image.py "<assembled prompt>" -a 4:5 -r 1K -o out/lifestyle-1.png -i <product photo url> [-i <extra ref url> ...]
+
+# no product photo (text-to-image; product described in the prompt)
+python3 scripts/kie_image.py "<assembled prompt>" -a 4:5 -r 1K -o out/lifestyle-1.png
 ```
 
-Examples:
-
-```bash
-higgsfield product-photoshoot create \
-  --mode lifestyle_scene \
-  --prompt "bottle of cold-brew on a sunlit kitchen counter, IG feed" \
-  --image bottle.jpg \
-  --count 3
-```
-
-```bash
-higgsfield product-photoshoot create \
-  --mode moodboard_pin \
-  --prompt "vertical pin for my candle brand, cottagecore mood" \
-  --image candle.jpg
-```
-
-```bash
-higgsfield product-photoshoot create \
-  --mode restyle \
-  --prompt "Christmas version, quiet-luxury aesthetic" \
-  --image existing-shot.jpg
-```
+The script creates the task, waits, prints `url ...` and saves the `-o` file when the result host is reachable. If the download is blocked by the sandbox network policy, give the user the URL.
 
 ## Image inputs
 
-`--image` accepts a local file path (auto-uploaded) OR an existing upload UUID. Repeat the flag for multiple references.
+Every input is a public URL passed with `-i`, repeat the flag for multiple references. Order matters and the prompt must say what each one is (`image 1 = product`, `image 2 = model / style reference`). For local files use `scripts/kie_upload.py` first. There is no mask or seed parameter: a "keep X, change Y" edit is an image-to-image call with the source as `-i` and an edit-style prompt.
 
 ## Multi-variant
 
-`--count 3` returns 3 distinct image URLs. Backend asks the enhancer to vary preset, lighting, angle, and palette across variants — they will not be paraphrased copies of one another.
+There is no `--count` on the script: `--count 3` means three calls, each with its own prompt. `references/prompt-assembly.md` (Variants) defines the axes to vary (preset, lighting, angle, palette) so the outputs are distinct rather than paraphrases. Ask for approval of the whole batch once, listing every prompt.
 
-For `social_carousel` and `ad_creative_pack`, count = number of slides / variants in the pack. Backend locks the visual system across all slides automatically.
+For `social_carousel` and `ad_creative_pack`, count = number of slides / variants in the pack. Lock the visual system by pasting the same SYSTEM block into every slide prompt (see `references/prompt-assembly.md`, Multi-slide systems); pass the first approved slide as an extra `-i` on the following slides to keep the look consistent.
 
 ## Aspect ratio
 
-Backend picks a sensible default per mode. Override with `--aspect_ratio` only if the user explicitly asks for a different one. Allowed values: `1:1`, `4:5`, `5:4`, `3:4`, `4:3`, `2:3`, `3:2`, `9:16`, `16:9`.
+Defaults per mode are in `references/mode-templates.md`. Override only if the user explicitly asks. Common values for `-a`: `1:1`, `4:5`, `5:4`, `3:4`, `4:3`, `2:3`, `3:2`, `9:16`, `16:9`, `21:9`, `auto`.
 
 ## Resolution
 
-Use `2k` for every product-photoshoot job.
+Default `-r 1K`. Go to `2K` / `4K` only when the user asks (print, large banner) and say it in the permission step.
+
+## Review
+
+Look at each result (host vision when available) against the QA list in `references/prompt-assembly.md`: product fidelity, label text, hands/anatomy, stray text, composition. If something is off, propose the specific fix line and ask before regenerating.
 
 ## Delivering results
 
-Print the image URLs as a short bulleted list. No JSON, no IDs, no internal model names, no enhanced prompt text. If a job failed, mention it briefly with the failure status.
+Print the image URLs as a short bulleted list with one label each. No JSON, no task ids.
 
 ```
 3 lifestyle shots ready:
-- https://cdn.higgsfield.ai/.../job_abc.jpg
-- https://cdn.higgsfield.ai/.../job_def.jpg
-- https://cdn.higgsfield.ai/.../job_ghi.jpg
+- https://tempfile.aiquickdraw.com/.../a.png
+- https://tempfile.aiquickdraw.com/.../b.png
+- https://tempfile.aiquickdraw.com/.../c.png
 ```
 
 ## What this skill does NOT do
 
-- Does not write gpt_image_2 prompts directly. Backend owns prompt assembly.
-- Does not auto-pick a different image-gen model. Always `gpt_image_2`.
-- Does not replace `higgsfield-generate` Marketing Studio for branded video / avatar workflows.
-- Does not replace `higgsfield-generate` for raw text-to-image without a product or brand context.
+- Does not freehand prompts: assembly always goes through the references.
+- Does not use a different image model: always GPT Image 2.5 Flare.
+- Does not produce video or avatar/UGC content (use kie-generate).
+- Does not do raw text-to-image without a product or brand context (use kie-generate).
 
 ## Common mistakes to avoid
 
 - Asking more than 4 interview questions in a single message.
 - Picking the wrong mode (e.g. `product_shot` when the user wants a Pinterest pin).
-- Calling `higgsfield generate create gpt_image_2 --prompt ...` directly instead of `higgsfield product-photoshoot create` — bypasses the prompt enhancer and produces noticeably worse output.
-- Pasting the assembled prompt back to the user — they want the URLs.
-- Using a `--mode` value not in the table above.
+- Running the script before the user approved the prompt, or re-running after a bad result without asking.
+- Sending the product photo without labelling it in the prompt (`image 1 = product`), or without the product-lock clause.
+- Passing a local path to `-i` (must be a public URL: upload first).
+- Using a mode value not in the table above.
+
+## Reference files
+
+- `references/prompt-assembly.md` — prompt slots, product-lock clause, vocabulary banks, variants, multi-slide systems, text rules, QA fixes.
+- `references/mode-templates.md` — the ten mode templates with default aspects, rules and worked examples.

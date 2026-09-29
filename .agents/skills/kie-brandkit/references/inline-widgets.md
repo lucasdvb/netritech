@@ -31,33 +31,26 @@ For 2–3 options, stack the complete blocks in one response. Never send filenam
 
 Before writing preview input, load [exact preview payloads](preview-payloads.md).
 
-## Recraft SVG logo review
+## Logo candidate review
 
-The preview script does not create or compare logos. Show the three Recraft results directly:
+The preview script does not create or compare logos. Show the three generated PNGs directly:
 
 ```markdown
 ### Candidate 1 — <short name>
-![Logo candidate 1](<Recraft SVG URL>)
-[Download SVG](<Recraft SVG URL>)
+![Logo candidate 1](/absolute/path/to/brandkit/logo/candidate-1.png)
 ```
 
-If the client cannot render the SVG URL, download the exact SVG locally and rasterize a review-only PNG with `rsvg-convert`. Keep the original SVG untouched as the downloadable asset.
+If the file could not be saved (result host blocked), link the printed result URL instead. Never redraw, normalize, recolor, or otherwise alter a candidate during review.
 
-```bash
-rsvg-convert --format png --width 2048 --height 2048 --keep-aspect-ratio \
-  --output "$BRANDKIT_WORKDIR/logo/candidate-1-preview.png" \
-  "$BRANDKIT_WORKDIR/logo/candidate-1.svg"
-```
-
-Never redraw, normalize, recolor, or otherwise alter a candidate during review.
+For a traced SVG, show the original candidate and the `-traced-2048.png` preview side by side and link the SVG path.
 
 ## Logo export review
 
-When `logo-export` creates SVG/PNG pairs:
+When `logo-export` or `logo-vectorize` creates SVG/PNG pairs:
 
 - Show each PNG inline or provide its absolute path.
 - Link/provide every requested SVG and PNG path.
-- State that the SVG geometry fingerprint is unchanged.
+- State that the SVG geometry fingerprint is unchanged (export) or that the SVG is a local trace of the approved PNG (vectorize).
 - Never label a raster PNG as editable vector output.
 
 ## Review messages

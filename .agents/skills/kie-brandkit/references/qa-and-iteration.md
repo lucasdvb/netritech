@@ -2,19 +2,20 @@
 
 Assume the first pass contains inconsistencies. Validate the set as a system and each asset as an individual deliverable.
 
-## 1. Preflight before paid generation
+## 1. Preflight before generation (credits)
 
 - The Brandkit state script's `get_status` action was called in this turn
 - Only the state slots required by this output were loaded
 - Required approved slots exist for this output
-- Every logo use points to the exact approved state asset ID
+- Every logo use points to the exact approved state asset
 - Brand Lock exists and matches state revisions
 - Requested output list, quantity, format, and dimensions are explicit
 - Exact user copy is captured
-- Authoritative logo/reference has one reusable ID
+- Authoritative logo/reference has one reusable path or public URL
 - Palette and typography decisions are resolved
 - Editable versus rendered deliverables are distinguished
 - Every generation call has a defined downstream purpose
+- The user has said yes to the exact prompt, settings, and output count of each call
 
 Do not generate speculative extras. Do not treat todo completion, model preference, your own visual assessment, or generation success as user approval.
 
@@ -69,8 +70,9 @@ Do not accept a vision model's statement as proof of exact hex, font, spacing, o
 ### Logo
 
 - Compare against authoritative source
-- New-logo selection contains exactly three editable SVGs
-- All three use identical Recraft model, palette, background, aspect, and quality parameters
+- New-logo selection contains exactly three PNG candidates
+- All three use identical model, palette, background, aspect, and resolution settings
+- A traced SVG matches its source PNG
 - Candidate prompts contain no text except explicitly requested monogram initials
 - Selected mark and later wordmark are optically balanced as one lockup
 - Check geometry, proportions, clear space, and small-size behavior
@@ -92,9 +94,9 @@ Do not accept a vision model's statement as proof of exact hex, font, spacing, o
 
 ### Mockups
 
-- Compare the Seedream result with every scene/product/logo reference
+- Compare the result with every scene/product/logo reference
 - Confirm every output uses the user-approved aspect ratio
-- For text-bearing mockups, compare GPT Image 2 output with the exact Seedream base and verify only the controlled branding/text application changed
+- For two-stage (locked base scene) mockups, compare the output with the approved base scene and verify only the controlled branding/text application changed
 - Verify placement, scale, alignment, clear space, color variant, and material application match the prompt exactly
 - When an existing photograph was supplied, verify only requested branded surfaces changed
 - Verify the selected color/black/white logo variant matches the material and production method
@@ -120,7 +122,7 @@ When an item fails:
 1. Name the failed Brand Lock rule.
 2. Decide whether the issue is generative or deterministic.
 3. Keep the Brand Lock and all passing assets unchanged.
-4. Regenerate/recompose only the failing asset.
+4. Propose the fix, then (after the user's yes) regenerate/recompose only the failing asset. Never loop regeneration automatically.
 5. Re-run its module checks and the set-level matrix.
 
 Prefer a small deterministic correction over a full regeneration:
@@ -141,7 +143,7 @@ Changing the palette also discards a generated logo because its candidate genera
 
 Stop and disclose a limitation when:
 
-- A generated logo cannot be reproduced faithfully as editable vector
+- A generated logo cannot be traced faithfully into vector
 - An image model repeatedly corrupts the official logo
 - A custom font is unavailable or cannot be embedded
 - The requested native editor format is unsupported

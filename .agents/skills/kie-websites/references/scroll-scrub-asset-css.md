@@ -1,7 +1,7 @@
 # Scroll scrub CSS asset
 
 Read `references/scroll-scrub.md` first. Copy the fenced source into
-`app/src/components/scroll-scrub/scroll-scrub.css` and replace composition
+`site/src/components/scroll-scrub/scroll-scrub.css` (plain HTML: `site/css/scroll-scrub.css`) and replace composition
 values through the design brief.
 
 ```css

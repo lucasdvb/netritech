@@ -16,7 +16,7 @@ Create payload files as JSON under `"$BRANDKIT_WORKDIR"`. Never interpolate user
 
 - The local state file survives turns and agent restarts. Do not export it into chat or paste it into prompts.
 - Read state only through the script. Do not hand-edit revisions, origins, dependencies, or approvals.
-- Store durable references: absolute local paths, confirmed URLs, upload IDs, or completed job IDs.
+- Store durable references: absolute local paths or confirmed public URLs.
 - If the state file is missing but the conversation claims prior approvals, stop and ask whether to restart or locate the previous project directory. Never infer approvals.
 - Do not commit `brandkit/state.json` unless the user explicitly wants brand state versioned with the project.
 

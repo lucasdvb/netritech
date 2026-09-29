@@ -13,7 +13,7 @@ python3 "$SKILL_ROOT/scripts/brandkit.py" state \
 
 Require:
 
-- approved logo SVG
+- approved logo (SVG or PNG)
 - approved palette
 - approved display/body typography
 - approved brand concept/summary copy supplied by the user
@@ -69,7 +69,7 @@ Preserve the template's slide size, masters, layout, margins, grids, text positi
 
 1. **Cover** — “Brand Guidelines” and the real brand/product name.
 2. **Branding concept** — approved concept summary and palette rationale.
-3. **Primary logo** — exact approved SVG.
+3. **Primary logo** — exact approved logo file.
 4. **Logo system** — primary plus an approved secondary/reverse variant only when supplied or requested. Remove the unused secondary slot and label; never invent one.
 5. **Primary palette** — approved swatches, names, RGB, hex, independent readable label contrast, and no decorative redesign.
 6. **Typography** — approved display/body fonts rendered at equal specimen sizes and aligned positions, with neither clipped nor substituted.

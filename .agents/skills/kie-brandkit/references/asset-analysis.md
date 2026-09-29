@@ -4,7 +4,7 @@ Analyze supplied assets before concepting or generation. The goal is a usable vi
 
 ## 1. Inventory and assign roles
 
-Inspect every attachment and local path supplied in the conversation. If the user asks to reuse prior Higgsfield uploads, run `higgsfield upload list --json`. Build an inventory with:
+Inspect every attachment and local path supplied in the conversation. If the user points to files from an earlier session, look for them in the project directory. Build an inventory with:
 
 ```text
 id | filename/source | format | dimensions/pages | likely role | authority
@@ -25,7 +25,7 @@ Use one role per asset:
 
 Ask the user only when confusing two roles would change the output—for example, an official logo versus a visual reference. Never treat inspiration as an official asset without confirmation.
 
-After confirming authority, immediately persist each official Essential Kit slot with `lock_authoritative_logo`, `lock_authoritative_palette`, or `lock_authoritative_typography`. Preserve the exact local path, URL, upload ID, or job ID plus the source summary and `user_supplied` origin. Do not wait for generated missing elements.
+After confirming authority, immediately persist each official Essential Kit slot with `lock_authoritative_logo`, `lock_authoritative_palette`, or `lock_authoritative_typography`. Preserve the exact local path or public URL plus the source summary and `user_supplied` origin. Do not wait for generated missing elements.
 
 ### Inspirational references
 
@@ -87,7 +87,7 @@ For deterministic measurement, use the local file directly or download the user-
 - Repeated motif size, density, and rotation
 - Image crop, focal point, balance, and negative-space distribution
 
-Download only the user's own Higgsfield media URLs or user-supplied public URLs; never fetch unrelated third-party content. Document URLs use the dedicated document route below.
+Download only the user's own generated-result URLs or user-supplied public URLs; never fetch unrelated third-party content. Document URLs use the dedicated document route below.
 
 For anti-aliased pixels, cluster near-identical colors rather than reporting hundreds of false palette entries. Ignore photographic colors when extracting the graphic palette unless the image clearly uses them as deliberate overlays or surfaces.
 
@@ -175,4 +175,4 @@ Return analysis in this order:
 7. **Unknowns/conflicts**
 8. **Safe extension rules**
 
-Feed these findings into `references/brand-lock.md`. Do not generate until the lock distinguishes what must be preserved from what may be proposed.
+Feed these findings into `references/brand-lock.md`. Do not generate (and do not ask to generate) until the lock distinguishes what must be preserved from what may be proposed.

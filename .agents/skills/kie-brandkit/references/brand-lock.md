@@ -1,6 +1,6 @@
 # Brand Lock
 
-The Brand Lock is the single source of truth for every requested graphic. Create it after intake and asset analysis, before paid generation.
+The Brand Lock is the single source of truth for every requested graphic. Create it after intake and asset analysis, before any generation.
 
 It is not a new brand strategy document. It records supplied context, measured rules, and the minimum proposed visual decisions needed for this job.
 
@@ -46,7 +46,7 @@ Use this structure internally. Keep it compact enough to copy relevant blocks ve
     "logo": {
       "origin": "user_supplied | brandkit_generated",
       "source": "",
-      "upload_or_job_id": "",
+      "asset_id_or_url": "",
       "variants": {
         "color": "",
         "black": "",
@@ -107,7 +107,7 @@ For each exact token, retain its state, evidence, and source when ambiguity exis
 
 ## Required minimum
 
-Before paid generation, the lock must contain the fields that the requested output actually uses:
+Before generation (credits), the lock must contain the fields that the requested output actually uses:
 
 - Exact brand/product spelling
 - Requested deliverables and formats
@@ -117,7 +117,7 @@ Before paid generation, the lock must contain the fields that the requested outp
 - Composition/hierarchy and shape rules relevant to the requested asset
 - At least two concrete avoid rules
 
-If a missing value would materially affect a paid generation, ask once. If it only affects a reversible layout detail, make a `proposed` decision.
+If a missing value would materially affect a generation, ask once. If it only affects a reversible layout detail, make a `proposed` decision.
 
 ## Prompt lock block
 
@@ -140,9 +140,9 @@ Repeat the block verbatim across related assets. Change only the asset-specific 
 
 ## Reference discipline
 
-- Keep one authoritative absolute local path or remote ID and reuse it everywhere.
-- Reference a prior generated output by its original job ID; do not download and re-upload it unless the receiving tool requires a file.
-- Label references by role in prompts: `Image 1: official logo`, `Image 2: approved base scene`.
+- Keep one authoritative absolute local path or public URL and reuse it everywhere.
+- Reference a prior generated output by its printed result URL (usable directly as `-i`); a local file needs `scripts/kie_upload.py` (with the user's yes) before it can be a reference.
+- Label references by role in prompts: `Image 1: official logo`, `Image 2: approved base scene` (numbered in `-i` order).
 - State what each reference controls and what it must not control.
 - For an existing logo, require exact preservation of spelling, geometry, proportions, and colors. Prefer deterministic placement/compositing when the logo does not need to interact physically with the scene.
 

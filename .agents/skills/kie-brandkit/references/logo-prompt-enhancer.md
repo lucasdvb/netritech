@@ -1,6 +1,6 @@
-# Brandkit Recraft logo prompt enhancer
+# Brandkit logo prompt enhancer
 
-The final prompt-construction layer between Brandkit Design Brain and Recraft V4.1 vector generation. There is no server-side enhancer tool in this environment: **you apply this contract yourself**, exactly once per Design Brain candidate, converting one structured logo-candidate specification into one precise Recraft prompt with the highest possible first-pass success rate.
+The final prompt-construction layer between Brandkit Design Brain and GPT Image 2.5 Flare generation (`scripts/kie_image.py`). There is no server-side enhancer tool: **you apply this contract yourself**, exactly once per Design Brain candidate, converting one structured logo-candidate specification into one precise image prompt with the highest possible first-pass success rate. The result is a flat vector-style mark on a flat solid background that can be traced locally to SVG.
 
 Design Brain has already made the creative decisions. Do not replace, reinterpret, broaden, or add a second concept. Do not narrate this step to the user.
 
@@ -37,7 +37,11 @@ Assemble one structured candidate specification per mechanism before writing its
   "palette": {
     "count": "1, 2, or 3 as required by the locked concept; greater only when user_requested_more_than_three is true",
     "user_requested_more_than_three": false,
-    "roles": ["primary", "accent", "background"]
+    "roles": [
+      {"role": "primary", "hex": "#0D141F"},
+      {"role": "accent", "hex": "#22808A"},
+      {"role": "background", "hex": "#DADDE0"}
+    ]
   },
   "reference_signals": ["formal qualities only"],
   "forbidden_elements": ["..."]
@@ -48,11 +52,11 @@ Treat supplied creative decisions as authoritative. If a nonessential detail is 
 
 ## Output contract
 
-The result of this step is exactly one continuous enhanced Recraft prompt string per candidate — no bullet points inside the prompt, no explanation, no debug text.
+The result of this step is exactly one continuous enhanced prompt string per candidate — no bullet points inside the prompt, no explanation, no debug text.
 
 The prompt must follow this order:
 
-mark type → central subject/mechanism → shape logic → style register → palette behavior → composition → constraint tail
+mark type → central subject/mechanism → shape logic → style register → composition → palette behavior → constraint tail
 
 Every clause must materially affect the drawing.
 
@@ -95,9 +99,9 @@ Preserve `candidate.treatment` exactly.
 
 Preserve `candidate.style_register` and `candidate.user_style_directive`. When the user supplied a particular style, name that formal style directly in the prompt and translate it into compatible drawing decisions. Do not dilute it into a generic “modern,” “minimal,” or “premium” treatment. Live brand/designer references remain subject to REFERENCE SAFETY below.
 
-- **flat_vector:** Solid fills, clean SVG paths, no surface effects.
+- **flat_vector:** Solid fills, crisp clean edges, no surface effects.
 - **monoline:** Uniform stroke weight, rounded caps, no fills.
-- **vector_gradient:** Vector-safe linear, radial, or duotone gradient with the locked stop count.
+- **vector_gradient:** Smooth linear or duotone gradient with the locked stop count (traces poorly; warn the user that SVG tracing needs flat fills).
 - **hand_drawn_vector:** Allowed only when supplied explicitly. Preserve intentional stroke variation and a clear silhouette. Do not promise minimal anchor points.
 
 Dimensional/3D treatment is forbidden.
@@ -152,14 +156,14 @@ The palette is locked. Do not invent, replace, expand, or reinterpret it.
 
 Use one, two, or three colors according to the locked concept; three is a maximum, not a target or default. Never add colors merely to reach three. Count the background when it participates visually. More than three are allowed only when `palette.user_requested_more_than_three` is true. Never infer that exception from a colorful reference or industry convention.
 
-Exact hex values are passed separately through the Recraft request's `colors` and `background_color` params. Never put hex, RGB, Pantone, or other color codes in the prompt.
+The image model has no color parameters, so the exact hex values go into the prompt, once, in a single color-role sentence placed after the composition clause. Never add RGB, Pantone, or other color codes, and never state hex anywhere else in the prompt.
 
 State:
 
 - strict color count
-- role relationships
+- role relationships, each with its hex (for example “exactly two flat colors: locked primary #0D141F and locked accent #22808A on a flat solid #DADDE0 background”)
 - solid or gradient behavior
-- background relationship
+- background relationship (always one flat solid background color, edge to edge, no vignette, no texture)
 
 Use role language such as “locked primary tone,” “locked accent,” and “locked background.” Do not invent color names that were not supplied.
 
@@ -179,10 +183,10 @@ Define drawing logic, not presentation photography.
 
 ## Constraint tails
 
-- **flat_vector:** Flat vector design, clean lines, no shadows, no texture, no text. Clean editable vector paths, SVG-friendly, minimal anchor points.
-- **monoline:** Monoline vector design, uniform stroke weight, rounded line caps, no fills, no shadows, no texture, no text. Clean editable vector paths, SVG-friendly, minimal anchor points.
-- **vector_gradient:** Flat vector design with the specified locked vector gradient, no shadows, no texture, no text. Clean editable vector paths, SVG-friendly, minimal anchor points.
-- **hand_drawn_vector:** Intentional hand-drawn vector strokes, approved surface variation, clear scalable silhouette, no shadows, no text.
+- **flat_vector:** Flat vector design, crisp clean edges, no shadows, no texture, no text. Solid fills only, centered on a flat solid background with generous margin, single isolated mark.
+- **monoline:** Monoline vector design, uniform stroke weight, rounded line caps, no fills, no shadows, no texture, no text. Centered on a flat solid background with generous margin, single isolated mark.
+- **vector_gradient:** Flat vector design with the specified locked gradient, no shadows, no texture, no text. Centered on a flat solid background with generous margin, single isolated mark.
+- **hand_drawn_vector:** Intentional hand-drawn strokes, approved surface variation, clear scalable silhouette, no shadows, no text. Centered on a flat solid background with generous margin.
 
 ## Forbidden elements
 
@@ -190,7 +194,7 @@ Honor every `forbidden_elements` entry literally. Never replace one forbidden cl
 
 ## Silent validation
 
-Before submitting each Recraft request, silently verify:
+Before showing each prompt for approval, silently verify:
 
 - prompt follows the supplied `central_idea` and `visual_mechanism`
 - central mechanism is one visual idea stated in one clause
@@ -202,11 +206,20 @@ Before submitting each Recraft request, silently verify:
 - no brand/designer names appear
 - no words appear except explicitly permitted monogram initials
 - exact phrase “no text” appears in the constraint tail
+- hex codes appear only in the one color-role sentence, and the background is one flat solid color
 - palette uses at most three colors unless the explicit user override is true
 - palette is not padded with unnecessary colors
 - palette count and role behavior are strict
-- geometry is practical for SVG generation
+- geometry is practical to trace into SVG (flat fills, no fine detail)
 - forbidden elements are absent
 - no camera or unsupported texture language appears
 
-If any check fails, rewrite the prompt before submitting it.
+If any check fails, rewrite the prompt before showing it.
+
+## Worked example
+
+Spec: abstract mark, central idea "a route that returns to its start", mechanism "one continuous line folding into a hexagonal loop", distinctive element "a single break in the line where it re-enters, forming a notch", flat_vector, two colors, background light grey.
+
+```text
+Abstract logo mark, one continuous heavy line folding into a hexagonal loop, its end re-entering the loop through a single notch-shaped gap that reads as the distinctive break in the outline, constructed on a strict 30-degree grid with uniform stroke weight and slightly rounded corners, restrained geometric register, balanced symmetry broken only by the notch, positive line on open negative space, no internal detail, legible at favicon size, centered composition. Exactly two flat colors: locked primary #0D141F for the line and locked accent #22808A for the notch cap, on a flat solid #DADDE0 background. Flat vector design, crisp clean edges, no shadows, no texture, no text. Solid fills only, centered on a flat solid background with generous margin, single isolated mark.
+```

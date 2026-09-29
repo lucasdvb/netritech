@@ -105,7 +105,7 @@ Use with `preview --input`. Keep one to three complete review objects in `review
         }
       ],
       "logo_ideas": [],
-      "logo_svg": "/absolute/path/to/brandkit/logo/northline-symbol.svg",
+      "logo_svg": "/absolute/path/to/brandkit/logo/northline-symbol.png",
       "display_font": {
         "family": "Fraunces",
         "source": "google:Fraunces",

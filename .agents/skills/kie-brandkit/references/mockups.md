@@ -1,8 +1,8 @@
 # Mockups
 
-Create believable applications of the Brand Lock. Preserve the approved logo and colors; do not let the scene generator invent branding.
+Create believable applications of the Brand Lock. Preserve the approved logo and colors; do not let the scene generator invent branding. Every generation step below needs the user's explicit yes on the final prompt, settings, and output count first (see the Permission rule in `SKILL.md`).
 
-Before planning, require only an approved logo through the Brandkit state script's `get_logo` action. Read approved palette/visual axes when available or when color/application decisions need them. Require typography only when readable text must appear. Use the exact approved logo path, URL, upload ID, or job ID returned by state everywhere; never substitute a newer generation or a recreated mark.
+Before planning, require only an approved logo through the Brandkit state script's `get_logo` action. Read approved palette/visual axes when available or when color/application decisions need them. Require typography only when readable text must appear. Use the exact approved logo path or URL returned by state everywhere; never substitute a newer generation or a recreated mark.
 
 Mockups are rendered images, not fully editable layered documents. If the user needs editable source artwork, use that asset's dedicated reference (for example `packaging.md` or `social-templates.md`) first.
 
@@ -32,19 +32,17 @@ Avoid the common synthetic/generic look:
 
 Prefer believable materials, restrained lighting, purposeful negative space, specific environments, and one focal branded application.
 
-## Required Seedream route
+## Generation route
 
-Use **Seedream** as the primary mockup generator. Soul models are forbidden. GPT Image 2 is allowed only as the conditional text/detail application stage below.
-
-Before generation, run `higgsfield model get seedream_v5_pro --json`. If that id is absent, inspect `higgsfield model list --image --json` and use the highest/newest Seedream tier it returns. Follow the live schema; request the highest supported resolution/quality tier and use the same Seedream model for every mockup in the set.
+Use **GPT Image 2.5 Flare** through `scripts/kie_image.py` (1K unless the user asks for more) for every mockup. It handles both the photoreal scene and readable text, so a finished mockup is normally one image-to-image call with the approved logo as a reference. Use the same model and settings for every mockup in the set.
 
 ## Ask for aspect ratio
 
-Before submitting any mockup job, ask which ratio the user wants unless their current request already states it. Offer supported choices such as 1:1, 4:3, 3:4, 16:9, 9:16, 3:2, and 2:3; validate the answer against the live model schema. For several mockups, use one ratio for the set unless the user assigns ratios per item. Lock the selected ratio across every stage.
+Before proposing any mockup generation, ask which ratio the user wants unless their current request already states it. Offer 1:1, 4:5, 3:4, 4:3, 16:9, 9:16, 3:2, and 2:3. For several mockups, use one ratio for the set unless the user assigns ratios per item. Lock the selected ratio across every stage.
 
 ### Existing photograph
 
-When the user explicitly supplies the exact photograph to mock up, pass it as `Image0` and the selected logo variant as `Image1`. Use Seedream for symbol-only applications; use GPT Image 2 when the final image contains readable text. Preserve subject, camera, lighting, materials, folds, shadows, perspective, crop, background, and selected ratio.
+When the user explicitly supplies the exact photograph to mock up, upload it (with the user's yes) and pass it as the first `-i` (Image 1) and the selected logo variant as the second (Image 2). Preserve subject, camera, lighting, materials, folds, shadows, perspective, crop, background, and selected ratio.
 
 ## Logo variant routing
 
@@ -55,11 +53,11 @@ Call the Brandkit state script's `get_logo` action and use one of its exact appr
 - White monochrome logo: dark paper, dark boxes, dark fabric, reverse marks, light-ink screen printing, and dark signage.
 - Embossing, debossing, foil, laser engraving, and one-color printing always use a monochrome variant. Never send the full-color mark as the application reference for those processes.
 
-Only after the user confirms a mockup whose physical production requires one-color/reverse artwork, run `python3 "$SKILL_ROOT/scripts/brandkit.py" logo-export` with `include_monochrome: true` and the approved color SVG when the required variant is absent. Never pre-generate monochrome assets for future mockups. Never ask Seedream to invent/recolor them or use manual SVG edits.
+Only after the user confirms a mockup whose physical production requires one-color/reverse artwork, run `python3 "$SKILL_ROOT/scripts/brandkit.py" logo-export` with `include_monochrome: true` and the approved color SVG when the required variant is absent. Never pre-generate monochrome assets for future mockups. Never ask the image model to invent/recolor them or use manual SVG edits. Monochrome variants need an SVG logo source (an official SVG or an accepted `logo-vectorize` trace); with a PNG-only logo, say so and use the full-color mark.
 
-## Seedream prompt contract
+## Mockup prompt contract
 
-Pass references with repeated CLI `--image` flags; `Image0` is the first flag, `Image1` the second, and so on. For a new scene, pass the exported PNG of the selected logo variant as `Image0`; add approved product/artwork references afterward. For an existing photograph, use the photograph as `Image0` and logo PNG as `Image1`. State each role explicitly. Local PNG/JPG paths auto-upload. Never pass an SVG path as an image reference.
+Pass references with repeated `-i <public url>` flags in a fixed order: Image 1 is the first `-i`, Image 2 the second, and so on. For a new scene, upload the PNG of the selected logo variant (`python3 scripts/kie_upload.py <png>`, with the user's yes) and pass it as Image 1; add approved product/artwork references afterward. For an existing photograph, the photograph is Image 1 and the logo PNG Image 2. State each role explicitly. Never pass an SVG as an image reference (export a PNG first).
 
 ```text
 [CREATE ONE FINISHED BRANDED MOCKUP]
@@ -67,7 +65,7 @@ Pass references with repeated CLI `--image` flags; `Image0` is the first flag, `
 composition, and one brand-specific art-direction idea>
 
 [AUTHORITATIVE LOGO]
-<ImageN> is the exact approved <full-color/black/white> logo. Preserve its
+Image N is the exact approved <full-color/black/white> logo. Preserve its
 spelling, silhouette, geometry, proportions, internal negative space, and exact
 color. Do not redraw, simplify, crop, stretch, outline, or add effects.
 
@@ -93,42 +91,31 @@ unrelated props, arbitrary gradients, plastic sheen, or generic luxury staging.
 
 The prompt must contain concrete placement, scale, alignment, clear-space, color-variant, and material-application instructions. “Place the logo on the bag/box” is insufficient.
 
-Use `--wait --json` and retain the final job ID and result URL. Do not download and re-upload the same result unless a receiving stage requires a local file.
-
-Typical one-stage call:
+Typical one-stage call (after the user's yes):
 
 ```bash
-higgsfield generate create seedream_v5_pro \
-  --image "$BRANDKIT_WORKDIR/logo/approved-logo-2048.png" \
-  --prompt "<complete Seedream prompt contract>" \
-  --aspect_ratio 3:4 \
-  --resolution 2k \
-  --wait --json
+python3 scripts/kie_image.py "<complete mockup prompt>" \
+  -a 3:4 -r 1K -o "$BRANDKIT_WORKDIR/mockups/tote-primary-v1.png" \
+  -i "<public URL of the approved logo PNG>"
 ```
 
-Replace ratio and resolution only with values confirmed by the live schema.
+Keep the printed result URL: a later stage can use it directly as an `-i` reference without re-uploading.
 
-## Conditional text/detail route
+## Locked base scene route (sets, colorways, exact copy)
 
-If the final mockup contains any readable text—wordmark, brand name, tagline, packaging label, signage, product copy, or interface text—do not ask Seedream to render it:
+Use two stages only when a set must share one scene or the final image carries a lot of exact text (wordmark, tagline, packaging label, signage, product copy, interface text):
 
-1. Seedream creates the same-ratio scene with the target surface blank and no logo, letters, pseudo-text, or invented graphics.
-2. Submit GPT Image 2 with the Seedream job ID as the first `--image` and approved logo/artwork PNG as the second `--image`.
-3. The GPT prompt preserves Image0's camera, crop, objects, lighting, material, folds, shadows, perspective, and background exactly.
-4. State the exact literal text, logo variant, placement, scale, alignment, clear space, color, and physical print/application behavior.
-5. Keep the ratio identical to the user-approved ratio.
+1. Generate the same-ratio scene with the target surface blank: no logo, letters, pseudo-text, or invented graphics. Ask the user to approve the base scene.
+2. Propose the application call, then after the user's yes run image-to-image with the approved base scene URL as Image 1 and the approved logo/artwork PNG as Image 2. The prompt preserves Image 1's camera, crop, objects, lighting, material, folds, shadows, perspective, and background exactly, and states the exact literal text, logo variant, placement, scale, alignment, clear space, color, and physical print/application behavior.
+3. Keep the ratio identical to the user-approved ratio.
 
 ```bash
-higgsfield generate create gpt_image_2 \
-  --image "<seedream-job-id>" \
-  --image "$BRANDKIT_WORKDIR/logo/approved-logo-2048.png" \
-  --prompt "<exact controlled text/detail application prompt>" \
-  --aspect_ratio 3:4 \
-  --resolution 4k \
-  --wait --json
+python3 scripts/kie_image.py "<exact controlled text/detail application prompt>" \
+  -a 3:4 -r 1K -o "$BRANDKIT_WORKDIR/mockups/tote-primary-v2.png" \
+  -i "<base scene result URL>" -i "<public URL of the approved logo PNG>"
 ```
 
-Use GPT Image 2 only for this controlled second stage. If there is no readable text, keep the one-call Seedream route.
+For one-off mockups without a lot of exact text, keep the single call above.
 
 ## Deterministic compositing
 
@@ -140,7 +127,7 @@ Prefer deterministic placement over generative editing when:
 
 Use image/SVG tooling to scale and place the official logo exactly. Preserve clear space and color. Add masks/perspective only when they can be controlled reliably.
 
-Use Seedream directly when the branding must interact with:
+Use the image model when the branding must interact with:
 
 - Fabric folds
 - Curved packaging
@@ -148,7 +135,7 @@ Use Seedream directly when the branding must interact with:
 - Foil, print texture, reflections, or surface wear
 - Occlusion and realistic perspective
 
-If Seedream corrupts the logo, retry once with stronger placement, geometry, and color constraints while keeping the same references. If it fails again, stop and use deterministic compositing when possible.
+If the model corrupts the logo, propose one retry with stronger placement, geometry, and color constraints and the same references, and ask before running it. If it fails again, stop and use deterministic compositing when possible.
 
 ## Mockup-specific guidance
 
@@ -160,7 +147,7 @@ If Seedream corrupts the logo, retry once with stronger placement, geometry, and
 
 ### Apparel/merch
 
-- Use Seedream for the finished branded person/garment mockup.
+- Use the image model for the finished branded person/garment mockup.
 - Define print/embroidery location, size, and material behavior.
 - Preserve the person and garment between variants.
 
@@ -172,7 +159,7 @@ If Seedream corrupts the logo, retry once with stronger placement, geometry, and
 ### Device/screen
 
 - Treat the screen graphic as a separate editable asset from its dedicated module when possible, then composite it into the device.
-- Do not ask GPT to invent interface copy that should be exact.
+- Do not ask the image model to invent interface copy that should be exact.
 
 ## Variant discipline
 

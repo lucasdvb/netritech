@@ -2,14 +2,17 @@
 """Deterministic Brandkit operations for a local agent workspace.
 
 This script deliberately uses only the Python standard library plus the
-ImageMagick and librsvg CLIs installed by the user. It owns
-Brandkit's approval ledger, editable HTML review boards, and
-geometry-preserving SVG/PNG logo exports. Files remain in the user's project.
+ImageMagick, librsvg and (for logo tracing) potrace CLIs installed by the user.
+It owns Brandkit's approval ledger, editable HTML review boards, local raster
+logo tracing, and geometry-preserving SVG/PNG logo exports. It never calls an
+image-generation API: generation goes through scripts/kie_image.py in the repo
+root. Files remain in the user's project.
 """
 
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import html
 import ipaddress
@@ -600,7 +603,7 @@ def safe_fetch_svg(url: str) -> str:
         assert_public_host(parsed.hostname)
         request = Request(
             current,
-            headers={"Accept": "image/svg+xml", "User-Agent": "higgsfield-brandkit/1"},
+            headers={"Accept": "image/svg+xml", "User-Agent": "kie-brandkit/1"},
         )
         try:
             response = opener.open(request, timeout=20)
@@ -830,7 +833,30 @@ def source_colors(svg: str) -> list[str]:
     return ordered_paint_colors(svg)
 
 
+RASTER_SUFFIXES = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp"}
+MAX_RASTER_BYTES = 8 * 1024 * 1024
+
+
+def local_raster(source: str) -> Path | None:
+    stripped = source.strip()
+    if not stripped or stripped.startswith(("<svg", "https://")):
+        return None
+    path = Path(stripped).expanduser().resolve()
+    if path.suffix.lower() in RASTER_SUFFIXES and path.is_file():
+        return path
+    return None
+
+
 def run_logo_inspect(args: argparse.Namespace) -> dict[str, Any]:
+    raster = local_raster(args.source)
+    if raster:
+        data = raster.read_bytes()
+        return {
+            "background_removed": False,
+            "geometry_fingerprint": hashlib.sha256(data).hexdigest(),
+            "kind": "raster",
+            "source_colors": [],
+        }
     original = read_svg(args.source)
     canonical, background_removed = strip_full_canvas_background(original)
     return {
@@ -913,7 +939,7 @@ def make_element_transparent(element: str) -> str:
 
 
 def path_bounds(markup: str) -> tuple[float, float, float, float, bool] | None:
-    """Bounds for the restricted M/L/H/V/Z path subset Recraft uses for backgrounds."""
+    """Bounds for the restricted M/L/H/V/Z path subset used for full-canvas backgrounds."""
     data = attribute_value(markup, "d")
     if not data:
         return None
@@ -1196,6 +1222,117 @@ def run_logo(args: argparse.Namespace) -> dict[str, Any]:
     }
 
 
+def run_logo_vectorize(args: argparse.Namespace) -> dict[str, Any]:
+    """Trace a flat raster logo (from kie_image.py) into layered SVG paths, offline."""
+    payload = load_json(args.input)
+    source = Path(str(payload.get("source", ""))).expanduser().resolve()
+    if source.suffix.lower() not in RASTER_SUFFIXES or not source.is_file():
+        raise RuntimeError("input.source must be an existing local PNG/JPG/WEBP file")
+    colors_value = payload.get("colors")
+    if not isinstance(colors_value, list) or not 1 <= len(colors_value) <= 4:
+        raise RuntimeError("input.colors must list one to four foreground hex colors")
+    colors = [normalize_hex(str(color)) for color in colors_value]
+    fuzz = float(payload.get("fuzz", 18))
+    if not 1 <= fuzz <= 40:
+        raise RuntimeError("input.fuzz must be between 1 and 40")
+    detail = int(payload.get("detail", 10))
+    if not 0 <= detail <= 100:
+        raise RuntimeError("input.detail (potrace turdsize) must be between 0 and 100")
+    overlap = len(colors) > 1
+    image_magick = shutil.which("magick") or shutil.which("convert")
+    potrace = shutil.which("potrace")
+    if not image_magick:
+        raise RuntimeError("ImageMagick is unavailable in the local environment")
+    if not potrace:
+        raise RuntimeError("potrace is unavailable in the local environment")
+    name = str(payload.get("name", "brandkit-logo"))
+    layers: list[str] = []
+    canvas = ""
+    with tempfile.TemporaryDirectory(prefix="brandkit-trace-") as directory:
+        for index, color in enumerate(colors):
+            mask = Path(directory) / f"mask-{index}.pbm"
+            traced = Path(directory) / f"trace-{index}.svg"
+            command = [
+                image_magick,
+                str(source),
+                "-background",
+                "white",
+                "-alpha",
+                "remove",
+                "-alpha",
+                "off",
+                "-fuzz",
+                f"{fuzz:g}%",
+                "-fill",
+                "white",
+                "+opaque",
+                color,
+                "-fill",
+                "black",
+                "-opaque",
+                color,
+            ]
+            if overlap:
+                command += ["-morphology", "Erode", "Disk:1"]
+            command += ["-colorspace", "Gray", "-threshold", "50%", "-monochrome", str(mask)]
+            subprocess.run(
+                command,
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                timeout=COMMAND_TIMEOUT_SECONDS,
+            )
+            subprocess.run(
+                [
+                    potrace,
+                    "--svg",
+                    "--turdsize",
+                    str(detail),
+                    "--opttolerance",
+                    "0.4",
+                    "--output",
+                    str(traced),
+                    str(mask),
+                ],
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                timeout=COMMAND_TIMEOUT_SECONDS,
+            )
+            markup = traced.read_text(encoding="utf-8")
+            box = re.search(r'viewBox\s*=\s*"([^"]+)"', markup)
+            group = re.search(r"<g\b([^>]*)>([\s\S]*?)</g>", markup)
+            transform = (
+                re.search(r'transform\s*=\s*"([^"]+)"', group.group(1)) if group else None
+            )
+            paths = re.findall(r"<path\b[^>]*?/>", group.group(2)) if group else []
+            if not box or not transform or not paths:
+                raise RuntimeError(
+                    f"no pixels matched {color} in {source.name}; raise fuzz or check the color"
+                )
+            canvas = canvas or box.group(1)
+            layers.append(
+                f'<g transform="{transform.group(1)}" fill="{color}" stroke="none">'
+                + "".join(paths)
+                + "</g>"
+            )
+    svg = f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{canvas}">' + "".join(layers) + "</svg>"
+    validate_svg(svg)
+    output_dir = args.output_dir.resolve()
+    output_dir.mkdir(parents=True, exist_ok=True)
+    pair = write_logo_pair(output_dir, slug(name), "-traced", svg)
+    return {
+        "action": "vectorize",
+        "geometry_fingerprint": geometry_fingerprint(svg),
+        "layers": colors,
+        "png": pair["png"],
+        "source": str(source),
+        "svg": pair["svg"],
+    }
+
+
 def font_css(font: dict[str, Any], default_family: str) -> tuple[str, str]:
     family = str(font.get("family", default_family))
     source = str(font.get("source", ""))
@@ -1235,6 +1372,16 @@ def font_css(font: dict[str, Any], default_family: str) -> tuple[str, str]:
 def logo_markup(source: str | None) -> str:
     if not source:
         return ""
+    raster = local_raster(source)
+    if raster:
+        data = raster.read_bytes()
+        if len(data) > MAX_RASTER_BYTES:
+            raise RuntimeError(f"logo image exceeds {MAX_RASTER_BYTES} bytes")
+        encoded = base64.b64encode(data).decode("ascii")
+        mime = RASTER_SUFFIXES[raster.suffix.lower()]
+        return (
+            f'<img class="logo" alt="Selected logo" src="data:{mime};base64,{encoded}">'
+        )
     svg = read_svg(source)
     attributes, body, viewbox = validate_svg(svg)
     del attributes
@@ -1432,6 +1579,9 @@ def parse_args() -> argparse.Namespace:
     logo.add_argument("--output-dir", type=Path, default=Path("brandkit/logo"))
     inspect_logo = commands.add_parser("logo-inspect")
     inspect_logo.add_argument("--source", required=True)
+    vectorize = commands.add_parser("logo-vectorize")
+    vectorize.add_argument("--input", required=True, type=Path)
+    vectorize.add_argument("--output-dir", type=Path, default=Path("brandkit/logo"))
     brandbook = commands.add_parser("brandbook-build")
     brandbook.add_argument("--input", required=True, type=Path)
     brandbook.add_argument(
@@ -1455,6 +1605,8 @@ def main() -> None:
         result = build(args)
     elif args.command == "logo-inspect":
         result = run_logo_inspect(args)
+    elif args.command == "logo-vectorize":
+        result = run_logo_vectorize(args)
     else:
         result = run_logo(args)
     print(compact(result))

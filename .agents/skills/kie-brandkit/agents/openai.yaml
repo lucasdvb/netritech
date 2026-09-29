@@ -1,4 +1,4 @@
 interface:
-  display_name: "Higgsfield Brandkit"
+  display_name: "KIE Brandkit"
   short_description: "Create complete visual brand systems"
-  default_prompt: "Use $higgsfield-brandkit to create a complete visual identity and brand asset system for my business."
+  default_prompt: "Use $kie-brandkit to create a complete visual identity and brand asset system for my business."

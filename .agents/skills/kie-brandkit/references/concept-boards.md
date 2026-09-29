@@ -30,7 +30,7 @@ Create 2–3 considered palette options from the brief and references. Each opti
 
 `logo_ideas` is mandatory for every palette option. The preview script rejects a palette review that omits them.
 
-Render all options in editable HTML with `python3 "$SKILL_ROOT/scripts/brandkit.py" preview`, then show them per `inline-widgets.md` (local board PNG screenshots plus editable HTML paths). Do not generate image-model duplicates.
+Render all options in editable HTML with `python3 "$SKILL_ROOT/scripts/brandkit.py" preview`, then show them per `inline-widgets.md` (local board PNG screenshots plus editable HTML paths). Do not generate image-model duplicates (the palette review is local HTML and costs no credits).
 
 Every palette review object must set `stage: "palette"`. Omit `display_font`, `body_font`, `logo_svg`, `headline`, and `body`; `logo_ideas` must contain 2–3 entries. The palette board must not display a typography specimen, placeholder font pairing, or wordmark. Typography appears only after the user selects a logo.
 
@@ -48,23 +48,23 @@ When the user selects a palette, immediately call the Brandkit state script's `a
 
 Enter this step only after Step 1 produced a user-selected and persisted palette, or after an authoritative/explicitly selected palette was already available. Never treat general color preferences from intake as palette selection.
 
-For this entire internal sequence, send at most one short user-facing status: “I’m generating three logo options now.” After it, send no other process/status text until the finished review. Do not mention Design Brain, mechanisms, enhancer prompts, model lookup, Recraft parameters, or intermediate validation.
+Generation needs the user's permission (credits): after preparing the three prompts, show them with the settings (GPT Image 2.5 Flare, 1:1, 1K, three outputs) and wait for an explicit yes. After the yes, send at most one short status, “I’m generating three logo options now.”, and no other process text until the finished review. Do not mention Design Brain, mechanisms, or intermediate validation.
 
 Using the selected draft palette plus Brandkit Design Brain:
 
 1. Design Brain returns exactly three original logo mechanisms.
 2. Apply `logo-prompt-enhancer.md` once per mechanism to produce its enhanced prompt.
-3. Pass each enhanced prompt separately to `higgsfield generate create recraft_v4_1 --model_type vector --wait --json`, with the selected logo color subset in `--colors` and selected background in `--background_color`. Use the one, two, or three logo colors the concept needs; never pad to three. Exceed three only when the user explicitly requested more.
-4. Use Recraft's returned SVG URLs directly. Do not pass them through the HTML preview script.
-5. Show all three per the logo review in `inline-widgets.md` with direct SVG links. This review is mandatory in interactive and explicit auto/no-question modes; bare SVG URLs are not a review.
+3. Run each enhanced prompt separately: `python3 scripts/kie_image.py "<prompt>" -a 1:1 -r 1K --background opaque -o "$BRANDKIT_WORKDIR/logo/candidate-N.png"`. The selected logo color subset and background hex are written into each prompt (see the enhancer). Use the one, two, or three logo colors the concept needs; never pad to three. Exceed three only when the user explicitly requested more.
+4. Use the returned PNGs directly. Do not pass them through the HTML preview script.
+5. Show all three per the logo review in `inline-widgets.md`. This review is mandatory in interactive and explicit auto/no-question modes; bare URLs are not a review.
 
 Ask the user to review and comment. In explicit no-question mode, show the same review without an additional questionnaire, but still stop for the user's logo selection. Do not self-select, treat your own visual assessment as approval, or start typography before the user responds.
 
-When the user selects a logo, run `logo-inspect --source <selected SVG URL or absolute path>`, then immediately call the Brandkit state script's `approve_logo` action with the exact Recraft SVG asset, name, returned canonical fingerprint, and any explicitly requested variants. A logo-only request is complete at this point; typography is not mandatory.
+When the user selects a logo, run `logo-inspect --source <absolute path of the selected PNG>`; if SVG/production files are needed, trace it with `logo-vectorize` and get the user's OK on the trace (see `logo.md`). Then immediately call the Brandkit state script's `approve_logo` action with the exact approved asset (PNG, or accepted traced SVG), name, returned fingerprint, and any explicitly requested variants. A logo-only request is complete at this point; typography is not mandatory.
 
 ## Step 3 — Typography options
 
-Using Design Brain with the selected draft palette and selected Recraft SVG:
+Using Design Brain with the selected draft palette and selected logo:
 
 - Propose 2–3 suitable font pairs.
 - Use user-uploaded licensed fonts when supplied; otherwise use verified Google Fonts and include official download links.
