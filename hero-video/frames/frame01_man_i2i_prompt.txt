@@ -1,0 +1,227 @@
+Use the attached reference image as the primary visual reference for photographic style, mood, composition language, lighting quality, lens character, color treatment, realism, styling and overall production value.
+Recreate the same level of visual sophistication, energy, warmth and photographic quality as the reference, while creating an entirely new SPM scene and character.
+SCENE
+A happy, charismatic mixed-race young man with naturally curly dark hair working as a professional customer service agent in a modern SPM workplace.
+He is caught in a genuine, spontaneous moment while speaking to a customer through his professional headset.
+He looks genuinely happy and engaged with the conversation, with a natural smile and lively expression. His expression should communicate warmth, confidence, intelligence and human connection.
+He is not posing for the camera.
+He is not looking directly into the lens.
+His attention is naturally focused toward his computer screen or slightly toward the side while speaking.
+The moment should feel candid, energetic and alive, as though the camera happened to capture an excellent moment during a real working day.
+CHARACTER
+The character is a mixed-race man with naturally curly dark hair.
+His curls should be clearly visible and highly realistic, with individual strands, natural variation, slight flyaways and believable volume.
+He should have:
+
+* realistic mixed-race skin tones
+* visible natural skin texture
+* pores and subtle tonal variation
+* slight facial asymmetry
+* natural eyebrows
+* realistic eyes
+* subtle smile lines
+* natural teeth
+* tiny imperfections
+* authentic facial expression
+* relaxed posture
+
+Do not make him look like a fashion model or generic stock-photo employee.
+He should feel like a real young professional with personality.
+His energy is friendly, optimistic, confident and human.
+HEADSET
+He wears a premium professional customer-service headset.
+The headset should look contemporary, comfortable and believable.
+The microphone boom is positioned naturally beside his mouth.
+The microphone has a soft black acoustic foam windscreen.
+This is extremely important.
+It must NOT have a metal grille.
+It must NOT resemble a karaoke microphone.
+It must NOT look futuristic.
+The foam should have realistic:
+
+* irregular fibres
+* slight compression
+* subtle deformation
+* microscopic dust
+* tiny surface imperfections
+* natural wear
+
+The microphone should be clearly visible and positioned in a way that naturally creates the visual destination for the next camera movement.
+The viewer should subconsciously notice:
+happy human → headset → microphone
+DYNAMIC COMPOSITION
+Make the composition much more dynamic and energetic than a traditional corporate portrait.
+Avoid a static centered headshot.
+Use a slightly off-center composition with the man occupying approximately one side of the frame and the workstation/environment creating strong visual depth around him.
+The camera feels close enough to feel involved in the moment.
+His body can be slightly angled.
+His curly hair creates an organic silhouette.
+The headset microphone creates a strong foreground visual pathway.
+The composition should naturally suggest that the camera is about to move rapidly toward the microphone.
+There should be enough environmental depth behind him to make the workplace feel substantial.
+Use foreground elements subtly, such as the edge of a monitor, desk element or workstation detail, to create cinematic depth.
+The image should have movement even while frozen.
+WORKPLACE
+A beautiful, modern SPM workplace populated by real people.
+The environment should feel:
+bright, friendly, sophisticated, energetic and contemporary.
+Not dark.
+Not gloomy.
+Not sterile.
+Not futuristic.
+Not like a traditional call center.
+Think premium modern creative workplace with excellent architecture, thoughtful lighting and genuine human activity.
+In the background, show other multicultural employees naturally working.
+People should be:
+
+* talking to colleagues
+* typing
+* looking at screens
+* laughing naturally
+* adjusting their chairs
+* moving through the workspace
+* collaborating casually
+
+No one should be looking at the camera.
+No one should appear perfectly posed.
+The background should feel alive without becoming visually chaotic.
+COLOR PALETTE
+Use SPM's brand colors creatively throughout the environment, using different tones and intensities rather than forcing the palette everywhere.
+Primary colors:
+Ink Navy #0D141F
+Slate Blue #1B2A38
+Steel Blue #43617A
+AI Teal #22808A
+Pearl Gray #DADDE0
+Mist White #F9FAFB
+Use lighter and darker variations of these colors naturally.
+For example:
+
+* soft slate-blue architectural elements
+* muted teal accents
+* navy workstation details
+* steel-blue furniture
+* pale blue-gray surfaces
+* warm natural skin tones
+* soft white highlights
+
+The environment should have color rhythm, not a monochromatic blue wash.
+Teal should feel like an intelligent brand accent rather than neon lighting.
+The overall result should feel fresh, modern and optimistic.
+LIGHTING
+Bright cinematic workplace lighting.
+Use beautiful soft daylight mixed with controlled architectural lighting.
+Natural light can enter from large windows or an open modern workspace.
+Create gentle highlights in the man's curls and subtle separation around his shoulders.
+His face should be beautifully illuminated with soft, flattering natural light.
+Keep the lighting energetic and dimensional.
+Avoid dramatic shadows covering his face.
+Avoid the moody, low-key lighting of a technology thriller.
+The environment should feel like a place where talented people genuinely enjoy working.
+PHOTOGRAPHY
+Match the photographic sophistication of the attached reference image.
+Premium editorial photography.
+High-end commercial campaign quality.
+Natural cinematic depth.
+Beautiful lens rendering.
+Realistic skin.
+Excellent dynamic range.
+Natural highlight roll-off.
+Rich but controlled colors.
+Authentic optical depth.
+The image should look like it was captured by an elite commercial photographer using a high-end cinema or medium-format camera.
+Do not make it look like a generic AI portrait.
+CONTROLLED IMPERFECTION
+The image must retain subtle real-world imperfections.
+This is essential for avoiding the artificial AI look.
+The man should have:
+
+* individual curly hair strands
+* slight hair asymmetry
+* natural skin pores
+* tiny imperfections
+* subtle facial asymmetry
+* natural teeth variation
+* realistic blinking or just-captured expression
+* natural posture
+* small clothing wrinkles
+
+The headset should have tiny signs of real physical use.
+The microphone foam should contain irregular fibres and tiny compressed areas.
+Furniture should contain subtle material variation.
+Glass should have realistic reflections.
+Metal should contain microscopic tonal variation.
+Nothing should look mathematically perfect.
+Premium does not mean flawless.
+Premium means believable.
+CAMERA CHARACTER
+The camera should feel like a real high-end camera operated by an exceptional cinematographer.
+Use:
+
+* natural depth of field
+* subtle focus falloff
+* realistic optical rendering
+* gentle lens character
+* slight focus breathing
+* extremely subtle camera micro-drift
+* realistic exposure
+* natural motion blur readiness
+* restrained reflections
+
+The image should feel like a frame extracted from an expensive cinematic film rather than a posed corporate photograph.
+IMPORTANT EMOTIONAL DIRECTION
+The emotional tone is:
+HUMAN. HAPPY. ENERGETIC. SMART. MODERN. CONNECTED.
+The viewer should immediately feel that there are real people behind the technology.
+This is the human beginning of a story about humans amplified by AI.
+The technology is not the protagonist yet.
+The person is.
+The extraordinary AI transformation happens later when the camera enters the microphone.
+DO NOT CREATE
+No robots.
+No cyborgs.
+No futuristic humans.
+No holograms.
+No glowing brains.
+No circuit-board patterns.
+No neural-network clichés.
+No floating AI icons.
+No cyberpunk.
+No server room.
+No excessive neon.
+No dark dystopian atmosphere.
+No generic call-center stock photography.
+No staged corporate smiles.
+No people looking into the camera.
+No plastic skin.
+No perfect skin.
+No perfectly symmetrical faces.
+No generic model appearance.
+No exaggerated CGI.
+No 3D-render appearance.
+No excessive lens flare.
+No heavy chromatic aberration.
+No fake film grain.
+No artificial teal glow.
+No text.
+No typography.
+No logo.
+No watermark.
+FINAL FRAME INTENT
+This is the very first frame of a continuous 8-second cinematic camera journey.
+The following sequence will rapidly move:
+HAPPY HUMAN → HEADSET → MICROPHONE FOAM → TINY MICROPHONE HOLE → AI INTELLIGENCE WORLD
+Therefore, the microphone must be visually important without overpowering the human.
+The first frame should make the viewer think:
+“These are real people.”
+Then the camera moves.
+16:9 horizontal.
+Photorealistic.
+Premium commercial photography.
+Dynamic editorial composition.
+Friendly and optimistic.
+Sophisticated SPM visual identity.
+Real human energy.
+High-end cinematic quality.
+
+The attached image is the visual reference. Match its camera angle, side-on candid framing, foreground depth, lighting quality, lens character and production value. Do NOT copy its people, brick walls, bookshelves or decor: the person and environment must be the new SPM ones described above.
