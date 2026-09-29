@@ -1,0 +1,175 @@
+Create a photorealistic cinematic still that will serve as the first frame of an 8-second premium website hero film for SPM, a French human + AI outsourcing company.
+CORE COMPOSITION
+A real, contemporary female customer service professional is seated at her workstation in a sophisticated modern customer service environment. She is naturally speaking to a customer through a professional over-ear call-center headset.
+The image should feel like we have entered a real moment at work, not a corporate photoshoot.
+The woman is approximately 28–35 years old, naturally attractive but not model-like, with authentic facial asymmetry, realistic skin texture, visible pores, tiny imperfections, subtle under-eye texture, natural eyebrows, individual hairs and a few subtle flyaway hairs.
+She has a warm, intelligent, focused expression while speaking. Her mouth is naturally mid-sentence. She is NOT smiling directly at the camera and is NOT posing.
+Her attention is directed toward her computer screen, slightly off-camera.
+Her posture is relaxed and believable. One hand is interacting naturally with her keyboard or desk while the other rests naturally near the workstation.
+HEADSET
+The headset is extremely important because it becomes the physical gateway for the entire film.
+Use a premium professional customer-service headset, elegant and realistic, with a padded over-ear earcup and a flexible microphone boom positioned close to the corner of her mouth.
+The microphone must have a soft black acoustic foam windscreen, NOT a metal grille, NOT a karaoke microphone, NOT a futuristic microphone.
+The foam should visibly look real:
+
+* irregular foam fibres
+* subtle compression
+* tiny surface imperfections
+* slight deformation from normal use
+* microscopic dust
+* realistic soft texture
+* natural variation in the foam surface
+
+The microphone should be clearly visible in the composition, but the camera should still primarily establish the human first.
+The microphone should point naturally toward her mouth and be positioned so that the camera could realistically move toward it in the next shot.
+CAMERA
+Premium cinematic photography.
+Camera positioned approximately at eye level, slightly closer than a conventional corporate portrait.
+Use a cinema-camera look with a natural 50mm to 65mm lens perspective.
+The woman occupies approximately the central-right portion of the frame.
+The microphone and headset should sit prominently within the foreground composition, creating a natural visual pathway for the camera to move toward the microphone.
+The camera should feel physically present inside the environment.
+Very subtle natural camera micro-drift.
+Natural depth of field.
+The woman's eyes and face are sharply resolved, while the background falls into a controlled cinematic softness.
+The microphone should remain sufficiently readable that the viewer immediately understands what it is.
+ENVIRONMENT
+A premium modern SPM workplace.
+Dark architectural interior with sophisticated navy and steel tones.
+Use SPM's visual language:
+
+* Ink Navy: #0D141F
+* Slate Blue: #1B2A38
+* Steel Blue: #43617A
+* restrained AI Teal: #22808A
+* soft off-white highlights
+
+The workplace should feel genuinely occupied and functional, not like an empty futuristic showroom.
+In the background, subtly reveal other real employees working at desks.
+Use a genuinely multicultural team, with varied ethnic backgrounds and appearances.
+They should be naturally engaged in their work:
+
+* someone typing
+* someone looking at a screen
+* someone speaking quietly with a colleague
+* someone adjusting their chair
+* subtle posture changes
+
+Nobody is looking into the camera.
+Nobody is posing.
+Nobody is smiling at the camera.
+The background activity should feel spontaneous and documentary-like.
+LIGHTING
+Cinematic, premium, sophisticated lighting.
+Large soft practical light sources create gentle illumination across the woman's face.
+Subtle cool navy ambient light throughout the room.
+Very restrained teal accents appear naturally in the environment, perhaps from a distant screen, architectural light or subtle workstation illumination.
+Do NOT make the room glow teal.
+Do NOT use neon cyberpunk lighting.
+The face should remain naturally skin-toned and beautifully exposed.
+Create gentle separation between the woman and the darker background.
+The microphone foam should catch a small amount of controlled rim light so its texture is visible.
+VISUAL LANGUAGE
+Think:
+high-end French corporate film + Apple product cinematography + premium editorial photography + sophisticated documentary photography.
+The image should communicate:
+Human first. Technology present. Intelligence underneath.
+The technology should not dominate the frame yet.
+At this moment, the viewer should simply see a highly capable human professional doing real work.
+The extraordinary transformation begins only when the camera approaches the microphone.
+REALISM AND CONTROLLED IMPERFECTION
+The entire image must feel physically photographed by a world-class cinematographer, not generated as flawless CGI.
+Introduce subtle, believable imperfections throughout the image.
+Human skin must contain natural pores, fine texture, tiny blemishes and slight tonal variation.
+Hair must contain individual strands and small flyaways.
+Eyes must contain realistic moisture and subtle asymmetry.
+Hands must have natural anatomy, small skin variations and believable positioning.
+Clothing must contain natural wrinkles, folds and tiny imperfections.
+The headset should show extremely subtle signs of real use.
+The foam microphone must have irregular fibres, compressed areas, microscopic dust and slight deformation.
+Furniture should have tiny material variations rather than perfectly uniform surfaces.
+Glass, metal and screens should have realistic reflections and subtle optical imperfections.
+Nothing should appear mathematically perfect.
+CAMERA REALISM
+The image should have the characteristics of a real high-end cinema camera:
+
+* natural optical depth of field
+* subtle focus falloff
+* realistic highlight roll-off
+* natural skin rendering
+* authentic motion-readiness
+* subtle lens character
+* restrained reflections
+* realistic exposure
+* very slight optical imperfections
+
+Avoid the sterile perfection of typical AI-generated corporate photography.
+The realism should be subconscious.
+The viewer should simply believe that this is a real photograph from an expensive production.
+COLOR GRADING
+Premium dark cinematic grade.
+Deep navy shadows.
+Natural skin tones.
+Steel-blue environmental tones.
+Very restrained SPM teal accents.
+Soft highlights.
+High dynamic range.
+Rich blacks without crushing facial detail.
+No orange-and-teal Hollywood cliché.
+No excessive contrast.
+No artificial glow.
+No oversaturated colors.
+IMPORTANT NEGATIVE DIRECTION
+Do NOT create:
+
+* robots
+* humanoid robots
+* cyborgs
+* holographic people
+* floating AI brains
+* circuit-board patterns
+* generic AI symbols
+* glowing neural networks
+* cyberpunk aesthetics
+* futuristic helmets
+* futuristic clothing
+* server-room clichés
+* excessive neon
+* fake holograms
+* floating UI interfaces
+* corporate stock-photo posing
+* people looking at camera
+* exaggerated smiles
+* plastic skin
+* perfect skin
+* symmetrical faces
+* CGI-looking materials
+* overly clean environments
+* excessive lens flare
+* heavy chromatic aberration
+* fake film grain
+* artificial camera shake
+* illustration
+* 3D render appearance
+* overly shallow portrait blur that hides the environment
+
+FINAL IMAGE INTENT
+This is Frame 01 of a continuous impossible camera journey.
+The next movement will push rapidly toward the headset microphone.
+Therefore, compose the image so the microphone naturally becomes the visual destination.
+The viewer should subconsciously feel:
+Human → headset → microphone → something extraordinary is about to happen.
+Photorealistic.
+Premium.
+Sophisticated.
+Human.
+Cinematic.
+Emotionally warm but restrained.
+Dark modern SPM aesthetic.
+Physically believable.
+16:9 horizontal composition.
+Ultra-high detail.
+Website hero quality.
+No text.
+No logo.
+No watermark.
