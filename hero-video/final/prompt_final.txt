@@ -1,0 +1,305 @@
+Create an **8-second maximum premium cinematic website hero film for SPM**, using the supplied **first frame as the exact visual starting point** and the supplied **final frame as the exact visual destination**. The entire film must feel like one continuous, impossible but physically believable camera journey. Every scene must flow naturally into the next through camera movement, scale, light, focus, depth and physical geometry. There are no conventional cuts, no teleportation, no disconnected shots and no abrupt transitions. The visual language is premium, minimalist, photorealistic and sophisticated, combining Apple-level restraint with high-end commercial filmmaking. The central visual story is **HUMAN → MICROPHONE → INTELLIGENCE → MICROPHONE → HUMAN → GRID**. **CRITICAL AUDIO REQUIREMENT: THIS VIDEO MUST BE COMPLETELY SILENT. GENERATE ZERO AUDIO OF ANY KIND. NO VOICE, NO DIALOGUE, NO OFFICE AMBIENCE, NO ROOM TONE, NO KEYBOARD SOUNDS, NO MECHANICAL SOUNDS, NO MUSIC, NO SOUND EFFECTS, NO WHOOSHES, NO VIBRATIONS, NO ELECTRONIC TONES, NO AUDIO REACTIVE EFFECTS AND NO IMPLIED AUDIO ELEMENTS. THE FINAL OUTPUT MUST CONTAIN NO AUDIBLE SOUND WHATSOEVER. VISUAL MOTION MUST COMMUNICATE THE ENTIRE STORY WITHOUT AUDIO.**
+
+### SCENE 01 · HUMAN TRIGGER · 0.00–0.40s
+
+**Scene Summary:** Begin inside a bright, sophisticated SPM workplace with a real human customer service professional naturally speaking to a customer through his headset.
+
+**Subject:** A happy, charismatic mixed-race young man with naturally curly dark hair, authentic mixed-race skin tones, realistic pores, fine skin texture, tiny imperfections, natural facial asymmetry, individual curls and subtle flyaway hairs. He wears a contemporary professional outfit and a premium professional over-ear customer service headset with a flexible microphone boom ending in a soft black acoustic foam windscreen. His expression is warm, engaged and genuinely happy, caught naturally mid-conversation rather than posing. He is focused toward his computer screen and never looks directly into the camera.
+
+**Background & Context:** A bright, modern SPM workplace with real multicultural employees working naturally in the background. Contemporary desks, glass, refined architecture, subtle navy, steel-blue and teal brand accents, natural daylight and sophisticated workplace design. The environment feels energetic, intelligent and human rather than sterile or overly corporate.
+
+**Action:** Begin exactly from the supplied first frame. The man naturally moves his mouth as if speaking to a customer, but there must be absolutely no audible voice. His facial expression changes subtly and naturally. He blinks, breathes and makes tiny authentic movements while background employees continue working. The camera is already positioned close enough to establish the headset microphone as the future visual destination.
+
+**Style & Aesthetic:** Photorealistic premium commercial cinematography, high-end editorial photography brought to life, natural skin, realistic materials, sophisticated production design, energetic but controlled.
+
+**Camera Instructions:** Eye-level cinematic medium close-up, approximately 50–65mm perspective. Very subtle real-camera micro-drift. Immediately begin a smooth forward push toward the headset microphone. The movement starts controlled and quickly gains momentum.
+
+**Composition & Framing:** The man occupies one side of the frame rather than sitting perfectly centered. His face establishes the human story while the headset microphone creates a strong visual pathway toward the next scene. Background remains visible enough to establish the workplace.
+
+**Lighting & Mood:** Bright, soft, natural workplace lighting with dimensional daylight. Friendly, optimistic and energetic. No moody shadows covering the face.
+
+**Audio:** **ABSOLUTE SILENCE. NO AUDIO TRACK. NO VOICE. NO DIALOGUE. NO OFFICE AMBIENCE. NO ROOM TONE.**
+
+**Color Palette:** Natural skin tones combined with SPM Ink Navy #0D141F, Slate Blue #1B2A38, Steel Blue #43617A, AI Teal #22808A, Pearl Gray #DADDE0 and Mist White #F9FAFB. Use different tonal variations naturally.
+
+**Negative Instructions:** No posing, no direct eye contact with camera, no generic stock-photo smile, no futuristic headset, no robot, no hologram, no AI graphics, no text, no logo, no subtitles, no audio.
+
+### SCENE 02 · THE MICROPHONE · 0.40–0.90s
+
+**Scene Summary:** The camera rapidly closes the distance between the human and the headset, turning the microphone into the dominant visual subject.
+
+**Subject:** The same professional headset and same soft black acoustic foam microphone from Scene 01. Maintain absolute physical and visual continuity.
+
+**Background & Context:** The real workplace rapidly falls out of focus as the camera moves closer. Human figures and architecture become soft environmental shapes behind the microphone.
+
+**Action:** The camera accelerates toward the microphone boom with deliberate precision. The microphone grows rapidly in frame. The man remains partially visible for a brief moment before the foam dominates the composition.
+
+**Style & Aesthetic:** High-end macro commercial cinematography with realistic optical behavior and exceptional material detail.
+
+**Camera Instructions:** Smooth accelerated dolly-in / push-in. Transition naturally from approximately 50mm into an extreme macro perspective. Natural depth-of-field compression and focus transition. Motion blur increases subtly with acceleration.
+
+**Composition & Framing:** The microphone becomes the central visual target. The foam sits prominently in the foreground while maintaining enough recognizable structure to understand that it is a real headset microphone.
+
+**Lighting & Mood:** Bright workplace lighting remains present but becomes increasingly focused on the microphone. A subtle highlight catches the foam texture.
+
+**Audio:** **ABSOLUTE SILENCE. NO SOUND EFFECTS. NO VOICE. NO AMBIENCE. NO AUDIO REACTION TO CAMERA MOVEMENT.**
+
+**Color Palette:** Dark acoustic foam against soft navy, steel-blue and natural workplace tones.
+
+**Negative Instructions:** Do not turn the microphone into a futuristic object. No metal grille. No karaoke microphone. No glowing microphone. No visual portal yet.
+
+### SCENE 03 · THE TINY OPENING · 0.90–1.35s
+
+**Scene Summary:** The camera dives into an extreme macro view of the microphone foam until one tiny physical opening becomes the entire destination.
+
+**Subject:** The soft black acoustic foam of the headset microphone, now enormous in frame.
+
+**Background & Context:** Almost all recognizable workplace context disappears. Only the physical texture of the foam remains.
+
+**Action:** Reveal irregular foam fibres, compressed sections, microscopic dust, tiny wear marks and slight deformation. The camera naturally approaches a tiny microphone opening hidden inside the foam. The opening should feel genuinely microscopic and physically embedded in the material.
+
+**Style & Aesthetic:** Extreme macro cinematography, tactile realism, premium material photography.
+
+**Camera Instructions:** Continue the forward camera movement. Focus progressively narrows until the tiny opening becomes sharply readable. Include extremely subtle focus breathing and natural optical behavior.
+
+**Composition & Framing:** The tiny opening gradually moves toward the center of the frame and becomes the unmistakable visual destination. Foam texture surrounds it organically.
+
+**Lighting & Mood:** Light falls naturally across the foam fibres, creating tiny highlights and shadows. The mood shifts from friendly human energy toward anticipation.
+
+**Audio:** **ABSOLUTE SILENCE. DO NOT ADD MICROPHONE HUM, VIBRATION, MUFFLED VOICE OR ANY OTHER SOUND.**
+
+**Color Palette:** Predominantly black, deep navy and soft steel tones with restrained teal reflections.
+
+**Negative Instructions:** No digital portal, no glowing circle, no vortex, no sci-fi tunnel, no perfectly circular artificial opening.
+
+### SCENE 04 · ENTER · 1.35–1.70s
+
+**Scene Summary:** The camera physically passes through the microscopic microphone opening and the scale of reality suddenly expands into an enormous intelligence environment.
+
+**Subject:** The tiny acoustic opening becomes the physical threshold into the next world.
+
+**Background & Context:** Nothing is visible beyond the opening at first.
+
+**Action:** The camera physically enters the tiny hole. As it crosses through the foam, physical scale transforms dramatically. The microscopic opening expands into a vast technological environment. The transition must feel like discovering the hidden intelligence inside the microphone, not entering a digital portal.
+
+**Style & Aesthetic:** Spectacular cinematic scale transformation, photorealistic physical materials, controlled visual effects.
+
+**Camera Instructions:** High-speed forward camera movement directly through the opening. Accelerate through the threshold, then reveal the massive environment through a rapid but smooth expansion of scale.
+
+**Composition & Framing:** Start extremely tight on the hole, then explode outward into an enormous spatial composition.
+
+**Lighting & Mood:** Brief low-light transition followed by a powerful but controlled reveal of the intelligence world.
+
+**Audio:** **ABSOLUTE SILENCE THROUGH THE ENTIRE TRANSITION. NO WHOOSH, NO IMPACT, NO LOW-FREQUENCY EFFECT, NO MUSICAL CUE. THE VISUAL SCALE CHANGE MUST CREATE THE IMPACT ENTIRELY ON ITS OWN.**
+
+**Color Palette:** Deep Ink Navy, Slate Blue, Steel Blue and restrained AI Teal.
+
+**Negative Instructions:** No flash transition, no digital wipe, no generic wormhole, no magic portal, no hard cut.
+
+### SCENE 05 · THE INTELLIGENCE WORLD · 1.70–2.60s
+
+**Scene Summary:** Reveal a vast precision-engineered intelligence ecosystem where the human voice is visually represented as sound waves travelling through mechanics, optics and information pathways.
+
+**Subject:** No human characters. The subject is the enormous physical intelligence environment and the visual sound-wave information travelling through it.
+
+**Background & Context:** An immense architectural-scale system containing precision metal structures, acoustic membranes, glass channels, mechanical pathways, optical elements and carefully engineered spaces.
+
+**Action:** Elegant visual sound waves travel through the environment. They visibly vibrate membranes, pass through acoustic chambers, activate mechanical components and interact with precision structures. Everything reacts subtly and physically.
+
+**Style & Aesthetic:** Premium cinematic technology, sophisticated engineering, architectural scale, realistic physical materials. Beautiful rather than aggressive.
+
+**Camera Instructions:** Fast fluid tracking shot through the environment. Camera follows the primary visual information stream while passing close to physical structures.
+
+**Composition & Framing:** Strong foreground, middle-ground and background depth. Keep one primary information pathway visually dominant so the scene never becomes chaotic.
+
+**Lighting & Mood:** Deep controlled darkness with precisely placed illumination. Small areas of teal and white intelligence emerge from the darkness.
+
+**Audio:** **ABSOLUTE SILENCE. VISUAL SOUND WAVES ARE PURELY VISUAL. DO NOT GENERATE ANY AUDIO ASSOCIATED WITH THEM.**
+
+**Color Palette:** Approximately 80% dark space, 15% precision machinery, 5% illuminated teal intelligence.
+
+**Negative Instructions:** No server room, no motherboard, no circuit board, no brain, no hologram, no cyberpunk, no robots.
+
+### SCENE 06 · SOUND BECOMES INTELLIGENCE · 2.60–3.55s
+
+**Scene Summary:** The visual sound wave transforms into organized information as the intelligence system processes it at extraordinary speed.
+
+**Subject:** A primary visual information stream travelling through the precision system.
+
+**Background & Context:** Multiple elegant pathways intersect, split and converge inside a huge mechanical ecosystem.
+
+**Action:** The visual sound wave divides into multiple streams, travels through different structures, then reorganizes and converges again. Mechanical components react milliseconds before the camera arrives, suggesting intelligent processing. Glass channels redirect light and information. Membranes respond with varied amplitudes.
+
+**Style & Aesthetic:** High-end cinematic engineering with controlled complexity and extraordinary precision.
+
+**Camera Instructions:** Accelerate the tracking movement. Follow the primary information stream through multiple layers. Use natural motion blur while maintaining enough visual clarity to understand the pathway.
+
+**Composition & Framing:** Maintain one dominant information stream as the visual anchor. Secondary pathways support the story without competing with it.
+
+**Lighting & Mood:** Intensity increases. Teal signals become slightly more visible while remaining restrained.
+
+**Audio:** **ABSOLUTE SILENCE. NO ELECTRONIC PULSES, NO MECHANICAL CLICKS, NO DATA SOUNDS, NO MUSIC.**
+
+**Color Palette:** Ink Navy, Slate Blue, Steel Blue with restrained #22808A signals and small white highlights.
+
+**Negative Instructions:** No visual clutter, no hundreds of random particles, no chaotic data storm, no glowing spaghetti, no generic digital effects.
+
+### SCENE 07 · THE RUN · 3.55–4.50s
+
+**Scene Summary:** The camera reaches the peak of the intelligence journey, racing through the system as sound, information, machinery and light converge into one powerful visual pathway.
+
+**Subject:** The primary information stream and the precision machinery reacting around it.
+
+**Background & Context:** Multiple layers of the intelligence ecosystem pass rapidly around the camera.
+
+**Action:** The camera accelerates to its fastest movement. Mechanical structures activate just before the camera reaches them. Visual sound waves compress and expand. Information streams merge. Light travels through glass. Precision components move with tiny physical imperfections. Everything feels coordinated but not mechanically perfect.
+
+**Style & Aesthetic:** Badass premium cinematic spectacle through precision, scale and controlled movement. Never noisy. Never cheesy.
+
+**Camera Instructions:** Fastest continuous tracking movement of the film. Strong forward acceleration. Camera remains stable and cinematic, with realistic motion blur and subtle optical character.
+
+**Composition & Framing:** Use strong perspective lines and converging pathways to create speed. Keep the main information stream readable.
+
+**Lighting & Mood:** Peak visual intensity. Dark environment with sharp controlled highlights and restrained teal energy.
+
+**Audio:** **ABSOLUTE SILENCE. THE ENTIRE PEAK MUST PLAY WITHOUT MUSIC OR SOUND EFFECTS. VISUAL MOVEMENT ALONE CREATES THE SENSATION OF SPEED.**
+
+**Color Palette:** Deep navy and steel dominate, teal provides precise points of energy.
+
+**Negative Instructions:** No explosions, no lasers, no giant energy balls, no excessive particles, no cyberpunk, no chaotic camera shake.
+
+### SCENE 08 · THE SECOND MICROPHONE · 4.50–5.05s
+
+**Scene Summary:** After the peak, the intelligence world suddenly becomes spacious and quiet visually as a second headset microphone appears ahead in the darkness.
+
+**Subject:** A second professional headset microphone with the same soft black acoustic foam construction as the first.
+
+**Background & Context:** The enormous intelligence environment fades visually into darkness. The information stream continues forward toward the microphone.
+
+**Action:** The camera decelerates dramatically. The information stream travels toward the second microphone. The microphone gradually becomes recognizable.
+
+**Style & Aesthetic:** Minimal, suspenseful, elegant and cinematic.
+
+**Camera Instructions:** Controlled deceleration from extremely fast movement to a slower forward approach.
+
+**Composition & Framing:** The second microphone sits ahead in generous negative space. The information stream provides a visual line leading directly toward its tiny opening.
+
+**Lighting & Mood:** Intense visual lighting collapses into subtle illumination. Create anticipation through darkness and negative space.
+
+**Audio:** **ABSOLUTE SILENCE. DO NOT ADD A SILENCE EFFECT OR LOW HUM. THERE IS SIMPLY NO AUDIO.**
+
+**Color Palette:** Predominantly Ink Navy and black with a restrained teal signal.
+
+**Negative Instructions:** No dramatic spotlight, no glowing portal, no futuristic microphone, no hard cut.
+
+### SCENE 09 · EXIT · 5.05–5.55s
+
+**Scene Summary:** The camera follows the visual information stream through the second microphone's tiny foam opening and bursts back into the real human world.
+
+**Subject:** The second microphone foam followed by the real SPM workplace.
+
+**Background & Context:** The microscopic foam opening initially fills the frame, then suddenly gives way to the real physical scale of the office.
+
+**Action:** The camera enters the tiny opening and emerges through it. The foam briefly dominates the frame before the workplace rapidly expands into view.
+
+**Style & Aesthetic:** Spectacular but elegant scale reversal.
+
+**Camera Instructions:** Rapid forward acceleration through the opening followed by immediate controlled deceleration as the camera emerges.
+
+**Composition & Framing:** Start extreme macro, then rapidly expand into a wide cinematic workplace perspective.
+
+**Lighting & Mood:** A brief dark transition followed by bright natural workplace light.
+
+**Audio:** **ABSOLUTE SILENCE. NO WHOOSH, NO IMPACT, NO OFFICE SOUND, NO MUSICAL TRANSITION.**
+
+**Color Palette:** Transition from deep navy and teal into the brighter SPM workplace palette.
+
+**Negative Instructions:** No flash, no portal, no teleportation, no hard cut, no digital dissolve.
+
+### SCENE 10 · HUMAN OUTCOME · 5.55–6.70s
+
+**Scene Summary:** The camera emerges into a real SPM workplace and reveals the human team that the intelligence system exists to amplify.
+
+**Subject:** A diverse multicultural team of real employees working naturally.
+
+**Background & Context:** Premium modern SPM workplace, bright natural light, sophisticated architecture, contemporary desks, glass, steel and subtle SPM colors.
+
+**Action:** Employees work naturally. One person types, another speaks to a colleague, another looks at a screen, someone smiles naturally during conversation, another adjusts their chair. Movements are independent and spontaneous. Nobody acknowledges the camera.
+
+**Style & Aesthetic:** Premium editorial workplace film, photorealistic, warm, energetic and sophisticated.
+
+**Camera Instructions:** Continue forward from Scene 09, then smoothly decelerate. Transition from dynamic movement into a calmer cinematic observation.
+
+**Composition & Framing:** Layer people through foreground, middle-ground and background. Avoid a staged group arrangement.
+
+**Lighting & Mood:** Bright, friendly, optimistic workplace light.
+
+**Audio:** **ABSOLUTE SILENCE. PEOPLE MAY VISUALLY SPEAK AND WORK, BUT NO VOICES, ROOM TONE OR WORKPLACE SOUNDS ARE PRESENT.**
+
+**Color Palette:** F9FAFB, DADDE0, 43617A, 1B2A38, 0D141F and restrained 22808A.
+
+**Negative Instructions:** No group posing, no synchronized smiles, no one looking at camera, no generic corporate stock-photo composition.
+
+### SCENE 11 · THE WORLD SIMPLIFIES · 6.70–7.40s
+
+**Scene Summary:** The real workplace begins dissolving into its underlying geometry as people and physical objects gradually disappear while the architecture remains.
+
+**Subject:** The workplace geometry itself.
+
+**Background & Context:** The real team and environment are still visible initially.
+
+**Action:** Architectural lines begin subtly extending and simplifying. Desk edges align with floor perspective. Window frames become clean geometric lines. Lighting simplifies. People and furniture gradually fade into darkness while their underlying spatial geometry remains.
+
+**Style & Aesthetic:** Minimalist cinematic abstraction derived directly from reality.
+
+**Camera Instructions:** Camera becomes almost still. Maintain subtle natural cinematic drift. No sudden movement.
+
+**Composition & Framing:** Preserve the perspective and geometry that will become the final grid. Begin increasing negative space.
+
+**Lighting & Mood:** Workplace light gradually fades. Dark navy begins taking over the image.
+
+**Audio:** **ABSOLUTE SILENCE. NO AMBIENT SOUND, NO TRANSITION SOUND, NO MUSIC.**
+
+**Color Palette:** Gradually transition from bright workplace tones into Ink Navy, Slate Blue and Steel Blue.
+
+**Negative Instructions:** Do not cut to a grid. Do not dissolve randomly. The grid must visibly originate from the workplace.
+
+### SCENE 12 · FINAL GRID · 7.40–8.00s
+
+**Scene Summary:** The workplace has completely distilled into a dark architectural spatial grid with one restrained teal signal continuing through it.
+
+**Subject:** The final SPM spatial grid and subtle moving teal signal.
+
+**Background & Context:** No people remain. No recognizable office remains. Only the underlying spatial geometry survives.
+
+**Action:** Reach the supplied final frame exactly. A small restrained AI Teal signal travels smoothly through one pathway of the grid. Everything else remains calm and minimal.
+
+**Style & Aesthetic:** Apple-level minimalist brand film, premium architectural abstraction, sophisticated French design language, photorealistic cinematic finish.
+
+**Camera Instructions:** Almost completely static. Only microscopic cinematic drift. No zoom. No shake. No dramatic movement.
+
+**Composition & Framing:** Large areas of negative space. Spatial grid concentrated subtly toward the lower and middle areas. Keep the center and upper area clean for potential website copy.
+
+**Lighting & Mood:** Deep Ink Navy and near-black atmosphere with subtle Steel Blue geometry. Calm, confident and intelligent after the intensity of the journey.
+
+**Audio:** **ABSOLUTE SILENCE. THE VIDEO ENDS WITH ZERO AUDIO. NO MUSIC, NO TONE, NO SIGNAL SOUND, NO AMBIENCE, NO SOUND EFFECTS.**
+
+**Color Palette:** Dominantly #0D141F and near-black, with subtle #1B2A38 and #43617A geometry and a restrained #22808A signal.
+
+**Negative Instructions:** No neon grid, no Tron aesthetic, no sci-fi HUD, no floating interface, no excessive glow, no particles, no text, no logo, no subtitles, no watermark, no audio.
+
+### GLOBAL AUDIO REQUIREMENT
+
+**ZERO AUDIO THROUGHOUT THE ENTIRE VIDEO.** This is a deliberately silent visual film. Do not generate or imply any audio. Do not generate dialogue, speech, voice, office ambience, room tone, keyboard sounds, mechanical sounds, microphone sounds, breathing sounds, footsteps, music, cinematic impacts, whooshes, transitions, electronic tones, bass, vibration, sound-wave audio or any other sound. Characters can visibly speak, machinery can visibly move and visual sound waves can visibly travel, but none of these actions produce audio. The final rendered output must contain **no audible sound whatsoever and preferably no audio track at all**. The storytelling, pacing, intensity and emotional progression must be communicated entirely through cinematography, movement, scale, lighting, composition, visual rhythm and physical transitions.
+
+### GLOBAL CINEMATIC REALISM
+
+Throughout every scene, maintain the visual character of a real high-end cinema production. Humans must have natural pores, fine skin texture, facial asymmetry, realistic eyes, individual hairs, flyaways, authentic blinking, breathing, micro-expressions and believable posture. Clothing must have natural wrinkles and folds. Headset foam must contain irregular fibres, tiny compressed areas, microscopic dust, subtle wear and slight deformation. Metal must contain tiny machining marks, fingerprints, scratches and realistic tonal variation. Glass must have realistic refraction, reflections and optical imperfections. Mechanical components must move with tiny variations rather than perfect synchronized CGI precision. Visual sound waves and information streams must have subtle organic variation rather than mathematically repetitive movement. The camera should behave like a real high-end cinema camera operated by an exceptional cinematographer, with natural depth of field, subtle focus breathing, realistic exposure adaptation, authentic motion blur, restrained lens imperfections and extremely subtle micro-drift. Camera movement must remain exceptionally smooth and controlled while never feeling mathematically perfect.
+
+### GLOBAL VISUAL RULE
+
+The film must always prioritize **clarity over complexity**. Every visual element must earn its place. The AI world can be spectacular, but it must never become visual noise. The humans must remain believable and spontaneous. The technology must feel physical rather than digital. The transitions must feel caused by the camera's physical movement and the story's visual logic. No scene should look like a separate video clip. The viewer should feel that they have travelled through one continuous space.
+
+### GLOBAL NEGATIVE INSTRUCTIONS
+
+No robots, cyborgs, humanoid AI, holograms, glowing brains, neural-network clichés, circuit boards, server-room clichés, cyberpunk, futuristic cities, sci-fi helmets, generic digital portals, glowing tunnels, giant energy spheres, excessive particles, excessive neon, excessive teal, lasers, explosions, floating UI, HUD graphics, generic corporate stock photography, posed employees, synchronized smiling, plastic skin, perfect faces, distorted anatomy, extra fingers, duplicated people, morphing faces, changing clothing, inconsistent headset design, unstable architecture, flickering textures, random objects appearing or disappearing, hard cuts, jump cuts, teleportation, excessive camera shake, excessive lens flare, heavy chromatic aberration, artificial film grain, subtitles, captions, text, logos, watermarks, **and absolutely any audio whatsoever**. **Maximum duration: 8 seconds. Maintain exact visual continuity with the supplied first and final frames.**
