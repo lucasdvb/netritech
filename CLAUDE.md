@@ -1,5 +1,8 @@
 # Image generation
 
-- Default model for text-to-image AND image-to-image: **GPT 2.5 Sunburst** (via KIE AI), 1K resolution.
-- Do not fall back to Nano Banana (`mcp__kie-ai__generate_nano_banana` / `edit_nano_banana`) unless the user asks. If no tool for the default model is available, say so and ask before substituting.
+- Default model for text-to-image AND image-to-image: **GPT Image 2.5 Sunburst** via KIE AI, 1K.
+  - KIE model IDs: `gpt-image-2-5-sunburst-text-to-image`, `gpt-image-2-5-sunburst-image-to-image`
+  - Use `scripts/kie_image.py "prompt" -a 21:9 -r 1K -o out.png` (add `-i <public image url>` for image-to-image). It reads the key from `KIE_AI_API_KEY` or `.mcp.json`.
+- The kie-ai MCP tools only offer Nano Banana; don't use them unless the user asks.
+- Result images are served from `tempfile.aiquickdraw.com`, which may be blocked by the sandbox network policy; if so, give the user the URL.
 - Brand palette (SPM): Ink navy #0D141F, Deep navy #1B2A38, Steel blue #43617A, Teal #22808A, Light grey #DADDE0.
