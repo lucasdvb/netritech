@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "kie-ai": {
+      "command": "npx",
+      "args": ["-y", "@andrewlwn77/kie-ai-mcp-server"],
+      "env": {
+        "KIE_AI_API_KEY": "${KIE_AI_API_KEY}"
+      }
+    }
+  }
+}
