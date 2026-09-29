@@ -22,7 +22,7 @@ Before every `scripts/kie_image.py` run (and every `scripts/kie_upload.py` uploa
    ```bash
    BRANDKIT_WORKDIR="${PWD}/brandkit"
    BRANDKIT_STATE="${BRANDKIT_WORKDIR}/state.json"
-   mkdir -p "${BRANDKIT_WORKDIR}"
+   mkdir -p "${BRANDKIT_WORKDIR}"/{logo,mockups,social,reviews}
    ```
 
 2. Read [prerequisites](references/prerequisites.md). Check tools before the stage that needs them. Never install system packages without the user's permission.

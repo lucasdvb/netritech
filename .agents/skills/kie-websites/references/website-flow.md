@@ -214,7 +214,7 @@ website.
   never drive the same media with a second ScrollTrigger timeline. Only when the
   user explicitly asked for a non-animated treatment do you instead wire the
   chosen catalog technique, e.g. the single scroll-scrubbed hero film per
-  `asset-system.md` §7.
+  `asset-system.md` item 8.
 - Scroll-chapter reveals: staggered headline builds (`split-type` + GSAP or
   registry text components), per-section distinct timing; work rows / cards with
   hover reveals; magnetic nav/CTA physics via `useMotionValue` (React) or

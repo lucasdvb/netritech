@@ -25,7 +25,7 @@ Do not invent mission, values, market statistics, pricing, claims, contacts, or 
 - Use approved logo, palette, and fonts.
 - Keep all text/shapes editable.
 - Keep imagery replaceable.
-- Use generated imagery only as optional supporting assets.
+- Use generated imagery only as optional supporting assets, and only after the user approves the prompt and settings for each `scripts/kie_image.py` call.
 - Do not flatten whole slides into images.
 
 Create only slide types required by the content, such as cover, divider, image/copy, comparison, process, data, quote, and closing.

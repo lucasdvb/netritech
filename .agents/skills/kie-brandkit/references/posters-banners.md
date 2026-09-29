@@ -19,7 +19,7 @@ For text-bearing branded layouts, require separately approved logo, palette, and
 - Easy office/editor editing → one-slide PPTX.
 - Digital implementation → HTML/CSS when requested.
 
-Typography, logo, shapes, and layout remain deterministic. Image models may create only replaceable photography/background imagery.
+Typography, logo, shapes, and layout remain deterministic. Image models (GPT Image 2.5 Flare via `scripts/kie_image.py`, generated only after the user approves the prompt, settings, and output count) may create only replaceable photography/background imagery.
 
 Never bake the final logo or exact copy into a generated image.
 
