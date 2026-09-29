@@ -1,12 +1,14 @@
 # Prompt Templates
 
-Write every image and video prompt in English. Write only narration in the user's selected language.
+Write every image and video prompt in English. Write only the narration line (the text inside the quotes) in the user's selected language.
 
-Two elements keep the film consistent: one style-key image attached to every clip, and one identical STYLE descriptor pasted into every clip prompt. Narrate per block so each voice take maps to exactly one 10-second clip.
+Three things keep the film consistent: one identical STYLE descriptor, one identical NARRATOR descriptor (and HOST descriptor in mascot mode) pasted into every clip prompt, and visual continuity from block to block (first-frame chaining, or the style-key image attached to every clip).
+
+Store each finished prompt as a text file (`p01.txt`, `p02.txt`, ...) and pass it with `"$(cat p01.txt)"` so quotes and apostrophes in the narration never break the shell.
 
 ## STYLE descriptor
 
-Write the render style, palette, line character, and finish once. Always end with:
+Write the render style, palette, line character, and finish once, or take one from `styles.md`. Always end with:
 
 ```text
 non-photorealistic, illustrated, not a photo, no live-action, no realism
@@ -20,6 +22,8 @@ Examples:
 - `hand-painted storybook gouache, soft textures, warm muted palette, visible brush strokes`
 
 ## Style key
+
+One image, generated once (`kie_image.py`, 1K, same aspect as the video: 16:9 or 9:16). It is attached as `-i` to Block 1 and to any re-anchored block.
 
 ### Abstract swatch
 
@@ -35,7 +39,7 @@ Pure {STYLE} STYLE REFERENCE plate. No characters, no faces, no people, no objec
 
 ### With style-reference images
 
-Prefix the prompt verbatim, then add the requested swatch or mascot instructions:
+The user's reference images must be public URLs (`scripts/kie_upload.py` for local files, after the user agrees to the upload). Pass each with a repeated `-i`, and prefix the prompt verbatim, then add the requested swatch or mascot instructions:
 
 ```text
 Make an Animated Explainer. Take only the visual render style and color grading of the input image(s); mix the styles if there is more than one image. Never use the characters, inscriptions, etc. from the input image(s) unless the instructions below ask you to. Use only the render style, and follow the user's instructions below:
@@ -44,39 +48,50 @@ Make an Animated Explainer. Take only the visual render style and color grading 
 
 Use references as style donors only. Never copy their people, text, logos, or objects.
 
-## Video block
+## Video block (one 10-second clip)
 
 ```text
-Block N
-STYLE REFERENCE: Match the attached reference image EXACTLY. Replicate its look precisely: {STYLE tokens}. Every element below rendered in that identical style.
-SCENE: {scene and one clear action matching Block N narration}.
-MOTION: {camera move and animation behavior—slow push-in, drift, scale shock, hard contrast cut}.
-AUDIO: {ambient SFX or music only—NO voice, dialogue, or narration}.
-NEGATIVE: color drift, photorealism, 3D render, lip-sync, captions, on-screen text, logos, watermark{, plus style-specific bans}.
+STYLE: {STYLE tokens}. Every element below is rendered in this identical style, palette and finish.
+CONTINUITY: {Block 1 or re-anchored block: "Match the attached reference image exactly." | chained block: "The supplied first frame is the opening image: start from it, keep its style, palette and characters, and evolve into the scene below."}
+CHARACTER: {HOST descriptor, mouth closed, never speaks | "none, faceless stylistic scene"}
+SCENE: {one scene and one clear action matching the narration}.
+MOTION: {camera move and animation behavior: slow push-in, drift, scale shock, hard contrast cut}. Single continuous shot; the last second holds a stable composition.
+NARRATION: Off-screen voice-over, {NARRATOR descriptor}, speaking {language}. The voice starts at about 0.5 seconds, finishes by 9 seconds, then a beat of ambient sound. It says exactly: "{narration line}"
+AUDIO: {ambient SFX or music mood}, kept quiet under the voice. No other speech, no singing.
+NEGATIVE: color drift, photorealism, 3D render, lip-sync, moving lips, subtitles, captions, on-screen text, logos, watermark{, plus style-specific bans}.
 ```
 
 Rules:
 
-- Paste the same STYLE tokens into every block.
-- Keep clip audio diegetic only. Characters never speak or lip-sync.
+- Paste the same STYLE, NARRATOR and HOST text into every block, character for character.
+- The narration line is the only speech. The voice-over belongs to no on-screen character: lips never move, nobody lip-syncs, nothing is written on screen.
 - In mascot mode, Block 1 greets by gesture with mouth closed, the final block waves a sign-off, and middle blocks use the same design.
 - In faceless mode, every block is a stylistic scene of its narration beat.
-- Use one clear action per block.
+- Use one clear action per block, and end on a held, uncluttered composition: the last frame is reused as the next block's opening frame.
+- Put numbers in the narration as words so they are pronounced correctly.
 
-Example:
+Example (chained block, English, faceless):
 
 ```text
-Block 4
-STYLE REFERENCE: Match the attached reference image EXACTLY. Replicate its look precisely: strict monochrome minimalism, solid black silhouettes on an absolute white void, high contrast, lots of negative space, matte, non-photorealistic, illustrated, not a photo, no live-action, no realism. Every element below rendered in that identical style.
+STYLE: strict monochrome minimalism, solid black silhouettes on an absolute white void, high contrast, lots of negative space, matte, non-photorealistic, illustrated, not a photo, no live-action, no realism. Every element below is rendered in this identical style, palette and finish.
+CONTINUITY: The supplied first frame is the opening image: start from it, keep its style, palette and characters, and evolve into the scene below.
+CHARACTER: none, faceless stylistic scene
 SCENE: A lone black silhouette slowly dissolves at the edges, crumbling into fine drifting sand that scatters into the white emptiness.
-MOTION: Very slow push-in; the figure erodes grain by grain and particles drift sideways.
-AUDIO: Low sustained drone and a soft whisper of falling sand—no voice.
-NEGATIVE: color, gray midtones, photorealism, 3D render, lip-sync, captions, on-screen text, logos, watermark.
+MOTION: Very slow push-in; the figure erodes grain by grain and particles drift sideways. Single continuous shot; the last second holds a stable composition of drifting grains on white.
+NARRATION: Off-screen voice-over, warm calm female voice-over, mid-thirties, clear and unhurried, documentary pace, speaking English. The voice starts at about 0.5 seconds, finishes by 9 seconds, then a beat of ambient sound. It says exactly: "Nothing built by hand lasts forever. Wind, water and time take a little each year, until only the idea remains."
+AUDIO: Low sustained drone and a soft whisper of falling sand, kept quiet under the voice. No other speech, no singing.
+NEGATIVE: color, gray midtones, photorealism, 3D render, lip-sync, moving lips, subtitles, captions, on-screen text, logos, watermark.
 ```
 
 ## Narration block
 
-Write one plain line per clip, sized for about 8–9 seconds and normally 20–24 words. Keep every take under roughly 9.5 seconds.
+Write one plain line per clip. The clip is 10 seconds and the voice runs roughly 0.5 s to 9 s, so the line must be spoken in about 8 seconds:
+
+| Language | Words per line | Speaking rate |
+|---|---|---|
+| English | 18 to 22 | about 2.5 words per second |
+| French, Spanish, Italian, German, Portuguese | 15 to 19 | about 2.2 words per second |
+| Other | 14 to 18, then check the pilot clip | |
 
 ```text
 Block 1
@@ -89,7 +104,9 @@ Rules:
 
 - Use no timecodes, emotion cues, parentheticals, or stage directions.
 - Spell numbers out.
-- Set tone through word choice and concrete detail.
-- Never say “in this video.”
+- Avoid hard-to-pronounce acronyms and mixed-language words; spell an acronym out phonetically if it matters.
+- Set tone through word choice and concrete detail, not through direction.
+- Never say "in this video."
 - For a topic, hook, build understanding block by block, and end on the payoff.
 - For a personal story, keep the user or their narrator persona as protagonist and invent nothing factual.
+- A line that is too long gets cut off or rushed at the end of the clip: shorten it rather than hoping.
