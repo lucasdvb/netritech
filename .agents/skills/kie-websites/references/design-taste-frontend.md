@@ -8,7 +8,7 @@ metadata:
   hermes:
     tags: [design, frontend, landing-page, portfolio, ui, tailwind, react, anti-slop, web-development, redesign]
     category: creative
-    related_skills: [quanta-design]
+    related_skills: []
 triggers:
   - landing page
   - portfolio site
@@ -142,13 +142,13 @@ For these directions, there is **no single official package**. Build with native
 Unless the design read picks a real design system (Section 2.A), these are the defaults:
 
 ### 3.A Stack
-* **Framework:** React or Next.js. Default to Server Components (RSC).
-  * **RSC SAFETY:** Global state works ONLY in Client Components. In Next.js, wrap providers in a `"use client"` component.
-  * **INTERACTIVITY ISOLATION:** Any component using Motion, scroll listeners, or pointer physics MUST be an isolated leaf with `'use client'` at the top. Server Components render static layouts only.
+* **Framework:** React (Vite) or plain HTML/CSS/JS, the user's choice per project (`website-flow.md`). If a project is ever built on a framework with Server Components (RSC), default to them.
+  * **RSC SAFETY (only if RSC is in play):** Global state works ONLY in Client Components; wrap providers in a `"use client"` component.
+  * **INTERACTIVITY ISOLATION:** Any component using Motion, scroll listeners, or pointer physics is an isolated leaf (in RSC projects with `'use client'` at the top). Static layout stays free of it.
 * **Styling:** **Tailwind v4** (default). Tailwind v3 only if the existing project demands it.
   * For v4: do NOT use `tailwindcss` plugin in `postcss.config.js`. Use `@tailwindcss/postcss` or the Vite plugin.
 * **Animation:** **Motion** (the library formerly known as Framer Motion). Import from `motion/react` (`import { motion } from "motion/react"`). The `framer-motion` package still works as a legacy alias - prefer `motion/react` in new code.
-* **Fonts:** Always use `next/font` (Next.js) or self-host with `@font-face` + `font-display: swap`. Never link Google Fonts via `<link>` in production.
+* **Fonts:** Self-host with `@font-face` + `font-display: swap` (`next/font` if on Next.js). Never link Google Fonts via `<link>` in production. SPM sites use the typography set in `docs/spm-brand-brief.md`.
 
 ### 3.B State
 * Local `useState` / `useReducer` for isolated UI.
@@ -282,8 +282,8 @@ LLMs default to "static successful state only." Always implement full cycles:
 Landing pages and portfolios are **visual products**. Text-only pages with fake-screenshot divs are slop.
 
 **Priority order for visual assets:**
-1. **Image-generation tool first.** If ANY image-gen tool is available in the environment (`generate_image`, MCP image tool, IDE-integrated gen, OpenAI image tools, etc.) you MUST use it to create section-specific assets: hero photography, product shots, texture backgrounds, mood images. Generate at the right aspect ratio for the section. Do not skip this step because hand-rolled CSS feels faster.
-2. **Real web images second.** When no gen tool is available, use real photography sources. Acceptable defaults:
+1. **KIE generation first, with the user's yes.** Generate section-specific assets (hero photography, product shots, texture backgrounds, mood images) with `scripts/kie_image.py` (GPT Image 2.5 Flare) at the right aspect ratio for the section, per `asset-system.md`. Each generation is shown to the user and approved first; do not skip this step because hand-rolled CSS feels faster, and do not run it without the yes.
+2. **Real web images second.** When generation is declined or unavailable, use real photography sources. Acceptable defaults:
    * `https://picsum.photos/seed/{descriptive-seed}/{w}/{h}` for placeholder photography (seed should describe the section, e.g. `marrow-cookware-kitchen`)
    * Actual stock or brand URLs when the brief provides them
    * Open-license sources (Unsplash via direct URL, Pexels) if explicitly allowed

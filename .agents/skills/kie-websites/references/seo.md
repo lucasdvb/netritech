@@ -1,66 +1,95 @@
 # SEO
 
+Everything here is static, local-code SEO for a React (Vite) or plain HTML site:
+head tags, static `robots.txt`/`sitemap.xml`, JSON-LD, entity and GEO copy rules,
+and a self-contained audit. There is no server layer in this workflow, so headers,
+redirects and HTTPS are the host's job and out of scope.
+
+For SPM sites, read `docs/spm-brand-brief.md` first: name, tagline, voice and
+positioning come from the brief, not from invention.
+
 ## Meta tags & OG
 
-The `__root.tsx` template ships with placeholder meta (`<App Title>`, generic description). This skill ensures those placeholders NEVER reach production. Every deploy must have real, keyword-targeted meta tags.
+The scaffold ships placeholder meta (default title, no description). This section
+ensures those placeholders NEVER reach the hand-over. Every page has real,
+keyword-targeted meta tags.
 
-### Global Meta in `__root.tsx`
+**Site URL.** Absolute URLs are required for `og:image`, `og:url`, canonical and
+schema. Use the user's production domain when they have one. Keep it in ONE place
+(a `SITE_URL` constant in `site/src/site.ts`, or one find-and-replace-able string in
+plain HTML) and never invent a domain. If it is unknown, say in the hand-over that
+`SITE_URL` is the one value to set before the site goes public.
 
-Set these in the root route's `head()` function. They apply site-wide and are overridden per-route where needed.
+### Global head (plain HTML, or React's `site/index.html`)
 
-```tsx
-export const Route = createRootRouteWithContext()({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'Acme Studio — Creative Agency for Bold Brands' },
-      { name: 'description', content: 'Acme Studio builds brand identities, websites, and campaigns that stand out. Based in NYC, working worldwide.' },
-      { name: 'author', content: 'Acme Studio' },
-      { name: 'theme-color', content: '#0A0A0A' },
-      { name: 'robots', content: 'index, follow, max-image-preview:large' },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:site_name', content: 'Acme Studio' },
-      { property: 'og:locale', content: 'en_US' },
-      { name: 'twitter:card', content: 'summary_large_image' },
-    ],
-  }),
-  // ...
-});
+Static tags in the HTML file are what crawlers and link unfurlers read first.
+
+```html
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Acme Studio | Creative Agency for Bold Brands</title>
+  <meta name="description" content="Acme Studio builds brand identities, websites, and campaigns that stand out. Based in NYC, working worldwide." />
+  <meta name="author" content="Acme Studio" />
+  <meta name="theme-color" content="#0D141F" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="https://acme-studio.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Acme Studio" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:title" content="Acme Studio | Creative Agency for Bold Brands" />
+  <meta property="og:description" content="Brand identities, websites, and campaigns that stand out." />
+  <meta property="og:url" content="https://acme-studio.com/" />
+  <meta property="og:image" content="https://acme-studio.com/assets/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+</head>
 ```
 
-### Per-Route Meta in Page `head()`
+The favicon/icon/manifest/OG files come from `references/asset-system.md` items 6-7.
+(Plain HTML pages in `site/` use root-relative paths only if served from a domain
+root; otherwise relative paths.)
 
-Each page route overrides title, description, and OG tags. This goes in the route definition, not the component.
+### Per-page meta
+
+- **Plain HTML / multi-page:** each `*.html` file carries its own `<title>`,
+  description, canonical, `og:*` and `twitter:*` tags. No shared copy-paste.
+- **React, one page:** the static tags in `index.html` are enough.
+- **React, several routes:** set title/description/canonical per route with
+  `react-helmet-async` (or React 19 native `<title>`/`<meta>` in the route
+  component), and prefer build-time prerendering when SEO matters, because a client-
+  rendered SPA exposes per-route tags only to crawlers that run JS.
 
 ```tsx
-import { createFileRoute } from '@tanstack/react-router';
+import { Helmet } from "react-helmet-async";
+import { SITE_URL } from "../site";
 
-export const Route = createFileRoute('/services')({
-  head: () => ({
-    meta: [
-      { title: 'Services — Acme Studio' },
-      { name: 'description', content: 'Brand identity, web design, and digital campaigns. See what Acme Studio can build for you.' },
-      { property: 'og:title', content: 'Services — Acme Studio' },
-      { property: 'og:description', content: 'Brand identity, web design, and digital campaigns.' },
-      { property: 'og:url', content: 'https://acme-studio.higgsfield.app/services' },
-      { property: 'og:image', content: 'https://acme-studio.higgsfield.app/og-services.png' },
-      { name: 'twitter:title', content: 'Services — Acme Studio' },
-      { name: 'twitter:description', content: 'Brand identity, web design, and digital campaigns.' },
-    ],
-    links: [
-      { rel: 'canonical', href: 'https://acme-studio.higgsfield.app/services' },
-    ],
-  }),
-  component: ServicesPage,
-});
+export function ServicesPage() {
+  return (
+    <>
+      <Helmet>
+        <title>Services | Acme Studio</title>
+        <meta name="description" content="Brand identity, web design, and digital campaigns. See what Acme Studio can build for you." />
+        <link rel="canonical" href={`${SITE_URL}/services`} />
+        <meta property="og:title" content="Services | Acme Studio" />
+        <meta property="og:description" content="Brand identity, web design, and digital campaigns." />
+        <meta property="og:url" content={`${SITE_URL}/services`} />
+        <meta property="og:image" content={`${SITE_URL}/assets/og-services.png`} />
+      </Helmet>
+      {/* page */}
+    </>
+  );
+}
 ```
 
 ### Title Formula
 
-- **Homepage:** `[Brand] — [Tagline]` → `Acme Studio — Creative Agency for Bold Brands`
-- **Subpages:** `[Page] — [Brand]` → `Services — Acme Studio`
+- **Homepage:** `[Brand] | [Tagline]` → `Acme Studio | Creative Agency for Bold Brands`
+- **Subpages:** `[Page] | [Brand]` → `Services | Acme Studio`
 
+Use ` | ` as the separator: the em-dash ban (`design-recipe.md` §5) covers titles too.
 Keep titles under 60 characters. The brand always appears.
 
 ### Description Rules
@@ -72,21 +101,18 @@ Keep titles under 60 characters. The brand always appears.
 
 ### Canonical URL Pattern
 
-All Higgsfield apps follow: `https://<slug>.higgsfield.app/<path>`
-
-- Homepage: `https://acme-studio.higgsfield.app`
-- Subpage: `https://acme-studio.higgsfield.app/services`
-- No trailing slash. No query params. No fragments.
+`https://<domain>/<path>` — homepage `https://acme-studio.com/`, subpage
+`https://acme-studio.com/services`. No trailing slash on subpages. No query params.
+No fragments. Multi-page plain HTML that serves `services.html` should canonicalize
+to the URL the host will actually serve; say which form you chose in the brief.
 
 ### Robots Directive
 
 | Page type | `robots` value |
 |---|---|
 | Public pages (homepage, services, about, blog) | `index, follow, max-image-preview:large` |
-| Auth pages, admin, dashboard | `noindex, nofollow` |
+| Admin, dashboard, login UI mockups | `noindex, nofollow` |
 | Legal (privacy, terms) | `index, nofollow` |
-
-Set the default in `__root.tsx`. Override per-route for protected pages.
 
 ### Deriving Values from Intake
 
@@ -98,270 +124,110 @@ Map user input directly:
 | Purpose / tagline | `title` (tagline part), homepage `description` |
 | Primary service / product | Subpage `description` seed |
 | Brand color | `theme-color` |
-| Logo / hero image | `og:image` |
+| Logo / hero image | `og:image` (the generated OG card) |
 
-### Page metadata file (`app/src/app-meta.json`) + Cover video
-
-`app/src/app-meta.json` is the machine-editable page-metadata file the template
-reads at BUILD time for the global head, and the marketplace syncs onto the
-website's feed/listing card on every deploy. Its keys:
-
-```jsonc
-{
-  "og_title":       "…",   // browser <title> + og:title
-  "og_description": "…",   // meta description + og:description
-  "og_image_url":   "…",   // og:image + twitter:image (the feed card cover)
-  "marketplace_cover_url": "…", // plain (unmasked) cover art — marketplace/preview slot
-  "favicon_url":    "…",   // <link rel="icon">
-  "og_video_url":   "…"    // og:video — the COVER VIDEO (feed cards play it on hover)
-}
-```
-
-Fill the five text/image keys with real values before any deploy or
-publish (URLs: absolute https, or a root-relative path to a file in
-`app/public/` — it is resolved against the site's own host).
-
-**Cover video (`og_video_url`).** The animated counterpart of the cover image —
-the Higgsfield feed plays it on the website's card. It is OPTIONAL and costs
-credits to produce, so:
-
-1. **ASK THE USER FIRST.** Offer it when publishing ("want a short cover video
-   for the feed card?"); never generate one unprompted.
-2. If yes: generate a SHORT seamless loop (3-6s, no cuts, loop-friendly motion)
-   of the site's hero visual with the Higgsfield video tools (the video-loop
-   recipe in `references/asset-system.md` / `references/wow-maker.md` applies).
-3. Put the result where the card can load it: download it into `app/public/`
-   (e.g. `app/public/cover-video.mp4`) and set
-   `"og_video_url": "/cover-video.mp4"`, or use the generation result's hosted
-   https URL directly.
-4. Commit + deploy — the metadata (and the feed card) update on the next
-   deploy, like every other `app-meta.json` change.
+A cover **clip** is not a meta tag: it is an optional, permission-gated asset
+(`references/cover-animator.md`).
 
 ### Pitfalls
 
-1. **Duplicate titles across routes.** Every page needs a unique `title` and `description`. Copy-paste from root is the #1 SEO mistake.
-2. **Missing `og:image`.** Social shares without an image get 80% less engagement. Use a 1200x630 image minimum. If no custom OG image exists, use the hero or logo on a colored background.
-3. **Placeholder text in production.** Search `__root.tsx` for `App Title`, `MyApp`, or `Lorem` before every deploy. Automated check: the build should grep for these.
+1. **Duplicate titles across pages.** Every page needs a unique `title` and `description`. Copy-paste from the home page is the #1 SEO mistake.
+2. **Missing `og:image`.** Social shares without an image get 80% less engagement. Use the 1200x630 OG card from the asset kit.
+3. **Placeholder text in the hand-over.** Grep `index.html` and every page for the scaffold title, `App Title`, `MyApp`, `Vite + React`, or `Lorem` before hand-over (also in review-rubric §A item 1).
 4. **Description too short or generic.** "Welcome to our website" is not a description. It must describe what the user gets.
-5. **Canonical mismatch.** The canonical URL in `head()` must exactly match the deployed URL. Wrong canonical = Google ignores the page.
+5. **Canonical mismatch.** The canonical URL must exactly match the URL the page will be served from. Wrong canonical = Google ignores the page.
 
 ## Technical SEO
 
-Technical SEO infrastructure that every Higgsfield website needs. This skill covers the server routes, headers, and performance patterns that search engines require before they'll properly index a site.
+Static files and page-level patterns that search engines expect.
 
-### robots.txt Server Route
+### robots.txt (static file)
 
-Create `app/src/routes/robots.txt.ts`:
+Create `site/public/robots.txt` (React) or `site/robots.txt` (plain HTML):
 
-```ts
-import { createFileRoute } from '@tanstack/react-router';
+```text
+User-agent: *
+Allow: /
 
-export const Route = createFileRoute('/robots')({
-  server: {
-    handlers: {
-      GET: async ({ request }) => {
-        const origin = new URL(request.url).origin;
-        const body = [
-          'User-agent: *',
-          'Allow: /',
-          '',
-          `Sitemap: ${origin}/sitemap.xml`,
-        ].join('\n');
-
-        return new Response(body, {
-          status: 200,
-          headers: { 'Content-Type': 'text/plain' },
-        });
-      },
-    },
-  },
-});
+Sitemap: https://acme-studio.com/sitemap.xml
 ```
 
-The file path is `robots.txt.ts` — TanStack Start maps the `.txt` extension to serve at `/robots.txt`. Origin is derived from the request so it works on any host the site is served from.
+Use the site's real `SITE_URL` in the `Sitemap:` line.
 
-### sitemap.xml Server Route
+### sitemap.xml (static file)
 
-Create `app/src/routes/sitemap.xml.ts`:
+Create `site/public/sitemap.xml` (React) or `site/sitemap.xml` (plain HTML). One
+`<url>` per page. Update it whenever a page is added; keep paths in sync with the
+actual pages.
 
-#### Single-page site (landing page)
-
-```ts
-import { createFileRoute } from '@tanstack/react-router';
-
-export const Route = createFileRoute('/sitemap')({
-  server: {
-    handlers: {
-      GET: async ({ request }) => {
-        const origin = new URL(request.url).origin;
-        const today = new Date().toISOString().split('T')[0];
-
-        const xml = `<?xml version="1.0" encoding="UTF-8"?>
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>${origin}</loc>
-    <lastmod>${today}</lastmod>
+    <loc>https://acme-studio.com/</loc>
+    <lastmod>2026-01-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-</urlset>`;
-
-        return new Response(xml, {
-          status: 200,
-          headers: { 'Content-Type': 'application/xml' },
-        });
-      },
-    },
-  },
-});
+  <url>
+    <loc>https://acme-studio.com/services</loc>
+    <lastmod>2026-01-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset>
 ```
 
-#### Multi-page site
+Set `lastmod` to the real build date. A single-page site lists just the homepage.
 
-```ts
-import { createFileRoute } from '@tanstack/react-router';
+### Links and URLs
 
-const ROUTES = [
-  { path: '/', priority: '1.0', changefreq: 'weekly' },
-  { path: '/services', priority: '0.8', changefreq: 'monthly' },
-  { path: '/about', priority: '0.6', changefreq: 'monthly' },
-  { path: '/contact', priority: '0.6', changefreq: 'monthly' },
-  { path: '/blog', priority: '0.7', changefreq: 'weekly' },
-];
-
-export const Route = createFileRoute('/sitemap')({
-  server: {
-    handlers: {
-      GET: async ({ request }) => {
-        const origin = new URL(request.url).origin;
-        const today = new Date().toISOString().split('T')[0];
-
-        const urls = ROUTES.map(
-          (r) => `  <url>
-    <loc>${origin}${r.path === '/' ? '' : r.path}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>${r.changefreq}</changefreq>
-    <priority>${r.priority}</priority>
-  </url>`
-        ).join('\n');
-
-        const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls}
-</urlset>`;
-
-        return new Response(xml, {
-          status: 200,
-          headers: { 'Content-Type': 'application/xml' },
-        });
-      },
-    },
-  },
-});
-```
-
-Update the `ROUTES` array when adding pages. Keep paths in sync with actual route files.
-
-### Security Headers in server.ts
-
-Security headers (CSP, HSTS, etc.) are not defined here — they have one
-canonical owner: `applySecurityHeaders()` in
-`app/src/lib/security-headers.server.ts`. Import it in `app/src/server.ts` and
-wrap every response (including redirects and error responses):
-
-```ts
-import { applySecurityHeaders } from './lib/security-headers.server';
-
-export default {
-  async fetch(request: Request, env: any) {
-    try {
-      const response = await handler.fetch(request, env);
-      return applySecurityHeaders(response);
-    } catch (error) {
-      return applySecurityHeaders(new Response('Internal Server Error', { status: 500 }));
-    }
-  },
-};
-```
-
-Do not define a second header function in this file. For the full rules
-(framing/CSP rationale, what to keep, what never to set), see
-`references/security.md#worker-hardening`.
-
-### Trailing Slash Normalization
-
-Add this at the top of the fetch handler in `app/src/server.ts`, before the `handler.fetch` call. Duplicate URLs (with and without trailing slash) split link equity.
-
-```ts
-const url = new URL(request.url);
-if (url.pathname !== '/' && url.pathname.endsWith('/')) {
-  url.pathname = url.pathname.slice(0, -1);
-  return Response.redirect(url.toString(), 301);
-}
-```
+Link internally in ONE form (no trailing slash on subpages, or always with one for
+directory-style plain HTML) so the host never has to redirect duplicates. Hosting
+concerns (security headers, HTTPS, compression, redirects) are outside this skill;
+mention in the hand-over that they belong to whoever hosts the site.
 
 ### Canonical URLs
 
-Every page route's `head()` must include a canonical link. This is the single source-of-truth URL for that page.
+Every page has a canonical link (see "Meta tags & OG"). Routes with params
+(`/blog/:slug`) must build the canonical from the param value, not a static string.
 
-```ts
-export const Route = createFileRoute('/about')({
-  head: () => ({
-    links: [
-      { rel: 'canonical', href: 'https://acme-studio.higgsfield.app/about' },
-    ],
-    meta: [
-      { title: 'About — Acme Studio' },
-      // ... other meta
-    ],
-  }),
-  component: AboutPage,
-});
+### Performance hints
+
+Performance feeds Core Web Vitals. In the `<head>`:
+
+```html
+<link rel="preload" as="image" href="/assets/hero.webp" fetchpriority="high" />
 ```
 
-Pattern: `https://<slug>.higgsfield.app/<path>` — no trailing slash, no query params.
+- Self-host fonts (`@font-face` + `font-display: swap`) and preload the one display
+  face; if Google Fonts are unavoidable, add `preconnect` to `fonts.googleapis.com`
+  and `fonts.gstatic.com` (crossorigin) BEFORE the stylesheet link.
+- Give every `<img>`/`<video>` explicit `width`/`height` (or `aspect-ratio`),
+  `loading="lazy"` below the fold, a `poster` on videos, modern formats (WebP/AVIF)
+  for photos.
+- Keep scrub clips within the brief's byte budget (`scroll-scrub.md`).
 
-### Performance Hints in `__root.tsx`
+### Crawlability of client-rendered pages
 
-Add preconnect hints in the root route's `head()` for any external resources. Google Fonts is the most common:
-
-```tsx
-head: () => ({
-  links: [
-    { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-    { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossOrigin: 'anonymous' },
-    { rel: 'dns-prefetch', href: 'https://fonts.googleapis.com' },
-  ],
-  meta: [
-    // ... meta tags from the "Meta tags & OG" section above
-  ],
-}),
-```
-
-Place `preconnect` before any stylesheet links. This shaves 100-300ms off font loading, which directly impacts Largest Contentful Paint (LCP).
-
-### Cloudflare Edge Advantage
-
-Higgsfield websites deploy as Cloudflare Workers with SSR. This means:
-
-- **SSR at 300+ edge locations** — the HTML is rendered close to the user, not at a single origin. TTFB under 100ms globally.
-- **No hydration delay for crawlers** — search engine bots get fully rendered HTML on first request. No "render budget" concerns.
-- **Automatic HTTPS** — Cloudflare handles TLS. No certificate management needed.
-- **HTTP/2 and HTTP/3** — enabled by default on Cloudflare. Parallel resource loading with zero config.
-
-This is a structural SEO advantage over client-rendered SPAs. Don't undermine it by adding client-side-only rendering patterns — keep data fetching in `loader()` and critical content in the initial SSR response.
+Search engines and AI crawlers read the initial HTML most reliably. Keep critical
+content (headline, intro paragraph, section headings, FAQ) in that HTML: plain HTML
+does this by default; a Vite React SPA does not unless it prerenders at build time.
+For SEO-critical multi-page sites choose plain HTML or add prerendering, and state
+the choice in `design-brief.md`. Never inject chapter copy or headings only after a
+viewport callback.
 
 ### Pitfalls
 
-1. **Forgetting to update the sitemap ROUTES array.** Every new page route needs a corresponding sitemap entry. Dead sitemap URLs actively hurt crawl efficiency.
-2. **CSP blocking inline styles from the design system.** The default CSP includes `'unsafe-inline'` for styles. If you tighten it, test that Tailwind/CSS-in-JS still works.
-3. **robots.txt with a hardcoded origin.** The route derives origin from the request URL, so any host the site is served from gets correct sitemaps automatically. Don't hardcode URLs.
-4. **Missing canonical on dynamic routes.** Routes with params (`/blog/$slug`) must build the canonical URL from the param value, not use a static string.
-5. **Trailing slash redirect loops.** The normalization redirect must be the FIRST check in `fetch()`, before `handler.fetch`. Placing it after can cause double-processing or loops with Cloudflare's own redirects.
+1. **Forgetting to update the sitemap.** Every new page needs a corresponding sitemap entry. Dead sitemap URLs actively hurt crawl efficiency.
+2. **Hardcoded origins scattered through the code.** Keep `SITE_URL` in one place.
+3. **Missing canonical on dynamic routes.** Build the canonical from the param value.
+4. **Blocking CSS/JS in robots.txt.** Never `Disallow` asset folders; crawlers need them to render the page.
+5. **Client-only content.** Copy that exists only after JS runs is fragile for crawlers; see above.
 
 ## Schema markup
 
-Load this skill for any website build with a public face. Structured data (JSON-LD) is how search engines understand what a page *is* — without it, rich results are off the table.
+Apply this to any website build with a public face. Structured data (JSON-LD) is how search engines understand what a page *is* — without it, rich results are off the table.
 
 ### Schema Type Decision Matrix
 
@@ -377,7 +243,7 @@ Load this skill for any website build with a public face. Structured data (JSON-
 
 ### Reusable Component
 
-Create `app/src/components/StructuredData.tsx`:
+**React:** create `site/src/components/StructuredData.tsx`:
 
 ```tsx
 export function StructuredData({ json }: { json: string }) {
@@ -390,7 +256,8 @@ export function StructuredData({ json }: { json: string }) {
 }
 ```
 
-SSR-safe. No client JS needed. The `json` prop is a pre-stringified JSON-LD object.
+No client JS needed. The `json` prop is a pre-stringified JSON-LD object.
+**Plain HTML:** paste the same JSON inside `<script type="application/ld+json">…</script>` in the page `<head>`.
 
 ### Usage Pattern
 
@@ -404,8 +271,8 @@ const ORG_SCHEMA = JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'Acme Studio',
-  url: 'https://acme-studio.higgsfield.app',
-  logo: 'https://acme-studio.higgsfield.app/logo.png',
+  url: 'https://acme-studio.com',
+  logo: 'https://acme-studio.com/logo.png',
 });
 
 export function HomePage() {
@@ -489,10 +356,10 @@ const SCHEMA = JSON.stringify({
   '@graph': [
     {
       '@type': 'Organization',
-      '@id': 'https://acme-studio.higgsfield.app/#org',
+      '@id': 'https://acme-studio.com/#org',
       name: 'Acme Studio',
-      url: 'https://acme-studio.higgsfield.app',
-      logo: 'https://acme-studio.higgsfield.app/logo.png',
+      url: 'https://acme-studio.com',
+      logo: 'https://acme-studio.com/logo.png',
       sameAs: [
         'https://twitter.com/acmestudio',
         'https://linkedin.com/company/acmestudio',
@@ -500,21 +367,21 @@ const SCHEMA = JSON.stringify({
     },
     {
       '@type': 'WebSite',
-      '@id': 'https://acme-studio.higgsfield.app/#website',
+      '@id': 'https://acme-studio.com/#website',
       name: 'Acme Studio',
-      url: 'https://acme-studio.higgsfield.app',
-      publisher: { '@id': 'https://acme-studio.higgsfield.app/#org' },
+      url: 'https://acme-studio.com',
+      publisher: { '@id': 'https://acme-studio.com/#org' },
     },
     {
       '@type': 'ProfessionalService',
-      '@id': 'https://acme-studio.higgsfield.app/#service',
+      '@id': 'https://acme-studio.com/#service',
       name: 'Acme Studio',
-      url: 'https://acme-studio.higgsfield.app',
+      url: 'https://acme-studio.com',
       description: 'Full-service creative agency specializing in brand identity and web design.',
       areaServed: 'Worldwide',
       serviceType: 'Creative Agency',
       priceRange: '$$$',
-      provider: { '@id': 'https://acme-studio.higgsfield.app/#org' },
+      provider: { '@id': 'https://acme-studio.com/#org' },
     },
   ],
 });
@@ -757,11 +624,11 @@ checks. Acme serves 200+ customers including DHL Freight and Kuehne+Nagel.
 
 ### When to Run
 
-Run this audit after building any website and before running `higgsfield website deploy`. It is the SEO quality gate. Do not deploy until every FAIL is resolved. The audit is self-contained — read the project source files directly, no external tools or browser needed.
+Run this audit after building any website and before the hand-over. It is the SEO quality gate. Do not hand the site over until every FAIL is resolved. The audit is self-contained — read the project source files directly, no external tools or browser needed.
 
 ### Audit Procedure
 
-Read every route/page component in `app/src/routes/`. For each file, evaluate the 10 checks below. Collect results, print the summary table, fix any FAILs, then re-run until clean.
+Read every page: each `site/*.html` file (plain HTML) or every page/route component under `site/src/` plus `site/index.html` (React). For each file, evaluate the 10 checks below. Collect results, print the summary table, fix any FAILs, then re-run until clean.
 
 ---
 
@@ -773,7 +640,7 @@ FAIL if: multiple `<h1>` tags, zero `<h1>` tags, or any skipped heading level.
 
 #### 2. Image Alt Text
 
-Every `<img>` element must have a non-empty `alt` attribute. For AI-generated images, derive `alt` from the generation prompt (e.g. prompt "modern office interior" → `alt="Modern office interior"`). Decorative images use `alt=""` with `role="presentation"`.
+Every `<img>` element must have a non-empty `alt` attribute. For generated images, derive `alt` from the generation prompt (e.g. prompt "modern office interior" → `alt="Modern office interior"`). Decorative images use `alt=""` with `role="presentation"`.
 
 FAIL if: any `<img>` lacks `alt`. WARN if: `alt` is generic like "image" or "photo".
 
@@ -846,16 +713,16 @@ After scanning, print this table to the build log:
 │ Form accessibility      │ PASS   │                                  │
 │ Social preview          │ PASS   │                                  │
 ├─────────────────────────┼────────┼──────────────────────────────────┤
-│ RESULT                  │ BLOCK  │ 2 FAIL — fix before deploy       │
+│ RESULT                  │ BLOCK  │ 2 FAIL — fix before hand-over    │
 └─────────────────────────┴────────┴──────────────────────────────────┘
 ```
 
-Status values: **PASS** (good), **WARN** (acceptable, note for improvement), **FAIL** (must fix before deploy).
+Status values: **PASS** (good), **WARN** (acceptable, note for improvement), **FAIL** (must fix before hand-over).
 
 ### Fix-and-Recheck Loop
 
 1. For each FAIL, open the source file and apply the fix directly.
 2. After fixing all FAILs, re-run the full 10-item audit from the top.
 3. Repeat until the table shows zero FAILs.
-4. WARNs are acceptable for deploy but should be noted in the deploy summary.
-5. Only after a clean pass (zero FAILs), proceed to `higgsfield website deploy`.
+4. WARNs are acceptable but should be noted in the hand-over report.
+5. Only after a clean pass (zero FAILs), hand the site over (local preview + report).

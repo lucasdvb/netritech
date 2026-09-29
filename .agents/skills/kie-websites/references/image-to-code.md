@@ -23,7 +23,8 @@ per board:
   never sub in generic web defaults.
 - **Components:** button size/shape/radius/fill-vs-outline and hierarchy;
   card structure; badges; dividers; borders; shadows. If a detail is too
-  small to read, generate a closer detail image rather than guessing.
+  small to read, propose a closer detail image (one `kie_image.py` call, asked
+  for first) rather than guessing.
 - **Rhythm:** repeated motifs that define the design language (hairlines,
   numerals, crop frames, rail notes) — these carry the concept spine.
 
@@ -44,8 +45,8 @@ per board:
 2. Preserve layout + spacing logic.
 3. Preserve the component family.
 4. Preserve mood/polish level.
-5. Generate an extra detail image of the unclear region.
-6. Regenerate that section's board fresh.
+5. Propose an extra detail image of the unclear region (needs the user's yes).
+6. Propose regenerating that section's board fresh (needs the user's yes).
 7. Only then pick the most implementation-friendly faithful reading.
 
 Never fill ambiguity with a generic default first.

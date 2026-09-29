@@ -2,11 +2,12 @@
 
 This is THE design source for every site you build. There are no fixed templates to
 pick and fill — you **compose** a distinctive, award-tier site from the directory
-below: bespoke AI-generated assets, signature animation patterns, motion/3D
-libraries, and copy-paste component/block registries.
+below: bespoke KIE-generated assets (GPT Image 2.5 Flare stills, Gemini Omni Flash
+clips; each approved by the user before it runs), signature animation patterns,
+motion/3D libraries, and copy-paste component/block registries.
 
 **The mandatory wow on a website is the ANIMATED WEBSITE.** On every
-`--type website` build the Tier-1 wow is fixed by the brief's `Animation mode`
+website build the Tier-1 wow is fixed by the brief's `Animation mode`
 (`references/website-flow.md` Phase 0): the DEFAULT is the **animated website** —
 the seam-locked scroll-scrub camera journey in `references/scroll-scrub.md` — and
 that is what "ships a real wow moment" MEANS here. This file is the ingredient
@@ -28,8 +29,8 @@ brief committed to — nothing lighter:
    effect DO NOT satisfy the animated-website requirement. Only when the brief
    records `Animation mode: non-animated` (the user picked Non-animated at intake)
    does a §2 signature effect / lighter technique become the Tier-1 wow.
-2. **≥1 bespoke generated asset**, downloaded into `app/public/` and actually
-   referenced — never stock, picsum, an icon-font hero, or a CSS-only hero. (§1)
+2. **≥1 bespoke generated asset**, saved into the site's assets folder
+   (`site/public/assets/` or `site/assets/`) and actually referenced — never stock, picsum, an icon-font hero, or a CSS-only hero. (§1)
 3. **Motivated entrance motion** (scroll reveals / spring transitions via
    `motion/react`, GSAP, or a registry reveal), `prefers-reduced-motion`-gated. Not a
    dead static page.
@@ -60,10 +61,12 @@ the animated website to a soft effect.
   add a proprietary/paid source (Unicorn Studio, Cult Pro, React Bits, Spline, Rive,
   Origin UI, hover.dev, Aceternity Pro, Motion+). What the end user adds to their own
   site later is their responsibility.
-- **SSR tags (Cloudflare Worker):** `[S]` static = server-safe anywhere. `[C]`
-  client-only = render under a mounted gate / client boundary, no `window` at module
-  top. `[W]` webgl/canvas = `[C]` **plus** `React.lazy` + code-split so it never
-  enters the SSR render path. See the SSR pattern at the bottom.
+- **Render tags:** `[S]` static = safe anywhere (also under build-time prerender).
+  `[C]` client-only = render under a mounted gate / client boundary, no `window` at
+  module top. `[W]` webgl/canvas = `[C]` **plus** `React.lazy` + code-split so it
+  loads only when needed. See the client-only pattern at the bottom (React); in a
+  plain HTML site every `[C]`/`[W]` item simply initializes after `DOMContentLoaded`.
+  Registry components (§5) are React + Tailwind only.
 - **Motion budget:** one signature/hero effect per page (don't stack two). Motion must
   be motivated (`design-recipe.md` §6). Honor `prefers-reduced-motion`:
   every animated effect needs a static fallback.
@@ -73,45 +76,50 @@ the animated website to a soft effect.
 ## 1. Generate bespoke AI assets — this is our biggest edge
 
 A site with real, generated art looks dramatically cooler than one built from stock,
-icon-fonts, CSS gradients, or empty placeholders — and generating it is **our
-product's superpower**. Treat bespoke asset generation as a **default step on every
-build**, not an afterthought. A hero with a generated image / video / 3D subject is
-often the single biggest wow upgrade available.
+icon-fonts, CSS gradients, or empty placeholders — and generating it is **this
+skill's biggest edge**. Treat bespoke asset generation as a **default step on every
+build**, not an afterthought. A hero with a generated image / film is often the
+single biggest wow upgrade available. Every generation is shown to the user and
+approved first (`references/asset-system.md` owns the permission rule).
 
-**Commands** (`higgsfield generate create <job_type> --prompt "…" [flags]`).
-Jobs are async — **submit (no `--wait` when batching; each prints a job id) →
-poll `higgsfield generate wait <id>` / `higgsfield generate get <id>` → use the
-result** (a single job can pass `--wait` to block and print the result URL). If
-a param/model is rejected, run `higgsfield model list` +
-`higgsfield model get <job_type>` and use what they report.
+**Commands** (run from repo root; each blocks until done, prints `url ...`, saves `-o`):
 
-- Images — `gpt_image_2` (general / art-directed), `nano_banana_pro`
-  (photoreal + reference-image driven, e.g. try-ons / product normalization).
-- Video — `seedance_2_0` (seamless loops + short films).
-- `image_background_remover` — turn a product/subject shot into a transparent
-  PNG cutout.
-- `multi_image_to_3d` — turn 1-4 approved images into a textured `.glb`
-  (repeated `--image`, `--should_texture true`; no rigging).
+```bash
+python3 scripts/kie_image.py "prompt" -a 16:9 -r 1K -o site/refs/x.png            # GPT Image 2.5 Flare
+python3 scripts/kie_image.py "edit prompt" -a 16:9 -o out.png -i <public url>     # image-to-image / reference-driven
+python3 scripts/kie_image.py "prompt" -a 1:1 --background transparent -o cut.png  # transparent cutout
+python3 scripts/kie_video.py "prompt" -a 16:9 -d 6 --first-frame <url> -o x.mp4   # Gemini Omni Flash 1.1, 4/6/8/10 s
+python3 scripts/kie_upload.py path/to/file.png                                    # public URL for -i / --first-frame
+```
 
-**Pipeline:** generate → poll → **download into `app/public/`** (e.g. `assets/`,
-`media/`, `frames/`) → reference **same-origin** (`/assets/...`). The Worker serves
-`public/` at the root. Never ship `<img src="">` / `<video src="">` blanks or
+- Images — GPT Image 2.5 Flare (general, art-directed, photoreal, typography;
+  reference-driven edits such as product normalization use `-i`).
+- Video — Gemini Omni Flash 1.1 (loops, short films; 16:9 or 9:16; also makes audio,
+  so ask for silence and strip it).
+- No background-remover, upscaler, outpainting or 3D-model generation: cutouts use
+  `--background transparent`, wide plates are generated at `-a 21:9`, 3D is
+  procedural code.
+
+**Pipeline:** approved list → generate → **save into the assets folder** (e.g.
+`assets/`, `media/`, `frames/`) → reference **same-origin** (`/assets/...`; Vite
+serves `public/` at the root). Never ship `<img src="">` / `<video src="">` blanks or
 stock/picsum as the final asset.
 
 **What to generate, and where it lands:**
 - **Hero image / background** — the centerpiece visual (full-bleed or behind glass).
 - **Section textures / atmospheric plates** — backdrops that crossfade per section.
-- **Video loop / showreel** — a seamless `seedance_2_0` clip for a hero or band.
-- **Product cutouts** — generate the image → `image_background_remover` →
-  transparent PNG.
-- **3D subject** — approved image → `multi_image_to_3d` → `.glb` for an R3F scene.
-- **OG image + favicon** — generate, wire into `<head>` / `app-meta`.
+- **Video loop / showreel** — a seamless Gemini Omni Flash clip (`--first-frame` and
+  `--last-frame` on the same image) for a hero or band.
+- **Product cutouts** — generate with `--background transparent` → transparent PNG.
+- **3D subject** — no model generation: procedural three.js, or an orbit clip
+  scrubbed as frames.
+- **OG image + favicon** — generate, wire into `<head>` (`references/seo.md`).
 - **People / avatars / testimonial faces, icon & logo glyphs** — bespoke, not stock.
 
 **Rules:** prompt for "no text, no logos, no watermark" (IP-safe + lets you set type
 in HTML); match the palette/mood to the brief; downscale large outputs (hero ≤2k,
-cutouts ~800px); **verify an image before the expensive `multi_image_to_3d`
-step**; for a monochrome look force grayscale in the prompt AND on export.
+cutouts ~800px); **verify an image before spending on a video that starts from
+it**; for a monochrome look force grayscale in the prompt AND on export.
 
 ---
 
@@ -119,7 +127,7 @@ step**; for a monochrome look force grayscale in the prompt AND on export.
 
 High-impact, award-tier mechanics — build any of these from scratch with the libs
 named, adapt them to the brief, combine, or invent your own. These are ideas, not
-mandates. Pair every one with generated assets (§1) and the SSR pattern (bottom).
+mandates. Pair every one with generated assets (§1) and the client-only pattern (bottom).
 
 - **Particle-morph hero** `[W]` — ~4-6k Three.js instanced points that morph through
   the scroll (sphere → the product's silhouette → disperse), recolored/relit per
@@ -134,16 +142,17 @@ mandates. Pair every one with generated assets (§1) and the SSR pattern (bottom
   while the next approaches from depth and the bg color lerps; drag/wheel/tabs +
   spring snap + autoplay. *Build:* `@react-three/fiber` + `gsap`, scenes as data.
   *Fits:* multi-variant product / flavor showcases.
-- **Hold-to-spin 3D showroom** `[W]` — a clay/toy-look turntable: a 3D subject on a
+- **Hold-to-spin showroom** `[W]`/`[C]` — a clay/toy-look turntable: a subject on a
   stepped platform, hold to spin with inertia, click hotspots for detail. *Build:*
-  `three` + `@react-three/fiber` + `@react-three/drei` (+ `image_to_3d` assets).
+  procedural `three` + `@react-three/fiber` + `@react-three/drei` geometry, or a
+  generated orbit clip scrubbed as frames on a `<canvas>` (no 3D model files).
   *Fits:* apparel, physical products, collectibles.
 - **Cursor X-ray reveal** `[C]` — a full-screen photo with an aligned "X-ray"
   substrate beneath; a soft feathered lens follows the cursor and dissolves the cover
   into the truth underneath. *Build:* pure React + a CSS `mask-image` at the cursor,
   no 3D/GSAP. *Fits:* editorial deep-dives, "look inside" product stories. (Strictly
   B&W + one breathing accent reads most premium.)
-- **Scroll-scrub film** `[C]` — an AI-generated ~15s film extracted to frames and
+- **Scroll-scrub film** `[C]` — an AI-generated 6-10 s film extracted to frames and
   drawn on a `<canvas>`, scrubbed forward/back by scroll, caption cards fading in.
   *Build:* generate the film (§1) → ffmpeg frames into `public/frames/` → canvas +
   rAF scrub. *Fits:* high-impact brand reveals / launches (dark, cinematic).
@@ -188,9 +197,9 @@ mandates. Pair every one with generated assets (§1) and the SSR pattern (bottom
 
 ---
 
-## 4. Framework toolkit (npm deps — add to `app/package.json` when used)
+## 4. Framework toolkit (npm deps — add to `site/package.json` when used)
 
-| Library (npm) | License | Wow it adds | SSR |
+| Library (npm) | License | Wow it adds | Render |
 |---|---|---|---|
 | `motion` (`motion/react`) | MIT | enter/exit (`AnimatePresence`), layout/FLIP, springs, `useScroll`/`useInView`, gestures | `[C]` |
 | `gsap` + `@gsap/react` | GSAP Standard License (free, all plugins) | ScrollTrigger pinned/scrubbed sequences, timelines, `SplitText`; use `useGSAP()` | `[C]` |
@@ -215,11 +224,12 @@ not `preset=` (it fetches a CDN at runtime). Keep all `three`/shader code in a
 
 ## 5. Component & block directory (copy-paste; the source lands in the repo)
 
-`shadcn add` drops the component SOURCE into `app/src/components/` — the user owns it.
-Namespaced registries must be registered in `app/components.json` first (block below);
+`shadcn add` drops the component SOURCE into `site/src/components/` — the user owns it
+(React + Tailwind projects only; run `npx shadcn@latest init` in `site/` first).
+Namespaced registries must be registered in `site/components.json` first (block below);
 URL-based ones install directly.
 
-### `app/components.json` → `registries`
+### `site/components.json` → `registries`
 ```jsonc
 "registries": {
   "@magicui":           "https://magicui.design/r/{name}.json",
@@ -266,10 +276,13 @@ Text `[C]`: `wavytext`/`blurintext`/`wordpullup`/`letterpullup`/`fadetext`/`grad
 
 ---
 
-## 6. SSR pattern (use for every `[C]` / `[W]` item)
+## 6. Client-only pattern (React; use for every `[C]` / `[W]` item)
+
+Plain Vite React has no server render, but keep the pattern: it costs nothing and
+keeps the code valid if the site is later prerendered or moved to a framework.
 
 ```tsx
-// app/src/components/client-only.tsx — render children only after mount
+// site/src/components/client-only.tsx — render children only after mount
 import { useEffect, useState, type ReactNode } from "react";
 export function ClientOnly({ children, fallback = null }: { children: ReactNode; fallback?: ReactNode }) {
   const [m, setM] = useState(false);
@@ -278,7 +291,7 @@ export function ClientOnly({ children, fallback = null }: { children: ReactNode;
 }
 ```
 ```tsx
-// [W] WebGL: lazy + ClientOnly so three/shaders never run during SSR
+// [W] WebGL: lazy + ClientOnly so three/shaders load only on the client
 const Scene = lazy(() => import("./scene")); // default export
 <ClientOnly fallback={<div className="min-h-dvh bg-[var(--bg)]" />}>
   <Suspense fallback={null}><Scene /></Suspense>

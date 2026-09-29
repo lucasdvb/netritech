@@ -1,5 +1,10 @@
 # design-recipe — the distilled craft playbook (read on EVERY build)
 
+For SPM sites read `docs/spm-brand-brief.md` first: the brand's palette
+(Ink navy #0D141F, Deep navy #1B2A38, Steel blue #43617A, Teal #22808A, Light grey
+#DADDE0), typography and voice are the user's explicit brand and override the
+palette/type defaults and bans below.
+
 This is the short, always-read version of `design-taste-frontend.md`. Follow it as
 written; open the full playbook only where this file explicitly defers to it. Every
 rule here exists because the default LLM output violates it.
@@ -66,7 +71,7 @@ rule here exists because the default LLM output violates it.
   the CTAs, trust micro-strip, pricing teaser, feature bullets, avatar rows,
   version labels (`BETA`, `v2.0`), "Brand · No. 01" micro-meta. Logo walls go in
   their own section BELOW the hero.
-- **The hero needs a real visual** (the Phase 1 generated asset). Text + gradient
+- **The hero needs a real visual** (the Phase 2 generated asset, or the user's own). Text + gradient
   blob is a placeholder, not a hero. Div-built fake product UI (fake task list,
   fake terminal, fake dashboard) is the #1 LLM tell — use a real screenshot,
   generated image, real component preview, or nothing.
@@ -153,15 +158,16 @@ rule here exists because the default LLM output violates it.
 
 ## 8. Images & icons
 
-- Priority: (1) generated bespoke assets (Phase 1 — always available in this
-  environment, so picsum/stock is NOT an acceptable final state), (2) real brand
-  URLs from the brief, (3) clearly-labeled TODO slots + tell the user.
+- Priority: (1) the user's own assets and generated bespoke assets (Phase 2 —
+  generated with the user's yes, so picsum/stock is NOT an acceptable final
+  state), (2) real brand URLs from the brief, (3) clearly-labeled TODO slots + tell
+  the user.
 - Even minimalist sites need 2-3 real images. Pure-text is incomplete, not minimal.
 - Logo walls: real SVG marks (Simple Icons CDN / `simple-icons`), logos ONLY (no
   category captions under each logo). Invented brands get an invented inline-SVG
   monogram, not a styled `<span>`.
 - **Icons: generated set first.** The site's visible icons come from the
-  Higgsfield-generated custom icon set (`asset-system.md` §4) — one consistent
+  generated custom icon set (`asset-system.md` item 4) — one consistent
   stroke style in the brand palette. Library icons (Phosphor / Radix / Tabler;
   Lucide on request) are the fallback for dense functional UI (forms, tables,
   20+ tiny glyphs). Never mix the two sets in one visual zone. No hand-rolled
