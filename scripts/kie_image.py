@@ -39,6 +39,7 @@ def main():
     p.add_argument("-a", "--aspect", default="auto")
     p.add_argument("-r", "--resolution", default="1K", choices=["1K", "2K", "4K"])
     p.add_argument("-i", "--input-url", action="append", default=[])
+    p.add_argument("-m", "--model", help="override model id, e.g. gpt-image-2-5-sunburst-text-to-image")
     p.add_argument("--background", default="opaque", choices=["transparent", "opaque", "auto"])
     a = p.parse_args()
 
@@ -46,7 +47,7 @@ def main():
     inp = {"prompt": a.prompt, "aspect_ratio": a.aspect, "resolution": a.resolution, "background": a.background}
     if a.input_url:
         inp["input_urls"] = a.input_url
-    res = call("/createTask", key, {"model": I2I if a.input_url else T2I, "input": inp})
+    res = call("/createTask", key, {"model": a.model or (I2I if a.input_url else T2I), "input": inp})
     if res.get("code") != 200:
         sys.exit(f"createTask failed: {res}")
     task = res["data"]["taskId"]
