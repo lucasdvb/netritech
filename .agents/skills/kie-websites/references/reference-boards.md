@@ -7,20 +7,25 @@ recovers from it. Budget real effort here.
 ## The output rule
 
 Generate **ONE horizontal design-reference image PER SECTION** with
-`higgsfield generate create <job_type> --prompt "…"` (strong model:
-`gpt_image_2` or `nano_banana_pro`).
+`python3 scripts/kie_image.py "<board prompt>" -a 16:9 -r 1K -o site/refs/board-NN-<section>.png`
+(GPT Image 2.5 Flare; `-a 3:2` also works; landscape only).
 6 sections = 6 boards. Never one tall full-page image (detail gets mushy and
-per-section composition variety dies). Aspect: 16:9 or 3:2, landscape.
+per-section composition variety dies).
 
-Submit all boards as async jobs at once (no `--wait`; collect the printed job
-ids), keep working while they render, poll `higgsfield generate wait <id>` /
-`higgsfield generate get <id>`, download into the repo's `refs/` directory
-(working artifact — NOT `app/public/`).
+**Permission:** show the user the itemized board list first (section, final
+prompt, aspect, 1K, one output each) and wait for an explicit yes. Once approved,
+run the boards concurrently in the background and keep working while they render.
+Boards land in `site/refs/` (working artifact, NOT the shipped assets folder).
+Re-rolls and detail crops are a new ask.
+
+For SPM sites read `docs/spm-brand-brief.md` first and name the brand palette hexes
+(Ink navy #0D141F, Deep navy #1B2A38, Steel blue #43617A, Teal #22808A, Light grey
+#DADDE0) in every board prompt; the brand palette overrides the bans below.
 
 ## The combinatorial pick (commit BEFORE prompting)
 
 To avoid the AI defaults, pick ONE option per category, write the pick into
-`app/design-brief.md`, and hold it across ALL boards. Do not mash categories;
+`site/design-brief.md`, and hold it across ALL boards. Do not mash categories;
 pick a strong combination and execute it consistently.
 
 - **Theme paradigm:** Pristine Light (paper/cream/off-white, dark ink) ·
@@ -92,18 +97,19 @@ paradigm + exact palette words], [typography character] typography, [hero
 architecture / composition anchor], [background mode], [narrative spine
 motif], professional layout, clear hierarchy and spacing, award-winning web
 design" — plus: "no watermark, no browser chrome". Boards are the design
-source of truth — request the model's HIGH quality setting explicitly (don't
-let it default to low). Name real content in the
-prompt (the actual headline wording you plan) so type sits believably.
+source of truth — state "high-fidelity, crisp typography, fine detail" in the
+prompt. Name real content in the prompt (the actual headline wording you plan) so
+type sits believably; the model renders text well.
 
 ## The re-roll rule (mandatory — LOOK at every board)
 
-Read every downloaded board image. For each, ask: "would this survive on a
+Read every saved board image (if the result host is blocked, hand the user the
+printed URLs and ask for their read). For each, ask: "would this survive on a
 studio's dribbble page, or does it read as a template?" If a board is generic
 (centered dark hero, glowing gradient blob, default card trio, dashboard spam,
-beige serif "luxury"), re-roll it with an escalated direction (push the
-composition anchor harder, or swap the background mode). Budget: up to 2
-re-rolls per build. A board that fails twice → change the category pick, not
+beige serif "luxury"), propose a re-roll with an escalated direction (push the
+composition anchor harder, or swap the background mode) and ask before running
+it. Budget: up to 2 re-rolls per build. A board that fails twice → change the category pick, not
 just the wording.
 
 ## Hero-board minimalism rules

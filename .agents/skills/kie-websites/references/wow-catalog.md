@@ -2,10 +2,12 @@
 
 The Tier-1 mechanic is the thing a visitor remembers. One per page, chosen in
 the design brief, fully executed — and chosen from THIS catalog, not from the
-first idea that comes to mind. Every technique here leans on Higgsfield
-generation: the wow is bespoke media responding to input, not a CSS trick.
+first idea that comes to mind. Every technique here leans on KIE-generated
+media (GPT Image 2.5 Flare stills, Gemini Omni Flash clips, all approved by the
+user before they run): the wow is bespoke media responding to input, not a CSS
+trick.
 
-**The default is the animated website (A4).** Every `--type website` build is
+**The default is the animated website (A4).** Every website build is
 an **animated website** — the seam-locked scroll-scrub camera journey (A4) — and
 you do NOT open this menu unless the user EXPLICITLY asked for a different
 treatment. Skip straight to `references/scroll-scrub.md`. The rules below apply
@@ -30,9 +32,10 @@ only on that explicit-alternative path.
 
 ### A. Film scrub family (scroll plays generated video)
 
-- **A1 — Single-shot hero scrub.** One ~5s seedance clip from the approved
-  hero still (push-in, rack focus, subject turn, light sweep; start ≠ end).
-  ffmpeg → ~100 frames → canvas bound to pin progress. The proven baseline.
+- **A1 — Single-shot hero scrub.** One 6 s clip from the approved hero still
+  (`--first-frame`; push-in, rack focus, subject turn, light sweep; start ≠ end).
+  ffmpeg → ~120 frames → canvas bound to pin progress. The proven baseline
+  (`asset-system.md` item 8).
 - **A2 — Long-form chaptered scrub.** The upgrade: 2-4 clips (same grade,
   different beats — e.g. wide establishing → detail macro → reveal) played
   across a LONG pin (300-500vh). Between chapters, pinned text cards, layered
@@ -56,18 +59,22 @@ only on that explicit-alternative path.
 
 ### B. Layered depth family (one image becomes a 3D-feeling scene)
 
-- **B1 — Cutout parallax rig.** Take the hero image, cut out the subject
-  (`image_background_remover`), generate/outpaint a clean background plate
-  behind it (+ optionally
-  a mid layer: fog, foliage, particles as transparent PNGs). Stack 3-5 layers
+- **B1 — Cutout parallax rig.** Generate the subject as a transparent cutout
+  (`--background transparent`, or image-to-image from the hero with "subject only
+  on a flat ground" and key the ground out with ffmpeg), plus a clean background
+  plate behind it (image-to-image from the hero: "same scene, subject removed,
+  empty plate") (+ optionally a mid layer: fog, foliage, particles as transparent
+  PNGs). Stack 3-5 layers
   moving at different rates on scroll AND subtly on cursor. The hero feels
   volumetric. Cheap, robust, dramatic.
 - **B2 — Grade-shift interaction pair.** Two renders of the SAME composition
-  (image-edit re-grade: dark/dormant vs. lit/alive). Crossfade by cursor
+  (image-to-image re-grade with the base as `-i`: dark/dormant vs. lit/alive). Crossfade by cursor
   spotlight (mask follows pointer) or by scroll. The "the site notices you"
   effect.
-- **B3 — 3D subject scene.** Approved hero image → `multi_image_to_3d` GLB →
-  R3F scene with scroll-driven camera orbit + cursor tilt. Spectacle tier.
+- **B3 — Procedural 3D scene.** No 3D-model generation exists: build the subject
+  in three.js/R3F from primitives, shaders or instanced points, textured with the
+  approved generated plates, with scroll-driven camera orbit + cursor tilt.
+  Spectacle tier.
 
 ### C. Canvas/pixel family (the image itself is alive)
 
@@ -84,7 +91,8 @@ only on that explicit-alternative path.
 ### D. Spatial layout family (the page itself moves unusually)
 
 - **D1 — Horizontal cinema rail.** A pinned section pans horizontally through
-  a WIDE generated panorama (outpaint the hero sideways) or a sequence of
+  a WIDE generated panorama (generate at `-a 21:9` from the hero as `-i`, "extend
+  the scene sideways, same grade") or a sequence of
   scene plates; content cards ride the rail. The scroll axis rotation itself
   is the surprise.
 - **D2 — Sticky-stack chapters.** Full-bleed chapters stack/peel over each
