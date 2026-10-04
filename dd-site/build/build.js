@@ -8,7 +8,7 @@ const { mono } = require('./mono.js');
 const ROOT = path.join(__dirname, '..');
 const rd = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
 
-const minCss = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\n\s*/g, '').replace(/\s*([{};])\s*/g, '$1').trim();
+const minCss = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\n\s*/g, '').replace(/\s*([{};])\s*/g, '$1').replace(/\}/g, '}\n').replace(/\n+/g, '\n').trim();
 const tl = (s) => '`' + s.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${') + '`';
 
 function oldPage(key) {
@@ -74,7 +74,7 @@ async function buildPage(key) {
 const DD = (window.__DD = window.__DD || { pages: {} });
 DD.pages[${JSON.stringify(key)}] = {
 ${meta}
-  ld: ${JSON.stringify(old.ld)},
+  ld: ${JSON.stringify(old.ld, null, 1)},
   css: ${tl(minCss(p.css || ''))},
   html: ${tl(p.html)},${g ? `
   // Hero gradient: GetLayers "${g.id}", tinted greyscale through its CONFIG. The shader is untouched.

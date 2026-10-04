@@ -53,7 +53,7 @@ async function clean(fnSrc) {
   code = code.replace(/`#version 300 es[\s\S]*?`/g, (glsl) => glsl
     .replace(/\/\*[\s\S]*?\*\//g, '')
     .replace(/\/\/.*?(?=\\n|`)/g, '')
-    .replace(/(?:[ \t]*\\n)+/g, '\\n'));
+    .replace(/(?:[ \t]*\\n)+/g, '\n'));
   if (/\u2014/.test(code)) throw new Error('em dash left in gradient code');
   return code;
 }

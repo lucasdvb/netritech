@@ -7,8 +7,169 @@ DD.pages["automation"] = {
   title: "Marketing automation and CRM in Mauritius",
   description: "CRM and marketing automation for Mauritian businesses: every enquiry in one place, a reply in minutes, and follow-up that runs on its own.",
   section: "services",
-  ld: {"@context":"https://schema.org","@graph":[{"@type":"Service","@id":"https://disruptivedodo.mu/services/marketing-automation-crm#service","name":"Automation and CRM","serviceType":"Marketing automation and CRM","description":"CRM and marketing automation for Mauritian businesses: every enquiry in one place, a reply in minutes, and follow-up that runs on its own.","inLanguage":"en","areaServed":{"@type":"Country","name":"Mauritius"},"provider":{"@type":"Organization","name":"Disruptive Dodo","url":"https://disruptivedodo.mu/"},"url":"https://disruptivedodo.mu/services/marketing-automation-crm","isRelatedTo":{"@type":"Service","name":"Fledge","url":"https://disruptivedodo.mu/fledge"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://disruptivedodo.mu/"},{"@type":"ListItem","position":2,"name":"Services","item":"https://disruptivedodo.mu/services"},{"@type":"ListItem","position":3,"name":"Automation and CRM","item":"https://disruptivedodo.mu/services/marketing-automation-crm"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a CRM, in plain words?","acceptedAnswer":{"@type":"Answer","text":"One place where you keep every enquiry and every customer, with their messages, calls, quotes and history. Your whole team sees the same thing."}},{"@type":"Question","name":"Which CRM do you use?","acceptedAnswer":{"@type":"Answer","text":"We build on GoHighLevel, which brings your inbox, pipeline, booking, email and automation into one place. If you already use a CRM, we look at it first and tell you honestly whether to keep it."}},{"@type":"Question","name":"Can it work with WhatsApp?","acceptedAnswer":{"@type":"Answer","text":"Yes. WhatsApp messages can land in the same inbox as everything else, and your team can get a WhatsApp alert for every new enquiry."}},{"@type":"Question","name":"Will my customers know the replies are automatic?","acceptedAnswer":{"@type":"Answer","text":"The first reply tells them you have their message and what happens next. Real conversations stay with your team. If you want an assistant that answers questions too, see AI implementation."}},{"@type":"Question","name":"Do I need to change how my team works?","acceptedAnswer":{"@type":"Answer","text":"A little, for the better. We build around how you already sell, then show your team the new way. Most of what it removes is copying, chasing and remembering."}},{"@type":"Question","name":"How long does the setup take?","acceptedAnswer":{"@type":"Answer","text":"[About 2 to 3 weeks, to confirm.] It depends on how many channels and steps we connect."}},{"@type":"Question","name":"Can you move our contacts from spreadsheets?","acceptedAnswer":{"@type":"Answer","text":"Yes. We bring your existing contacts and customers into the CRM, cleaned up, so your team starts with everything in one place."}},{"@type":"Question","name":"Is this only for large businesses?","acceptedAnswer":{"@type":"Answer","text":"No. Small teams often gain the most, because every enquiry counts and nobody has time to chase them by hand."}}]}]},
-  css: `.sp-part{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:rgba(243,241,234,.6)}.sp-part .cap{color:inherit}.sp-part .tag{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#f3f1ea;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.sp-part:hover .tag{border-color:rgba(255,255,255,.3)}.sp-ban{margin-bottom:clamp(64px,8vw,120px)}.flc{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:40px var(--gap);padding:clamp(28px,4vw,64px);border-radius:var(--rx);background:var(--card);border:1px solid var(--ln);box-shadow:var(--sh2);position:relative;overflow:hidden;isolation:isolate}.flc>*{grid-column:1/-1}@media (min-width:1024px){.flc .a{grid-column:1/span 5}.flc .b{grid-column:7/-1}}.flc::before{content:"";position:absolute;inset:auto -10% -40% 30%;height:80%;background:radial-gradient(closest-side,rgba(215,213,205,.12),transparent);z-index:-1}.flc .kick{color:var(--fg)}.stg{display:grid;gap:10px}.stg>li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:16px;align-items:center;padding:18px 20px;border-radius:16px;border:1px solid var(--ln);background:var(--card2);color:var(--mu)}.stg .n{font-size:13px}.stg .nm{font-size:18px;color:var(--fg);letter-spacing:-.01em}.stg .lnn{font-size:14px;margin-top:2px}.stg>li.on{background:var(--inv);color:#62615b;border-color:transparent;--fg:var(--inv-fg)}.stg .this{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;white-space:nowrap;color:var(--fg)}.stg .this::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}@media (max-width:639px){.stg>li{grid-template-columns:32px minmax(0,1fr)}.stg .this{grid-column:2}}.pcard{display:block;padding:12px;border-radius:var(--r3)}.pcard .ph{border-radius:20px;box-shadow:none}.pcard .row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:20px 12px 8px}.pcard .tx{padding:0 12px 10px}.flow{position:relative;display:grid;gap:clamp(20px,2.4vw,36px);max-width:1180px;margin-inline:auto}.flow-line{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--ln);transform:translateX(-50%)}.flow-line>i{position:absolute;inset:0;background:var(--fg);transform-origin:top;transform:scaleY(var(--p,0))}.flow>li{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:clamp(48px,7vw,120px)}.flow>li .card{padding:28px;max-width:470px}.flow>li.fl .card{grid-column:1;justify-self:end}.flow>li.fr .card{grid-column:2;justify-self:start}.flow .node{position:absolute;left:50%;top:34px;width:13px;height:13px;margin-left:-6.5px;border-radius:50%;background:var(--bg);border:1px solid var(--ls);transition:background .5s,border-color .5s,box-shadow .5s;z-index:1}.flow>li.on .node{background:var(--fg);border-color:var(--fg);box-shadow:0 0 0 6px rgba(243,241,234,.08)}@media (min-width:768px){.flow>li+li{margin-top:-72px}}@media (max-width:767px){.flow-line{left:6px}.flow>li{grid-template-columns:1fr;padding-left:32px}.flow>li .card{grid-column:1!important;justify-self:stretch!important;max-width:none}.flow .node{left:6px}}`,
+  ld: {
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Service",
+   "@id": "https://disruptivedodo.mu/services/marketing-automation-crm#service",
+   "name": "Automation and CRM",
+   "serviceType": "Marketing automation and CRM",
+   "description": "CRM and marketing automation for Mauritian businesses: every enquiry in one place, a reply in minutes, and follow-up that runs on its own.",
+   "inLanguage": "en",
+   "areaServed": {
+    "@type": "Country",
+    "name": "Mauritius"
+   },
+   "provider": {
+    "@type": "Organization",
+    "name": "Disruptive Dodo",
+    "url": "https://disruptivedodo.mu/"
+   },
+   "url": "https://disruptivedodo.mu/services/marketing-automation-crm",
+   "isRelatedTo": {
+    "@type": "Service",
+    "name": "Fledge",
+    "url": "https://disruptivedodo.mu/fledge"
+   }
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+     "item": "https://disruptivedodo.mu/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Services",
+     "item": "https://disruptivedodo.mu/services"
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "name": "Automation and CRM",
+     "item": "https://disruptivedodo.mu/services/marketing-automation-crm"
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "What is a CRM, in plain words?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "One place where you keep every enquiry and every customer, with their messages, calls, quotes and history. Your whole team sees the same thing."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Which CRM do you use?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "We build on GoHighLevel, which brings your inbox, pipeline, booking, email and automation into one place. If you already use a CRM, we look at it first and tell you honestly whether to keep it."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Can it work with WhatsApp?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. WhatsApp messages can land in the same inbox as everything else, and your team can get a WhatsApp alert for every new enquiry."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Will my customers know the replies are automatic?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "The first reply tells them you have their message and what happens next. Real conversations stay with your team. If you want an assistant that answers questions too, see AI implementation."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do I need to change how my team works?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "A little, for the better. We build around how you already sell, then show your team the new way. Most of what it removes is copying, chasing and remembering."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How long does the setup take?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "[About 2 to 3 weeks, to confirm.] It depends on how many channels and steps we connect."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Can you move our contacts from spreadsheets?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. We bring your existing contacts and customers into the CRM, cleaned up, so your team starts with everything in one place."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Is this only for large businesses?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No. Small teams often gain the most, because every enquiry counts and nobody has time to chase them by hand."
+     }
+    }
+   ]
+  }
+ ]
+},
+  css: `.sp-part{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:rgba(243,241,234,.6)}
+.sp-part .cap{color:inherit}
+.sp-part .tag{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#f3f1ea;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.sp-part:hover .tag{border-color:rgba(255,255,255,.3)}
+.sp-ban{margin-bottom:clamp(64px,8vw,120px)}
+.flc{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:40px var(--gap);padding:clamp(28px,4vw,64px);border-radius:var(--rx);background:var(--card);border:1px solid var(--ln);box-shadow:var(--sh2);position:relative;overflow:hidden;isolation:isolate}
+.flc>*{grid-column:1/-1}
+@media (min-width:1024px){.flc .a{grid-column:1/span 5}
+.flc .b{grid-column:7/-1}
+}
+.flc::before{content:"";position:absolute;inset:auto -10% -40% 30%;height:80%;background:radial-gradient(closest-side,rgba(215,213,205,.12),transparent);z-index:-1}
+.flc .kick{color:var(--fg)}
+.stg{display:grid;gap:10px}
+.stg>li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:16px;align-items:center;padding:18px 20px;border-radius:16px;border:1px solid var(--ln);background:var(--card2);color:var(--mu)}
+.stg .n{font-size:13px}
+.stg .nm{font-size:18px;color:var(--fg);letter-spacing:-.01em}
+.stg .lnn{font-size:14px;margin-top:2px}
+.stg>li.on{background:var(--inv);color:#62615b;border-color:transparent;--fg:var(--inv-fg)}
+.stg .this{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;white-space:nowrap;color:var(--fg)}
+.stg .this::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+@media (max-width:639px){.stg>li{grid-template-columns:32px minmax(0,1fr)}
+.stg .this{grid-column:2}
+}
+.pcard{display:block;padding:12px;border-radius:var(--r3)}
+.pcard .ph{border-radius:20px;box-shadow:none}
+.pcard .row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:20px 12px 8px}
+.pcard .tx{padding:0 12px 10px}
+.flow{position:relative;display:grid;gap:clamp(20px,2.4vw,36px);max-width:1180px;margin-inline:auto}
+.flow-line{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--ln);transform:translateX(-50%)}
+.flow-line>i{position:absolute;inset:0;background:var(--fg);transform-origin:top;transform:scaleY(var(--p,0))}
+.flow>li{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:clamp(48px,7vw,120px)}
+.flow>li .card{padding:28px;max-width:470px}
+.flow>li.fl .card{grid-column:1;justify-self:end}
+.flow>li.fr .card{grid-column:2;justify-self:start}
+.flow .node{position:absolute;left:50%;top:34px;width:13px;height:13px;margin-left:-6.5px;border-radius:50%;background:var(--bg);border:1px solid var(--ls);transition:background .5s,border-color .5s,box-shadow .5s;z-index:1}
+.flow>li.on .node{background:var(--fg);border-color:var(--fg);box-shadow:0 0 0 6px rgba(243,241,234,.08)}
+@media (min-width:768px){.flow>li+li{margin-top:-72px}
+}
+@media (max-width:767px){.flow-line{left:6px}
+.flow>li{grid-template-columns:1fr;padding-left:32px}
+.flow>li .card{grid-column:1!important;justify-self:stretch!important;max-width:none}
+.flow .node{left:6px}
+}`,
   html: `<main>
   <section class="hero">
     <div class="hero-bg shade"></div>
@@ -172,8 +333,96 @@ DD.pages["automation"] = {
   powerPreference: "high-performance"
  });
  if (!gl) return null;
- const VERT = `#version 300 es\nvoid main() {\n  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);\n  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);\n}`;
- const FRAG = `#version 300 es\nprecision highp float;\nout vec4 fragColor;\nuniform vec2  iResolution;\nuniform float iTime;\nuniform vec2  iMouse;\nuniform vec2  iMouseVel;\nuniform vec3  uBg, uColorA, uColorB, uColorC, uColorD;\nuniform float uScale, uSpeed, uRise, uFlicker, uBedHeight, uCoal;\nuniform float uRoughness, uLacunarity, uContrast, uMidpoint, uSink, uGlow;\nuniform float uGrain, uDither, uVignette, uPointerRadius, uPointerStrength, uPointerLift;\nuniform float uWake, uParallax;\n#define OCTAVES 4\nfloat hash1(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }\nvec2 hash2(vec2 p) {\n  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));\n  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);\n}\nfloat snoise(vec2 p) {\n  const float K1 = 0.366025404, K2 = 0.211324865;\n  vec2 i = floor(p + (p.x + p.y) * K1);\n  vec2 a = p - i + (i.x + i.y) * K2;\n  float m = step(a.y, a.x);\n  vec2 o = vec2(m, 1.0 - m);\n  vec2 b = a - o + K2;\n  vec2 c = a - 1.0 + 2.0 * K2;\n  vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);\n  vec3 n = h * h * h * h * vec3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));\n  return dot(n, vec3(70.0));\n}\nfloat fbm(vec2 p) {\n  float v = 0.0, amp = 0.5;\n  for (int i = 0; i < OCTAVES; i++) {\n    v += amp * snoise(p);\n    p *= uLacunarity;\n    amp *= uRoughness;\n  }\n  return v;\n}\nvec3 ramp4(float t) {\n  vec3 c = mix(uColorA, uColorB, smoothstep(0.00, 0.36, t));\n  c = mix(c, uColorC, smoothstep(0.32, 0.70, t));\n  c = mix(c, uColorD, smoothstep(0.66, 1.00, t));\n  return c;\n}\nfloat triDither(vec2 fc) {\n  float a = fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453);\n  float b = fract(sin(dot(fc + 17.0, vec2(12.9898, 78.233))) * 43758.5453);\n  return (a + b - 1.0) / 255.0;\n}\nuniform float uGrainAnim;\nfloat houseGrain(vec2 fc) {\n  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)\n          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;\n  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;\n  float a = float(n & 0xffffu) / 65535.0;\n  n *= 3266489917u; n ^= n >> 16u;\n  float b = float(n & 0xffffu) / 65535.0;\n  return a + b - 1.0;\n}\nvoid main() {\n  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;\n  float t = iTime * uSpeed;\n  vec2 d = uv - iMouse;\n  float near = exp(-dot(d, d) / max(1e-4, uPointerRadius * uPointerRadius));\n  vec2 p = (uv - iMouse * uParallax) * uScale;\n  float lift = smoothstep(-0.6, 0.7, uv.y);\n  p.x -= iMouseVel.x * uWake * lift;\n  float bed = exp(-pow(max(0.0, uv.y + 0.32), 2.0) * (3.4 / max(0.05, uBedHeight)));\n  float coals = fbm(p * 2.3 + vec2(0.0, -t * 0.12)) * 0.5 + 0.5;\n  float heat = fbm(vec2(p.x * 1.4, p.y * 0.8 - t * uRise)) * 0.5 + 0.5;\n  float lick = fbm(vec2(p.x * 3.1 + heat * 0.6, p.y * 1.6 - t * uRise * 1.9)) * 0.5 + 0.5;\n  float f = bed * (uCoal * coals + 0.30) * 0.85 + heat * 0.26 * lift + lick * uFlicker * 0.20 * lift;\n  f = clamp(f + near * uPointerLift * bed, 0.0, 1.0);\n  f *= smoothstep(0.95, -0.30, uv.y) * 0.92 + 0.08;\n  f = clamp((f - uMidpoint) * uContrast + 0.5, 0.0, 1.0);\n  vec3 col = ramp4(f);\n  col += uColorD * uGlow * pow(f, 4.0);\n  col = mix(uBg, col, smoothstep(0.0, max(0.01, uSink), f) * 0.9 + 0.1);\n  col *= 1.0 - uVignette * dot(uv, uv);\n  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);\n    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }\n  col += triDither(gl_FragCoord.xy) * uDither;\n  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);\n}`;
+ const VERT = `#version 300 es
+void main() {
+  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}`;
+ const FRAG = `#version 300 es
+precision highp float;
+out vec4 fragColor;
+uniform vec2  iResolution;
+uniform float iTime;
+uniform vec2  iMouse;
+uniform vec2  iMouseVel;
+uniform vec3  uBg, uColorA, uColorB, uColorC, uColorD;
+uniform float uScale, uSpeed, uRise, uFlicker, uBedHeight, uCoal;
+uniform float uRoughness, uLacunarity, uContrast, uMidpoint, uSink, uGlow;
+uniform float uGrain, uDither, uVignette, uPointerRadius, uPointerStrength, uPointerLift;
+uniform float uWake, uParallax;
+#define OCTAVES 4
+float hash1(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }
+vec2 hash2(vec2 p) {
+  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+}
+float snoise(vec2 p) {
+  const float K1 = 0.366025404, K2 = 0.211324865;
+  vec2 i = floor(p + (p.x + p.y) * K1);
+  vec2 a = p - i + (i.x + i.y) * K2;
+  float m = step(a.y, a.x);
+  vec2 o = vec2(m, 1.0 - m);
+  vec2 b = a - o + K2;
+  vec2 c = a - 1.0 + 2.0 * K2;
+  vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);
+  vec3 n = h * h * h * h * vec3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));
+  return dot(n, vec3(70.0));
+}
+float fbm(vec2 p) {
+  float v = 0.0, amp = 0.5;
+  for (int i = 0; i < OCTAVES; i++) {
+    v += amp * snoise(p);
+    p *= uLacunarity;
+    amp *= uRoughness;
+  }
+  return v;
+}
+vec3 ramp4(float t) {
+  vec3 c = mix(uColorA, uColorB, smoothstep(0.00, 0.36, t));
+  c = mix(c, uColorC, smoothstep(0.32, 0.70, t));
+  c = mix(c, uColorD, smoothstep(0.66, 1.00, t));
+  return c;
+}
+float triDither(vec2 fc) {
+  float a = fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453);
+  float b = fract(sin(dot(fc + 17.0, vec2(12.9898, 78.233))) * 43758.5453);
+  return (a + b - 1.0) / 255.0;
+}
+uniform float uGrainAnim;
+float houseGrain(vec2 fc) {
+  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)
+          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;
+  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;
+  float a = float(n & 0xffffu) / 65535.0;
+  n *= 3266489917u; n ^= n >> 16u;
+  float b = float(n & 0xffffu) / 65535.0;
+  return a + b - 1.0;
+}
+void main() {
+  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;
+  float t = iTime * uSpeed;
+  vec2 d = uv - iMouse;
+  float near = exp(-dot(d, d) / max(1e-4, uPointerRadius * uPointerRadius));
+  vec2 p = (uv - iMouse * uParallax) * uScale;
+  float lift = smoothstep(-0.6, 0.7, uv.y);
+  p.x -= iMouseVel.x * uWake * lift;
+  float bed = exp(-pow(max(0.0, uv.y + 0.32), 2.0) * (3.4 / max(0.05, uBedHeight)));
+  float coals = fbm(p * 2.3 + vec2(0.0, -t * 0.12)) * 0.5 + 0.5;
+  float heat = fbm(vec2(p.x * 1.4, p.y * 0.8 - t * uRise)) * 0.5 + 0.5;
+  float lick = fbm(vec2(p.x * 3.1 + heat * 0.6, p.y * 1.6 - t * uRise * 1.9)) * 0.5 + 0.5;
+  float f = bed * (uCoal * coals + 0.30) * 0.85 + heat * 0.26 * lift + lick * uFlicker * 0.20 * lift;
+  f = clamp(f + near * uPointerLift * bed, 0.0, 1.0);
+  f *= smoothstep(0.95, -0.30, uv.y) * 0.92 + 0.08;
+  f = clamp((f - uMidpoint) * uContrast + 0.5, 0.0, 1.0);
+  vec3 col = ramp4(f);
+  col += uColorD * uGlow * pow(f, 4.0);
+  col = mix(uBg, col, smoothstep(0.0, max(0.01, uSink), f) * 0.9 + 0.1);
+  col *= 1.0 - uVignette * dot(uv, uv);
+  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);
+    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }
+  col += triDither(gl_FragCoord.xy) * uDither;
+  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+}`;
  function compile(type, src) {
   const sh = gl.createShader(type);
   gl.shaderSource(sh, src);

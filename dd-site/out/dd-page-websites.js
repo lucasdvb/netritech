@@ -7,8 +7,166 @@ DD.pages["websites"] = {
   title: "Web design Mauritius · Websites that bring enquiries",
   description: "Websites for Mauritian businesses, designed to be found on Google and to turn visitors into enquiries. Designed, written, built and looked after by our team.",
   section: "services",
-  ld: {"@context":"https://schema.org","@graph":[{"@type":"Service","@id":"https://disruptivedodo.mu/services/web-design#service","name":"Websites and SEO","serviceType":"Web design and SEO","description":"Websites for Mauritian businesses, designed to be found on Google and to turn visitors into enquiries. Designed, written, built and looked after by our team.","inLanguage":"en","areaServed":{"@type":"Country","name":"Mauritius"},"provider":{"@type":"Organization","name":"Disruptive Dodo","url":"https://disruptivedodo.mu/"},"url":"https://disruptivedodo.mu/services/web-design","isRelatedTo":{"@type":"Service","name":"Fledge","url":"https://disruptivedodo.mu/fledge"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://disruptivedodo.mu/"},{"@type":"ListItem","position":2,"name":"Services","item":"https://disruptivedodo.mu/services"},{"@type":"ListItem","position":3,"name":"Websites and SEO","item":"https://disruptivedodo.mu/services/web-design"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How much does a website cost in Mauritius?","acceptedAnswer":{"@type":"Answer","text":"It depends on the number of pages, the languages and what the site must do, such as bookings or online sales. After a free growth call, we send a fixed price before any work starts."}},{"@type":"Question","name":"How long does it take to build a website?","acceptedAnswer":{"@type":"Answer","text":"[About 4 weeks from the day we have your content, to confirm.] We agree the dates with you before we start."}},{"@type":"Question","name":"Will my website show up on Google?","acceptedAnswer":{"@type":"Answer","text":"We build every page to be found: the right titles, headings, descriptions and speed, and we connect your site to Google. Where you rank also depends on your competitors and takes time, so we don't promise a position. We show you the searches you appear for, every month."}},{"@type":"Question","name":"Do you redesign existing websites?","acceptedAnswer":{"@type":"Answer","text":"Yes. We look at what your current site does well, keep what works, and rebuild the rest."}},{"@type":"Question","name":"Can you build an online shop?","acceptedAnswer":{"@type":"Answer","text":"Yes. We build shops that take Mauritian card payments, with your delivery zones, order emails and product pages."}},{"@type":"Question","name":"What happens after launch?","acceptedAnswer":{"@type":"Answer","text":"We host and look after your site every month. [We fix any defect found in the first 90 days at no cost, to confirm as our standard.]"}},{"@type":"Question","name":"Do you write the content for the website?","acceptedAnswer":{"@type":"Answer","text":"Yes. We write the words for every page, in plain language, around what your customers search for. You review and approve everything before it goes live."}},{"@type":"Question","name":"Can you take over a website another company built?","acceptedAnswer":{"@type":"Answer","text":"Usually, yes. We look at how it was built and where it is hosted, then tell you honestly whether to keep it, fix it or rebuild it."}}]}]},
-  css: `.sp-part{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:rgba(243,241,234,.6)}.sp-part .cap{color:inherit}.sp-part .tag{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#f3f1ea;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.sp-part:hover .tag{border-color:rgba(255,255,255,.3)}.sp-ban{margin-bottom:clamp(64px,8vw,120px)}.flc{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:40px var(--gap);padding:clamp(28px,4vw,64px);border-radius:var(--rx);background:var(--card);border:1px solid var(--ln);box-shadow:var(--sh2);position:relative;overflow:hidden;isolation:isolate}.flc>*{grid-column:1/-1}@media (min-width:1024px){.flc .a{grid-column:1/span 5}.flc .b{grid-column:7/-1}}.flc::before{content:"";position:absolute;inset:auto -10% -40% 30%;height:80%;background:radial-gradient(closest-side,rgba(215,213,205,.12),transparent);z-index:-1}.flc .kick{color:var(--fg)}.stg{display:grid;gap:10px}.stg>li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:16px;align-items:center;padding:18px 20px;border-radius:16px;border:1px solid var(--ln);background:var(--card2);color:var(--mu)}.stg .n{font-size:13px}.stg .nm{font-size:18px;color:var(--fg);letter-spacing:-.01em}.stg .lnn{font-size:14px;margin-top:2px}.stg>li.on{background:var(--inv);color:#62615b;border-color:transparent;--fg:var(--inv-fg)}.stg .this{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;white-space:nowrap;color:var(--fg)}.stg .this::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}@media (max-width:639px){.stg>li{grid-template-columns:32px minmax(0,1fr)}.stg .this{grid-column:2}}.pcard{display:block;padding:12px;border-radius:var(--r3)}.pcard .ph{border-radius:20px;box-shadow:none}.pcard .row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:20px 12px 8px}.pcard .tx{padding:0 12px 10px}.bento{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}.bento>li{display:flex;flex-direction:column;justify-content:space-between;gap:56px;min-height:280px;padding:28px}.bento .b1,.bento .b6{grid-column:span 2}.bento .b1{grid-row:span 2;background:var(--inv);color:var(--inv-fg);--fg:var(--inv-fg);--mu:#62615b;border-color:transparent}.bento .b1 .h4{font-size:clamp(26px,2.4vw,40px);font-weight:var(--w-dsp);letter-spacing:-.035em;line-height:1.05}.bento .b1 .tx{max-width:40ch}@media (max-width:1023px){.bento{grid-template-columns:1fr 1fr}.bento .b1{grid-row:auto}.bento .b6{grid-column:span 1}}@media (max-width:639px){.bento{grid-template-columns:1fr}.bento>li{grid-column:auto!important;min-height:0}}`,
+  ld: {
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Service",
+   "@id": "https://disruptivedodo.mu/services/web-design#service",
+   "name": "Websites and SEO",
+   "serviceType": "Web design and SEO",
+   "description": "Websites for Mauritian businesses, designed to be found on Google and to turn visitors into enquiries. Designed, written, built and looked after by our team.",
+   "inLanguage": "en",
+   "areaServed": {
+    "@type": "Country",
+    "name": "Mauritius"
+   },
+   "provider": {
+    "@type": "Organization",
+    "name": "Disruptive Dodo",
+    "url": "https://disruptivedodo.mu/"
+   },
+   "url": "https://disruptivedodo.mu/services/web-design",
+   "isRelatedTo": {
+    "@type": "Service",
+    "name": "Fledge",
+    "url": "https://disruptivedodo.mu/fledge"
+   }
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+     "item": "https://disruptivedodo.mu/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Services",
+     "item": "https://disruptivedodo.mu/services"
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "name": "Websites and SEO",
+     "item": "https://disruptivedodo.mu/services/web-design"
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "How much does a website cost in Mauritius?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "It depends on the number of pages, the languages and what the site must do, such as bookings or online sales. After a free growth call, we send a fixed price before any work starts."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How long does it take to build a website?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "[About 4 weeks from the day we have your content, to confirm.] We agree the dates with you before we start."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Will my website show up on Google?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "We build every page to be found: the right titles, headings, descriptions and speed, and we connect your site to Google. Where you rank also depends on your competitors and takes time, so we don't promise a position. We show you the searches you appear for, every month."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do you redesign existing websites?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. We look at what your current site does well, keep what works, and rebuild the rest."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Can you build an online shop?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. We build shops that take Mauritian card payments, with your delivery zones, order emails and product pages."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "What happens after launch?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "We host and look after your site every month. [We fix any defect found in the first 90 days at no cost, to confirm as our standard.]"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do you write the content for the website?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. We write the words for every page, in plain language, around what your customers search for. You review and approve everything before it goes live."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Can you take over a website another company built?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Usually, yes. We look at how it was built and where it is hosted, then tell you honestly whether to keep it, fix it or rebuild it."
+     }
+    }
+   ]
+  }
+ ]
+},
+  css: `.sp-part{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:rgba(243,241,234,.6)}
+.sp-part .cap{color:inherit}
+.sp-part .tag{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#f3f1ea;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.sp-part:hover .tag{border-color:rgba(255,255,255,.3)}
+.sp-ban{margin-bottom:clamp(64px,8vw,120px)}
+.flc{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:40px var(--gap);padding:clamp(28px,4vw,64px);border-radius:var(--rx);background:var(--card);border:1px solid var(--ln);box-shadow:var(--sh2);position:relative;overflow:hidden;isolation:isolate}
+.flc>*{grid-column:1/-1}
+@media (min-width:1024px){.flc .a{grid-column:1/span 5}
+.flc .b{grid-column:7/-1}
+}
+.flc::before{content:"";position:absolute;inset:auto -10% -40% 30%;height:80%;background:radial-gradient(closest-side,rgba(215,213,205,.12),transparent);z-index:-1}
+.flc .kick{color:var(--fg)}
+.stg{display:grid;gap:10px}
+.stg>li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:16px;align-items:center;padding:18px 20px;border-radius:16px;border:1px solid var(--ln);background:var(--card2);color:var(--mu)}
+.stg .n{font-size:13px}
+.stg .nm{font-size:18px;color:var(--fg);letter-spacing:-.01em}
+.stg .lnn{font-size:14px;margin-top:2px}
+.stg>li.on{background:var(--inv);color:#62615b;border-color:transparent;--fg:var(--inv-fg)}
+.stg .this{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;white-space:nowrap;color:var(--fg)}
+.stg .this::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+@media (max-width:639px){.stg>li{grid-template-columns:32px minmax(0,1fr)}
+.stg .this{grid-column:2}
+}
+.pcard{display:block;padding:12px;border-radius:var(--r3)}
+.pcard .ph{border-radius:20px;box-shadow:none}
+.pcard .row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:20px 12px 8px}
+.pcard .tx{padding:0 12px 10px}
+.bento{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}
+.bento>li{display:flex;flex-direction:column;justify-content:space-between;gap:56px;min-height:280px;padding:28px}
+.bento .b1,.bento .b6{grid-column:span 2}
+.bento .b1{grid-row:span 2;background:var(--inv);color:var(--inv-fg);--fg:var(--inv-fg);--mu:#62615b;border-color:transparent}
+.bento .b1 .h4{font-size:clamp(26px,2.4vw,40px);font-weight:var(--w-dsp);letter-spacing:-.035em;line-height:1.05}
+.bento .b1 .tx{max-width:40ch}
+@media (max-width:1023px){.bento{grid-template-columns:1fr 1fr}
+.bento .b1{grid-row:auto}
+.bento .b6{grid-column:span 1}
+}
+@media (max-width:639px){.bento{grid-template-columns:1fr}
+.bento>li{grid-column:auto!important;min-height:0}
+}`,
   html: `<main>
   <section class="hero">
     <div class="hero-bg shade"></div>
@@ -176,8 +334,104 @@ DD.pages["websites"] = {
   powerPreference: "high-performance"
  });
  if (!gl) return null;
- const VERT = `#version 300 es\nvoid main() {\n  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);\n  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);\n}`;
- const FRAG = `#version 300 es\nprecision highp float;\nout vec4 fragColor;\nuniform vec2  iResolution;\nuniform float iTime;\nuniform vec2  iMouse;\nuniform vec3  uBg, uColorA, uColorB, uColorC, uColorD;\nuniform float uScale, uSpeed, uFlow, uWarp, uWarpScale, uRoughness, uLacunarity;\nuniform float uMassBias, uTilt, uSoftness, uSpill, uSeamWidth, uSeamGain, uBloom;\nuniform float uContrast, uMidpoint, uGlow, uGrain, uDither, uVignette;\nuniform float uPointerRadius, uPointerStrength, uPointerSeam, uParallax;\n#define OCTAVES 4\nvec2 hash2(vec2 p) {\n  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));\n  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);\n}\nfloat snoise(vec2 p) {\n  const float K1 = 0.366025404, K2 = 0.211324865;\n  vec2 i = floor(p + (p.x + p.y) * K1);\n  vec2 a = p - i + (i.x + i.y) * K2;\n  float m = step(a.y, a.x);\n  vec2 o = vec2(m, 1.0 - m);\n  vec2 b = a - o + K2;\n  vec2 c = a - 1.0 + 2.0 * K2;\n  vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);\n  vec3 n = h * h * h * h * vec3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));\n  return dot(n, vec3(70.0));\n}\nfloat fbm(vec2 p) {\n  float v = 0.0, amp = 0.5;\n  for (int i = 0; i < OCTAVES; i++) {\n    v += amp * snoise(p);\n    p *= uLacunarity;\n    amp *= uRoughness;\n  }\n  return v;\n}\nvec3 ramp4(float t) {\n  vec3 c = mix(uColorA, uColorB, smoothstep(0.00, 0.36, t));\n  c = mix(c, uColorC, smoothstep(0.32, 0.70, t));\n  c = mix(c, uColorD, smoothstep(0.66, 1.00, t));\n  return c;\n}\nfloat triDither(vec2 fc) {\n  float a = fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453);\n  float b = fract(sin(dot(fc + 17.0, vec2(12.9898, 78.233))) * 43758.5453);\n  return (a + b - 1.0) / 255.0;\n}\nvec2 rot(vec2 v, float a) { float c = cos(a), s = sin(a); return vec2(c * v.x - s * v.y, s * v.x + c * v.y); }\nfloat mass(vec2 p) { return snoise(p) + uRoughness * snoise(p * uLacunarity); }\nuniform float uGrainAnim;\nfloat houseGrain(vec2 fc) {\n  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)\n          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;\n  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;\n  float a = float(n & 0xffffu) / 65535.0;\n  n *= 3266489917u; n ^= n >> 16u;\n  float b = float(n & 0xffffu) / 65535.0;\n  return a + b - 1.0;\n}\nvoid main() {\n  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;\n  float t = iTime * uSpeed;\n  vec2 d = uv - iMouse;\n  float near = exp(-dot(d, d) / max(1e-4, uPointerRadius * uPointerRadius));\n  vec2 p = (uv + d * near * uPointerStrength - iMouse * uParallax) * uScale;\n  vec2 w = uWarp * vec2(mass(p * uWarpScale + vec2(0.0, t * uFlow)),\n                        mass(p * uWarpScale + vec2(4.1, 2.6) - t * uFlow * 0.7));\n  vec2 axisDir = vec2(-sin(uTilt), cos(uTilt));\n  float axis = dot(uv, axisDir);\n  float a = mass(p + w) + axis * uMassBias;\n  float b = mass(p + w + vec2(9.3, 5.7)) - axis * uMassBias;\n  float diff = (a - b) * uSoftness;\n  float spill = exp(-abs(diff) * uSpill);\n  float warmAmt = smoothstep(0.0, 0.55, diff) * spill;\n  float coolAmt = smoothstep(0.0, 0.55, -diff) * spill;\n  float seam = exp(-diff * diff / max(1e-4, uSeamWidth * uSeamWidth));\n  vec3 col = uColorA;\n  col = mix(col, uColorB, clamp(warmAmt * uContrast, 0.0, 0.92));\n  col = mix(col, uColorC, clamp(coolAmt * uContrast, 0.0, 0.92));\n  col += uColorD * seam * (uSeamGain + near * uPointerSeam);\n  col += uColorD * uBloom * exp(-diff * diff / max(1e-4, uSeamWidth * uSeamWidth * 9.0)) * 0.35;\n  float lift = clamp(0.5 + axis * 0.5, 0.0, 1.0);\n  col *= 0.55 + 0.90 * mix(lift, 1.0, uMidpoint * 0.6);\n  col += uColorD * uGlow * seam * seam;\n  col = mix(uBg, col, 0.92);\n  col *= 1.0 - uVignette * dot(uv, uv);\n  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);\n    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }\n  col += triDither(gl_FragCoord.xy) * uDither;\n  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);\n}\n`;
+ const VERT = `#version 300 es
+void main() {
+  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}`;
+ const FRAG = `#version 300 es
+precision highp float;
+out vec4 fragColor;
+uniform vec2  iResolution;
+uniform float iTime;
+uniform vec2  iMouse;
+uniform vec3  uBg, uColorA, uColorB, uColorC, uColorD;
+uniform float uScale, uSpeed, uFlow, uWarp, uWarpScale, uRoughness, uLacunarity;
+uniform float uMassBias, uTilt, uSoftness, uSpill, uSeamWidth, uSeamGain, uBloom;
+uniform float uContrast, uMidpoint, uGlow, uGrain, uDither, uVignette;
+uniform float uPointerRadius, uPointerStrength, uPointerSeam, uParallax;
+#define OCTAVES 4
+vec2 hash2(vec2 p) {
+  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+}
+float snoise(vec2 p) {
+  const float K1 = 0.366025404, K2 = 0.211324865;
+  vec2 i = floor(p + (p.x + p.y) * K1);
+  vec2 a = p - i + (i.x + i.y) * K2;
+  float m = step(a.y, a.x);
+  vec2 o = vec2(m, 1.0 - m);
+  vec2 b = a - o + K2;
+  vec2 c = a - 1.0 + 2.0 * K2;
+  vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);
+  vec3 n = h * h * h * h * vec3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));
+  return dot(n, vec3(70.0));
+}
+float fbm(vec2 p) {
+  float v = 0.0, amp = 0.5;
+  for (int i = 0; i < OCTAVES; i++) {
+    v += amp * snoise(p);
+    p *= uLacunarity;
+    amp *= uRoughness;
+  }
+  return v;
+}
+vec3 ramp4(float t) {
+  vec3 c = mix(uColorA, uColorB, smoothstep(0.00, 0.36, t));
+  c = mix(c, uColorC, smoothstep(0.32, 0.70, t));
+  c = mix(c, uColorD, smoothstep(0.66, 1.00, t));
+  return c;
+}
+float triDither(vec2 fc) {
+  float a = fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453);
+  float b = fract(sin(dot(fc + 17.0, vec2(12.9898, 78.233))) * 43758.5453);
+  return (a + b - 1.0) / 255.0;
+}
+vec2 rot(vec2 v, float a) { float c = cos(a), s = sin(a); return vec2(c * v.x - s * v.y, s * v.x + c * v.y); }
+float mass(vec2 p) { return snoise(p) + uRoughness * snoise(p * uLacunarity); }
+uniform float uGrainAnim;
+float houseGrain(vec2 fc) {
+  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)
+          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;
+  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;
+  float a = float(n & 0xffffu) / 65535.0;
+  n *= 3266489917u; n ^= n >> 16u;
+  float b = float(n & 0xffffu) / 65535.0;
+  return a + b - 1.0;
+}
+void main() {
+  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;
+  float t = iTime * uSpeed;
+  vec2 d = uv - iMouse;
+  float near = exp(-dot(d, d) / max(1e-4, uPointerRadius * uPointerRadius));
+  vec2 p = (uv + d * near * uPointerStrength - iMouse * uParallax) * uScale;
+  vec2 w = uWarp * vec2(mass(p * uWarpScale + vec2(0.0, t * uFlow)),
+                        mass(p * uWarpScale + vec2(4.1, 2.6) - t * uFlow * 0.7));
+  vec2 axisDir = vec2(-sin(uTilt), cos(uTilt));
+  float axis = dot(uv, axisDir);
+  float a = mass(p + w) + axis * uMassBias;
+  float b = mass(p + w + vec2(9.3, 5.7)) - axis * uMassBias;
+  float diff = (a - b) * uSoftness;
+  float spill = exp(-abs(diff) * uSpill);
+  float warmAmt = smoothstep(0.0, 0.55, diff) * spill;
+  float coolAmt = smoothstep(0.0, 0.55, -diff) * spill;
+  float seam = exp(-diff * diff / max(1e-4, uSeamWidth * uSeamWidth));
+  vec3 col = uColorA;
+  col = mix(col, uColorB, clamp(warmAmt * uContrast, 0.0, 0.92));
+  col = mix(col, uColorC, clamp(coolAmt * uContrast, 0.0, 0.92));
+  col += uColorD * seam * (uSeamGain + near * uPointerSeam);
+  col += uColorD * uBloom * exp(-diff * diff / max(1e-4, uSeamWidth * uSeamWidth * 9.0)) * 0.35;
+  float lift = clamp(0.5 + axis * 0.5, 0.0, 1.0);
+  col *= 0.55 + 0.90 * mix(lift, 1.0, uMidpoint * 0.6);
+  col += uColorD * uGlow * seam * seam;
+  col = mix(uBg, col, 0.92);
+  col *= 1.0 - uVignette * dot(uv, uv);
+  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);
+    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }
+  col += triDither(gl_FragCoord.xy) * uDither;
+  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+}
+`;
  function compile(type, src) {
   const sh = gl.createShader(type);
   gl.shaderSource(sh, src);

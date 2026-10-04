@@ -239,9 +239,9 @@ function splitWords(el) {
         });
         n.replaceWith(frag);
       } else if (n.nodeType === 1 && !n.classList.contains('w') && n.tagName !== 'BR' && n.tagName !== 'SVG' && n.tagName !== 'svg') {
-        if (getComputedStyle(n).display === 'inline-block') {
-          n.classList.add('w');
-        } else walk(n);
+        if (getComputedStyle(n).display === 'inline-block') n.classList.add('w');
+        else if (n.classList.contains('todo')) n.classList.add('wf');
+        else walk(n);
       }
     });
   };
@@ -249,7 +249,7 @@ function splitWords(el) {
 }
 function indexLines(el) {
   let line = -1, top = null;
-  el.querySelectorAll('.w').forEach((w) => {
+  el.querySelectorAll('.w, .wf').forEach((w) => {
     const t = Math.round(w.offsetTop);
     if (top === null || Math.abs(t - top) > 4) { line++; top = t; }
     w.style.setProperty('--i', line);

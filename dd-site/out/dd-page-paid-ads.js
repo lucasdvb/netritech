@@ -7,8 +7,164 @@ DD.pages["paid-ads"] = {
   title: "Facebook, Instagram and Google Ads in Mauritius",
   description: "Facebook, Instagram and Google ads for Mauritian businesses: campaigns planned, built and managed, with tracking that shows what each enquiry costs.",
   section: "services",
-  ld: {"@context":"https://schema.org","@graph":[{"@type":"Service","@id":"https://disruptivedodo.mu/services/facebook-google-ads#service","name":"Paid ads","serviceType":"Facebook, Instagram, Google and TikTok advertising","description":"Facebook, Instagram and Google ads for Mauritian businesses: campaigns planned, built and managed, with tracking that shows what each enquiry costs.","inLanguage":"en","areaServed":{"@type":"Country","name":"Mauritius"},"provider":{"@type":"Organization","name":"Disruptive Dodo","url":"https://disruptivedodo.mu/"},"url":"https://disruptivedodo.mu/services/facebook-google-ads","isRelatedTo":{"@type":"Service","name":"Fledge","url":"https://disruptivedodo.mu/fledge"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://disruptivedodo.mu/"},{"@type":"ListItem","position":2,"name":"Services","item":"https://disruptivedodo.mu/services"},{"@type":"ListItem","position":3,"name":"Paid ads","item":"https://disruptivedodo.mu/services/facebook-google-ads"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How much should I spend on ads?","acceptedAnswer":{"@type":"Answer","text":"It depends on your market and your offer. We start with a test budget we agree with you, then raise it only when the numbers justify it."}},{"@type":"Question","name":"Is the ad budget included in your fee?","acceptedAnswer":{"@type":"Answer","text":"No. You pay your ad budget directly to Meta, Google or TikTok. Our fee covers the planning, the ads, the tracking and the management, and we take no cut of your budget."}},{"@type":"Question","name":"Facebook ads or Google ads: which is better?","acceptedAnswer":{"@type":"Answer","text":"They do different jobs. Google ads reach people who are already searching for what you sell. Facebook and Instagram ads reach people who aren't searching yet but look like your customers. Many businesses need both, and we tell you where to start."}},{"@type":"Question","name":"Do you guarantee results?","acceptedAnswer":{"@type":"Answer","text":"We set targets with you, such as a cost per enquiry, and report against them every month. Nobody can honestly guarantee what the platforms will do, so we don't."}},{"@type":"Question","name":"How soon will I see results?","acceptedAnswer":{"@type":"Answer","text":"The first figures come in as soon as the ads go live. Every campaign needs a testing period before it settles, and we tell you what we are learning each month."}},{"@type":"Question","name":"Do I keep my ad accounts?","acceptedAnswer":{"@type":"Answer","text":"[Yes. Your ad accounts and pages stay in your name and you give our team access. If we stop working together, everything stays with you. To confirm.]"}},{"@type":"Question","name":"Can you run ads in French and Creole?","acceptedAnswer":{"@type":"Answer","text":"Yes. We write ads in English, French and Creole, depending on who you want to reach."}},{"@type":"Question","name":"Do you run TikTok ads?","acceptedAnswer":{"@type":"Answer","text":"Yes, when your customers are there. We look at where your customers spend their time before deciding where your budget goes."}}]}]},
-  css: `.sp-part{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:rgba(243,241,234,.6)}.sp-part .cap{color:inherit}.sp-part .tag{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#f3f1ea;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.sp-part:hover .tag{border-color:rgba(255,255,255,.3)}.sp-ban{margin-bottom:clamp(64px,8vw,120px)}.flc{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:40px var(--gap);padding:clamp(28px,4vw,64px);border-radius:var(--rx);background:var(--card);border:1px solid var(--ln);box-shadow:var(--sh2);position:relative;overflow:hidden;isolation:isolate}.flc>*{grid-column:1/-1}@media (min-width:1024px){.flc .a{grid-column:1/span 5}.flc .b{grid-column:7/-1}}.flc::before{content:"";position:absolute;inset:auto -10% -40% 30%;height:80%;background:radial-gradient(closest-side,rgba(215,213,205,.12),transparent);z-index:-1}.flc .kick{color:var(--fg)}.stg{display:grid;gap:10px}.stg>li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:16px;align-items:center;padding:18px 20px;border-radius:16px;border:1px solid var(--ln);background:var(--card2);color:var(--mu)}.stg .n{font-size:13px}.stg .nm{font-size:18px;color:var(--fg);letter-spacing:-.01em}.stg .lnn{font-size:14px;margin-top:2px}.stg>li.on{background:var(--inv);color:#62615b;border-color:transparent;--fg:var(--inv-fg)}.stg .this{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;white-space:nowrap;color:var(--fg)}.stg .this::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}@media (max-width:639px){.stg>li{grid-template-columns:32px minmax(0,1fr)}.stg .this{grid-column:2}}.pcard{display:block;padding:12px;border-radius:var(--r3)}.pcard .ph{border-radius:20px;box-shadow:none}.pcard .row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:20px 12px 8px}.pcard .tx{padding:0 12px 10px}.ledger{border-top:1px solid var(--ln)}.ledger>li{display:grid;grid-template-columns:clamp(70px,9vw,150px) minmax(0,5fr) minmax(0,6fr);gap:var(--gap);align-items:baseline;padding:clamp(26px,2.8vw,40px) 0;border-bottom:1px solid var(--ln);position:relative;transition:padding .6s var(--e)}.ledger .ln{font-size:clamp(44px,5vw,84px);font-weight:var(--w-dsp);letter-spacing:-.06em;line-height:.8;color:var(--su);transition:color .5s}.ledger>li:hover .ln{color:var(--fg)}.ledger>li::after{content:"";position:absolute;left:0;bottom:-1px;height:1px;width:100%;background:var(--fg);transform:scaleX(0);transform-origin:0 50%;transition:transform .9s var(--e2)}.ledger>li:hover::after{transform:scaleX(1)}@media (min-width:1024px){.ledger>li:hover{padding-left:12px}}@media (max-width:767px){.ledger>li{grid-template-columns:64px minmax(0,1fr)}.ledger .tx{grid-column:2}}`,
+  ld: {
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Service",
+   "@id": "https://disruptivedodo.mu/services/facebook-google-ads#service",
+   "name": "Paid ads",
+   "serviceType": "Facebook, Instagram, Google and TikTok advertising",
+   "description": "Facebook, Instagram and Google ads for Mauritian businesses: campaigns planned, built and managed, with tracking that shows what each enquiry costs.",
+   "inLanguage": "en",
+   "areaServed": {
+    "@type": "Country",
+    "name": "Mauritius"
+   },
+   "provider": {
+    "@type": "Organization",
+    "name": "Disruptive Dodo",
+    "url": "https://disruptivedodo.mu/"
+   },
+   "url": "https://disruptivedodo.mu/services/facebook-google-ads",
+   "isRelatedTo": {
+    "@type": "Service",
+    "name": "Fledge",
+    "url": "https://disruptivedodo.mu/fledge"
+   }
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+     "item": "https://disruptivedodo.mu/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Services",
+     "item": "https://disruptivedodo.mu/services"
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "name": "Paid ads",
+     "item": "https://disruptivedodo.mu/services/facebook-google-ads"
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "How much should I spend on ads?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "It depends on your market and your offer. We start with a test budget we agree with you, then raise it only when the numbers justify it."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Is the ad budget included in your fee?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No. You pay your ad budget directly to Meta, Google or TikTok. Our fee covers the planning, the ads, the tracking and the management, and we take no cut of your budget."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Facebook ads or Google ads: which is better?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "They do different jobs. Google ads reach people who are already searching for what you sell. Facebook and Instagram ads reach people who aren't searching yet but look like your customers. Many businesses need both, and we tell you where to start."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do you guarantee results?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "We set targets with you, such as a cost per enquiry, and report against them every month. Nobody can honestly guarantee what the platforms will do, so we don't."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How soon will I see results?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "The first figures come in as soon as the ads go live. Every campaign needs a testing period before it settles, and we tell you what we are learning each month."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do I keep my ad accounts?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "[Yes. Your ad accounts and pages stay in your name and you give our team access. If we stop working together, everything stays with you. To confirm.]"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Can you run ads in French and Creole?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. We write ads in English, French and Creole, depending on who you want to reach."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do you run TikTok ads?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes, when your customers are there. We look at where your customers spend their time before deciding where your budget goes."
+     }
+    }
+   ]
+  }
+ ]
+},
+  css: `.sp-part{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:rgba(243,241,234,.6)}
+.sp-part .cap{color:inherit}
+.sp-part .tag{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#f3f1ea;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.sp-part:hover .tag{border-color:rgba(255,255,255,.3)}
+.sp-ban{margin-bottom:clamp(64px,8vw,120px)}
+.flc{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:40px var(--gap);padding:clamp(28px,4vw,64px);border-radius:var(--rx);background:var(--card);border:1px solid var(--ln);box-shadow:var(--sh2);position:relative;overflow:hidden;isolation:isolate}
+.flc>*{grid-column:1/-1}
+@media (min-width:1024px){.flc .a{grid-column:1/span 5}
+.flc .b{grid-column:7/-1}
+}
+.flc::before{content:"";position:absolute;inset:auto -10% -40% 30%;height:80%;background:radial-gradient(closest-side,rgba(215,213,205,.12),transparent);z-index:-1}
+.flc .kick{color:var(--fg)}
+.stg{display:grid;gap:10px}
+.stg>li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:16px;align-items:center;padding:18px 20px;border-radius:16px;border:1px solid var(--ln);background:var(--card2);color:var(--mu)}
+.stg .n{font-size:13px}
+.stg .nm{font-size:18px;color:var(--fg);letter-spacing:-.01em}
+.stg .lnn{font-size:14px;margin-top:2px}
+.stg>li.on{background:var(--inv);color:#62615b;border-color:transparent;--fg:var(--inv-fg)}
+.stg .this{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;white-space:nowrap;color:var(--fg)}
+.stg .this::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+@media (max-width:639px){.stg>li{grid-template-columns:32px minmax(0,1fr)}
+.stg .this{grid-column:2}
+}
+.pcard{display:block;padding:12px;border-radius:var(--r3)}
+.pcard .ph{border-radius:20px;box-shadow:none}
+.pcard .row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:20px 12px 8px}
+.pcard .tx{padding:0 12px 10px}
+.ledger{border-top:1px solid var(--ln)}
+.ledger>li{display:grid;grid-template-columns:clamp(70px,9vw,150px) minmax(0,5fr) minmax(0,6fr);gap:var(--gap);align-items:baseline;padding:clamp(26px,2.8vw,40px) 0;border-bottom:1px solid var(--ln);position:relative;transition:padding .6s var(--e)}
+.ledger .ln{font-size:clamp(44px,5vw,84px);font-weight:var(--w-dsp);letter-spacing:-.06em;line-height:.8;color:var(--su);transition:color .5s}
+.ledger>li:hover .ln{color:var(--fg)}
+.ledger>li::after{content:"";position:absolute;left:0;bottom:-1px;height:1px;width:100%;background:var(--fg);transform:scaleX(0);transform-origin:0 50%;transition:transform .9s var(--e2)}
+.ledger>li:hover::after{transform:scaleX(1)}
+@media (min-width:1024px){.ledger>li:hover{padding-left:12px}
+}
+@media (max-width:767px){.ledger>li{grid-template-columns:64px minmax(0,1fr)}
+.ledger .tx{grid-column:2}
+}`,
   html: `<main>
   <section class="hero">
     <div class="hero-bg shade"></div>
@@ -177,8 +333,95 @@ DD.pages["paid-ads"] = {
   powerPreference: "high-performance"
  });
  if (!gl) return null;
- const VERT = `#version 300 es\nvoid main() {\n  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);\n  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);\n}`;
- const FRAG = `#version 300 es\nprecision highp float;\nout vec4 fragColor;\nuniform vec2  iResolution;\nuniform float iTime;\nuniform vec2  iMouse;\nuniform float uScale;\nuniform vec2  iLag;\nuniform vec2  iTail;\nuniform float iEnergy;\nuniform float iIntro;\nuniform vec3  uBgColor, uColorA, uColorB, uColorC, uColorD;\nuniform float uSpeed, uAngle, uSweep, uDrift;\nuniform float uSourceFar, uSourceSoft, uKeyAmt, uFloorAmt;\nuniform float uSourceStretch;\nuniform float uRing;\nuniform float uRadiusA, uRadiusB, uSpread, uContact, uDecay, uShadowAmt;\nuniform float uGrain, uDither, uVignette, uEdgeCrush;\nuniform float uPointerRadius, uPointerShadow, uGlow, uParallax;\nfloat hash1(vec2 p) {\n  vec3 p3 = fract(vec3(p.xyx) * 0.1031);\n  p3 += dot(p3, p3.yzx + 33.33);\n  return fract((p3.x + p3.y) * p3.z);\n}\nvec3 ramp4(float t) {\n  vec3 c = mix(uColorA, uColorB, smoothstep(0.00, 0.38, t));\n  c = mix(c, uColorC, smoothstep(0.34, 0.74, t));\n  c = mix(c, uColorD, smoothstep(0.70, 1.00, t));\n  return c;\n}\nfloat triDither(vec2 fc) { return (hash1(fc) + hash1(fc + 17.0) - 1.0) / 255.0; }\nfloat shade(vec2 p, vec2 c, float r, vec2 dir, vec2 nrm) {\n  float along  = dot(p - c, dir);\n  float across = dot(p - c, nrm);\n  float w = max(1e-3, r + uSpread * max(0.0, along));\n  float pen = exp(-(across * across) / (w * w));\n  float start = smoothstep(-uContact, uContact, along);\n  float far = exp(-max(0.0, along) * uDecay);\n  return pen * start * far * (r / w);\n}\nuniform float uGrainAnim;\nfloat houseGrain(vec2 fc) {\n  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)\n          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;\n  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;\n  float a = float(n & 0xffffu) / 65535.0;\n  n *= 3266489917u; n ^= n >> 16u;\n  float b = float(n & 0xffffu) / 65535.0;\n  return a + b - 1.0;\n}\nvoid main() {\n  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;\n  uv *= uScale;\n  vec2 iM = iMouse * uScale;\n  float t = iTime * uSpeed;\n  vec2 p  = uv - iM * uParallax;\n  vec2 ml = iLag - iM * uParallax;\n  float a = uAngle + sin(t * 0.13) * uSweep;\n  vec2 dir = vec2(cos(a), sin(a));\n  vec2 nrm = vec2(-dir.y, dir.x);\n  vec2 src = -dir * uSourceFar;\n  vec2 ds = p - src;\n  float sd = length(vec2(dot(ds, dir) / max(0.05, uSourceStretch), dot(ds, nrm))) - uRing;\n  float key = uKeyAmt * exp(-(sd * sd) / max(1e-4, uSourceSoft * uSourceSoft));\n  float lit = key + uFloorAmt;\n  vec2 ca = vec2(sin(t * 0.19) * 0.5, cos(t * 0.23) * 0.34) + vec2(-0.3, 0.15) * uDrift;\n  vec2 cb = vec2(cos(t * 0.27 + 2.4) * 0.45, sin(t * 0.17 + 1.2) * 0.4) + vec2(0.4, -0.2) * uDrift;\n  float charge = (0.4 + 0.6 * iEnergy) * iIntro;\n  float sh = shade(p, ca, uRadiusA, dir, nrm)\n           + shade(p, cb, uRadiusB, dir, nrm)\n           + shade(p, ml, uPointerRadius, dir, nrm) * uPointerShadow * iIntro;\n  lit *= 1.0 - uShadowAmt * clamp(sh, 0.0, 1.0);\n  vec2 dm = p - ml;\n  lit += exp(-dot(dm, dm) / max(1e-4, uPointerRadius * uPointerRadius * 6.0)) * uGlow * charge;\n  vec3 col = ramp4(clamp(lit, 0.0, 1.0));\n  col = mix(col, uBgColor, 0.16 * dot(uv, uv));\n  { vec2 q = abs(gl_FragCoord.xy / iResolution * 2.0 - 1.0);\n    col *= 1.0 - uEdgeCrush * smoothstep(0.35, 1.0, max(q.x, q.y)); }\n  col *= 1.0 - uVignette * dot(uv, uv);\n  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);\n    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }\n  col += triDither(gl_FragCoord.xy) * uDither;\n  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);\n}`;
+ const VERT = `#version 300 es
+void main() {
+  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}`;
+ const FRAG = `#version 300 es
+precision highp float;
+out vec4 fragColor;
+uniform vec2  iResolution;
+uniform float iTime;
+uniform vec2  iMouse;
+uniform float uScale;
+uniform vec2  iLag;
+uniform vec2  iTail;
+uniform float iEnergy;
+uniform float iIntro;
+uniform vec3  uBgColor, uColorA, uColorB, uColorC, uColorD;
+uniform float uSpeed, uAngle, uSweep, uDrift;
+uniform float uSourceFar, uSourceSoft, uKeyAmt, uFloorAmt;
+uniform float uSourceStretch;
+uniform float uRing;
+uniform float uRadiusA, uRadiusB, uSpread, uContact, uDecay, uShadowAmt;
+uniform float uGrain, uDither, uVignette, uEdgeCrush;
+uniform float uPointerRadius, uPointerShadow, uGlow, uParallax;
+float hash1(vec2 p) {
+  vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+vec3 ramp4(float t) {
+  vec3 c = mix(uColorA, uColorB, smoothstep(0.00, 0.38, t));
+  c = mix(c, uColorC, smoothstep(0.34, 0.74, t));
+  c = mix(c, uColorD, smoothstep(0.70, 1.00, t));
+  return c;
+}
+float triDither(vec2 fc) { return (hash1(fc) + hash1(fc + 17.0) - 1.0) / 255.0; }
+float shade(vec2 p, vec2 c, float r, vec2 dir, vec2 nrm) {
+  float along  = dot(p - c, dir);
+  float across = dot(p - c, nrm);
+  float w = max(1e-3, r + uSpread * max(0.0, along));
+  float pen = exp(-(across * across) / (w * w));
+  float start = smoothstep(-uContact, uContact, along);
+  float far = exp(-max(0.0, along) * uDecay);
+  return pen * start * far * (r / w);
+}
+uniform float uGrainAnim;
+float houseGrain(vec2 fc) {
+  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)
+          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;
+  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;
+  float a = float(n & 0xffffu) / 65535.0;
+  n *= 3266489917u; n ^= n >> 16u;
+  float b = float(n & 0xffffu) / 65535.0;
+  return a + b - 1.0;
+}
+void main() {
+  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;
+  uv *= uScale;
+  vec2 iM = iMouse * uScale;
+  float t = iTime * uSpeed;
+  vec2 p  = uv - iM * uParallax;
+  vec2 ml = iLag - iM * uParallax;
+  float a = uAngle + sin(t * 0.13) * uSweep;
+  vec2 dir = vec2(cos(a), sin(a));
+  vec2 nrm = vec2(-dir.y, dir.x);
+  vec2 src = -dir * uSourceFar;
+  vec2 ds = p - src;
+  float sd = length(vec2(dot(ds, dir) / max(0.05, uSourceStretch), dot(ds, nrm))) - uRing;
+  float key = uKeyAmt * exp(-(sd * sd) / max(1e-4, uSourceSoft * uSourceSoft));
+  float lit = key + uFloorAmt;
+  vec2 ca = vec2(sin(t * 0.19) * 0.5, cos(t * 0.23) * 0.34) + vec2(-0.3, 0.15) * uDrift;
+  vec2 cb = vec2(cos(t * 0.27 + 2.4) * 0.45, sin(t * 0.17 + 1.2) * 0.4) + vec2(0.4, -0.2) * uDrift;
+  float charge = (0.4 + 0.6 * iEnergy) * iIntro;
+  float sh = shade(p, ca, uRadiusA, dir, nrm)
+           + shade(p, cb, uRadiusB, dir, nrm)
+           + shade(p, ml, uPointerRadius, dir, nrm) * uPointerShadow * iIntro;
+  lit *= 1.0 - uShadowAmt * clamp(sh, 0.0, 1.0);
+  vec2 dm = p - ml;
+  lit += exp(-dot(dm, dm) / max(1e-4, uPointerRadius * uPointerRadius * 6.0)) * uGlow * charge;
+  vec3 col = ramp4(clamp(lit, 0.0, 1.0));
+  col = mix(col, uBgColor, 0.16 * dot(uv, uv));
+  { vec2 q = abs(gl_FragCoord.xy / iResolution * 2.0 - 1.0);
+    col *= 1.0 - uEdgeCrush * smoothstep(0.35, 1.0, max(q.x, q.y)); }
+  col *= 1.0 - uVignette * dot(uv, uv);
+  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);
+    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }
+  col += triDither(gl_FragCoord.xy) * uDither;
+  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+}`;
  function compile(type, src) {
   const sh = gl.createShader(type);
   gl.shaderSource(sh, src);

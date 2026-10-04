@@ -7,7 +7,64 @@ DD.pages["services"] = {
   title: "Marketing services in Mauritius · Disruptive Dodo",
   description: "Websites, social media, Facebook and Google ads, CRM, automation and AI for Mauritian businesses. Take one service, or let us run them all as one system.",
   ld: null,
-  css: `.svh .d1{max-width:13ch}.col{display:flex;gap:10px;height:clamp(520px,44vw,640px)}.col>a{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;justify-content:space-between;padding:24px;border-radius:var(--r3);overflow:hidden;isolation:isolate;color:#f3f1ea;background:#0b0b0d;box-shadow:var(--sh1);transition:flex-grow .9s var(--e),box-shadow .7s var(--e)}.col>a.on{flex-grow:3.4;box-shadow:var(--sh2)}.col .cov{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform 1.6s var(--e)}.col>a::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.05) 40%,rgba(0,0,0,.6));transition:opacity .8s}.col>a.on .cov{transform:scale(1.05)}.col .idx{font-size:13px;color:rgba(243,241,234,.75);white-space:nowrap}.col .bd{opacity:0;transform:translateY(16px);transition:opacity .5s var(--e3),transform .9s var(--e);width:min(420px,100%)}.col>a.on .bd{opacity:1;transform:none;transition-delay:.18s}.col h3{font-size:clamp(30px,2.8vw,46px);font-weight:var(--w-dsp);letter-spacing:-.04em;line-height:1}.col .sub{margin-top:14px;font-size:15px;color:rgba(243,241,234,.75);max-width:34ch}.col .disc{display:flex;align-items:center;gap:14px;margin-top:28px;font-size:14px}.col .ring{border-color:rgba(243,241,234,.4)}.col>a.on .ring{background:#f3f1ea;color:#08080a;border-color:#f3f1ea}.col .vl{position:absolute;left:24px;bottom:24px;writing-mode:vertical-rl;transform:rotate(180deg);font-size:15px;white-space:nowrap;transition:opacity .4s}.col>a.on .vl{opacity:0}.col>a:not(.on) .idx{opacity:0}.col .idx{transition:opacity .4s}@media (max-width:1023px){.col{flex-direction:column;height:auto}.col>a,.col>a.on{flex:none;min-height:300px}.col .bd{opacity:1;transform:none}.col .vl{display:none}}.fband{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px var(--gap);align-items:center;padding:clamp(28px,5vw,80px);border-radius:var(--rx);background:#0b0b0d;border:1px solid var(--ln);box-shadow:var(--sh2);overflow:hidden;position:relative;isolation:isolate}.fband::before{content:"";position:absolute;right:-10%;bottom:-30%;width:70%;height:120%;background:radial-gradient(closest-side,rgba(215,213,205,.18),transparent);z-index:-1}.fband .t{grid-column:1/-1}.fband .art{grid-column:1/-1}@media (min-width:1024px){.fband .t{grid-column:1/span 6}.fband .art{grid-column:8/-1}}.fband .mega{font-size:clamp(96px,13vw,210px)}.fband .art img{width:min(420px,80%);margin-inline:auto;filter:drop-shadow(0 40px 60px rgba(0,0,0,.6))}.stack .st{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px var(--gap);min-height:clamp(340px,30vw,420px);padding:clamp(26px,3.4vw,52px);border-radius:var(--r3)}.stack .st:nth-child(even){background:#0c0c0e;color:#f3f1ea;--fg:#f3f1ea;--mu:#8c8b84;--ln:rgba(243,241,234,.12);border-color:transparent}.stack .st .a{grid-column:1/-1}.stack .st .b{grid-column:1/-1}@media (min-width:1024px){.stack .st .a{grid-column:1/span 5}.stack .st .b{grid-column:7/-1}}.stack .h3{font-size:clamp(34px,3.6vw,58px);letter-spacing:-.04em}.caplist{display:grid;grid-template-columns:1fr 1fr;gap:0 var(--gap);border-top:1px solid var(--ln)}.caplist li{border-bottom:1px solid var(--ln)}.caplist a,.caplist span{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 0;font-size:16px}.caplist span{color:var(--mu)}.caplist a .ar{width:10px;height:10px;opacity:.5;transition:transform .5s var(--e),opacity .3s}.caplist a:hover .ar{opacity:1;transform:translate(2px,-2px)}@media (max-width:639px){.caplist{grid-template-columns:1fr}}.ways{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}.way{display:flex;flex-direction:column;padding:clamp(28px,3.4vw,52px);border-radius:var(--r3)}.way ul{margin:32px 0 40px;border-top:1px solid var(--ln)}.way li{display:flex;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--ln);font-size:16px}.way .ck{width:16px;height:16px;flex:none}.way .btn{margin-top:auto;align-self:flex-start}.way.inv{background:#f3f1ea;color:#0c0c0e;--fg:#0c0c0e;--mu:#62615b;--ln:rgba(12,12,14,.12);--ls:rgba(12,12,14,.24);--inv:#0c0c0e;--inv-fg:#f3f1ea;border-color:transparent}@media (max-width:1023px){.ways{grid-template-columns:1fr}}`,
+  css: `.svh .d1{max-width:13ch}
+.col{display:flex;gap:10px;height:clamp(520px,44vw,640px)}
+.col>a{position:relative;flex:1 1 0;min-width:0;display:flex;flex-direction:column;justify-content:space-between;padding:24px;border-radius:var(--r3);overflow:hidden;isolation:isolate;color:#f3f1ea;background:#0b0b0d;box-shadow:var(--sh1);transition:flex-grow .9s var(--e),box-shadow .7s var(--e)}
+.col>a.on{flex-grow:3.4;box-shadow:var(--sh2)}
+.col .cov{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;transition:transform 1.6s var(--e)}
+.col>a::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.45),rgba(0,0,0,.05) 40%,rgba(0,0,0,.6));transition:opacity .8s}
+.col>a.on .cov{transform:scale(1.05)}
+.col .idx{font-size:13px;color:rgba(243,241,234,.75);white-space:nowrap}
+.col .bd{opacity:0;transform:translateY(16px);transition:opacity .5s var(--e3),transform .9s var(--e);width:min(420px,100%)}
+.col>a.on .bd{opacity:1;transform:none;transition-delay:.18s}
+.col h3{font-size:clamp(30px,2.8vw,46px);font-weight:var(--w-dsp);letter-spacing:-.04em;line-height:1}
+.col .sub{margin-top:14px;font-size:15px;color:rgba(243,241,234,.75);max-width:34ch}
+.col .disc{display:flex;align-items:center;gap:14px;margin-top:28px;font-size:14px}
+.col .ring{border-color:rgba(243,241,234,.4)}
+.col>a.on .ring{background:#f3f1ea;color:#08080a;border-color:#f3f1ea}
+.col .vl{position:absolute;left:24px;bottom:24px;writing-mode:vertical-rl;transform:rotate(180deg);font-size:15px;white-space:nowrap;transition:opacity .4s}
+.col>a.on .vl{opacity:0}
+.col>a:not(.on) .idx{opacity:0}
+.col .idx{transition:opacity .4s}
+@media (max-width:1023px){.col{flex-direction:column;height:auto}
+.col>a,.col>a.on{flex:none;min-height:300px}
+.col .bd{opacity:1;transform:none}
+.col .vl{display:none}
+}
+.fband{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px var(--gap);align-items:center;padding:clamp(28px,5vw,80px);border-radius:var(--rx);background:#0b0b0d;border:1px solid var(--ln);box-shadow:var(--sh2);overflow:hidden;position:relative;isolation:isolate}
+.fband::before{content:"";position:absolute;right:-10%;bottom:-30%;width:70%;height:120%;background:radial-gradient(closest-side,rgba(215,213,205,.18),transparent);z-index:-1}
+.fband .t{grid-column:1/-1}
+.fband .art{grid-column:1/-1}
+@media (min-width:1024px){.fband .t{grid-column:1/span 6}
+.fband .art{grid-column:8/-1}
+}
+.fband .mega{font-size:clamp(96px,13vw,210px)}
+.fband .art img{width:min(420px,80%);margin-inline:auto;filter:drop-shadow(0 40px 60px rgba(0,0,0,.6))}
+.stack .st{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px var(--gap);min-height:clamp(340px,30vw,420px);padding:clamp(26px,3.4vw,52px);border-radius:var(--r3)}
+.stack .st:nth-child(even){background:#0c0c0e;color:#f3f1ea;--fg:#f3f1ea;--mu:#8c8b84;--ln:rgba(243,241,234,.12);border-color:transparent}
+.stack .st .a{grid-column:1/-1}
+.stack .st .b{grid-column:1/-1}
+@media (min-width:1024px){.stack .st .a{grid-column:1/span 5}
+.stack .st .b{grid-column:7/-1}
+}
+.stack .h3{font-size:clamp(34px,3.6vw,58px);letter-spacing:-.04em}
+.caplist{display:grid;grid-template-columns:1fr 1fr;gap:0 var(--gap);border-top:1px solid var(--ln)}
+.caplist li{border-bottom:1px solid var(--ln)}
+.caplist a,.caplist span{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 0;font-size:16px}
+.caplist span{color:var(--mu)}
+.caplist a .ar{width:10px;height:10px;opacity:.5;transition:transform .5s var(--e),opacity .3s}
+.caplist a:hover .ar{opacity:1;transform:translate(2px,-2px)}
+@media (max-width:639px){.caplist{grid-template-columns:1fr}
+}
+.ways{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+.way{display:flex;flex-direction:column;padding:clamp(28px,3.4vw,52px);border-radius:var(--r3)}
+.way ul{margin:32px 0 40px;border-top:1px solid var(--ln)}
+.way li{display:flex;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--ln);font-size:16px}
+.way .ck{width:16px;height:16px;flex:none}
+.way .btn{margin-top:auto;align-self:flex-start}
+.way.inv{background:#f3f1ea;color:#0c0c0e;--fg:#0c0c0e;--mu:#62615b;--ln:rgba(12,12,14,.12);--ls:rgba(12,12,14,.24);--inv:#0c0c0e;--inv-fg:#f3f1ea;border-color:transparent}
+@media (max-width:1023px){.ways{grid-template-columns:1fr}
+}`,
   html: `<main>
   <section class="hero svh">
     <div class="hero-bg"></div>
@@ -196,8 +253,114 @@ DD.pages["services"] = {
   powerPreference: "high-performance"
  });
  if (!gl) return null;
- const VERT = `#version 300 es\nvoid main() {\n  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);\n  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);\n}`;
- const FRAG = `#version 300 es\nprecision highp float;\nout vec4 fragColor;\nuniform vec2  iResolution;\nuniform float iTime;\nuniform vec2  iMouse;\nuniform vec3  uBg, uColorA, uColorB, uColorC, uColorD;\nuniform float uScale, uSpeed, uAngle, uPitch, uTaper, uFacet;\nuniform float uBow, uBowScale, uBowStretch, uDrift;\nuniform float uLightAim, uSweep, uPolish, uSecond, uAA, uAmbient, uGleam;\nuniform float uVeil, uVeilScale, uVeilStretch;\nuniform float uTilt, uHorizon, uSpread, uFalloff, uLightGrad;\nuniform float uContrast, uMidpoint, uSink, uGlow;\nuniform float uGrain, uDither, uVignette;\nuniform float uPointerRadius, uPointerSwing, uPointerLift, uParallax;\n#define OCTAVES 4\nvec2 hash2(vec2 p) {\n  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));\n  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);\n}\nfloat snoise(vec2 p) {\n  const float K1 = 0.366025404, K2 = 0.211324865;\n  vec2 i = floor(p + (p.x + p.y) * K1);\n  vec2 a = p - i + (i.x + i.y) * K2;\n  float m = step(a.y, a.x);\n  vec2 o = vec2(m, 1.0 - m);\n  vec2 b = a - o + K2;\n  vec2 c = a - 1.0 + 2.0 * K2;\n  vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);\n  vec3 n = h * h * h * h * vec3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));\n  return dot(n, vec3(70.0));\n}\nfloat fbm(vec2 p) {\n  float v = 0.0, amp = 0.5;\n  for (int i = 0; i < OCTAVES; i++) {\n    v += amp * snoise(p);\n    p *= 2.02;\n    amp *= 0.52;\n  }\n  return v;\n}\nvec3 ramp4(float t) {\n  vec3 c = mix(uColorA, uColorB, smoothstep(0.00, 0.36, t));\n  c = mix(c, uColorC, smoothstep(0.32, 0.70, t));\n  c = mix(c, uColorD, smoothstep(0.66, 1.00, t));\n  return c;\n}\nfloat triDither(vec2 fc) {\n  float a = fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453);\n  float b = fract(sin(dot(fc + 17.0, vec2(12.9898, 78.233))) * 43758.5453);\n  return (a + b - 1.0) / 255.0;\n}\nuniform float uGrainAnim;\nfloat houseGrain(vec2 fc) {\n  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)\n          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;\n  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;\n  float a = float(n & 0xffffu) / 65535.0;\n  n *= 3266489917u; n ^= n >> 16u;\n  float b = float(n & 0xffffu) / 65535.0;\n  return a + b - 1.0;\n}\nvoid main() {\n  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;\n  float t = iTime * uSpeed;\n  vec2 p = (uv - iMouse * uParallax) * uScale;\n  vec2 md = uv - iMouse;\n  float near = exp(-dot(md, md) / max(1e-4, uPointerRadius * uPointerRadius));\n  float ang = uAngle + near * uPointerSwing;\n  vec2 ax = vec2(cos(ang), sin(ang));\n  vec2 al = vec2(-ax.y, ax.x);\n  float s = dot(p, ax);\n  float l = dot(p, al);\n  float bow = fbm(vec2(s * uBowScale, l * uBowScale * uBowStretch + t * uDrift));\n  s += bow * uBow;\n  float ph = uPitch * (s + uTaper * s * s);\n  float sw  = sin(6.2831853 * ph);\n  float tri = 0.6366198 * asin(clamp(sw, -1.0, 1.0));\n  float slope = mix(sw, tri, uFacet);\n  float sd = fwidth(slope);\n  float polish = uPolish / (1.0 + uPolish * sd * sd * uAA);\n  float aim = uLightAim + sin(t * 0.70) * uSweep;\n  float m1 = slope - aim;\n  float m2 = slope + aim * 0.60;\n  float spec = exp(-m1 * m1 * polish) + uSecond * exp(-m2 * m2 * polish * 0.30);\n  float veil = fbm(vec2(s * uVeilScale, l * uVeilScale * uVeilStretch - t * 0.22));\n  float axis = dot(uv, vec2(-sin(uTilt), cos(uTilt)));\n  float alt = clamp(0.5 + (axis - uHorizon) * uSpread, 0.0, 1.0);\n  alt = pow(alt, uFalloff);\n  float f = uAmbient + spec * uGleam;\n  f *= mix(1.0, alt, uLightGrad);\n  f += veil * uVeil;\n  f += near * uPointerLift;\n  f = clamp((f - uMidpoint) * uContrast + 0.5, 0.0, 1.0);\n  vec3 col = ramp4(f);\n  col += uColorD * uGlow * pow(f, 4.0);\n  col = mix(uBg, col, smoothstep(0.0, max(0.01, uSink), f) * 0.90 + 0.10);\n  col *= 1.0 - uVignette * dot(uv, uv);\n  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);\n    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }\n  col += triDither(gl_FragCoord.xy) * uDither;\n  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);\n}`;
+ const VERT = `#version 300 es
+void main() {
+  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}`;
+ const FRAG = `#version 300 es
+precision highp float;
+out vec4 fragColor;
+uniform vec2  iResolution;
+uniform float iTime;
+uniform vec2  iMouse;
+uniform vec3  uBg, uColorA, uColorB, uColorC, uColorD;
+uniform float uScale, uSpeed, uAngle, uPitch, uTaper, uFacet;
+uniform float uBow, uBowScale, uBowStretch, uDrift;
+uniform float uLightAim, uSweep, uPolish, uSecond, uAA, uAmbient, uGleam;
+uniform float uVeil, uVeilScale, uVeilStretch;
+uniform float uTilt, uHorizon, uSpread, uFalloff, uLightGrad;
+uniform float uContrast, uMidpoint, uSink, uGlow;
+uniform float uGrain, uDither, uVignette;
+uniform float uPointerRadius, uPointerSwing, uPointerLift, uParallax;
+#define OCTAVES 4
+vec2 hash2(vec2 p) {
+  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+}
+float snoise(vec2 p) {
+  const float K1 = 0.366025404, K2 = 0.211324865;
+  vec2 i = floor(p + (p.x + p.y) * K1);
+  vec2 a = p - i + (i.x + i.y) * K2;
+  float m = step(a.y, a.x);
+  vec2 o = vec2(m, 1.0 - m);
+  vec2 b = a - o + K2;
+  vec2 c = a - 1.0 + 2.0 * K2;
+  vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);
+  vec3 n = h * h * h * h * vec3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));
+  return dot(n, vec3(70.0));
+}
+float fbm(vec2 p) {
+  float v = 0.0, amp = 0.5;
+  for (int i = 0; i < OCTAVES; i++) {
+    v += amp * snoise(p);
+    p *= 2.02;
+    amp *= 0.52;
+  }
+  return v;
+}
+vec3 ramp4(float t) {
+  vec3 c = mix(uColorA, uColorB, smoothstep(0.00, 0.36, t));
+  c = mix(c, uColorC, smoothstep(0.32, 0.70, t));
+  c = mix(c, uColorD, smoothstep(0.66, 1.00, t));
+  return c;
+}
+float triDither(vec2 fc) {
+  float a = fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453);
+  float b = fract(sin(dot(fc + 17.0, vec2(12.9898, 78.233))) * 43758.5453);
+  return (a + b - 1.0) / 255.0;
+}
+uniform float uGrainAnim;
+float houseGrain(vec2 fc) {
+  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)
+          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;
+  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;
+  float a = float(n & 0xffffu) / 65535.0;
+  n *= 3266489917u; n ^= n >> 16u;
+  float b = float(n & 0xffffu) / 65535.0;
+  return a + b - 1.0;
+}
+void main() {
+  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;
+  float t = iTime * uSpeed;
+  vec2 p = (uv - iMouse * uParallax) * uScale;
+  vec2 md = uv - iMouse;
+  float near = exp(-dot(md, md) / max(1e-4, uPointerRadius * uPointerRadius));
+  float ang = uAngle + near * uPointerSwing;
+  vec2 ax = vec2(cos(ang), sin(ang));
+  vec2 al = vec2(-ax.y, ax.x);
+  float s = dot(p, ax);
+  float l = dot(p, al);
+  float bow = fbm(vec2(s * uBowScale, l * uBowScale * uBowStretch + t * uDrift));
+  s += bow * uBow;
+  float ph = uPitch * (s + uTaper * s * s);
+  float sw  = sin(6.2831853 * ph);
+  float tri = 0.6366198 * asin(clamp(sw, -1.0, 1.0));
+  float slope = mix(sw, tri, uFacet);
+  float sd = fwidth(slope);
+  float polish = uPolish / (1.0 + uPolish * sd * sd * uAA);
+  float aim = uLightAim + sin(t * 0.70) * uSweep;
+  float m1 = slope - aim;
+  float m2 = slope + aim * 0.60;
+  float spec = exp(-m1 * m1 * polish) + uSecond * exp(-m2 * m2 * polish * 0.30);
+  float veil = fbm(vec2(s * uVeilScale, l * uVeilScale * uVeilStretch - t * 0.22));
+  float axis = dot(uv, vec2(-sin(uTilt), cos(uTilt)));
+  float alt = clamp(0.5 + (axis - uHorizon) * uSpread, 0.0, 1.0);
+  alt = pow(alt, uFalloff);
+  float f = uAmbient + spec * uGleam;
+  f *= mix(1.0, alt, uLightGrad);
+  f += veil * uVeil;
+  f += near * uPointerLift;
+  f = clamp((f - uMidpoint) * uContrast + 0.5, 0.0, 1.0);
+  vec3 col = ramp4(f);
+  col += uColorD * uGlow * pow(f, 4.0);
+  col = mix(uBg, col, smoothstep(0.0, max(0.01, uSink), f) * 0.90 + 0.10);
+  col *= 1.0 - uVignette * dot(uv, uv);
+  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);
+    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }
+  col += triDither(gl_FragCoord.xy) * uDither;
+  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+}`;
  function compile(type, src) {
   const sh = gl.createShader(type);
   gl.shaderSource(sh, src);

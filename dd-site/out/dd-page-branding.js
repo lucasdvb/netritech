@@ -7,8 +7,162 @@ DD.pages["branding"] = {
   title: "Branding and logo design in Mauritius · Disruptive Dodo",
   description: "Branding for Mauritian businesses: three logo and colour options, typography, a simple brand book and every file you need, designed by our own team.",
   section: "services",
-  ld: {"@context":"https://schema.org","@graph":[{"@type":"Service","@id":"https://disruptivedodo.mu/services/branding-logo-design#service","name":"Branding","serviceType":"Branding and logo design","description":"Branding for Mauritian businesses: three logo and colour options, typography, a simple brand book and every file you need, designed by our own team.","inLanguage":"en","areaServed":{"@type":"Country","name":"Mauritius"},"provider":{"@type":"Organization","name":"Disruptive Dodo","url":"https://disruptivedodo.mu/"},"url":"https://disruptivedodo.mu/services/branding-logo-design","isRelatedTo":{"@type":"Service","name":"Fledge","url":"https://disruptivedodo.mu/fledge"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://disruptivedodo.mu/"},{"@type":"ListItem","position":2,"name":"Services","item":"https://disruptivedodo.mu/services"},{"@type":"ListItem","position":3,"name":"Branding","item":"https://disruptivedodo.mu/services/branding-logo-design"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How much does a logo cost in Mauritius?","acceptedAnswer":{"@type":"Answer","text":"It depends on what you need: a logo alone, or a full identity with colours, typography and a brand book. After a free growth call, we send a fixed price before any work starts."}},{"@type":"Question","name":"How long does branding take?","acceptedAnswer":{"@type":"Answer","text":"[About 3 to 4 weeks from the first call to the final files, to confirm.] We agree the dates with you before we start."}},{"@type":"Question","name":"Do you help choose a business name?","acceptedAnswer":{"@type":"Answer","text":"No. The name is yours: you choose it and you register it. We start from it and design everything around it."}},{"@type":"Question","name":"Who owns the logo and the files?","acceptedAnswer":{"@type":"Answer","text":"[You do. Once the project is paid, the logo and every file are yours. To confirm.]"}},{"@type":"Question","name":"How many changes can I ask for?","acceptedAnswer":{"@type":"Answer","text":"[Number of rounds of changes, to confirm.] We agree it before we start, and we ask the right questions first so the options are close from the start."}},{"@type":"Question","name":"Can you refresh our existing brand?","acceptedAnswer":{"@type":"Answer","text":"Yes. We keep what your customers already recognise and modernise the rest, so you look current without starting from zero."}},{"@type":"Question","name":"What files will I get?","acceptedAnswer":{"@type":"Answer","text":"Your logo in colour, black and white, as vector files for print and PNG files for screens, the colour codes for print and screen, and your brand book as a PDF."}},{"@type":"Question","name":"Is branding worth it for a small business?","acceptedAnswer":{"@type":"Answer","text":"A clear look that stays the same everywhere makes a small business look established, and it is often the first thing customers judge. It also makes every post, ad and page look like it comes from the same place."}}]}]},
-  css: `.sp-part{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:rgba(243,241,234,.6)}.sp-part .cap{color:inherit}.sp-part .tag{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#f3f1ea;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.sp-part:hover .tag{border-color:rgba(255,255,255,.3)}.sp-ban{margin-bottom:clamp(64px,8vw,120px)}.flc{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:40px var(--gap);padding:clamp(28px,4vw,64px);border-radius:var(--rx);background:var(--card);border:1px solid var(--ln);box-shadow:var(--sh2);position:relative;overflow:hidden;isolation:isolate}.flc>*{grid-column:1/-1}@media (min-width:1024px){.flc .a{grid-column:1/span 5}.flc .b{grid-column:7/-1}}.flc::before{content:"";position:absolute;inset:auto -10% -40% 30%;height:80%;background:radial-gradient(closest-side,rgba(215,213,205,.12),transparent);z-index:-1}.flc .kick{color:var(--fg)}.stg{display:grid;gap:10px}.stg>li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:16px;align-items:center;padding:18px 20px;border-radius:16px;border:1px solid var(--ln);background:var(--card2);color:var(--mu)}.stg .n{font-size:13px}.stg .nm{font-size:18px;color:var(--fg);letter-spacing:-.01em}.stg .lnn{font-size:14px;margin-top:2px}.stg>li.on{background:var(--inv);color:#62615b;border-color:transparent;--fg:var(--inv-fg)}.stg .this{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;white-space:nowrap;color:var(--fg)}.stg .this::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}@media (max-width:639px){.stg>li{grid-template-columns:32px minmax(0,1fr)}.stg .this{grid-column:2}}.pcard{display:block;padding:12px;border-radius:var(--r3)}.pcard .ph{border-radius:20px;box-shadow:none}.pcard .row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:20px 12px 8px}.pcard .tx{padding:0 12px 10px}.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}.tiles>li{aspect-ratio:1/1.08;display:flex;flex-direction:column;justify-content:space-between;padding:26px;transition:background .6s var(--e),color .6s var(--e),transform .7s var(--e),box-shadow .7s var(--e)}.tn{font-size:clamp(72px,7.4vw,128px);font-weight:var(--w-dsp);letter-spacing:-.07em;line-height:.8;color:var(--fg)}.tiles>li:hover{background:var(--inv);color:var(--inv-fg);--fg:var(--inv-fg);--mu:#62615b}@media (max-width:1023px){.tiles{grid-template-columns:1fr 1fr}}@media (max-width:639px){.tiles{grid-template-columns:1fr}.tiles>li{aspect-ratio:auto;min-height:260px}}`,
+  ld: {
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Service",
+   "@id": "https://disruptivedodo.mu/services/branding-logo-design#service",
+   "name": "Branding",
+   "serviceType": "Branding and logo design",
+   "description": "Branding for Mauritian businesses: three logo and colour options, typography, a simple brand book and every file you need, designed by our own team.",
+   "inLanguage": "en",
+   "areaServed": {
+    "@type": "Country",
+    "name": "Mauritius"
+   },
+   "provider": {
+    "@type": "Organization",
+    "name": "Disruptive Dodo",
+    "url": "https://disruptivedodo.mu/"
+   },
+   "url": "https://disruptivedodo.mu/services/branding-logo-design",
+   "isRelatedTo": {
+    "@type": "Service",
+    "name": "Fledge",
+    "url": "https://disruptivedodo.mu/fledge"
+   }
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+     "item": "https://disruptivedodo.mu/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Services",
+     "item": "https://disruptivedodo.mu/services"
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "name": "Branding",
+     "item": "https://disruptivedodo.mu/services/branding-logo-design"
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "How much does a logo cost in Mauritius?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "It depends on what you need: a logo alone, or a full identity with colours, typography and a brand book. After a free growth call, we send a fixed price before any work starts."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How long does branding take?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "[About 3 to 4 weeks from the first call to the final files, to confirm.] We agree the dates with you before we start."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do you help choose a business name?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No. The name is yours: you choose it and you register it. We start from it and design everything around it."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Who owns the logo and the files?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "[You do. Once the project is paid, the logo and every file are yours. To confirm.]"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How many changes can I ask for?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "[Number of rounds of changes, to confirm.] We agree it before we start, and we ask the right questions first so the options are close from the start."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Can you refresh our existing brand?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. We keep what your customers already recognise and modernise the rest, so you look current without starting from zero."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "What files will I get?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Your logo in colour, black and white, as vector files for print and PNG files for screens, the colour codes for print and screen, and your brand book as a PDF."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Is branding worth it for a small business?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "A clear look that stays the same everywhere makes a small business look established, and it is often the first thing customers judge. It also makes every post, ad and page look like it comes from the same place."
+     }
+    }
+   ]
+  }
+ ]
+},
+  css: `.sp-part{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:rgba(243,241,234,.6)}
+.sp-part .cap{color:inherit}
+.sp-part .tag{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#f3f1ea;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.sp-part:hover .tag{border-color:rgba(255,255,255,.3)}
+.sp-ban{margin-bottom:clamp(64px,8vw,120px)}
+.flc{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:40px var(--gap);padding:clamp(28px,4vw,64px);border-radius:var(--rx);background:var(--card);border:1px solid var(--ln);box-shadow:var(--sh2);position:relative;overflow:hidden;isolation:isolate}
+.flc>*{grid-column:1/-1}
+@media (min-width:1024px){.flc .a{grid-column:1/span 5}
+.flc .b{grid-column:7/-1}
+}
+.flc::before{content:"";position:absolute;inset:auto -10% -40% 30%;height:80%;background:radial-gradient(closest-side,rgba(215,213,205,.12),transparent);z-index:-1}
+.flc .kick{color:var(--fg)}
+.stg{display:grid;gap:10px}
+.stg>li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:16px;align-items:center;padding:18px 20px;border-radius:16px;border:1px solid var(--ln);background:var(--card2);color:var(--mu)}
+.stg .n{font-size:13px}
+.stg .nm{font-size:18px;color:var(--fg);letter-spacing:-.01em}
+.stg .lnn{font-size:14px;margin-top:2px}
+.stg>li.on{background:var(--inv);color:#62615b;border-color:transparent;--fg:var(--inv-fg)}
+.stg .this{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;white-space:nowrap;color:var(--fg)}
+.stg .this::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+@media (max-width:639px){.stg>li{grid-template-columns:32px minmax(0,1fr)}
+.stg .this{grid-column:2}
+}
+.pcard{display:block;padding:12px;border-radius:var(--r3)}
+.pcard .ph{border-radius:20px;box-shadow:none}
+.pcard .row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:20px 12px 8px}
+.pcard .tx{padding:0 12px 10px}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}
+.tiles>li{aspect-ratio:1/1.08;display:flex;flex-direction:column;justify-content:space-between;padding:26px;transition:background .6s var(--e),color .6s var(--e),transform .7s var(--e),box-shadow .7s var(--e)}
+.tn{font-size:clamp(72px,7.4vw,128px);font-weight:var(--w-dsp);letter-spacing:-.07em;line-height:.8;color:var(--fg)}
+.tiles>li:hover{background:var(--inv);color:var(--inv-fg);--fg:var(--inv-fg);--mu:#62615b}
+@media (max-width:1023px){.tiles{grid-template-columns:1fr 1fr}
+}
+@media (max-width:639px){.tiles{grid-template-columns:1fr}
+.tiles>li{aspect-ratio:auto;min-height:260px}
+}`,
   html: `<main>
   <section class="hero">
     <div class="hero-bg shade"></div>
@@ -185,8 +339,110 @@ DD.pages["branding"] = {
   powerPreference: "high-performance"
  });
  if (!gl) return null;
- const VERT = `#version 300 es\nvoid main() {\n  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);\n  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);\n}`;
- const FRAG = `#version 300 es\nprecision highp float;\nout vec4 fragColor;\nuniform vec2  iResolution;\nuniform float iTime;\nuniform vec2  iMouse;\nuniform vec2  iLead;\nuniform float uPourRadius, uPour, uSmear, uInfuse;\nuniform vec3  uBg, uColorA, uColorB, uColorC, uColorD;\nuniform float uSpeed, uTilt, uLevel, uSway, uCore, uReach;\nuniform float uBright, uSkirt, uAmbient, uWarp, uScale, uDrift;\nuniform float uRoughness, uLacunarity, uContrast, uMidpoint, uSink, uGlow, uSeam, uSplit;\nuniform float uGrain, uDither, uVignette, uLift, uOpen, uParallax;\nuniform float uArc, uCenterX, uCenterY;\n#define OCTAVES 3\nvec2 hash2(vec2 p) {\n  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));\n  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);\n}\nfloat snoise(vec2 p) {\n  const float K1 = 0.366025404, K2 = 0.211324865;\n  vec2 i = floor(p + (p.x + p.y) * K1);\n  vec2 a = p - i + (i.x + i.y) * K2;\n  float m = step(a.y, a.x);\n  vec2 o = vec2(m, 1.0 - m);\n  vec2 b = a - o + K2;\n  vec2 c = a - 1.0 + 2.0 * K2;\n  vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);\n  vec3 n = h * h * h * h * vec3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));\n  return dot(n, vec3(70.0));\n}\nfloat fbm(vec2 p) {\n  float v = 0.0, amp = 0.5;\n  for (int i = 0; i < OCTAVES; i++) {\n    v += amp * snoise(p);\n    p *= uLacunarity;\n    amp *= uRoughness;\n  }\n  return v;\n}\nvec3 ramp4(float t, float side) {\n  vec3 acc = mix(uColorB, uColorC, side);\n  vec3 lo  = mix(uColorB, acc, uSplit);\n  vec3 hi  = mix(uColorC, acc, uSplit);\n  vec3 c = mix(uColorA, lo, smoothstep(0.00, 0.36, t));\n  float k = smoothstep(0.32, 0.70, t);\n  c = mix(c, hi, k);\n  c = mix(c, uColorD, uSeam * 4.0 * k * (1.0 - k));\n  c = mix(c, uColorD, smoothstep(0.66, 1.00, t));\n  return c;\n}\nfloat triDither(vec2 fc) {\n  float a = fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453);\n  float b = fract(sin(dot(fc + 17.0, vec2(12.9898, 78.233))) * 43758.5453);\n  return (a + b - 1.0) / 255.0;\n}\nvec2 rot(vec2 p, float a) { float s = sin(a), c = cos(a); return mat2(c, -s, s, c) * p; }\nuniform float uGrainAnim;\nfloat houseGrain(vec2 fc) {\n  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)\n          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;\n  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;\n  float a = float(n & 0xffffu) / 65535.0;\n  n *= 3266489917u; n ^= n >> 16u;\n  float b = float(n & 0xffffu) / 65535.0;\n  return a + b - 1.0;\n}\nvoid main() {\n  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;\n  float t = iTime * uSpeed;\n  vec2 tfD = uv - iMouse;\n  vec2 tfStroke = iLead - iMouse;\n  float tfR2 = max(1e-4, uPourRadius * uPourRadius);\n  float tfWell = exp(-dot(tfD, tfD) / tfR2);\n  float tfWide = exp(-dot(tfD, tfD) / (tfR2 * 3.0));\n  vec2 tfPour = -tfD * tfWell * uPour + tfStroke * tfWide * uSmear;\n  float tfInfuse = tfWide * uInfuse * (0.55 + 0.45 * smoothstep(0.0, 0.12, length(tfStroke)));\n  vec2 p = uv + tfPour - iMouse * uParallax;\n  vec2 n = vec2(-sin(uTilt), cos(uTilt));\n  vec2 q = p - vec2(uCenterX, uCenterY);\n  float air = fbm(p * uScale + vec2(-t * uDrift, t * uDrift * 0.5));\n  float lvl = uLevel + sin(t * 0.13) * uSway + iMouse.y * uLift;\n  float d = mix(dot(q, n) - lvl, length(q) - max(0.0, lvl), uArc) + air * uWarp;\n  float w = max(0.004, uCore * (1.0 + iMouse.x * uOpen));\n  float band = exp(-(d * d) / (w * w));\n  float wide = exp(-abs(d) / max(0.02, uReach));\n  float f = uAmbient + uBright * band + uSkirt * wide + tfInfuse;\n  f = clamp((f - uMidpoint) * uContrast + 0.5, 0.0, 1.0);\n  float side = smoothstep(-1.0, 1.0, d / max(0.03, uCore + uReach * 0.35));\n  vec3 col = ramp4(f, side);\n  col += uColorD * uGlow * pow(f, 4.0);\n  col = mix(uBg, col, smoothstep(0.0, max(0.01, uSink), f) * 0.90 + 0.10);\n  col *= 1.0 - uVignette * dot(uv, uv);\n  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);\n    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }\n  col += triDither(gl_FragCoord.xy) * uDither;\n  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);\n}\n`;
+ const VERT = `#version 300 es
+void main() {
+  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}`;
+ const FRAG = `#version 300 es
+precision highp float;
+out vec4 fragColor;
+uniform vec2  iResolution;
+uniform float iTime;
+uniform vec2  iMouse;
+uniform vec2  iLead;
+uniform float uPourRadius, uPour, uSmear, uInfuse;
+uniform vec3  uBg, uColorA, uColorB, uColorC, uColorD;
+uniform float uSpeed, uTilt, uLevel, uSway, uCore, uReach;
+uniform float uBright, uSkirt, uAmbient, uWarp, uScale, uDrift;
+uniform float uRoughness, uLacunarity, uContrast, uMidpoint, uSink, uGlow, uSeam, uSplit;
+uniform float uGrain, uDither, uVignette, uLift, uOpen, uParallax;
+uniform float uArc, uCenterX, uCenterY;
+#define OCTAVES 3
+vec2 hash2(vec2 p) {
+  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+}
+float snoise(vec2 p) {
+  const float K1 = 0.366025404, K2 = 0.211324865;
+  vec2 i = floor(p + (p.x + p.y) * K1);
+  vec2 a = p - i + (i.x + i.y) * K2;
+  float m = step(a.y, a.x);
+  vec2 o = vec2(m, 1.0 - m);
+  vec2 b = a - o + K2;
+  vec2 c = a - 1.0 + 2.0 * K2;
+  vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);
+  vec3 n = h * h * h * h * vec3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));
+  return dot(n, vec3(70.0));
+}
+float fbm(vec2 p) {
+  float v = 0.0, amp = 0.5;
+  for (int i = 0; i < OCTAVES; i++) {
+    v += amp * snoise(p);
+    p *= uLacunarity;
+    amp *= uRoughness;
+  }
+  return v;
+}
+vec3 ramp4(float t, float side) {
+  vec3 acc = mix(uColorB, uColorC, side);
+  vec3 lo  = mix(uColorB, acc, uSplit);
+  vec3 hi  = mix(uColorC, acc, uSplit);
+  vec3 c = mix(uColorA, lo, smoothstep(0.00, 0.36, t));
+  float k = smoothstep(0.32, 0.70, t);
+  c = mix(c, hi, k);
+  c = mix(c, uColorD, uSeam * 4.0 * k * (1.0 - k));
+  c = mix(c, uColorD, smoothstep(0.66, 1.00, t));
+  return c;
+}
+float triDither(vec2 fc) {
+  float a = fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453);
+  float b = fract(sin(dot(fc + 17.0, vec2(12.9898, 78.233))) * 43758.5453);
+  return (a + b - 1.0) / 255.0;
+}
+vec2 rot(vec2 p, float a) { float s = sin(a), c = cos(a); return mat2(c, -s, s, c) * p; }
+uniform float uGrainAnim;
+float houseGrain(vec2 fc) {
+  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)
+          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;
+  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;
+  float a = float(n & 0xffffu) / 65535.0;
+  n *= 3266489917u; n ^= n >> 16u;
+  float b = float(n & 0xffffu) / 65535.0;
+  return a + b - 1.0;
+}
+void main() {
+  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;
+  float t = iTime * uSpeed;
+  vec2 tfD = uv - iMouse;
+  vec2 tfStroke = iLead - iMouse;
+  float tfR2 = max(1e-4, uPourRadius * uPourRadius);
+  float tfWell = exp(-dot(tfD, tfD) / tfR2);
+  float tfWide = exp(-dot(tfD, tfD) / (tfR2 * 3.0));
+  vec2 tfPour = -tfD * tfWell * uPour + tfStroke * tfWide * uSmear;
+  float tfInfuse = tfWide * uInfuse * (0.55 + 0.45 * smoothstep(0.0, 0.12, length(tfStroke)));
+  vec2 p = uv + tfPour - iMouse * uParallax;
+  vec2 n = vec2(-sin(uTilt), cos(uTilt));
+  vec2 q = p - vec2(uCenterX, uCenterY);
+  float air = fbm(p * uScale + vec2(-t * uDrift, t * uDrift * 0.5));
+  float lvl = uLevel + sin(t * 0.13) * uSway + iMouse.y * uLift;
+  float d = mix(dot(q, n) - lvl, length(q) - max(0.0, lvl), uArc) + air * uWarp;
+  float w = max(0.004, uCore * (1.0 + iMouse.x * uOpen));
+  float band = exp(-(d * d) / (w * w));
+  float wide = exp(-abs(d) / max(0.02, uReach));
+  float f = uAmbient + uBright * band + uSkirt * wide + tfInfuse;
+  f = clamp((f - uMidpoint) * uContrast + 0.5, 0.0, 1.0);
+  float side = smoothstep(-1.0, 1.0, d / max(0.03, uCore + uReach * 0.35));
+  vec3 col = ramp4(f, side);
+  col += uColorD * uGlow * pow(f, 4.0);
+  col = mix(uBg, col, smoothstep(0.0, max(0.01, uSink), f) * 0.90 + 0.10);
+  col *= 1.0 - uVignette * dot(uv, uv);
+  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);
+    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }
+  col += triDither(gl_FragCoord.xy) * uDither;
+  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+}
+`;
  function compile(type, src) {
   const sh = gl.createShader(type);
   gl.shaderSource(sh, src);

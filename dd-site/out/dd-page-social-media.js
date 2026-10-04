@@ -7,8 +7,165 @@ DD.pages["social-media"] = {
   title: "Social media management Mauritius · Disruptive Dodo",
   description: "Social media management for Mauritian businesses: a monthly plan, posts every week on Facebook, Instagram and TikTok, and a report in plain words.",
   section: "services",
-  ld: {"@context":"https://schema.org","@graph":[{"@type":"Service","@id":"https://disruptivedodo.mu/services/social-media-management#service","name":"Social media","serviceType":"Social media management","description":"Social media management for Mauritian businesses: a monthly plan, posts every week on Facebook, Instagram and TikTok, and a report in plain words.","inLanguage":"en","areaServed":{"@type":"Country","name":"Mauritius"},"provider":{"@type":"Organization","name":"Disruptive Dodo","url":"https://disruptivedodo.mu/"},"url":"https://disruptivedodo.mu/services/social-media-management","isRelatedTo":{"@type":"Service","name":"Fledge","url":"https://disruptivedodo.mu/fledge"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://disruptivedodo.mu/"},{"@type":"ListItem","position":2,"name":"Services","item":"https://disruptivedodo.mu/services"},{"@type":"ListItem","position":3,"name":"Social media","item":"https://disruptivedodo.mu/services/social-media-management"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Which platforms do you manage?","acceptedAnswer":{"@type":"Answer","text":"Facebook, Instagram, TikTok and LinkedIn, plus your Google listing. We recommend the ones your customers actually use."}},{"@type":"Question","name":"How many posts will you publish?","acceptedAnswer":{"@type":"Answer","text":"It depends on your plan. Our standard plan includes four posts a week on each platform. We agree the number before we start."}},{"@type":"Question","name":"Do I approve the posts?","acceptedAnswer":{"@type":"Answer","text":"Yes. You see the plan and the posts before they go live, and nothing goes out without your approval."}},{"@type":"Question","name":"Do you film and take photos?","acceptedAnswer":{"@type":"Answer","text":"Some plans include shoots at your business or your events. In others, you send us your photos and videos and we turn them into finished posts. We agree which at the start, so there are no surprises."}},{"@type":"Question","name":"Will you promise me more followers?","acceptedAnswer":{"@type":"Answer","text":"No. Reach on social media depends on platforms we don't control, so we don't promise follower numbers. We commit to the work: the plan, the posts, the replies and an honest report every month."}},{"@type":"Question","name":"Do you post in French and Creole?","acceptedAnswer":{"@type":"Answer","text":"Yes. We write in English, French and Creole, whichever your customers speak."}},{"@type":"Question","name":"How long before social media brings customers?","acceptedAnswer":{"@type":"Answer","text":"Social media builds trust over months, not days. Posting every week is what makes people recognise you. If you need enquiries quickly, we pair it with paid ads."}},{"@type":"Question","name":"Can I still post myself?","acceptedAnswer":{"@type":"Answer","text":"Of course. We plan around anything you want to post yourself, such as news from your shop or your events, so your page stays consistent."}}]}]},
-  css: `.sp-part{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:rgba(243,241,234,.6)}.sp-part .cap{color:inherit}.sp-part .tag{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#f3f1ea;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}.sp-part:hover .tag{border-color:rgba(255,255,255,.3)}.sp-ban{margin-bottom:clamp(64px,8vw,120px)}.flc{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:40px var(--gap);padding:clamp(28px,4vw,64px);border-radius:var(--rx);background:var(--card);border:1px solid var(--ln);box-shadow:var(--sh2);position:relative;overflow:hidden;isolation:isolate}.flc>*{grid-column:1/-1}@media (min-width:1024px){.flc .a{grid-column:1/span 5}.flc .b{grid-column:7/-1}}.flc::before{content:"";position:absolute;inset:auto -10% -40% 30%;height:80%;background:radial-gradient(closest-side,rgba(215,213,205,.12),transparent);z-index:-1}.flc .kick{color:var(--fg)}.stg{display:grid;gap:10px}.stg>li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:16px;align-items:center;padding:18px 20px;border-radius:16px;border:1px solid var(--ln);background:var(--card2);color:var(--mu)}.stg .n{font-size:13px}.stg .nm{font-size:18px;color:var(--fg);letter-spacing:-.01em}.stg .lnn{font-size:14px;margin-top:2px}.stg>li.on{background:var(--inv);color:#62615b;border-color:transparent;--fg:var(--inv-fg)}.stg .this{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;white-space:nowrap;color:var(--fg)}.stg .this::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}@media (max-width:639px){.stg>li{grid-template-columns:32px minmax(0,1fr)}.stg .this{grid-column:2}}.pcard{display:block;padding:12px;border-radius:var(--r3)}.pcard .ph{border-radius:20px;box-shadow:none}.pcard .row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:20px 12px 8px}.pcard .tx{padding:0 12px 10px}.rail-wrap{position:relative}.rail{display:grid;grid-auto-flow:column;grid-auto-columns:clamp(270px,27vw,400px);gap:var(--gap);overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:var(--gt);margin-inline:calc(var(--gt) * -1);padding:6px var(--gt) 32px;scrollbar-width:none;cursor:grab}.rail::-webkit-scrollbar{display:none}.rail>li{scroll-snap-align:start;aspect-ratio:3/4;display:flex;flex-direction:column;justify-content:space-between;padding:28px}.rail>li:nth-child(3n+1){background:var(--inv);color:var(--inv-fg);--fg:var(--inv-fg);--mu:#62615b;border-color:transparent}.rn{font-size:clamp(64px,6vw,104px);font-weight:var(--w-dsp);letter-spacing:-.06em;line-height:.85;color:var(--fg)}.rail-ctl{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}.rail-ctl [data-rail="-1"] .ar{transform:rotate(-135deg)}.rail-ctl [data-rail="1"] .ar{transform:rotate(45deg)}.rail-ctl .ring:hover{background:var(--fg);color:var(--bg)}@media (max-width:767px){.rail>li{aspect-ratio:auto;min-height:340px}}`,
+  ld: {
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Service",
+   "@id": "https://disruptivedodo.mu/services/social-media-management#service",
+   "name": "Social media",
+   "serviceType": "Social media management",
+   "description": "Social media management for Mauritian businesses: a monthly plan, posts every week on Facebook, Instagram and TikTok, and a report in plain words.",
+   "inLanguage": "en",
+   "areaServed": {
+    "@type": "Country",
+    "name": "Mauritius"
+   },
+   "provider": {
+    "@type": "Organization",
+    "name": "Disruptive Dodo",
+    "url": "https://disruptivedodo.mu/"
+   },
+   "url": "https://disruptivedodo.mu/services/social-media-management",
+   "isRelatedTo": {
+    "@type": "Service",
+    "name": "Fledge",
+    "url": "https://disruptivedodo.mu/fledge"
+   }
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+     "item": "https://disruptivedodo.mu/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Services",
+     "item": "https://disruptivedodo.mu/services"
+    },
+    {
+     "@type": "ListItem",
+     "position": 3,
+     "name": "Social media",
+     "item": "https://disruptivedodo.mu/services/social-media-management"
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "Which platforms do you manage?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Facebook, Instagram, TikTok and LinkedIn, plus your Google listing. We recommend the ones your customers actually use."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How many posts will you publish?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "It depends on your plan. Our standard plan includes four posts a week on each platform. We agree the number before we start."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do I approve the posts?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. You see the plan and the posts before they go live, and nothing goes out without your approval."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do you film and take photos?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Some plans include shoots at your business or your events. In others, you send us your photos and videos and we turn them into finished posts. We agree which at the start, so there are no surprises."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Will you promise me more followers?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No. Reach on social media depends on platforms we don't control, so we don't promise follower numbers. We commit to the work: the plan, the posts, the replies and an honest report every month."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do you post in French and Creole?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. We write in English, French and Creole, whichever your customers speak."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How long before social media brings customers?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Social media builds trust over months, not days. Posting every week is what makes people recognise you. If you need enquiries quickly, we pair it with paid ads."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Can I still post myself?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Of course. We plan around anything you want to post yourself, such as news from your shop or your events, so your page stays consistent."
+     }
+    }
+   ]
+  }
+ ]
+},
+  css: `.sp-part{display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:rgba(243,241,234,.6)}
+.sp-part .cap{color:inherit}
+.sp-part .tag{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#f3f1ea;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.sp-part:hover .tag{border-color:rgba(255,255,255,.3)}
+.sp-ban{margin-bottom:clamp(64px,8vw,120px)}
+.flc{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:40px var(--gap);padding:clamp(28px,4vw,64px);border-radius:var(--rx);background:var(--card);border:1px solid var(--ln);box-shadow:var(--sh2);position:relative;overflow:hidden;isolation:isolate}
+.flc>*{grid-column:1/-1}
+@media (min-width:1024px){.flc .a{grid-column:1/span 5}
+.flc .b{grid-column:7/-1}
+}
+.flc::before{content:"";position:absolute;inset:auto -10% -40% 30%;height:80%;background:radial-gradient(closest-side,rgba(215,213,205,.12),transparent);z-index:-1}
+.flc .kick{color:var(--fg)}
+.stg{display:grid;gap:10px}
+.stg>li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:16px;align-items:center;padding:18px 20px;border-radius:16px;border:1px solid var(--ln);background:var(--card2);color:var(--mu)}
+.stg .n{font-size:13px}
+.stg .nm{font-size:18px;color:var(--fg);letter-spacing:-.01em}
+.stg .lnn{font-size:14px;margin-top:2px}
+.stg>li.on{background:var(--inv);color:#62615b;border-color:transparent;--fg:var(--inv-fg)}
+.stg .this{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;white-space:nowrap;color:var(--fg)}
+.stg .this::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+@media (max-width:639px){.stg>li{grid-template-columns:32px minmax(0,1fr)}
+.stg .this{grid-column:2}
+}
+.pcard{display:block;padding:12px;border-radius:var(--r3)}
+.pcard .ph{border-radius:20px;box-shadow:none}
+.pcard .row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:20px 12px 8px}
+.pcard .tx{padding:0 12px 10px}
+.rail-wrap{position:relative}
+.rail{display:grid;grid-auto-flow:column;grid-auto-columns:clamp(270px,27vw,400px);gap:var(--gap);overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:var(--gt);margin-inline:calc(var(--gt) * -1);padding:6px var(--gt) 32px;scrollbar-width:none;cursor:grab}
+.rail::-webkit-scrollbar{display:none}
+.rail>li{scroll-snap-align:start;aspect-ratio:3/4;display:flex;flex-direction:column;justify-content:space-between;padding:28px}
+.rail>li:nth-child(3n+1){background:var(--inv);color:var(--inv-fg);--fg:var(--inv-fg);--mu:#62615b;border-color:transparent}
+.rn{font-size:clamp(64px,6vw,104px);font-weight:var(--w-dsp);letter-spacing:-.06em;line-height:.85;color:var(--fg)}
+.rail-ctl{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+.rail-ctl [data-rail="-1"] .ar{transform:rotate(-135deg)}
+.rail-ctl [data-rail="1"] .ar{transform:rotate(45deg)}
+.rail-ctl .ring:hover{background:var(--fg);color:var(--bg)}
+@media (max-width:767px){.rail>li{aspect-ratio:auto;min-height:340px}
+}`,
   html: `<main>
   <section class="hero">
     <div class="hero-bg shade"></div>
@@ -178,8 +335,100 @@ DD.pages["social-media"] = {
   powerPreference: "high-performance"
  });
  if (!gl) return null;
- const VERT = `#version 300 es\nvoid main() {\n  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);\n  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);\n}`;
- const FRAG = `#version 300 es\nprecision highp float;\nout vec4 fragColor;\nuniform vec2  iResolution;\nuniform float iTime;\nuniform vec2  iMouse;\nuniform vec2  iLead;\nuniform float uPourRadius, uPour, uSmear, uInfuse;\nuniform vec3  uBg, uColorA, uColorB, uColorC, uColorD;\nuniform float uSpeed, uTilt, uLean, uHorizon, uBreathe, uSpread;\nuniform float uCurve, uWarp, uScale, uDrift, uRoughness, uLacunarity;\nuniform float uContrast, uMidpoint, uSink, uGlow, uGrain, uDither;\nuniform float uVignette, uSteer, uRaise, uParallax;\n#define OCTAVES 3\nvec2 hash2(vec2 p) {\n  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));\n  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);\n}\nfloat snoise(vec2 p) {\n  const float K1 = 0.366025404, K2 = 0.211324865;\n  vec2 i = floor(p + (p.x + p.y) * K1);\n  vec2 a = p - i + (i.x + i.y) * K2;\n  float m = step(a.y, a.x);\n  vec2 o = vec2(m, 1.0 - m);\n  vec2 b = a - o + K2;\n  vec2 c = a - 1.0 + 2.0 * K2;\n  vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);\n  vec3 n = h * h * h * h * vec3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));\n  return dot(n, vec3(70.0));\n}\nfloat fbm(vec2 p) {\n  float v = 0.0, amp = 0.5;\n  for (int i = 0; i < OCTAVES; i++) {\n    v += amp * snoise(p);\n    p *= uLacunarity;\n    amp *= uRoughness;\n  }\n  return v;\n}\nvec3 ramp4(float t) {\n  vec3 c = mix(uColorA, uColorB, smoothstep(0.00, 0.36, t));\n  c = mix(c, uColorC, smoothstep(0.32, 0.70, t));\n  c = mix(c, uColorD, smoothstep(0.66, 1.00, t));\n  return c;\n}\nfloat triDither(vec2 fc) {\n  float a = fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453);\n  float b = fract(sin(dot(fc + 17.0, vec2(12.9898, 78.233))) * 43758.5453);\n  return (a + b - 1.0) / 255.0;\n}\nvec2 rot(vec2 p, float a) { float s = sin(a), c = cos(a); return mat2(c, -s, s, c) * p; }\nuniform float uGrainAnim;\nfloat houseGrain(vec2 fc) {\n  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)\n          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;\n  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;\n  float a = float(n & 0xffffu) / 65535.0;\n  n *= 3266489917u; n ^= n >> 16u;\n  float b = float(n & 0xffffu) / 65535.0;\n  return a + b - 1.0;\n}\nvoid main() {\n  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;\n  float t = iTime * uSpeed;\n  vec2 tfD = uv - iMouse;\n  vec2 tfStroke = iLead - iMouse;\n  float tfR2 = max(1e-4, uPourRadius * uPourRadius);\n  float tfWell = exp(-dot(tfD, tfD) / tfR2);\n  float tfWide = exp(-dot(tfD, tfD) / (tfR2 * 3.0));\n  vec2 tfPour = -tfD * tfWell * uPour + tfStroke * tfWide * uSmear;\n  float tfInfuse = tfWide * uInfuse * (0.55 + 0.45 * smoothstep(0.0, 0.12, length(tfStroke)));\n  vec2 p = uv + tfPour - iMouse * uParallax;\n  float a = uTilt + sin(t * 0.11) * uLean + iMouse.x * uSteer;\n  float axis = dot(p, vec2(cos(a), sin(a)));\n  float horizon = uHorizon + sin(t * 0.08 + 1.9) * uBreathe - iMouse.y * uRaise;\n  float air = fbm(p * uScale + vec2(t * uDrift, -t * uDrift * 0.6));\n  float h = clamp(0.5 + (axis - horizon) * uSpread + air * uWarp + tfInfuse, 0.0, 1.0);\n  float f = pow(h, max(0.05, uCurve));\n  f = clamp((f - uMidpoint) * uContrast + 0.5, 0.0, 1.0);\n  vec3 col = ramp4(f);\n  col += uColorD * uGlow * pow(f, 4.0);\n  col = mix(uBg, col, smoothstep(0.0, max(0.01, uSink), f) * 0.90 + 0.10);\n  col *= 1.0 - uVignette * dot(uv, uv);\n  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);\n    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }\n  col += triDither(gl_FragCoord.xy) * uDither;\n  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);\n}\n`;
+ const VERT = `#version 300 es
+void main() {
+  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}`;
+ const FRAG = `#version 300 es
+precision highp float;
+out vec4 fragColor;
+uniform vec2  iResolution;
+uniform float iTime;
+uniform vec2  iMouse;
+uniform vec2  iLead;
+uniform float uPourRadius, uPour, uSmear, uInfuse;
+uniform vec3  uBg, uColorA, uColorB, uColorC, uColorD;
+uniform float uSpeed, uTilt, uLean, uHorizon, uBreathe, uSpread;
+uniform float uCurve, uWarp, uScale, uDrift, uRoughness, uLacunarity;
+uniform float uContrast, uMidpoint, uSink, uGlow, uGrain, uDither;
+uniform float uVignette, uSteer, uRaise, uParallax;
+#define OCTAVES 3
+vec2 hash2(vec2 p) {
+  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+}
+float snoise(vec2 p) {
+  const float K1 = 0.366025404, K2 = 0.211324865;
+  vec2 i = floor(p + (p.x + p.y) * K1);
+  vec2 a = p - i + (i.x + i.y) * K2;
+  float m = step(a.y, a.x);
+  vec2 o = vec2(m, 1.0 - m);
+  vec2 b = a - o + K2;
+  vec2 c = a - 1.0 + 2.0 * K2;
+  vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);
+  vec3 n = h * h * h * h * vec3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));
+  return dot(n, vec3(70.0));
+}
+float fbm(vec2 p) {
+  float v = 0.0, amp = 0.5;
+  for (int i = 0; i < OCTAVES; i++) {
+    v += amp * snoise(p);
+    p *= uLacunarity;
+    amp *= uRoughness;
+  }
+  return v;
+}
+vec3 ramp4(float t) {
+  vec3 c = mix(uColorA, uColorB, smoothstep(0.00, 0.36, t));
+  c = mix(c, uColorC, smoothstep(0.32, 0.70, t));
+  c = mix(c, uColorD, smoothstep(0.66, 1.00, t));
+  return c;
+}
+float triDither(vec2 fc) {
+  float a = fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453);
+  float b = fract(sin(dot(fc + 17.0, vec2(12.9898, 78.233))) * 43758.5453);
+  return (a + b - 1.0) / 255.0;
+}
+vec2 rot(vec2 p, float a) { float s = sin(a), c = cos(a); return mat2(c, -s, s, c) * p; }
+uniform float uGrainAnim;
+float houseGrain(vec2 fc) {
+  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)
+          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;
+  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;
+  float a = float(n & 0xffffu) / 65535.0;
+  n *= 3266489917u; n ^= n >> 16u;
+  float b = float(n & 0xffffu) / 65535.0;
+  return a + b - 1.0;
+}
+void main() {
+  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;
+  float t = iTime * uSpeed;
+  vec2 tfD = uv - iMouse;
+  vec2 tfStroke = iLead - iMouse;
+  float tfR2 = max(1e-4, uPourRadius * uPourRadius);
+  float tfWell = exp(-dot(tfD, tfD) / tfR2);
+  float tfWide = exp(-dot(tfD, tfD) / (tfR2 * 3.0));
+  vec2 tfPour = -tfD * tfWell * uPour + tfStroke * tfWide * uSmear;
+  float tfInfuse = tfWide * uInfuse * (0.55 + 0.45 * smoothstep(0.0, 0.12, length(tfStroke)));
+  vec2 p = uv + tfPour - iMouse * uParallax;
+  float a = uTilt + sin(t * 0.11) * uLean + iMouse.x * uSteer;
+  float axis = dot(p, vec2(cos(a), sin(a)));
+  float horizon = uHorizon + sin(t * 0.08 + 1.9) * uBreathe - iMouse.y * uRaise;
+  float air = fbm(p * uScale + vec2(t * uDrift, -t * uDrift * 0.6));
+  float h = clamp(0.5 + (axis - horizon) * uSpread + air * uWarp + tfInfuse, 0.0, 1.0);
+  float f = pow(h, max(0.05, uCurve));
+  f = clamp((f - uMidpoint) * uContrast + 0.5, 0.0, 1.0);
+  vec3 col = ramp4(f);
+  col += uColorD * uGlow * pow(f, 4.0);
+  col = mix(uBg, col, smoothstep(0.0, max(0.01, uSink), f) * 0.90 + 0.10);
+  col *= 1.0 - uVignette * dot(uv, uv);
+  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);
+    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }
+  col += triDither(gl_FragCoord.xy) * uDither;
+  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+}
+`;
  function compile(type, src) {
   const sh = gl.createShader(type);
   gl.shaderSource(sh, src);

@@ -6,8 +6,270 @@ DD.pages["fledge"] = {
   path: "/fledge",
   title: "Fledge · Full marketing system for Mauritian businesses",
   description: "Fledge is Disruptive Dodo's full marketing system: website, social media, ads, CRM, follow-up and AI, built as one and run by one team in Mauritius.",
-  ld: {"@context":"https://schema.org","@graph":[{"@type":"Service","@id":"https://disruptivedodo.mu/fledge#service","name":"Fledge","serviceType":"Full marketing system","inLanguage":"en","description":"Fledge is Disruptive Dodo's full marketing system: website, social media, ads, CRM, follow-up and AI, built as one and run by one team in Mauritius.","areaServed":{"@type":"Country","name":"Mauritius"},"provider":{"@type":"Organization","name":"Disruptive Dodo","url":"https://disruptivedodo.mu/"},"url":"https://disruptivedodo.mu/fledge","hasOfferCatalog":{"@type":"OfferCatalog","name":"Services in Fledge","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Websites and SEO","url":"https://disruptivedodo.mu/services/web-design"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Social media","url":"https://disruptivedodo.mu/services/social-media-management"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Paid ads","url":"https://disruptivedodo.mu/services/facebook-google-ads"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Automation and CRM","url":"https://disruptivedodo.mu/services/marketing-automation-crm"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"AI implementation","url":"https://disruptivedodo.mu/services/ai-chatbots"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Branding","url":"https://disruptivedodo.mu/services/branding-logo-design"}}]}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://disruptivedodo.mu/"},{"@type":"ListItem","position":2,"name":"Fledge","item":"https://disruptivedodo.mu/fledge"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is Fledge?","acceptedAnswer":{"@type":"Answer","text":"Fledge is our full marketing system. One team builds your website, social media, ads, CRM, follow-up and AI assistant to work as one, then runs it with you every month."}},{"@type":"Question","name":"How is Fledge different from hiring a marketing agency?","acceptedAnswer":{"@type":"Answer","text":"Most agencies sell one piece: posts, ads or a website. Fledge covers the whole path, from the first time someone sees you to the day they buy again, and connects every step so no enquiry is lost in between."}},{"@type":"Question","name":"Do I need everything from day one?","acceptedAnswer":{"@type":"Answer","text":"No. We start with the problem that costs you the most and build from there. If you start with one service, it plugs into Fledge later, so nothing is built twice."}},{"@type":"Question","name":"How much does Fledge cost?","acceptedAnswer":{"@type":"Answer","text":"It depends on the size of your business and what is already in place. After a free growth call, we send a clear proposal with the setup fee and the monthly fee before any work starts. Ad budgets are paid by you, directly to the platforms."}},{"@type":"Question","name":"How long do I commit for?","acceptedAnswer":{"@type":"Answer","text":"[3 months, then 30 days' notice, to confirm.]"}},{"@type":"Question","name":"Who owns the website, the pages and the data?","acceptedAnswer":{"@type":"Answer","text":"[You do. Your website content, your pages, your ad accounts and your customer list stay in your business's name. To confirm.]"}},{"@type":"Question","name":"Do you work outside Mauritius?","acceptedAnswer":{"@type":"Answer","text":"Yes. We're based in Mauritius and work with businesses here and abroad, in English and French."}}]}]},
-  css: `.flh{justify-content:flex-end}.flh .top{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);align-items:end}.flh .top>*{grid-column:1/-1}.flh h1{display:flex;flex-direction:column;grid-row:2}.flh h1 .mega{display:block;line-height:.8;letter-spacing:-.07em;white-space:nowrap;margin-left:-.04em}.flh h1 .fl-sub{font-size:clamp(28px,3vw,48px);font-weight:var(--w-dsp);letter-spacing:-.035em;line-height:1.04;max-width:17ch;margin-top:clamp(28px,3.4vw,48px)}.flh .rr{grid-row:3;margin-top:28px}@media (min-width:1024px){.flh .rr{grid-row:2;grid-column:8/-1;align-self:end;margin-top:0}}.flh .dodo{position:absolute;right:calc(var(--gt) + 1%);top:clamp(110px,14vh,170px);height:min(34vh,330px);width:auto;z-index:1;filter:drop-shadow(0 30px 40px rgba(0,0,0,.7))}@media (max-width:1023px){.flh .dodo{height:24vh;top:96px}}@media (max-width:639px){.flh .dodo{display:none}}.leaks>li{padding:clamp(28px,3vw,44px) 0}.leaks .n{font-size:clamp(44px,5vw,84px);font-weight:var(--w-dsp);letter-spacing:-.06em;line-height:.8;color:var(--su);padding-top:0}.leaks>li:hover .n{color:var(--fg)}.leaks .n{transition:color .5s}.stg2 .st{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:28px var(--gap);padding:clamp(16px,1.6vw,22px);border-radius:var(--r3);min-height:clamp(380px,34vw,500px)}.stg2 .st:nth-child(even){background:#0c0c0e;color:#f3f1ea;--fg:#f3f1ea;--mu:#8c8b84;--ln:rgba(243,241,234,.12)}.stg2 .im{grid-column:1/-1;border-radius:20px;overflow:hidden}.stg2 .im img{width:100%;height:100%;object-fit:cover}.stg2 .tx2{grid-column:1/-1;display:flex;flex-direction:column;padding:clamp(4px,1vw,16px) clamp(4px,1.2vw,20px)}@media (min-width:1024px){.stg2 .im{grid-column:1/span 6}.stg2 .tx2{grid-column:7/-1}}.stg2 .row{display:flex;justify-content:space-between;gap:16px}.stg2 .h3{font-size:clamp(32px,3.2vw,52px);letter-spacing:-.04em}.stg2 .num{font-size:clamp(44px,4.4vw,72px);font-weight:var(--w-dsp);letter-spacing:-.06em;line-height:.8;color:var(--mu)}.items{margin-top:auto;padding-top:28px;border-top:0}.items li{border-bottom:1px solid var(--ln)}.items li:first-child{border-top:1px solid var(--ln)}.items a,.items span{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:13px 0;font-size:16px}.items span{color:var(--mu)}.items .ar{width:10px;height:10px;opacity:.5;flex:none;transition:transform .5s var(--e),opacity .3s}.items a:hover .ar{opacity:1;transform:translate(2px,-2px)}.path{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:var(--gap)}.path .line{position:absolute;left:0;right:0;top:27px;height:1px;background:var(--ln)}.path .line i{position:absolute;inset:0;background:var(--fg);transform-origin:0 50%;transform:scaleX(var(--p,0))}.path li{position:relative}.path .nd{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;border:1px solid var(--ls);background:var(--bg);font-size:15px;transition:background .5s var(--e),color .5s,border-color .5s;position:relative;z-index:1}.path li.on .nd{background:var(--fg);color:var(--bg);border-color:var(--fg)}.path p{margin-top:22px;font-size:16px;line-height:1.4;color:var(--mu);transition:color .5s;max-width:18ch}.path li.on p{color:var(--fg)}@media (max-width:1023px){.path{grid-template-columns:1fr;gap:0}.path .line{left:27px;right:auto;top:0;bottom:0;width:1px;height:auto}.path .line i{transform-origin:50% 0;transform:scaleY(var(--p,0))}.path li{display:grid;grid-template-columns:56px 1fr;gap:20px;align-items:center;padding:10px 0}.path p{margin-top:0}}.again{display:inline-flex;align-items:center;gap:12px;margin-top:40px;padding:12px 18px 12px 12px;border-radius:999px;border:1px solid var(--ls);color:var(--fg)}.again svg{width:22px;height:22px}.ways2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}.ways2 .way{padding:clamp(28px,3.4vw,52px);border-radius:var(--r3)}.ways2 .way.dk{background:#0c0c0e}.ways2 ul{margin-top:32px;border-top:1px solid var(--ln)}.ways2 li{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--ln);font-size:16px}.ways2 .ck{width:16px;height:16px;flex:none;margin-top:4px}@media (max-width:1023px){.ways2{grid-template-columns:1fr}}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 var(--gap)}.metrics>div{padding:28px 0 32px;border-top:1px solid var(--ln)}.metrics dt{font-size:clamp(26px,2.4vw,38px);font-weight:var(--w-dsp);letter-spacing:-.035em;color:var(--fg);line-height:1.05}.metrics dd{margin-top:12px}@media (max-width:767px){.metrics{grid-template-columns:1fr}}.cmp{width:100%;font-size:16px}.cmp th,.cmp td{text-align:left;padding:22px 20px;vertical-align:top;border-bottom:1px solid var(--ln)}.cmp thead th{font-size:14px;font-weight:500;color:var(--mu);border-bottom:1px solid var(--ls)}.cmp tbody th{font-weight:400;color:var(--mu);width:24%}.cmp td{color:var(--mu)}.cmp .us{background:#0c0c0e;color:#f3f1ea}.cmp thead .us{border-radius:20px 20px 0 0;color:#f3f1ea}.cmp tbody tr:last-child .us{border-radius:0 0 20px 20px}.cmp .us{border-bottom-color:rgba(243,241,234,.1)}.cmp .dot{display:inline-flex;align-items:center;gap:8px}.cmp .dot::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}@media (max-width:767px){.cmp thead{display:none}.cmp,.cmp tbody,.cmp tr,.cmp th,.cmp td{display:block;width:auto}.cmp tr{padding:14px 0;border-bottom:1px solid var(--ln)}.cmp th,.cmp td{border:0;padding:6px 0}.cmp tbody th{color:var(--fg);font-weight:500;width:auto}.cmp td::before{content:attr(data-label);display:block;font-size:12px;color:var(--mu);margin-bottom:2px}.cmp .us{padding:12px 16px;border-radius:14px!important;margin-top:8px}.cmp .us::before{color:rgba(243,241,234,.6)}}.fit{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}.fit .card{padding:clamp(28px,3.4vw,52px)}.fit .us{background:#f3f1ea;color:#0c0c0e;--fg:#0c0c0e;--mu:#62615b;--ln:rgba(12,12,14,.12);border-color:transparent}.fit h3{display:flex;align-items:center;gap:10px;font-size:clamp(24px,2vw,30px);font-weight:400;letter-spacing:-.025em}.fit .us h3::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}.fit ul{margin-top:28px;border-top:1px solid var(--ln)}.fit li{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--ln);font-size:16px}.fit .ck{width:16px;height:16px;flex:none;margin-top:4px}@media (max-width:1023px){.fit{grid-template-columns:1fr}}.plug{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px var(--gap);align-items:center;margin-top:clamp(48px,5vw,72px);padding-top:32px;border-top:1px solid var(--ln)}.plug>*{grid-column:1/-1}@media (min-width:1024px){.plug .tx{grid-column:1/span 4}.plug ul{grid-column:6/-1}}.plug ul{display:flex;flex-wrap:wrap;gap:8px}.plug a{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 18px;border-radius:999px;border:1px solid var(--ls);font-size:14px;transition:background .4s var(--e),color .4s,border-color .4s}.plug a .ar{width:9px;height:9px}.plug a:hover{background:var(--fg);color:var(--bg);border-color:var(--fg)}.name{min-height:min(92vh,900px);display:flex;flex-direction:column;justify-content:center}.name .gl{font-weight:var(--w-dsp)}.name h2{max-width:20ch;font-size:clamp(38px,4.6vw,76px);font-weight:var(--w-dsp);letter-spacing:-.042em;line-height:1.02}.name .tx{max-width:46ch}`,
+  ld: {
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Service",
+   "@id": "https://disruptivedodo.mu/fledge#service",
+   "name": "Fledge",
+   "serviceType": "Full marketing system",
+   "inLanguage": "en",
+   "description": "Fledge is Disruptive Dodo's full marketing system: website, social media, ads, CRM, follow-up and AI, built as one and run by one team in Mauritius.",
+   "areaServed": {
+    "@type": "Country",
+    "name": "Mauritius"
+   },
+   "provider": {
+    "@type": "Organization",
+    "name": "Disruptive Dodo",
+    "url": "https://disruptivedodo.mu/"
+   },
+   "url": "https://disruptivedodo.mu/fledge",
+   "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Services in Fledge",
+    "itemListElement": [
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Websites and SEO",
+       "url": "https://disruptivedodo.mu/services/web-design"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Social media",
+       "url": "https://disruptivedodo.mu/services/social-media-management"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Paid ads",
+       "url": "https://disruptivedodo.mu/services/facebook-google-ads"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Automation and CRM",
+       "url": "https://disruptivedodo.mu/services/marketing-automation-crm"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "AI implementation",
+       "url": "https://disruptivedodo.mu/services/ai-chatbots"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Branding",
+       "url": "https://disruptivedodo.mu/services/branding-logo-design"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+     "item": "https://disruptivedodo.mu/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Fledge",
+     "item": "https://disruptivedodo.mu/fledge"
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "What is Fledge?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Fledge is our full marketing system. One team builds your website, social media, ads, CRM, follow-up and AI assistant to work as one, then runs it with you every month."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How is Fledge different from hiring a marketing agency?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Most agencies sell one piece: posts, ads or a website. Fledge covers the whole path, from the first time someone sees you to the day they buy again, and connects every step so no enquiry is lost in between."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do I need everything from day one?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No. We start with the problem that costs you the most and build from there. If you start with one service, it plugs into Fledge later, so nothing is built twice."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How much does Fledge cost?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "It depends on the size of your business and what is already in place. After a free growth call, we send a clear proposal with the setup fee and the monthly fee before any work starts. Ad budgets are paid by you, directly to the platforms."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How long do I commit for?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "[3 months, then 30 days' notice, to confirm.]"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Who owns the website, the pages and the data?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "[You do. Your website content, your pages, your ad accounts and your customer list stay in your business's name. To confirm.]"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do you work outside Mauritius?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. We're based in Mauritius and work with businesses here and abroad, in English and French."
+     }
+    }
+   ]
+  }
+ ]
+},
+  css: `.flh{justify-content:flex-end}
+.flh .top{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);align-items:end}
+.flh .top>*{grid-column:1/-1}
+.flh h1{display:flex;flex-direction:column;grid-row:2}
+.flh h1 .mega{display:block;line-height:.8;letter-spacing:-.07em;white-space:nowrap;margin-left:-.04em}
+.flh h1 .fl-sub{font-size:clamp(28px,3vw,48px);font-weight:var(--w-dsp);letter-spacing:-.035em;line-height:1.04;max-width:17ch;margin-top:clamp(28px,3.4vw,48px)}
+.flh .rr{grid-row:3;margin-top:28px}
+@media (min-width:1024px){.flh .rr{grid-row:2;grid-column:8/-1;align-self:end;margin-top:0}
+}
+.flh .dodo{position:absolute;right:calc(var(--gt) + 1%);top:clamp(110px,14vh,170px);height:min(34vh,330px);width:auto;z-index:1;filter:drop-shadow(0 30px 40px rgba(0,0,0,.7))}
+@media (max-width:1023px){.flh .dodo{height:24vh;top:96px}
+}
+@media (max-width:639px){.flh .dodo{display:none}
+}
+.leaks>li{padding:clamp(28px,3vw,44px) 0}
+.leaks .n{font-size:clamp(44px,5vw,84px);font-weight:var(--w-dsp);letter-spacing:-.06em;line-height:.8;color:var(--su);padding-top:0}
+.leaks>li:hover .n{color:var(--fg)}
+.leaks .n{transition:color .5s}
+.stg2 .st{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:28px var(--gap);padding:clamp(16px,1.6vw,22px);border-radius:var(--r3);min-height:clamp(380px,34vw,500px)}
+.stg2 .st:nth-child(even){background:#0c0c0e;color:#f3f1ea;--fg:#f3f1ea;--mu:#8c8b84;--ln:rgba(243,241,234,.12)}
+.stg2 .im{grid-column:1/-1;border-radius:20px;overflow:hidden}
+.stg2 .im img{width:100%;height:100%;object-fit:cover}
+.stg2 .tx2{grid-column:1/-1;display:flex;flex-direction:column;padding:clamp(4px,1vw,16px) clamp(4px,1.2vw,20px)}
+@media (min-width:1024px){.stg2 .im{grid-column:1/span 6}
+.stg2 .tx2{grid-column:7/-1}
+}
+.stg2 .row{display:flex;justify-content:space-between;gap:16px}
+.stg2 .h3{font-size:clamp(32px,3.2vw,52px);letter-spacing:-.04em}
+.stg2 .num{font-size:clamp(44px,4.4vw,72px);font-weight:var(--w-dsp);letter-spacing:-.06em;line-height:.8;color:var(--mu)}
+.items{margin-top:auto;padding-top:28px;border-top:0}
+.items li{border-bottom:1px solid var(--ln)}
+.items li:first-child{border-top:1px solid var(--ln)}
+.items a,.items span{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:13px 0;font-size:16px}
+.items span{color:var(--mu)}
+.items .ar{width:10px;height:10px;opacity:.5;flex:none;transition:transform .5s var(--e),opacity .3s}
+.items a:hover .ar{opacity:1;transform:translate(2px,-2px)}
+.path{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:var(--gap)}
+.path .line{position:absolute;left:0;right:0;top:27px;height:1px;background:var(--ln)}
+.path .line i{position:absolute;inset:0;background:var(--fg);transform-origin:0 50%;transform:scaleX(var(--p,0))}
+.path li{position:relative}
+.path .nd{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;border:1px solid var(--ls);background:var(--bg);font-size:15px;transition:background .5s var(--e),color .5s,border-color .5s;position:relative;z-index:1}
+.path li.on .nd{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.path p{margin-top:22px;font-size:16px;line-height:1.4;color:var(--mu);transition:color .5s;max-width:18ch}
+.path li.on p{color:var(--fg)}
+@media (max-width:1023px){.path{grid-template-columns:1fr;gap:0}
+.path .line{left:27px;right:auto;top:0;bottom:0;width:1px;height:auto}
+.path .line i{transform-origin:50% 0;transform:scaleY(var(--p,0))}
+.path li{display:grid;grid-template-columns:56px 1fr;gap:20px;align-items:center;padding:10px 0}
+.path p{margin-top:0}
+}
+.again{display:inline-flex;align-items:center;gap:12px;margin-top:40px;padding:12px 18px 12px 12px;border-radius:999px;border:1px solid var(--ls);color:var(--fg)}
+.again svg{width:22px;height:22px}
+.ways2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+.ways2 .way{padding:clamp(28px,3.4vw,52px);border-radius:var(--r3)}
+.ways2 .way.dk{background:#0c0c0e}
+.ways2 ul{margin-top:32px;border-top:1px solid var(--ln)}
+.ways2 li{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--ln);font-size:16px}
+.ways2 .ck{width:16px;height:16px;flex:none;margin-top:4px}
+@media (max-width:1023px){.ways2{grid-template-columns:1fr}
+}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 var(--gap)}
+.metrics>div{padding:28px 0 32px;border-top:1px solid var(--ln)}
+.metrics dt{font-size:clamp(26px,2.4vw,38px);font-weight:var(--w-dsp);letter-spacing:-.035em;color:var(--fg);line-height:1.05}
+.metrics dd{margin-top:12px}
+@media (max-width:767px){.metrics{grid-template-columns:1fr}
+}
+.cmp{width:100%;font-size:16px}
+.cmp th,.cmp td{text-align:left;padding:22px 20px;vertical-align:top;border-bottom:1px solid var(--ln)}
+.cmp thead th{font-size:14px;font-weight:500;color:var(--mu);border-bottom:1px solid var(--ls)}
+.cmp tbody th{font-weight:400;color:var(--mu);width:24%}
+.cmp td{color:var(--mu)}
+.cmp .us{background:#0c0c0e;color:#f3f1ea}
+.cmp thead .us{border-radius:20px 20px 0 0;color:#f3f1ea}
+.cmp tbody tr:last-child .us{border-radius:0 0 20px 20px}
+.cmp .us{border-bottom-color:rgba(243,241,234,.1)}
+.cmp .dot{display:inline-flex;align-items:center;gap:8px}
+.cmp .dot::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+@media (max-width:767px){.cmp thead{display:none}
+.cmp,.cmp tbody,.cmp tr,.cmp th,.cmp td{display:block;width:auto}
+.cmp tr{padding:14px 0;border-bottom:1px solid var(--ln)}
+.cmp th,.cmp td{border:0;padding:6px 0}
+.cmp tbody th{color:var(--fg);font-weight:500;width:auto}
+.cmp td::before{content:attr(data-label);display:block;font-size:12px;color:var(--mu);margin-bottom:2px}
+.cmp .us{padding:12px 16px;border-radius:14px!important;margin-top:8px}
+.cmp .us::before{color:rgba(243,241,234,.6)}
+}
+.fit{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+.fit .card{padding:clamp(28px,3.4vw,52px)}
+.fit .us{background:#f3f1ea;color:#0c0c0e;--fg:#0c0c0e;--mu:#62615b;--ln:rgba(12,12,14,.12);border-color:transparent}
+.fit h3{display:flex;align-items:center;gap:10px;font-size:clamp(24px,2vw,30px);font-weight:400;letter-spacing:-.025em}
+.fit .us h3::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.fit ul{margin-top:28px;border-top:1px solid var(--ln)}
+.fit li{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--ln);font-size:16px}
+.fit .ck{width:16px;height:16px;flex:none;margin-top:4px}
+@media (max-width:1023px){.fit{grid-template-columns:1fr}
+}
+.plug{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px var(--gap);align-items:center;margin-top:clamp(48px,5vw,72px);padding-top:32px;border-top:1px solid var(--ln)}
+.plug>*{grid-column:1/-1}
+@media (min-width:1024px){.plug .tx{grid-column:1/span 4}
+.plug ul{grid-column:6/-1}
+}
+.plug ul{display:flex;flex-wrap:wrap;gap:8px}
+.plug a{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 18px;border-radius:999px;border:1px solid var(--ls);font-size:14px;transition:background .4s var(--e),color .4s,border-color .4s}
+.plug a .ar{width:9px;height:9px}
+.plug a:hover{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.name{min-height:min(92vh,900px);display:flex;flex-direction:column;justify-content:center}
+.name .gl{font-weight:var(--w-dsp)}
+.name h2{max-width:20ch;font-size:clamp(38px,4.6vw,76px);font-weight:var(--w-dsp);letter-spacing:-.042em;line-height:1.02}
+.name .tx{max-width:46ch}`,
   html: `<main>
   <section class="hero flh" aria-labelledby="fl-h">
     <div class="hero-bg shade"></div>
@@ -243,8 +505,105 @@ DD.pages["fledge"] = {
   powerPreference: "high-performance"
  });
  if (!gl) return null;
- const VERT = `#version 300 es\nvoid main() {\n  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);\n  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);\n}`;
- const FRAG = `#version 300 es\nprecision highp float;\nout vec4 fragColor;\nuniform vec2  iResolution;\nuniform float iTime;\nuniform vec2  iMouse;\nuniform vec3  uBg, uColorA, uColorB, uColorC, uColorD;\nuniform float uScale, uSpeed, uAngle, uWander, uWanderScale;\nuniform float uFibreFreq, uFibreGain, uFibreLac, uTwist, uTilt;\nuniform float uLightAz, uLightHeight, uSheen, uSpecular, uDiffuse, uAmbient, uFalloff;\nuniform float uContrast, uMidpoint, uSink, uGlow;\nuniform float uGrain, uDither, uVignette;\nuniform float uPointerRadius, uPointerComb, uPointerLift;\n#define FIBRES 4\nvec2 hash2(vec2 p) {\n  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));\n  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);\n}\nfloat snoise(vec2 p) {\n  const float K1 = 0.366025404, K2 = 0.211324865;\n  vec2 i = floor(p + (p.x + p.y) * K1);\n  vec2 a = p - i + (i.x + i.y) * K2;\n  float m = step(a.y, a.x);\n  vec2 o = vec2(m, 1.0 - m);\n  vec2 b = a - o + K2;\n  vec2 c = a - 1.0 + 2.0 * K2;\n  vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);\n  vec3 n = h * h * h * h * vec3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));\n  return dot(n, vec3(70.0));\n}\nvec3 ramp4(float t) {\n  vec3 c = mix(uColorA, uColorB, smoothstep(0.00, 0.36, t));\n  c = mix(c, uColorC, smoothstep(0.32, 0.70, t));\n  c = mix(c, uColorD, smoothstep(0.66, 1.00, t));\n  return c;\n}\nfloat triDither(vec2 fc) {\n  float a = fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453);\n  float b = fract(sin(dot(fc + 17.0, vec2(12.9898, 78.233))) * 43758.5453);\n  return (a + b - 1.0) / 255.0;\n}\nvec2 rot(vec2 v, float a) { float c = cos(a), s = sin(a); return vec2(c * v.x - s * v.y, s * v.x + c * v.y); }\nuniform float uGrainAnim;\nfloat houseGrain(vec2 fc) {\n  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)\n          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;\n  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;\n  float a = float(n & 0xffffu) / 65535.0;\n  n *= 3266489917u; n ^= n >> 16u;\n  float b = float(n & 0xffffu) / 65535.0;\n  return a + b - 1.0;\n}\nvoid main() {\n  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;\n  float t = iTime * uSpeed;\n  vec2 dm = uv - iMouse;\n  float q = dot(dm, dm) / max(1e-4, uPointerRadius * uPointerRadius);\n  float near = 1.0 / ((1.0 + q) * (1.0 + q));\n  float swirl = near * uPointerComb;\n  vec2 m = iMouse * uScale;\n  vec2 p = rot(uv * uScale - m, swirl) + m;\n  float bend = snoise(p * uWanderScale + vec2(t * 0.11, -t * 0.08)) * 0.66\n             + snoise(p * uWanderScale * 2.17 - vec2(t * 0.06, t * 0.09)) * 0.28;\n  float a = uAngle + swirl + uWander * bend;\n  vec2 dir = vec2(cos(a), sin(a));\n  vec2 nrm = vec2(-dir.y, dir.x);\n  float xs = dot(p, nrm), ys = dot(p, dir);\n  float lift = 0.0, amp = 1.0, k = uFibreFreq;\n  for (int i = 0; i < FIBRES; i++) {\n    float fi = float(i);\n    lift += amp * sin(k * xs + uTwist * sin(k * 0.19 * ys + t * (0.57 + fi * 0.23)) + t * (0.79 + fi * 0.37));\n    amp *= uFibreGain;\n    k   *= uFibreLac;\n  }\n  vec3 T = normalize(vec3(dir, lift * uTilt));\n  vec3 L = normalize(vec3(cos(uLightAz), sin(uLightAz), uLightHeight));\n  float cl = dot(T, L), sl = sqrt(max(0.0, 1.0 - cl * cl));\n  float cv = T.z,       sv = sqrt(max(0.0, 1.0 - cv * cv));\n  float lobe = max(0.0, sl * sv - cl * cv);\n  float sheen = uSheen / (1.0 + uSheen * fwidth(lobe));\n  float spec = pow(lobe, sheen);\n  float axis = dot(uv, vec2(cos(uLightAz), sin(uLightAz)));\n  float expo = 1.0 + uFalloff * (smoothstep(-0.8, 0.8, axis) - 0.5) * 2.0;\n  float lum = (uAmbient + uDiffuse * sl + uSpecular * spec) * expo + near * uPointerLift;\n  float f = clamp((lum - uMidpoint) * uContrast + 0.5, 0.0, 1.0);\n  vec3 col = ramp4(f);\n  col += uColorD * uGlow * pow(f, 4.0);\n  col = mix(uBg, col, smoothstep(0.0, max(0.01, uSink), f) * 0.90 + 0.10);\n  col *= 1.0 - uVignette * dot(uv, uv);\n  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);\n    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }\n  col += triDither(gl_FragCoord.xy) * uDither;\n  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);\n}`;
+ const VERT = `#version 300 es
+void main() {
+  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}`;
+ const FRAG = `#version 300 es
+precision highp float;
+out vec4 fragColor;
+uniform vec2  iResolution;
+uniform float iTime;
+uniform vec2  iMouse;
+uniform vec3  uBg, uColorA, uColorB, uColorC, uColorD;
+uniform float uScale, uSpeed, uAngle, uWander, uWanderScale;
+uniform float uFibreFreq, uFibreGain, uFibreLac, uTwist, uTilt;
+uniform float uLightAz, uLightHeight, uSheen, uSpecular, uDiffuse, uAmbient, uFalloff;
+uniform float uContrast, uMidpoint, uSink, uGlow;
+uniform float uGrain, uDither, uVignette;
+uniform float uPointerRadius, uPointerComb, uPointerLift;
+#define FIBRES 4
+vec2 hash2(vec2 p) {
+  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+}
+float snoise(vec2 p) {
+  const float K1 = 0.366025404, K2 = 0.211324865;
+  vec2 i = floor(p + (p.x + p.y) * K1);
+  vec2 a = p - i + (i.x + i.y) * K2;
+  float m = step(a.y, a.x);
+  vec2 o = vec2(m, 1.0 - m);
+  vec2 b = a - o + K2;
+  vec2 c = a - 1.0 + 2.0 * K2;
+  vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);
+  vec3 n = h * h * h * h * vec3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));
+  return dot(n, vec3(70.0));
+}
+vec3 ramp4(float t) {
+  vec3 c = mix(uColorA, uColorB, smoothstep(0.00, 0.36, t));
+  c = mix(c, uColorC, smoothstep(0.32, 0.70, t));
+  c = mix(c, uColorD, smoothstep(0.66, 1.00, t));
+  return c;
+}
+float triDither(vec2 fc) {
+  float a = fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453);
+  float b = fract(sin(dot(fc + 17.0, vec2(12.9898, 78.233))) * 43758.5453);
+  return (a + b - 1.0) / 255.0;
+}
+vec2 rot(vec2 v, float a) { float c = cos(a), s = sin(a); return vec2(c * v.x - s * v.y, s * v.x + c * v.y); }
+uniform float uGrainAnim;
+float houseGrain(vec2 fc) {
+  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)
+          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;
+  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;
+  float a = float(n & 0xffffu) / 65535.0;
+  n *= 3266489917u; n ^= n >> 16u;
+  float b = float(n & 0xffffu) / 65535.0;
+  return a + b - 1.0;
+}
+void main() {
+  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;
+  float t = iTime * uSpeed;
+  vec2 dm = uv - iMouse;
+  float q = dot(dm, dm) / max(1e-4, uPointerRadius * uPointerRadius);
+  float near = 1.0 / ((1.0 + q) * (1.0 + q));
+  float swirl = near * uPointerComb;
+  vec2 m = iMouse * uScale;
+  vec2 p = rot(uv * uScale - m, swirl) + m;
+  float bend = snoise(p * uWanderScale + vec2(t * 0.11, -t * 0.08)) * 0.66
+             + snoise(p * uWanderScale * 2.17 - vec2(t * 0.06, t * 0.09)) * 0.28;
+  float a = uAngle + swirl + uWander * bend;
+  vec2 dir = vec2(cos(a), sin(a));
+  vec2 nrm = vec2(-dir.y, dir.x);
+  float xs = dot(p, nrm), ys = dot(p, dir);
+  float lift = 0.0, amp = 1.0, k = uFibreFreq;
+  for (int i = 0; i < FIBRES; i++) {
+    float fi = float(i);
+    lift += amp * sin(k * xs + uTwist * sin(k * 0.19 * ys + t * (0.57 + fi * 0.23)) + t * (0.79 + fi * 0.37));
+    amp *= uFibreGain;
+    k   *= uFibreLac;
+  }
+  vec3 T = normalize(vec3(dir, lift * uTilt));
+  vec3 L = normalize(vec3(cos(uLightAz), sin(uLightAz), uLightHeight));
+  float cl = dot(T, L), sl = sqrt(max(0.0, 1.0 - cl * cl));
+  float cv = T.z,       sv = sqrt(max(0.0, 1.0 - cv * cv));
+  float lobe = max(0.0, sl * sv - cl * cv);
+  float sheen = uSheen / (1.0 + uSheen * fwidth(lobe));
+  float spec = pow(lobe, sheen);
+  float axis = dot(uv, vec2(cos(uLightAz), sin(uLightAz)));
+  float expo = 1.0 + uFalloff * (smoothstep(-0.8, 0.8, axis) - 0.5) * 2.0;
+  float lum = (uAmbient + uDiffuse * sl + uSpecular * spec) * expo + near * uPointerLift;
+  float f = clamp((lum - uMidpoint) * uContrast + 0.5, 0.0, 1.0);
+  vec3 col = ramp4(f);
+  col += uColorD * uGlow * pow(f, 4.0);
+  col = mix(uBg, col, smoothstep(0.0, max(0.01, uSink), f) * 0.90 + 0.10);
+  col *= 1.0 - uVignette * dot(uv, uv);
+  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);
+    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }
+  col += triDither(gl_FragCoord.xy) * uDither;
+  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+}`;
  function compile(type, src) {
   const sh = gl.createShader(type);
   gl.shaderSource(sh, src);
