@@ -68,6 +68,10 @@ if (require.main === module) {
     if (n !== 1) throw new Error('find occurs ' + n + 'x: ' + p.find.slice(0, 60));
     s = s.replace(p.find, () => p.replace);
   }
+  // the shared nav and footer: the exact dd-core.js, in its own block scope so none of
+  // its names meet the homepage's (the site will not scope dd-core.js to the homepage)
+  const core = fs.readFileSync(__dirname + '/../out/dd-core.js', 'utf8');
+  s = s + '\n// ===== shared nav and footer: identical to src/scripts/dd-core.js (generated, do not edit here) =====\n{\n' + core + '}\n';
   fs.writeFileSync(__dirname + '/../out/marcus-vane.js', s);
   console.log('patched', s.length);
 }

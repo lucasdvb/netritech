@@ -12,7 +12,7 @@ http.createServer((q,r)=>{const u=decodeURIComponent(q.url.split('?')[0]);
    if(!f){r.writeHead(404);return r.end('nf '+name)}r.writeHead(200,{'content-type':types[path.extname(f)]||'application/octet-stream'});return fs.createReadStream(f).pipe(r);}
  if(u.startsWith('/src/')){const f=ROOT+'/'+SRC+'/'+path.basename(u);if(!fs.existsSync(f)){r.writeHead(404);return r.end()}r.writeHead(200,{'content-type':'text/javascript'});return fs.createReadStream(f).pipe(r);}
  const key=PAGES[u.replace(/\/$/,'')||'/'];if(!key){r.writeHead(404);return r.end('no page')}
- const scripts=key==='home'?['dd-core.js','marcus-vane.js']:['dd-core.js','dd-page-'+key+'.js'];
+ const scripts=key==='home'?['marcus-vane.js']:['dd-core.js','dd-page-'+key+'.js'];
  r.writeHead(200,{'content-type':'text/html'});
  r.end(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>local</title></head><body>${key==='home'?'<div id="mv-root"></div>':`<div id="dd-root" data-page="${key}"></div>`}${scripts.map(s=>`<script type="module" src="/src/${s}"></script>`).join('')}</body></html>`);
 }).listen(+process.env.PORT||8787,()=>console.log('up'));
