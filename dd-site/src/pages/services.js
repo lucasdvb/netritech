@@ -17,6 +17,12 @@ const STAGES = [
 
 module.exports = {
   gl: 'reeded',
+  motion: [{
+    root: '.fband', D: 48000, still: 0.04, tracks: [
+      ['.orb', 0, [[0, 48000, { transform: 'rotate(0deg)' }, { transform: 'rotate(360deg)' }, 'l']]],
+      ['.oi', 0, [[0, 48000, { transform: 'rotate(0deg) scaleY(2.78)' }, { transform: 'rotate(-360deg) scaleY(2.78)' }, 'l']]],
+    ],
+  }],
   css: `
 .svh .d1{max-width:13ch}
 .col{display:flex;gap:10px;height:clamp(520px,44vw,640px)}
@@ -44,7 +50,15 @@ module.exports = {
 .fband .t{grid-column:1/-1}.fband .art{grid-column:1/-1}
 @media (min-width:1024px){.fband .t{grid-column:1/span 6}.fband .art{grid-column:8/-1}}
 .fband .mega{font-size:clamp(96px,13vw,210px)}
-.fband .art img{width:min(420px,80%);margin-inline:auto;filter:drop-shadow(0 40px 60px rgba(0,0,0,.6))}
+.fband .art{position:relative;display:grid;place-items:center;min-height:clamp(340px,34vw,500px)}
+.fband .art img{position:relative;z-index:1;width:min(340px,62%);margin-inline:auto;filter:drop-shadow(0 40px 60px rgba(0,0,0,.6))}
+.orb-wrap{position:absolute;left:50%;top:58%;width:0;height:0;transform:scaleY(.36)}
+.orb{position:absolute;left:0;top:0;width:0;height:0}
+.orb .trk{position:absolute;left:calc(var(--R) * -1);top:calc(var(--R) * -1);width:calc(var(--R) * 2);height:calc(var(--R) * 2);border-radius:50%;border:1px dashed rgba(243,241,234,.18)}
+.orb-wrap{--R:clamp(150px,17vw,250px)}
+.oc{position:absolute;left:0;top:0;transform:rotate(var(--a)) translateX(var(--R)) rotate(calc(var(--a) * -1))}
+.oi{display:block;transform:scaleY(2.78)}
+.oi .chip{transform:translate(-50%,-50%);background:rgba(18,18,21,.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-color:rgba(243,241,234,.18);color:#f3f1ea;font-size:12.5px;height:32px}
 .stack .st{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px var(--gap);min-height:clamp(340px,30vw,420px);padding:clamp(26px,3.4vw,52px);border-radius:var(--r3)}
 .stack .st:nth-child(even){background:#0c0c0e;color:#f3f1ea;--fg:#f3f1ea;--mu:#8c8b84;--ln:rgba(243,241,234,.12);border-color:transparent}
 .stack .st .a{grid-column:1/-1}.stack .st .b{grid-column:1/-1}
@@ -92,7 +106,7 @@ module.exports = {
         <p class="lead mt-32" style="max-width:34ch">Your full marketing system: website, social media, ads, CRM, follow-up and AI, built as one and run by one team.</p>
         <div class="btn-row mt-40"><a class="btn btn-p" href="/fledge">Discover Fledge{{ar}}</a></div>
       </div>
-      <div class="art"><img src="/uploads/8hzVIXmhSCC0RLLMXrB-F-hero-dodo.webp" alt="Disruptive Dodo mascot" width="921" height="1228" loading="lazy"></div>
+      <div class="art"><div class="orb-wrap" aria-hidden="true"><div class="orb"><i class="trk"></i><span class="oc" style="--a:0deg"><span class="oi"><span class="chip">Websites and SEO</span></span></span><span class="oc" style="--a:60deg"><span class="oi"><span class="chip">Social media</span></span></span><span class="oc" style="--a:120deg"><span class="oi"><span class="chip">Paid ads</span></span></span><span class="oc" style="--a:180deg"><span class="oi"><span class="chip">Automation and CRM</span></span></span><span class="oc" style="--a:240deg"><span class="oi"><span class="chip">AI implementation</span></span></span><span class="oc" style="--a:300deg"><span class="oi"><span class="chip">Branding</span></span></span></div></div><img src="/uploads/8hzVIXmhSCC0RLLMXrB-F-hero-dodo.webp" alt="Disruptive Dodo mascot" width="921" height="1228" loading="lazy"></div>
     </div>
   </section>
 

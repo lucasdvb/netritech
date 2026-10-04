@@ -162,6 +162,21 @@ DD.pages["branding"] = {
 }
 @media (max-width:639px){.tiles{grid-template-columns:1fr}
 .tiles>li{aspect-ratio:auto;min-height:260px}
+}
+.vg-brd .cv{left:5%;top:7%;width:43%;height:86%}
+.vg-brd .cvs{left:5%;top:7%;width:43%;height:86%}
+.vg-brd .gd{fill:none;stroke:rgba(243,241,234,.16);stroke-width:1}
+.vg-brd .gc{fill:none;stroke:rgba(243,241,234,.55);stroke-width:1.2}
+.vg-brd .mk{fill:#f3f1ea;transform-box:fill-box;transform-origin:center}
+.vg-brd .sw{top:7%;width:9.1%;height:34%;border-radius:1cqw;border:1px solid rgba(255,255,255,.1);display:flex;align-items:flex-end;padding:.9cqw;font-size:.8cqw}
+.vg-brd .ty{left:52%;top:45%;width:20%;height:48%;padding:1.4cqw}
+.vg-brd .aa{font-size:5.4cqw;line-height:1;font-weight:300;letter-spacing:-.06em}
+.vg-brd .fl{left:75%;top:45%;width:20%;height:48%;perspective:60cqw}
+.vg-brd .card3{position:absolute;inset:0;transform-style:preserve-3d}
+.vg-brd .face{position:absolute;inset:0;border-radius:1.2cqw;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:grid;place-items:center;border:1px solid rgba(255,255,255,.12);box-shadow:0 2cqw 4cqw -2cqw rgba(0,0,0,.8)}
+.vg-brd .front{background:#f3f1ea}
+.vg-brd .back{background:#141417;transform:rotateY(180deg);align-content:center;gap:.8cqw;justify-items:start;padding:0 1.6cqw}
+@media (max-width:767px){.vg-brd{--fx:-4%}
 }`,
   html: `<main>
   <section class="hero">
@@ -181,7 +196,25 @@ DD.pages["branding"] = {
   </section>
 
   <section class="sheet lt sec" aria-labelledby="plain-h">
-    <div class="sp-ban"><div class="ph r21x9" data-r="x"><div class="lb"><b>Brand in use</b><span>A brand we designed: logo, colours and pages side by side</span><i>21:9</i></div></div></div>
+    <div class="sp-ban"><div class="vg vg-brd" role="img" aria-label="A logo being drawn on a grid, then given colours, type and a business card" data-r="x"><div class="vg-in"><div class="v-g">
+    <div class="v-win cv"></div>
+    <svg class="cvs" viewBox="0 0 430 370" aria-hidden="true">
+      <g class="gd"><line pathLength="1" stroke-dasharray="1" x1="40" y1="65" x2="390" y2="65"/><line pathLength="1" stroke-dasharray="1" x1="40" y1="305" x2="390" y2="305"/><line pathLength="1" stroke-dasharray="1" x1="95" y1="25" x2="95" y2="345"/><line pathLength="1" stroke-dasharray="1" x1="335" y1="25" x2="335" y2="345"/><line pathLength="1" stroke-dasharray="1" x1="40" y1="185" x2="390" y2="185"/><line pathLength="1" stroke-dasharray="1" x1="215" y1="25" x2="215" y2="345"/></g>
+      <circle class="gc" pathLength="1" stroke-dasharray="1" cx="215" cy="185" r="120"/>
+      <rect class="gc" pathLength="1" stroke-dasharray="1" x="95" y="65" width="120" height="240"/>
+      <path class="mk" d="M125 95h90a90 90 0 0 1 0 180h-90z M165 135v100h50a50 50 0 0 0 0-100z" fill-rule="evenodd"/>
+      <circle class="mk eye" cx="318" cy="262" r="13"/>
+    </svg>
+    <div class="sw" style="left:52%;background:#0c0c0e"><span>Ink</span></div>
+    <div class="sw" style="left:62.5%;background:#3a3a40"><span>Graphite</span></div>
+    <div class="sw" style="left:73%;background:#8c8b84;color:#0c0c0e"><span>Stone</span></div>
+    <div class="sw" style="left:83.5%;width:11.5%;background:#f3f1ea;color:#0c0c0e"><span>Paper</span></div>
+    <div class="v-win v-solid ty"><p class="aa">Aa</p><span class="v-bar hi" style="margin-top:1.2cqw;width:80%"></span><span class="v-bar" style="margin-top:.7cqw;width:60%"></span><span class="v-bar" style="margin-top:.7cqw;width:70%"></span></div>
+    <div class="fl"><div class="card3">
+      <div class="face front"><svg viewBox="0 0 430 370" width="56%" aria-hidden="true"><path d="M125 95h90a90 90 0 0 1 0 180h-90z M165 135v100h50a50 50 0 0 0 0-100z" fill="#0c0c0e" fill-rule="evenodd"/><circle cx="318" cy="262" r="13" fill="#0c0c0e"/></svg></div>
+      <div class="face back"><span class="v-bar hi" style="width:7cqw;height:1.2cqw"></span><span class="v-bar" style="width:10cqw"></span><span class="v-bar" style="width:8cqw"></span></div>
+    </div></div>
+  </div></div><div class="lb" hidden><div class="lb"><b>Brand in use</b><span>A brand we designed: logo, colours and pages side by side</span><i>21:9</i></div></div></div></div>
     <div class="g12">
       <div class="c1-5"><p class="kick">In plain terms</p><h2 class="h2 mt-24" id="plain-h">What you get, in plain terms.</h2></div>
       <p class="lead fg c7-12">You bring the name and tell us about your business. We design three logo and colour options, you pick one, and we turn it into a full identity: logo, colours, typography and a simple brand book that shows how to use them. Then you get every file you need, for screens and for print.</p>
@@ -274,6 +307,261 @@ DD.pages["branding"] = {
     <div class="btn-row mt-48"><a class="btn btn-p" href="/contact">Book a free growth call{{ar}}</a></div>
   </section>
 </main>`,
+  // Live motion: looping scenes played by dd-core's motion engine (see motion()).
+  motion: [
+ {
+  "root": ".vg-brd",
+  "D": 10000,
+  "still": 0.6,
+  "tracks": [
+   [
+    ".v-g",
+    0,
+    [
+     [
+      0,
+      500,
+      {
+       "opacity": 0
+      },
+      {
+       "opacity": 1
+      },
+      "io"
+     ],
+     [
+      9300,
+      9900,
+      {
+       "opacity": 1
+      },
+      {
+       "opacity": 0
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".cv",
+    0,
+    [
+     [
+      0,
+      900,
+      {
+       "opacity": 0,
+       "transform": "translateY(2cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".gd line",
+    90,
+    [
+     [
+      500,
+      1400,
+      {
+       "strokeDashoffset": 1
+      },
+      {
+       "strokeDashoffset": 0
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    "circle.gc",
+    0,
+    [
+     [
+      1400,
+      2600,
+      {
+       "strokeDashoffset": 1
+      },
+      {
+       "strokeDashoffset": 0
+      },
+      "io"
+     ],
+     [
+      4200,
+      5000,
+      {},
+      {
+       "opacity": 0.25
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    "rect.gc",
+    0,
+    [
+     [
+      1900,
+      2900,
+      {
+       "strokeDashoffset": 1
+      },
+      {
+       "strokeDashoffset": 0
+      },
+      "io"
+     ],
+     [
+      4200,
+      5000,
+      {},
+      {
+       "opacity": 0.25
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".gd",
+    0,
+    [
+     [
+      4200,
+      5000,
+      {
+       "opacity": 1
+      },
+      {
+       "opacity": 0.35
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    "path.mk",
+    0,
+    [
+     [
+      2900,
+      3800,
+      {
+       "opacity": 0,
+       "transform": "scale(.94)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1)"
+      },
+      "sp"
+     ]
+    ]
+   ],
+   [
+    ".eye",
+    0,
+    [
+     [
+      3700,
+      4100,
+      {
+       "opacity": 0,
+       "transform": "scale(.6)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1)"
+      },
+      "sp"
+     ]
+    ]
+   ],
+   [
+    ".sw",
+    90,
+    [
+     [
+      4400,
+      5100,
+      {
+       "opacity": 0,
+       "transform": "translateY(2.4cqw)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "o"
+     ]
+    ]
+   ],
+   [
+    ".ty",
+    0,
+    [
+     [
+      5000,
+      5700,
+      {
+       "opacity": 0,
+       "transform": "translateY(2cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".fl",
+    0,
+    [
+     [
+      5400,
+      6100,
+      {
+       "opacity": 0,
+       "transform": "translateY(2cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".card3",
+    0,
+    [
+     [
+      6800,
+      7700,
+      {
+       "transform": "rotateY(0deg)"
+      },
+      {
+       "transform": "rotateY(180deg)"
+      },
+      "io"
+     ]
+    ]
+   ]
+  ]
+ }
+],
   // Hero gradient: GetLayers "meridian", tinted greyscale through its CONFIG. The shader is untouched.
   gl: { cfg: {"bgColor":"#08080a","colorA":"#070606","colorB":"#51504e","colorC":"#3d3d3b","colorD":"#aaa8a3"}, poster: "/uploads/d-Q_kvQRPH8ATZhTFd1Yt-svc-03.webp", mount: function(canvas, __ovr, __opts) {
  const __dummy = {

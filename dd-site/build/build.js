@@ -59,7 +59,7 @@ async function buildPage(key) {
   let p;
   if (SERVICES[key]) {
     const d = JSON.parse(rd(`src/data/${key}.json`));
-    p = require('../src/pages/_service.js')(d, SERVICES[key]);
+    p = require('../src/pages/_service.js')(d, Object.assign({ key }, SERVICES[key]));
     p.gl = SERVICES[key].gl;
   } else {
     delete require.cache[require.resolve(`../src/pages/${key}.js`)];
@@ -76,7 +76,9 @@ DD.pages[${JSON.stringify(key)}] = {
 ${meta}
   ld: ${JSON.stringify(old.ld, null, 1)},
   css: ${tl(minCss(p.css || ''))},
-  html: ${tl(p.html)},${g ? `
+  html: ${tl(p.html)},${p.motion ? `
+  // Live motion: looping scenes played by dd-core's motion engine (see motion()).
+  motion: ${JSON.stringify(p.motion, null, 1)},` : ''}${g ? `
   // Hero gradient: GetLayers "${g.id}", tinted greyscale through its CONFIG. The shader is untouched.
   gl: { cfg: ${JSON.stringify(g.cfg)}, poster: ${JSON.stringify(g.poster)}, mount: ${g.fn} },` : ''}${p.init ? `
   init: ${p.init.toString()},` : ''}

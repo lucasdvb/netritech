@@ -20,6 +20,14 @@ DD.pages["about"] = {
 .glance .stat:nth-child(2){background:#f3f1ea;color:#0c0c0e;--fg:#0c0c0e;--mu:#62615b;border-color:transparent}
 .glance .stat:nth-child(3){background:#0b0b0d url(/uploads/1qEcUtH4lHDuqfDdPiAdS-svc-01.webp) center/cover}
 .glance .lab{margin-top:0}
+.glance .stat{position:relative}
+.gx{position:absolute;right:24px;bottom:24px;width:48px;height:48px;color:var(--fg);overflow:visible}
+.gx .gt{fill:none;stroke:currentColor;stroke-opacity:.16;stroke-width:2}
+.gx .gr{fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round}
+.gx .gh{stroke:currentColor;stroke-width:2.4;stroke-linecap:round;transform-origin:32px 32px}
+.gx .go{transform-origin:32px 32px}
+.gx .gq{fill:currentColor;transform-box:fill-box;transform-origin:center}
+.gx .gb1,.gx .gb2{transform-box:fill-box;transform-origin:center}
 @media (max-width:1023px){.glance{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(240px,72%);overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:calc(var(--gt) * -1);padding:4px var(--gt) 24px;scrollbar-width:none}
 .glance::-webkit-scrollbar{display:none}
 .glance .stat{scroll-snap-align:start}
@@ -63,10 +71,10 @@ DD.pages["about"] = {
   <section class="sheet dk sec" aria-labelledby="glance-h">
     <div class="head"><h2 class="kick" id="glance-h">At a glance</h2><a class="lnk" href="mailto:info@disruptivedodo.mu">info@disruptivedodo.mu{{ar}}</a></div>
     <div class="glance mt-48" data-r="s">
-      <div class="stat"><p class="fig">1 hr</p><p class="lab">Every enquiry answered within a business hour</p></div>
-      <div class="stat"><p class="fig">24/7</p><p class="lab">Automated follow-up that never sleeps</p></div>
-      <div class="stat"><p class="fig">4</p><p class="lab">Growth stages, handled by one team</p></div>
-      <div class="stat"><p class="fig">EN·FR</p><p class="lab">We work in English and French</p></div>
+      <div class="stat"><svg class="gx" viewBox="0 0 64 64" aria-hidden="true"><circle class="gt" cx="32" cy="32" r="26"/><circle class="gr" pathLength="1" stroke-dasharray="1" cx="32" cy="32" r="26" transform="rotate(-90 32 32)"/><line class="gh" x1="32" y1="32" x2="32" y2="15"/><circle cx="32" cy="32" r="2.6" fill="currentColor"/></svg><p class="fig">1 hr</p><p class="lab">Every enquiry answered within a business hour</p></div>
+      <div class="stat"><svg class="gx" viewBox="0 0 64 64" aria-hidden="true"><circle class="gt" cx="32" cy="32" r="24"/><g class="go"><circle cx="32" cy="8" r="4.5" fill="currentColor"/></g><circle cx="32" cy="32" r="6" fill="none" stroke="currentColor" stroke-width="2"/></svg><p class="fig">24/7</p><p class="lab">Automated follow-up that never sleeps</p></div>
+      <div class="stat"><svg class="gx" viewBox="0 0 64 64" aria-hidden="true"><rect class="gq" x="10" y="10" width="20" height="20" rx="5"/><rect class="gq" x="34" y="10" width="20" height="20" rx="5"/><rect class="gq" x="10" y="34" width="20" height="20" rx="5"/><rect class="gq" x="34" y="34" width="20" height="20" rx="5"/></svg><p class="fig">4</p><p class="lab">Growth stages, handled by one team</p></div>
+      <div class="stat"><svg class="gx" viewBox="0 0 64 64" aria-hidden="true"><g class="gb1"><path d="M8 12h30a6 6 0 0 1 6 6v12a6 6 0 0 1-6 6H20l-8 7v-7H8a6 6 0 0 1-6-6V18a6 6 0 0 1 6-6z" fill="currentColor"/></g><g class="gb2"><path d="M26 26h30a6 6 0 0 1 6 6v12a6 6 0 0 1-6 6h-4v7l-8-7H26a6 6 0 0 1-6-6V32a6 6 0 0 1 6-6z" fill="none" stroke="currentColor" stroke-width="2.2"/></g></svg><p class="fig">EN·FR</p><p class="lab">We work in English and French</p></div>
     </div>
   </section>
 
@@ -99,6 +107,163 @@ DD.pages["about"] = {
     </div>
   </section>
 </main>`,
+  // Live motion: looping scenes played by dd-core's motion engine (see motion()).
+  motion: [
+ {
+  "root": ".glance",
+  "D": 6000,
+  "still": 0.5,
+  "tracks": [
+   [
+    ".gr",
+    0,
+    [
+     [
+      300,
+      5200,
+      {
+       "strokeDashoffset": 1
+      },
+      {
+       "strokeDashoffset": 0
+      },
+      "io"
+     ],
+     [
+      5400,
+      5900,
+      {},
+      {
+       "strokeDashoffset": 1
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".gh",
+    0,
+    [
+     [
+      300,
+      5200,
+      {
+       "transform": "rotate(0deg)"
+      },
+      {
+       "transform": "rotate(360deg)"
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".go",
+    0,
+    [
+     [
+      0,
+      6000,
+      {
+       "transform": "rotate(0deg)"
+      },
+      {
+       "transform": "rotate(360deg)"
+      },
+      "l"
+     ]
+    ]
+   ],
+   [
+    ".gq",
+    260,
+    [
+     [
+      400,
+      800,
+      {
+       "opacity": 0.16,
+       "transform": "scale(.8)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1)"
+      },
+      "sp"
+     ],
+     [
+      4600,
+      5200,
+      {},
+      {
+       "opacity": 0.16,
+       "transform": "scale(.8)"
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".gb1",
+    0,
+    [
+     [
+      600,
+      1000,
+      {
+       "opacity": 0.25,
+       "transform": "translateY(4px)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sp"
+     ],
+     [
+      3200,
+      3600,
+      {},
+      {
+       "opacity": 0.25,
+       "transform": "translateY(4px)"
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".gb2",
+    0,
+    [
+     [
+      1800,
+      2200,
+      {
+       "opacity": 0.25,
+       "transform": "translateY(4px)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sp"
+     ],
+     [
+      4400,
+      4800,
+      {},
+      {
+       "opacity": 0.25,
+       "transform": "translateY(4px)"
+      },
+      "io"
+     ]
+    ]
+   ]
+  ]
+ }
+],
   // Hero gradient: GetLayers "antumbra", tinted greyscale through its CONFIG. The shader is untouched.
   gl: { cfg: {"bgColor":"#08080a","colorA":"#121211","colorB":"#343332","colorC":"#7f7e7a","colorD":"#f3f1ea"}, poster: "", mount: function(canvas, __ovr, __opts) {
  const __dummy = {

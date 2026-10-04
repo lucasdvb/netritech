@@ -168,6 +168,19 @@ DD.pages["ai"] = {
 30%{opacity:1;transform:translateY(-3px)}
 }
 @media (prefers-reduced-motion:reduce){.chat .typing i{animation:none}
+}
+.vg-ai .phn{left:38%;top:3%;width:24%;height:94%;border-radius:2.8cqw}
+.vg-ai .hdr{left:39.5%;top:7%;width:21%;padding-bottom:1cqw;border-bottom:1px solid rgba(255,255,255,.08)}
+.vg-ai .onl{color:rgba(243,241,234,.55);font-size:.85cqw}
+.vg-ai .bub{max-width:17cqw;padding:.9cqw 1.1cqw;border-radius:1.4cqw;font-size:1.02cqw;line-height:1.35;white-space:normal}
+.vg-ai .cu{left:40%;background:rgba(255,255,255,.09);border-bottom-left-radius:.4cqw}
+.vg-ai .bo{right:40%;background:#f3f1ea;color:#0c0c0e;border-bottom-right-radius:.4cqw;text-align:left}
+.vg-ai .typ{right:40%;display:flex;gap:.4cqw;padding:1cqw 1.2cqw;border-radius:1.4cqw;background:#f3f1ea}
+.vg-ai .typ i{width:.6cqw;height:.6cqw;border-radius:50%;background:#0c0c0e;opacity:.5}
+.vg-ai .bk{left:6%;top:30%;width:26%;padding:1.4cqw}
+.vg-ai .tm{left:68%;top:52%;width:26%;padding:1.4cqw}
+.vg-ai .cal{width:3.4cqw;height:3.4cqw;border-radius:.8cqw;background:#f3f1ea;color:#0c0c0e;display:grid;place-items:center;font-weight:600;font-size:1.2cqw;flex:none}
+@media (max-width:767px){.vg-ai{--fx:-45%}
 }`,
   html: `<main>
   <section class="hero">
@@ -187,7 +200,18 @@ DD.pages["ai"] = {
   </section>
 
   <section class="sheet lt sec" aria-labelledby="plain-h">
-    <div class="sp-ban"><div class="ph r21x9" data-r="x"><div class="lb"><b>AI assistant on WhatsApp</b><span>A customer conversation with the assistant, on a phone</span><i>21:9</i></div></div></div>
+    <div class="sp-ban"><div class="vg vg-ai" role="img" aria-label="An AI assistant answering a customer on WhatsApp and booking a visit" data-r="x"><div class="vg-in"><div class="v-g">
+    <div class="v-win phn"></div>
+    <div class="v-row hdr"><span class="v-av"></span><div><p class="v-t">Your business</p><p class="onl">Online</p></div></div>
+    <p class="bub cu m1" style="top:20%">Hi, are you open on Sunday?</p>
+    <div class="typ t1" style="top:32%"><i></i><i></i><i></i></div>
+    <p class="bub bo m2" style="top:32%">Yes, from 9:00 to 13:00. Would you like to book a visit?</p>
+    <p class="bub cu m3" style="top:51%">Yes, Sunday at 10:00 please.</p>
+    <div class="typ t2" style="top:63%"><i></i><i></i><i></i></div>
+    <p class="bub bo m4" style="top:63%">Done. You are booked for Sunday at 10:00.</p>
+    <div class="v-win v-solid bk"><div class="v-row"><span class="cal">10</span><div><p class="v-t">Booked</p><p class="v-s">Sunday at 10:00</p></div></div></div>
+    <div class="v-win v-solid tm"><div class="v-row"><span class="v-av"></span><div><p class="v-t">Team notified</p><p class="v-s">The full chat is in your CRM</p></div></div></div>
+  </div></div><div class="lb" hidden><div class="lb"><b>AI assistant on WhatsApp</b><span>A customer conversation with the assistant, on a phone</span><i>21:9</i></div></div></div></div>
     <div class="g12">
       <div class="c1-5"><p class="kick">In plain terms</p><h2 class="h2 mt-24" id="plain-h">What you get, in plain terms.</h2></div>
       <p class="lead fg c7-12">We put AI to work where it helps you sell: answering customer questions, collecting their details, booking calls and drafting follow-ups. It works from your business's information, follows your rules, and passes the conversation to a person when it should.</p>
@@ -279,6 +303,304 @@ DD.pages["ai"] = {
     <div class="btn-row mt-48"><a class="btn btn-p" href="/contact">Book a free growth call{{ar}}</a></div>
   </section>
 </main>`,
+  // Live motion: looping scenes played by dd-core's motion engine (see motion()).
+  motion: [
+ {
+  "root": ".vg-ai",
+  "D": 10000,
+  "still": 0.82,
+  "tracks": [
+   [
+    ".v-g",
+    0,
+    [
+     [
+      0,
+      500,
+      {
+       "opacity": 0
+      },
+      {
+       "opacity": 1
+      },
+      "io"
+     ],
+     [
+      9300,
+      9900,
+      {
+       "opacity": 1
+      },
+      {
+       "opacity": 0
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".phn",
+    0,
+    [
+     [
+      0,
+      900,
+      {
+       "opacity": 0,
+       "transform": "translateY(3cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".hdr",
+    0,
+    [
+     [
+      400,
+      1000,
+      {
+       "opacity": 0,
+       "transform": "translateY(.8cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".m1",
+    0,
+    [
+     [
+      1000,
+      1500,
+      {
+       "opacity": 0,
+       "transform": "translateY(1.2cqw) scale(.94)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sp"
+     ]
+    ]
+   ],
+   [
+    ".t1",
+    0,
+    [
+     [
+      1900,
+      2200,
+      {
+       "opacity": 0,
+       "transform": "scale(.8)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1)"
+      },
+      "sp"
+     ],
+     [
+      3000,
+      3150,
+      {},
+      {
+       "opacity": 0
+      },
+      "l"
+     ]
+    ]
+   ],
+   [
+    ".t1 i",
+    150,
+    [
+     [
+      2100,
+      2400,
+      {
+       "transform": "translateY(0)"
+      },
+      {
+       "transform": "translateY(-.4cqw)"
+      },
+      "io"
+     ],
+     [
+      2400,
+      2700,
+      {},
+      {
+       "transform": "translateY(0)"
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".m2",
+    0,
+    [
+     [
+      3050,
+      3550,
+      {
+       "opacity": 0,
+       "transform": "translateY(1.2cqw) scale(.94)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sp"
+     ]
+    ]
+   ],
+   [
+    ".m3",
+    0,
+    [
+     [
+      4500,
+      5000,
+      {
+       "opacity": 0,
+       "transform": "translateY(1.2cqw) scale(.94)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sp"
+     ]
+    ]
+   ],
+   [
+    ".t2",
+    0,
+    [
+     [
+      5300,
+      5600,
+      {
+       "opacity": 0,
+       "transform": "scale(.8)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1)"
+      },
+      "sp"
+     ],
+     [
+      6300,
+      6450,
+      {},
+      {
+       "opacity": 0
+      },
+      "l"
+     ]
+    ]
+   ],
+   [
+    ".t2 i",
+    150,
+    [
+     [
+      5500,
+      5800,
+      {
+       "transform": "translateY(0)"
+      },
+      {
+       "transform": "translateY(-.4cqw)"
+      },
+      "io"
+     ],
+     [
+      5800,
+      6100,
+      {},
+      {
+       "transform": "translateY(0)"
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".m4",
+    0,
+    [
+     [
+      6350,
+      6850,
+      {
+       "opacity": 0,
+       "transform": "translateY(1.2cqw) scale(.94)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sp"
+     ]
+    ]
+   ],
+   [
+    ".bk",
+    0,
+    [
+     [
+      7000,
+      7600,
+      {
+       "opacity": 0,
+       "transform": "translateX(2cqw) scale(.95)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sp"
+     ]
+    ]
+   ],
+   [
+    ".tm",
+    0,
+    [
+     [
+      7600,
+      8200,
+      {
+       "opacity": 0,
+       "transform": "translateX(-2cqw) scale(.95)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sp"
+     ]
+    ]
+   ]
+  ]
+ }
+],
   // Hero gradient: GetLayers "cynosure", tinted greyscale through its CONFIG. The shader is untouched.
   gl: { cfg: {"bgColor":"#08080a","colorA":"#7d7c78","colorB":"#4e4e4b","colorC":"#4a4a47","colorD":"#8b8a86"}, poster: "/uploads/scHUo4gyKrkiEYNTf-8EU-svc-04.webp", mount: function(canvas, __ovr, __opts) {
  const __dummy = {

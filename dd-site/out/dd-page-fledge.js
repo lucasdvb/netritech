@@ -225,6 +225,25 @@ DD.pages["fledge"] = {
 .metrics>div{padding:28px 0 32px;border-top:1px solid var(--ln)}
 .metrics dt{font-size:clamp(26px,2.4vw,38px);font-weight:var(--w-dsp);letter-spacing:-.035em;color:var(--fg);line-height:1.05}
 .metrics dd{margin-top:12px}
+.mc{display:block;width:120px;height:48px;margin-bottom:22px;overflow:visible;color:var(--fg)}
+.mc .mb,.mc .mq{fill:currentColor;transform-box:fill-box;transform-origin:50% 100%}
+.mc .mt,.mc .mbase{fill:none;stroke:currentColor;stroke-opacity:.14;stroke-width:1.5}
+.mc .mr,.mc .ml,.mc .mtk{fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.mc .mtk{stroke-opacity:.35;stroke-width:2}
+.mc .mdot,.mc .mend{fill:currentColor;transform-box:fill-box;transform-origin:center}
+.mc .ms{fill:currentColor}
+.path .line{overflow:hidden}
+.path .line::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(243,241,234,.95),transparent) no-repeat;background-size:16% 100%;animation:flow 3.4s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes flow{from{background-position:-30% 0}
+to{background-position:130% 0}
+}
+@keyframes flowv{from{background-position:0 -30%}
+to{background-position:0 130%}
+}
+@media (max-width:1023px){.path .line::after{background-image:linear-gradient(180deg,transparent,rgba(243,241,234,.95),transparent);background-size:100% 16%;animation-name:flowv}
+}
+@media (prefers-reduced-motion:reduce){.path .line::after{animation:none;opacity:0}
+}
 @media (max-width:767px){.metrics{grid-template-columns:1fr}
 }
 .cmp{width:100%;font-size:16px}
@@ -378,12 +397,12 @@ DD.pages["fledge"] = {
       <div class="head"><div><p class="kick">What we measure</p><h2 class="h2 mt-24" id="measure-h" style="max-width:19ch">The numbers we show you every month.</h2></div>
         <p class="tx">We report on what moves your business.</p></div>
       <dl class="metrics mt-64">
-        <div><dt>Enquiries</dt><dd class="tx">How many came in, and from where.</dd></div>
-        <div><dt>Reply time</dt><dd class="tx">How fast each one was answered.</dd></div>
-        <div><dt>Sales</dt><dd class="tx">How many enquiries became customers.</dd></div>
-        <div><dt>Cost per enquiry</dt><dd class="tx">What each enquiry cost you in ads.</dd></div>
-        <div><dt>Reviews</dt><dd class="tx">New reviews, and your rating.</dd></div>
-        <div><dt>Content</dt><dd class="tx">What we posted, and how people responded.</dd></div>
+        <div><svg class="mc" viewBox="0 0 120 48" aria-hidden="true"><rect class="mb" x="4" y="34" width="9" height="14" rx="2"/><rect class="mb" x="20" y="28" width="9" height="20" rx="2"/><rect class="mb" x="36" y="31" width="9" height="17" rx="2"/><rect class="mb" x="52" y="21" width="9" height="27" rx="2"/><rect class="mb" x="68" y="16" width="9" height="32" rx="2"/><rect class="mb" x="84" y="10" width="9" height="38" rx="2"/><rect class="mb" x="100" y="2" width="9" height="46" rx="2"/></svg><dt>Enquiries</dt><dd class="tx">How many came in, and from where.</dd></div>
+        <div><svg class="mc" viewBox="0 0 120 48" aria-hidden="true"><circle class="mt" cx="24" cy="24" r="20"/><circle class="mr" pathLength="1" stroke-dasharray="1" cx="24" cy="24" r="20" transform="rotate(-90 24 24)"/><circle class="mdot" cx="24" cy="24" r="3"/><path class="mtk" d="M60 24h52" pathLength="1" stroke-dasharray="1"/></svg><dt>Reply time</dt><dd class="tx">How fast each one was answered.</dd></div>
+        <div><svg class="mc" viewBox="0 0 120 48" aria-hidden="true"><path class="mbase" d="M2 46h116"/><path class="ml" pathLength="1" stroke-dasharray="1" d="M4 40 L22 36 L40 38 L58 27 L76 24 L94 14 L116 6"/><circle class="mend" cx="116" cy="6" r="3.5"/></svg><dt>Sales</dt><dd class="tx">How many enquiries became customers.</dd></div>
+        <div><svg class="mc" viewBox="0 0 120 48" aria-hidden="true"><path class="mbase" d="M2 46h116"/><path class="ml" pathLength="1" stroke-dasharray="1" d="M4 8 L22 12 L40 10 L58 22 L76 26 L94 33 L116 38"/><circle class="mend" cx="116" cy="38" r="3.5"/></svg><dt>Cost per enquiry</dt><dd class="tx">What each enquiry cost you in ads.</dd></div>
+        <div><svg class="mc" viewBox="0 0 120 48" aria-hidden="true"><path class="ms" transform="translate(2 12)" d="M10 0l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L10 15l-5.9 3.2 1.3-6.6L.5 7l6.6-.8z"/><path class="ms" transform="translate(25 12)" d="M10 0l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L10 15l-5.9 3.2 1.3-6.6L.5 7l6.6-.8z"/><path class="ms" transform="translate(48 12)" d="M10 0l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L10 15l-5.9 3.2 1.3-6.6L.5 7l6.6-.8z"/><path class="ms" transform="translate(71 12)" d="M10 0l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L10 15l-5.9 3.2 1.3-6.6L.5 7l6.6-.8z"/><path class="ms" transform="translate(94 12)" d="M10 0l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L10 15l-5.9 3.2 1.3-6.6L.5 7l6.6-.8z"/></svg><dt>Reviews</dt><dd class="tx">New reviews, and your rating.</dd></div>
+        <div><svg class="mc" viewBox="0 0 120 48" aria-hidden="true"><rect class="mq" x="4" y="4" width="14" height="18" rx="3"/><rect class="mq" x="23" y="4" width="14" height="18" rx="3"/><rect class="mq" x="42" y="4" width="14" height="18" rx="3"/><rect class="mq" x="61" y="4" width="14" height="18" rx="3"/><rect class="mq" x="80" y="4" width="14" height="18" rx="3"/><rect class="mq" x="99" y="4" width="14" height="18" rx="3"/><rect class="mq" x="4" y="26" width="14" height="18" rx="3"/><rect class="mq" x="23" y="26" width="14" height="18" rx="3"/><rect class="mq" x="42" y="26" width="14" height="18" rx="3"/><rect class="mq" x="61" y="26" width="14" height="18" rx="3"/><rect class="mq" x="80" y="26" width="14" height="18" rx="3"/><rect class="mq" x="99" y="26" width="14" height="18" rx="3"/></svg><dt>Content</dt><dd class="tx">What we posted, and how people responded.</dd></div>
       </dl>
     </div>
     <p class="sm mt-24">We set targets with you for the paid parts. We never promise numbers we don't control.</p>
@@ -446,6 +465,229 @@ DD.pages["fledge"] = {
     <div class="btn-row mt-48"><a class="btn btn-p" href="/contact">Book a free growth call{{ar}}</a><a class="btn" href="/services">See all services</a></div>
   </section>
 </main>`,
+  // Live motion: looping scenes played by dd-core's motion engine (see motion()).
+  motion: [
+ {
+  "root": ".metrics",
+  "D": 6400,
+  "still": 0.62,
+  "tracks": [
+   [
+    ".mb",
+    70,
+    [
+     [
+      500,
+      1300,
+      {
+       "transform": "scaleY(0)"
+      },
+      {
+       "transform": "scaleY(1)"
+      },
+      "sp"
+     ],
+     [
+      5300,
+      5900,
+      {},
+      {
+       "transform": "scaleY(0)"
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".mr",
+    0,
+    [
+     [
+      600,
+      2600,
+      {
+       "strokeDashoffset": 1
+      },
+      {
+       "strokeDashoffset": 0.12
+      },
+      "io"
+     ],
+     [
+      5300,
+      5900,
+      {},
+      {
+       "strokeDashoffset": 1
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".mdot",
+    0,
+    [
+     [
+      2400,
+      2800,
+      {
+       "transform": "scale(1)"
+      },
+      {
+       "transform": "scale(1.8)"
+      },
+      "sp"
+     ],
+     [
+      2800,
+      3200,
+      {},
+      {
+       "transform": "scale(1)"
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".mtk",
+    0,
+    [
+     [
+      1200,
+      2600,
+      {
+       "strokeDashoffset": 1
+      },
+      {
+       "strokeDashoffset": 0.6
+      },
+      "io"
+     ],
+     [
+      5300,
+      5900,
+      {},
+      {
+       "strokeDashoffset": 1
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".ml",
+    0,
+    [
+     [
+      700,
+      2700,
+      {
+       "strokeDashoffset": 1
+      },
+      {
+       "strokeDashoffset": 0
+      },
+      "io"
+     ],
+     [
+      5300,
+      5900,
+      {},
+      {
+       "strokeDashoffset": 1
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".mend",
+    0,
+    [
+     [
+      2500,
+      2900,
+      {
+       "opacity": 0,
+       "transform": "scale(.3)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1)"
+      },
+      "sp"
+     ],
+     [
+      5200,
+      5500,
+      {},
+      {
+       "opacity": 0
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".ms",
+    140,
+    [
+     [
+      800,
+      1200,
+      {
+       "opacity": 0.14
+      },
+      {
+       "opacity": 1
+      },
+      "o"
+     ],
+     [
+      5300,
+      5800,
+      {},
+      {
+       "opacity": 0.14
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".mq",
+    60,
+    [
+     [
+      700,
+      1100,
+      {
+       "opacity": 0.12,
+       "transform": "scaleY(.6)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scaleY(1)"
+      },
+      "sp"
+     ],
+     [
+      5200,
+      5800,
+      {},
+      {
+       "opacity": 0.12,
+       "transform": "scaleY(.6)"
+      },
+      "io"
+     ]
+    ]
+   ]
+  ]
+ }
+],
   // Hero gradient: GetLayers "chatoyance", tinted greyscale through its CONFIG. The shader is untouched.
   gl: { cfg: {"bgColor":"#08080a","colorA":"#121212","colorB":"#4b4a48","colorC":"#72716e","colorD":"#cbcac4"}, poster: "", mount: function(canvas, __ovr, __opts) {
  const __dummy = {

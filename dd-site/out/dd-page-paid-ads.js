@@ -164,6 +164,23 @@ DD.pages["paid-ads"] = {
 }
 @media (max-width:767px){.ledger>li{grid-template-columns:64px minmax(0,1fr)}
 .ledger .tx{grid-column:2}
+}
+.vg-ads .ad{left:5%;top:8%;width:24%;height:84%;padding:1.4cqw}
+.vg-ads .adimg{background-image:url(/uploads/Y3s6CQVkiDaxrn8gIgp9C-svc-02.webp)}
+.vg-ads .chart{left:33%;top:8%;width:40%;height:58%;padding:1.4cqw 1.6cqw}
+.vg-ads .chart svg{position:absolute;left:4%;right:4%;bottom:10%;width:92%;height:62%}
+.vg-ads .grid line{stroke:rgba(255,255,255,.07);stroke-width:1}
+.vg-ads .ln{fill:none;stroke:#f3f1ea;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.vg-ads .area{fill:url(#vgAdsFill)}
+.vg-ads .pt{transform-box:fill-box;transform-origin:center}
+.vg-ads .kpi{width:19.4%;height:22%;top:70%;padding:1.2cqw 1.4cqw}
+.vg-ads .arw{width:1.6cqw;height:1.6cqw;flex:none}
+.vg-ads .meter{position:absolute;left:1.4cqw;right:1.4cqw;bottom:1.4cqw;height:.75cqw;border-radius:1cqw;background:rgba(255,255,255,.08);overflow:hidden}
+.vg-ads .meter i{position:absolute;inset:0;border-radius:inherit;background:#f3f1ea;transform-origin:0 50%}
+.vg-ads .wk{left:77%;top:8%;width:18%;height:84%;padding:1.4cqw}
+.vg-ads .bars{position:absolute;left:1.4cqw;right:1.4cqw;bottom:2.4cqw;height:60%;display:flex;align-items:flex-end;gap:.9cqw}
+.vg-ads .bars i{flex:1;border-radius:.5cqw .5cqw .2cqw .2cqw;background:linear-gradient(#f3f1ea,rgba(243,241,234,.35));transform-origin:50% 100%}
+@media (max-width:767px){.vg-ads{--fx:-40%}
 }`,
   html: `<main>
   <section class="hero">
@@ -183,7 +200,25 @@ DD.pages["paid-ads"] = {
   </section>
 
   <section class="sheet lt sec" aria-labelledby="plain-h">
-    <div class="sp-ban"><div class="ph r21x9" data-r="x"><div class="lb"><b>Ads on a phone</b><span>A campaign as it appears in the Facebook and Instagram feed</span><i>21:9</i></div></div></div>
+    <div class="sp-ban"><div class="vg vg-ads" role="img" aria-label="An ad going live while enquiries rise and the cost per enquiry falls" data-r="x"><div class="vg-in"><div class="v-g">
+    <div class="v-win ad">
+      <div class="v-row"><span class="v-av"></span><div style="display:grid;gap:.5cqw"><span class="v-bar hi" style="width:7cqw"></span><span class="v-s">Sponsored</span></div></div>
+      <div class="v-img adimg" style="position:relative;margin-top:1.4cqw;height:52%"></div>
+      <span class="v-bar hi" style="margin-top:1.4cqw;width:85%"></span><span class="v-bar" style="margin-top:.7cqw;width:60%"></span>
+      <span class="v-pill adcta" style="position:absolute;left:1.4cqw;right:1.4cqw;bottom:1.4cqw">Book now</span>
+    </div>
+    <div class="v-win chart"><div class="v-row" style="justify-content:space-between"><span class="v-t">Enquiries</span><span class="v-s">Last 30 days</span></div>
+      <svg viewBox="0 0 400 160" preserveAspectRatio="none" aria-hidden="true">
+        <defs><linearGradient id="vgAdsFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f1ea" stop-opacity=".22"/><stop offset="1" stop-color="#f3f1ea" stop-opacity="0"/></linearGradient></defs>
+        <g class="grid"><line x1="0" y1="40" x2="400" y2="40"/><line x1="0" y1="80" x2="400" y2="80"/><line x1="0" y1="120" x2="400" y2="120"/></g>
+        <path class="area" d="M0 140 C40 136 60 128 90 124 S150 120 180 104 S240 92 270 70 S330 44 360 34 L400 22 L400 160 L0 160 Z"/>
+        <path class="ln" pathLength="1" stroke-dasharray="1" d="M0 140 C40 136 60 128 90 124 S150 120 180 104 S240 92 270 70 S330 44 360 34 L400 22"/>
+        <circle class="pt" cx="400" cy="22" r="5" fill="#f3f1ea"/>
+      </svg></div>
+    <div class="v-win v-solid kpi" style="left:33%"><div class="v-row"><svg class="arw" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5L8 3l4.5 4.5" fill="none" stroke="#f3f1ea" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="v-t">Enquiries</span></div><span class="meter"><i class="up"></i></span></div>
+    <div class="v-win v-solid kpi" style="left:53.6%"><div class="v-row"><svg class="arw" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3.5 8.5L8 13l4.5-4.5" fill="none" stroke="#f3f1ea" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="v-t">Cost per enquiry</span></div><span class="meter"><i class="dn"></i></span></div>
+    <div class="v-win wk"><span class="v-t">This week</span><div class="bars"><i style="height:38%"></i><i style="height:52%"></i><i style="height:46%"></i><i style="height:68%"></i><i style="height:74%"></i><i style="height:88%"></i><i style="height:100%"></i></div></div>
+  </div></div><div class="lb" hidden><div class="lb"><b>Ads on a phone</b><span>A campaign as it appears in the Facebook and Instagram feed</span><i>21:9</i></div></div></div></div>
     <div class="g12">
       <div class="c1-5"><p class="kick">In plain terms</p><h2 class="h2 mt-24" id="plain-h">What you get, in plain terms.</h2></div>
       <p class="lead fg c7-12">We run your ads on Facebook, Instagram, Google and TikTok. We decide who sees them, make them, check them, and move the money to what works. Your ad budget is paid by you, directly to the platforms, separate from our fee.</p>
@@ -276,6 +311,277 @@ DD.pages["paid-ads"] = {
     <div class="btn-row mt-48"><a class="btn btn-p" href="/contact">Book a free growth call{{ar}}</a></div>
   </section>
 </main>`,
+  // Live motion: looping scenes played by dd-core's motion engine (see motion()).
+  motion: [
+ {
+  "root": ".vg-ads",
+  "D": 9000,
+  "still": 0.78,
+  "tracks": [
+   [
+    ".v-g",
+    0,
+    [
+     [
+      0,
+      500,
+      {
+       "opacity": 0
+      },
+      {
+       "opacity": 1
+      },
+      "io"
+     ],
+     [
+      8300,
+      8900,
+      {
+       "opacity": 1
+      },
+      {
+       "opacity": 0
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".ad",
+    0,
+    [
+     [
+      0,
+      900,
+      {
+       "opacity": 0,
+       "transform": "translateY(3cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".adimg",
+    0,
+    [
+     [
+      300,
+      1300,
+      {
+       "clipPath": "inset(0 0 100% 0 round 1cqw)"
+      },
+      {
+       "clipPath": "inset(0 0 0% 0 round 1cqw)"
+      }
+     ]
+    ]
+   ],
+   [
+    ".adcta",
+    0,
+    [
+     [
+      1100,
+      1600,
+      {
+       "opacity": 0,
+       "transform": "scale(.6)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1)"
+      },
+      "sp"
+     ],
+     [
+      2200,
+      2350,
+      {},
+      {
+       "transform": "scale(.94)"
+      },
+      "io"
+     ],
+     [
+      2350,
+      2700,
+      {},
+      {
+       "transform": "scale(1)"
+      },
+      "sp"
+     ]
+    ]
+   ],
+   [
+    ".chart",
+    0,
+    [
+     [
+      700,
+      1500,
+      {
+       "opacity": 0,
+       "transform": "translateY(2cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".ln",
+    0,
+    [
+     [
+      1600,
+      4200,
+      {
+       "strokeDashoffset": 1
+      },
+      {
+       "strokeDashoffset": 0
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".area",
+    0,
+    [
+     [
+      2600,
+      4400,
+      {
+       "opacity": 0
+      },
+      {
+       "opacity": 1
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".pt",
+    0,
+    [
+     [
+      4100,
+      4500,
+      {
+       "opacity": 0,
+       "transform": "scale(.6)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1)"
+      },
+      "sp"
+     ]
+    ]
+   ],
+   [
+    ".kpi",
+    140,
+    [
+     [
+      1300,
+      2000,
+      {
+       "opacity": 0,
+       "transform": "translateY(2cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".up",
+    0,
+    [
+     [
+      2400,
+      4600,
+      {
+       "transform": "scaleX(.18)"
+      },
+      {
+       "transform": "scaleX(.82)"
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".dn",
+    0,
+    [
+     [
+      2400,
+      4600,
+      {
+       "transform": "scaleX(.86)"
+      },
+      {
+       "transform": "scaleX(.34)"
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".wk",
+    0,
+    [
+     [
+      1000,
+      1800,
+      {
+       "opacity": 0,
+       "transform": "translateY(2cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".bars i",
+    70,
+    [
+     [
+      1900,
+      2700,
+      {
+       "transform": "scaleY(0)"
+      },
+      {
+       "transform": "scaleY(1)"
+      },
+      "sp"
+     ]
+    ]
+   ]
+  ]
+ }
+],
   // Hero gradient: GetLayers "gnomon", tinted greyscale through its CONFIG. The shader is untouched.
   gl: { cfg: {"bgColor":"#08080a","colorA":"#1a1a19","colorB":"#50504d","colorC":"#bdbcb6","colorD":"#f3f1ea"}, poster: "/uploads/Y3s6CQVkiDaxrn8gIgp9C-svc-02.webp", mount: function(canvas, __ovr, __opts) {
  const __dummy = {

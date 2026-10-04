@@ -117,6 +117,7 @@ const SHARED_CSS = `.sp-part{display:flex;flex-wrap:wrap;align-items:center;gap:
 
 module.exports = function service(d, o) {
   const inc = INC[o.inc](d);
+  const vg = require('../vignettes.js')(o.key, d.banner);
   const html = `<main>
   <section class="hero">
     <div class="hero-bg shade"></div>
@@ -135,7 +136,7 @@ module.exports = function service(d, o) {
   </section>
 
   <section class="sheet lt sec" aria-labelledby="plain-h">
-    <div class="sp-ban"><div class="${d.bannerCls}" data-r="x">${d.banner}</div></div>
+    <div class="sp-ban">${vg.html}</div>
     <div class="g12">
       <div class="c1-5"><p class="kick">${d.plain.eb}</p><h2 class="h2 mt-24" id="plain-h">${d.plain.h2}</h2></div>
       <p class="lead fg c7-12">${d.plain.p}</p>
@@ -211,7 +212,7 @@ module.exports = function service(d, o) {
   </section>
 </main>`;
   const init = INIT[o.inc] || null;
-  return { css: SHARED_CSS + '\n' + CSS[o.inc], html, init };
+  return { css: SHARED_CSS + '\n' + CSS[o.inc] + '\n' + vg.css, html, init, motion: [vg.spec] };
 };
 
 const INIT = {

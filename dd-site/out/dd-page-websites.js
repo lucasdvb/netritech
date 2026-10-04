@@ -166,6 +166,22 @@ DD.pages["websites"] = {
 }
 @media (max-width:639px){.bento{grid-template-columns:1fr}
 .bento>li{grid-column:auto!important;min-height:0}
+}
+.vg-web .br{left:5%;top:9%;width:58%;height:82%}
+.vg-web .dots{display:flex;gap:.6cqw}
+.vg-web .dots i{width:.8cqw;height:.8cqw;border-radius:50%;background:rgba(243,241,234,.25)}
+.vg-web .url{height:2.4cqw;padding:0 1.2cqw;border-radius:2cqw;background:rgba(255,255,255,.07);display:flex;align-items:center;font-size:.95cqw;color:rgba(243,241,234,.7)}
+.vg-web .img{background-image:url(/uploads/1qEcUtH4lHDuqfDdPiAdS-svc-01.webp)}
+.vg-web .tile{border-radius:.8cqw;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08)}
+.vg-web .phone{left:68%;top:6%;width:15%;height:88%;border-radius:2.4cqw;padding:0}
+.vg-web .notch{left:73.5%;top:8.4%;width:6%;height:3%;border-radius:2cqw;background:#0a0a0c}
+.vg-web .q{left:39%;top:56%;width:29%;height:31%;padding:1.4cqw}
+.vg-web .g{width:2.2cqw;height:2.2cqw;border-radius:50%;border:2px solid #f3f1ea;flex:none}
+.vg-web .type{font-size:1.15cqw;white-space:nowrap}
+.vg-web .one{width:2.4cqw;height:2.4cqw;border-radius:50%;background:#f3f1ea;color:#0c0c0e;display:grid;place-items:center;font-size:1.1cqw;font-weight:600}
+.vg-web .toast{left:62%;top:68%;width:30%;padding:1.2cqw 1.4cqw}
+.vg-web .cur{left:14.6%;top:68.5%}
+@media (max-width:767px){.vg-web{--fx:-3%}
 }`,
   html: `<main>
   <section class="hero">
@@ -185,7 +201,28 @@ DD.pages["websites"] = {
   </section>
 
   <section class="sheet lt sec" aria-labelledby="plain-h">
-    <div class="sp-ban"><div class="ph r21x9" data-r="x"><div class="lb"><b>Website in context</b><span>A site we built, on a laptop and a phone</span><i>21:9</i></div></div></div>
+    <div class="sp-ban"><div class="vg vg-web" role="img" aria-label="A website being designed, found on Google, and bringing in an enquiry" data-r="x"><div class="vg-in"><div class="v-g">
+    <div class="v-win br"></div>
+    <div class="dots" style="left:7.5%;top:14%"><i></i><i></i><i></i></div>
+    <div class="url" style="left:20%;top:12.6%;width:26%">yourbusiness.mu</div>
+    <span class="v-bar hi nb" style="left:9%;top:24%;width:6%"></span><span class="v-bar nb" style="left:42%;top:24%;width:4%"></span><span class="v-bar nb" style="left:48%;top:24%;width:4%"></span><span class="v-bar nb" style="left:54%;top:24%;width:4%"></span>
+    <span class="v-bar hi th hb" style="left:9%;top:36%;width:23%"></span><span class="v-bar hi th hb" style="left:9%;top:44.5%;width:17%"></span>
+    <span class="v-bar sb" style="left:9%;top:55%;width:22%"></span><span class="v-bar sb" style="left:9%;top:59.5%;width:15%"></span>
+    <span class="v-pill btn" style="left:9%;top:66%">Book a call</span>
+    <div class="v-img img" style="left:36%;top:33%;width:23%;height:42%"></div>
+    <div class="tile rw" style="left:9%;top:79%;width:15%;height:7%"></div><div class="tile rw" style="left:25.5%;top:79%;width:15%;height:7%"></div><div class="tile rw" style="left:42%;top:79%;width:17%;height:7%"></div>
+    <div class="v-win phone"></div><div class="notch"></div>
+    <div class="v-img img pp" style="left:69.5%;top:15%;width:12%;height:25%"></div>
+    <span class="v-bar hi pp" style="left:69.5%;top:45%;width:9%"></span><span class="v-bar pp" style="left:69.5%;top:50%;width:7%"></span>
+    <span class="v-pill pp" style="left:69.5%;top:56%;height:2cqw;font-size:.8cqw">Book a call</span>
+    <div class="tile pp" style="left:69.5%;top:66%;width:12%;height:9%"></div><div class="tile pp" style="left:69.5%;top:77%;width:12%;height:9%"></div>
+    <div class="v-win v-solid q">
+      <div class="v-row"><span class="g"></span><span class="type">web design mauritius</span></div>
+      <div class="v-row" style="margin-top:2.2cqw"><span class="one">1</span><div style="display:grid;gap:.7cqw;width:100%"><span class="v-bar hi rb" style="width:80%"></span><span class="v-bar rb" style="width:55%"></span></div></div>
+    </div>
+    <div class="v-win v-solid toast"><div class="v-row"><span class="v-dot"></span><span class="v-t">New enquiry</span></div><p class="v-s" style="margin-top:.5cqw">From your website, just now</p></div>
+    <div class="cur"><svg class="v-cur" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3l14 8-6 1.6L10 19z" fill="#f3f1ea" stroke="#0c0c0e" stroke-width="1.2" stroke-linejoin="round"/></svg></div>
+  </div></div><div class="lb" hidden><div class="lb"><b>Website in context</b><span>A site we built, on a laptop and a phone</span><i>21:9</i></div></div></div></div>
     <div class="g12">
       <div class="c1-5"><p class="kick">In plain terms</p><h2 class="h2 mt-24" id="plain-h">What you get, in plain terms.</h2></div>
       <p class="lead fg c7-12">We build your website so people find it on Google, understand what you do straight away, and get in touch. Then we keep it fast, secure and up to date, on our own servers.</p>
@@ -278,6 +315,384 @@ DD.pages["websites"] = {
     <div class="btn-row mt-48"><a class="btn btn-p" href="/contact">Book a free growth call{{ar}}</a></div>
   </section>
 </main>`,
+  // Live motion: looping scenes played by dd-core's motion engine (see motion()).
+  motion: [
+ {
+  "root": ".vg-web",
+  "D": 9000,
+  "still": 0.8,
+  "tracks": [
+   [
+    ".v-g",
+    0,
+    [
+     [
+      0,
+      500,
+      {
+       "opacity": 0
+      },
+      {
+       "opacity": 1
+      },
+      "io"
+     ],
+     [
+      8300,
+      8900,
+      {
+       "opacity": 1
+      },
+      {
+       "opacity": 0
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".br",
+    0,
+    [
+     [
+      0,
+      900,
+      {
+       "opacity": 0,
+       "transform": "translateY(2cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".dots, .url",
+    120,
+    [
+     [
+      400,
+      1000,
+      {
+       "opacity": 0,
+       "transform": "translateY(.6cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".nb",
+    70,
+    [
+     [
+      600,
+      1300,
+      {
+       "transform": "scaleX(0)"
+      },
+      {
+       "transform": "scaleX(1)"
+      }
+     ]
+    ]
+   ],
+   [
+    ".hb",
+    140,
+    [
+     [
+      850,
+      1700,
+      {
+       "transform": "scaleX(0)"
+      },
+      {
+       "transform": "scaleX(1)"
+      }
+     ]
+    ]
+   ],
+   [
+    ".sb",
+    110,
+    [
+     [
+      1250,
+      2000,
+      {
+       "transform": "scaleX(0)"
+      },
+      {
+       "transform": "scaleX(1)"
+      }
+     ]
+    ]
+   ],
+   [
+    ".btn",
+    0,
+    [
+     [
+      1700,
+      2300,
+      {
+       "opacity": 0,
+       "transform": "scale(.6)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1)"
+      },
+      "sp"
+     ],
+     [
+      5900,
+      6060,
+      {},
+      {
+       "transform": "scale(.92)"
+      },
+      "io"
+     ],
+     [
+      6060,
+      6500,
+      {},
+      {
+       "transform": "scale(1)"
+      },
+      "sp"
+     ]
+    ]
+   ],
+   [
+    ".img:not(.pp)",
+    0,
+    [
+     [
+      1100,
+      2300,
+      {
+       "clipPath": "inset(0 0 100% 0 round 1cqw)"
+      },
+      {
+       "clipPath": "inset(0 0 0% 0 round 1cqw)"
+      }
+     ]
+    ]
+   ],
+   [
+    ".rw",
+    90,
+    [
+     [
+      1900,
+      2600,
+      {
+       "opacity": 0,
+       "transform": "translateY(1cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".phone, .notch",
+    0,
+    [
+     [
+      1000,
+      1900,
+      {
+       "opacity": 0,
+       "transform": "translateY(3cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".pp",
+    80,
+    [
+     [
+      1500,
+      2200,
+      {
+       "opacity": 0,
+       "transform": "translateY(1cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".q",
+    0,
+    [
+     [
+      2700,
+      3300,
+      {
+       "opacity": 0,
+       "transform": "translateY(2cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".type",
+    0,
+    [
+     [
+      3100,
+      4500,
+      {
+       "clipPath": "inset(0 100% 0 0)"
+      },
+      {
+       "clipPath": "inset(0 0% 0 0)"
+      },
+      "steps(20, end)"
+     ]
+    ]
+   ],
+   [
+    ".one",
+    0,
+    [
+     [
+      4600,
+      5100,
+      {
+       "opacity": 0,
+       "transform": "scale(.6)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1)"
+      },
+      "sp"
+     ]
+    ]
+   ],
+   [
+    ".rb",
+    110,
+    [
+     [
+      4700,
+      5400,
+      {
+       "transform": "scaleX(0)"
+      },
+      {
+       "transform": "scaleX(1)"
+      }
+     ]
+    ]
+   ],
+   [
+    ".cur",
+    0,
+    [
+     [
+      4900,
+      5100,
+      {
+       "opacity": 0,
+       "transform": "translate(26cqw,14cqw)"
+      },
+      {
+       "opacity": 1,
+       "transform": "translate(26cqw,14cqw)"
+      }
+     ],
+     [
+      5100,
+      5900,
+      {},
+      {
+       "transform": "translate(0,0)"
+      },
+      "io"
+     ],
+     [
+      5900,
+      6060,
+      {},
+      {
+       "transform": "translate(0,0) scale(.85)"
+      },
+      "io"
+     ],
+     [
+      6060,
+      6300,
+      {},
+      {
+       "transform": "translate(0,0) scale(1)"
+      }
+     ],
+     [
+      6900,
+      7400,
+      {},
+      {
+       "opacity": 0,
+       "transform": "translate(4cqw,6cqw)"
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".toast",
+    0,
+    [
+     [
+      6200,
+      6800,
+      {
+       "opacity": 0,
+       "transform": "translateY(1.6cqw) scale(.95)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sp"
+     ]
+    ]
+   ]
+  ]
+ }
+],
   // Hero gradient: GetLayers "antipode", tinted greyscale through its CONFIG. The shader is untouched.
   gl: { cfg: {"bgColor":"#08080a","colorA":"#0f0f0f","colorB":"#83827e","colorC":"#5c5b59","colorD":"#eae8e1"}, poster: "/uploads/1qEcUtH4lHDuqfDdPiAdS-svc-01.webp", mount: function(canvas, __ovr, __opts) {
  const __dummy = {

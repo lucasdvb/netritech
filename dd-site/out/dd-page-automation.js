@@ -169,6 +169,18 @@ DD.pages["automation"] = {
 .flow>li{grid-template-columns:1fr;padding-left:32px}
 .flow>li .card{grid-column:1!important;justify-self:stretch!important;max-width:none}
 .flow .node{left:6px}
+}
+.vg-crm .board{left:4%;top:7%;width:63%;height:86%}
+.vg-crm .colh{width:13.6%;top:12%;display:flex;justify-content:space-between;align-items:center}
+.vg-crm .lane{width:13.6%;top:20%;height:68%;border-radius:1cqw;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.08)}
+.vg-crm .cd{width:13.6%;padding:1cqw;border-radius:1cqw;background:#1b1b20;border:1px solid rgba(255,255,255,.1);box-shadow:0 1cqw 2cqw -1cqw rgba(0,0,0,.8);display:grid;gap:.6cqw}
+.vg-crm .cd.pri{background:#f3f1ea;color:#0c0c0e;z-index:3}
+.vg-crm .cd.pri .v-s{color:#62615b}
+.vg-crm .won{left:63.2%;top:24.4%;z-index:4;height:2cqw;font-size:.85cqw;background:#0c0c0e;color:#f3f1ea;padding:0 .9cqw}
+.vg-crm .alert{left:70%;top:9%;width:26%;padding:1.2cqw 1.4cqw}
+.vg-crm .fu{left:70%;top:40%;width:26%;padding:1.2cqw 1.4cqw;display:grid;gap:1cqw}
+.vg-crm .ck{width:1.8cqw;height:1.8cqw;border-radius:50%;background:#f3f1ea;color:#0c0c0e;padding:.3cqw;flex:none}
+@media (max-width:767px){.vg-crm{--fx:-6%}
 }`,
   html: `<main>
   <section class="hero">
@@ -188,7 +200,19 @@ DD.pages["automation"] = {
   </section>
 
   <section class="sheet lt sec" aria-labelledby="plain-h">
-    <div class="sp-ban"><div class="ph r21x9" data-r="x"><div class="lb"><b>CRM pipeline</b><span>Enquiries moving through the stages of a sale, on a laptop</span><i>21:9</i></div></div></div>
+    <div class="sp-ban"><div class="vg vg-crm" role="img" aria-label="A new enquiry moving through a sales pipeline until the sale is won" data-r="x"><div class="vg-in"><div class="v-g">
+    <div class="v-win board"></div>
+    <div class="colh" style="left:6%"><span class="v-t">New</span><span class="v-s">3</span></div><div class="lane" style="left:6%"></div><div class="colh" style="left:21.2%"><span class="v-t">Contacted</span><span class="v-s">2</span></div><div class="lane" style="left:21.2%"></div><div class="colh" style="left:36.4%"><span class="v-t">Quote sent</span><span class="v-s">2</span></div><div class="lane" style="left:36.4%"></div><div class="colh" style="left:51.599999999999994%"><span class="v-t">Won</span><span class="v-s">1</span></div><div class="lane" style="left:51.599999999999994%"></div>
+    <div class="cd st" style="left:6%;top:40%"><div class="v-row"><span class="v-av" style="width:1.8cqw;height:1.8cqw"></span><span class="v-t">Jean</span></div><span class="v-bar" style="width:80%"></span></div><div class="cd st" style="left:6%;top:55%"><div class="v-row"><span class="v-av" style="width:1.8cqw;height:1.8cqw"></span><span class="v-t">Aisha</span></div><span class="v-bar" style="width:80%"></span></div><div class="cd st" style="left:21.2%;top:23%"><div class="v-row"><span class="v-av" style="width:1.8cqw;height:1.8cqw"></span><span class="v-t">Kevin</span></div><span class="v-bar" style="width:80%"></span></div><div class="cd st" style="left:21.2%;top:38%"><div class="v-row"><span class="v-av" style="width:1.8cqw;height:1.8cqw"></span><span class="v-t">Marie</span></div><span class="v-bar" style="width:80%"></span></div><div class="cd st" style="left:36.4%;top:23%"><div class="v-row"><span class="v-av" style="width:1.8cqw;height:1.8cqw"></span><span class="v-t">Ravi</span></div><span class="v-bar" style="width:80%"></span></div><div class="cd st" style="left:36.4%;top:38%"><div class="v-row"><span class="v-av" style="width:1.8cqw;height:1.8cqw"></span><span class="v-t">Sophie</span></div><span class="v-bar" style="width:80%"></span></div><div class="cd st" style="left:51.599999999999994%;top:38%"><div class="v-row"><span class="v-av" style="width:1.8cqw;height:1.8cqw"></span><span class="v-t">Leo</span></div><span class="v-bar" style="width:80%"></span></div>
+    <div class="cd pri" style="left:6%;top:23%"><div class="v-row"><span class="v-av" style="width:1.8cqw;height:1.8cqw"></span><span class="v-t">Priya</span></div><span class="v-s">Villa rental</span></div>
+    <span class="v-pill won">Won</span>
+    <div class="v-win v-solid alert"><div class="v-row"><span class="v-dot"></span><span class="v-t">New enquiry on WhatsApp</span></div><p class="v-s" style="margin-top:.6cqw">Priya wants a villa for June</p></div>
+    <div class="v-win v-solid fu"><span class="v-t">Follow-up</span>
+      <div class="v-row fr"><span class="ck"><svg viewBox="0 0 16 16" width="100%" height="100%" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="v-s" style="color:#f3f1ea">Reply sent in 2 minutes</span></div>
+      <div class="v-row fr"><span class="ck"><svg viewBox="0 0 16 16" width="100%" height="100%" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="v-s" style="color:#f3f1ea">Quote sent</span></div>
+      <div class="v-row fr"><span class="ck"><svg viewBox="0 0 16 16" width="100%" height="100%" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="v-s" style="color:#f3f1ea">Reminder after 2 days</span></div>
+    </div>
+  </div></div><div class="lb" hidden><div class="lb"><b>CRM pipeline</b><span>Enquiries moving through the stages of a sale, on a laptop</span><i>21:9</i></div></div></div></div>
     <div class="g12">
       <div class="c1-5"><p class="kick">In plain terms</p><h2 class="h2 mt-24" id="plain-h">What you get, in plain terms.</h2></div>
       <p class="lead fg c7-12">A CRM is one place where every enquiry and every customer is kept, with their full history. Automation is the work it does on its own: replies, reminders, follow-ups and review requests. We set up both, connect them to your website, your pages and your phone, and show your team how to use them.</p>
@@ -281,6 +305,288 @@ DD.pages["automation"] = {
     <div class="btn-row mt-48"><a class="btn btn-p" href="/contact">Book a free growth call{{ar}}</a></div>
   </section>
 </main>`,
+  // Live motion: looping scenes played by dd-core's motion engine (see motion()).
+  motion: [
+ {
+  "root": ".vg-crm",
+  "D": 10000,
+  "still": 0.8,
+  "tracks": [
+   [
+    ".v-g",
+    0,
+    [
+     [
+      0,
+      500,
+      {
+       "opacity": 0
+      },
+      {
+       "opacity": 1
+      },
+      "io"
+     ],
+     [
+      9300,
+      9900,
+      {
+       "opacity": 1
+      },
+      {
+       "opacity": 0
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".board",
+    0,
+    [
+     [
+      0,
+      900,
+      {
+       "opacity": 0,
+       "transform": "translateY(2cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".colh, .lane",
+    60,
+    [
+     [
+      300,
+      900,
+      {
+       "opacity": 0,
+       "transform": "translateY(.8cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".cd.st",
+    70,
+    [
+     [
+      700,
+      1300,
+      {
+       "opacity": 0,
+       "transform": "translateY(1cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".alert",
+    0,
+    [
+     [
+      1200,
+      1800,
+      {
+       "opacity": 0,
+       "transform": "translateY(2cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".cd.pri",
+    0,
+    [
+     [
+      1600,
+      2200,
+      {
+       "opacity": 0,
+       "transform": "translate(0,0) scale(.8)"
+      },
+      {
+       "opacity": 1,
+       "transform": "translate(0.0cqw,0) scale(1)"
+      },
+      "sp"
+     ],
+     [
+      3000,
+      3500,
+      {},
+      {
+       "transform": "translate(7.6cqw,-.6cqw) scale(1.04)"
+      },
+      "i"
+     ],
+     [
+      3500,
+      3950,
+      {},
+      {
+       "transform": "translate(15.2cqw,0) scale(1)"
+      },
+      "sg"
+     ],
+     [
+      4900,
+      5400,
+      {},
+      {
+       "transform": "translate(22.8cqw,-.6cqw) scale(1.04)"
+      },
+      "i"
+     ],
+     [
+      5400,
+      5850,
+      {},
+      {
+       "transform": "translate(30.4cqw,0) scale(1)"
+      },
+      "sg"
+     ],
+     [
+      6800,
+      7300,
+      {},
+      {
+       "transform": "translate(38.0cqw,-.6cqw) scale(1.04)"
+      },
+      "i"
+     ],
+     [
+      7300,
+      7750,
+      {},
+      {
+       "transform": "translate(45.6cqw,0) scale(1)"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".fu",
+    0,
+    [
+     [
+      2600,
+      3200,
+      {
+       "opacity": 0,
+       "transform": "translateY(2cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".fr:nth-of-type(1)",
+    0,
+    [
+     [
+      3700,
+      4200,
+      {
+       "opacity": 0,
+       "transform": "translateY(.6cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".fr:nth-of-type(2)",
+    0,
+    [
+     [
+      5600,
+      6100,
+      {
+       "opacity": 0,
+       "transform": "translateY(.6cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".fr:nth-of-type(3)",
+    0,
+    [
+     [
+      7000,
+      7500,
+      {
+       "opacity": 0,
+       "transform": "translateY(.6cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".won",
+    0,
+    [
+     [
+      7800,
+      8300,
+      {
+       "opacity": 0,
+       "transform": "scale(.6)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1)"
+      },
+      "sp"
+     ]
+    ]
+   ]
+  ]
+ }
+],
   // Hero gradient: GetLayers "hearth", tinted greyscale through its CONFIG. The shader is untouched.
   gl: { cfg: {"bgColor":"#08080a","colorA":"#6c6b68","colorB":"#424240","colorC":"#71706d","colorD":"#adaca7"}, poster: "/uploads/nCS7Kte6VC1XCoepoHERN-svc-05.webp", mount: function(canvas, __ovr, __opts) {
  const __dummy = {

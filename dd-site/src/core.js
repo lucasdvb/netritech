@@ -381,6 +381,111 @@ function heroGradient(R, page) {
   io.observe(box);
 }
 
+// ===== motion engine: looping vignettes on the compositor =====
+// Follows the HyperFrames motion contract, adapted for a live page: one period per
+// scene, explicit from/to states, transforms and opacity (plus clip-path and stroke
+// for reveals), capped staggers. Each track compiles to Web Animations keyframes that
+// loop seamlessly; scenes pause offscreen and show one still frame under reduced motion.
+// spec = { root, D, still, tracks: [[selector, stagger, [[t0, t1, from, to, ease], ...]]] }
+// Remotion-style spring(): the physics (stiffness, damping, mass) is simulated once and
+// compiled into a CSS linear() curve, so a "spring" segment settles exactly like
+// Remotion's spring() over whatever duration the timeline gives it. Older browsers get
+// the closest cubic-bezier.
+function springEase(stiffness, damping, mass) {
+  const pts = [];
+  let x = 0, v = 0;
+  const dt = 1 / 240;
+  for (let t = 0; t < 4; t += dt) {
+    v += ((-stiffness * (x - 1) - damping * v) / mass) * dt;
+    x += v * dt;
+    pts.push(x);
+    if (t > 0.2 && Math.abs(x - 1) < 4e-4 && Math.abs(v) < 4e-3) break;
+  }
+  const n = 48, out = [];
+  for (let i = 0; i <= n; i++) out.push(i === n ? '1' : pts[Math.round((i / n) * (pts.length - 1))].toFixed(4));
+  return 'linear(' + out.join(', ') + ')';
+}
+const HAS_LINEAR = !!(window.CSS && CSS.supports && CSS.supports('transition-timing-function', 'linear(0, 1)'));
+const SPRING = {
+  sp: HAS_LINEAR ? springEase(160, 18, 1) : 'cubic-bezier(.34,1.56,.64,1)', // pop: a little overshoot
+  sg: HAS_LINEAR ? springEase(170, 22, 1) : 'cubic-bezier(.22,1.2,.36,1)', // glide: settles with a whisper
+};
+const EASE = { o: 'cubic-bezier(.16,1,.3,1)', io: 'cubic-bezier(.65,0,.35,1)', i: 'cubic-bezier(.55,0,.75,.06)', sp: SPRING.sp, sg: SPRING.sg, l: 'linear' };
+function frames(D, segs, off) {
+  let st = {};
+  segs.forEach((s) => Object.keys(s[2]).concat(Object.keys(s[3])).forEach((k) => { if (!(k in st)) st[k] = k in s[2] ? s[2][k] : s[3][k]; }));
+  const ks = [Object.assign({ offset: 0 }, st)];
+  let last = 0;
+  segs.slice().sort((a, b) => a[0] - b[0]).forEach(([t0, t1, a, b, e]) => {
+    t0 = Math.min(D, Math.max(last, t0 + off));
+    t1 = Math.min(D, Math.max(t0, t1 + off));
+    st = Object.assign({}, st, a);
+    ks.push(Object.assign({ offset: t0 / D, easing: EASE[e || 'o'] || e }, st));
+    st = Object.assign({}, st, b);
+    ks.push(Object.assign({ offset: t1 / D }, st));
+    last = t1;
+  });
+  ks.push(Object.assign({ offset: 1 }, st));
+  return ks;
+}
+function motion(R, page) {
+  const specs = (page.motion || []).concat(DD.motion || []);
+  specs.forEach((spec) => {
+    R.querySelectorAll(spec.root).forEach((root) => {
+      const anims = [];
+      spec.tracks.forEach(([sel, stag, segs]) => {
+        root.querySelectorAll(sel).forEach((el, i) => {
+          try { anims.push(el.animate(frames(spec.D, segs, i * (stag || 0)), { duration: spec.D, iterations: Infinity, fill: 'both' })); } catch (e) { /* unsupported keyframe value: leave the element static */ }
+        });
+      });
+      anims.forEach((a) => a.pause());
+      if (RM()) { anims.forEach((a) => { a.currentTime = spec.D * (spec.still || 0.75); }); return; }
+      new IntersectionObserver((es) => {
+        const on = es[0].isIntersecting;
+        anims.forEach((a) => (on ? a.play() : a.pause()));
+      }, { threshold: 0.12 }).observe(root);
+    });
+  });
+}
+
+// ===== small live touches: spotlight, magnetic buttons, hero parallax =====
+function liveTouches(R) {
+  const fine = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (fine) {
+    // a soft light that follows the pointer across cards
+    R.addEventListener('pointermove', (e) => {
+      const c = e.target.closest && e.target.closest('.card, .vg, .stat, .facts > div');
+      if (!c) return;
+      const r = c.getBoundingClientRect();
+      c.style.setProperty('--mx', (e.clientX - r.left).toFixed(0) + 'px');
+      c.style.setProperty('--my', (e.clientY - r.top).toFixed(0) + 'px');
+    }, { passive: true });
+    // primary buttons lean toward the pointer
+    if (!RM()) R.querySelectorAll('.btn-p, .nav-cta, .submit').forEach((b) => {
+      b.addEventListener('pointermove', (e) => {
+        const r = b.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width / 2) / r.width, y = (e.clientY - r.top - r.height / 2) / r.height;
+        b.style.translate = (x * 8).toFixed(1) + 'px ' + (y * 6).toFixed(1) + 'px';
+      });
+      b.addEventListener('pointerleave', () => { b.style.translate = ''; });
+    });
+  }
+  // the hero drifts up and dims as the first sheet slides over it
+  const hero = R.querySelector('main > .hero');
+  if (!hero || RM()) return;
+  const parts = [...hero.children].filter((c) => !c.classList.contains('hero-bg'));
+  const bg = hero.querySelector('.hero-bg');
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const h = hero.offsetHeight, y = Math.min(Math.max(scrollY, 0), h);
+    const p = y / h;
+    parts.forEach((el) => { el.style.transform = 'translate3d(0,' + (y * 0.28).toFixed(1) + 'px,0)'; el.style.opacity = String(Math.max(0, 1 - p * 1.35).toFixed(3)); });
+    if (bg) bg.style.transform = 'scale(' + (1 + p * 0.08).toFixed(4) + ')';
+  };
+  addEventListener('scroll', () => { if (!ticking && scrollY < innerHeight * 1.4) { ticking = true; raf(update); } }, { passive: true });
+}
+
 const DD = (window.__DD = window.__DD || { pages: {} });
 DD.ui = { AR, CHK, SERVICES, RM };
 
@@ -404,6 +509,8 @@ DD.mount = function () {
     const html = page.html.split('{{ar}}').join(AR).split('{{ck}}').join(CHK);
     R.innerHTML = '<style>' + CSS + '\n' + (page.css || '') + '</style><div class="r">' + NAV + html + FOOTER + '</div>';
     const wrap = R.querySelector('.r');
+    wrap.style.setProperty('--sp', SPRING.sp);
+    wrap.style.setProperty('--sg', SPRING.sg);
     markCurrent(R, page);
     navBehaviour(R, wrap);
     hashLinks(R);
@@ -414,6 +521,8 @@ DD.mount = function () {
     if (typeof page.init === 'function') { try { page.init(R, DD.ui); } catch (e) { console.error('[dd] page init', e); } }
     reveal(R);
     sheets(R);
+    motion(R, page);
+    liveTouches(R);
   } catch (e) { console.error('[dd] mount failed', e); }
 };
 

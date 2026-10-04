@@ -165,6 +165,19 @@ DD.pages["social-media"] = {
 .rail-ctl [data-rail="1"] .ar{transform:rotate(45deg)}
 .rail-ctl .ring:hover{background:var(--fg);color:var(--bg)}
 @media (max-width:767px){.rail>li{aspect-ratio:auto;min-height:340px}
+}
+.vg-soc .phn{left:9%;top:5%;width:19%;height:90%;border-radius:2.6cqw}
+.vg-soc .post{background-image:url(/uploads/EmxO1Byhcnx4qSVf0rF7I-svc-06.webp)}
+.vg-soc .heart{left:16.6%;top:33%;width:4cqw;height:4cqw;color:#f3f1ea;filter:drop-shadow(0 .5cqw 1cqw rgba(0,0,0,.6))}
+.vg-soc .tl{width:9.4cqw;height:9.4cqw;border-radius:1cqw;background:linear-gradient(140deg,#2b2b30,#141417);border:1px solid rgba(255,255,255,.08);background-size:cover;background-position:center}
+.vg-soc .tl.txt{display:grid;align-content:end;padding:1cqw;gap:.5cqw}
+.vg-soc .cal{left:68%;top:8%;width:25%;height:50%;padding:1.4cqw}
+.vg-soc .days{display:grid;grid-template-columns:repeat(7,1fr);gap:.7cqw;margin-top:1.4cqw}
+.vg-soc .days i{aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,.08)}
+.vg-soc .days i.on{background:#f3f1ea}
+.vg-soc .plat{left:68%;top:63%;width:25%;height:29%;padding:1.2cqw 1.4cqw;display:grid;gap:.9cqw}
+.vg-soc .ck{width:1.8cqw;height:1.8cqw;border-radius:50%;background:#f3f1ea;color:#0c0c0e;padding:.3cqw;flex:none}
+@media (max-width:767px){.vg-soc{--fx:-8%}
 }`,
   html: `<main>
   <section class="hero">
@@ -184,7 +197,21 @@ DD.pages["social-media"] = {
   </section>
 
   <section class="sheet lt sec" aria-labelledby="plain-h">
-    <div class="sp-ban"><div class="ph r21x9" data-r="x"><div class="lb"><b>A month of content</b><span>A month of posts for one brand, shown on a phone</span><i>21:9</i></div></div></div>
+    <div class="sp-ban"><div class="vg vg-soc" role="img" aria-label="A month of social media posts being planned and published" data-r="x"><div class="vg-in"><div class="v-g">
+    <div class="v-win phn"></div>
+    <div class="v-row ph-h" style="left:10.6%;top:9.5%"><span class="v-av" style="width:2.2cqw;height:2.2cqw"></span><span class="v-bar hi" style="width:5cqw"></span></div>
+    <div class="v-img post" style="left:10.6%;top:18%;width:15.8%;height:40%"></div>
+    <svg class="heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.3C1.4 7.6 4 4.5 7.3 4.5c2 0 3.5 1.1 4.7 2.7 1.2-1.6 2.7-2.7 4.7-2.7 3.3 0 5.9 3.1 4.6 6.7-1.8 4.7-9.3 9.3-9.3 9.3z" fill="currentColor"/></svg>
+    <div class="v-row ph-a" style="left:10.6%;top:62%"><span class="v-bar hi" style="width:3cqw"></span><span class="v-bar" style="width:3cqw"></span><span class="v-bar" style="width:3cqw"></span></div>
+    <span class="v-bar ph-c hi" style="left:10.6%;top:69%;width:12%"></span><span class="v-bar ph-c" style="left:10.6%;top:73.5%;width:14%"></span><span class="v-bar ph-c" style="left:10.6%;top:78%;width:9%"></span>
+    <div class="tl" style="left:33%;top:9%;background-image:url(/uploads/1qEcUtH4lHDuqfDdPiAdS-svc-01.webp)"></div><div class="tl" style="left:43.4%;top:9%;background-image:url(/uploads/EmxO1Byhcnx4qSVf0rF7I-svc-06.webp)"></div><div class="tl" style="left:53.8%;top:9%;background-image:url(/uploads/d-Q_kvQRPH8ATZhTFd1Yt-svc-03.webp)"></div><div class="tl txt" style="left:33%;top:36%"><span class="v-bar hi" style="width:80%"></span><span class="v-bar" style="width:55%"></span></div><div class="tl hl" style="left:43.4%;top:36%;background-image:url(/uploads/Y3s6CQVkiDaxrn8gIgp9C-svc-02.webp)"></div><div class="tl" style="left:53.8%;top:36%;background-image:url(/uploads/nCS7Kte6VC1XCoepoHERN-svc-05.webp)"></div><div class="tl" style="left:33%;top:63%;background-image:url(/uploads/scHUo4gyKrkiEYNTf-8EU-svc-04.webp)"></div><div class="tl txt" style="left:43.4%;top:63%"><span class="v-bar hi" style="width:80%"></span><span class="v-bar" style="width:55%"></span></div><div class="tl" style="left:53.8%;top:63%;background-image:url(/uploads/EmxO1Byhcnx4qSVf0rF7I-svc-06.webp)"></div>
+    <div class="v-win v-solid cal"><div class="v-row" style="justify-content:space-between"><span class="v-t">This month</span><span class="v-s">12 posts</span></div><div class="days"><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i></div></div>
+    <div class="v-win v-solid plat">
+      <div class="v-row"><span class="ck"><svg viewBox="0 0 16 16" width="100%" height="100%" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="v-t">Instagram</span></div>
+      <div class="v-row"><span class="ck"><svg viewBox="0 0 16 16" width="100%" height="100%" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="v-t">Facebook</span></div>
+      <div class="v-row"><span class="ck"><svg viewBox="0 0 16 16" width="100%" height="100%" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="v-t">LinkedIn</span></div>
+    </div>
+  </div></div><div class="lb" hidden><div class="lb"><b>A month of content</b><span>A month of posts for one brand, shown on a phone</span><i>21:9</i></div></div></div></div>
     <div class="g12">
       <div class="c1-5"><p class="kick">In plain terms</p><h2 class="h2 mt-24" id="plain-h">What you get, in plain terms.</h2></div>
       <p class="lead fg c7-12">We run your social media every week, so your business stays visible and trusted without you having to think about it. You approve the plan, we do the rest, and every month we show you what happened.</p>
@@ -277,6 +304,237 @@ DD.pages["social-media"] = {
     <div class="btn-row mt-48"><a class="btn btn-p" href="/contact">Book a free growth call{{ar}}</a></div>
   </section>
 </main>`,
+  // Live motion: looping scenes played by dd-core's motion engine (see motion()).
+  motion: [
+ {
+  "root": ".vg-soc",
+  "D": 9000,
+  "still": 0.75,
+  "tracks": [
+   [
+    ".v-g",
+    0,
+    [
+     [
+      0,
+      500,
+      {
+       "opacity": 0
+      },
+      {
+       "opacity": 1
+      },
+      "io"
+     ],
+     [
+      8300,
+      8900,
+      {
+       "opacity": 1
+      },
+      {
+       "opacity": 0
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".phn",
+    0,
+    [
+     [
+      0,
+      900,
+      {
+       "opacity": 0,
+       "transform": "translateY(3cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".ph-h, .post, .ph-a, .ph-c",
+    80,
+    [
+     [
+      400,
+      1100,
+      {
+       "opacity": 0,
+       "transform": "translateY(1cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".tl",
+    60,
+    [
+     [
+      900,
+      1600,
+      {
+       "opacity": 0,
+       "transform": "scale(.86)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1)"
+      },
+      "sp"
+     ]
+    ]
+   ],
+   [
+    ".cal",
+    0,
+    [
+     [
+      1500,
+      2100,
+      {
+       "opacity": 0,
+       "transform": "translateY(2cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".days i.on",
+    70,
+    [
+     [
+      2100,
+      2500,
+      {
+       "transform": "scale(0)"
+      },
+      {
+       "transform": "scale(1)"
+      },
+      "sp"
+     ]
+    ]
+   ],
+   [
+    ".plat",
+    0,
+    [
+     [
+      2600,
+      3200,
+      {
+       "opacity": 0,
+       "transform": "translateY(2cqw) scale(.97)"
+      },
+      {
+       "opacity": 1,
+       "transform": "none"
+      },
+      "sg"
+     ]
+    ]
+   ],
+   [
+    ".ck",
+    220,
+    [
+     [
+      3100,
+      3500,
+      {
+       "opacity": 0,
+       "transform": "scale(.6)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1)"
+      },
+      "sp"
+     ]
+    ]
+   ],
+   [
+    ".heart",
+    0,
+    [
+     [
+      4200,
+      4550,
+      {
+       "opacity": 0,
+       "transform": "scale(.2)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1.25)"
+      },
+      "sp"
+     ],
+     [
+      4550,
+      4800,
+      {},
+      {
+       "transform": "scale(1)"
+      }
+     ],
+     [
+      5600,
+      6000,
+      {},
+      {
+       "opacity": 0,
+       "transform": "scale(1.1)"
+      }
+     ]
+    ]
+   ],
+   [
+    ".tl.hl",
+    0,
+    [
+     [
+      6000,
+      6400,
+      {
+       "transform": "scale(1)"
+      },
+      {
+       "transform": "scale(1.06)"
+      },
+      "sp"
+     ],
+     [
+      6400,
+      7200,
+      {},
+      {
+       "transform": "scale(1)"
+      },
+      "io"
+     ]
+    ]
+   ]
+  ]
+ }
+],
   // Hero gradient: GetLayers "firmament", tinted greyscale through its CONFIG. The shader is untouched.
   gl: { cfg: {"bgColor":"#08080a","colorA":"#4e4d4b","colorB":"#6b6a67","colorC":"#83827e","colorD":"#e7e5de"}, poster: "/uploads/EmxO1Byhcnx4qSVf0rF7I-svc-06.webp", mount: function(canvas, __ovr, __opts) {
  const __dummy = {
