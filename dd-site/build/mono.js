@@ -7,6 +7,6 @@ function toHex(L){const f=c=>c<=.0031308?12.92*c:1.055*Math.pow(c,1/2.4)-.055;co
   return '#'+w.map(k=>Math.max(0,Math.min(255,Math.round(f(Math.min(1,L))*255*k)))).map(v=>v.toString(16).padStart(2,'0')).join('');}
 function mono(config,{lift=1,gamma=1,bg}={}){const keys=Object.keys(config).filter(k=>typeof config[k]==='string'&&/^#/.test(config[k]));
   const Ls=keys.map(k=>lum(config[k]));const max=Math.max(...Ls);const out={};
-  keys.forEach((k,i)=>{let L=Ls[i]/max; L=Math.pow(L,gamma)*Math.min(1,max*lift>0.9?0.9:max*lift); out[k]=toHex(L);});
+  keys.forEach((k,i)=>{const L=Math.pow(Ls[i]/max,gamma)*lift; out[k]=toHex(L);});
   if(bg)out.bgColor=bg;return out;}
 module.exports={mono,lum,toHex};

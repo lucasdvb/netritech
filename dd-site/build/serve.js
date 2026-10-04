@@ -7,7 +7,7 @@ const PAGES={'/':'home','/work':'work','/work/case-study':'case-study','/service
 '/services/web-design':'websites','/services/social-media-management':'social-media','/services/facebook-google-ads':'paid-ads','/services/marketing-automation-crm':'automation','/services/ai-chatbots':'ai','/services/branding-logo-design':'branding'};
 const types={'.js':'text/javascript','.webp':'image/webp','.png':'image/png','.otf':'font/otf','.html':'text/html','.jpg':'image/jpeg'};
 http.createServer((q,r)=>{const u=decodeURIComponent(q.url.split('?')[0]);
- if(u.startsWith('/uploads/')){const name=u.slice(9).replace(/^[A-Za-z0-9_-]{21}-/,'');
+ if(u.startsWith('/uploads/')){const name=u.slice(9).replace(/^[A-Za-z0-9_-]{21}-/,'').replace('Switzer-Light.otf','Switzer-Regular.otf');
    const cand=[ROOT+'/drafts/assets/img/'+name,ROOT+'/drafts/assets/fonts/'+name,ROOT+'/media/'+name];const f=cand.find(fs.existsSync);
    if(!f){r.writeHead(404);return r.end('nf '+name)}r.writeHead(200,{'content-type':types[path.extname(f)]||'application/octet-stream'});return fs.createReadStream(f).pipe(r);}
  if(u.startsWith('/src/')){const f=ROOT+'/'+SRC+'/'+path.basename(u);if(!fs.existsSync(f)){r.writeHead(404);return r.end()}r.writeHead(200,{'content-type':'text/javascript'});return fs.createReadStream(f).pipe(r);}

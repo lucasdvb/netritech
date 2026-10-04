@@ -1,0 +1,290 @@
+{
+ "crumb": "Social media",
+ "eyebrow": "Social media · Mauritius",
+ "h1": "Social media management in Mauritius that keeps you top of mind.",
+ "lead": "Posting when someone finds the time doesn't work. We plan your content a month ahead, make it, post it on Facebook, Instagram, TikTok and LinkedIn, and show you what it does. You approve every post before it goes out.",
+ "btns": [
+  {
+   "href": "/contact",
+   "t": "Book a free growth call",
+   "p": true
+  },
+  {
+   "href": "/fledge",
+   "t": "See Fledge, the full system",
+   "p": false
+  }
+ ],
+ "partCap": "Part of Fledge ·",
+ "partTags": [
+  "Stage 01 · Get Found",
+  "Stage 04 · Keep &amp; Grow"
+ ],
+ "banner": "<div class=\"lb\"><b>A month of content</b><span>A month of posts for one brand, shown on a phone</span><i>21:9</i></div>",
+ "bannerCls": "ph r21x9",
+ "plain": {
+  "eb": "In plain terms",
+  "h2": "What you get, in plain terms.",
+  "p": "We run your social media every week, so your business stays visible and trusted without you having to think about it. You approve the plan, we do the rest, and every month we show you what happened.",
+  "facts": [
+   {
+    "k": "Who it's for",
+    "v": "Businesses that know they should be posting, but don't have the time or the team."
+   },
+   {
+    "k": "What you get",
+    "v": "A monthly plan, posts every week, your pages kept up to date, replies to comments and messages, a monthly report."
+   },
+   {
+    "k": "Platforms",
+    "v": "Facebook, Instagram, TikTok and LinkedIn, plus your Google listing."
+   },
+   {
+    "k": "How you pay",
+    "v": "A setup fee to build your pages, then a monthly fee. Minimum term <span class=\"todo\">[3 months, to confirm]</span>."
+   }
+  ]
+ },
+ "sf": {
+  "h2": "Sound familiar?",
+  "q": [
+   "\"We post when someone has time, which means not often.\"",
+   "\"Our page looks nothing like our business.\"",
+   "\"We get likes, but we can't tell if social media brings us a single customer.\"",
+   "\"Comments and messages sit unanswered for days.\""
+  ]
+ },
+ "inc": {
+  "eb": "What's included",
+  "h2": "What we do every month.",
+  "items": [
+   {
+    "n": "01",
+    "h": "A plan for the month",
+    "p": "Every month starts with a plan: what we'll post, when, and why. You check it and approve it before anything goes live."
+   },
+   {
+    "n": "02",
+    "h": "Posts made for you",
+    "p": "Graphics, photos, short videos and captions, made in your brand's look and voice."
+   },
+   {
+    "n": "03",
+    "h": "Posted on every platform",
+    "p": "Facebook, Instagram, TikTok and LinkedIn, plus regular posts on your Google listing."
+   },
+   {
+    "n": "04",
+    "h": "Pages set up properly",
+    "p": "Your profiles built and styled to match your brand, with the right information, links and contact buttons."
+   },
+   {
+    "n": "05",
+    "h": "Replies to comments and messages",
+    "p": "We answer comments and messages on your pages and pass serious enquiries straight to your team on WhatsApp."
+   },
+   {
+    "n": "06",
+    "h": "Filming when you need it",
+    "p": "Some plans include photo and video shoots at your business or your events. In others you send us the footage and we turn it into finished posts. We agree which at the start."
+   },
+   {
+    "n": "07",
+    "h": "A report every month",
+    "p": "What we posted, how people responded, and what we'll change next month. In plain words."
+   },
+   {
+    "n": "08",
+    "h": "A call every month",
+    "p": "Once a month we sit down with you to talk about your business, your results and the month ahead."
+   }
+  ]
+ },
+ "how": {
+  "eb": "How it works",
+  "h2": "How it works.",
+  "steps": [
+   {
+    "n": "01",
+    "h": "We get to know your brand",
+    "p": "Who you sell to, what they care about, and what your competitors post."
+   },
+   {
+    "n": "02",
+    "h": "We set up your pages",
+    "p": "Profiles built or cleaned up on every platform, in your brand's look."
+   },
+   {
+    "n": "03",
+    "h": "We plan the month",
+    "p": "A calendar of posts that you approve before anything goes live."
+   },
+   {
+    "n": "04",
+    "h": "We make it and post it",
+    "p": "Content made in your look and voice, posted at the times your customers are online."
+   },
+   {
+    "n": "05",
+    "h": "We report and adjust",
+    "p": "Every month: what worked, what didn't, and what we change next."
+   }
+  ]
+ },
+ "choose": {
+  "eb": "Before you choose",
+  "h2": "How to choose a social media agency in Mauritius.",
+  "items": [
+   {
+    "n": "01",
+    "h": "Ask to see the plan",
+    "p": "A good agency shows you what it will post and why before the month starts. If the posts just appear, nobody is steering."
+   },
+   {
+    "n": "02",
+    "h": "Ask who makes the content",
+    "p": "Find out who writes, designs and films, and whether the content is made for your business or adapted from a template."
+   },
+   {
+    "n": "03",
+    "h": "Ask who answers your messages",
+    "p": "Comments and messages are where customers ask to buy. Agree who replies, how fast, and how serious enquiries reach you."
+   },
+   {
+    "n": "04",
+    "h": "Be wary of follower promises",
+    "p": "Followers can be bought, and reach depends on the platforms. Ask what the agency commits to doing, not what it promises will happen."
+   }
+  ]
+ },
+ "fl": {
+  "eb": "Part of Fledge",
+  "h2": "Social media that sends people somewhere.",
+  "p": "In Fledge, social media isn't a separate job. Your posts send people to your website, every message lands in your CRM, and your best posts become ads that reach the people most like your customers.",
+  "link": {
+   "href": "/fledge",
+   "t": "Discover Fledge"
+  },
+  "stagesLabel": "The four stages of Fledge",
+  "stages": [
+   {
+    "n": "01",
+    "nm": "Get Found",
+    "ln": "People find you on Google, social media and ads.",
+    "on": true,
+    "this": "This service"
+   },
+   {
+    "n": "02",
+    "nm": "Get Chosen",
+    "ln": "Your website and proof make them pick you.",
+    "on": false,
+    "this": null
+   },
+   {
+    "n": "03",
+    "nm": "Get The Business",
+    "ln": "Every enquiry gets a fast reply and a follow-up.",
+    "on": false,
+    "this": null
+   },
+   {
+    "n": "04",
+    "nm": "Keep &amp; Grow",
+    "ln": "Customers come back and send others.",
+    "on": true,
+    "this": "This service"
+   }
+  ],
+  "withCap": "Works well with",
+  "sibs": [
+   {
+    "href": "/services/facebook-google-ads",
+    "img": "/uploads/Y3s6CQVkiDaxrn8gIgp9C-svc-02.webp",
+    "h": "Paid ads",
+    "sub": "Facebook, Instagram and Google ads that turn attention into enquiries."
+   },
+   {
+    "href": "/services/web-design",
+    "img": "/uploads/1qEcUtH4lHDuqfDdPiAdS-svc-01.webp",
+    "h": "Websites and SEO",
+    "sub": "Websites and SEO that put your business in front of the right people."
+   },
+   {
+    "href": "/services/marketing-automation-crm",
+    "img": "/uploads/scHUo4gyKrkiEYNTf-8EU-svc-04.webp",
+    "h": "Automation and CRM",
+    "sub": "CRM, follow-up and automation, so you handle more enquiries without hiring more people."
+   }
+  ]
+ },
+ "proof": {
+  "eb": "Our work",
+  "h2": "A project like this.",
+  "href": "/work/case-study",
+  "ph": "<div class=\"lb\"><b>Project cover</b><span>A social media project, shown in context</span><i>16:9</i></div>",
+  "phCls": "ph r16x9",
+  "client": "<span class=\"todo\">[Client name]</span>",
+  "sector": "<span class=\"todo\">[Sector]</span>",
+  "line": "<span class=\"todo\">[What changed, in one line]</span>",
+  "note": "Client names and results appear only with each client's written consent.",
+  "link": {
+   "href": "/work",
+   "t": "See all our work"
+  }
+ },
+ "faq": {
+  "eb": "Questions",
+  "h2": "Social media questions, answered.",
+  "items": [
+   {
+    "q": "Which platforms do you manage?",
+    "a": "Facebook, Instagram, TikTok and LinkedIn, plus your Google listing. We recommend the ones your customers actually use.",
+    "open": true
+   },
+   {
+    "q": "How many posts will you publish?",
+    "a": "It depends on your plan. Our standard plan includes four posts a week on each platform. We agree the number before we start.",
+    "open": false
+   },
+   {
+    "q": "Do I approve the posts?",
+    "a": "Yes. You see the plan and the posts before they go live, and nothing goes out without your approval.",
+    "open": false
+   },
+   {
+    "q": "Do you film and take photos?",
+    "a": "Some plans include shoots at your business or your events. In others, you send us your photos and videos and we turn them into finished posts. We agree which at the start, so there are no surprises.",
+    "open": false
+   },
+   {
+    "q": "Will you promise me more followers?",
+    "a": "No. Reach on social media depends on platforms we don't control, so we don't promise follower numbers. We commit to the work: the plan, the posts, the replies and an honest report every month.",
+    "open": false
+   },
+   {
+    "q": "Do you post in French and Creole?",
+    "a": "Yes. We write in English, French and Creole, whichever your customers speak.",
+    "open": false
+   },
+   {
+    "q": "How long before social media brings customers?",
+    "a": "Social media builds trust over months, not days. Posting every week is what makes people recognise you. If you need enquiries quickly, we pair it with paid ads.",
+    "open": false
+   },
+   {
+    "q": "Can I still post myself?",
+    "a": "Of course. We plan around anything you want to post yourself, such as news from your shop or your events, so your page stays consistent.",
+    "open": false
+   }
+  ]
+ },
+ "cta": {
+  "eb": "Get In Touch",
+  "h2": "Tell us where your business is leaking customers",
+  "btn": {
+   "href": "/contact",
+   "t": "Book a free growth call"
+  }
+ }
+}

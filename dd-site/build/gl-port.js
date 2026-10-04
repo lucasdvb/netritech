@@ -44,6 +44,20 @@ const __H = () => canvas.clientHeight || 1
 `;
   return head + s.trim() + '\n}';
 }
+// Strip every comment: JS via terser (layout kept readable), GLSL inside the shader
+// template literals by hand (GLSL has no strings, so this is safe).
+async function clean(fnSrc) {
+  const { minify } = require('terser');
+  const r = await minify('var __gl = ' + fnSrc, { compress: false, mangle: false, format: { comments: false, beautify: true, indent_level: 1 } });
+  let code = r.code.replace(/^var __gl = /, '').replace(/;\s*$/, '');
+  code = code.replace(/`#version 300 es[\s\S]*?`/g, (glsl) => glsl
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\/\/.*?(?=\\n|`)/g, '')
+    .replace(/(?:[ \t]*\\n)+/g, '\\n'));
+  if (/\u2014/.test(code)) throw new Error('em dash left in gradient code');
+  return code;
+}
+port.clean = clean;
 module.exports = port;
 if (require.main === module) {
   const out = {};

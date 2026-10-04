@@ -1,0 +1,290 @@
+{
+ "crumb": "Websites and SEO",
+ "eyebrow": "Websites and SEO · Mauritius",
+ "h1": "Web design in Mauritius, built to bring you enquiries.",
+ "lead": "A website should do more than look good. It should show up when people search, make the case for your business in a few seconds, and turn visitors into enquiries. We design it, write it, build it and look after it.",
+ "btns": [
+  {
+   "href": "/contact",
+   "t": "Book a free growth call",
+   "p": true
+  },
+  {
+   "href": "/fledge",
+   "t": "See Fledge, the full system",
+   "p": false
+  }
+ ],
+ "partCap": "Part of Fledge ·",
+ "partTags": [
+  "Stage 01 · Get Found",
+  "Stage 02 · Get Chosen"
+ ],
+ "banner": "<div class=\"lb\"><b>Website in context</b><span>A site we built, on a laptop and a phone</span><i>21:9</i></div>",
+ "bannerCls": "ph r21x9",
+ "plain": {
+  "eb": "In plain terms",
+  "h2": "What you get, in plain terms.",
+  "p": "We build your website so people find it on Google, understand what you do straight away, and get in touch. Then we keep it fast, secure and up to date, on our own servers.",
+  "facts": [
+   {
+    "k": "Who it's for",
+    "v": "New businesses that need their first site, and businesses whose site no longer brings anything in."
+   },
+   {
+    "k": "What you get",
+    "v": "Design, words, build, SEO, contact and booking forms, tracking, hosting."
+   },
+   {
+    "k": "How long it takes",
+    "v": "<span class=\"todo\">[About 4 weeks from the day we have your content, to confirm]</span>"
+   },
+   {
+    "k": "How you pay",
+    "v": "A fixed price agreed before we start, then a monthly fee for hosting and care."
+   }
+  ]
+ },
+ "sf": {
+  "h2": "Sound familiar?",
+  "q": [
+   "\"Our website looks fine, but nobody contacts us through it.\"",
+   "\"When I search for what we do, our competitors come up. We don't.\"",
+   "\"We can't change a thing on the site without calling someone.\"",
+   "\"It looks dated next to the businesses we compete with.\""
+  ]
+ },
+ "inc": {
+  "eb": "What's included",
+  "h2": "What's in a Disruptive Dodo website.",
+  "items": [
+   {
+    "n": "01",
+    "h": "Design that fits your brand",
+    "p": "Pages designed around your brand and your customers, phone first, because that is where most people will see them."
+   },
+   {
+    "n": "02",
+    "h": "Words that sell",
+    "p": "We write the copy: what you do, who it's for, why you, and what to do next. Plain words your customers understand."
+   },
+   {
+    "n": "03",
+    "h": "Built to be found on Google",
+    "p": "Every page is built around what your customers type into Google: the right titles, headings and descriptions, fast pages and clean code. This is SEO, done from the first day."
+   },
+   {
+    "n": "04",
+    "h": "Articles that answer your customers",
+    "p": "A plan of articles that answer the questions your customers search for, written to bring visitors to your site month after month."
+   },
+   {
+    "n": "05",
+    "h": "Your Google listing",
+    "p": "We set up or clean up your Google Business Profile, the listing that shows on Google Maps and in local searches, and link it to your site."
+   },
+   {
+    "n": "06",
+    "h": "Enquiries that reach you",
+    "p": "Contact forms, WhatsApp buttons and online booking that send every enquiry straight to you, or into your CRM."
+   },
+   {
+    "n": "07",
+    "h": "Online shops",
+    "p": "Shops that take Mauritian card payments, with your delivery zones, order emails and product pages written to sell."
+   },
+   {
+    "n": "08",
+    "h": "Hosting and care",
+    "p": "We host your site, keep it secure and backed up, and fix anything that breaks."
+   }
+  ]
+ },
+ "how": {
+  "eb": "How it works",
+  "h2": "How we build your website.",
+  "steps": [
+   {
+    "n": "01",
+    "h": "We look first",
+    "p": "We study your business, your customers and your competitors, and what your current site does and doesn't do."
+   },
+   {
+    "n": "02",
+    "h": "We plan the pages",
+    "p": "We agree the pages, what each one must do, and the searches each one should show up for."
+   },
+   {
+    "n": "03",
+    "h": "We design and write",
+    "p": "You see the design and the words before we build. You approve, we adjust."
+   },
+   {
+    "n": "04",
+    "h": "We build and test",
+    "p": "We build the site and test it on phones and computers, with every form and link checked."
+   },
+   {
+    "n": "05",
+    "h": "We launch and look after it",
+    "p": "We put it live, connect it to Google, and keep it working."
+   }
+  ]
+ },
+ "choose": {
+  "eb": "Before you choose",
+  "h2": "How to choose a web design company in Mauritius.",
+  "items": [
+   {
+    "n": "01",
+    "h": "Ask what the site is for",
+    "p": "A good company asks what you want the site to bring in before it talks about colours. If nobody asks about your customers, the site will look nice and do little."
+   },
+   {
+    "n": "02",
+    "h": "Check who writes the words",
+    "p": "Most sites fail on the words, not the design. Ask who writes the copy, and whether it is written around the searches your customers make."
+   },
+   {
+    "n": "03",
+    "h": "Ask who looks after it",
+    "p": "A site needs hosting, updates, backups and fixes. Find out who does that after launch, and what it costs each month."
+   },
+   {
+    "n": "04",
+    "h": "Make sure it is yours",
+    "p": "Ask who owns the domain, the content and the accounts. They should be in your business's name."
+   }
+  ]
+ },
+ "fl": {
+  "eb": "Part of Fledge",
+  "h2": "Your website is where everything lands.",
+  "p": "People from Google, from your ads and from your social media all end up on your website. In Fledge, every enquiry from your site goes into your CRM and gets a reply in minutes, so nobody who reaches you is lost.",
+  "link": {
+   "href": "/fledge",
+   "t": "Discover Fledge"
+  },
+  "stagesLabel": "The four stages of Fledge",
+  "stages": [
+   {
+    "n": "01",
+    "nm": "Get Found",
+    "ln": "People find you on Google, social media and ads.",
+    "on": true,
+    "this": "This service"
+   },
+   {
+    "n": "02",
+    "nm": "Get Chosen",
+    "ln": "Your website and proof make them pick you.",
+    "on": true,
+    "this": "This service"
+   },
+   {
+    "n": "03",
+    "nm": "Get The Business",
+    "ln": "Every enquiry gets a fast reply and a follow-up.",
+    "on": false,
+    "this": null
+   },
+   {
+    "n": "04",
+    "nm": "Keep &amp; Grow",
+    "ln": "Customers come back and send others.",
+    "on": false,
+    "this": null
+   }
+  ],
+  "withCap": "Works well with",
+  "sibs": [
+   {
+    "href": "/services/facebook-google-ads",
+    "img": "/uploads/Y3s6CQVkiDaxrn8gIgp9C-svc-02.webp",
+    "h": "Paid ads",
+    "sub": "Facebook, Instagram and Google ads that turn attention into enquiries."
+   },
+   {
+    "href": "/services/social-media-management",
+    "img": "/uploads/EmxO1Byhcnx4qSVf0rF7I-svc-06.webp",
+    "h": "Social media",
+    "sub": "Social media and content that keep your brand visible, trusted, and relevant."
+   },
+   {
+    "href": "/services/marketing-automation-crm",
+    "img": "/uploads/scHUo4gyKrkiEYNTf-8EU-svc-04.webp",
+    "h": "Automation and CRM",
+    "sub": "CRM, follow-up and automation, so you handle more enquiries without hiring more people."
+   }
+  ]
+ },
+ "proof": {
+  "eb": "Our work",
+  "h2": "A project like this.",
+  "href": "/work/case-study",
+  "ph": "<div class=\"lb\"><b>Project cover</b><span>A website project, shown in context</span><i>16:9</i></div>",
+  "phCls": "ph r16x9",
+  "client": "<span class=\"todo\">[Client name]</span>",
+  "sector": "<span class=\"todo\">[Sector]</span>",
+  "line": "<span class=\"todo\">[What changed, in one line]</span>",
+  "note": "Client names and results appear only with each client's written consent.",
+  "link": {
+   "href": "/work",
+   "t": "See all our work"
+  }
+ },
+ "faq": {
+  "eb": "Questions",
+  "h2": "Website questions, answered.",
+  "items": [
+   {
+    "q": "How much does a website cost in Mauritius?",
+    "a": "It depends on the number of pages, the languages and what the site must do, such as bookings or online sales. After a free growth call, we send a fixed price before any work starts.",
+    "open": true
+   },
+   {
+    "q": "How long does it take to build a website?",
+    "a": "<span class=\"todo\">[About 4 weeks from the day we have your content, to confirm.]</span> We agree the dates with you before we start.",
+    "open": false
+   },
+   {
+    "q": "Will my website show up on Google?",
+    "a": "We build every page to be found: the right titles, headings, descriptions and speed, and we connect your site to Google. Where you rank also depends on your competitors and takes time, so we don't promise a position. We show you the searches you appear for, every month.",
+    "open": false
+   },
+   {
+    "q": "Do you redesign existing websites?",
+    "a": "Yes. We look at what your current site does well, keep what works, and rebuild the rest.",
+    "open": false
+   },
+   {
+    "q": "Can you build an online shop?",
+    "a": "Yes. We build shops that take Mauritian card payments, with your delivery zones, order emails and product pages.",
+    "open": false
+   },
+   {
+    "q": "What happens after launch?",
+    "a": "We host and look after your site every month. <span class=\"todo\">[We fix any defect found in the first 90 days at no cost, to confirm as our standard.]</span>",
+    "open": false
+   },
+   {
+    "q": "Do you write the content for the website?",
+    "a": "Yes. We write the words for every page, in plain language, around what your customers search for. You review and approve everything before it goes live.",
+    "open": false
+   },
+   {
+    "q": "Can you take over a website another company built?",
+    "a": "Usually, yes. We look at how it was built and where it is hosted, then tell you honestly whether to keep it, fix it or rebuild it.",
+    "open": false
+   }
+  ]
+ },
+ "cta": {
+  "eb": "Get In Touch",
+  "h2": "Tell us where your business is leaking customers",
+  "btn": {
+   "href": "/contact",
+   "t": "Book a free growth call"
+  }
+ }
+}

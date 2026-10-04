@@ -1,0 +1,279 @@
+{
+ "crumb": "AI implementation",
+ "eyebrow": "AI implementation · Mauritius",
+ "h1": "AI chatbots in Mauritius that answer your customers, day and night.",
+ "lead": "Your customers message at ten at night and on Sunday mornings. An AI assistant trained on your business answers them in seconds on WhatsApp, Facebook and your website, books the call, and hands the conversation to your team when a person is needed.",
+ "btns": [
+  {
+   "href": "/contact",
+   "t": "Book a free growth call",
+   "p": true
+  },
+  {
+   "href": "/fledge",
+   "t": "See Fledge, the full system",
+   "p": false
+  }
+ ],
+ "partCap": "Part of Fledge ·",
+ "partTags": [
+  "Stage 03 · Get The Business"
+ ],
+ "banner": "<div class=\"lb\"><b>AI assistant on WhatsApp</b><span>A customer conversation with the assistant, on a phone</span><i>21:9</i></div>",
+ "bannerCls": "ph r21x9",
+ "plain": {
+  "eb": "In plain terms",
+  "h2": "What you get, in plain terms.",
+  "p": "We put AI to work where it helps you sell: answering customer questions, collecting their details, booking calls and drafting follow-ups. It works from your business's information, follows your rules, and passes the conversation to a person when it should.",
+  "facts": [
+   {
+    "k": "Who it's for",
+    "v": "Businesses that get the same questions every day, or miss messages outside working hours."
+   },
+   {
+    "k": "What you get",
+    "v": "An AI assistant on WhatsApp, Facebook, Instagram and your website, trained on your business and connected to your CRM."
+   },
+   {
+    "k": "Languages",
+    "v": "English and French. <span class=\"todo\">[Creole, to confirm]</span>"
+   },
+   {
+    "k": "How you pay",
+    "v": "A setup fee, then <span class=\"todo\">[a monthly fee for the AI and its upkeep, to confirm]</span>."
+   }
+  ]
+ },
+ "sf": {
+  "h2": "Sound familiar?",
+  "q": [
+   "\"We get the same ten questions every day.\"",
+   "\"Messages that come in at night get answered the next afternoon.\"",
+   "\"We tried a chatbot. It answered nonsense, so we switched it off.\"",
+   "\"Everyone talks about AI. We don't know where it would actually help us.\""
+  ]
+ },
+ "inc": {
+  "eb": "What's included",
+  "h2": "Where we put AI to work.",
+  "items": [
+   {
+    "n": "01",
+    "h": "An assistant that answers customers",
+    "p": "On WhatsApp, Facebook, Instagram and your website. It answers questions about your products, services, prices and opening hours, in your tone."
+   },
+   {
+    "n": "02",
+    "h": "Trained on your business",
+    "p": "It works from the information you approve: your services, your prices, your policies. When it doesn't know, it says so and calls a person."
+   },
+   {
+    "n": "03",
+    "h": "Enquiries qualified and booked",
+    "p": "It asks the questions your team would ask, records the answers in your CRM, and books a call or an appointment."
+   },
+   {
+    "n": "04",
+    "h": "A clean hand-off to your team",
+    "p": "When a customer needs a person, the conversation goes to the right member of your team, with the full history."
+   },
+   {
+    "n": "05",
+    "h": "Follow-ups written for each person",
+    "p": "AI drafts follow-up messages from what each customer asked, for your team to check and send."
+   },
+   {
+    "n": "06",
+    "h": "Content, made faster",
+    "p": "We use AI in our own studio to make visuals and video for your posts and ads faster. A person checks everything before it goes out."
+   }
+  ]
+ },
+ "how": {
+  "eb": "How it works",
+  "h2": "How we set it up.",
+  "steps": [
+   {
+    "n": "01",
+    "h": "We find where AI helps",
+    "p": "We look at your messages and your sales process, and pick the jobs AI does well. Not everything should be automated."
+   },
+   {
+    "n": "02",
+    "h": "We write what it knows and its rules",
+    "p": "What it can say, what it must never say, and when it must hand over to a person. You approve all of it."
+   },
+   {
+    "n": "03",
+    "h": "We connect it",
+    "p": "To WhatsApp, your website, your pages and your CRM."
+   },
+   {
+    "n": "04",
+    "h": "We test it hard",
+    "p": "We ask it the questions your customers ask, and the awkward ones too, before any customer sees it."
+   },
+   {
+    "n": "05",
+    "h": "We watch and improve it",
+    "p": "We read the conversations, fill the gaps and keep its information up to date."
+   }
+  ]
+ },
+ "choose": {
+  "eb": "Before you choose",
+  "h2": "How to choose an AI chatbot partner in Mauritius.",
+  "items": [
+   {
+    "n": "01",
+    "h": "Ask what it will be trained on",
+    "p": "An assistant is only as good as the information it works from. Ask who writes and approves it, and how it is kept up to date."
+   },
+   {
+    "n": "02",
+    "h": "Ask what happens when it doesn't know",
+    "p": "A good assistant hands the conversation to a person. A bad one guesses. Ask to see how the hand-off works."
+   },
+   {
+    "n": "03",
+    "h": "Check it connects to your sales",
+    "p": "An assistant that chats but doesn't record enquiries or book calls leaves the job half done. It should feed your CRM and your calendar."
+   },
+   {
+    "n": "04",
+    "h": "Ask to test it first",
+    "p": "Before launch, ask it the questions your customers ask, and the awkward ones too. If the answers worry you, it isn't ready."
+   }
+  ]
+ },
+ "fl": {
+  "eb": "Part of Fledge",
+  "h2": "The first reply every customer gets.",
+  "p": "In Fledge, the AI assistant works inside your CRM. Every conversation is saved, every booking lands in your calendar, and every enquiry is followed up, whether it came in at noon or at midnight.",
+  "link": {
+   "href": "/fledge",
+   "t": "Discover Fledge"
+  },
+  "stagesLabel": "The four stages of Fledge",
+  "stages": [
+   {
+    "n": "01",
+    "nm": "Get Found",
+    "ln": "People find you on Google, social media and ads.",
+    "on": false,
+    "this": null
+   },
+   {
+    "n": "02",
+    "nm": "Get Chosen",
+    "ln": "Your website and proof make them pick you.",
+    "on": false,
+    "this": null
+   },
+   {
+    "n": "03",
+    "nm": "Get The Business",
+    "ln": "Every enquiry gets a fast reply and a follow-up.",
+    "on": true,
+    "this": "This service"
+   },
+   {
+    "n": "04",
+    "nm": "Keep &amp; Grow",
+    "ln": "Customers come back and send others.",
+    "on": false,
+    "this": null
+   }
+  ],
+  "withCap": "Works well with",
+  "sibs": [
+   {
+    "href": "/services/marketing-automation-crm",
+    "img": "/uploads/scHUo4gyKrkiEYNTf-8EU-svc-04.webp",
+    "h": "Automation and CRM",
+    "sub": "CRM, follow-up and automation, so you handle more enquiries without hiring more people."
+   },
+   {
+    "href": "/services/web-design",
+    "img": "/uploads/1qEcUtH4lHDuqfDdPiAdS-svc-01.webp",
+    "h": "Websites and SEO",
+    "sub": "Websites and SEO that put your business in front of the right people."
+   },
+   {
+    "href": "/services/social-media-management",
+    "img": "/uploads/EmxO1Byhcnx4qSVf0rF7I-svc-06.webp",
+    "h": "Social media",
+    "sub": "Social media and content that keep your brand visible, trusted, and relevant."
+   }
+  ]
+ },
+ "proof": {
+  "eb": "Our work",
+  "h2": "A project like this.",
+  "href": "/work/case-study",
+  "ph": "<div class=\"lb\"><b>Project cover</b><span>An AI implementation project, shown in context</span><i>16:9</i></div>",
+  "phCls": "ph r16x9",
+  "client": "<span class=\"todo\">[Client name]</span>",
+  "sector": "<span class=\"todo\">[Sector]</span>",
+  "line": "<span class=\"todo\">[What changed, in one line]</span>",
+  "note": "Client names and results appear only with each client's written consent.",
+  "link": {
+   "href": "/work",
+   "t": "See all our work"
+  }
+ },
+ "faq": {
+  "eb": "Questions",
+  "h2": "AI questions, answered.",
+  "items": [
+   {
+    "q": "What is an AI chatbot?",
+    "a": "A program that answers your customers' messages in everyday language, the way a person would. Ours are trained on your business and follow rules you approve.",
+    "open": true
+   },
+   {
+    "q": "Will it give wrong answers?",
+    "a": "We limit it to the information you approve and test it before launch. When it isn't sure, it is set to hand over to your team instead of guessing. We also read the conversations and correct any answer that needs it.",
+    "open": false
+   },
+   {
+    "q": "Does it work on WhatsApp?",
+    "a": "Yes, through WhatsApp Business, as well as on Facebook, Instagram and your website. <span class=\"todo\">[WhatsApp Business setup steps, to confirm.]</span>",
+    "open": false
+   },
+   {
+    "q": "Which languages does it speak?",
+    "a": "English and French. <span class=\"todo\">[Creole, to confirm.]</span>",
+    "open": false
+   },
+   {
+    "q": "Is my customers' data safe?",
+    "a": "The assistant gets only the information it needs, and your customer records stay in your CRM. <span class=\"todo\">[Where conversations are stored and which AI provider is used, to confirm.]</span>",
+    "open": false
+   },
+   {
+    "q": "Can AI replace my team?",
+    "a": "No, and it shouldn't. It takes the repeated questions and the late-night messages, so your team spends its time on the customers ready to buy.",
+    "open": false
+   },
+   {
+    "q": "Can the assistant book appointments?",
+    "a": "Yes. It can offer times from your calendar, book the call or the appointment, and send the reminders.",
+    "open": false
+   },
+   {
+    "q": "How long does it take to set up?",
+    "a": "<span class=\"todo\">[About 2 to 3 weeks, to confirm.]</span> Most of the time goes into writing what it knows and testing it.",
+    "open": false
+   }
+  ]
+ },
+ "cta": {
+  "eb": "Get In Touch",
+  "h2": "Tell us where your business is leaking customers",
+  "btn": {
+   "href": "/contact",
+   "t": "Book a free growth call"
+  }
+ }
+}
