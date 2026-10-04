@@ -51,6 +51,8 @@ function buildCore() {
   const css = minCss(rd('src/core.css'));
   const js = rd('src/core.js').replace('`/*@CSS@*/`', tl(css));
   fs.writeFileSync(path.join(ROOT, 'out/dd-core.js'), js);
+  // the homepage gets the identical file as its own asset (the site will not scope dd-core.js to it)
+  fs.writeFileSync(path.join(ROOT, 'out/dd-chrome.js'), js);
   return js.length;
 }
 
