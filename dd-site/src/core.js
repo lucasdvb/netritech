@@ -162,6 +162,7 @@ function navBehaviour(R, wrap) {
     burger.setAttribute('aria-expanded', open ? 'true' : 'false');
     burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     document.documentElement.style.overflow = open ? 'hidden' : '';
+    if (window.lenis) { if (open) window.lenis.stop(); else window.lenis.start(); }
     nav.classList.remove('hide');
   }
   burger.addEventListener('click', () => setMm(!wrap.classList.contains('mm-open')));
@@ -526,11 +527,53 @@ DD.mount = function () {
   } catch (e) { console.error('[dd] mount failed', e); }
 };
 
+// ===== the same nav and footer on the homepage =====
+// The homepage (marcus-vane.js) renders into its own shadow root on #mv-root. Its old
+// header and footer are hidden there; this mounts the shared NAV and FOOTER around it,
+// each in its own shadow root so neither page's styles can reach the other.
+function globalFonts() {
+  if (document.getElementById('dd-global')) return;
+  const st = document.createElement('style');
+  st.id = 'dd-global'; st.textContent = FONT_CSS;
+  document.head.appendChild(st);
+}
+DD.mountChrome = function () {
+  const home = document.getElementById('mv-root');
+  if (!home || document.getElementById('dd-chrome-top')) return;
+  try {
+    globalFonts();
+    const make = (id, inner, where) => {
+      const el = document.createElement('div');
+      el.id = id;
+      home.insertAdjacentElement(where, el);
+      const R = el.attachShadow({ mode: 'open' });
+      R.innerHTML = '<style>' + CSS + '\n.r.ddc{min-height:0;background:transparent;overflow:visible}.ddc .ft{margin-top:calc(var(--rx) * -1)}</style><div class="r ddc">' + inner + '</div>';
+      const wrap = R.querySelector('.r');
+      wrap.style.setProperty('--sp', SPRING.sp);
+      wrap.style.setProperty('--sg', SPRING.sg);
+      return { R, wrap };
+    };
+    // the header goes before the homepage so its loading curtain still covers it
+    const top = make('dd-chrome-top', NAV, 'beforebegin');
+    const foot = make('dd-chrome-foot', FOOTER, 'afterend');
+    markCurrent(top.R, { path: '/' });
+    navBehaviour(top.R, top.wrap);
+    clocks(top.R);
+    liveTouches(top.R);
+    clocks(foot.R);
+    fit(foot.R);
+    reveal(foot.R);
+    liveTouches(foot.R);
+  } catch (e) { console.error('[dd] chrome mount failed', e); }
+};
+
 (function boot() {
+  if (document.getElementById('mv-root')) { DD.mountChrome(); return; }
   if (document.getElementById('dd-root')) { DD.mount(); return; }
-  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', () => DD.mount(), { once: true }); return; }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', () => (document.getElementById('mv-root') ? DD.mountChrome() : DD.mount()), { once: true }); return; }
   let tries = 0;
   const iv = setInterval(() => {
+    if (document.getElementById('mv-root')) { clearInterval(iv); DD.mountChrome(); return; }
     if (document.getElementById('dd-root') || tries++ > 40) { clearInterval(iv); DD.mount(); }
   }, 100);
 })();

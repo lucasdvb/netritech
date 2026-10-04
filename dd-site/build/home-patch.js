@@ -22,6 +22,8 @@ const NAV_FOOT_CSS = `
 .mv-word { display: block; width: 100%; margin-top: clamp(56px, 7vw, 110px); font-family: var(--font-sans); font-size: 15vw; line-height: .74; letter-spacing: -.065em; white-space: nowrap; color: #f3f1ea; transform: translateY(.14em); user-select: none; }
 .mv-word b { font-weight: 600; }
 .mv-word span { font-weight: 300; }
+/* the shared dd-core nav and footer replace these on the homepage */
+.site-nav, .mobile-menu, footer.contact { display: none !important; }
 `;
 module.exports = [
   {
