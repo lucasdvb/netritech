@@ -1,0 +1,591 @@
+// Disruptive Dodo · fledge page content (from the website-v1 design).
+// Rendered by src/scripts/dd-core.js into #dd-root. Edit copy here; shared nav, footer and styles live in dd-core.js.
+const DD = (window.__DD = window.__DD || { pages: {} });
+DD.pages["fledge"] = {
+  path: "/fledge",
+  title: "Fledge · Full marketing system for Mauritian businesses",
+  description: "Fledge is Disruptive Dodo's full marketing system: website, social media, ads, CRM, follow-up and AI, built as one and run by one team in Mauritius.",
+  ld: {
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Service",
+   "@id": "https://disruptivedodo.mu/fledge#service",
+   "name": "Fledge",
+   "serviceType": "Full marketing system",
+   "inLanguage": "en",
+   "description": "Fledge is Disruptive Dodo's full marketing system: website, social media, ads, CRM, follow-up and AI, built as one and run by one team in Mauritius.",
+   "areaServed": {
+    "@type": "Country",
+    "name": "Mauritius"
+   },
+   "provider": {
+    "@type": "Organization",
+    "name": "Disruptive Dodo",
+    "url": "https://disruptivedodo.mu/"
+   },
+   "url": "https://disruptivedodo.mu/fledge",
+   "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Services in Fledge",
+    "itemListElement": [
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Websites and SEO",
+       "url": "https://disruptivedodo.mu/services/web-design"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Social media",
+       "url": "https://disruptivedodo.mu/services/social-media-management"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Paid ads",
+       "url": "https://disruptivedodo.mu/services/facebook-google-ads"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Automation and CRM",
+       "url": "https://disruptivedodo.mu/services/marketing-automation-crm"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "AI implementation",
+       "url": "https://disruptivedodo.mu/services/ai-chatbots"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Branding",
+       "url": "https://disruptivedodo.mu/services/branding-logo-design"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+     "item": "https://disruptivedodo.mu/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Fledge",
+     "item": "https://disruptivedodo.mu/fledge"
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "What is Fledge?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Fledge is our full marketing system. One team builds your website, social media, ads, CRM, follow-up and AI assistant to work as one, then runs it with you every month."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How is Fledge different from hiring a marketing agency?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Most agencies sell one piece: posts, ads or a website. Fledge covers the whole path, from the first time someone sees you to the day they buy again, and connects every step so no enquiry is lost in between."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do I need everything from day one?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No. We start with the problem that costs you the most and build from there. If you start with one service, it plugs into Fledge later, so nothing is built twice."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How much does Fledge cost?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "It depends on the size of your business and what is already in place. After a free growth call, we send a clear proposal with the setup fee and the monthly fee before any work starts. Ad budgets are paid by you, directly to the platforms."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How long do I commit for?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "[3 months, then 30 days' notice, to confirm.]"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Who owns the website, the pages and the data?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "[You do. Your website content, your pages, your ad accounts and your customer list stay in your business's name. To confirm.]"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do you work outside Mauritius?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. We're based in Mauritius and work with businesses here and abroad, in English and French."
+     }
+    }
+   ]
+  }
+ ]
+},
+  css: `.fl-head{align-items:end}
+.fl-head .tx,.fl-head .ld{max-width:44ch}
+.fl-dot{display:inline-block;flex:none;width:8px;height:8px;border-radius:50%;background:var(--acx)}
+.fl-check{width:16px;height:16px;flex:none;color:var(--acx)}
+
+
+.fl-hero{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);align-items:start;gap:var(--gt);padding-bottom:clamp(104px,9.7vw,140px)}
+.fl-hero .eb{margin-top:20px}
+.fl-hero h1{margin-top:36px}
+.fl-hero h1 .mega{display:block}
+.fl-sub{display:block;max-width:17ch;margin-top:24px;font-size:clamp(28px,3.62vw,52px);font-weight:400;line-height:1.04;letter-spacing:-.01em;text-wrap:balance}
+.fl-hero .ld{max-width:46ch;margin-top:40px}
+.fl-hero .btn-row{margin-top:44px}
+.fl-dodo{align-self:end;width:100%;max-width:470px;margin:0 auto;background:transparent}
+.fl-dodo img{width:128%;max-width:none;height:auto;margin-left:-14%}
+@media (max-width:899px){.fl-hero{grid-template-columns:minmax(0,1fr);gap:24px;padding-bottom:88px}.fl-dodo{max-width:280px}}
+@media (max-width:639px){.fl-hero h1 .mega{font-size:clamp(64px,22vw,104px)}}
+
+
+.fl-plain{align-self:end;max-width:52ch}
+.fl-facts dd{max-width:30ch}
+
+
+.fl-leaks li{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));align-items:baseline;gap:var(--gt);padding:44px 0;border-top:1px solid var(--ln)}
+.fl-leak-n{grid-column:1/span 2}
+.fl-leaks .h3{grid-column:3/span 5}
+.fl-leaks .tx{grid-column:8/span 5}
+.fl-leaks li:last-child{border-bottom:1px solid var(--ln)}
+.fl-leak-n{font-size:clamp(42px,5.56vw,80px);font-weight:400;line-height:.9;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--mu)}
+.fl-leaks .h3{max-width:22ch;text-wrap:balance}
+.fl-leaks .tx{max-width:44ch}
+@media (max-width:767px){.fl-leaks li{grid-template-columns:minmax(0,1fr);gap:12px;padding:32px 0}.fl-leaks li .fl-leak-n,.fl-leaks li .h3,.fl-leaks li .tx{grid-column:1/-1}.fl-leak-n{font-size:48px}}
+
+
+.fl-inside{scroll-margin-top:64px}
+.fl-inside .h1{max-width:12ch}
+.fl-stages{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--gt);row-gap:80px}
+.fl-stages>li:nth-child(2n){margin-top:96px}
+.stage-img{position:relative;overflow:hidden;border-radius:2px;background:var(--sf)}
+.stage-img img{filter:grayscale(1) contrast(1.02)}
+.fl-stage-row{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-top:24px;padding-top:20px;border-top:1px solid var(--ln)}
+.fl-items{margin-top:28px;border-top:1px solid var(--ln)}
+.fl-items li{border-bottom:1px solid var(--ln)}
+.fl-items a,.fl-items li>span{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:52px;padding:12px 0;font-size:17px;line-height:1.4;color:var(--fg);text-decoration:none}
+.fl-items .ar{color:var(--mu)}
+.fl-items a:hover{text-decoration:underline;text-decoration-color:var(--acx);text-underline-offset:5px}
+.fl-items a:hover .ar{color:var(--fg);transform:translate(2px,-2px)}
+@media (max-width:767px){.fl-stages{grid-template-columns:minmax(0,1fr);row-gap:64px}.fl-stages>li:nth-child(2n){margin-top:0}}
+
+
+.fl-path .h2{max-width:16ch}
+.fl-loop{position:relative;margin-top:clamp(56px,5.56vw,80px)}
+.fl-loop::before{content:"";position:absolute;top:28px;left:0;right:0;bottom:0;border:1px dashed var(--ls);border-radius:40px;pointer-events:none}
+.fl-steps{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));padding:0 48px 72px}
+.fl-steps::before{content:"";position:absolute;top:28px;left:calc(48px + (100% - 96px) / 14);right:calc(48px + (100% - 96px) / 14);height:1px;background:rgba(243,241,234,.5)}
+.fl-steps li{position:relative;display:flex;flex-direction:column;align-items:center;padding:0 10px;text-align:center}
+.fl-node{display:grid;place-items:center;flex:none;width:56px;height:56px;border-radius:50%;border:1px solid rgba(243,241,234,.5);background:var(--sf);font-size:15px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;color:var(--fg)}
+.fl-steps li:first-child .fl-node{border-color:var(--ac);box-shadow:0 0 0 5px var(--sf),0 0 0 6px var(--ls)}
+.fl-steps p{max-width:17ch;margin-top:22px;font-size:15px;line-height:1.45;color:var(--fg);text-wrap:balance}
+.fl-again{position:absolute;left:50%;bottom:0;transform:translate(-50%,50%);display:flex;align-items:center;gap:14px;padding:0 22px;background:var(--sf);white-space:nowrap}
+.fl-again-i{display:none;place-items:center;flex:none;width:44px;height:44px;border-radius:50%;border:1px dashed var(--ls);color:var(--fg)}
+.fl-again-i svg{width:18px;height:18px}
+.fl-ah{position:absolute;top:calc(50% + 14px);display:grid;place-items:center;width:28px;height:28px;margin-top:-14px;border-radius:50%;background:var(--sf);color:var(--fg)}
+.fl-ah svg{width:16px;height:16px}
+.fl-ah-r{right:-14px}.fl-ah-l{left:-14px}
+.fl-path-tx{max-width:44ch;margin-top:64px}
+@media (max-width:1099px){
+  .fl-loop::before,.fl-ah{display:none}
+  .fl-steps{grid-template-columns:minmax(0,1fr);padding:0}
+  .fl-steps::before{top:32px;bottom:32px;left:22px;right:auto;width:1px;height:auto}
+  .fl-steps li{flex-direction:row;align-items:center;gap:20px;padding:10px 0;text-align:left}
+  .fl-node{width:44px;height:44px}
+  .fl-steps li:first-child .fl-node{box-shadow:none}
+  .fl-steps p{max-width:40ch;margin-top:0;font-size:17px}
+  .fl-again{position:static;transform:none;gap:20px;padding:10px 0 0;background:none;white-space:normal}
+  .fl-again-i{display:grid}
+  .fl-path-tx{margin-top:40px}
+}
+
+
+.fl-ways{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gt)}
+.fl-way{display:flex;flex-direction:column;padding:40px;border-radius:16px;border:1px solid var(--ls);background:var(--sf2)}
+.fl-way.dk{background:var(--sf);border-color:var(--ls)}
+.fl-way .tx{max-width:46ch}
+.fl-way ul{margin-top:32px}
+.fl-way li{display:flex;align-items:center;gap:14px;padding:14px 0;border-top:1px solid var(--ln);font-size:17px;line-height:1.45;color:var(--fg)}
+.fl-way li:last-child{border-bottom:1px solid var(--ln)}
+@media (min-width:900px){.fl-way .tx{min-height:3.4em}}
+@media (max-width:899px){.fl-ways{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:639px){.fl-way{padding:24px}}
+
+
+.fl-metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));grid-template-columns:repeat(auto-fit,minmax(max(min(280px,100%),calc((100% - 2px) / 3)),1fr));gap:1px;border:1px solid var(--ln);border-radius:16px;overflow:hidden;background:var(--ln)}
+.fl-metrics>div{display:flex;flex-direction:column;gap:14px;padding:32px 32px 36px;background:var(--bg)}
+.fl-metrics dt{display:flex;align-items:center;gap:12px;color:var(--fg)}
+.fl-metrics dd{max-width:40ch}
+@media (max-width:639px){.fl-metrics>div{padding:24px}}
+
+
+.fl-cmp{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed}
+.fl-cmp .c1{width:28%}
+.fl-cmp thead th,.fl-cmp thead td{padding:28px 32px 22px;text-align:left;vertical-align:bottom;font-size:13px;line-height:1.35;font-weight:500;text-transform:uppercase;letter-spacing:.18em;color:var(--mu)}
+.fl-cmp thead td{padding-left:0;border-top:0}
+.fl-cmp thead .fl-us{border-radius:16px 16px 0 0;color:var(--fg)}
+.fl-cmp thead .fl-us span{display:inline-flex;align-items:center;gap:12px}
+.fl-cmp tbody th{padding:28px 32px 28px 0;border-top:1px solid var(--ln);text-align:left;vertical-align:top;font-size:20px;line-height:1.3;font-weight:600;letter-spacing:-.01em;color:var(--fg)}
+.fl-cmp td{padding:28px 32px;border-top:1px solid var(--ln);vertical-align:top;font-size:18px;line-height:1.5;color:var(--mu)}
+.fl-cmp .fl-us{background:var(--sf2);color:var(--fg)}
+.fl-cmp tbody tr:last-child th,.fl-cmp tbody tr:last-child td{border-bottom:1px solid var(--ln)}
+.fl-cmp tbody tr:last-child .fl-us{border-radius:0 0 16px 16px;border-bottom-color:transparent}
+@media (max-width:719px){
+  .fl-cmp,.fl-cmp tbody,.fl-cmp tr,.fl-cmp th,.fl-cmp td{display:block;width:auto}
+  .fl-cmp thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+  .fl-cmp tbody{display:flex;flex-direction:column;gap:12px}
+  .fl-cmp tbody tr{padding:24px 20px 20px;border:1px solid var(--ln);border-radius:16px}
+  .fl-cmp tbody th,.fl-cmp tbody tr:last-child th{padding:0;border:0}
+  .fl-cmp td,.fl-cmp tbody tr:last-child td{padding:16px 0 0;border:0;font-size:17px}
+  .fl-cmp td::before{content:attr(data-label);display:block;margin-bottom:6px;font-size:12px;line-height:1.35;font-weight:500;text-transform:uppercase;letter-spacing:.16em;color:var(--mu)}
+  .fl-cmp td.fl-us,.fl-cmp tbody tr:last-child td.fl-us{margin-top:16px;padding:14px 16px;border-radius:12px}
+  .fl-cmp td.fl-us::before{padding-left:18px;background:radial-gradient(circle at 4px 50%,var(--acx) 3.5px,transparent 4.2px)}
+}
+
+
+.fl-fit{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gt)}
+.fl-fit-col{padding:40px;border-radius:16px;border:1px solid var(--ln)}
+.fl-fit-us{border-color:var(--ls);background:var(--sf2)}
+.fl-fit-col h3{display:flex;align-items:center;gap:12px;font-size:13px;line-height:1.35;font-weight:500;text-transform:uppercase;letter-spacing:.18em;color:var(--fg)}
+.fl-fit-col ul{margin-top:24px}
+.fl-fit-col li{display:flex;align-items:flex-start;gap:14px;padding:16px 0;border-top:1px solid var(--ln);font-size:18px;line-height:1.45;color:var(--fg)}
+.fl-fit-col li svg{width:16px;height:16px;flex:none;margin-top:5px;color:var(--acx)}
+.fl-fit-col:not(.fl-fit-us) li svg{color:var(--mu)}
+.fl-plug{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:24px 48px;margin-top:56px;padding-top:32px;border-top:1px solid var(--ln)}
+.fl-plug .tx{max-width:38ch;color:var(--fg)}
+.fl-svc-links{display:flex;flex-wrap:wrap;gap:10px}
+.fl-svc-links a{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 20px;border-radius:999px;border:1px solid var(--ls);font-size:14px;font-weight:500;line-height:1.2;color:var(--fg);text-decoration:none}
+.fl-svc-links a:hover{border-color:var(--fg)}
+.fl-svc-links .ar{color:var(--mu)}
+@media (max-width:899px){.fl-fit{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:639px){.fl-fit-col{padding:24px}.fl-fit-col li{font-size:17px}}
+
+
+.fl-name{text-align:center}
+.fl-feather{display:block;width:56px;height:56px;margin:0 auto 28px;color:var(--acx)}
+.fl-name-h{max-width:22ch;margin:24px auto 0;font-size:clamp(34px,4.45vw,64px);font-weight:400;line-height:1.04;letter-spacing:-.015em;text-wrap:balance}
+.fl-name .tx{max-width:52ch;margin:32px auto 0;text-wrap:balance}
+
+
+.faq-head .h2{max-width:16ch}
+.cta{text-align:center}
+.cta .eb{justify-content:center}
+.cta .h2{max-width:18ch;margin-left:auto;margin-right:auto}
+.cta .btn-row{justify-content:center}
+
+@media (prefers-reduced-motion:no-preference){.fl-items .ar,.fl-svc-links a,.fl-svc-links .ar{transition:color .2s,border-color .2s,transform .3s cubic-bezier(.16,1,.3,1)}}`,
+  html: `<main>
+  <!-- 2. Hero -->
+  <section class="hero-in fl-hero" aria-labelledby="fl-h">
+    <div>
+      <nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li aria-current="page">Fledge</li></ol></nav>
+      <p class="eb"><span class="dot"></span>Our signature system</p>
+      <h1 id="fl-h"><span class="mega">Fledge.</span><span class="fl-sub">Your full marketing system, built and run by one team.</span></h1>
+      <p class="ld">Most businesses buy marketing in pieces. A website from one supplier, ads from another, a page someone posts on when they find the time. The pieces don't talk to each other, so customers slip through the gaps. Fledge builds every piece as one system, then runs it with you every month.</p>
+      <div class="btn-row">
+        <a class="btn btn-a" href="/contact">Book a free growth call</a>
+        <a class="btn" href="#inside">See what's inside</a>
+      </div>
+    </div>
+    <div class="dodo fl-dodo"><img src="/uploads/8hzVIXmhSCC0RLLMXrB-F-hero-dodo.webp" alt="Disruptive Dodo mascot" width="921" height="1228"></div>
+  </section>
+
+  <!-- 3. In plain terms -->
+  <section class="lt panel sec" aria-labelledby="plain-h">
+    <div class="g12 fl-head">
+      <div class="span-5">
+        <p class="eb"><span class="dot"></span>In plain terms</p>
+        <h2 class="h2 mt-24" id="plain-h">What you get with Fledge.</h2>
+      </div>
+      <p class="span-6 from-7 ld fg fl-plain">One team builds your website, your social media, your ads, your CRM and follow-up, and your AI assistant, so they work as one. Then we run it with you every month and show you what it brings in.</p>
+    </div>
+    <dl class="meta fl-facts mt-64">
+      <div><dt class="cap">Who it's for</dt><dd class="tx fg">Businesses ready to grow that would rather have one team for all of it than five suppliers.</dd></div>
+      <div><dt class="cap">What's included</dt><dd class="tx fg">Website, social media, ads, CRM and follow-up, AI assistant, a monthly report and a monthly call.</dd></div>
+      <div><dt class="cap">How you pay</dt><dd class="tx fg">A setup fee for the build, then a monthly fee to run it.</dd></div>
+      <div><dt class="cap">Minimum term</dt><dd class="tx fg"><span class="todo">[3 months, then 30 days' notice, to confirm]</span></dd></div>
+    </dl>
+  </section>
+
+  <!-- 4. Why one system -->
+  <section class="sec" aria-labelledby="why-h">
+    <div class="g12 fl-head">
+      <div class="span-6">
+        <p class="eb"><span class="dot"></span>Why one system</p>
+        <h2 class="h2 mt-24" id="why-h">Marketing in pieces leaks customers.</h2>
+      </div>
+      <p class="span-5 from-8 tx">Every business loses customers at the same four points. Most marketing fixes one of them and ignores the rest. Fledge closes all four.</p>
+    </div>
+    <ol class="fl-leaks mt-64">
+      <li><span class="fl-leak-n">01</span><h3 class="h3">They can't find you.</h3><p class="tx">Your competitors show up on Google, Facebook and Instagram. You don't, or not often enough.</p></li>
+      <li><span class="fl-leak-n">02</span><h3 class="h3">They find you, then choose someone else.</h3><p class="tx">Your website and pages don't look like the leader you are, so people pick the business that does.</p></li>
+      <li><span class="fl-leak-n">03</span><h3 class="h3">They enquire, and nobody follows up in time.</h3><p class="tx">A message sits unanswered for a day. By then they've called someone else.</p></li>
+      <li><span class="fl-leak-n">04</span><h3 class="h3">They buy once and never come back.</h3><p class="tx">No reminder, no review request, no reason to return. The next sale starts from zero.</p></li>
+    </ol>
+  </section>
+
+  <!-- 5. What's inside -->
+  <section class="panel sec fl-inside" id="inside" aria-labelledby="inside-h">
+    <div class="g12 fl-head">
+      <div class="span-6">
+        <p class="eb"><span class="dot"></span>What's inside</p>
+        <h2 class="h1 mt-24" id="inside-h">Four stages. One system.</h2>
+      </div>
+      <p class="span-5 from-8 ld">Each stage uses services we also sell on their own. In Fledge they are built together and share the same information, so each one makes the next work better.</p>
+    </div>
+    <ol class="fl-stages mt-96">
+      <li>
+        <figure class="stage-img r16x11"><img class="cov" src="/uploads/_aEIAO-vT9eQ9p08XxTeR-stage-get-found.webp" alt="" width="569" height="379"></figure>
+        <div class="fl-stage-row"><div><h3 class="h3">Get Found</h3><p class="tx mt-8">We put you where your customers are looking.</p></div><p class="cap">01</p></div>
+        <ul class="fl-items">
+          <li><a href="/services/web-design">A website built to be found on Google<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+          <li><a href="/services/web-design">Your Google listing, set up and kept active<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+          <li><a href="/services/facebook-google-ads">Facebook, Instagram and Google ads<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+          <li><a href="/services/social-media-management">Posts every week on the platforms your customers use<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+        </ul>
+      </li>
+      <li>
+        <figure class="stage-img r16x11"><img class="cov" src="/uploads/bG7W8Y3ge0MCiasr9z3Mq-stage-get-chosen.webp" alt="" width="632" height="421"></figure>
+        <div class="fl-stage-row"><div><h3 class="h3">Get Chosen</h3><p class="tx mt-8">When they find you, they choose you.</p></div><p class="cap">02</p></div>
+        <ul class="fl-items">
+          <li><a href="/services/web-design">A website that makes the case for you<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+          <li><span>Your brand used the same way everywhere</span></li>
+          <li><span>Reviews and proof in the right places</span></li>
+          <li><a href="/services/social-media-management">Content that answers your customers' questions<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+        </ul>
+      </li>
+      <li>
+        <figure class="stage-img r16x11"><img class="cov" src="/uploads/ci3Z6faTkzajuXrUfoL-z-stage-get-business.webp" alt="" width="632" height="421"></figure>
+        <div class="fl-stage-row"><div><h3 class="h3">Get The Business</h3><p class="tx mt-8">No enquiry is lost.</p></div><p class="cap">03</p></div>
+        <ul class="fl-items">
+          <li><a href="/services/marketing-automation-crm">Every enquiry in one CRM<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+          <li><a href="/services/marketing-automation-crm">Instant alerts and fast replies<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+          <li><a href="/services/ai-chatbots">An AI assistant that answers day and night<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+        <li><a href="/services/branding-logo-design">Branding<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+          <li><a href="/services/marketing-automation-crm">Follow-up until they say yes or no<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+        </ul>
+      </li>
+      <li>
+        <figure class="stage-img r16x11"><img class="cov" src="/uploads/JdHstpeuD7jFaymUxCvgq-stage-keep-grow.webp" alt="" width="702" height="468"></figure>
+        <div class="fl-stage-row"><div><h3 class="h3">Keep &amp; Grow</h3><p class="tx mt-8">Customers come back and send others.</p></div><p class="cap">04</p></div>
+        <ul class="fl-items">
+          <li><a href="/services/marketing-automation-crm">Review requests after every sale<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+          <li><a href="/services/marketing-automation-crm">Offers and news for past customers<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+          <li><a href="/services/social-media-management">Content that keeps you top of mind<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+          <li><a href="/services/marketing-automation-crm">Repetitive work done automatically<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+        </ul>
+      </li>
+    </ol>
+  </section>
+
+  <!-- 6. One customer, start to finish -->
+  <section class="panel on-sf sec fl-path" aria-labelledby="path-h">
+    <p class="eb"><span class="dot"></span>How it works together</p>
+    <h2 class="h2 mt-24" id="path-h">One customer, start to finish.</h2>
+    <div class="fl-loop">
+      <ol class="fl-steps">
+        <li><span class="fl-node">1</span><p>Sees your ad, or finds you on Google</p></li>
+        <li><span class="fl-node">2</span><p>Lands on your website</p></li>
+        <li><span class="fl-node">3</span><p>Sends a message or books a call</p></li>
+        <li><span class="fl-node">4</span><p>Gets a reply in minutes, from your team or your AI assistant</p></li>
+        <li><span class="fl-node">5</span><p>Is followed up until they decide</p></li>
+        <li><span class="fl-node">6</span><p>Buys, and is asked for a review</p></li>
+        <li><span class="fl-node">7</span><p>Hears from you again, and comes back</p></li>
+      </ol>
+      <i class="fl-ah fl-ah-r" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none"><path d="M3 4.5L6 7.5l3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+      <i class="fl-ah fl-ah-l" aria-hidden="true"><svg viewBox="0 0 12 12" fill="none"><path d="M3 7.5L6 4.5l3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+      <p class="cap fl-again"><span class="fl-again-i" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none"><path d="M15.6 8.2A6 6 0 1 0 16 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M16.2 3.8v4.6h-4.6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>And the loop starts again</p>
+    </div>
+    <p class="tx fl-path-tx">Every step is recorded in one place, so you can see where each sale came from.</p>
+  </section>
+
+  <!-- 7. Setup, then every month -->
+  <section class="lt panel sec" aria-labelledby="runs-h">
+    <p class="eb"><span class="dot"></span>How Fledge runs</p>
+    <h2 class="h2 mt-24" id="runs-h">We build it once.<br>Then we run it with you.</h2>
+    <div class="fl-ways mt-64">
+      <article class="fl-way">
+        <p class="cap">(01) The setup</p>
+        <h3 class="h3 mt-24">Built properly, the first time.</h3>
+        <p class="tx mt-16">We look at your business first, then build every piece and connect them.</p>
+        <ul>
+          <li><svg class="fl-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>A close look at your marketing, sales and follow-up today</li>
+          <li><svg class="fl-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Your website, built or rebuilt</li>
+          <li><svg class="fl-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Your brand look, set up or refreshed</li>
+          <li><svg class="fl-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Your Google listing and social pages set up</li>
+          <li><svg class="fl-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>CRM, booking and follow-up connected</li>
+          <li><svg class="fl-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Your AI assistant trained on your business</li>
+          <li><svg class="fl-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Tracking, so every enquiry shows where it came from</li>
+        </ul>
+      </article>
+      <article class="fl-way dk">
+        <p class="cap">(02) Every month</p>
+        <h3 class="h3 mt-24">Run, measured, improved.</h3>
+        <p class="tx mt-16">A full marketing team for your business, without the hiring.</p>
+        <ul>
+          <li><svg class="fl-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Posts every week, approved by you</li>
+          <li><svg class="fl-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Ads managed and adjusted</li>
+          <li><svg class="fl-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Replies and follow-up checked</li>
+          <li><svg class="fl-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>A report every month, in plain words</li>
+          <li><svg class="fl-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>A call every month about your business and what comes next</li>
+          <li><svg class="fl-check" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Improvements as your business grows</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <!-- 8. What we measure -->
+  <section class="sec" aria-labelledby="measure-h">
+    <div class="g12 fl-head">
+      <div class="span-6">
+        <p class="eb"><span class="dot"></span>What we measure</p>
+        <h2 class="h2 mt-24" id="measure-h" style="max-width:19ch">The numbers we show you every month.</h2>
+      </div>
+      <p class="span-5 from-8 tx">We report on what moves your business.</p>
+    </div>
+    <dl class="fl-metrics mt-64">
+      <div><dt class="cap">Enquiries</dt><dd class="tx">How many came in, and from where.</dd></div>
+      <div><dt class="cap">Reply time</dt><dd class="tx">How fast each one was answered.</dd></div>
+      <div><dt class="cap">Sales</dt><dd class="tx">How many enquiries became customers.</dd></div>
+      <div><dt class="cap">Cost per enquiry</dt><dd class="tx">What each enquiry cost you in ads.</dd></div>
+      <div><dt class="cap">Reviews</dt><dd class="tx">New reviews, and your rating.</dd></div>
+      <div><dt class="cap">Content</dt><dd class="tx">What we posted, and how people responded.</dd></div>
+    </dl>
+    <p class="sm mt-24">We set targets with you for the paid parts. We never promise numbers we don't control.</p>
+  </section>
+
+  <!-- 9. Compare -->
+  <section class="lt panel sec" aria-labelledby="compare-h">
+    <p class="eb"><span class="dot"></span>Compare</p>
+    <h2 class="h2 mt-24" id="compare-h">Fledge, or marketing in pieces.</h2>
+    <table class="fl-cmp mt-64" role="table">
+      <caption class="sr-only">Fledge, or marketing in pieces.</caption>
+      <colgroup><col class="c1"><col><col></colgroup>
+      <thead role="rowgroup">
+        <tr role="row"><td role="cell"></td><th scope="col" role="columnheader">Marketing in pieces</th><th scope="col" role="columnheader" class="fl-us"><span><i class="fl-dot" aria-hidden="true"></i>Fledge</span></th></tr>
+      </thead>
+      <tbody role="rowgroup">
+        <tr role="row"><th scope="row" role="rowheader">Who answers for results</th><td role="cell" data-label="Marketing in pieces">Each supplier points at the others</td><td role="cell" class="fl-us" data-label="Fledge">One team, one contact</td></tr>
+        <tr role="row"><th scope="row" role="rowheader">Your tools</th><td role="cell" data-label="Marketing in pieces">A website, a page and a spreadsheet that don't connect</td><td role="cell" class="fl-us" data-label="Fledge">Website, ads, CRM and follow-up share the same information</td></tr>
+        <tr role="row"><th scope="row" role="rowheader">Enquiries</th><td role="cell" data-label="Marketing in pieces">Some get lost between inboxes</td><td role="cell" class="fl-us" data-label="Fledge">Every one lands in one place and gets a reply</td></tr>
+        <tr role="row"><th scope="row" role="rowheader">Reporting</th><td role="cell" data-label="Marketing in pieces">Several reports, or none</td><td role="cell" class="fl-us" data-label="Fledge">One report a month, in plain words</td></tr>
+        <tr role="row"><th scope="row" role="rowheader">Your time</th><td role="cell" data-label="Marketing in pieces">You manage the suppliers</td><td role="cell" class="fl-us" data-label="Fledge">We manage the work, you approve it</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 10. Is it right for you? -->
+  <section class="sec" aria-labelledby="fit-h">
+    <p class="eb"><span class="dot"></span>Is it right for you?</p>
+    <h2 class="h2 mt-24" id="fit-h">Fledge, or one service first.</h2>
+    <div class="fl-fit mt-64">
+      <div class="fl-fit-col fl-fit-us">
+        <h3><i class="fl-dot" aria-hidden="true"></i>Fledge fits if</h3>
+        <ul>
+          <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>You want more customers and don't want to manage five suppliers</li>
+          <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Your team can handle more work</li>
+          <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>You're ready to invest every month in growth</li>
+          <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>You want to see where every sale came from</li>
+        </ul>
+      </div>
+      <div class="fl-fit-col">
+        <h3>Start with one service if</h3>
+        <ul>
+          <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>One problem is costing you the most right now</li>
+          <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>You're launching and need the basics first</li>
+          <li><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>You'd rather start with one piece and add the rest</li>
+        </ul>
+      </div>
+    </div>
+    <div class="fl-plug">
+      <p class="tx">Every service we build plugs into Fledge later, so nothing is built twice.</p>
+      <ul class="fl-svc-links">
+        <li><a href="/services/web-design">Websites and SEO<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+        <li><a href="/services/social-media-management">Social media<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+        <li><a href="/services/facebook-google-ads">Paid ads<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+        <li><a href="/services/marketing-automation-crm">Automation and CRM<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+        <li><a href="/services/ai-chatbots">AI implementation<svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 11. Why the name -->
+  <section class="panel sec fl-name" aria-labelledby="name-h">
+    <svg class="fl-feather" viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M14.6 34.2C12.4 22.6 22.4 10.4 40.6 7.4c-.6 6.4-2.6 11.6-5.8 15.6l-4.4-.6 2.2 3.6c-5 4.6-11 7.6-18 8.2z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/><path d="M7.4 40.6L34.2 13.8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M16.6 22.4l4.8 5.2M21.4 16.8l4.6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <p class="cap">Why Fledge</p>
+    <h2 class="fl-name-h" id="name-h">To fledge is to grow your flight feathers and leave the nest.</h2>
+    <p class="tx">It is the moment a young bird stops waiting to be fed and starts flying on its own. That is what this system is for: a business that grows by design, not by luck.</p>
+  </section>
+
+  <!-- 12. FAQ -->
+  <section class="lt panel sec" aria-labelledby="faq-h">
+    <div class="g12">
+      <div class="span-5 faq-head">
+        <p class="eb"><span class="dot"></span>Questions</p>
+        <h2 class="h2 mt-24" id="faq-h">Fledge questions, answered.</h2>
+      </div>
+      <div class="span-6 from-7 faq">
+        <details open><summary><h3>What is Fledge?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Fledge is our full marketing system. One team builds your website, social media, ads, CRM, follow-up and AI assistant to work as one, then runs it with you every month.</p></details>
+        <details><summary><h3>How is Fledge different from hiring a marketing agency?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Most agencies sell one piece: posts, ads or a website. Fledge covers the whole path, from the first time someone sees you to the day they buy again, and connects every step so no enquiry is lost in between.</p></details>
+        <details><summary><h3>Do I need everything from day one?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">No. We start with the problem that costs you the most and build from there. If you start with one service, it plugs into Fledge later, so nothing is built twice.</p></details>
+        <details><summary><h3>How much does Fledge cost?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">It depends on the size of your business and what is already in place. After a free growth call, we send a clear proposal with the setup fee and the monthly fee before any work starts. Ad budgets are paid by you, directly to the platforms.</p></details>
+        <details><summary><h3>How long do I commit for?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans"><span class="todo">[3 months, then 30 days' notice, to confirm.]</span></p></details>
+        <details><summary><h3>Who owns the website, the pages and the data?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans"><span class="todo">[You do. Your website content, your pages, your ad accounts and your customer list stay in your business's name. To confirm.]</span></p></details>
+        <details><summary><h3>Do you work outside Mauritius?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Yes. We're based in Mauritius and work with businesses here and abroad, in English and French.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13. CTA -->
+  <section class="sec cta" aria-labelledby="cta-h">
+    <p class="eb eba">Get In Touch</p>
+    <h2 class="h2 mt-24" id="cta-h">Tell us where your business is leaking customers</h2>
+    <div class="btn-row mt-48">
+      <a class="btn btn-a" href="/contact">Book a free growth call</a>
+      <a class="btn" href="/services">See all services</a>
+    </div>
+  </section>
+</main>`,
+};
+DD.current = "fledge";
+if (DD.mount) DD.mount();

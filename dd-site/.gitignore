@@ -1,0 +1,6 @@
+ref/
+shots/
+drafts/assets/
+gl/*.html
+build/gl-ported.json
+build/gl-test.html
