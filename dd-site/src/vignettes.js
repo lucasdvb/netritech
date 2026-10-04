@@ -108,7 +108,7 @@ const social = {
     <div class="v-row ph-a" ${P(10.6, 62)}><span class="v-bar hi" style="width:3cqw"></span><span class="v-bar" style="width:3cqw"></span><span class="v-bar" style="width:3cqw"></span></div>
     <span class="v-bar ph-c hi" ${P(10.6, 69, 12)}></span><span class="v-bar ph-c" ${P(10.6, 73.5, 14)}></span><span class="v-bar ph-c" ${P(10.6, 78, 9)}></span>
     ${tiles}
-    <div class="v-win v-solid cal"><div class="v-row" style="justify-content:space-between"><span class="v-t">This month</span><span class="v-s">12 posts</span></div><div class="days">${days}</div></div>
+    <div class="v-win v-solid cal"><div class="v-row" style="justify-content:space-between"><span class="v-t">This month</span><span class="v-s">Planned</span></div><div class="days">${days}</div></div>
     <div class="v-win v-solid plat">
       <div class="v-row"><span class="ck">${CHECK}</span><span class="v-t">Instagram</span></div>
       <div class="v-row"><span class="ck">${CHECK}</span><span class="v-t">Facebook</span></div>
@@ -360,6 +360,8 @@ module.exports = function vignette(key, brief) {
   const v = ALL[key];
   const html = typeof v.html === 'function' ? v.html() : v.html;
   const spec = Object.assign({ root: '.' + CLS[key] }, v.spec());
+  // the whole scene breathes slowly while it holds (sine-like, two eased halves)
+  spec.tracks.push(['.v-g', 0, [[0, spec.D / 2, { transform: 'translateY(0)' }, { transform: 'translateY(-.35cqw)' }, 'io'], [spec.D / 2, spec.D, {}, { transform: 'translateY(0)' }, 'io']]]);
   spec.tracks = spec.tracks.filter((t) => t[2].length);
   return {
     html: `<div class="vg ${CLS[key]}" role="img" aria-label="${v.label}" data-r="x"><div class="vg-in">${html}</div><div class="lb" hidden>${brief}</div></div>`,

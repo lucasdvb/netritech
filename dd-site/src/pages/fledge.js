@@ -46,7 +46,9 @@ module.exports = {
 .stg2 .st{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:28px var(--gap);padding:clamp(16px,1.6vw,22px);border-radius:var(--r3);min-height:clamp(380px,34vw,500px)}
 .stg2 .st:nth-child(even){background:#0c0c0e;color:#f3f1ea;--fg:#f3f1ea;--mu:#8c8b84;--ln:rgba(243,241,234,.12)}
 .stg2 .im{grid-column:1/-1;border-radius:20px;overflow:hidden}
-.stg2 .im img{width:100%;height:100%;object-fit:cover}
+.stg2 .im img{width:100%;height:100%;object-fit:cover;animation:kb 22s cubic-bezier(.45,0,.55,1) infinite alternate;will-change:transform}
+@keyframes kb{from{transform:scale(1) translate(0,0)}to{transform:scale(1.08) translate(-1.5%,-1%)}}
+@media (prefers-reduced-motion:reduce){.stg2 .im img{animation:none}}
 .stg2 .tx2{grid-column:1/-1;display:flex;flex-direction:column;padding:clamp(4px,1vw,16px) clamp(4px,1.2vw,20px)}
 @media (min-width:1024px){.stg2 .im{grid-column:1/span 6}.stg2 .tx2{grid-column:7/-1}}
 .stg2 .row{display:flex;justify-content:space-between;gap:16px}

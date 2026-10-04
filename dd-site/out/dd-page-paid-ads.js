@@ -578,6 +578,32 @@ DD.pages["paid-ads"] = {
       "sp"
      ]
     ]
+   ],
+   [
+    ".v-g",
+    0,
+    [
+     [
+      0,
+      4500,
+      {
+       "transform": "translateY(0)"
+      },
+      {
+       "transform": "translateY(-.35cqw)"
+      },
+      "io"
+     ],
+     [
+      4500,
+      9000,
+      {},
+      {
+       "transform": "translateY(0)"
+      },
+      "io"
+     ]
+    ]
    ]
   ]
  }

@@ -11,7 +11,7 @@ const W = [
 const card = (w, i) => `
       <a class="wcard${i % 2 ? ' off' : ''}" href="/work/case-study" data-stages="${w[0]}">
         <div class="ph r16x10"><div class="lb"><b>Project cover</b><span>The finished website, campaign or system, shown in context</span><i>16:10</i></div></div>
-        <div class="wrow"><div><h2 class="h3"><span class="todo">[Client name]</span></h2><p class="cap mt-12"><span class="todo">[Sector]</span></p></div><p class="cap">${w[1]}</p></div>
+        <div class="wrow"><div><h2 class="h3"><span class="todo">[Client name]</span></h2><p class="cap mt-12"><span class="todo">[Sector]</span></p></div><div class="v-end"><p class="cap">${w[1]}</p><span class="ring">{{ar}}</span></div></div>
         <div class="tags mt-16">${w[2].map((t) => `<span class="tag">${t}</span>`).join('')}</div>
         <p class="tx mt-16"><span class="todo">[What changed, in one line]</span></p>
       </a>`;
@@ -30,13 +30,16 @@ module.exports = {
 .ctrl .chip[aria-pressed="false"]:hover{background:var(--sf2)}
 @media (max-width:767px){.ctrl{position:static;border-radius:var(--r2)}.ctrl .seg{display:none}}
 .wgrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:clamp(56px,7vw,110px) var(--gap)}
-.wcard{grid-column:1/span 7;display:block;cursor:none}
+.wcard{grid-column:1/span 7;display:block}
 .wcard.off{grid-column:8/-1;margin-top:clamp(80px,14vw,240px)}
 .wcard .ph{transition:transform 1.2s var(--e),box-shadow .8s var(--e);border-radius:var(--r3)}
 .wcard:hover .ph{transform:scale(.985);box-shadow:var(--sh2)}
 .wrow{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-top:22px}
 .wcard .tx{max-width:46ch}
-@media (max-width:1023px){.wcard,.wcard.off{grid-column:1/-1;margin-top:0;cursor:pointer}}
+.v-end{display:flex;align-items:center;gap:16px}
+.wcard:hover .ring{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.wcard:hover .ring .ar{transform:rotate(45deg)}
+@media (max-width:1023px){.wcard,.wcard.off{grid-column:1/-1;margin-top:0}}
 .band{grid-column:1/-1;padding:clamp(24px,4vw,64px) 0;border-top:1px solid var(--ln);border-bottom:1px solid var(--ln)}
 .band p{font-size:clamp(40px,6vw,104px);font-weight:var(--w-dsp);letter-spacing:-.05em;line-height:.95;max-width:16ch}
 .wlist{border-top:1px solid var(--ln)}
@@ -45,7 +48,6 @@ module.exports = {
 .wl .ar{width:12px;height:12px;transition:transform .5s var(--e)}
 .wl:hover .ar{transform:translate(3px,-3px)}
 @media (max-width:767px){.wl{grid-template-columns:40px 1fr 20px}.wl>:nth-child(3),.wl>:nth-child(4),.wl>:nth-child(5){display:none}}
-.cur{position:fixed;left:0;top:0;z-index:60;width:96px;height:96px;margin:-48px 0 0 -48px;border-radius:50%;display:grid;place-items:center;background:#0c0c0e;color:#f3f1ea;font-size:14px;font-weight:500;pointer-events:none;transform:translate3d(var(--x,-200px),var(--y,-200px),0) scale(var(--s,0));transition:transform .35s var(--e)}
 .wcta .h2{max-width:16ch}`,
   html: `<main>
   <section class="hero auto wkh">
@@ -85,7 +87,6 @@ module.exports = {
       <div class="btn-row"><a class="btn btn-p" href="/contact">Book a free growth call{{ar}}</a><a class="btn" href="/services">See our services</a></div>
     </div>
   </section>
-  <div class="cur" aria-hidden="true">View</div>
 </main>`,
   init: function (R) {
     /* filters and view toggle: everything is in the HTML, the script only toggles hidden */
@@ -101,13 +102,5 @@ module.exports = {
     }
     chips.forEach(function (b) { b.addEventListener('click', function () { chips.forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); }); filter(b.dataset.filter); }); });
     views.forEach(function (b) { b.addEventListener('click', function () { views.forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); }); var l = b.dataset.view === 'list'; full.hidden = l; list.hidden = !l; }); });
-    /* "View" cursor over the gallery, mouse only */
-    var cur = R.querySelector('.cur');
-    if (!cur || !(window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches)) return;
-    addEventListener('pointermove', function (e) { cur.style.setProperty('--x', e.clientX + 'px'); cur.style.setProperty('--y', e.clientY + 'px'); }, { passive: true });
-    cards.forEach(function (c) {
-      c.addEventListener('pointerenter', function () { cur.style.setProperty('--s', '1'); });
-      c.addEventListener('pointerleave', function () { cur.style.setProperty('--s', '0'); });
-    });
   },
 };

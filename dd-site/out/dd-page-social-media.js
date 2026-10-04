@@ -205,7 +205,7 @@ DD.pages["social-media"] = {
     <div class="v-row ph-a" style="left:10.6%;top:62%"><span class="v-bar hi" style="width:3cqw"></span><span class="v-bar" style="width:3cqw"></span><span class="v-bar" style="width:3cqw"></span></div>
     <span class="v-bar ph-c hi" style="left:10.6%;top:69%;width:12%"></span><span class="v-bar ph-c" style="left:10.6%;top:73.5%;width:14%"></span><span class="v-bar ph-c" style="left:10.6%;top:78%;width:9%"></span>
     <div class="tl" style="left:33%;top:9%;background-image:url(/uploads/1qEcUtH4lHDuqfDdPiAdS-svc-01.webp)"></div><div class="tl" style="left:43.4%;top:9%;background-image:url(/uploads/EmxO1Byhcnx4qSVf0rF7I-svc-06.webp)"></div><div class="tl" style="left:53.8%;top:9%;background-image:url(/uploads/d-Q_kvQRPH8ATZhTFd1Yt-svc-03.webp)"></div><div class="tl txt" style="left:33%;top:36%"><span class="v-bar hi" style="width:80%"></span><span class="v-bar" style="width:55%"></span></div><div class="tl hl" style="left:43.4%;top:36%;background-image:url(/uploads/Y3s6CQVkiDaxrn8gIgp9C-svc-02.webp)"></div><div class="tl" style="left:53.8%;top:36%;background-image:url(/uploads/nCS7Kte6VC1XCoepoHERN-svc-05.webp)"></div><div class="tl" style="left:33%;top:63%;background-image:url(/uploads/scHUo4gyKrkiEYNTf-8EU-svc-04.webp)"></div><div class="tl txt" style="left:43.4%;top:63%"><span class="v-bar hi" style="width:80%"></span><span class="v-bar" style="width:55%"></span></div><div class="tl" style="left:53.8%;top:63%;background-image:url(/uploads/EmxO1Byhcnx4qSVf0rF7I-svc-06.webp)"></div>
-    <div class="v-win v-solid cal"><div class="v-row" style="justify-content:space-between"><span class="v-t">This month</span><span class="v-s">12 posts</span></div><div class="days"><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i></div></div>
+    <div class="v-win v-solid cal"><div class="v-row" style="justify-content:space-between"><span class="v-t">This month</span><span class="v-s">Planned</span></div><div class="days"><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i><i class="on"></i><i class=""></i></div></div>
     <div class="v-win v-solid plat">
       <div class="v-row"><span class="ck"><svg viewBox="0 0 16 16" width="100%" height="100%" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="v-t">Instagram</span></div>
       <div class="v-row"><span class="ck"><svg viewBox="0 0 16 16" width="100%" height="100%" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="v-t">Facebook</span></div>
@@ -527,6 +527,32 @@ DD.pages["social-media"] = {
       {},
       {
        "transform": "scale(1)"
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".v-g",
+    0,
+    [
+     [
+      0,
+      4500,
+      {
+       "transform": "translateY(0)"
+      },
+      {
+       "transform": "translateY(-.35cqw)"
+      },
+      "io"
+     ],
+     [
+      4500,
+      9000,
+      {},
+      {
+       "transform": "translateY(0)"
       },
       "io"
      ]

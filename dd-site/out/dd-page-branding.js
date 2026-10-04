@@ -558,6 +558,32 @@ DD.pages["branding"] = {
       "io"
      ]
     ]
+   ],
+   [
+    ".v-g",
+    0,
+    [
+     [
+      0,
+      5000,
+      {
+       "transform": "translateY(0)"
+      },
+      {
+       "transform": "translateY(-.35cqw)"
+      },
+      "io"
+     ],
+     [
+      5000,
+      10000,
+      {},
+      {
+       "transform": "translateY(0)"
+      },
+      "io"
+     ]
+    ]
    ]
   ]
  }
