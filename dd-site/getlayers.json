@@ -1,0 +1,30 @@
+{
+  "style": "marcus-vane-style (re-tinted monochrome: #08080a / #f3f1ea / white, accent #d7d5cd)",
+  "fonts": "Switzer only (300 display, 400/500/600)",
+  "gradients": {
+    "antipode": "/services/web-design hero",
+    "gnomon": "/services/facebook-google-ads hero",
+    "meridian": "/services/branding-logo-design hero",
+    "cynosure": "/services/ai-chatbots hero",
+    "hearth": "/services/marketing-automation-crm hero",
+    "firmament": "/services/social-media-management hero",
+    "reeded": "/services hero",
+    "chatoyance": "/fledge hero",
+    "antumbra": "/about hero"
+  },
+  "tint": "build/mono.js: each colour key keeps its default luminance, hue removed, warmed toward #f3f1ea; exposure per gradient in build/build.js GL map. Shaders untouched.",
+  "compositions": {
+    "cards-almanac": "sticky stacking cards: Services four stages, Fledge four stages",
+    "colonnade": "Services 'What we build' expanding columns",
+    "roadmap-ascent": "Fledge 'One customer' scroll-filled path; automation flow",
+    "artist-works": "Work alternating 7/5 gallery",
+    "artist-faq": "4|8 FAQ on every page with questions",
+    "artist-process": "pinned heading + ruled steps",
+    "lumora-stats": "inverted inset panel: Fledge metrics, case study results",
+    "lumora-about": "ghost glyph statement: Fledge name",
+    "cortex-hero": "Fledge giant wordmark; footer giant wordmark",
+    "halcyon-nav": "floating glass pill nav",
+    "stride-product": "bento: web design included"
+  },
+  "loaders": "none on inner pages"
+}
