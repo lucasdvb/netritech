@@ -50,15 +50,17 @@ const RJ_CSS = `
 /* image under the title, never behind it: a wide image pinned to the bottom, full width, whole and uncut */
 .dz-svc-card.ph-under .dz-bg { inset: 50% 0 0 0; background-size: cover; background-position: center bottom; background-repeat: no-repeat; }
 @supports (aspect-ratio: 1) { .dz-svc-card.ph-under .dz-bg { top: auto; aspect-ratio: 16 / 9; } }
-/* card 05: the collage at card width, starting at the left edge (the hand comes in from it) with the art centred in the
-   card; a smooth black gradient on top of the picture keeps the title readable */
+/* card 05: a calm, smaller collage centred in the card; the arm (extended to the left in the image) still reaches the
+   left edge. A smooth black gradient on top of the picture keeps the title readable */
 .dz-svc-card.ph-drop { container-type: size; }
-.dz-svc-card.ph-drop .dz-bg { background-size: 100% auto; background-position: 0 60%; background-repeat: no-repeat; }
-/* cq units measure the card's content box, so add the card padding back (1.5rem, 2rem from 768px) to get the image layer's size.
-   The art spans 23% to 92% of the image height, so its middle (57.5%) goes to the middle of the card */
-@supports (width: 1cqw) { .dz-svc-card.ph-drop .dz-bg { --p: 3rem; background-position: 0 calc((100cqh + var(--p)) / 2 - (100cqw + var(--p)) * 0.575); } }
+.dz-svc-card.ph-drop .dz-bg { background-size: auto 85%; background-position: 70% 62%; background-repeat: no-repeat; }
+/* cq units measure the card's content box, so add the card padding back (1.5rem, 2rem from 768px) to get the image layer's
+   size. Image height --S: 85% of the card, at most 1.2x its width. The art is centred at 63% across and 57.5% down the image */
+@supports (width: 1cqw) { .dz-svc-card.ph-drop .dz-bg { --p: 3rem; --S: min(calc((100cqh + var(--p)) * 0.85), calc((100cqw + var(--p)) * 1.2)); background-size: auto var(--S); background-position: calc((100cqw + var(--p)) / 2 - var(--S) * 0.841) calc((100cqh + var(--p)) * 0.56 - var(--S) * 0.575); } }
 @media (min-width: 768px) { .dz-svc-card.ph-drop .dz-bg { --p: 4rem; } }
 .dz-svc-card.ph-drop .dz-bg::after { background-image: linear-gradient(180deg, rgba(2,2,2,.94) 0%, rgba(2,2,2,.9) 8%, rgba(2,2,2,.8) 16%, rgba(2,2,2,.64) 24%, rgba(2,2,2,.45) 32%, rgba(2,2,2,.27) 40%, rgba(2,2,2,.13) 48%, rgba(2,2,2,.04) 56%, rgba(2,2,2,0) 64%, rgba(2,2,2,0) 76%, rgba(2,2,2,.3) 100%); }
+/* card 06: crop so the hand and the eye cut-outs stay clear of the title */
+.dz-svc-card.ph-six .dz-bg { background-position: 25% 35%; }
 /* touch screens have no hover: the card that settles mid-screen opens up the same way */
 @media (hover: none) {
   .dz-svc-card h3 { font-size: clamp(2.3rem, 7vw, 2.9rem); }
@@ -332,10 +334,14 @@ function patches(gl) {
       find: '    qa(".inview").forEach((i) => i.classList.add("in-view"));\n  }',
       replace: '    qa(".inview").forEach((i) => i.classList.add("in-view"));\n    qa(".rj-hero").forEach((h) => h.classList.add("rj-in"));\n  }',
     },
+    {
+      find: `<article class="dz-svc-card brand">\n            <a class="dz-card-link" href="/services/social-media-management" aria-label="Discover Social media"></a><span class="dz-bg" style="background-image:url('/uploads/ZbsQomRpOljHSJxUMYvdQ-svc-gradient-firmament.webp')"></span>`,
+      replace: `<article class="dz-svc-card brand ph ph-six">\n            <a class="dz-card-link" href="/services/social-media-management" aria-label="Discover Social media"></a><span class="dz-bg" role="img" aria-label="A hand dropping Google, Facebook, Instagram, LinkedIn and YouTube icons into an open mouth, with cut-out eyes, ears and a megaphone" style="background-image:url('/uploads/zXcEIVXf_jvSupH81ZIf4-svc-06-stay-top-of-mind.webp')"></span>`,
+    },
     { find: 'function mvApp(R) {', replace: RJ_JS(gl) },
     {
       find: `<article class="dz-svc-card lime">\n            <a class="dz-card-link" href="/services/marketing-automation-crm" aria-label="Discover Automation and CRM"></a><span class="dz-bg" style="background-image:url('/uploads/BVywNC3ExdKpfgDNuKj1K-svc-gradient-hearth.webp')"></span>`,
-      replace: `<article class="dz-svc-card lime ph ph-drop">\n            <a class="dz-card-link" href="/services/marketing-automation-crm" aria-label="Discover Automation and CRM"></a><span class="dz-bg" role="img" aria-label="A hand holding a stack of coins in a collage of leaves, engraved banknote pieces and a cone of light" style="background-image:url('/uploads/Li4cZA7TOd5NO4dqCY0tU-svc-05-close-more-sales.webp')"></span>`,
+      replace: `<article class="dz-svc-card lime ph ph-drop">\n            <a class="dz-card-link" href="/services/marketing-automation-crm" aria-label="Discover Automation and CRM"></a><span class="dz-bg" role="img" aria-label="A hand holding a stack of coins in a collage of leaves, engraved banknote pieces and a cone of light" style="background-image:url('/uploads/u_Kx1SprGGpMdxT4p-I7U-svc-05-close-more-sales-wide.webp')"></span>`,
     },
     {
       find: `<article class="dz-svc-card brand">\n            <a class="dz-card-link" href="/services/ai-chatbots" aria-label="Discover AI implementation"></a><span class="dz-bg" style="background-image:url('/uploads/jynwU4ZlUcvkFo7HdezFK-svc-gradient-cynosure.webp')"></span>`,
