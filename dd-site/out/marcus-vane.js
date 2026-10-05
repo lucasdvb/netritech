@@ -725,7 +725,7 @@ main { position: relative; width: 100%; overflow-x: clip; }
 @supports (aspect-ratio: 1) { .dz-svc-card.ph-under .dz-bg { top: auto; aspect-ratio: 16 / 9; } }
 /* image set low, its top fading in from black, so the title stays on clean black */
 .dz-svc-card.ph-drop .dz-bg { background-size: 100% auto; background-position: 0 100%; background-repeat: no-repeat; -webkit-mask-image: linear-gradient(180deg, transparent 40%, #000 52%); mask-image: linear-gradient(180deg, transparent 40%, #000 52%); }
-@media (min-width: 768px) { .dz-svc-card.ph-drop .dz-bg { background-size: auto 72%; -webkit-mask-image: linear-gradient(180deg, transparent 38%, #000 50%); mask-image: linear-gradient(180deg, transparent 38%, #000 50%); } }
+@media (min-width: 768px) { .dz-svc-card.ph-drop .dz-bg { background-size: 100% auto; background-position: 0 3.25rem; -webkit-mask-image: linear-gradient(180deg, transparent 11.6rem, #000 13.6rem); mask-image: linear-gradient(180deg, transparent 11.6rem, #000 13.6rem); } }
 /* touch screens have no hover: the card that settles mid-screen opens up the same way */
 @media (hover: none) {
   .dz-svc-card h3 { font-size: clamp(2.3rem, 7vw, 2.9rem); }
