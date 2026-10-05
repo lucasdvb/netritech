@@ -30,7 +30,7 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 
 - Cards put their title at the top left. Keep the **top third quiet** (just base colour)
   and place the subject in the lower two-thirds, slightly right of centre.
-- Default format **4:5 portrait** for cards (fits desktop and phone crops). Wide sections
+- Default format **2:3 portrait** for cards (Sunburst does not accept 4:5). Wide sections
   use 16:9 or 21:9 with the same rules.
 - **No added text**, logos or watermarks unless the idea needs a real interface on a
   screen (as in the reference), and then keep it minimal and in greys.
@@ -46,4 +46,4 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 
 | Section | Card | Base | Accent | Reference | Status |
 |---|---|---|---|---|---|
-| Everything you need to grow | 01 Get Found. Get Chosen. | black | lime #E1FF01 | binoculars over search page | prompt proposed |
+| Everything you need to grow | 01 Get Found. Get Chosen. | asked black, came out white | lime #E1FF01 (focus wheel) | binoculars over search page | generated 2026-10-05 (Sunburst i2i, 1K, 2:3; 4:5 is not accepted by Sunburst), awaiting client review: media/gen/01-get-found.png |
