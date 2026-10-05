@@ -704,8 +704,16 @@ main { position: relative; width: 100%; overflow-x: clip; }
 .dz-svc-card:not(.ph) .dz-bg { filter: grayscale(1); }
 .dz-svc-card:not(.ph):hover .dz-bg { filter: blur(16px) grayscale(1) brightness(.9); }
 .dz-svc-card.ph .dz-bg { background-position: center 18%; }
-.dz-svc-card.ph-low .dz-bg { background-position: 58% center; }
-@media (min-width: 768px) { .dz-svc-card.ph-low .dz-bg { background-size: auto 86%; background-position: 58% 100%; background-repeat: no-repeat; } }
+.dz-svc-card.ph-low .dz-bg { background-position: var(--x, 58%) center; }
+@media (min-width: 768px) { .dz-svc-card.ph-low .dz-bg { background-size: auto var(--s, 86%); background-position: var(--x, 58%) 100%; background-repeat: no-repeat; } }
+/* an image narrower than its card: fade its side edges into the card (desktop) */
+@media (min-width: 768px) { .dz-svc-card.ph-fade { container-type: size; } .dz-svc-card.ph-fade .dz-bg { -webkit-mask-image: linear-gradient(90deg, transparent calc(50cqw - 38cqh), #000 calc(50cqw - 26cqh), #000 calc(50cqw + 26cqh), transparent calc(50cqw + 38cqh)); mask-image: linear-gradient(90deg, transparent calc(50cqw - 38cqh), #000 calc(50cqw - 26cqh), #000 calc(50cqw + 26cqh), transparent calc(50cqw + 38cqh)); } }
+/* a light photo (white base): dark text, a white veil, a frosted blur on hover */
+.dz-svc-card.ph-light { background: #fff; color: #08080a; border-color: rgba(8,8,10,.1); }
+.dz-svc-card.ph-light h3, .dz-svc-card.ph-light .dz-idx { color: #08080a; }
+.dz-svc-card.ph-light .dz-bg::after { background-image: linear-gradient(180deg, rgba(255,255,255,.6) 0%, rgba(255,255,255,.12) 38%, rgba(255,255,255,0) 62%, rgba(255,255,255,.35) 100%); }
+.dz-svc-card.ph-light:hover .dz-bg, .dz-svc-card.ph-light.is-on .dz-bg { filter: blur(16px) brightness(1.03); }
+.dz-svc-card.ph-light:hover .dz-bg::after, .dz-svc-card.ph-light.is-on .dz-bg::after { background-color: rgba(255,255,255,.6); }
 /* touch screens have no hover: the card that settles mid-screen opens up the same way */
 @media (hover: none) {
   .dz-svc-card h3 { font-size: clamp(2.3rem, 7vw, 2.9rem); }
@@ -866,8 +874,8 @@ const MARKUP = `
             <a class="dz-card-link" href="/services/branding-logo-design" aria-label="Discover Branding"></a><span class="dz-bg" role="img" aria-label="A tiny ant walks into a lone door and a huge elephant walks out, lit by a thin lime light" style="background-image:url('/uploads/lswKF9BnskEC0aCrz1hvP-svc-03-look-like-leader.webp')"></span><div class="dz-top"><p class="dz-idx">03</p><div class="dz-tt"><h3>Look Like<br>the Leader.</h3><p class="dz-sub">Branding that makes your business stand out, build trust, and get remembered.</p></div></div>
             <div class="dz-disc"><p>Discover</p><span class="dz-ring" data-dz-arrow></span></div>
           </article>
-          <article class="dz-svc-card brand">
-            <a class="dz-card-link" href="/services/ai-chatbots" aria-label="Discover AI implementation"></a><span class="dz-bg" style="background-image:url('/uploads/jynwU4ZlUcvkFo7HdezFK-svc-gradient-cynosure.webp')"></span><div class="dz-top"><p class="dz-idx">04</p><div class="dz-tt"><h3>Grow Without<br>Growing Your Team.</h3><p class="dz-sub">Automate repetitive work and streamline your business so you can handle more without hiring more people.</p></div></div>
+          <article class="dz-svc-card brand ph ph-light ph-low ph-fade">
+            <a class="dz-card-link" href="/services/ai-chatbots" aria-label="Discover AI implementation"></a><span class="dz-bg" role="img" aria-label="A human hand and a robotic hand almost touching inside a thin black ring, with a small lime spark between them" style="background-image:url('/uploads/4DdNPqwJ3lBrJz9SNzfZA-svc-04-grow-without-team.webp');--s:76%;--x:50%"></span><div class="dz-top"><p class="dz-idx">04</p><div class="dz-tt"><h3>Grow Without<br>Growing Your Team.</h3><p class="dz-sub">Automate repetitive work and streamline your business so you can handle more without hiring more people.</p></div></div>
             <div class="dz-disc"><p>Discover</p><span class="dz-ring" data-dz-arrow></span></div>
           </article>
           <article class="dz-svc-card lime">
