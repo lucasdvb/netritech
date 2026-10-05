@@ -306,6 +306,10 @@ function patches(gl) {
     },
     { find: 'function mvApp(R) {', replace: RJ_JS(gl) },
     {
+      find: `<article class="dz-svc-card brand">\n            <a class="dz-card-link" href="/services/facebook-google-ads" aria-label="Discover Paid ads"></a><span class="dz-bg" style="background-image:url('/uploads/pRFJj72VWCnd0T9r_233u-svc-gradient-gnomon.webp')"></span>`,
+      replace: `<article class="dz-svc-card brand ph">\n            <a class="dz-card-link" href="/services/facebook-google-ads" aria-label="Discover Paid ads"></a><span class="dz-bg" role="img" aria-label="Streams of people seen from above converging on one glowing lime point on a black floor" style="background-image:url('/uploads/qXcz1kpuNDfZZunGNJ81I-svc-02-more-customers.webp');background-position:68% center"></span>`,
+    },
+    {
       find: `<article class="dz-svc-card lime">\n            <a class="dz-card-link" href="/services/web-design" aria-label="Discover Websites and SEO"></a><span class="dz-bg" style="background-image:url('/uploads/rQj-rf6y8kzmTrOq8tCz6-svc-gradient-antipode.webp')"></span>`,
       replace: `<article class="dz-svc-card lime ph">\n            <a class="dz-card-link" href="/services/web-design" aria-label="Discover Websites and SEO"></a><span class="dz-bg" role="img" aria-label="A hand holding binoculars whose lenses show Google search results and Google Maps for My Business" style="background-image:url('/uploads/4SsE3nR2FS5MUv6PTN_CR-svc-01-get-found.webp')"></span>`,
     },
