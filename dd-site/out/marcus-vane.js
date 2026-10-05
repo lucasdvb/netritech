@@ -715,14 +715,14 @@ main { position: relative; width: 100%; overflow-x: clip; }
 .dz-svc-card.ph-light:hover .dz-bg, .dz-svc-card.ph-light.is-on .dz-bg { filter: blur(16px) brightness(1.03); }
 .dz-svc-card.ph-light:hover .dz-bg::after, .dz-svc-card.ph-light.is-on .dz-bg::after { background-color: rgba(255,255,255,.6); }
 /* a lime photo: lime card, dark text, a lime veil on hover */
-.dz-svc-card.ph-lime { background: #d5fa10; color: #08080a; border-color: rgba(8,8,10,.12); }
+.dz-svc-card.ph-lime { background: #d9fb03; color: #08080a; border-color: rgba(8,8,10,.12); }
 .dz-svc-card.ph-lime h3, .dz-svc-card.ph-lime .dz-idx { color: #08080a; }
 .dz-svc-card.ph-lime .dz-bg::after { background-image: none; }
 .dz-svc-card.ph-lime:hover .dz-bg, .dz-svc-card.ph-lime.is-on .dz-bg { filter: blur(16px); }
-.dz-svc-card.ph-lime:hover .dz-bg::after, .dz-svc-card.ph-lime.is-on .dz-bg::after { background-color: rgba(213,250,16,.6); }
-/* image under the title, never behind it: bottom-left, the right edge fading into the card on desktop */
-.dz-svc-card.ph-under .dz-bg { background-size: 100% auto; background-position: 0 100%; background-repeat: no-repeat; }
-@media (min-width: 768px) { .dz-svc-card.ph-under { container-type: size; } .dz-svc-card.ph-under .dz-bg { background-size: auto 64%; -webkit-mask-image: linear-gradient(90deg, #000 50cqh, transparent 64cqh); mask-image: linear-gradient(90deg, #000 50cqh, transparent 64cqh); } }
+.dz-svc-card.ph-lime:hover .dz-bg::after, .dz-svc-card.ph-lime.is-on .dz-bg::after { background-color: rgba(217,251,3,.6); }
+/* image under the title, never behind it: a wide image pinned to the bottom, full width, whole and uncut */
+.dz-svc-card.ph-under .dz-bg { inset: 50% 0 0 0; background-size: cover; background-position: center bottom; background-repeat: no-repeat; }
+@supports (aspect-ratio: 1) { .dz-svc-card.ph-under .dz-bg { top: auto; aspect-ratio: 16 / 9; } }
 /* touch screens have no hover: the card that settles mid-screen opens up the same way */
 @media (hover: none) {
   .dz-svc-card h3 { font-size: clamp(2.3rem, 7vw, 2.9rem); }
@@ -884,7 +884,7 @@ const MARKUP = `
             <div class="dz-disc"><p>Discover</p><span class="dz-ring" data-dz-arrow></span></div>
           </article>
           <article class="dz-svc-card brand ph ph-lime ph-under">
-            <a class="dz-card-link" href="/services/ai-chatbots" aria-label="Discover AI implementation"></a><span class="dz-bg" role="img" aria-label="A chrome robotic hand typing on a keyboard on a lime background" style="background-image:url('/uploads/Z8ihzSyggEgVS3mVc4igR-svc-04-robot-keyboard.webp')"></span><div class="dz-top"><p class="dz-idx">04</p><div class="dz-tt"><h3>Grow Without<br>Growing Your Team.</h3><p class="dz-sub">Automate repetitive work and streamline your business so you can handle more without hiring more people.</p></div></div>
+            <a class="dz-card-link" href="/services/ai-chatbots" aria-label="Discover AI implementation"></a><span class="dz-bg" role="img" aria-label="A white and chrome robotic hand typing on a keyboard on a lime background" style="background-image:url('/uploads/v3myoSUdgXACOKm9jF2E_-svc-04-robot-keyboard-wide.webp')"></span><div class="dz-top"><p class="dz-idx">04</p><div class="dz-tt"><h3>Grow Without<br>Growing Your Team.</h3><p class="dz-sub">Automate repetitive work and streamline your business so you can handle more without hiring more people.</p></div></div>
             <div class="dz-disc"><p>Discover</p><span class="dz-ring" data-dz-arrow></span></div>
           </article>
           <article class="dz-svc-card lime">
