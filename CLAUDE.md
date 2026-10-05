@@ -14,3 +14,7 @@
 - The kie-ai MCP tools only offer Nano Banana; don't use them unless the user asks.
 - Result images are served from `tempfile.aiquickdraw.com`, which may be blocked by the sandbox network policy; if so, give the user the URL.
 - Brand palette (SPM): Ink navy #0D141F, Deep navy #1B2A38, Steel blue #43617A, Teal #22808A, Light grey #DADDE0.
+
+# Disruptive Dodo images
+
+- Every generated image for the Disruptive Dodo site follows `dd-site/docs/image-direction.md`: black and white, the base alternating black / white, and one small accent detail in lime #E1FF01 (no blue). Work one image at a time from the client's reference. The generation permission rule above still applies to each one.

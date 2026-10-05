@@ -1,0 +1,991 @@
+{
+ "params": {
+  "slug": "hearth",
+  "driver": "ambient",
+  "liveRebuild": false,
+  "assets": [],
+  "sections": [
+   [
+    "palette",
+    [
+     "bgColor",
+     "colorA",
+     "colorB",
+     "colorC",
+     "colorD"
+    ]
+   ],
+   [
+    "field",
+    [
+     "scale",
+     "speed",
+     "rise",
+     "flicker",
+     "bedHeight",
+     "coal",
+     "roughness",
+     "lacunarity"
+    ]
+   ],
+   [
+    "tone",
+    [
+     "contrast",
+     "midpoint",
+     "sink",
+     "glow"
+    ]
+   ],
+   [
+    "finish",
+    [
+     "grain",
+     "grainAnim",
+     "dither",
+     "vignette"
+    ]
+   ],
+   [
+    "pointer",
+    [
+     "pointerRadius",
+     "pointerStrength",
+     "pointerLift",
+     "wake",
+     "parallax",
+     "cursor"
+    ]
+   ],
+   [
+    "perf",
+    [
+     "maxDpr"
+    ]
+   ]
+  ],
+  "params": [
+   {
+    "key": "bgColor",
+    "kind": "color",
+    "default": "#1f7a6b",
+    "structural": false
+   },
+   {
+    "key": "colorA",
+    "kind": "color",
+    "default": "#3fbfa0",
+    "structural": false
+   },
+   {
+    "key": "colorB",
+    "kind": "color",
+    "default": "#e8324d",
+    "structural": false
+   },
+   {
+    "key": "colorC",
+    "kind": "color",
+    "default": "#ff8fa8",
+    "structural": false
+   },
+   {
+    "key": "colorD",
+    "kind": "color",
+    "default": "#e8f5a0",
+    "structural": false
+   },
+   {
+    "key": "scale",
+    "kind": "number",
+    "default": 0.2,
+    "min": 0.2,
+    "max": 6,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "speed",
+    "kind": "number",
+    "default": 0.33,
+    "min": 0,
+    "max": 0.6,
+    "step": 0.005,
+    "structural": false
+   },
+   {
+    "key": "rise",
+    "kind": "number",
+    "default": 0.1,
+    "min": 0,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "flicker",
+    "kind": "number",
+    "default": 0.1,
+    "min": 0,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "bedHeight",
+    "kind": "number",
+    "default": 1.42,
+    "min": 0,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "coal",
+    "kind": "number",
+    "default": 0.33,
+    "min": 0,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "roughness",
+    "kind": "number",
+    "default": 0.72,
+    "min": 0.1,
+    "max": 0.9,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "lacunarity",
+    "kind": "number",
+    "default": 1.94,
+    "min": 1.2,
+    "max": 3.2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "contrast",
+    "kind": "number",
+    "default": 0.56,
+    "min": 0.2,
+    "max": 4,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "midpoint",
+    "kind": "number",
+    "default": 0.51,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "sink",
+    "kind": "number",
+    "default": 0.53,
+    "min": 0.01,
+    "max": 0.6,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "glow",
+    "kind": "number",
+    "default": 0.12,
+    "min": 0,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "grain",
+    "kind": "number",
+    "default": 0.07,
+    "min": 0,
+    "max": 0.2,
+    "step": 0.002,
+    "structural": false
+   },
+   {
+    "key": "grainAnim",
+    "kind": "number",
+    "default": 0,
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "structural": false
+   },
+   {
+    "key": "dither",
+    "kind": "number",
+    "default": 1.33,
+    "min": 0,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "vignette",
+    "kind": "number",
+    "default": 0.07,
+    "min": 0,
+    "max": 0.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "cursor",
+    "kind": "number",
+    "default": 1,
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "structural": false
+   },
+   {
+    "key": "pointerRadius",
+    "kind": "number",
+    "default": 1.28,
+    "min": 0.05,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "pointerStrength",
+    "kind": "number",
+    "default": 0.08,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "pointerLift",
+    "kind": "number",
+    "default": 0.04,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "wake",
+    "kind": "number",
+    "default": 0.68,
+    "min": 0,
+    "max": 14,
+    "step": 0.05,
+    "structural": false
+   },
+   {
+    "key": "parallax",
+    "kind": "number",
+    "default": 0.001,
+    "min": 0,
+    "max": 0.1,
+    "step": 0.001,
+    "structural": false
+   },
+   {
+    "key": "maxDpr",
+    "kind": "number",
+    "default": 1,
+    "min": 0.5,
+    "max": 2,
+    "step": 0.1,
+    "structural": false
+   }
+  ]
+ },
+ "variantConfigs": {
+  "id": "hearth",
+  "type": "gradient",
+  "variants": [
+   {
+    "id": "hearth",
+    "name": "Default",
+    "isDefault": true,
+    "sortOrder": 0,
+    "hue": "orange",
+    "tone": "light",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#1f7a6b",
+     "colorA": "#3fbfa0",
+     "colorB": "#e8324d",
+     "colorC": "#ff8fa8",
+     "colorD": "#e8f5a0",
+     "scale": 0.2,
+     "speed": 0.33,
+     "rise": 0.1,
+     "flicker": 0.1,
+     "bedHeight": 1.42,
+     "coal": 0.33,
+     "roughness": 0.72,
+     "lacunarity": 1.94,
+     "contrast": 0.56,
+     "midpoint": 0.51,
+     "sink": 0.53,
+     "glow": 0.12,
+     "grain": 0.07,
+     "grainAnim": 0,
+     "dither": 1.33,
+     "vignette": 0.07,
+     "cursor": 1,
+     "pointerRadius": 1.28,
+     "pointerStrength": 0.08,
+     "pointerLift": 0.04,
+     "wake": 0.68,
+     "parallax": 0.001,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#1f7a6b",
+     "colorA": "#3fbfa0",
+     "colorB": "#e8324d",
+     "colorC": "#ff8fa8",
+     "colorD": "#e8f5a0"
+    },
+    "media": {
+     "poster": "gradients/hearth-d1bb9911fa.webp",
+     "preview": "gradients/hearth-d1bb9911fa-preview.mp4",
+     "hero": "gradients/hearth-d1bb9911fa.mp4"
+    }
+   },
+   {
+    "id": "hearth-001",
+    "name": "001",
+    "isDefault": false,
+    "sortOrder": 1,
+    "hue": "violet",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#0a0a0c",
+     "colorA": "#141a4a",
+     "colorB": "#3a3fa8",
+     "colorC": "#8b3fd9",
+     "colorD": "#e0409a",
+     "scale": 1.5,
+     "speed": 0.33,
+     "rise": 0.38,
+     "flicker": 0.35,
+     "bedHeight": 0.55,
+     "coal": 0.7,
+     "roughness": 0.55,
+     "lacunarity": 2.2,
+     "contrast": 1.35,
+     "midpoint": 0.52,
+     "sink": 0.26,
+     "glow": 0.62,
+     "grain": 0.02,
+     "grainAnim": 0,
+     "dither": 1.1,
+     "vignette": 0.5,
+     "cursor": 1,
+     "pointerRadius": 0.6,
+     "pointerStrength": 0.3,
+     "pointerLift": 0.28,
+     "wake": 5,
+     "parallax": 0.004,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#0a0a0c",
+     "colorA": "#141a4a",
+     "colorB": "#3a3fa8",
+     "colorC": "#8b3fd9",
+     "colorD": "#e0409a"
+    },
+    "media": {
+     "poster": "gradients/hearth-d1bb9911fa/9706cd72.webp",
+     "preview": "gradients/hearth-d1bb9911fa/9706cd72-preview.mp4",
+     "hero": "gradients/hearth-d1bb9911fa/9706cd72.mp4"
+    }
+   },
+   {
+    "id": "hearth-002",
+    "name": "002",
+    "isDefault": false,
+    "sortOrder": 2,
+    "hue": "indigo",
+    "tone": "light",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#2a1f5c",
+     "colorA": "#4b6bff",
+     "colorB": "#f5c9a0",
+     "colorC": "#a8c8f0",
+     "colorD": "#f0d8c0",
+     "scale": 0.2,
+     "speed": 0.33,
+     "rise": 0.18,
+     "flicker": 0.08,
+     "bedHeight": 1.32,
+     "coal": 0.38,
+     "roughness": 0.7,
+     "lacunarity": 1.9,
+     "contrast": 0.62,
+     "midpoint": 0.5,
+     "sink": 0.47,
+     "glow": 0.15,
+     "grain": 0.06,
+     "grainAnim": 0,
+     "dither": 1.29,
+     "vignette": 0.09,
+     "cursor": 1,
+     "pointerRadius": 1.18,
+     "pointerStrength": 0.07,
+     "pointerLift": 0.04,
+     "wake": 0.84,
+     "parallax": 0.001,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#2a1f5c",
+     "colorA": "#4b6bff",
+     "colorB": "#f5c9a0",
+     "colorC": "#a8c8f0",
+     "colorD": "#f0d8c0"
+    },
+    "media": {
+     "poster": "gradients/hearth-d1bb9911fa/b3f1b56a.webp",
+     "preview": "gradients/hearth-d1bb9911fa/b3f1b56a-preview.mp4",
+     "hero": "gradients/hearth-d1bb9911fa/b3f1b56a.mp4"
+    }
+   },
+   {
+    "id": "hearth-003",
+    "name": "003",
+    "isDefault": false,
+    "sortOrder": 3,
+    "hue": "blue",
+    "tone": "light",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#e8dcea",
+     "colorA": "#a8c8f0",
+     "colorB": "#2fd5c0",
+     "colorC": "#ff9bc8",
+     "colorD": "#ffd0e0",
+     "scale": 0.2,
+     "speed": 0.33,
+     "rise": 0.14,
+     "flicker": 0.06,
+     "bedHeight": 1.5,
+     "coal": 0.32,
+     "roughness": 0.74,
+     "lacunarity": 1.98,
+     "contrast": 0.5,
+     "midpoint": 0.49,
+     "sink": 0.55,
+     "glow": 0.11,
+     "grain": 0.08,
+     "grainAnim": 0,
+     "dither": 1.35,
+     "vignette": 0.05,
+     "cursor": 1,
+     "pointerRadius": 1.35,
+     "pointerStrength": 0.07,
+     "pointerLift": 0.03,
+     "wake": 0.64,
+     "parallax": 0.001,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#e8dcea",
+     "colorA": "#a8c8f0",
+     "colorB": "#2fd5c0",
+     "colorC": "#ff9bc8",
+     "colorD": "#ffd0e0"
+    },
+    "media": {
+     "poster": "gradients/hearth-d1bb9911fa/e8a1a44c.webp",
+     "preview": "gradients/hearth-d1bb9911fa/e8a1a44c-preview.mp4",
+     "hero": "gradients/hearth-d1bb9911fa/e8a1a44c.mp4"
+    }
+   },
+   {
+    "id": "hearth-004",
+    "name": "004",
+    "isDefault": false,
+    "sortOrder": 4,
+    "hue": "violet",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#2a1f5c",
+     "colorA": "#7b3fd9",
+     "colorB": "#ff2d9b",
+     "colorC": "#b78fff",
+     "colorD": "#f0e8f5",
+     "scale": 0.2,
+     "speed": 0.33,
+     "rise": 0.17,
+     "flicker": 0.13,
+     "bedHeight": 1.28,
+     "coal": 0.45,
+     "roughness": 0.67,
+     "lacunarity": 1.87,
+     "contrast": 0.68,
+     "midpoint": 0.54,
+     "sink": 0.44,
+     "glow": 0.19,
+     "grain": 0.06,
+     "grainAnim": 0,
+     "dither": 1.27,
+     "vignette": 0.1,
+     "cursor": 1,
+     "pointerRadius": 1.12,
+     "pointerStrength": 0.09,
+     "pointerLift": 0.05,
+     "wake": 0.92,
+     "parallax": 0.002,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#2a1f5c",
+     "colorA": "#7b3fd9",
+     "colorB": "#ff2d9b",
+     "colorC": "#b78fff",
+     "colorD": "#f0e8f5"
+    },
+    "media": {
+     "poster": "gradients/hearth-d1bb9911fa/b725ee7e.webp",
+     "preview": "gradients/hearth-d1bb9911fa/b725ee7e-preview.mp4",
+     "hero": "gradients/hearth-d1bb9911fa/b725ee7e.mp4"
+    }
+   },
+   {
+    "id": "hearth-005",
+    "name": "005",
+    "isDefault": false,
+    "sortOrder": 5,
+    "hue": "pink",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#25131d",
+     "colorA": "#71334d",
+     "colorB": "#bc5474",
+     "colorC": "#d7a5af",
+     "colorD": "#f8f0f1",
+     "scale": 3.41,
+     "speed": 0.33,
+     "rise": 0.73,
+     "flicker": 0.65,
+     "bedHeight": 0.74,
+     "coal": 0.87,
+     "roughness": 0.59,
+     "lacunarity": 2.39,
+     "contrast": 1.01,
+     "midpoint": 0.84,
+     "sink": 0.19,
+     "glow": 0.91,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 0.95,
+     "vignette": 0.1,
+     "cursor": 1,
+     "pointerRadius": 0.41,
+     "pointerStrength": 0.2,
+     "pointerLift": 0.12,
+     "wake": 2.32,
+     "parallax": 0.006,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#25131d",
+     "colorA": "#71334d",
+     "colorB": "#bc5474",
+     "colorC": "#d7a5af",
+     "colorD": "#f8f0f1"
+    },
+    "media": {
+     "poster": "gradients/hearth-d1bb9911fa/d2eb5fe7.webp",
+     "preview": "gradients/hearth-d1bb9911fa/d2eb5fe7-preview.mp4",
+     "hero": "gradients/hearth-d1bb9911fa/d2eb5fe7.mp4"
+    }
+   },
+   {
+    "id": "hearth-006",
+    "name": "006",
+    "isDefault": false,
+    "sortOrder": 6,
+    "hue": "teal",
+    "tone": "light",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#ffd0e0",
+     "colorA": "#2fd5c0",
+     "colorB": "#7fe8d8",
+     "colorC": "#ff9bc8",
+     "colorD": "#fff0f6",
+     "scale": 0.2,
+     "speed": 0.33,
+     "rise": 0.13,
+     "flicker": 0.09,
+     "bedHeight": 1.4,
+     "coal": 0.36,
+     "roughness": 0.71,
+     "lacunarity": 1.92,
+     "contrast": 0.6,
+     "midpoint": 0.5,
+     "sink": 0.52,
+     "glow": 0.13,
+     "grain": 0.07,
+     "grainAnim": 0,
+     "dither": 1.32,
+     "vignette": 0.06,
+     "cursor": 1,
+     "pointerRadius": 1.3,
+     "pointerStrength": 0.07,
+     "pointerLift": 0.04,
+     "wake": 0.76,
+     "parallax": 0.001,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#ffd0e0",
+     "colorA": "#2fd5c0",
+     "colorB": "#7fe8d8",
+     "colorC": "#ff9bc8",
+     "colorD": "#fff0f6"
+    },
+    "media": {
+     "poster": "gradients/hearth-d1bb9911fa/2c3b3c17.webp",
+     "preview": "gradients/hearth-d1bb9911fa/2c3b3c17-preview.mp4",
+     "hero": "gradients/hearth-d1bb9911fa/2c3b3c17.mp4"
+    }
+   },
+   {
+    "id": "hearth-007",
+    "name": "007",
+    "isDefault": false,
+    "sortOrder": 7,
+    "hue": "green",
+    "tone": "light",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#1f7a6b",
+     "colorA": "#3fbfa0",
+     "colorB": "#c8e85c",
+     "colorC": "#e8f5a0",
+     "colorD": "#f6fbd8",
+     "scale": 0.2,
+     "speed": 0.33,
+     "rise": 0.11,
+     "flicker": 0.14,
+     "bedHeight": 1.2,
+     "coal": 0.44,
+     "roughness": 0.66,
+     "lacunarity": 1.85,
+     "contrast": 0.64,
+     "midpoint": 0.55,
+     "sink": 0.48,
+     "glow": 0.16,
+     "grain": 0.05,
+     "grainAnim": 0,
+     "dither": 1.25,
+     "vignette": 0.08,
+     "cursor": 1,
+     "pointerRadius": 1.2,
+     "pointerStrength": 0.08,
+     "pointerLift": 0.04,
+     "wake": 0.96,
+     "parallax": 0.001,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#1f7a6b",
+     "colorA": "#3fbfa0",
+     "colorB": "#c8e85c",
+     "colorC": "#e8f5a0",
+     "colorD": "#f6fbd8"
+    },
+    "media": {
+     "poster": "gradients/hearth-d1bb9911fa/6cac8044.webp",
+     "preview": "gradients/hearth-d1bb9911fa/6cac8044-preview.mp4",
+     "hero": "gradients/hearth-d1bb9911fa/6cac8044.mp4"
+    }
+   },
+   {
+    "id": "hearth-008",
+    "name": "008",
+    "isDefault": false,
+    "sortOrder": 8,
+    "hue": "red",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#000000",
+     "colorA": "#2b6eff",
+     "colorB": "#e0399a",
+     "colorC": "#ff6b2e",
+     "colorD": "#ffd93f",
+     "scale": 1.8,
+     "speed": 0.33,
+     "rise": 0.45,
+     "flicker": 0.55,
+     "bedHeight": 0.8,
+     "coal": 0.6,
+     "roughness": 0.6,
+     "lacunarity": 2.35,
+     "contrast": 1.1,
+     "midpoint": 0.48,
+     "sink": 0.22,
+     "glow": 0.5,
+     "grain": 0.16,
+     "grainAnim": 1,
+     "dither": 1.2,
+     "vignette": 0.18,
+     "cursor": 1,
+     "pointerRadius": 0.8,
+     "pointerStrength": 0.1,
+     "pointerLift": 0.07,
+     "wake": 2.4,
+     "parallax": 0.002,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#000000",
+     "colorA": "#2b6eff",
+     "colorB": "#e0399a",
+     "colorC": "#ff6b2e",
+     "colorD": "#ffd93f"
+    },
+    "media": {
+     "poster": "gradients/hearth-d1bb9911fa/3f72904d.webp",
+     "preview": "gradients/hearth-d1bb9911fa/3f72904d-preview.mp4",
+     "hero": "gradients/hearth-d1bb9911fa/3f72904d.mp4"
+    }
+   },
+   {
+    "id": "hearth-009",
+    "name": "009",
+    "isDefault": false,
+    "sortOrder": 9,
+    "hue": "indigo",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#2a1f5c",
+     "colorA": "#4b6bff",
+     "colorB": "#7b3fd9",
+     "colorC": "#b78fff",
+     "colorD": "#ece4ff",
+     "scale": 0.2,
+     "speed": 0.33,
+     "rise": 0.16,
+     "flicker": 0.12,
+     "bedHeight": 1.3,
+     "coal": 0.4,
+     "roughness": 0.69,
+     "lacunarity": 1.88,
+     "contrast": 0.7,
+     "midpoint": 0.53,
+     "sink": 0.45,
+     "glow": 0.2,
+     "grain": 0.06,
+     "grainAnim": 0,
+     "dither": 1.26,
+     "vignette": 0.1,
+     "cursor": 1,
+     "pointerRadius": 1.15,
+     "pointerStrength": 0.09,
+     "pointerLift": 0.05,
+     "wake": 0.88,
+     "parallax": 0.002,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#2a1f5c",
+     "colorA": "#4b6bff",
+     "colorB": "#7b3fd9",
+     "colorC": "#b78fff",
+     "colorD": "#ece4ff"
+    },
+    "media": {
+     "poster": "gradients/hearth-d1bb9911fa/d3ac2543.webp",
+     "preview": "gradients/hearth-d1bb9911fa/d3ac2543-preview.mp4",
+     "hero": "gradients/hearth-d1bb9911fa/d3ac2543.mp4"
+    }
+   },
+   {
+    "id": "hearth-010",
+    "name": "010",
+    "isDefault": false,
+    "sortOrder": 10,
+    "hue": "indigo",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#eaeaf6",
+     "colorA": "#b4afe1",
+     "colorB": "#846fd1",
+     "colorC": "#6542ae",
+     "colorD": "#4c316f",
+     "scale": 3.7,
+     "speed": 0.33,
+     "rise": 0.53,
+     "flicker": 0.9,
+     "bedHeight": 0.83,
+     "coal": 0.44,
+     "roughness": 0.7,
+     "lacunarity": 2.43,
+     "contrast": 0.84,
+     "midpoint": 0.38,
+     "sink": 0.13,
+     "glow": 0.88,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 0.94,
+     "vignette": 0.08,
+     "cursor": 1,
+     "pointerRadius": 1.11,
+     "pointerStrength": 0.13,
+     "pointerLift": 0.12,
+     "wake": 1.28,
+     "parallax": 0.003,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#eaeaf6",
+     "colorA": "#b4afe1",
+     "colorB": "#846fd1",
+     "colorC": "#6542ae",
+     "colorD": "#4c316f"
+    },
+    "media": {
+     "poster": "gradients/hearth-d1bb9911fa/fb28583d.webp",
+     "preview": "gradients/hearth-d1bb9911fa/fb28583d-preview.mp4",
+     "hero": "gradients/hearth-d1bb9911fa/fb28583d.mp4"
+    }
+   },
+   {
+    "id": "hearth-011",
+    "name": "011",
+    "isDefault": false,
+    "sortOrder": 11,
+    "hue": "red",
+    "tone": "light",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#ffd0d8",
+     "colorA": "#c41e3a",
+     "colorB": "#e8324d",
+     "colorC": "#ff8fa8",
+     "colorD": "#ffe8ec",
+     "scale": 0.2,
+     "speed": 0.33,
+     "rise": 0.1,
+     "flicker": 0.07,
+     "bedHeight": 1.45,
+     "coal": 0.3,
+     "roughness": 0.73,
+     "lacunarity": 1.95,
+     "contrast": 0.52,
+     "midpoint": 0.48,
+     "sink": 0.54,
+     "glow": 0.1,
+     "grain": 0.05,
+     "grainAnim": 0,
+     "dither": 1.34,
+     "vignette": 0.09,
+     "cursor": 1,
+     "pointerRadius": 1.4,
+     "pointerStrength": 0.07,
+     "pointerLift": 0.03,
+     "wake": 0.6,
+     "parallax": 0.001,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#ffd0d8",
+     "colorA": "#c41e3a",
+     "colorB": "#e8324d",
+     "colorC": "#ff8fa8",
+     "colorD": "#ffe8ec"
+    },
+    "media": {
+     "poster": "gradients/hearth-d1bb9911fa/8780f5dc.webp",
+     "preview": "gradients/hearth-d1bb9911fa/8780f5dc-preview.mp4",
+     "hero": "gradients/hearth-d1bb9911fa/8780f5dc.mp4"
+    }
+   },
+   {
+    "id": "hearth-012",
+    "name": "012",
+    "isDefault": false,
+    "sortOrder": 12,
+    "hue": "magenta",
+    "tone": "light",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#f0e8f5",
+     "colorA": "#ff7bc8",
+     "colorB": "#ff2d9b",
+     "colorC": "#ffb3dd",
+     "colorD": "#ffffff",
+     "scale": 0.2,
+     "speed": 0.33,
+     "rise": 0.15,
+     "flicker": 0.11,
+     "bedHeight": 1.25,
+     "coal": 0.42,
+     "roughness": 0.68,
+     "lacunarity": 1.86,
+     "contrast": 0.66,
+     "midpoint": 0.52,
+     "sink": 0.46,
+     "glow": 0.18,
+     "grain": 0.07,
+     "grainAnim": 0,
+     "dither": 1.28,
+     "vignette": 0.05,
+     "cursor": 1,
+     "pointerRadius": 1.1,
+     "pointerStrength": 0.08,
+     "pointerLift": 0.04,
+     "wake": 0.72,
+     "parallax": 0.001,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#f0e8f5",
+     "colorA": "#ff7bc8",
+     "colorB": "#ff2d9b",
+     "colorC": "#ffb3dd",
+     "colorD": "#ffffff"
+    },
+    "media": {
+     "poster": "gradients/hearth-d1bb9911fa/62175496.webp",
+     "preview": "gradients/hearth-d1bb9911fa/62175496-preview.mp4",
+     "hero": "gradients/hearth-d1bb9911fa/62175496.mp4"
+    }
+   }
+  ]
+ },
+ "tint": {
+  "bgColor": "#08080a",
+  "colorB": "#f3f1ea",
+  "colorA": "#807f78",
+  "colorD": "#ff3b1d"
+ },
+ "contract": {
+  "mutable": [
+   "skin"
+  ],
+  "preserve": [
+   "motion"
+  ],
+  "notes": "A bed of coals breathing under its own draught, and the pointer fans it. The breathing is slow and self-driven, so it works without a pointer \u2014 the fanning is a bonus rather than the mechanism. Wants a warm ramp with a genuinely dark stop for the char between the coals."
+ }
+}

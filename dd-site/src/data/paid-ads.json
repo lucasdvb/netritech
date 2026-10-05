@@ -1,0 +1,290 @@
+{
+ "crumb": "Paid ads",
+ "eyebrow": "Paid ads · Mauritius",
+ "h1": "Facebook, Instagram and Google ads in Mauritius that bring enquiries, not just clicks.",
+ "lead": "Boosting a post is easy. Getting enquiries at a price that makes sense is not. We plan your campaigns, make the ads, send people to a page built for them, and track every enquiry, so you know what each new customer costs.",
+ "btns": [
+  {
+   "href": "/contact",
+   "t": "Book a free growth call",
+   "p": true
+  },
+  {
+   "href": "/fledge",
+   "t": "See Fledge, the full system",
+   "p": false
+  }
+ ],
+ "partCap": "Part of Fledge ·",
+ "partTags": [
+  "Stage 01 · Get Found",
+  "Stage 03 · Get The Business"
+ ],
+ "banner": "<div class=\"lb\"><b>Ads on a phone</b><span>A campaign as it appears in the Facebook and Instagram feed</span><i>21:9</i></div>",
+ "bannerCls": "ph r21x9",
+ "plain": {
+  "eb": "In plain terms",
+  "h2": "What you get, in plain terms.",
+  "p": "We run your ads on Facebook, Instagram, Google and TikTok. We decide who sees them, make them, check them, and move the money to what works. Your ad budget is paid by you, directly to the platforms, separate from our fee.",
+  "facts": [
+   {
+    "k": "Who it's for",
+    "v": "Businesses with a clear offer that want more enquiries now, not in six months."
+   },
+   {
+    "k": "What you get",
+    "v": "A campaign plan, the ads, a page for each offer, tracking, regular checks, a monthly report."
+   },
+   {
+    "k": "Platforms",
+    "v": "Facebook, Instagram, Google and TikTok."
+   },
+   {
+    "k": "How you pay",
+    "v": "A monthly management fee. Your ad budget goes straight to the platforms."
+   }
+  ]
+ },
+ "sf": {
+  "h2": "Sound familiar?",
+  "q": [
+   "\"We boosted a few posts. We got likes, not customers.\"",
+   "\"We spend on ads every month and can't say what it brings back.\"",
+   "\"People click on the ad, then leave.\"",
+   "\"Someone set up our ads once. Nobody has looked at them since.\""
+  ]
+ },
+ "inc": {
+  "eb": "What's included",
+  "h2": "What we do for your ads.",
+  "items": [
+   {
+    "n": "01",
+    "h": "A plan before any money is spent",
+    "p": "Who your customers are, where to reach them, what to offer them, and how much to spend to start."
+   },
+   {
+    "n": "02",
+    "h": "Ads made for you",
+    "p": "Images, short videos and words made to stop the scroll and say one thing clearly."
+   },
+   {
+    "n": "03",
+    "h": "A page for every offer",
+    "p": "Each campaign sends people to a page built for that offer, with a form and online booking, not to your homepage."
+   },
+   {
+    "n": "04",
+    "h": "Tracking that tells the truth",
+    "p": "The Meta Pixel and server tracking set up properly, so every enquiry and booking is counted, the platforms learn who your real customers are, and you see what each enquiry costs."
+   },
+   {
+    "n": "05",
+    "h": "A second chance with interested people",
+    "p": "People who visited your page or watched your video see your ads again. This is called retargeting, and it brings back people who were already interested."
+   },
+   {
+    "n": "06",
+    "h": "Regular checks",
+    "p": "We watch your campaigns <span class=\"todo\">[every week, to confirm]</span>, stop what doesn't work and put more behind what does."
+   },
+   {
+    "n": "07",
+    "h": "Enquiries that get a reply",
+    "p": "Every enquiry from your ads goes straight to your team on WhatsApp or into your CRM, so it gets an answer while the person is still interested."
+   },
+   {
+    "n": "08",
+    "h": "A report in plain words",
+    "p": "What you spent, what it brought in, and what we'll change next month."
+   }
+  ]
+ },
+ "how": {
+  "eb": "How it works",
+  "h2": "How we run your ads.",
+  "steps": [
+   {
+    "n": "01",
+    "h": "We look at your offer",
+    "p": "What you sell, who buys it and what a customer is worth to you. Ads can't fix an offer people don't want, so we check that first."
+   },
+   {
+    "n": "02",
+    "h": "We set up tracking",
+    "p": "Before any money goes out, we make sure every enquiry can be counted."
+   },
+   {
+    "n": "03",
+    "h": "We build the campaign",
+    "p": "Audiences, ads, and the page people land on."
+   },
+   {
+    "n": "04",
+    "h": "We start small, then grow",
+    "p": "We begin with a test budget, keep what works, and spend more only where it pays."
+   },
+   {
+    "n": "05",
+    "h": "We report every month",
+    "p": "Spend, enquiries, cost per enquiry and sales, in plain words."
+   }
+  ]
+ },
+ "choose": {
+  "eb": "Before you choose",
+  "h2": "How to choose a Facebook or Google ads agency in Mauritius.",
+  "items": [
+   {
+    "n": "01",
+    "h": "Ask how they track results",
+    "p": "If an agency reports clicks and reach but can't tell you what each enquiry cost, you are paying for activity, not results."
+   },
+   {
+    "n": "02",
+    "h": "Check where your money goes",
+    "p": "Your ad budget should be paid to the platforms from your own account, separate from the agency's fee. Ask for that in writing."
+   },
+   {
+    "n": "03",
+    "h": "Ask what happens after the click",
+    "p": "Ads send people somewhere. Ask what page they land on and who answers them, because that is where most ad money is lost."
+   },
+   {
+    "n": "04",
+    "h": "Ask how often they look",
+    "p": "Campaigns drift. Ask how often someone checks and adjusts them, and what you will see in the report."
+   }
+  ]
+ },
+ "fl": {
+  "eb": "Part of Fledge",
+  "h2": "Ads are only as good as what happens next.",
+  "p": "Ads bring people in. In Fledge, they land on a page built for them, get a reply in minutes, and are followed up until they decide. That is how ad money turns into sales instead of clicks.",
+  "link": {
+   "href": "/fledge",
+   "t": "Discover Fledge"
+  },
+  "stagesLabel": "The four stages of Fledge",
+  "stages": [
+   {
+    "n": "01",
+    "nm": "Get Found",
+    "ln": "People find you on Google, social media and ads.",
+    "on": true,
+    "this": "This service"
+   },
+   {
+    "n": "02",
+    "nm": "Get Chosen",
+    "ln": "Your website and proof make them pick you.",
+    "on": false,
+    "this": null
+   },
+   {
+    "n": "03",
+    "nm": "Get The Business",
+    "ln": "Every enquiry gets a fast reply and a follow-up.",
+    "on": true,
+    "this": "This service"
+   },
+   {
+    "n": "04",
+    "nm": "Keep &amp; Grow",
+    "ln": "Customers come back and send others.",
+    "on": false,
+    "this": null
+   }
+  ],
+  "withCap": "Works well with",
+  "sibs": [
+   {
+    "href": "/services/web-design",
+    "img": "/uploads/1qEcUtH4lHDuqfDdPiAdS-svc-01.webp",
+    "h": "Websites and SEO",
+    "sub": "Websites and SEO that put your business in front of the right people."
+   },
+   {
+    "href": "/services/marketing-automation-crm",
+    "img": "/uploads/scHUo4gyKrkiEYNTf-8EU-svc-04.webp",
+    "h": "Automation and CRM",
+    "sub": "CRM, follow-up and automation, so you handle more enquiries without hiring more people."
+   },
+   {
+    "href": "/services/ai-chatbots",
+    "img": "/uploads/nCS7Kte6VC1XCoepoHERN-svc-05.webp",
+    "h": "AI implementation",
+    "sub": "AI assistants that reply to your customers on WhatsApp and your website, day and night."
+   }
+  ]
+ },
+ "proof": {
+  "eb": "Our work",
+  "h2": "A project like this.",
+  "href": "/work/case-study",
+  "ph": "<div class=\"lb\"><b>Project cover</b><span>A paid ads project, shown in context</span><i>16:9</i></div>",
+  "phCls": "ph r16x9",
+  "client": "<span class=\"todo\">[Client name]</span>",
+  "sector": "<span class=\"todo\">[Sector]</span>",
+  "line": "<span class=\"todo\">[What changed, in one line]</span>",
+  "note": "Client names and results appear only with each client's written consent.",
+  "link": {
+   "href": "/work",
+   "t": "See all our work"
+  }
+ },
+ "faq": {
+  "eb": "Questions",
+  "h2": "Ad questions, answered.",
+  "items": [
+   {
+    "q": "How much should I spend on ads?",
+    "a": "It depends on your market and your offer. We start with a test budget we agree with you, then raise it only when the numbers justify it.",
+    "open": true
+   },
+   {
+    "q": "Is the ad budget included in your fee?",
+    "a": "No. You pay your ad budget directly to Meta, Google or TikTok. Our fee covers the planning, the ads, the tracking and the management, and we take no cut of your budget.",
+    "open": false
+   },
+   {
+    "q": "Facebook ads or Google ads: which is better?",
+    "a": "They do different jobs. Google ads reach people who are already searching for what you sell. Facebook and Instagram ads reach people who aren't searching yet but look like your customers. Many businesses need both, and we tell you where to start.",
+    "open": false
+   },
+   {
+    "q": "Do you guarantee results?",
+    "a": "We set targets with you, such as a cost per enquiry, and report against them every month. Nobody can honestly guarantee what the platforms will do, so we don't.",
+    "open": false
+   },
+   {
+    "q": "How soon will I see results?",
+    "a": "The first figures come in as soon as the ads go live. Every campaign needs a testing period before it settles, and we tell you what we are learning each month.",
+    "open": false
+   },
+   {
+    "q": "Do I keep my ad accounts?",
+    "a": "<span class=\"todo\">[Yes. Your ad accounts and pages stay in your name and you give our team access. If we stop working together, everything stays with you. To confirm.]</span>",
+    "open": false
+   },
+   {
+    "q": "Can you run ads in French and Creole?",
+    "a": "Yes. We write ads in English, French and Creole, depending on who you want to reach.",
+    "open": false
+   },
+   {
+    "q": "Do you run TikTok ads?",
+    "a": "Yes, when your customers are there. We look at where your customers spend their time before deciding where your budget goes.",
+    "open": false
+   }
+  ]
+ },
+ "cta": {
+  "eb": "Get In Touch",
+  "h2": "Tell us where your business is leaking customers",
+  "btn": {
+   "href": "/contact",
+   "t": "Book a free growth call"
+  }
+ }
+}

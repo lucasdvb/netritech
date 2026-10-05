@@ -1,0 +1,422 @@
+{
+ "params": {
+  "slug": "demilune",
+  "driver": "ambient",
+  "liveRebuild": false,
+  "assets": [],
+  "sections": [
+   [
+    "palette",
+    [
+     "bgColor",
+     "colorA",
+     "colorB",
+     "colorC",
+     "colorD"
+    ]
+   ],
+   [
+    "weather",
+    [
+     "scale",
+     "speed",
+     "flow",
+     "warp",
+     "warpScale",
+     "roughness",
+     "lacunarity"
+    ]
+   ],
+   [
+    "source",
+    [
+     "haloRadius",
+     "coreRadius",
+     "haloPower",
+     "crescent",
+     "crescentGap",
+     "scatter"
+    ]
+   ],
+   [
+    "light",
+    [
+     "tilt",
+     "spread",
+     "lightCurve",
+     "amount"
+    ]
+   ],
+   [
+    "tone",
+    [
+     "contrast",
+     "midpoint",
+     "glow",
+     "sink"
+    ]
+   ],
+   [
+    "finish",
+    [
+     "grain",
+     "grainAnim",
+     "dither",
+     "vignette"
+    ]
+   ],
+   [
+    "pointer",
+    [
+     "pointerRadius",
+     "pointerFollow",
+     "pointerBloom",
+     "pointerSmear",
+     "parallax",
+     "cursor"
+    ]
+   ],
+   [
+    "perf",
+    [
+     "maxDpr"
+    ]
+   ]
+  ],
+  "params": [
+   {
+    "key": "bgColor",
+    "kind": "color",
+    "default": "#100a20",
+    "structural": false
+   },
+   {
+    "key": "colorA",
+    "kind": "color",
+    "default": "#1a0f33",
+    "structural": false
+   },
+   {
+    "key": "colorB",
+    "kind": "color",
+    "default": "#6b2bc8",
+    "structural": false
+   },
+   {
+    "key": "colorC",
+    "kind": "color",
+    "default": "#8b3fe0",
+    "structural": false
+   },
+   {
+    "key": "colorD",
+    "kind": "color",
+    "default": "#e02bc8",
+    "structural": false
+   },
+   {
+    "key": "scale",
+    "kind": "number",
+    "default": 0.2,
+    "min": 0.2,
+    "max": 4,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "speed",
+    "kind": "number",
+    "default": 0.33,
+    "min": 0,
+    "max": 0.6,
+    "step": 0.005,
+    "structural": false
+   },
+   {
+    "key": "flow",
+    "kind": "number",
+    "default": 0.9,
+    "min": 0,
+    "max": 1.2,
+    "step": 0.005,
+    "structural": false
+   },
+   {
+    "key": "warp",
+    "kind": "number",
+    "default": 2.2,
+    "min": 0,
+    "max": 3,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "warpScale",
+    "kind": "number",
+    "default": 1.97,
+    "min": 0.1,
+    "max": 3,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "roughness",
+    "kind": "number",
+    "default": 0.44,
+    "min": 0.1,
+    "max": 0.9,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "lacunarity",
+    "kind": "number",
+    "default": 1.61,
+    "min": 1.2,
+    "max": 3.2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "haloRadius",
+    "kind": "number",
+    "default": 1.11,
+    "min": 0.05,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "coreRadius",
+    "kind": "number",
+    "default": 0.54,
+    "min": 0.02,
+    "max": 1,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "haloPower",
+    "kind": "number",
+    "default": 1.33,
+    "min": 0.5,
+    "max": 3,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "crescent",
+    "kind": "number",
+    "default": 0.76,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "crescentGap",
+    "kind": "number",
+    "default": 0.41,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "scatter",
+    "kind": "number",
+    "default": 0.71,
+    "min": 0,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "tilt",
+    "kind": "number",
+    "default": 0.22,
+    "min": -1.6,
+    "max": 1.6,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "spread",
+    "kind": "number",
+    "default": 0.97,
+    "min": -2,
+    "max": 3,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "lightCurve",
+    "kind": "number",
+    "default": 1.49,
+    "min": 0.4,
+    "max": 3,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "amount",
+    "kind": "number",
+    "default": 0.38,
+    "min": 0,
+    "max": 0.6,
+    "step": 0.005,
+    "structural": false
+   },
+   {
+    "key": "contrast",
+    "kind": "number",
+    "default": 0.94,
+    "min": 0.2,
+    "max": 3,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "midpoint",
+    "kind": "number",
+    "default": 0.59,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "glow",
+    "kind": "number",
+    "default": 0.42,
+    "min": 0,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "sink",
+    "kind": "number",
+    "default": 0.12,
+    "min": 0,
+    "max": 0.5,
+    "step": 0.005,
+    "structural": false
+   },
+   {
+    "key": "grain",
+    "kind": "number",
+    "default": 0,
+    "min": 0,
+    "max": 0.12,
+    "step": 0.002,
+    "structural": false
+   },
+   {
+    "key": "grainAnim",
+    "kind": "number",
+    "default": 0,
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "structural": false
+   },
+   {
+    "key": "dither",
+    "kind": "number",
+    "default": 1.46,
+    "min": 0,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "vignette",
+    "kind": "number",
+    "default": 0.19,
+    "min": 0,
+    "max": 0.6,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "cursor",
+    "kind": "number",
+    "default": 1,
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "structural": false
+   },
+   {
+    "key": "pointerRadius",
+    "kind": "number",
+    "default": 1.67,
+    "min": 0.05,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "pointerFollow",
+    "kind": "number",
+    "default": 1.12,
+    "min": 0,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "pointerBloom",
+    "kind": "number",
+    "default": 0.3,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "pointerSmear",
+    "kind": "number",
+    "default": 1.3,
+    "min": 0,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "parallax",
+    "kind": "number",
+    "default": 0.019,
+    "min": 0,
+    "max": 0.1,
+    "step": 0.001,
+    "structural": false
+   },
+   {
+    "key": "maxDpr",
+    "kind": "number",
+    "default": 1,
+    "min": 0.5,
+    "max": 2,
+    "step": 0.1,
+    "structural": false
+   }
+  ]
+ },
+ "tint": {
+  "bgColor": "#08080a",
+  "colorD": "#f3f1ea",
+  "colorC": "#807f78",
+  "colorB": "#ff3b1d"
+ },
+ "contract": {
+  "mutable": [
+   "skin"
+  ],
+  "preserve": [
+   "motion"
+  ],
+  "notes": "A soft source behind weather, and the CURSOR CARRIES the light \u2014 the room brightens a beat after the hand stops. `flow` is 0.9, unusually high, and it is that lag rather than the brightness that sells it. Quiet, dark and sparse; a good ground for light type."
+ }
+}

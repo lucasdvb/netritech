@@ -1,0 +1,428 @@
+{
+ "params": {
+  "slug": "antipode",
+  "driver": "ambient",
+  "liveRebuild": false,
+  "assets": [],
+  "sections": [
+   [
+    "palette",
+    [
+     "bgColor",
+     "colorA",
+     "colorB",
+     "colorC",
+     "colorD"
+    ]
+   ],
+   [
+    "field",
+    [
+     "scale",
+     "speed",
+     "flow",
+     "warp",
+     "warpScale",
+     "roughness",
+     "lacunarity",
+     "massBias",
+     "tilt",
+     "softness",
+     "spill"
+    ]
+   ],
+   [
+    "seam",
+    [
+     "seamWidth",
+     "seamGain",
+     "bloom"
+    ]
+   ],
+   [
+    "tone",
+    [
+     "contrast",
+     "midpoint",
+     "glow"
+    ]
+   ],
+   [
+    "finish",
+    [
+     "grain",
+     "grainAnim",
+     "dither",
+     "vignette"
+    ]
+   ],
+   [
+    "pointer",
+    [
+     "pointerRadius",
+     "pointerStrength",
+     "pointerSeam",
+     "parallax",
+     "cursor"
+    ]
+   ],
+   [
+    "perf",
+    [
+     "maxDpr"
+    ]
+   ]
+  ],
+  "params": [
+   {
+    "key": "bgColor",
+    "kind": "color",
+    "default": "#05060a",
+    "structural": false
+   },
+   {
+    "key": "colorA",
+    "kind": "color",
+    "default": "#0b1020",
+    "structural": false
+   },
+   {
+    "key": "colorB",
+    "kind": "color",
+    "default": "#e0651b",
+    "structural": false
+   },
+   {
+    "key": "colorC",
+    "kind": "color",
+    "default": "#1d5fb8",
+    "structural": false
+   },
+   {
+    "key": "colorD",
+    "kind": "color",
+    "default": "#fff3e0",
+    "structural": false
+   },
+   {
+    "key": "scale",
+    "kind": "number",
+    "default": 0.95,
+    "min": 0.2,
+    "max": 6,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "speed",
+    "kind": "number",
+    "default": 0.33,
+    "min": 0,
+    "max": 0.6,
+    "step": 0.005,
+    "structural": false
+   },
+   {
+    "key": "flow",
+    "kind": "number",
+    "default": 0.16,
+    "min": 0,
+    "max": 0.8,
+    "step": 0.005,
+    "structural": false
+   },
+   {
+    "key": "warp",
+    "kind": "number",
+    "default": 0.75,
+    "min": 0,
+    "max": 4,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "warpScale",
+    "kind": "number",
+    "default": 0.55,
+    "min": 0.1,
+    "max": 4,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "roughness",
+    "kind": "number",
+    "default": 0.42,
+    "min": 0.1,
+    "max": 0.9,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "lacunarity",
+    "kind": "number",
+    "default": 2.1,
+    "min": 1.2,
+    "max": 3.2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "massBias",
+    "kind": "number",
+    "default": 1.1,
+    "min": 0,
+    "max": 4,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "tilt",
+    "kind": "number",
+    "default": 0.9,
+    "min": -3.14,
+    "max": 3.14,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "softness",
+    "kind": "number",
+    "default": 0.95,
+    "min": 0.1,
+    "max": 4,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "spill",
+    "kind": "number",
+    "default": 1.15,
+    "min": 0.1,
+    "max": 5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "seamWidth",
+    "kind": "number",
+    "default": 0.42,
+    "min": 0.02,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "seamGain",
+    "kind": "number",
+    "default": 0.5,
+    "min": 0,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "bloom",
+    "kind": "number",
+    "default": 0.45,
+    "min": 0,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "contrast",
+    "kind": "number",
+    "default": 1.1,
+    "min": 0.2,
+    "max": 4,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "midpoint",
+    "kind": "number",
+    "default": 0.5,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "glow",
+    "kind": "number",
+    "default": 0.1,
+    "min": 0,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "grain",
+    "kind": "number",
+    "default": 0,
+    "min": 0,
+    "max": 0.12,
+    "step": 0.002,
+    "structural": false
+   },
+   {
+    "key": "grainAnim",
+    "kind": "number",
+    "default": 0,
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "structural": false
+   },
+   {
+    "key": "dither",
+    "kind": "number",
+    "default": 1.1,
+    "min": 0,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "vignette",
+    "kind": "number",
+    "default": 0.22,
+    "min": 0,
+    "max": 0.8,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "cursor",
+    "kind": "number",
+    "default": 1,
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "structural": false
+   },
+   {
+    "key": "pointerRadius",
+    "kind": "number",
+    "default": 0.75,
+    "min": 0.05,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "pointerStrength",
+    "kind": "number",
+    "default": 0.45,
+    "min": 0,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "pointerSeam",
+    "kind": "number",
+    "default": 0.35,
+    "min": 0,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "parallax",
+    "kind": "number",
+    "default": 0.0043,
+    "min": 0,
+    "max": 0.1,
+    "step": 0.001,
+    "structural": false
+   },
+   {
+    "key": "maxDpr",
+    "kind": "number",
+    "default": 1,
+    "min": 0.5,
+    "max": 2,
+    "step": 0.1,
+    "structural": false
+   }
+  ]
+ },
+ "variantConfigs": {
+  "id": "antipode",
+  "type": "gradient",
+  "variants": [
+   {
+    "id": "antipode",
+    "name": "Default",
+    "isDefault": true,
+    "sortOrder": 0,
+    "hue": "red",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#05060a",
+     "colorA": "#0b1020",
+     "colorB": "#e0651b",
+     "colorC": "#1d5fb8",
+     "colorD": "#fff3e0",
+     "scale": 0.95,
+     "speed": 0.33,
+     "flow": 0.16,
+     "warp": 0.75,
+     "warpScale": 0.55,
+     "roughness": 0.42,
+     "lacunarity": 2.1,
+     "massBias": 1.1,
+     "tilt": 0.9,
+     "softness": 0.95,
+     "spill": 1.15,
+     "seamWidth": 0.42,
+     "seamGain": 0.5,
+     "bloom": 0.45,
+     "contrast": 1.1,
+     "midpoint": 0.5,
+     "glow": 0.1,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 1.1,
+     "vignette": 0.22,
+     "cursor": 1,
+     "pointerRadius": 0.75,
+     "pointerStrength": 0.45,
+     "pointerSeam": 0.35,
+     "parallax": 0.0043,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#05060a",
+     "colorA": "#0b1020",
+     "colorB": "#e0651b",
+     "colorC": "#1d5fb8",
+     "colorD": "#fff3e0"
+    },
+    "media": {
+     "poster": "gradients/antipode-88350af1c9.webp",
+     "preview": "gradients/antipode-88350af1c9-preview.mp4",
+     "hero": "gradients/antipode-88350af1c9.mp4"
+    }
+   }
+  ]
+ },
+ "tint": {
+  "bgColor": "#08080a",
+  "colorB": "#f3f1ea",
+  "colorC": "#807f78",
+  "colorD": "#ff3b1d"
+ },
+ "contract": {
+  "mutable": [
+   "skin"
+  ],
+  "preserve": [
+   "motion"
+  ],
+  "notes": "Two masses of light leaning against each other \u2014 brightest where they still disagree, black where neither reaches. The palette must be two distinguishable hues or the disagreement has nothing to show; a single-hue ramp collapses it to one blob. Sparse and dark: a good hero ground."
+ }
+}

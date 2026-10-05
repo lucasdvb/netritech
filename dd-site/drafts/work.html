@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Work · Disruptive Dodo</title>
+<link rel="stylesheet" href="../assets/dd.css">
+<style>
+.work-hero .dsp{max-width:12ch}
+.work-hero .sm{margin-top:20px;max-width:56ch}
+/* controls */
+.ctrl{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 32px;padding-top:24px;padding-bottom:24px;border-top:1px solid var(--ln);border-bottom:1px solid var(--ln)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+/* full view */
+.wgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--gt);row-gap:72px;padding-top:clamp(56px,5.6vw,80px);padding-bottom:var(--sec)}
+.wcard{display:block;color:inherit;text-decoration:none}
+.wcard.off{margin-top:96px}
+.wcard .ph{transition:border-color .3s}
+.wcard:hover .ph{border-color:var(--fg)}
+.wrow{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-top:24px;padding-top:20px;border-top:1px solid var(--ln)}
+.band{grid-column:1/-1;padding:clamp(32px,4.45vw,64px) 0;text-align:center}
+.band .dsp{max-width:16ch;margin:0 auto}
+/* list view */
+.wlist{padding-top:clamp(40px,4.45vw,64px);padding-bottom:var(--sec)}
+.wlist li{border-bottom:1px solid var(--ln)}
+.wlist li:first-child{border-top:1px solid var(--ln)}
+.wl{display:grid;grid-template-columns:72px minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.5fr) 96px 24px;align-items:center;gap:24px;min-height:88px;padding:16px 0;color:inherit;text-decoration:none}
+.wl .h4{font-size:clamp(18px,1.53vw,22px)}
+.wl .ar{width:14px;height:14px;justify-self:end;color:var(--mu);transition:color .2s,transform .3s}
+.wl:hover .ar{color:var(--fg);transform:translate(2px,-2px)}
+.cta .head-row{align-items:flex-end}
+.cta .h2{max-width:18ch}
+@media (max-width:899px){
+  .wgrid{grid-template-columns:minmax(0,1fr);row-gap:56px}
+  .wcard.off{margin-top:0}
+  .wl{grid-template-columns:48px minmax(0,1fr) 20px;gap:8px 16px;padding:20px 0}
+  .wl>:nth-child(3),.wl>:nth-child(4),.wl>:nth-child(5){grid-column:2}
+  .wl>:nth-child(6){grid-column:3;grid-row:1}
+}
+</style>
+<meta name="review-project" content="dd-website-v1">
+<meta name="review-page" content="work">
+<link rel="stylesheet" href="../review/review.css">
+<script src="../review/dd-accent.js"></script>
+</head>
+<body>
+<div class="r">
+<header class="nav">
+  <a class="nav-logo" href="home.html" aria-label="Disruptive Dodo, home"><img src="../assets/img/dd-logo-white.png" alt="Disruptive Dodo" width="176" height="37"></a>
+  <div class="nav-mid"><i class="cmk cmk-t"></i><i class="cmk cmk-b"></i>
+    <nav class="nav-links" id="nav-links" aria-label="Main">
+      <div class="nav-dd">
+        <a class="nav-dd-top" href="services.html">Services</a>
+        <button class="nav-dd-btn" type="button" aria-expanded="false" aria-controls="nav-dd-panel" aria-label="Show the services"><svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="nav-dd-panel" id="nav-dd-panel">
+          <a class="nav-dd-feat" href="fledge.html"><span class="cap">Our signature system</span><b>Fledge</b><span class="nav-dd-sub">Your full marketing system, built and run by one team.</span><svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <ul class="nav-dd-list">
+            <li><a href="websites.html">Websites and SEO</a></li>
+            <li><a href="social-media.html">Social media</a></li>
+            <li><a href="paid-ads.html">Paid ads</a></li>
+            <li><a href="automation.html">Automation and CRM</a></li>
+            <li><a href="ai.html">AI implementation</a></li>
+            <li><a href="branding.html">Branding</a></li>
+            <li><a class="nav-dd-all" href="services.html">All services</a></li>
+          </ul>
+        </div>
+      </div>
+      <a class="nav-sig" href="fledge.html"><i class="nav-sig-dot" aria-hidden="true"></i>Fledge</a>
+      <a href="work.html" aria-current="page">Work</a>
+      <a href="about.html">About</a>
+      <div class="nav-lang" role="group" aria-label="Language">
+        <span aria-current="true" lang="en">EN</span><a href="fr-work.html" hreflang="fr" lang="fr">FR</a>
+      </div>
+    </nav>
+  </div>
+  <a class="nav-act" href="contact.html"><svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Contact<i class="cmk cmk-t"></i><i class="cmk cmk-b"></i></a>
+  <button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links"><span></span><span></span></button>
+</header>
+
+<main>
+  <section class="hero-in work-hero">
+    <p class="eb"><span class="dot"></span>Our work</p>
+    <h1 class="dsp">Businesses we helped grow.</h1>
+    <p class="ld">Each project starts with the same question: where is this business losing customers? Here is what we found, what we built, and what changed.</p>
+    <p class="sm">Client names and results appear only with each client's written consent.</p>
+  </section>
+
+  <div class="ctrl gt">
+    <div class="chips" role="group" aria-label="Filter by stage">
+      <button class="chip" type="button" aria-pressed="true" data-filter="all">All</button>
+      <button class="chip" type="button" aria-pressed="false" data-filter="found">Get Found</button>
+      <button class="chip" type="button" aria-pressed="false" data-filter="chosen">Get Chosen</button>
+      <button class="chip" type="button" aria-pressed="false" data-filter="business">Get The Business</button>
+      <button class="chip" type="button" aria-pressed="false" data-filter="keep">Keep &amp; Grow</button>
+    </div>
+    <div class="seg" role="group" aria-label="View">
+      <button class="chip" type="button" aria-pressed="true" data-view="full">Full view</button>
+      <button class="chip" type="button" aria-pressed="false" data-view="list">List view</button>
+    </div>
+  </div>
+
+  <!-- Full view -->
+  <div class="wgrid gt" id="view-full">
+    <a class="wcard" href="case-study.html" data-stages="found chosen">
+      <div class="ph r16x10"><div class="lb"><b>Project cover</b><span>The finished website, campaign or system, shown in context</span><i>16:10</i></div></div>
+      <div class="wrow"><div><h2 class="h3"><span class="todo">[Client name]</span></h2><p class="cap mt-12"><span class="todo">[Sector]</span></p></div><p class="cap">01</p></div>
+      <div class="tags mt-16"><span class="tag">Get Found</span><span class="tag">Get Chosen</span></div>
+      <p class="tx mt-16"><span class="todo">[What changed, in one line]</span></p>
+    </a>
+    <a class="wcard off" href="case-study.html" data-stages="business">
+      <div class="ph r16x10"><div class="lb"><b>Project cover</b><span>The finished website, campaign or system, shown in context</span><i>16:10</i></div></div>
+      <div class="wrow"><div><h2 class="h3"><span class="todo">[Client name]</span></h2><p class="cap mt-12"><span class="todo">[Sector]</span></p></div><p class="cap">02</p></div>
+      <div class="tags mt-16"><span class="tag">Get The Business</span></div>
+      <p class="tx mt-16"><span class="todo">[What changed, in one line]</span></p>
+    </a>
+    <a class="wcard" href="case-study.html" data-stages="chosen">
+      <div class="ph r16x10"><div class="lb"><b>Project cover</b><span>The finished website, campaign or system, shown in context</span><i>16:10</i></div></div>
+      <div class="wrow"><div><h2 class="h3"><span class="todo">[Client name]</span></h2><p class="cap mt-12"><span class="todo">[Sector]</span></p></div><p class="cap">03</p></div>
+      <div class="tags mt-16"><span class="tag">Get Chosen</span></div>
+      <p class="tx mt-16"><span class="todo">[What changed, in one line]</span></p>
+    </a>
+    <a class="wcard off" href="case-study.html" data-stages="keep found">
+      <div class="ph r16x10"><div class="lb"><b>Project cover</b><span>The finished website, campaign or system, shown in context</span><i>16:10</i></div></div>
+      <div class="wrow"><div><h2 class="h3"><span class="todo">[Client name]</span></h2><p class="cap mt-12"><span class="todo">[Sector]</span></p></div><p class="cap">04</p></div>
+      <div class="tags mt-16"><span class="tag">Keep &amp; Grow</span><span class="tag">Get Found</span></div>
+      <p class="tx mt-16"><span class="todo">[What changed, in one line]</span></p>
+    </a>
+    <div class="band"><p class="dsp">Local team. Real specialists. No outsourcing.</p></div>
+    <a class="wcard" href="case-study.html" data-stages="business keep">
+      <div class="ph r16x10"><div class="lb"><b>Project cover</b><span>The finished website, campaign or system, shown in context</span><i>16:10</i></div></div>
+      <div class="wrow"><div><h2 class="h3"><span class="todo">[Client name]</span></h2><p class="cap mt-12"><span class="todo">[Sector]</span></p></div><p class="cap">05</p></div>
+      <div class="tags mt-16"><span class="tag">Get The Business</span><span class="tag">Keep &amp; Grow</span></div>
+      <p class="tx mt-16"><span class="todo">[What changed, in one line]</span></p>
+    </a>
+    <a class="wcard off" href="case-study.html" data-stages="found">
+      <div class="ph r16x10"><div class="lb"><b>Project cover</b><span>The finished website, campaign or system, shown in context</span><i>16:10</i></div></div>
+      <div class="wrow"><div><h2 class="h3"><span class="todo">[Client name]</span></h2><p class="cap mt-12"><span class="todo">[Sector]</span></p></div><p class="cap">06</p></div>
+      <div class="tags mt-16"><span class="tag">Get Found</span></div>
+      <p class="tx mt-16"><span class="todo">[What changed, in one line]</span></p>
+    </a>
+  </div>
+
+  <!-- List view -->
+  <ol class="wlist gt" id="view-list" hidden>
+    <li data-stages="found chosen"><a class="wl" href="case-study.html"><span class="cap">01</span><span class="h4"><span class="todo">[Client name]</span></span><span class="cap"><span class="todo">[Sector]</span></span><span class="tags"><span class="tag">Get Found</span><span class="tag">Get Chosen</span></span><span class="cap"><span class="todo">[Year]</span></span><svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+    <li data-stages="business"><a class="wl" href="case-study.html"><span class="cap">02</span><span class="h4"><span class="todo">[Client name]</span></span><span class="cap"><span class="todo">[Sector]</span></span><span class="tags"><span class="tag">Get The Business</span></span><span class="cap"><span class="todo">[Year]</span></span><svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+    <li data-stages="chosen"><a class="wl" href="case-study.html"><span class="cap">03</span><span class="h4"><span class="todo">[Client name]</span></span><span class="cap"><span class="todo">[Sector]</span></span><span class="tags"><span class="tag">Get Chosen</span></span><span class="cap"><span class="todo">[Year]</span></span><svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+    <li data-stages="keep found"><a class="wl" href="case-study.html"><span class="cap">04</span><span class="h4"><span class="todo">[Client name]</span></span><span class="cap"><span class="todo">[Sector]</span></span><span class="tags"><span class="tag">Keep &amp; Grow</span><span class="tag">Get Found</span></span><span class="cap"><span class="todo">[Year]</span></span><svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+    <li data-stages="business keep"><a class="wl" href="case-study.html"><span class="cap">05</span><span class="h4"><span class="todo">[Client name]</span></span><span class="cap"><span class="todo">[Sector]</span></span><span class="tags"><span class="tag">Get The Business</span><span class="tag">Keep &amp; Grow</span></span><span class="cap"><span class="todo">[Year]</span></span><svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+    <li data-stages="found"><a class="wl" href="case-study.html"><span class="cap">06</span><span class="h4"><span class="todo">[Client name]</span></span><span class="cap"><span class="todo">[Sector]</span></span><span class="tags"><span class="tag">Get Found</span></span><span class="cap"><span class="todo">[Year]</span></span><svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a></li>
+  </ol>
+
+  <section class="lt panel sec cta" aria-labelledby="cta-h">
+    <div class="head-row">
+      <h2 class="h2" id="cta-h">Want your business on this page next?</h2>
+      <div class="btn-row">
+        <a class="btn btn-a" href="contact.html">Book a free growth call</a>
+        <a class="btn" href="services.html">See our services</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="ft">
+  <p class="eb"><span class="dot"></span>Prefer email?</p>
+  <h2 class="dsp ft-h">Do it once,<br>do it right</h2>
+  <p class="ld ft-b">Built properly the first time. One team, no wasted spend, nothing to redo later. Email us and let's get started.</p>
+  <a class="ft-mail" href="mailto:info@disruptivedodo.mu">info@disruptivedodo.mu<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <div class="ft-bar">
+    <div class="ft-sig"><img src="../assets/img/dd-logo-white.png" alt="Disruptive Dodo" width="266" height="56"><p class="cap">Built in Mauritius. Made to grow.</p></div>
+    <nav class="ft-col" aria-label="Services"><p class="cap">Services</p><a href="fledge.html">Fledge</a><a href="websites.html">Websites and SEO</a><a href="social-media.html">Social media</a><a href="paid-ads.html">Paid ads</a><a href="automation.html">Automation and CRM</a><a href="ai.html">AI implementation</a><a href="branding.html">Branding</a></nav>
+    <nav class="ft-col" aria-label="Pages"><p class="cap">Pages</p><a href="home.html">Home</a><a href="work.html">Work</a><a href="services.html">Services</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav>
+    <nav class="ft-col" aria-label="Social"><p class="cap">Follow</p><a href="https://www.linkedin.com" target="_blank" rel="noreferrer noopener">LinkedIn</a><a href="https://instagram.com" target="_blank" rel="noreferrer noopener">Instagram</a><a href="https://wa.me/23058065315" target="_blank" rel="noreferrer noopener">WhatsApp</a></nav>
+    <div class="ft-col"><p class="cap">© 2026 Disruptive Dodo</p><a href="privacy.html">Privacy and terms</a></div>
+  </div>
+</footer>
+</div>
+<script src="../assets/nav.js" defer></script>
+<script>
+/* filters and view toggle: everything is in the HTML, the script only toggles hidden */
+(function(){
+  var chips=document.querySelectorAll('[data-filter]'),views=document.querySelectorAll('[data-view]');
+  var cards=document.querySelectorAll('.wcard'),rows=document.querySelectorAll('.wlist li'),band=document.querySelector('.band');
+  var full=document.getElementById('view-full'),list=document.getElementById('view-list');
+  function match(el,f){return f==='all'||el.dataset.stages.split(' ').indexOf(f)>-1;}
+  function filter(f){
+    var n=0;
+    cards.forEach(function(c){var on=match(c,f);c.hidden=!on;if(on){c.classList.toggle('off',n%2===1);n++;}});
+    rows.forEach(function(r){r.hidden=!match(r,f);});
+    band.hidden=f!=='all';
+  }
+  chips.forEach(function(b){b.addEventListener('click',function(){chips.forEach(function(o){o.setAttribute('aria-pressed',o===b?'true':'false');});filter(b.dataset.filter);});});
+  views.forEach(function(b){b.addEventListener('click',function(){views.forEach(function(o){o.setAttribute('aria-pressed',o===b?'true':'false');});var l=b.dataset.view==='list';full.hidden=l;list.hidden=!l;});});
+})();
+</script>
+<script src="../review/review.js" defer></script>
+</body>
+</html>

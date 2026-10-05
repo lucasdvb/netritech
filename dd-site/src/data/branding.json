@@ -1,0 +1,289 @@
+{
+ "crumb": "Branding",
+ "eyebrow": "Branding · Mauritius",
+ "h1": "Branding and logo design in Mauritius that makes you look like the leader.",
+ "lead": "People judge a business in seconds, often before they read a word. We design your logo, your colours, your type and the rules to use them, so your business looks as good as the work you do, everywhere it shows up.",
+ "btns": [
+  {
+   "href": "/contact",
+   "t": "Book a free growth call",
+   "p": true
+  },
+  {
+   "href": "/fledge",
+   "t": "See Fledge, the full system",
+   "p": false
+  }
+ ],
+ "partCap": "Part of Fledge ·",
+ "partTags": [
+  "Stage 02 · Get Chosen"
+ ],
+ "banner": "<div class=\"lb\"><b>Brand in use</b><span>A brand we designed: logo, colours and pages side by side</span><i>21:9</i></div>",
+ "bannerCls": "ph r21x9",
+ "plain": {
+  "eb": "In plain terms",
+  "h2": "What you get, in plain terms.",
+  "p": "You bring the name and tell us about your business. We design three logo and colour options, you pick one, and we turn it into a full identity: logo, colours, typography and a simple brand book that shows how to use them. Then you get every file you need, for screens and for print.",
+  "facts": [
+   {
+    "k": "Who it's for",
+    "v": "New businesses that need a look, and businesses whose look no longer matches the work they do."
+   },
+   {
+    "k": "What you get",
+    "v": "Three logo and colour options, the final logo in every format, colours, typography, a simple brand book."
+   },
+   {
+    "k": "How long it takes",
+    "v": "<span class=\"todo\">[About 3 to 4 weeks from the first call to the final files, to confirm]</span>"
+   },
+   {
+    "k": "How you pay",
+    "v": "A fixed price agreed before we start."
+   }
+  ]
+ },
+ "sf": {
+  "h2": "Sound familiar?",
+  "q": [
+   "\"We made our logo ourselves when we started. It shows.\"",
+   "\"Our website, our Facebook page and our van look like three different businesses.\"",
+   "\"Bigger competitors look more trustworthy than us, even when our work is better.\"",
+   "\"Every time we need a flyer, someone guesses the colours.\""
+  ]
+ },
+ "inc": {
+  "eb": "What's included",
+  "h2": "What's in a Disruptive Dodo brand.",
+  "items": [
+   {
+    "n": "01",
+    "h": "A discovery call",
+    "p": "We ask about your business, your customers, the tone you want and the brands you like or don't. Everything we design starts from your answers."
+   },
+   {
+    "n": "02",
+    "h": "Three logo and colour options",
+    "p": "Three different directions, each with its logo and colour palette, shown in use. You pick the one that feels like your business."
+   },
+   {
+    "n": "03",
+    "h": "Refined with you",
+    "p": "We refine the direction you chose with your feedback, until the logo works small on a phone and large on a sign."
+   },
+   {
+    "n": "04",
+    "h": "Colours and typography",
+    "p": "A palette and a set of fonts that work together on screens and in print, with the codes your printer and your web team need."
+   },
+   {
+    "n": "05",
+    "h": "A simple brand book",
+    "p": "A short guide that shows how to use your logo, colours and type, and what to avoid, so everyone who works on your brand gets it right."
+   },
+   {
+    "n": "06",
+    "h": "How your brand speaks",
+    "p": "A few clear rules for your words: your tone, the languages you use, and the phrases that sound like you."
+   },
+   {
+    "n": "07",
+    "h": "Every file you need",
+    "p": "Your logo in every version: colour, black and white, for screens and for print, ready to send to a printer or a web designer."
+   },
+   {
+    "n": "08",
+    "h": "Your brand in use",
+    "p": "Your new look applied to your social media profiles and the documents you use every day. <span class=\"todo\">[Business cards, email signature, signage and packaging, to confirm]</span>"
+   }
+  ]
+ },
+ "how": {
+  "eb": "How it works",
+  "h2": "How we build your brand.",
+  "steps": [
+   {
+    "n": "01",
+    "h": "You bring the name",
+    "p": "You choose your business name and register it. We start from it and design everything around it."
+   },
+   {
+    "n": "02",
+    "h": "We listen first",
+    "p": "A discovery call about your business, your customers, your competitors and the look you want."
+   },
+   {
+    "n": "03",
+    "h": "Three directions",
+    "p": "We design three logo and colour options and show each one in use, on a phone, a sign and a page."
+   },
+   {
+    "n": "04",
+    "h": "You choose, we refine",
+    "p": "You pick one direction. We refine it with you until it's right."
+   },
+   {
+    "n": "05",
+    "h": "We hand it over",
+    "p": "The final logo, colours, typography, brand book and every file, ready to use."
+   }
+  ]
+ },
+ "choose": {
+  "eb": "Before you choose",
+  "h2": "How to choose a branding agency in Mauritius.",
+  "items": [
+   {
+    "n": "01",
+    "h": "Ask how they start",
+    "p": "A good agency asks about your business and your customers before it draws anything. A logo made without questions is a guess."
+   },
+   {
+    "n": "02",
+    "h": "Ask what you receive",
+    "p": "A logo alone isn't a brand. Check that you get the colours, the fonts, the rules to use them and the files in every format."
+   },
+   {
+    "n": "03",
+    "h": "Ask who owns the files",
+    "p": "Once the work is paid, the logo and the source files should be yours. Ask for that in writing."
+   },
+   {
+    "n": "04",
+    "h": "Look at their brands in real life",
+    "p": "A logo can look good on a screen and fail on a sign or a phone. Ask to see brands they made, in use."
+   }
+  ]
+ },
+ "fl": {
+  "eb": "Part of Fledge",
+  "h2": "Your brand is how people recognise you.",
+  "p": "Your brand shows up on your website, your posts, your ads and every message you send. In Fledge, it is set up once and used the same way everywhere, so people recognise you and trust you before they ever get in touch.",
+  "link": {
+   "href": "/fledge",
+   "t": "Discover Fledge"
+  },
+  "stagesLabel": "The four stages of Fledge",
+  "stages": [
+   {
+    "n": "01",
+    "nm": "Get Found",
+    "ln": "People find you on Google, social media and ads.",
+    "on": false,
+    "this": null
+   },
+   {
+    "n": "02",
+    "nm": "Get Chosen",
+    "ln": "Your website and proof make them pick you.",
+    "on": true,
+    "this": "This service"
+   },
+   {
+    "n": "03",
+    "nm": "Get The Business",
+    "ln": "Every enquiry gets a fast reply and a follow-up.",
+    "on": false,
+    "this": null
+   },
+   {
+    "n": "04",
+    "nm": "Keep &amp; Grow",
+    "ln": "Customers come back and send others.",
+    "on": false,
+    "this": null
+   }
+  ],
+  "withCap": "Works well with",
+  "sibs": [
+   {
+    "href": "/services/web-design",
+    "img": "/uploads/1qEcUtH4lHDuqfDdPiAdS-svc-01.webp",
+    "h": "Websites and SEO",
+    "sub": "Websites and SEO that put your business in front of the right people."
+   },
+   {
+    "href": "/services/social-media-management",
+    "img": "/uploads/EmxO1Byhcnx4qSVf0rF7I-svc-06.webp",
+    "h": "Social media",
+    "sub": "Social media and content that keep your brand visible, trusted, and relevant."
+   },
+   {
+    "href": "/services/facebook-google-ads",
+    "img": "/uploads/Y3s6CQVkiDaxrn8gIgp9C-svc-02.webp",
+    "h": "Paid ads",
+    "sub": "Facebook, Instagram and Google ads that turn attention into enquiries."
+   }
+  ]
+ },
+ "proof": {
+  "eb": "Our work",
+  "h2": "A project like this.",
+  "href": "/work/case-study",
+  "ph": "<div class=\"lb\"><b>Project cover</b><span>A branding project, shown in context</span><i>16:9</i></div>",
+  "phCls": "ph r16x9",
+  "client": "<span class=\"todo\">[Client name]</span>",
+  "sector": "<span class=\"todo\">[Sector]</span>",
+  "line": "<span class=\"todo\">[What changed, in one line]</span>",
+  "note": "Client names and results appear only with each client's written consent.",
+  "link": {
+   "href": "/work",
+   "t": "See all our work"
+  }
+ },
+ "faq": {
+  "eb": "Questions",
+  "h2": "Branding questions, answered.",
+  "items": [
+   {
+    "q": "How much does a logo cost in Mauritius?",
+    "a": "It depends on what you need: a logo alone, or a full identity with colours, typography and a brand book. After a free growth call, we send a fixed price before any work starts.",
+    "open": true
+   },
+   {
+    "q": "How long does branding take?",
+    "a": "<span class=\"todo\">[About 3 to 4 weeks from the first call to the final files, to confirm.]</span> We agree the dates with you before we start.",
+    "open": false
+   },
+   {
+    "q": "Do you help choose a business name?",
+    "a": "No. The name is yours: you choose it and you register it. We start from it and design everything around it.",
+    "open": false
+   },
+   {
+    "q": "Who owns the logo and the files?",
+    "a": "<span class=\"todo\">[You do. Once the project is paid, the logo and every file are yours. To confirm.]</span>",
+    "open": false
+   },
+   {
+    "q": "How many changes can I ask for?",
+    "a": "<span class=\"todo\">[Number of rounds of changes, to confirm.]</span> We agree it before we start, and we ask the right questions first so the options are close from the start.",
+    "open": false
+   },
+   {
+    "q": "Can you refresh our existing brand?",
+    "a": "Yes. We keep what your customers already recognise and modernise the rest, so you look current without starting from zero.",
+    "open": false
+   },
+   {
+    "q": "What files will I get?",
+    "a": "Your logo in colour, black and white, as vector files for print and PNG files for screens, the colour codes for print and screen, and your brand book as a PDF.",
+    "open": false
+   },
+   {
+    "q": "Is branding worth it for a small business?",
+    "a": "A clear look that stays the same everywhere makes a small business look established, and it is often the first thing customers judge. It also makes every post, ad and page look like it comes from the same place.",
+    "open": false
+   }
+  ]
+ },
+ "cta": {
+  "eb": "Get In Touch",
+  "h2": "Tell us where your business is leaking customers",
+  "btn": {
+   "href": "/contact",
+   "t": "Book a free growth call"
+  }
+ }
+}

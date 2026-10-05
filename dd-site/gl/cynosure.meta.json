@@ -1,0 +1,1065 @@
+{
+ "params": {
+  "slug": "cynosure",
+  "driver": "ambient",
+  "liveRebuild": false,
+  "assets": [],
+  "sections": [
+   [
+    "palette",
+    [
+     "bgColor",
+     "colorA",
+     "colorB",
+     "colorC",
+     "colorD"
+    ]
+   ],
+   [
+    "field",
+    [
+     "scale",
+     "speed",
+     "flow",
+     "warp",
+     "warpScale",
+     "roughness",
+     "lacunarity",
+     "gate",
+     "gateSoft"
+    ]
+   ],
+   [
+    "burst",
+    [
+     "zoom",
+     "taper",
+     "core",
+     "coreRadius"
+    ]
+   ],
+   [
+    "tone",
+    [
+     "contrast",
+     "midpoint",
+     "glow"
+    ]
+   ],
+   [
+    "finish",
+    [
+     "grain",
+     "grainAnim",
+     "dither",
+     "vignette"
+    ]
+   ],
+   [
+    "pointer",
+    [
+     "pointerRadius",
+     "pointerFollow",
+     "pointerLift",
+     "parallax",
+     "cursor"
+    ]
+   ],
+   [
+    "perf",
+    [
+     "maxDpr"
+    ]
+   ]
+  ],
+  "params": [
+   {
+    "key": "bgColor",
+    "kind": "color",
+    "default": "#000000",
+    "structural": false
+   },
+   {
+    "key": "colorA",
+    "kind": "color",
+    "default": "#3fe07f",
+    "structural": false
+   },
+   {
+    "key": "colorB",
+    "kind": "color",
+    "default": "#e0399a",
+    "structural": false
+   },
+   {
+    "key": "colorC",
+    "kind": "color",
+    "default": "#2b6eff",
+    "structural": false
+   },
+   {
+    "key": "colorD",
+    "kind": "color",
+    "default": "#ffd93f",
+    "structural": false
+   },
+   {
+    "key": "scale",
+    "kind": "number",
+    "default": 0.2,
+    "min": 0.2,
+    "max": 6,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "speed",
+    "kind": "number",
+    "default": 0.33,
+    "min": 0,
+    "max": 0.6,
+    "step": 0.005,
+    "structural": false
+   },
+   {
+    "key": "flow",
+    "kind": "number",
+    "default": 0.35,
+    "min": 0,
+    "max": 0.8,
+    "step": 0.005,
+    "structural": false
+   },
+   {
+    "key": "warp",
+    "kind": "number",
+    "default": 1.6,
+    "min": 0,
+    "max": 4,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "warpScale",
+    "kind": "number",
+    "default": 0.6,
+    "min": 0.1,
+    "max": 4,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "roughness",
+    "kind": "number",
+    "default": 0.52,
+    "min": 0.1,
+    "max": 0.9,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "lacunarity",
+    "kind": "number",
+    "default": 1.9,
+    "min": 1.2,
+    "max": 3.2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "zoom",
+    "kind": "number",
+    "default": 0.8,
+    "min": 0,
+    "max": 1,
+    "step": 0.005,
+    "structural": false
+   },
+   {
+    "key": "taper",
+    "kind": "number",
+    "default": 0.85,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "gate",
+    "kind": "number",
+    "default": 0.5,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "gateSoft",
+    "kind": "number",
+    "default": 0.75,
+    "min": 0.02,
+    "max": 1,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "core",
+    "kind": "number",
+    "default": 0.6,
+    "min": 0,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "coreRadius",
+    "kind": "number",
+    "default": 0.7,
+    "min": 0.02,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "contrast",
+    "kind": "number",
+    "default": 1.4,
+    "min": 0.2,
+    "max": 4,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "midpoint",
+    "kind": "number",
+    "default": 0.5,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "glow",
+    "kind": "number",
+    "default": 0.9,
+    "min": 0,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "grain",
+    "kind": "number",
+    "default": 0.11,
+    "min": 0,
+    "max": 0.12,
+    "step": 0.002,
+    "structural": false
+   },
+   {
+    "key": "grainAnim",
+    "kind": "number",
+    "default": 0,
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "structural": false
+   },
+   {
+    "key": "dither",
+    "kind": "number",
+    "default": 1.2,
+    "min": 0,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "vignette",
+    "kind": "number",
+    "default": 0.2,
+    "min": 0,
+    "max": 0.8,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "cursor",
+    "kind": "number",
+    "default": 1,
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "structural": false
+   },
+   {
+    "key": "pointerRadius",
+    "kind": "number",
+    "default": 0.7,
+    "min": 0.05,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "pointerFollow",
+    "kind": "number",
+    "default": 0.85,
+    "min": 0,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "pointerLift",
+    "kind": "number",
+    "default": 0.25,
+    "min": 0,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "parallax",
+    "kind": "number",
+    "default": 0.002,
+    "min": 0,
+    "max": 0.1,
+    "step": 0.001,
+    "structural": false
+   },
+   {
+    "key": "maxDpr",
+    "kind": "number",
+    "default": 1,
+    "min": 0.5,
+    "max": 2,
+    "step": 0.1,
+    "structural": false
+   }
+  ]
+ },
+ "variantConfigs": {
+  "id": "cynosure",
+  "type": "gradient",
+  "variants": [
+   {
+    "id": "cynosure",
+    "name": "Default",
+    "isDefault": true,
+    "sortOrder": 0,
+    "hue": "teal",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#000000",
+     "colorA": "#3fe07f",
+     "colorB": "#e0399a",
+     "colorC": "#2b6eff",
+     "colorD": "#ffd93f",
+     "scale": 0.2,
+     "speed": 0.33,
+     "flow": 0.35,
+     "warp": 1.6,
+     "warpScale": 0.6,
+     "roughness": 0.52,
+     "lacunarity": 1.9,
+     "zoom": 0.8,
+     "taper": 0.85,
+     "gate": 0.5,
+     "gateSoft": 0.75,
+     "core": 0.6,
+     "coreRadius": 0.7,
+     "contrast": 1.4,
+     "midpoint": 0.5,
+     "glow": 0.9,
+     "grain": 0.11,
+     "grainAnim": 0,
+     "dither": 1.2,
+     "vignette": 0.2,
+     "cursor": 1,
+     "pointerRadius": 0.7,
+     "pointerFollow": 0.85,
+     "pointerLift": 0.25,
+     "parallax": 0.002,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#000000",
+     "colorA": "#3fe07f",
+     "colorB": "#e0399a",
+     "colorC": "#2b6eff",
+     "colorD": "#ffd93f"
+    },
+    "media": {
+     "poster": "gradients/cynosure-43fb3070f8.webp",
+     "preview": "gradients/cynosure-43fb3070f8-preview.mp4",
+     "hero": "gradients/cynosure-43fb3070f8.mp4"
+    }
+   },
+   {
+    "id": "cynosure-001",
+    "name": "001",
+    "isDefault": false,
+    "sortOrder": 1,
+    "hue": "blue",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#04143c",
+     "colorA": "#0b2e7a",
+     "colorB": "#6ec8ff",
+     "colorC": "#1e7fe0",
+     "colorD": "#eaf6ff",
+     "scale": 0.2,
+     "speed": 0.33,
+     "flow": 0.2,
+     "warp": 0.5,
+     "warpScale": 0.5,
+     "roughness": 0.44,
+     "lacunarity": 2.05,
+     "zoom": 0.95,
+     "taper": 0.2,
+     "gate": 0.58,
+     "gateSoft": 0.25,
+     "core": 0.5,
+     "coreRadius": 0.3,
+     "contrast": 2.6,
+     "midpoint": 0.62,
+     "glow": 0.6,
+     "grain": 0.015,
+     "grainAnim": 0,
+     "dither": 1.1,
+     "vignette": 0.3,
+     "cursor": 1,
+     "pointerRadius": 0.7,
+     "pointerFollow": 0.85,
+     "pointerLift": 0.2,
+     "parallax": 0.0023,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#04143c",
+     "colorA": "#0b2e7a",
+     "colorB": "#6ec8ff",
+     "colorC": "#1e7fe0",
+     "colorD": "#eaf6ff"
+    },
+    "media": {
+     "poster": "gradients/cynosure-43fb3070f8/9aa039ce.webp",
+     "preview": "gradients/cynosure-43fb3070f8/9aa039ce-preview.mp4",
+     "hero": "gradients/cynosure-43fb3070f8/9aa039ce.mp4"
+    }
+   },
+   {
+    "id": "cynosure-002",
+    "name": "002",
+    "isDefault": false,
+    "sortOrder": 2,
+    "hue": "green",
+    "tone": "light",
+    "saturation": "muted",
+    "config": {
+     "bgColor": "#f5f3e4",
+     "colorA": "#dfe6c8",
+     "colorB": "#8fa96b",
+     "colorC": "#c9d6a8",
+     "colorD": "#5e7a45",
+     "scale": 0.2,
+     "speed": 0.33,
+     "flow": 0.28,
+     "warp": 2,
+     "warpScale": 1.2,
+     "roughness": 0.62,
+     "lacunarity": 2.3,
+     "zoom": 0.45,
+     "taper": 0.45,
+     "gate": 0.52,
+     "gateSoft": 0.55,
+     "core": 0.4,
+     "coreRadius": 0.5,
+     "contrast": 1.5,
+     "midpoint": 0.5,
+     "glow": 0.2,
+     "grain": 0.05,
+     "grainAnim": 0,
+     "dither": 1.1,
+     "vignette": 0.18,
+     "cursor": 1,
+     "pointerRadius": 0.7,
+     "pointerFollow": 0.85,
+     "pointerLift": 0.2,
+     "parallax": 0.0023,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#f5f3e4",
+     "colorA": "#dfe6c8",
+     "colorB": "#8fa96b",
+     "colorC": "#c9d6a8",
+     "colorD": "#5e7a45"
+    },
+    "media": {
+     "poster": "gradients/cynosure-43fb3070f8/5e0fef62.webp",
+     "preview": "gradients/cynosure-43fb3070f8/5e0fef62-preview.mp4",
+     "hero": "gradients/cynosure-43fb3070f8/5e0fef62.mp4"
+    }
+   },
+   {
+    "id": "cynosure-003",
+    "name": "003",
+    "isDefault": false,
+    "sortOrder": 3,
+    "hue": "blue",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#010b24",
+     "colorA": "#071a4e",
+     "colorB": "#2e6bff",
+     "colorC": "#0a2a7a",
+     "colorD": "#cfe0ff",
+     "scale": 0.2,
+     "speed": 0.33,
+     "flow": 0.2,
+     "warp": 0.8,
+     "warpScale": 0.6,
+     "roughness": 0.46,
+     "lacunarity": 2,
+     "zoom": 0.35,
+     "taper": 0.75,
+     "gate": 0.5,
+     "gateSoft": 0.5,
+     "core": 1.3,
+     "coreRadius": 0.6,
+     "contrast": 2,
+     "midpoint": 0.58,
+     "glow": 0.85,
+     "grain": 0.02,
+     "grainAnim": 0,
+     "dither": 1.1,
+     "vignette": 0.78,
+     "cursor": 1,
+     "pointerRadius": 0.7,
+     "pointerFollow": 0.85,
+     "pointerLift": 0.35,
+     "parallax": 0.0023,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#010b24",
+     "colorA": "#071a4e",
+     "colorB": "#2e6bff",
+     "colorC": "#0a2a7a",
+     "colorD": "#cfe0ff"
+    },
+    "media": {
+     "poster": "gradients/cynosure-43fb3070f8/72071f37.webp",
+     "preview": "gradients/cynosure-43fb3070f8/72071f37-preview.mp4",
+     "hero": "gradients/cynosure-43fb3070f8/72071f37.mp4"
+    }
+   },
+   {
+    "id": "cynosure-004",
+    "name": "004",
+    "isDefault": false,
+    "sortOrder": 4,
+    "hue": "orange",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#0a0708",
+     "colorA": "#3d0a06",
+     "colorB": "#f26a1b",
+     "colorC": "#b22208",
+     "colorD": "#fbbf5c",
+     "scale": 0.2,
+     "speed": 0.33,
+     "flow": 0.26,
+     "warp": 1.1,
+     "warpScale": 0.8,
+     "roughness": 0.5,
+     "lacunarity": 2.15,
+     "zoom": 0.6,
+     "taper": 0.6,
+     "gate": 0.62,
+     "gateSoft": 0.35,
+     "core": 0.9,
+     "coreRadius": 0.45,
+     "contrast": 3,
+     "midpoint": 0.72,
+     "glow": 0.7,
+     "grain": 0.03,
+     "grainAnim": 0,
+     "dither": 1.1,
+     "vignette": 0.4,
+     "cursor": 1,
+     "pointerRadius": 0.7,
+     "pointerFollow": 0.85,
+     "pointerLift": 0.3,
+     "parallax": 0.0023,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#0a0708",
+     "colorA": "#3d0a06",
+     "colorB": "#f26a1b",
+     "colorC": "#b22208",
+     "colorD": "#fbbf5c"
+    },
+    "media": {
+     "poster": "gradients/cynosure-43fb3070f8/f91f45d1.webp",
+     "preview": "gradients/cynosure-43fb3070f8/f91f45d1-preview.mp4",
+     "hero": "gradients/cynosure-43fb3070f8/f91f45d1.mp4"
+    }
+   },
+   {
+    "id": "cynosure-005",
+    "name": "005",
+    "isDefault": false,
+    "sortOrder": 5,
+    "hue": "indigo",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#141033",
+     "colorA": "#2a1f5c",
+     "colorB": "#b7aee8",
+     "colorC": "#5b4bae",
+     "colorD": "#e8e4f7",
+     "scale": 0.2,
+     "speed": 0.33,
+     "flow": 0.42,
+     "warp": 2.2,
+     "warpScale": 0.85,
+     "roughness": 0.55,
+     "lacunarity": 1.9,
+     "zoom": 0.55,
+     "taper": 0.6,
+     "gate": 0.52,
+     "gateSoft": 0.62,
+     "core": 0.6,
+     "coreRadius": 0.7,
+     "contrast": 1.7,
+     "midpoint": 0.48,
+     "glow": 0.5,
+     "grain": 0.02,
+     "grainAnim": 0,
+     "dither": 1.1,
+     "vignette": 0.26,
+     "cursor": 1,
+     "pointerRadius": 0.7,
+     "pointerFollow": 0.85,
+     "pointerLift": 0.3,
+     "parallax": 0.0023,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#141033",
+     "colorA": "#2a1f5c",
+     "colorB": "#b7aee8",
+     "colorC": "#5b4bae",
+     "colorD": "#e8e4f7"
+    },
+    "media": {
+     "poster": "gradients/cynosure-43fb3070f8/c1c7bb2d.webp",
+     "preview": "gradients/cynosure-43fb3070f8/c1c7bb2d-preview.mp4",
+     "hero": "gradients/cynosure-43fb3070f8/c1c7bb2d.mp4"
+    }
+   },
+   {
+    "id": "cynosure-006",
+    "name": "006",
+    "isDefault": false,
+    "sortOrder": 6,
+    "hue": "indigo",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#000000",
+     "colorA": "#1e5aff",
+     "colorB": "#ff3b1f",
+     "colorC": "#c46bff",
+     "colorD": "#66ff66",
+     "scale": 0.2,
+     "speed": 0.33,
+     "flow": 0.2,
+     "warp": 0.7,
+     "warpScale": 0.6,
+     "roughness": 0.46,
+     "lacunarity": 2.2,
+     "zoom": 0.3,
+     "taper": 0.85,
+     "gate": 0.55,
+     "gateSoft": 0.18,
+     "core": 1.4,
+     "coreRadius": 0.45,
+     "contrast": 3.4,
+     "midpoint": 0.55,
+     "glow": 0.9,
+     "grain": 0.01,
+     "grainAnim": 0,
+     "dither": 1,
+     "vignette": 0.55,
+     "cursor": 1,
+     "pointerRadius": 0.7,
+     "pointerFollow": 0.85,
+     "pointerLift": 0.4,
+     "parallax": 0.0023,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#000000",
+     "colorA": "#1e5aff",
+     "colorB": "#ff3b1f",
+     "colorC": "#c46bff",
+     "colorD": "#66ff66"
+    },
+    "media": {
+     "poster": "gradients/cynosure-43fb3070f8/97cc0b36.webp",
+     "preview": "gradients/cynosure-43fb3070f8/97cc0b36-preview.mp4",
+     "hero": "gradients/cynosure-43fb3070f8/97cc0b36.mp4"
+    }
+   },
+   {
+    "id": "cynosure-007",
+    "name": "007",
+    "isDefault": false,
+    "sortOrder": 7,
+    "hue": "indigo",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#05040d",
+     "colorA": "#1a1030",
+     "colorB": "#b79bff",
+     "colorC": "#7b4bd9",
+     "colorD": "#e9e0ff",
+     "scale": 0.2,
+     "speed": 0.33,
+     "flow": 0.25,
+     "warp": 1,
+     "warpScale": 0.7,
+     "roughness": 0.48,
+     "lacunarity": 2,
+     "zoom": 0.7,
+     "taper": 0.5,
+     "gate": 0.54,
+     "gateSoft": 0.5,
+     "core": 0,
+     "coreRadius": 0.35,
+     "contrast": 2.2,
+     "midpoint": 0.55,
+     "glow": 0,
+     "grain": 0.02,
+     "grainAnim": 0,
+     "dither": 1.1,
+     "vignette": 0.45,
+     "cursor": 1,
+     "pointerRadius": 0.7,
+     "pointerFollow": 0.85,
+     "pointerLift": 0,
+     "parallax": 0.0023,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#05040d",
+     "colorA": "#1a1030",
+     "colorB": "#b79bff",
+     "colorC": "#7b4bd9",
+     "colorD": "#e9e0ff"
+    },
+    "media": {
+     "poster": "gradients/cynosure-43fb3070f8/96a36210.webp",
+     "preview": "gradients/cynosure-43fb3070f8/96a36210-preview.mp4",
+     "hero": "gradients/cynosure-43fb3070f8/96a36210.mp4"
+    }
+   },
+   {
+    "id": "cynosure-008",
+    "name": "008",
+    "isDefault": false,
+    "sortOrder": 8,
+    "hue": "violet",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#0a0a0c",
+     "colorA": "#3a3fa8",
+     "colorB": "#e0409a",
+     "colorC": "#8b3fd9",
+     "colorD": "#ffd9ee",
+     "scale": 0.2,
+     "speed": 0.33,
+     "flow": 0.3,
+     "warp": 1.2,
+     "warpScale": 0.9,
+     "roughness": 0.5,
+     "lacunarity": 2,
+     "zoom": 0.5,
+     "taper": 0.7,
+     "gate": 0.5,
+     "gateSoft": 0.5,
+     "core": 1.2,
+     "coreRadius": 0.55,
+     "contrast": 1.6,
+     "midpoint": 0.5,
+     "glow": 0.8,
+     "grain": 0.02,
+     "grainAnim": 0,
+     "dither": 1.1,
+     "vignette": 0.72,
+     "cursor": 1,
+     "pointerRadius": 0.7,
+     "pointerFollow": 0.85,
+     "pointerLift": 0.3,
+     "parallax": 0.0023,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#0a0a0c",
+     "colorA": "#3a3fa8",
+     "colorB": "#e0409a",
+     "colorC": "#8b3fd9",
+     "colorD": "#ffd9ee"
+    },
+    "media": {
+     "poster": "gradients/cynosure-43fb3070f8/720e1a83.webp",
+     "preview": "gradients/cynosure-43fb3070f8/720e1a83-preview.mp4",
+     "hero": "gradients/cynosure-43fb3070f8/720e1a83.mp4"
+    }
+   },
+   {
+    "id": "cynosure-009",
+    "name": "009",
+    "isDefault": false,
+    "sortOrder": 9,
+    "hue": "violet",
+    "tone": "light",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#f0e8f5",
+     "colorA": "#c8d8f5",
+     "colorB": "#ff7bc8",
+     "colorC": "#a8c8f0",
+     "colorD": "#ffffff",
+     "scale": 0.2,
+     "speed": 0.33,
+     "flow": 0.3,
+     "warp": 1.8,
+     "warpScale": 0.55,
+     "roughness": 0.5,
+     "lacunarity": 1.85,
+     "zoom": 0.5,
+     "taper": 0.6,
+     "gate": 0.5,
+     "gateSoft": 0.85,
+     "core": 0.3,
+     "coreRadius": 0.8,
+     "contrast": 1.1,
+     "midpoint": 0.5,
+     "glow": 0.35,
+     "grain": 0.03,
+     "grainAnim": 0,
+     "dither": 1.1,
+     "vignette": 0.12,
+     "cursor": 1,
+     "pointerRadius": 0.7,
+     "pointerFollow": 0.85,
+     "pointerLift": 0.2,
+     "parallax": 0.0023,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#f0e8f5",
+     "colorA": "#c8d8f5",
+     "colorB": "#ff7bc8",
+     "colorC": "#a8c8f0",
+     "colorD": "#ffffff"
+    },
+    "media": {
+     "poster": "gradients/cynosure-43fb3070f8/4152e204.webp",
+     "preview": "gradients/cynosure-43fb3070f8/4152e204-preview.mp4",
+     "hero": "gradients/cynosure-43fb3070f8/4152e204.mp4"
+    }
+   },
+   {
+    "id": "cynosure-010",
+    "name": "010",
+    "isDefault": false,
+    "sortOrder": 10,
+    "hue": "teal",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#000000",
+     "colorA": "#0b2b12",
+     "colorB": "#7fd93f",
+     "colorC": "#1e5ac8",
+     "colorD": "#ddebff",
+     "scale": 0.2,
+     "speed": 0.33,
+     "flow": 0.22,
+     "warp": 0.9,
+     "warpScale": 0.7,
+     "roughness": 0.48,
+     "lacunarity": 2.1,
+     "zoom": 0.25,
+     "taper": 0.9,
+     "gate": 0.55,
+     "gateSoft": 0.45,
+     "core": 1.6,
+     "coreRadius": 0.5,
+     "contrast": 2.2,
+     "midpoint": 0.6,
+     "glow": 1.2,
+     "grain": 0.01,
+     "grainAnim": 0,
+     "dither": 1,
+     "vignette": 0.5,
+     "cursor": 1,
+     "pointerRadius": 0.7,
+     "pointerFollow": 0.85,
+     "pointerLift": 0.4,
+     "parallax": 0.0023,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#000000",
+     "colorA": "#0b2b12",
+     "colorB": "#7fd93f",
+     "colorC": "#1e5ac8",
+     "colorD": "#ddebff"
+    },
+    "media": {
+     "poster": "gradients/cynosure-43fb3070f8/125a04be.webp",
+     "preview": "gradients/cynosure-43fb3070f8/125a04be-preview.mp4",
+     "hero": "gradients/cynosure-43fb3070f8/125a04be.mp4"
+    }
+   },
+   {
+    "id": "cynosure-011",
+    "name": "011",
+    "isDefault": false,
+    "sortOrder": 11,
+    "hue": "red",
+    "tone": "light",
+    "saturation": "muted",
+    "config": {
+     "bgColor": "#f2c9c0",
+     "colorA": "#f5b8ae",
+     "colorB": "#e8a6b4",
+     "colorC": "#b9b4e8",
+     "colorD": "#fdf0ec",
+     "scale": 0.2,
+     "speed": 0.33,
+     "flow": 0.24,
+     "warp": 1.3,
+     "warpScale": 0.6,
+     "roughness": 0.5,
+     "lacunarity": 1.8,
+     "zoom": 0.4,
+     "taper": 0.5,
+     "gate": 0.5,
+     "gateSoft": 0.8,
+     "core": 0.15,
+     "coreRadius": 0.6,
+     "contrast": 0.5,
+     "midpoint": 0.5,
+     "glow": 0.1,
+     "grain": 0.115,
+     "grainAnim": 0,
+     "dither": 1.3,
+     "vignette": 0.1,
+     "cursor": 1,
+     "pointerRadius": 0.7,
+     "pointerFollow": 0.85,
+     "pointerLift": 0.15,
+     "parallax": 0.0023,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#f2c9c0",
+     "colorA": "#f5b8ae",
+     "colorB": "#e8a6b4",
+     "colorC": "#b9b4e8",
+     "colorD": "#fdf0ec"
+    },
+    "media": {
+     "poster": "gradients/cynosure-43fb3070f8/33187fca.webp",
+     "preview": "gradients/cynosure-43fb3070f8/33187fca-preview.mp4",
+     "hero": "gradients/cynosure-43fb3070f8/33187fca.mp4"
+    }
+   },
+   {
+    "id": "cynosure-012",
+    "name": "012",
+    "isDefault": false,
+    "sortOrder": 12,
+    "hue": "red",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#04050b",
+     "colorA": "#0a0f1e",
+     "colorB": "#f0902a",
+     "colorC": "#2b4fa0",
+     "colorD": "#fff6e6",
+     "scale": 1.15,
+     "speed": 0.33,
+     "flow": 0.16,
+     "warp": 0.85,
+     "warpScale": 0.7,
+     "roughness": 0.46,
+     "lacunarity": 2.05,
+     "zoom": 0.55,
+     "taper": 0.85,
+     "gate": 0.52,
+     "gateSoft": 0.44,
+     "core": 0.22,
+     "coreRadius": 0.13,
+     "contrast": 1,
+     "midpoint": 0.5,
+     "glow": 0.16,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 1.1,
+     "vignette": 0.24,
+     "cursor": 1,
+     "pointerRadius": 0.7,
+     "pointerFollow": 0.85,
+     "pointerLift": 0.2,
+     "parallax": 0.0023,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#04050b",
+     "colorA": "#0a0f1e",
+     "colorB": "#f0902a",
+     "colorC": "#2b4fa0",
+     "colorD": "#fff6e6"
+    },
+    "media": {
+     "poster": "gradients/cynosure-43fb3070f8/fde49f3f.webp",
+     "preview": "gradients/cynosure-43fb3070f8/fde49f3f-preview.mp4",
+     "hero": "gradients/cynosure-43fb3070f8/fde49f3f.mp4"
+    }
+   }
+  ]
+ },
+ "tint": {
+  "bgColor": "#08080a",
+  "colorC": "#f3f1ea",
+  "colorD": "#807f78",
+  "colorA": "#ff3b1d"
+ },
+ "contract": {
+  "mutable": [
+   "skin"
+  ],
+  "preserve": [
+   "motion"
+  ],
+  "notes": "A radial zoom smear where every streak points at the cursor, so moving the hand re-aims the entire frame at once. That is the asset \u2014 without a pointer it is a static starburst. Excellent as a hero, poor as a passive background."
+ }
+}

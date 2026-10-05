@@ -1,0 +1,290 @@
+{
+ "crumb": "Automation and CRM",
+ "eyebrow": "Automation and CRM · Mauritius",
+ "h1": "Marketing automation and CRM in Mauritius, so no enquiry slips through.",
+ "lead": "Enquiries come in by WhatsApp, Facebook, email, phone and your website. Some get answered, some get forgotten. We put them all in one place, reply in minutes, and follow up automatically until each person says yes or no.",
+ "btns": [
+  {
+   "href": "/contact",
+   "t": "Book a free growth call",
+   "p": true
+  },
+  {
+   "href": "/fledge",
+   "t": "See Fledge, the full system",
+   "p": false
+  }
+ ],
+ "partCap": "Part of Fledge ·",
+ "partTags": [
+  "Stage 03 · Get The Business",
+  "Stage 04 · Keep &amp; Grow"
+ ],
+ "banner": "<div class=\"lb\"><b>CRM pipeline</b><span>Enquiries moving through the stages of a sale, on a laptop</span><i>21:9</i></div>",
+ "bannerCls": "ph r21x9",
+ "plain": {
+  "eb": "In plain terms",
+  "h2": "What you get, in plain terms.",
+  "p": "A CRM is one place where every enquiry and every customer is kept, with their full history. Automation is the work it does on its own: replies, reminders, follow-ups and review requests. We set up both, connect them to your website, your pages and your phone, and show your team how to use them.",
+  "facts": [
+   {
+    "k": "Who it's for",
+    "v": "Businesses that lose track of enquiries, or spend hours chasing them by hand."
+   },
+   {
+    "k": "What you get",
+    "v": "A CRM set up for you, every enquiry in one place, instant alerts, follow-up, online booking, review requests."
+   },
+   {
+    "k": "Built on",
+    "v": "A custom-built CRM, or the CRM you already use if it does the job."
+   },
+   {
+    "k": "How you pay",
+    "v": "A setup fee, then <span class=\"todo\">[a monthly fee for the CRM and support, to confirm]</span>."
+   }
+  ]
+ },
+ "sf": {
+  "h2": "Sound familiar?",
+  "q": [
+   "\"Enquiries come in on five channels and nobody sees all of them.\"",
+   "\"We send quotes and forget to follow up.\"",
+   "\"Our customer list is a spreadsheet, a phone and someone's memory.\"",
+   "\"Half the week goes on copying information from one place to another.\""
+  ]
+ },
+ "inc": {
+  "eb": "What's included",
+  "h2": "What we set up.",
+  "items": [
+   {
+    "n": "01",
+    "h": "One place for every enquiry",
+    "p": "WhatsApp, Facebook, Instagram, email, your website forms and calls, in one inbox, with the full history of each person."
+   },
+   {
+    "n": "02",
+    "h": "A clear view of every sale",
+    "p": "Every enquiry and where it stands: new, contacted, quote sent, won or lost. Nothing hides in someone's inbox."
+   },
+   {
+    "n": "03",
+    "h": "Instant alerts",
+    "p": "Your team gets a WhatsApp alert the moment a real enquiry comes in, with the details."
+   },
+   {
+    "n": "04",
+    "h": "Questions that filter enquiries",
+    "p": "Forms that ask the right questions first, so your team spends its time on the people ready to buy."
+   },
+   {
+    "n": "05",
+    "h": "Follow-up that runs on its own",
+    "p": "Reminders by email, SMS or WhatsApp until the person decides. Your team steps in when it matters."
+   },
+   {
+    "n": "06",
+    "h": "Online booking",
+    "p": "A calendar on your website and pages where customers book a call or an appointment, with automatic reminders."
+   },
+   {
+    "n": "07",
+    "h": "Review requests",
+    "p": "After each sale, customers are asked for a Google review at the right moment."
+   },
+   {
+    "n": "08",
+    "h": "Email campaigns",
+    "p": "News and offers sent to past customers and to people who enquired but didn't buy yet."
+   }
+  ]
+ },
+ "how": {
+  "eb": "How it works",
+  "h2": "How we set it up.",
+  "steps": [
+   {
+    "n": "01",
+    "h": "We map how enquiries come in today",
+    "p": "Every channel, every step, and where things get lost."
+   },
+   {
+    "n": "02",
+    "h": "We design the flow",
+    "p": "What happens when someone enquires, who does what, and what runs on its own."
+   },
+   {
+    "n": "03",
+    "h": "We set it up and connect it",
+    "p": "CRM, website, pages, phone and calendar, connected and tested."
+   },
+   {
+    "n": "04",
+    "h": "We show your team how to use it",
+    "p": "Short sessions with your team, so the system is used from the first day."
+   },
+   {
+    "n": "05",
+    "h": "We watch and improve",
+    "p": "We check what's working and adjust the messages and the timing."
+   }
+  ]
+ },
+ "choose": {
+  "eb": "Before you choose",
+  "h2": "How to choose a CRM and automation partner in Mauritius.",
+  "items": [
+   {
+    "n": "01",
+    "h": "Start from how you sell",
+    "p": "The right setup follows your sales process, not the other way round. Ask a partner to map how enquiries reach you before they suggest a tool."
+   },
+   {
+    "n": "02",
+    "h": "Ask who sets it up and who supports it",
+    "p": "A CRM nobody looks after goes stale in months. Find out who builds it, who fixes it and who answers your team's questions."
+   },
+   {
+    "n": "03",
+    "h": "Check it connects to WhatsApp",
+    "p": "In Mauritius, many customers enquire on WhatsApp first. Make sure your CRM brings those conversations in with the rest."
+   },
+   {
+    "n": "04",
+    "h": "Ask how your team will learn it",
+    "p": "A system only works if your team uses it. Ask how they will be trained, and what happens when someone new joins."
+   }
+  ]
+ },
+ "fl": {
+  "eb": "Part of Fledge",
+  "h2": "The part that turns attention into sales.",
+  "p": "Your ads, website and social media bring people in. Your CRM and follow-up make sure each one gets an answer and a next step. In Fledge, they are built together, so you can see where every sale came from.",
+  "link": {
+   "href": "/fledge",
+   "t": "Discover Fledge"
+  },
+  "stagesLabel": "The four stages of Fledge",
+  "stages": [
+   {
+    "n": "01",
+    "nm": "Get Found",
+    "ln": "People find you on Google, social media and ads.",
+    "on": false,
+    "this": null
+   },
+   {
+    "n": "02",
+    "nm": "Get Chosen",
+    "ln": "Your website and proof make them pick you.",
+    "on": false,
+    "this": null
+   },
+   {
+    "n": "03",
+    "nm": "Get The Business",
+    "ln": "Every enquiry gets a fast reply and a follow-up.",
+    "on": true,
+    "this": "This service"
+   },
+   {
+    "n": "04",
+    "nm": "Keep &amp; Grow",
+    "ln": "Customers come back and send others.",
+    "on": true,
+    "this": "This service"
+   }
+  ],
+  "withCap": "Works well with",
+  "sibs": [
+   {
+    "href": "/services/ai-chatbots",
+    "img": "/uploads/nCS7Kte6VC1XCoepoHERN-svc-05.webp",
+    "h": "AI implementation",
+    "sub": "AI assistants that reply to your customers on WhatsApp and your website, day and night."
+   },
+   {
+    "href": "/services/web-design",
+    "img": "/uploads/1qEcUtH4lHDuqfDdPiAdS-svc-01.webp",
+    "h": "Websites and SEO",
+    "sub": "Websites and SEO that put your business in front of the right people."
+   },
+   {
+    "href": "/services/facebook-google-ads",
+    "img": "/uploads/Y3s6CQVkiDaxrn8gIgp9C-svc-02.webp",
+    "h": "Paid ads",
+    "sub": "Facebook, Instagram and Google ads that turn attention into enquiries."
+   }
+  ]
+ },
+ "proof": {
+  "eb": "Our work",
+  "h2": "A project like this.",
+  "href": "/work/case-study",
+  "ph": "<div class=\"lb\"><b>Project cover</b><span>An automation and CRM project, shown in context</span><i>16:9</i></div>",
+  "phCls": "ph r16x9",
+  "client": "<span class=\"todo\">[Client name]</span>",
+  "sector": "<span class=\"todo\">[Sector]</span>",
+  "line": "<span class=\"todo\">[What changed, in one line]</span>",
+  "note": "Client names and results appear only with each client's written consent.",
+  "link": {
+   "href": "/work",
+   "t": "See all our work"
+  }
+ },
+ "faq": {
+  "eb": "Questions",
+  "h2": "CRM and automation questions, answered.",
+  "items": [
+   {
+    "q": "What is a CRM, in plain words?",
+    "a": "One place where you keep every enquiry and every customer, with their messages, calls, quotes and history. Your whole team sees the same thing.",
+    "open": true
+   },
+   {
+    "q": "Which CRM do you use?",
+    "a": "We build you a custom CRM that brings your inbox, pipeline, booking, email and automation into one place. If you already use a CRM, we look at it first and tell you honestly whether to keep it.",
+    "open": false
+   },
+   {
+    "q": "Can it work with WhatsApp?",
+    "a": "Yes. WhatsApp messages can land in the same inbox as everything else, and your team can get a WhatsApp alert for every new enquiry.",
+    "open": false
+   },
+   {
+    "q": "Will my customers know the replies are automatic?",
+    "a": "The first reply tells them you have their message and what happens next. Real conversations stay with your team. If you want an assistant that answers questions too, see <a href=\"/services/ai-chatbots\">AI implementation</a>.",
+    "open": false
+   },
+   {
+    "q": "Do I need to change how my team works?",
+    "a": "A little, for the better. We build around how you already sell, then show your team the new way. Most of what it removes is copying, chasing and remembering.",
+    "open": false
+   },
+   {
+    "q": "How long does the setup take?",
+    "a": "<span class=\"todo\">[About 2 to 3 weeks, to confirm.]</span> It depends on how many channels and steps we connect.",
+    "open": false
+   },
+   {
+    "q": "Can you move our contacts from spreadsheets?",
+    "a": "Yes. We bring your existing contacts and customers into the CRM, cleaned up, so your team starts with everything in one place.",
+    "open": false
+   },
+   {
+    "q": "Is this only for large businesses?",
+    "a": "No. Small teams often gain the most, because every enquiry counts and nobody has time to chase them by hand.",
+    "open": false
+   }
+  ]
+ },
+ "cta": {
+  "eb": "Get In Touch",
+  "h2": "Tell us where your business is leaking customers",
+  "btn": {
+   "href": "/contact",
+   "t": "Book a free growth call"
+  }
+ }
+}

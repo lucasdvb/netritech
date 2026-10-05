@@ -1,0 +1,1041 @@
+{
+ "params": {
+  "slug": "chatoyance",
+  "driver": "ambient",
+  "liveRebuild": false,
+  "assets": [],
+  "sections": [
+   [
+    "palette",
+    [
+     "bgColor",
+     "colorA",
+     "colorB",
+     "colorC",
+     "colorD"
+    ]
+   ],
+   [
+    "fibres",
+    [
+     "scale",
+     "speed",
+     "angle",
+     "wander",
+     "wanderScale",
+     "fibreFreq",
+     "fibreGain",
+     "fibreLac",
+     "twist",
+     "tilt"
+    ]
+   ],
+   [
+    "light",
+    [
+     "lightAz",
+     "lightHeight",
+     "sheen",
+     "specular",
+     "diffuse",
+     "ambient",
+     "falloff"
+    ]
+   ],
+   [
+    "tone",
+    [
+     "contrast",
+     "midpoint",
+     "sink",
+     "glow"
+    ]
+   ],
+   [
+    "finish",
+    [
+     "grain",
+     "grainAnim",
+     "dither",
+     "vignette"
+    ]
+   ],
+   [
+    "pointer",
+    [
+     "pointerRadius",
+     "pointerComb",
+     "pointerLift",
+     "cursor"
+    ]
+   ],
+   [
+    "perf",
+    [
+     "maxDpr"
+    ]
+   ]
+  ],
+  "params": [
+   {
+    "key": "bgColor",
+    "kind": "color",
+    "default": "#070313",
+    "structural": false
+   },
+   {
+    "key": "colorA",
+    "kind": "color",
+    "default": "#1a0f33",
+    "structural": false
+   },
+   {
+    "key": "colorB",
+    "kind": "color",
+    "default": "#6b2bc8",
+    "structural": false
+   },
+   {
+    "key": "colorC",
+    "kind": "color",
+    "default": "#e02bc8",
+    "structural": false
+   },
+   {
+    "key": "colorD",
+    "kind": "color",
+    "default": "#f9d9ff",
+    "structural": false
+   },
+   {
+    "key": "scale",
+    "kind": "number",
+    "default": 1.75,
+    "min": 0.2,
+    "max": 4,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "speed",
+    "kind": "number",
+    "default": 0.33,
+    "min": 0,
+    "max": 0.6,
+    "step": 0.005,
+    "structural": false
+   },
+   {
+    "key": "angle",
+    "kind": "number",
+    "default": -1.18,
+    "min": -3.15,
+    "max": 3.15,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "wander",
+    "kind": "number",
+    "default": 0.44,
+    "min": 0,
+    "max": 1.6,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "wanderScale",
+    "kind": "number",
+    "default": 0.82,
+    "min": 0.1,
+    "max": 3,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "fibreFreq",
+    "kind": "number",
+    "default": 7.8,
+    "min": 1,
+    "max": 24,
+    "step": 0.1,
+    "structural": false
+   },
+   {
+    "key": "fibreGain",
+    "kind": "number",
+    "default": 0.52,
+    "min": 0.1,
+    "max": 0.9,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "fibreLac",
+    "kind": "number",
+    "default": 2.15,
+    "min": 1.2,
+    "max": 3.2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "twist",
+    "kind": "number",
+    "default": 1.3,
+    "min": 0,
+    "max": 3,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "tilt",
+    "kind": "number",
+    "default": 0.9,
+    "min": 0,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "lightAz",
+    "kind": "number",
+    "default": 0.88,
+    "min": -3.15,
+    "max": 3.15,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "lightHeight",
+    "kind": "number",
+    "default": 0.34,
+    "min": 0.02,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "sheen",
+    "kind": "number",
+    "default": 76,
+    "min": 2,
+    "max": 120,
+    "step": 0.5,
+    "structural": false
+   },
+   {
+    "key": "specular",
+    "kind": "number",
+    "default": 0.6,
+    "min": 0,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "diffuse",
+    "kind": "number",
+    "default": 0.08,
+    "min": 0,
+    "max": 1.2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "ambient",
+    "kind": "number",
+    "default": 0.03,
+    "min": 0,
+    "max": 0.6,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "falloff",
+    "kind": "number",
+    "default": 0.85,
+    "min": 0,
+    "max": 1.2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "contrast",
+    "kind": "number",
+    "default": 1.2,
+    "min": 0.2,
+    "max": 4,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "midpoint",
+    "kind": "number",
+    "default": 0.52,
+    "min": 0,
+    "max": 1,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "sink",
+    "kind": "number",
+    "default": 0.22,
+    "min": 0,
+    "max": 0.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "glow",
+    "kind": "number",
+    "default": 0.22,
+    "min": 0,
+    "max": 1.5,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "grain",
+    "kind": "number",
+    "default": 0,
+    "min": 0,
+    "max": 0.12,
+    "step": 0.002,
+    "structural": false
+   },
+   {
+    "key": "grainAnim",
+    "kind": "number",
+    "default": 0,
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "structural": false
+   },
+   {
+    "key": "dither",
+    "kind": "number",
+    "default": 1.45,
+    "min": 0,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "vignette",
+    "kind": "number",
+    "default": 0.16,
+    "min": 0,
+    "max": 0.8,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "cursor",
+    "kind": "number",
+    "default": 1,
+    "min": 0,
+    "max": 1,
+    "step": 1,
+    "structural": false
+   },
+   {
+    "key": "pointerRadius",
+    "kind": "number",
+    "default": 0.5,
+    "min": 0.05,
+    "max": 2,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "pointerComb",
+    "kind": "number",
+    "default": 0.66,
+    "min": 0,
+    "max": 1.6,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "pointerLift",
+    "kind": "number",
+    "default": 0.18,
+    "min": 0,
+    "max": 0.6,
+    "step": 0.01,
+    "structural": false
+   },
+   {
+    "key": "maxDpr",
+    "kind": "number",
+    "default": 1,
+    "min": 0.5,
+    "max": 2,
+    "step": 0.1,
+    "structural": false
+   }
+  ]
+ },
+ "variantConfigs": {
+  "id": "chatoyance",
+  "type": "gradient",
+  "variants": [
+   {
+    "id": "chatoyance",
+    "name": "Default",
+    "isDefault": true,
+    "sortOrder": 0,
+    "hue": "violet",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#070313",
+     "colorA": "#1a0f33",
+     "colorB": "#6b2bc8",
+     "colorC": "#e02bc8",
+     "colorD": "#f9d9ff",
+     "scale": 1.75,
+     "speed": 0.33,
+     "angle": -1.18,
+     "wander": 0.44,
+     "wanderScale": 0.82,
+     "fibreFreq": 7.8,
+     "fibreGain": 0.52,
+     "fibreLac": 2.15,
+     "twist": 1.3,
+     "tilt": 0.9,
+     "lightAz": 0.88,
+     "lightHeight": 0.34,
+     "sheen": 76,
+     "specular": 0.6,
+     "diffuse": 0.08,
+     "ambient": 0.03,
+     "falloff": 0.85,
+     "contrast": 1.2,
+     "midpoint": 0.52,
+     "sink": 0.22,
+     "glow": 0.22,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 1.45,
+     "vignette": 0.16,
+     "cursor": 1,
+     "pointerRadius": 0.5,
+     "pointerComb": 0.66,
+     "pointerLift": 0.18,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#070313",
+     "colorA": "#1a0f33",
+     "colorB": "#6b2bc8",
+     "colorC": "#e02bc8",
+     "colorD": "#f9d9ff"
+    },
+    "media": {
+     "poster": "gradients/chatoyance-733996919c.webp",
+     "preview": "gradients/chatoyance-733996919c-preview.mp4",
+     "hero": "gradients/chatoyance-733996919c.mp4"
+    }
+   },
+   {
+    "id": "chatoyance-001",
+    "name": "001",
+    "isDefault": false,
+    "sortOrder": 1,
+    "hue": "blue",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#03110f",
+     "colorA": "#0a2f2b",
+     "colorB": "#3fc8c0",
+     "colorC": "#c8e0d0",
+     "colorD": "#f04b8b",
+     "scale": 1.62,
+     "speed": 0.33,
+     "angle": -1.92,
+     "wander": 0.3,
+     "wanderScale": 0.72,
+     "fibreFreq": 8.8,
+     "fibreGain": 0.49,
+     "fibreLac": 2.2,
+     "twist": 0.95,
+     "tilt": 0.8,
+     "lightAz": -2.72,
+     "lightHeight": 0.4,
+     "sheen": 56,
+     "specular": 0.54,
+     "diffuse": 0.15,
+     "ambient": 0.05,
+     "falloff": 0.8,
+     "contrast": 1.15,
+     "midpoint": 0.59,
+     "sink": 0.17,
+     "glow": 0.2,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 1.38,
+     "vignette": 0.12,
+     "cursor": 1,
+     "pointerRadius": 0.54,
+     "pointerComb": 0.58,
+     "pointerLift": 0.15,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#03110f",
+     "colorA": "#0a2f2b",
+     "colorB": "#3fc8c0",
+     "colorC": "#c8e0d0",
+     "colorD": "#f04b8b"
+    },
+    "media": {
+     "poster": "gradients/chatoyance-733996919c/3c708ea7.webp",
+     "preview": "gradients/chatoyance-733996919c/3c708ea7-preview.mp4",
+     "hero": "gradients/chatoyance-733996919c/3c708ea7.mp4"
+    }
+   },
+   {
+    "id": "chatoyance-002",
+    "name": "002",
+    "isDefault": false,
+    "sortOrder": 2,
+    "hue": "magenta",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#12030a",
+     "colorA": "#3d0a10",
+     "colorB": "#c41e2a",
+     "colorC": "#ffe8e0",
+     "colorD": "#2b4be8",
+     "scale": 1.42,
+     "speed": 0.33,
+     "angle": 0.52,
+     "wander": 0.22,
+     "wanderScale": 0.44,
+     "fibreFreq": 7.6,
+     "fibreGain": 0.53,
+     "fibreLac": 1.86,
+     "twist": 0.72,
+     "tilt": 0.58,
+     "lightAz": -0.78,
+     "lightHeight": 0.48,
+     "sheen": 52,
+     "specular": 0.5,
+     "diffuse": 0.21,
+     "ambient": 0.07,
+     "falloff": 0.7,
+     "contrast": 1.3,
+     "midpoint": 0.64,
+     "sink": 0.13,
+     "glow": 0.12,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 1.3,
+     "vignette": 0.08,
+     "cursor": 1,
+     "pointerRadius": 0.7,
+     "pointerComb": 0.44,
+     "pointerLift": 0.12,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#12030a",
+     "colorA": "#3d0a10",
+     "colorB": "#c41e2a",
+     "colorC": "#ffe8e0",
+     "colorD": "#2b4be8"
+    },
+    "media": {
+     "poster": "gradients/chatoyance-733996919c/10251500.webp",
+     "preview": "gradients/chatoyance-733996919c/10251500-preview.mp4",
+     "hero": "gradients/chatoyance-733996919c/10251500.mp4"
+    }
+   },
+   {
+    "id": "chatoyance-003",
+    "name": "003",
+    "isDefault": false,
+    "sortOrder": 3,
+    "hue": "red",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#100407",
+     "colorA": "#380b0c",
+     "colorB": "#e8342b",
+     "colorC": "#ff6b5a",
+     "colorD": "#fff2ee",
+     "scale": 0.92,
+     "speed": 0.33,
+     "angle": 2.24,
+     "wander": 0.19,
+     "wanderScale": 0.38,
+     "fibreFreq": 6.8,
+     "fibreGain": 0.44,
+     "fibreLac": 1.92,
+     "twist": 0.58,
+     "tilt": 0.52,
+     "lightAz": 2.35,
+     "lightHeight": 0.62,
+     "sheen": 38,
+     "specular": 0.46,
+     "diffuse": 0.18,
+     "ambient": 0.05,
+     "falloff": 0.68,
+     "contrast": 1.2,
+     "midpoint": 0.48,
+     "sink": 0.14,
+     "glow": 0.14,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 1.3,
+     "vignette": 0.08,
+     "cursor": 1,
+     "pointerRadius": 0.74,
+     "pointerComb": 0.33,
+     "pointerLift": 0.12,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#100407",
+     "colorA": "#380b0c",
+     "colorB": "#e8342b",
+     "colorC": "#ff6b5a",
+     "colorD": "#fff2ee"
+    },
+    "media": {
+     "poster": "gradients/chatoyance-733996919c/0317370f.webp",
+     "preview": "gradients/chatoyance-733996919c/0317370f-preview.mp4",
+     "hero": "gradients/chatoyance-733996919c/0317370f.mp4"
+    }
+   },
+   {
+    "id": "chatoyance-004",
+    "name": "004",
+    "isDefault": false,
+    "sortOrder": 4,
+    "hue": "violet",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#0c0416",
+     "colorA": "#24093a",
+     "colorB": "#7b3fd9",
+     "colorC": "#f02be0",
+     "colorD": "#fff0fc",
+     "scale": 1.35,
+     "speed": 0.33,
+     "angle": -0.42,
+     "wander": 0.31,
+     "wanderScale": 0.58,
+     "fibreFreq": 9.4,
+     "fibreGain": 0.55,
+     "fibreLac": 2.42,
+     "twist": 1.15,
+     "tilt": 0.74,
+     "lightAz": -0.35,
+     "lightHeight": 0.44,
+     "sheen": 64,
+     "specular": 0.52,
+     "diffuse": 0.15,
+     "ambient": 0.06,
+     "falloff": 0.75,
+     "contrast": 1.1,
+     "midpoint": 0.48,
+     "sink": 0.16,
+     "glow": 0.16,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 1.35,
+     "vignette": 0.1,
+     "cursor": 1,
+     "pointerRadius": 0.58,
+     "pointerComb": 0.52,
+     "pointerLift": 0.14,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#0c0416",
+     "colorA": "#24093a",
+     "colorB": "#7b3fd9",
+     "colorC": "#f02be0",
+     "colorD": "#fff0fc"
+    },
+    "media": {
+     "poster": "gradients/chatoyance-733996919c/7bb64a33.webp",
+     "preview": "gradients/chatoyance-733996919c/7bb64a33-preview.mp4",
+     "hero": "gradients/chatoyance-733996919c/7bb64a33.mp4"
+    }
+   },
+   {
+    "id": "chatoyance-005",
+    "name": "005",
+    "isDefault": false,
+    "sortOrder": 5,
+    "hue": "red",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#170509",
+     "colorA": "#4a0d12",
+     "colorB": "#e8342b",
+     "colorC": "#ffd8d0",
+     "colorD": "#fffcfb",
+     "scale": 1.28,
+     "speed": 0.33,
+     "angle": -1.42,
+     "wander": 0.26,
+     "wanderScale": 0.52,
+     "fibreFreq": 10.2,
+     "fibreGain": 0.46,
+     "fibreLac": 2.02,
+     "twist": 0.92,
+     "tilt": 0.7,
+     "lightAz": 2.62,
+     "lightHeight": 0.58,
+     "sheen": 46,
+     "specular": 0.5,
+     "diffuse": 0.19,
+     "ambient": 0.06,
+     "falloff": 0.72,
+     "contrast": 1.25,
+     "midpoint": 0.6,
+     "sink": 0.13,
+     "glow": 0.14,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 1.32,
+     "vignette": 0.08,
+     "cursor": 1,
+     "pointerRadius": 0.66,
+     "pointerComb": 0.46,
+     "pointerLift": 0.12,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#170509",
+     "colorA": "#4a0d12",
+     "colorB": "#e8342b",
+     "colorC": "#ffd8d0",
+     "colorD": "#fffcfb"
+    },
+    "media": {
+     "poster": "gradients/chatoyance-733996919c/d284298c.webp",
+     "preview": "gradients/chatoyance-733996919c/d284298c-preview.mp4",
+     "hero": "gradients/chatoyance-733996919c/d284298c.mp4"
+    }
+   },
+   {
+    "id": "chatoyance-006",
+    "name": "006",
+    "isDefault": false,
+    "sortOrder": 6,
+    "hue": "orange",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#0d0402",
+     "colorA": "#340c05",
+     "colorB": "#e8342b",
+     "colorC": "#f5a52b",
+     "colorD": "#fff0c2",
+     "scale": 1.18,
+     "speed": 0.33,
+     "angle": 0.68,
+     "wander": 0.28,
+     "wanderScale": 0.5,
+     "fibreFreq": 8.2,
+     "fibreGain": 0.5,
+     "fibreLac": 2.08,
+     "twist": 0.86,
+     "tilt": 0.66,
+     "lightAz": 0.92,
+     "lightHeight": 0.56,
+     "sheen": 30,
+     "specular": 0.42,
+     "diffuse": 0.2,
+     "ambient": 0.07,
+     "falloff": 0.8,
+     "contrast": 1.15,
+     "midpoint": 0.58,
+     "sink": 0.12,
+     "glow": 0.15,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 1.28,
+     "vignette": 0.07,
+     "cursor": 1,
+     "pointerRadius": 0.68,
+     "pointerComb": 0.4,
+     "pointerLift": 0.11,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#0d0402",
+     "colorA": "#340c05",
+     "colorB": "#e8342b",
+     "colorC": "#f5a52b",
+     "colorD": "#fff0c2"
+    },
+    "media": {
+     "poster": "gradients/chatoyance-733996919c/25d21b25.webp",
+     "preview": "gradients/chatoyance-733996919c/25d21b25-preview.mp4",
+     "hero": "gradients/chatoyance-733996919c/25d21b25.mp4"
+    }
+   },
+   {
+    "id": "chatoyance-007",
+    "name": "007",
+    "isDefault": false,
+    "sortOrder": 7,
+    "hue": "orange",
+    "tone": "light",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#b9a37a",
+     "colorA": "#d4cbe6",
+     "colorB": "#f5d28c",
+     "colorC": "#f2e8d4",
+     "colorD": "#fffdf7",
+     "scale": 0.68,
+     "speed": 0.33,
+     "angle": 0.24,
+     "wander": 0.16,
+     "wanderScale": 0.3,
+     "fibreFreq": 6.6,
+     "fibreGain": 0.4,
+     "fibreLac": 1.78,
+     "twist": 0.62,
+     "tilt": 0.52,
+     "lightAz": 2.8,
+     "lightHeight": 0.86,
+     "sheen": 26,
+     "specular": 0.34,
+     "diffuse": 0.3,
+     "ambient": 0.2,
+     "falloff": 0.65,
+     "contrast": 1,
+     "midpoint": 0.52,
+     "sink": 0.06,
+     "glow": 0.05,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 1.6,
+     "vignette": 0.04,
+     "cursor": 1,
+     "pointerRadius": 0.96,
+     "pointerComb": 0.26,
+     "pointerLift": 0.08,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#b9a37a",
+     "colorA": "#d4cbe6",
+     "colorB": "#f5d28c",
+     "colorC": "#f2e8d4",
+     "colorD": "#fffdf7"
+    },
+    "media": {
+     "poster": "gradients/chatoyance-733996919c/47b9ffe4.webp",
+     "preview": "gradients/chatoyance-733996919c/47b9ffe4-preview.mp4",
+     "hero": "gradients/chatoyance-733996919c/47b9ffe4.mp4"
+    }
+   },
+   {
+    "id": "chatoyance-008",
+    "name": "008",
+    "isDefault": false,
+    "sortOrder": 8,
+    "hue": "teal",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#021216",
+     "colorA": "#063440",
+     "colorB": "#2b7be8",
+     "colorC": "#4fe0d8",
+     "colorD": "#d6ffe8",
+     "scale": 0.82,
+     "speed": 0.33,
+     "angle": 1.62,
+     "wander": 0.52,
+     "wanderScale": 0.94,
+     "fibreFreq": 9.6,
+     "fibreGain": 0.55,
+     "fibreLac": 2.3,
+     "twist": 1.44,
+     "tilt": 0.86,
+     "lightAz": 1.42,
+     "lightHeight": 0.66,
+     "sheen": 36,
+     "specular": 0.44,
+     "diffuse": 0.17,
+     "ambient": 0.06,
+     "falloff": 0.64,
+     "contrast": 1.2,
+     "midpoint": 0.58,
+     "sink": 0.11,
+     "glow": 0.13,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 1.34,
+     "vignette": 0.1,
+     "cursor": 1,
+     "pointerRadius": 0.86,
+     "pointerComb": 0.36,
+     "pointerLift": 0.1,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#021216",
+     "colorA": "#063440",
+     "colorB": "#2b7be8",
+     "colorC": "#4fe0d8",
+     "colorD": "#d6ffe8"
+    },
+    "media": {
+     "poster": "gradients/chatoyance-733996919c/5497a01c.webp",
+     "preview": "gradients/chatoyance-733996919c/5497a01c-preview.mp4",
+     "hero": "gradients/chatoyance-733996919c/5497a01c.mp4"
+    }
+   },
+   {
+    "id": "chatoyance-009",
+    "name": "009",
+    "isDefault": false,
+    "sortOrder": 9,
+    "hue": "blue",
+    "tone": "light",
+    "saturation": "muted",
+    "config": {
+     "bgColor": "#a49ccd",
+     "colorA": "#bfe8d8",
+     "colorB": "#c8d0f0",
+     "colorC": "#e8e4f5",
+     "colorD": "#fdfcff",
+     "scale": 0.76,
+     "speed": 0.33,
+     "angle": -0.86,
+     "wander": 0.34,
+     "wanderScale": 0.34,
+     "fibreFreq": 7.2,
+     "fibreGain": 0.42,
+     "fibreLac": 1.64,
+     "twist": 0.8,
+     "tilt": 0.6,
+     "lightAz": -1.3,
+     "lightHeight": 0.92,
+     "sheen": 30,
+     "specular": 0.34,
+     "diffuse": 0.24,
+     "ambient": 0.14,
+     "falloff": 0.55,
+     "contrast": 1.05,
+     "midpoint": 0.42,
+     "sink": 0.05,
+     "glow": 0.04,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 1.65,
+     "vignette": 0.03,
+     "cursor": 1,
+     "pointerRadius": 1.1,
+     "pointerComb": 0.22,
+     "pointerLift": 0.07,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#a49ccd",
+     "colorA": "#bfe8d8",
+     "colorB": "#c8d0f0",
+     "colorC": "#e8e4f5",
+     "colorD": "#fdfcff"
+    },
+    "media": {
+     "poster": "gradients/chatoyance-733996919c/e7b2c60a.webp",
+     "preview": "gradients/chatoyance-733996919c/e7b2c60a-preview.mp4",
+     "hero": "gradients/chatoyance-733996919c/e7b2c60a.mp4"
+    }
+   },
+   {
+    "id": "chatoyance-010",
+    "name": "010",
+    "isDefault": false,
+    "sortOrder": 10,
+    "hue": "indigo",
+    "tone": "dark",
+    "saturation": "vivid",
+    "config": {
+     "bgColor": "#020818",
+     "colorA": "#0d2358",
+     "colorB": "#2b5bff",
+     "colorC": "#e6eeff",
+     "colorD": "#ff7a63",
+     "scale": 1.05,
+     "speed": 0.33,
+     "angle": -2.6,
+     "wander": 0.36,
+     "wanderScale": 0.66,
+     "fibreFreq": 10.8,
+     "fibreGain": 0.47,
+     "fibreLac": 2.24,
+     "twist": 1.34,
+     "tilt": 0.8,
+     "lightAz": 2.05,
+     "lightHeight": 0.5,
+     "sheen": 44,
+     "specular": 0.48,
+     "diffuse": 0.18,
+     "ambient": 0.06,
+     "falloff": 0.74,
+     "contrast": 1.25,
+     "midpoint": 0.62,
+     "sink": 0.15,
+     "glow": 0.12,
+     "grain": 0,
+     "grainAnim": 0,
+     "dither": 1.32,
+     "vignette": 0.09,
+     "cursor": 1,
+     "pointerRadius": 0.62,
+     "pointerComb": 0.48,
+     "pointerLift": 0.13,
+     "maxDpr": 1
+    },
+    "colors": {
+     "bgColor": "#020818",
+     "colorA": "#0d2358",
+     "colorB": "#2b5bff",
+     "colorC": "#e6eeff",
+     "colorD": "#ff7a63"
+    },
+    "media": {
+     "poster": "gradients/chatoyance-733996919c/4c261696.webp",
+     "preview": "gradients/chatoyance-733996919c/4c261696-preview.mp4",
+     "hero": "gradients/chatoyance-733996919c/4c261696.mp4"
+    }
+   }
+  ]
+ },
+ "tint": {
+  "bgColor": "#08080a",
+  "colorC": "#f3f1ea",
+  "colorB": "#807f78",
+  "colorD": "#ff3b1d"
+ },
+ "contract": {
+  "mutable": [
+   "skin"
+  ],
+  "preserve": [
+   "motion"
+  ],
+  "notes": "A bundle of fibres lying almost parallel and lit from one side \u2014 the sheen is drawn by WHERE EACH FIBRE POINTS, and the cursor combs them. `wander` is how far from parallel they stray; at 0 it is a mirror, too high and the cat's-eye disappears. That one value is the whole material."
+ }
+}

@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Disruptive Dodo · Marketing and growth agency in Mauritius</title>
+<meta name="description" content="Marketing and growth agency in Mauritius. Websites, social media, ads, CRM and AI that bring you customers, built and run by one local team.">
+<link rel="stylesheet" href="../assets/dd.css">
+<style>
+/* hero */
+.hero{position:relative;overflow:hidden;min-height:900px;padding:clamp(40px,4.45vw,64px) var(--gt) 0}
+.hero-art{position:absolute;top:0;left:50%;z-index:0;height:100%;aspect-ratio:921/1228;transform:translateX(-50%);pointer-events:none}
+.hero-art img{width:100%;height:100%;object-fit:contain;object-position:top center}
+.hero-fade{position:absolute;left:0;right:0;bottom:0;z-index:1;height:31%;background:linear-gradient(to bottom,rgba(8,8,10,0) 0%,var(--bg) 62%,var(--bg) 100%);pointer-events:none}
+.hero-roles{position:relative;z-index:2;font-size:clamp(28px,3.62vw,52px);font-weight:400;line-height:1.05;letter-spacing:-.01em}
+.hero-roles span{display:block}
+.hero-cta{position:absolute;left:0;right:0;bottom:54px;z-index:3;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;padding:0 var(--gt)}
+.hero-cta .btn{font-size:16px;padding:0 32px}
+.hero-cta .btn:not(.btn-s){border-color:rgba(243,241,234,.55);background:rgba(243,241,234,.03)}
+.hero-cta .btn:not(.btn-s):hover{border-color:var(--ac);background:var(--ac);color:var(--ac-ink)}
+.hero-cue{position:absolute;left:var(--gt);bottom:32px;z-index:3}
+.hero-cue .rule{display:inline-block;width:40px;height:1px;background:var(--acx)}
+@media (max-width:639px){
+  .hero{min-height:780px}
+  .hero-art{top:auto;bottom:0;height:86%}
+  .hero-cta{flex-direction:column;bottom:72px}
+  .hero-cta .btn{min-width:240px}
+  .hero-cue{bottom:24px}
+}
+/* manifesto */
+.mani{display:flex;align-items:center;justify-content:center;min-height:560px}
+.mani h2{max-width:55ch;text-align:center;font-size:clamp(24px,3.27vw,47px);font-weight:400;line-height:1.3;letter-spacing:-.01em;text-wrap:balance}
+@media (max-width:639px){.mani{min-height:0}}
+/* services panel */
+.svcp{padding:80px 0 40px}
+.svcp-head{display:grid;grid-template-columns:1.3fr 1fr;align-items:end;gap:32px 48px;padding:0 var(--gt)}
+.svcp-head .eb{grid-column:2;grid-row:1}
+.svcp-head .h2{grid-column:1;grid-row:2;max-width:20ch}
+.svcp-head .ld{grid-column:2;grid-row:2;max-width:44ch}
+.svcp .rail{margin-top:56px}
+@media (max-width:1023px){.svcp-head{display:flex;flex-direction:column;align-items:flex-start;gap:16px}.svcp{padding-top:56px}.svcp .rail{margin-top:32px}}
+/* story */
+.story-l .h1{max-width:16ch}
+.story-l .ld{max-width:46ch}
+.story-r{padding-top:8px}
+/* growth loop */
+.loop{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:var(--gt);row-gap:64px}
+.loop>li:nth-child(2n){margin-top:96px}
+.stage-img{position:relative;overflow:hidden;border-radius:2px;background:var(--sf)}
+.stage-img img{filter:grayscale(1) contrast(1.02)}
+.stage-row{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-top:24px;padding-top:20px;border-top:1px solid var(--ln)}
+.stage-row .tx{max-width:42ch}
+.stage-meta{flex:none;text-align:right}
+.stage-meta .cap{letter-spacing:.18em}
+@media (max-width:767px){.loop{grid-template-columns:minmax(0,1fr);row-gap:48px}.loop>li:nth-child(2n){margin-top:0}.stage-row{flex-direction:column;gap:12px}.stage-meta{text-align:left}}
+/* sound familiar */
+.vlist li:last-child .vbtn{border-bottom:1px solid var(--ln)}
+.vbtn{display:flex;align-items:baseline;gap:20px;width:100%;min-height:44px;padding:28px 0;border:0;border-top:1px solid var(--ln);background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.vbtn .num{font-size:13px;line-height:1.2;letter-spacing:.18em;color:var(--mu);font-variant-numeric:tabular-nums}
+.vbtn[aria-pressed="true"] .num{color:var(--acx)}
+.vbtn .who{flex:1;min-width:0}
+.vbtn .vn{display:block;font-size:clamp(22px,1.95vw,28px);line-height:1.15;font-weight:600;letter-spacing:-.01em;color:var(--mu);transition:color .3s}
+.vbtn[aria-pressed="true"] .vn,.vbtn:hover .vn{color:var(--fg)}
+.vbtn .vr{display:block;margin-top:6px;font-size:13px;line-height:1.35;text-transform:uppercase;letter-spacing:.18em;color:var(--mu)}
+.vbtn .vrule{align-self:center;flex:none;width:0;height:1px;background:var(--acx);transition:width .34s ease-out}
+.vbtn[aria-pressed="true"] .vrule{width:40px}
+.vfeat{display:grid;grid-template-columns:minmax(0,1fr) 256px;gap:32px;align-items:start;padding-top:28px}
+.vq>p:first-child{max-width:30ch;font-size:clamp(22px,1.95vw,28px);font-weight:500;line-height:1.3;letter-spacing:-.01em;color:var(--fg)}
+.vq footer{margin-top:32px}
+.vq .tx{margin-top:16px;max-width:44ch}
+.vport{position:relative;width:256px;aspect-ratio:4/5;overflow:hidden;border-radius:2px;background:var(--sf)}
+@media (max-width:639px){.vfeat{grid-template-columns:minmax(0,1fr)}.vport{width:200px}}
+/* partners and tools */
+.partners{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:760px;border-top:1px solid var(--ln);text-align:center}
+.partners .eb{justify-content:center}
+.partners .h2{max-width:18ch}
+.partners .ld{max-width:46ch}
+.partners .btn-row{justify-content:center}
+.logos{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:12px;width:100%;margin-top:72px}
+@media (max-width:1023px){.logos{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:639px){.logos{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:48px}}
+/* about */
+.about{padding:64px var(--gt) 96px}
+.about .ph{height:560px}
+.about-row{display:flex;align-items:center;justify-content:space-between;gap:64px;margin-top:48px}
+.about-l{display:flex;flex-direction:column;gap:40px;width:40%}
+.astats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:16px;row-gap:40px}
+.astats li{display:flex;flex-direction:column;gap:12px;padding-left:16px;border-left:1px solid var(--acx)}
+.astats .fig{font-size:clamp(48px,5.56vw,80px);line-height:1;letter-spacing:-.015em;white-space:nowrap}
+.astats .lab{text-wrap:balance;max-width:26ch;font-size:13px;line-height:1.4;text-transform:uppercase;letter-spacing:.14em;color:var(--mu)}
+.about-r{display:flex;flex-direction:column;gap:40px;width:52%}
+.about-p{font-size:clamp(20px,1.53vw,22px);line-height:1.4;color:var(--fg)}
+@media (max-width:1023px){.about .ph{height:380px}.about-row{flex-direction:column;align-items:stretch;gap:48px}.about-l,.about-r{width:auto}}
+@media (max-width:639px){.about .ph{height:260px}}
+/* team */
+.team{padding:96px 0 104px;border-top:1px solid var(--ln)}
+.team .rail{padding-top:20px;padding-bottom:28px}
+.tintro{display:flex;flex-direction:column;justify-content:space-between;width:416px;height:520px;padding:32px;border-radius:16px;background:var(--ac);color:var(--ac-ink);box-shadow:0 18px 42px -18px rgba(15,15,18,.45),0 4px 14px -8px rgba(15,15,18,.26)}
+.tintro .eb{color:inherit;opacity:.8}
+.tintro h2{margin-top:24px;font-size:42px;line-height:.98;font-weight:400;letter-spacing:-.01em;text-wrap:balance}
+.ticons{display:flex;gap:12px}
+.ticons a{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;border:1px solid color-mix(in srgb,currentColor 40%,transparent);color:inherit;transition:background .2s,color .2s}
+.ticons a:hover{background:var(--ac-ink);color:var(--ac)}
+.ticons svg{width:18px;height:18px}
+.tmore{display:flex;flex-direction:column;justify-content:space-between;width:336px;height:520px;padding:32px;border-radius:16px;border:1px solid rgba(243,241,234,.22);background:#0f0f12;color:#f3f1ea;text-decoration:none;box-shadow:0 18px 42px -18px rgba(15,15,18,.45),0 4px 14px -8px rgba(15,15,18,.26)}
+.tmore p{font-size:32px;line-height:.98;font-weight:400;letter-spacing:-.01em}
+.tmore .foot{display:flex;align-items:flex-end;justify-content:space-between;font-size:16px;color:rgba(243,241,234,.66)}
+.tmore .ring{width:64px;height:64px;border-color:var(--ac);color:var(--ac)}
+.tmore:hover .ring{background:var(--ac);color:var(--ac-ink)}
+@media (max-width:639px){.tintro{width:300px;height:440px;padding:24px}.tintro h2{font-size:34px}.tmore{width:280px;height:440px;padding:24px}}
+/* contact */
+.contact{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:64px;padding:72px var(--gt) 120px}
+.contact-copy{align-self:center}
+.contact-copy .h2{max-width:20ch;font-size:clamp(34px,3.34vw,48px)}
+.contact-copy .ld{max-width:34ch;font-size:clamp(18px,1.45vw,21px)}
+@media (max-width:899px){.contact{grid-template-columns:minmax(0,1fr);gap:40px;padding-top:56px}}
+</style>
+<meta name="review-project" content="dd-website-v1">
+<meta name="review-page" content="home">
+<link rel="stylesheet" href="../review/review.css">
+<script src="../review/dd-accent.js"></script>
+</head>
+<body>
+<div class="r">
+<header class="nav">
+  <a class="nav-logo" href="home.html" aria-label="Disruptive Dodo, home"><img src="../assets/img/dd-logo-white.png" alt="Disruptive Dodo" width="176" height="37"></a>
+  <div class="nav-mid"><i class="cmk cmk-t"></i><i class="cmk cmk-b"></i>
+    <nav class="nav-links" id="nav-links" aria-label="Main">
+      <div class="nav-dd">
+        <a class="nav-dd-top" href="services.html">Services</a>
+        <button class="nav-dd-btn" type="button" aria-expanded="false" aria-controls="nav-dd-panel" aria-label="Show the services"><svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 4.5L6 8l3.5-3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <div class="nav-dd-panel" id="nav-dd-panel">
+          <a class="nav-dd-feat" href="fledge.html"><span class="cap">Our signature system</span><b>Fledge</b><span class="nav-dd-sub">Your full marketing system, built and run by one team.</span><svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <ul class="nav-dd-list">
+            <li><a href="websites.html">Websites and SEO</a></li>
+            <li><a href="social-media.html">Social media</a></li>
+            <li><a href="paid-ads.html">Paid ads</a></li>
+            <li><a href="automation.html">Automation and CRM</a></li>
+            <li><a href="ai.html">AI implementation</a></li>
+            <li><a href="branding.html">Branding</a></li>
+            <li><a class="nav-dd-all" href="services.html">All services</a></li>
+          </ul>
+        </div>
+      </div>
+      <a class="nav-sig" href="fledge.html"><i class="nav-sig-dot" aria-hidden="true"></i>Fledge</a>
+      <a href="work.html">Work</a>
+      <a href="about.html">About</a>
+      <div class="nav-lang" role="group" aria-label="Language">
+        <span aria-current="true" lang="en">EN</span><a href="fr-home.html" hreflang="fr" lang="fr">FR</a>
+      </div>
+    </nav>
+  </div>
+  <a class="nav-act" href="contact.html"><svg class="ar" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Contact<i class="cmk cmk-t"></i><i class="cmk cmk-b"></i></a>
+  <button class="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links"><span></span><span></span></button>
+</header>
+
+<main>
+  <!-- 2. Hero -->
+  <section class="hero">
+    <div class="hero-art dodo"><img src="../assets/img/hero-dodo.webp" alt="Disruptive Dodo mascot" width="921" height="1228"></div>
+    <div class="hero-fade" aria-hidden="true"></div>
+    <h1 class="hero-roles"><span>Websites</span><span>Advertising</span><span>Automation</span><span>Growth</span></h1>
+    <div class="hero-cta">
+      <a class="btn" href="contact.html">Get more clients</a>
+      <a class="btn btn-s" href="services.html">See what we do</a>
+    </div>
+    <p class="eb hero-cue"><span class="rule" aria-hidden="true"></span>Scroll to begin</p>
+  </section>
+
+  <!-- 3. Stacked panel: everything after the hero -->
+  <div class="panel">
+
+    <div class="marquee">
+      <div class="marquee-track">
+        <div class="mq-set">
+          <span>More Customers<i></i></span><span>Less Chaos<i></i></span><span>No Lost Enquiries<i></i></span><span>Found On Google<i></i></span><span>Top Of Mind<i></i></span><span>Made In Mauritius<i></i></span>
+        </div>
+        <div class="mq-set" aria-hidden="true">
+          <span>More Customers<i></i></span><span>Less Chaos<i></i></span><span>No Lost Enquiries<i></i></span><span>Found On Google<i></i></span><span>Top Of Mind<i></i></span><span>Made In Mauritius<i></i></span>
+        </div>
+      </div>
+    </div>
+
+    <section class="sec mani">
+      <h2>Disruptive Dodo is a marketing and business growth agency based in Mauritius, working with businesses locally and globally. We build systems that generate leads, close deals, and scale operations. Our team has done it across 20+ industries.</h2>
+    </section>
+
+    <section class="panel on-sf svcp" id="services" aria-labelledby="svc-h">
+      <div class="svcp-head">
+        <p class="eb eba">What We Build</p>
+        <h2 class="h2" id="svc-h">Everything you need to grow, under one roof</h2>
+        <p class="ld">Six services that get you found, win you the sale, and keep customers coming back. Take one, or let us run the lot.</p>
+      </div>
+      <div class="rail">
+        <a class="svc" href="websites.html">
+          <img class="cov" src="../assets/img/svc-01.webp" alt="" width="960" height="684">
+          <div><p class="idx">01</p><h3>Get Found.<br>Get Chosen.</h3><p class="sub">Websites, SEO, and content that put your business in front of the right people.</p></div>
+          <div class="disc"><span>Discover</span><span class="ring"><svg viewBox="0 0 19.0049 19" fill="none" aria-hidden="true"><path d="M19.0049 1.18457H19.002V18.3564H17.8047V2.21973L0.84668 19L0 18.1621L17.1582 1.18457H0.453125V0H19.0049V1.18457Z" fill="currentColor"/></svg></span></div>
+        </a>
+        <a class="svc" href="paid-ads.html">
+          <img class="cov" src="../assets/img/svc-02.webp" alt="" width="960" height="684">
+          <div><p class="idx">02</p><h3>Get More<br>Customers.</h3><p class="sub">Client acquisition systems that turn attention into enquiries, sales, and growth.</p></div>
+          <div class="disc"><span>Discover</span><span class="ring"><svg viewBox="0 0 19.0049 19" fill="none" aria-hidden="true"><path d="M19.0049 1.18457H19.002V18.3564H17.8047V2.21973L0.84668 19L0 18.1621L17.1582 1.18457H0.453125V0H19.0049V1.18457Z" fill="currentColor"/></svg></span></div>
+        </a>
+        <a class="svc" href="branding.html">
+          <img class="cov" src="../assets/img/svc-03.webp" alt="" width="960" height="684">
+          <div><p class="idx">03</p><h3>Look Like<br>the Leader.</h3><p class="sub">Branding that makes your business stand out, build trust, and get remembered.</p></div>
+          <div class="disc"><span>Discover</span><span class="ring"><svg viewBox="0 0 19.0049 19" fill="none" aria-hidden="true"><path d="M19.0049 1.18457H19.002V18.3564H17.8047V2.21973L0.84668 19L0 18.1621L17.1582 1.18457H0.453125V0H19.0049V1.18457Z" fill="currentColor"/></svg></span></div>
+        </a>
+        <a class="svc" href="automation.html">
+          <img class="cov" src="../assets/img/svc-04.webp" alt="" width="960" height="684">
+          <div><p class="idx">04</p><h3>Grow Without<br>Growing Your Team.</h3><p class="sub">Automate repetitive work and streamline your business so you can handle more without hiring more people.</p></div>
+          <div class="disc"><span>Discover</span><span class="ring"><svg viewBox="0 0 19.0049 19" fill="none" aria-hidden="true"><path d="M19.0049 1.18457H19.002V18.3564H17.8047V2.21973L0.84668 19L0 18.1621L17.1582 1.18457H0.453125V0H19.0049V1.18457Z" fill="currentColor"/></svg></span></div>
+        </a>
+        <a class="svc" href="automation.html">
+          <img class="cov" src="../assets/img/svc-05.webp" alt="" width="960" height="684">
+          <div><p class="idx">05</p><h3>Close More<br>Sales.</h3><p class="sub">CRM and sales automation that keeps leads moving, follows up faster, and helps you close more business.</p></div>
+          <div class="disc"><span>Discover</span><span class="ring"><svg viewBox="0 0 19.0049 19" fill="none" aria-hidden="true"><path d="M19.0049 1.18457H19.002V18.3564H17.8047V2.21973L0.84668 19L0 18.1621L17.1582 1.18457H0.453125V0H19.0049V1.18457Z" fill="currentColor"/></svg></span></div>
+        </a>
+        <a class="svc" href="social-media.html">
+          <img class="cov" src="../assets/img/svc-06.webp" alt="" width="960" height="684">
+          <div><p class="idx">06</p><h3>Stay Top<br>of Mind.</h3><p class="sub">Social media and content that keep your brand visible, trusted, and relevant.</p></div>
+          <div class="disc"><span>Discover</span><span class="ring"><svg viewBox="0 0 19.0049 19" fill="none" aria-hidden="true"><path d="M19.0049 1.18457H19.002V18.3564H17.8047V2.21973L0.84668 19L0 18.1621L17.1582 1.18457H0.453125V0H19.0049V1.18457Z" fill="currentColor"/></svg></span></div>
+        </a>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="story-h">
+      <div class="g12">
+        <div class="span-6 story-l">
+          <p class="eb"><span class="dot"></span>The Real Problem</p>
+          <h2 class="h1 mt-24" id="story-h">Growth shouldn't feel this hard.</h2>
+          <p class="ld mt-32">You don't need more random marketing. You need to know what's holding your business back. Maybe you're not getting enough enquiries. Maybe you're getting them but not closing enough. Maybe your team is buried in manual work. We find the bottleneck, fix it, and build a system that helps your business grow.</p>
+        </div>
+        <ol class="span-6 story-r">
+          <li class="principle"><span class="idx">01</span><div><h3>We find what's holding you back</h3><p>Before we recommend anything, we look at your marketing, sales, systems, and operations to find where growth is getting stuck.</p></div></li>
+          <li class="principle"><span class="idx">02</span><div><h3>We fix the biggest problem first</h3><p>You don't need everything at once. We focus on the changes that can make the biggest difference to your business.</p></div></li>
+          <li class="principle"><span class="idx">03</span><div><h3>We build for growth</h3><p>From websites and client acquisition to CRM, automation, and AI, we build systems that work together as your business grows.</p></div></li>
+          <li class="principle"><span class="idx">04</span><div><h3>We measure what matters</h3><p>More enquiries. More sales. Less wasted time. Better systems. We focus on the numbers that actually move your business forward.</p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="loop-h">
+      <div class="head-row">
+        <div>
+          <p class="eb"><span class="dot"></span>How Growth Works</p>
+          <h2 class="h1 mt-24" id="loop-h" style="max-width:14ch">Growth is a loop, not luck.</h2>
+        </div>
+        <p class="cap" style="letter-spacing:.22em">04 / Stages</p>
+      </div>
+      <ul class="loop mt-64">
+        <li>
+          <figure class="stage-img r16x11"><img class="cov" src="../assets/img/stage-get-found.webp" alt="" width="569" height="379"></figure>
+          <div class="stage-row">
+            <div><h3 class="h3">Get Found</h3><p class="tx mt-8">Websites, SEO, content and paid ads that put your business in front of the right people, the moment they're searching or scrolling.</p></div>
+            <div class="stage-meta"><p class="cap">01</p><p class="cap eba mt-8">SEO · Ads · Social</p><p class="cap mt-12">Visibility &amp; Demand</p></div>
+          </div>
+        </li>
+        <li>
+          <figure class="stage-img r16x11"><img class="cov" src="../assets/img/stage-get-chosen.webp" alt="" width="632" height="421"></figure>
+          <div class="stage-row">
+            <div><h3 class="h3">Get Chosen</h3><p class="tx mt-8">Branding and websites that make you look like the leader, build trust and turn visitors into enquiries.</p></div>
+            <div class="stage-meta"><p class="cap">02</p><p class="cap eba mt-8">Brand · Web · Proof</p><p class="cap mt-12">Brand &amp; Websites</p></div>
+          </div>
+        </li>
+        <li>
+          <figure class="stage-img r16x11"><img class="cov" src="../assets/img/stage-get-business.webp" alt="" width="632" height="421"></figure>
+          <div class="stage-row">
+            <div><h3 class="h3">Get The Business</h3><p class="tx mt-8">Client acquisition and CRM automation that keep leads moving, follow up faster and help you close more sales.</p></div>
+            <div class="stage-meta"><p class="cap">03</p><p class="cap eba mt-8">CRM · AI · Follow-up</p><p class="cap mt-12">Capture &amp; Convert</p></div>
+          </div>
+        </li>
+        <li>
+          <figure class="stage-img r16x11"><img class="cov" src="../assets/img/stage-keep-grow.webp" alt="" width="702" height="468"></figure>
+          <div class="stage-row">
+            <div><h3 class="h3">Keep &amp; Grow</h3><p class="tx mt-8">Automation and social content that streamline your work, keep you top of mind and bring customers back, without growing your team.</p></div>
+            <div class="stage-meta"><p class="cap">04</p><p class="cap eba mt-8">Reviews · Repeat</p><p class="cap mt-12">Retain &amp; Refer</p></div>
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="sec" aria-labelledby="impact-h">
+      <div class="head-row">
+        <p class="eb"><span class="dot"></span>By The Numbers</p>
+        <h2 class="h2" id="impact-h">Proof, not promises.</h2>
+      </div>
+      <div class="stats mt-64">
+        <div class="stat"><p class="fig">117+</p><p class="lab">Mauritian businesses helped</p></div>
+        <div class="stat"><p class="fig">7 yrs</p><p class="lab">Building growth systems here</p></div>
+        <div class="stat"><p class="fig">3x</p><p class="lab">More online orders for a client</p></div>
+        <div class="stat"><p class="fig">20h+</p><p class="lab">Saved every week with automation</p></div>
+      </div>
+    </section>
+
+    <section class="sec" aria-labelledby="voices-h">
+      <div class="head-row">
+        <p class="eb"><span class="dot"></span>Common Situations</p>
+        <h2 class="h2" id="voices-h">Sound familiar?</h2>
+      </div>
+      <div class="g12 mt-64">
+        <ul class="span-5 vlist">
+          <li><button class="vbtn" type="button" aria-pressed="true" aria-controls="voice-1" data-voice="voice-1"><span class="num">01</span><span class="who"><span class="vn">Losing deals you should win</span><span class="vr">Chosen second, one too many times</span></span><span class="vrule" aria-hidden="true"></span></button></li>
+          <li><button class="vbtn" type="button" aria-pressed="false" aria-controls="voice-2" data-voice="voice-2"><span class="num">02</span><span class="who"><span class="vn">A pipeline that runs dry</span><span class="vr">Too few deals, no way to predict them</span></span><span class="vrule" aria-hidden="true"></span></button></li>
+          <li><button class="vbtn" type="button" aria-pressed="false" aria-controls="voice-3" data-voice="voice-3"><span class="num">03</span><span class="who"><span class="vn">Lost in the handoffs</span><span class="vr">Complexity is quietly costing you deals</span></span><span class="vrule" aria-hidden="true"></span></button></li>
+          <li><button class="vbtn" type="button" aria-pressed="false" aria-controls="voice-4" data-voice="voice-4"><span class="num">04</span><span class="who"><span class="vn">The follow-up that came too late</span><span class="vr">No system, no second chance</span></span><span class="vrule" aria-hidden="true"></span></button></li>
+          <li><button class="vbtn" type="button" aria-pressed="false" aria-controls="voice-5" data-voice="voice-5"><span class="num">05</span><span class="who"><span class="vn">Too outdated for the market</span><span class="vr">Overdue for a digital overhaul</span></span><span class="vrule" aria-hidden="true"></span></button></li>
+        </ul>
+        <div class="span-7 vfeat">
+          <div aria-live="polite">
+            <blockquote class="vq" id="voice-1">
+              <p>"You get in front of the right companies, but too often it ends with 'we went with someone else', and you rarely find out why."</p>
+              <footer class="cap">Losing deals you should win · Chosen second, one too many times</footer>
+              <p class="tx">What we do: Positioning and follow-up that win the deals you're already in.</p>
+            </blockquote>
+            <blockquote class="vq" id="voice-2" hidden>
+              <p>"There just aren't enough qualified opportunities coming in, and forecasting next quarter is mostly guesswork."</p>
+              <footer class="cap">A pipeline that runs dry · Too few deals, no way to predict them</footer>
+              <p class="tx">What we do: A client-acquisition system that brings in leads you can forecast.</p>
+            </blockquote>
+            <blockquote class="vq" id="voice-3" hidden>
+              <p>"Leads, approvals and handoffs cross three departments and two systems, so deals stall in the gaps between them."</p>
+              <footer class="cap">Lost in the handoffs · Complexity is quietly costing you deals</footer>
+              <p class="tx">What we do: Connected CRM and automation so nothing stalls between teams.</p>
+            </blockquote>
+            <blockquote class="vq" id="voice-4" hidden>
+              <p>"A prospect asks for a proposal Tuesday; it goes out Friday. By then they've had two calls with a competitor who replied in an hour."</p>
+              <footer class="cap">The follow-up that came too late · No system, no second chance</footer>
+              <p class="tx">What we do: Automated follow-up that replies in minutes, not days.</p>
+            </blockquote>
+            <blockquote class="vq" id="voice-5" hidden>
+              <p>"The business still runs on paper, spreadsheets and tools that don't connect. It still gets the job done, but it's starting to look dated next to competitors who've already modernised."</p>
+              <footer class="cap">Too outdated for the market · Overdue for a digital overhaul</footer>
+              <p class="tx">What we do: A modern website and systems that bring the business up to date.</p>
+            </blockquote>
+          </div>
+          <figure class="vport"><img class="cov" src="../assets/img/voice-1.webp" alt="" width="450" height="600"></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec partners" aria-labelledby="partners-h">
+      <p class="eb eba">Partners &amp; Tools</p>
+      <h2 class="h2 mt-32" id="partners-h">The partners and tools we use to bring you more clients</h2>
+      <p class="ld mt-32">The platforms, tools and partners we put to work every day, turning attention into real clients for your business.</p>
+      <div class="btn-row mt-48">
+        <a class="btn btn-a" href="services.html">See what we build</a>
+        <a class="btn" href="about.html">How we work</a>
+      </div>
+      <ul class="logos">
+        <li class="logo-ph">Tool or partner logo</li>
+        <li class="logo-ph">Tool or partner logo</li>
+        <li class="logo-ph">Tool or partner logo</li>
+        <li class="logo-ph">Tool or partner logo</li>
+        <li class="logo-ph">Tool or partner logo</li>
+        <li class="logo-ph">Tool or partner logo</li>
+        <li class="logo-ph">Tool or partner logo</li>
+        <li class="logo-ph">Tool or partner logo</li>
+      </ul>
+    </section>
+
+    <section class="lt panel about" aria-labelledby="about-h">
+      <div class="ph"><div class="lb"><b>Brand video</b><span>The looping video on the live site</span><i>16:9, muted loop</i></div></div>
+      <div class="about-row">
+        <div class="about-l">
+          <h2 class="eb eba" id="about-h">About Disruptive Dodo</h2>
+          <ul class="astats">
+            <li><p class="fig">1 hr</p><p class="lab">Every enquiry answered within a business hour</p></li>
+            <li><p class="fig">24/7</p><p class="lab">Automated follow-up that never sleeps</p></li>
+            <li><p class="fig">4</p><p class="lab">Growth stages, handled by one team</p></li>
+            <li><p class="fig">EN·FR</p><p class="lab">We work in English and French</p></li>
+          </ul>
+        </div>
+        <div class="about-r">
+          <p class="about-p"><span class="mu">We're a Mauritian growth agency built on one idea:</span> your website, your marketing and your follow-up should work as one. <span class="mu">We find where your business is quietly losing customers</span>, and we build the system that wins them back.</p>
+          <div class="btn-row">
+            <a class="btn btn-a" href="contact.html">Get your free audit</a>
+            <a class="btn" href="services.html">See our services</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lt team" aria-labelledby="team-h">
+      <div class="rail">
+        <div class="tintro">
+          <div>
+            <p class="eb">Our Team</p>
+            <h2 id="team-h">The team doing the actual work.</h2>
+          </div>
+          <ul class="ticons">
+            <li><a href="https://www.linkedin.com" target="_blank" rel="noreferrer noopener" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5A2.5 2.5 0 1 1 0 3.5a2.5 2.5 0 0 1 4.98 0zM.5 8h4V24h-4V8zM8 8h3.8v2.2h.05c.53-1 1.83-2.2 3.77-2.2 4.03 0 4.78 2.65 4.78 6.1V24h-4v-6.9c0-1.65-.03-3.77-2.3-3.77-2.3 0-2.65 1.8-2.65 3.65V24H8V8z"/></svg></a></li>
+            <li><a href="https://instagram.com" target="_blank" rel="noreferrer noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" stroke="none"/></svg></a></li>
+            <li><a href="https://wa.me/23058065315" target="_blank" rel="noreferrer noopener" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.4 5 5.1-1.3A10 10 0 1 0 12 2zm0 2a8 8 0 1 1-4.2 14.8l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 0 1 12 4zm4.6 10.9c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.1-.2 0-.4.1-.5l.4-.5c.1-.1.1-.3 0-.4l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.4c.1.2 1.7 2.7 4.2 3.7 1.6.6 2.2.7 2.9.6.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1z"/></svg></a></li>
+          </ul>
+        </div>
+        <figure class="tcard"><img src="../assets/img/team-lucas.webp" alt="Lucas" width="400" height="600"><figcaption><span class="n">Lucas</span><span class="ro">Creative Director</span></figcaption></figure>
+        <figure class="tcard"><img src="../assets/img/team-jean-claude.webp" alt="Jean-Claude" width="400" height="600"><figcaption><span class="n">Jean-Claude</span><span class="ro">Technology Director</span></figcaption></figure>
+        <figure class="tcard"><img src="../assets/img/team-kipchoge.webp" alt="Kipchoge" width="400" height="600"><figcaption><span class="n">Kipchoge</span><span class="ro">Content Strategist &amp; Copywriter</span></figcaption></figure>
+        <figure class="tcard"><img src="../assets/img/team-karen.webp" alt="Karen" width="400" height="600"><figcaption><span class="n">Karen</span><span class="ro">Admin Manager</span></figcaption></figure>
+        <figure class="tcard"><img src="../assets/img/team-ali.webp" alt="Ali" width="512" height="768"><figcaption><span class="n">Ali</span><span class="ro">Automations Specialist</span></figcaption></figure>
+        <figure class="tcard"><img src="../assets/img/team-nigel.webp" alt="Nigel" width="400" height="600"><figcaption><span class="n">Nigel</span><span class="ro">Global Business Developer</span></figcaption></figure>
+        <figure class="tcard"><img src="../assets/img/team-amara.webp" alt="Amara" width="400" height="600"><figcaption><span class="n">Amara</span><span class="ro">Graphic Designer</span></figcaption></figure>
+        <a class="tmore" href="contact.html">
+          <p>Local team. Real specialists. No outsourcing.</p>
+          <span class="foot"><span>Say hello</span><span class="ring"><svg viewBox="0 0 19.0049 19" fill="none" aria-hidden="true"><path d="M19.0049 1.18457H19.002V18.3564H17.8047V2.21973L0.84668 19L0 18.1621L17.1582 1.18457H0.453125V0H19.0049V1.18457Z" fill="currentColor"/></svg></span></span>
+        </a>
+      </div>
+    </section>
+
+    <section class="lt panel contact" id="contact" aria-labelledby="contact-h">
+      <div class="contact-copy">
+        <p class="eb eba">Get In Touch</p>
+        <h2 class="h2 mt-32" id="contact-h">Tell us where your business is leaking customers</h2>
+        <p class="ld mt-40">Leave your details and we'll come back within one business hour: a straight read on what's costing you customers, and what we'd fix first. No jargon, no hard sell.</p>
+      </div>
+      <div class="form-panel raised">
+        <h3>BOOK A FREE GROWTH CALL</h3>
+        <form class="lead-form" action="contact.html" novalidate>
+          <div class="field"><label for="f-name">Your name</label><input class="inp" id="f-name" name="name" type="text" placeholder="Name" autocomplete="name"></div>
+          <div class="field"><label for="f-company">Company name</label><input class="inp" id="f-company" name="company" type="text" placeholder="Your business" autocomplete="organization"></div>
+          <div class="field"><label for="f-phone">Phone / WhatsApp</label><input class="inp" id="f-phone" name="phone" type="tel" placeholder="+230 ..." autocomplete="tel"></div>
+          <div class="field"><label for="f-problem">What's slowing your growth?</label><select class="inp" id="f-problem" name="problem"><option value="" disabled selected>Choose one...</option><option>Getting more customers</option><option>A website that converts</option><option>Following up on enquiries</option><option>Brand &amp; positioning</option><option>Too much manual admin</option><option>Not sure, help me diagnose</option></select></div>
+          <div class="field"><label for="f-message">Anything else?</label><textarea class="inp" id="f-message" name="message" rows="2" placeholder="Tell us a little about your business"></textarea></div>
+          <p class="consent">By submitting, you agree to our <a href="privacy.html">privacy policy</a> and to be contacted about your enquiry.</p>
+          <button class="submit" type="submit"><span>Send request</span><span class="disc" aria-hidden="true"><svg viewBox="0 0 19.0049 19" fill="none"><path d="M19.0049 1.18457H19.002V18.3564H17.8047V2.21973L0.84668 19L0 18.1621L17.1582 1.18457H0.453125V0H19.0049V1.18457Z" fill="currentColor"/></svg></span></button>
+        </form>
+        <div class="form-done" hidden>
+          <h3>Thanks, message ready.</h3>
+          <p class="tx">We've opened WhatsApp so you can send it in one tap. Prefer email? Write to <a href="mailto:info@disruptivedodo.mu">info@disruptivedodo.mu</a> and we'll reply within one business hour.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="ft">
+  <p class="eb"><span class="dot"></span>Prefer email?</p>
+  <h2 class="dsp ft-h">Do it once,<br>do it right</h2>
+  <p class="ld ft-b">Built properly the first time. One team, no wasted spend, nothing to redo later. Email us and let's get started.</p>
+  <a class="ft-mail" href="mailto:info@disruptivedodo.mu">info@disruptivedodo.mu<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.6 9.4L9.4 2.6M4.2 2.6h5.2v5.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+  <div class="ft-bar">
+    <div class="ft-sig"><img src="../assets/img/dd-logo-white.png" alt="Disruptive Dodo" width="266" height="56"><p class="cap">Built in Mauritius. Made to grow.</p></div>
+    <nav class="ft-col" aria-label="Services"><p class="cap">Services</p><a href="fledge.html">Fledge</a><a href="websites.html">Websites and SEO</a><a href="social-media.html">Social media</a><a href="paid-ads.html">Paid ads</a><a href="automation.html">Automation and CRM</a><a href="ai.html">AI implementation</a><a href="branding.html">Branding</a></nav>
+    <nav class="ft-col" aria-label="Pages"><p class="cap">Pages</p><a href="home.html">Home</a><a href="work.html">Work</a><a href="services.html">Services</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav>
+    <nav class="ft-col" aria-label="Social"><p class="cap">Follow</p><a href="https://www.linkedin.com" target="_blank" rel="noreferrer noopener">LinkedIn</a><a href="https://instagram.com" target="_blank" rel="noreferrer noopener">Instagram</a><a href="https://wa.me/23058065315" target="_blank" rel="noreferrer noopener">WhatsApp</a></nav>
+    <div class="ft-col"><p class="cap">© 2026 Disruptive Dodo</p><a href="privacy.html">Privacy and terms</a></div>
+  </div>
+</footer>
+</div>
+<script src="../assets/nav.js" defer></script>
+<script>
+/* "Sound familiar?" switcher: every quote is in the HTML, the buttons only toggle hidden */
+(function(){var btns=document.querySelectorAll('.vbtn');btns.forEach(function(b){b.addEventListener('click',function(){btns.forEach(function(o){var on=o===b;o.setAttribute('aria-pressed',on?'true':'false');document.getElementById(o.dataset.voice).hidden=!on;});});});})();
+/* form: mockup only, show the thank-you block */
+(function(){document.querySelectorAll('.lead-form').forEach(function(f){f.addEventListener('submit',function(e){e.preventDefault();f.hidden=true;f.parentNode.querySelector('.form-done').hidden=false;});});})();
+</script>
+<script src="../review/review.js" defer></script>
+</body>
+</html>

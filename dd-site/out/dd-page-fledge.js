@@ -1,0 +1,1033 @@
+// Disruptive Dodo · fledge page.
+// Rendered by src/scripts/dd-core.js into #dd-root (shared nav, footer, styles and
+// motion live there). Edit copy in `html` below. {{ar}} is the arrow icon.
+const DD = (window.__DD = window.__DD || { pages: {} });
+DD.pages["fledge"] = {
+  path: "/fledge",
+  title: "Fledge · Full marketing system for Mauritian businesses",
+  description: "Fledge is Disruptive Dodo's full marketing system: website, social media, ads, CRM, follow-up and AI, built as one and run by one team in Mauritius.",
+  ld: {
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Service",
+   "@id": "https://disruptivedodo.mu/fledge#service",
+   "name": "Fledge",
+   "serviceType": "Full marketing system",
+   "inLanguage": "en",
+   "description": "Fledge is Disruptive Dodo's full marketing system: website, social media, ads, CRM, follow-up and AI, built as one and run by one team in Mauritius.",
+   "areaServed": {
+    "@type": "Country",
+    "name": "Mauritius"
+   },
+   "provider": {
+    "@type": "Organization",
+    "name": "Disruptive Dodo",
+    "url": "https://disruptivedodo.mu/"
+   },
+   "url": "https://disruptivedodo.mu/fledge",
+   "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Services in Fledge",
+    "itemListElement": [
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Websites and SEO",
+       "url": "https://disruptivedodo.mu/services/web-design"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Social media",
+       "url": "https://disruptivedodo.mu/services/social-media-management"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Paid ads",
+       "url": "https://disruptivedodo.mu/services/facebook-google-ads"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Automation and CRM",
+       "url": "https://disruptivedodo.mu/services/marketing-automation-crm"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "AI implementation",
+       "url": "https://disruptivedodo.mu/services/ai-chatbots"
+      }
+     },
+     {
+      "@type": "Offer",
+      "itemOffered": {
+       "@type": "Service",
+       "name": "Branding",
+       "url": "https://disruptivedodo.mu/services/branding-logo-design"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "Home",
+     "item": "https://disruptivedodo.mu/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Fledge",
+     "item": "https://disruptivedodo.mu/fledge"
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "What is Fledge?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Fledge is our full marketing system. One team builds your website, social media, ads, CRM, follow-up and AI assistant to work as one, then runs it with you every month."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How is Fledge different from hiring a marketing agency?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Most agencies sell one piece: posts, ads or a website. Fledge covers the whole path, from the first time someone sees you to the day they buy again, and connects every step so no enquiry is lost in between."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do I need everything from day one?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "No. We start with the problem that costs you the most and build from there. If you start with one service, it plugs into Fledge later, so nothing is built twice."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How much does Fledge cost?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "It depends on the size of your business and what is already in place. After a free growth call, we send a clear proposal with the setup fee and the monthly fee before any work starts. Ad budgets are paid by you, directly to the platforms."
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "How long do I commit for?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "[3 months, then 30 days' notice, to confirm.]"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Who owns the website, the pages and the data?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "[You do. Your website content, your pages, your ad accounts and your customer list stay in your business's name. To confirm.]"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "Do you work outside Mauritius?",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Yes. We're based in Mauritius and work with businesses here and abroad, in English, French and Creole."
+     }
+    }
+   ]
+  }
+ ]
+},
+  css: `.flh{justify-content:flex-end}
+.flh .top{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gap);align-items:end}
+.flh .top>*{grid-column:1/-1}
+.flh h1{display:flex;flex-direction:column;grid-row:2}
+.flh h1 .mega{display:block;line-height:.8;letter-spacing:-.07em;white-space:nowrap;margin-left:-.04em}
+.flh h1 .fl-sub{font-size:clamp(28px,3vw,48px);font-weight:var(--w-dsp);letter-spacing:-.035em;line-height:1.04;max-width:17ch;margin-top:clamp(28px,3.4vw,48px)}
+.flh .rr{grid-row:3;margin-top:28px}
+@media (min-width:1024px){.flh .rr{grid-row:2;grid-column:8/-1;align-self:end;margin-top:0}
+}
+.flh .dodo{position:absolute;right:calc(var(--gt) + 1%);top:clamp(110px,14vh,170px);height:min(34vh,330px);width:auto;z-index:1;filter:drop-shadow(0 30px 40px rgba(0,0,0,.7))}
+@media (max-width:1023px){.flh .dodo{height:24vh;top:96px}
+}
+@media (max-width:639px){.flh .dodo{display:none}
+}
+.leaks>li{padding:clamp(28px,3vw,44px) 0}
+.leaks .n{font-size:clamp(44px,5vw,84px);font-weight:var(--w-dsp);letter-spacing:-.06em;line-height:.8;color:var(--su);padding-top:0}
+.leaks>li:hover .n{color:var(--fg)}
+.leaks .n{transition:color .5s}
+.stg2 .st{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:28px var(--gap);padding:clamp(16px,1.6vw,22px);border-radius:var(--r3);min-height:clamp(380px,34vw,500px)}
+.stg2 .st:nth-child(even){background:#0c0c0e;color:#f3f1ea;--fg:#f3f1ea;--mu:#8c8b84;--ln:rgba(243,241,234,.12)}
+.stg2 .im{grid-column:1/-1;border-radius:20px;overflow:hidden}
+.stg2 .im img{width:100%;height:100%;object-fit:cover;animation:kb 22s cubic-bezier(.45,0,.55,1) infinite alternate;will-change:transform}
+@keyframes kb{from{transform:scale(1) translate(0,0)}
+to{transform:scale(1.08) translate(-1.5%,-1%)}
+}
+@media (prefers-reduced-motion:reduce){.stg2 .im img{animation:none}
+}
+.stg2 .tx2{grid-column:1/-1;display:flex;flex-direction:column;padding:clamp(4px,1vw,16px) clamp(4px,1.2vw,20px)}
+@media (min-width:1024px){.stg2 .im{grid-column:1/span 6}
+.stg2 .tx2{grid-column:7/-1}
+}
+.stg2 .row{display:flex;justify-content:space-between;gap:16px}
+.stg2 .h3{font-size:clamp(32px,3.2vw,52px);letter-spacing:-.04em}
+.stg2 .num{font-size:clamp(44px,4.4vw,72px);font-weight:var(--w-dsp);letter-spacing:-.06em;line-height:.8;color:var(--mu)}
+.items{margin-top:auto;padding-top:28px;border-top:0}
+.items li{border-bottom:1px solid var(--ln)}
+.items li:first-child{border-top:1px solid var(--ln)}
+.items a,.items span{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:13px 0;font-size:16px}
+.items span{color:var(--mu)}
+.items .ar{width:10px;height:10px;opacity:.5;flex:none;transition:transform .5s var(--e),opacity .3s}
+.items a:hover .ar{opacity:1;transform:translate(2px,-2px)}
+.path{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:var(--gap)}
+.path .line{position:absolute;left:0;right:0;top:27px;height:1px;background:var(--ln)}
+.path .line i{position:absolute;inset:0;background:var(--fg);transform-origin:0 50%;transform:scaleX(var(--p,0))}
+.path li{position:relative}
+.path .nd{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;border:1px solid var(--ls);background:var(--bg);font-size:15px;transition:background .5s var(--e),color .5s,border-color .5s;position:relative;z-index:1}
+.path li.on .nd{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.path p{margin-top:22px;font-size:16px;line-height:1.4;color:var(--mu);transition:color .5s;max-width:18ch}
+.path li.on p{color:var(--fg)}
+@media (max-width:1023px){.path{grid-template-columns:1fr;gap:0}
+.path .line{left:27px;right:auto;top:0;bottom:0;width:1px;height:auto}
+.path .line i{transform-origin:50% 0;transform:scaleY(var(--p,0))}
+.path li{display:grid;grid-template-columns:56px 1fr;gap:20px;align-items:center;padding:10px 0}
+.path p{margin-top:0}
+}
+.again{display:inline-flex;align-items:center;gap:12px;margin-top:40px;padding:12px 18px 12px 12px;border-radius:999px;border:1px solid var(--ls);color:var(--fg)}
+.again svg{width:22px;height:22px}
+.ways2{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+.ways2 .way{padding:clamp(28px,3.4vw,52px);border-radius:var(--r3)}
+.ways2 .way.dk{background:#0c0c0e}
+.ways2 ul{margin-top:32px;border-top:1px solid var(--ln)}
+.ways2 li{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--ln);font-size:16px}
+.ways2 .ck{width:16px;height:16px;flex:none;margin-top:4px}
+@media (max-width:1023px){.ways2{grid-template-columns:1fr}
+}
+.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 var(--gap)}
+.metrics>div{padding:28px 0 32px;border-top:1px solid var(--ln)}
+.metrics dt{font-size:clamp(26px,2.4vw,38px);font-weight:var(--w-dsp);letter-spacing:-.035em;color:var(--fg);line-height:1.05}
+.metrics dd{margin-top:12px}
+.mc{display:block;width:120px;height:48px;margin-bottom:22px;overflow:visible;color:var(--fg)}
+.mc .mb,.mc .mq{fill:currentColor;transform-box:fill-box;transform-origin:50% 100%}
+.mc .mt,.mc .mbase{fill:none;stroke:currentColor;stroke-opacity:.14;stroke-width:1.5}
+.mc .mr,.mc .ml,.mc .mtk{fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.mc .mtk{stroke-opacity:.35;stroke-width:2}
+.mc .mdot,.mc .mend{fill:currentColor;transform-box:fill-box;transform-origin:center}
+.mc .ms{fill:currentColor}
+.path .line{overflow:hidden}
+.path .line::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(243,241,234,.95),transparent) no-repeat;background-size:16% 100%;animation:flow 3.4s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes flow{from{background-position:-30% 0}
+to{background-position:130% 0}
+}
+@keyframes flowv{from{background-position:0 -30%}
+to{background-position:0 130%}
+}
+@media (max-width:1023px){.path .line::after{background-image:linear-gradient(180deg,transparent,rgba(243,241,234,.95),transparent);background-size:100% 16%;animation-name:flowv}
+}
+@media (prefers-reduced-motion:reduce){.path .line::after{animation:none;opacity:0}
+}
+@media (max-width:767px){.metrics{grid-template-columns:1fr}
+}
+.cmp{width:100%;font-size:16px}
+.cmp th,.cmp td{text-align:left;padding:22px 20px;vertical-align:top;border-bottom:1px solid var(--ln)}
+.cmp thead th{font-size:14px;font-weight:500;color:var(--mu);border-bottom:1px solid var(--ls)}
+.cmp tbody th{font-weight:400;color:var(--mu);width:24%}
+.cmp td{color:var(--mu)}
+.cmp .us{background:#0c0c0e;color:#f3f1ea}
+.cmp thead .us{border-radius:20px 20px 0 0;color:#f3f1ea}
+.cmp tbody tr:last-child .us{border-radius:0 0 20px 20px}
+.cmp .us{border-bottom-color:rgba(243,241,234,.1)}
+.cmp .dot{display:inline-flex;align-items:center;gap:8px}
+.cmp .dot::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+@media (max-width:767px){.cmp thead{display:none}
+.cmp,.cmp tbody,.cmp tr,.cmp th,.cmp td{display:block;width:auto}
+.cmp tr{padding:14px 0;border-bottom:1px solid var(--ln)}
+.cmp th,.cmp td{border:0;padding:6px 0}
+.cmp tbody th{color:var(--fg);font-weight:500;width:auto}
+.cmp td::before{content:attr(data-label);display:block;font-size:12px;color:var(--mu);margin-bottom:2px}
+.cmp .us{padding:12px 16px;border-radius:14px!important;margin-top:8px}
+.cmp .us::before{color:rgba(243,241,234,.6)}
+}
+.fit{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap)}
+.fit .card{padding:clamp(28px,3.4vw,52px)}
+.fit .us{background:#f3f1ea;color:#0c0c0e;--fg:#0c0c0e;--mu:#62615b;--ln:rgba(12,12,14,.12);border-color:transparent}
+.fit h3{display:flex;align-items:center;gap:10px;font-size:clamp(24px,2vw,30px);font-weight:400;letter-spacing:-.025em}
+.fit .us h3::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.fit ul{margin-top:28px;border-top:1px solid var(--ln)}
+.fit li{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--ln);font-size:16px}
+.fit .ck{width:16px;height:16px;flex:none;margin-top:4px}
+@media (max-width:1023px){.fit{grid-template-columns:1fr}
+}
+.plug{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:24px var(--gap);align-items:center;margin-top:clamp(48px,5vw,72px);padding-top:32px;border-top:1px solid var(--ln)}
+.plug>*{grid-column:1/-1}
+@media (min-width:1024px){.plug .tx{grid-column:1/span 4}
+.plug ul{grid-column:6/-1}
+}
+.plug ul{display:flex;flex-wrap:wrap;gap:8px}
+.plug a{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 18px;border-radius:999px;border:1px solid var(--ls);font-size:14px;transition:background .4s var(--e),color .4s,border-color .4s}
+.plug a .ar{width:9px;height:9px}
+.plug a:hover{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.name{min-height:min(92vh,900px);display:flex;flex-direction:column;justify-content:center}
+.name .gl{font-weight:var(--w-dsp)}
+.name h2{max-width:20ch;font-size:clamp(38px,4.6vw,76px);font-weight:var(--w-dsp);letter-spacing:-.042em;line-height:1.02}
+.name .tx{max-width:46ch}`,
+  html: `<main>
+  <section class="hero flh" aria-labelledby="fl-h">
+    <div class="hero-bg shade"></div>
+    <div class="top">
+      <div><nav class="crumbs" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li aria-current="page">Fledge</li></ol></nav>
+        <p class="kick mt-32">Our signature system</p></div>
+      <h1 id="fl-h" class="mt-32" data-r="0"><span class="mega" data-fit="28">Fledge.</span><span class="fl-sub" data-r="l">Your full marketing system, built and run by one team.</span></h1>
+      <div class="rr">
+        <p class="lead">Most businesses buy marketing in pieces. A website from one supplier, ads from another, a page someone posts on when they find the time. The pieces don't talk to each other, so customers slip through the gaps. Fledge builds every piece as one system, then runs it with you every month.</p>
+        <div class="btn-row mt-32"><a class="btn btn-p" href="/contact">Book a free growth call{{ar}}</a><a class="btn" href="#inside">See what's inside</a></div>
+      </div>
+    </div>
+    <img class="dodo" src="/uploads/8hzVIXmhSCC0RLLMXrB-F-hero-dodo.webp" alt="Disruptive Dodo mascot" width="921" height="1228">
+  </section>
+
+  <section class="sheet lt sec" aria-labelledby="plain-h">
+    <div class="g12">
+      <div class="c1-5"><p class="kick">In plain terms</p><h2 class="h2 mt-24" id="plain-h">What you get with Fledge.</h2></div>
+      <p class="lead fg c7-12">One team builds your website, your social media, your ads, your CRM and follow-up, and your AI assistant, so they work as one. Then we run it with you every month and show you what it brings in.</p>
+    </div>
+    <dl class="facts mt-96" data-r="s">
+      <div><dt class="cap">Who it's for</dt><dd>Businesses ready to grow that would rather have one team for all of it than five suppliers.</dd></div>
+      <div><dt class="cap">What's included</dt><dd>Website, social media, ads, CRM and follow-up, AI assistant, a monthly report and a monthly call.</dd></div>
+      <div><dt class="cap">How you pay</dt><dd>A setup fee for the build, then a monthly fee to run it.</dd></div>
+      <div><dt class="cap">Minimum term</dt><dd><span class="todo">[3 months, then 30 days' notice, to confirm]</span></dd></div>
+    </dl>
+  </section>
+
+  <section class="sheet dk sec" aria-labelledby="why-h">
+    <div class="head"><div><p class="kick">Why one system</p><h2 class="h2 mt-24" id="why-h" style="max-width:14ch">Marketing in pieces leaks customers.</h2></div>
+      <p class="tx">Every business loses customers at the same four points. Most marketing fixes one of them and ignores the rest. Fledge closes all four.</p></div>
+    <ol class="rows hov leaks mt-64">
+      <li data-r="u"><span class="n">01</span><h3 class="h3 t">They can't find you.</h3><p class="tx b">Your competitors show up on Google, Facebook and Instagram. You don't, or not often enough.</p></li>
+      <li data-r="u"><span class="n">02</span><h3 class="h3 t">They find you, then choose someone else.</h3><p class="tx b">Your website and pages don't look like the leader you are, so people pick the business that does.</p></li>
+      <li data-r="u"><span class="n">03</span><h3 class="h3 t">They enquire, and nobody follows up in time.</h3><p class="tx b">A message sits unanswered for a day. By then they've called someone else.</p></li>
+      <li data-r="u"><span class="n">04</span><h3 class="h3 t">They buy once and never come back.</h3><p class="tx b">No reminder, no review request, no reason to return. The next sale starts from zero.</p></li>
+    </ol>
+  </section>
+
+  <section class="sheet lt sec" id="inside" aria-labelledby="inside-h">
+    <div class="head"><div><p class="kick">What's inside</p><h2 class="d2 mt-24" id="inside-h">Four stages. One system.</h2></div>
+      <p class="lead">Each stage uses services we also sell on their own. In Fledge they are built together and share the same information, so each one makes the next work better.</p></div>
+    <ol class="stack stg2 mt-96">
+      <li class="st card" style="--i:0">
+        <figure class="im r16x11"><img src="/uploads/_aEIAO-vT9eQ9p08XxTeR-stage-get-found.webp" alt="" width="569" height="379" loading="lazy"></figure>
+        <div class="tx2">
+          <div class="row"><div><h3 class="h3">Get Found</h3><p class="tx mt-8">We put you where your customers are looking.</p></div><p class="num">01</p></div>
+          <ul class="items"><li><a href="/services/web-design">A website built to be found on Google{{ar}}</a></li><li><a href="/services/web-design">Your Google listing, set up and kept active{{ar}}</a></li><li><a href="/services/facebook-google-ads">Facebook, Instagram and Google ads{{ar}}</a></li><li><a href="/services/social-media-management">Posts every week on the platforms your customers use{{ar}}</a></li></ul>
+        </div>
+      </li>
+      <li class="st card" style="--i:1">
+        <figure class="im r16x11"><img src="/uploads/bG7W8Y3ge0MCiasr9z3Mq-stage-get-chosen.webp" alt="" width="632" height="421" loading="lazy"></figure>
+        <div class="tx2">
+          <div class="row"><div><h3 class="h3">Get Chosen</h3><p class="tx mt-8">When they find you, they choose you.</p></div><p class="num">02</p></div>
+          <ul class="items"><li><a href="/services/web-design">A website that makes the case for you{{ar}}</a></li><li><span>Your brand used the same way everywhere</span></li><li><span>Reviews and proof in the right places</span></li><li><a href="/services/social-media-management">Content that answers your customers' questions{{ar}}</a></li></ul>
+        </div>
+      </li>
+      <li class="st card" style="--i:2">
+        <figure class="im r16x11"><img src="/uploads/ci3Z6faTkzajuXrUfoL-z-stage-get-business.webp" alt="" width="632" height="421" loading="lazy"></figure>
+        <div class="tx2">
+          <div class="row"><div><h3 class="h3">Get The Business</h3><p class="tx mt-8">No enquiry is lost.</p></div><p class="num">03</p></div>
+          <ul class="items"><li><a href="/services/marketing-automation-crm">Every enquiry in one CRM{{ar}}</a></li><li><a href="/services/marketing-automation-crm">Instant alerts and fast replies{{ar}}</a></li><li><a href="/services/ai-chatbots">An AI assistant that answers day and night{{ar}}</a></li><li><a href="/services/branding-logo-design">Branding{{ar}}</a></li><li><a href="/services/marketing-automation-crm">Follow-up until they say yes or no{{ar}}</a></li></ul>
+        </div>
+      </li>
+      <li class="st card" style="--i:3">
+        <figure class="im r16x11"><img src="/uploads/JdHstpeuD7jFaymUxCvgq-stage-keep-grow.webp" alt="" width="702" height="468" loading="lazy"></figure>
+        <div class="tx2">
+          <div class="row"><div><h3 class="h3">Keep &amp; Grow</h3><p class="tx mt-8">Customers come back and send others.</p></div><p class="num">04</p></div>
+          <ul class="items"><li><a href="/services/marketing-automation-crm">Review requests after every sale{{ar}}</a></li><li><a href="/services/marketing-automation-crm">Offers and news for past customers{{ar}}</a></li><li><a href="/services/social-media-management">Content that keeps you top of mind{{ar}}</a></li><li><a href="/services/marketing-automation-crm">Repetitive work done automatically{{ar}}</a></li></ul>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="sheet dk sec" aria-labelledby="path-h">
+    <p class="kick">How it works together</p>
+    <h2 class="d2 mt-24" id="path-h" style="max-width:13ch">One customer, start to finish.</h2>
+    <div class="mt-96">
+      <ol class="path"><i class="line" aria-hidden="true"><i></i></i><li><span class="nd">1</span><p>Sees your ad, or finds you on Google</p></li><li><span class="nd">2</span><p>Lands on your website</p></li><li><span class="nd">3</span><p>Sends a message or books a call</p></li><li><span class="nd">4</span><p>Gets a reply in minutes, from your team or your AI assistant</p></li><li><span class="nd">5</span><p>Is followed up until they decide</p></li><li><span class="nd">6</span><p>Buys, and is asked for a review</p></li><li><span class="nd">7</span><p>Hears from you again, and comes back</p></li></ol>
+      <p class="again"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4.5h-4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>And the loop starts again</p>
+    </div>
+    <p class="lead mt-64" style="max-width:36ch">Every step is recorded in one place, so you can see where each sale came from.</p>
+  </section>
+
+  <section class="sheet lt sec" aria-labelledby="runs-h">
+    <p class="kick">How Fledge runs</p>
+    <h2 class="h2 mt-24" id="runs-h">We build it once.<br>Then we run it with you.</h2>
+    <div class="ways2 mt-64" data-r="s">
+      <article class="way card">
+        <p class="cap">(01) The setup</p>
+        <h3 class="h3 mt-24">Built properly, the first time.</h3>
+        <p class="tx mt-16">We look at your business first, then build every piece and connect them.</p>
+        <ul><li>{{ck}}A close look at your marketing, sales and follow-up today</li><li>{{ck}}Your website, built or rebuilt</li><li>{{ck}}Your brand look, set up or refreshed</li><li>{{ck}}Your Google listing and social pages set up</li><li>{{ck}}CRM, booking and follow-up connected</li><li>{{ck}}Your AI assistant trained on your business</li><li>{{ck}}Tracking, so every enquiry shows where it came from</li></ul>
+      </article>
+      <article class="way card dk">
+        <p class="cap">(02) Every month</p>
+        <h3 class="h3 mt-24">Run, measured, improved.</h3>
+        <p class="tx mt-16">A full marketing team for your business, without the hiring.</p>
+        <ul><li>{{ck}}Posts every week, approved by you</li><li>{{ck}}Ads managed and adjusted</li><li>{{ck}}Replies and follow-up checked</li><li>{{ck}}A report every month, in plain words</li><li>{{ck}}A call every month about your business and what comes next</li><li>{{ck}}Improvements as your business grows</li></ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="sheet dk sec" aria-labelledby="measure-h">
+    <div class="inset" data-r="u">
+      <div class="head"><div><p class="kick">What we measure</p><h2 class="h2 mt-24" id="measure-h" style="max-width:19ch">The numbers we show you every month.</h2></div>
+        <p class="tx">We report on what moves your business.</p></div>
+      <dl class="metrics mt-64">
+        <div><svg class="mc" viewBox="0 0 120 48" aria-hidden="true"><rect class="mb" x="4" y="34" width="9" height="14" rx="2"/><rect class="mb" x="20" y="28" width="9" height="20" rx="2"/><rect class="mb" x="36" y="31" width="9" height="17" rx="2"/><rect class="mb" x="52" y="21" width="9" height="27" rx="2"/><rect class="mb" x="68" y="16" width="9" height="32" rx="2"/><rect class="mb" x="84" y="10" width="9" height="38" rx="2"/><rect class="mb" x="100" y="2" width="9" height="46" rx="2"/></svg><dt>Enquiries</dt><dd class="tx">How many came in, and from where.</dd></div>
+        <div><svg class="mc" viewBox="0 0 120 48" aria-hidden="true"><circle class="mt" cx="24" cy="24" r="20"/><circle class="mr" pathLength="1" stroke-dasharray="1" cx="24" cy="24" r="20" transform="rotate(-90 24 24)"/><circle class="mdot" cx="24" cy="24" r="3"/><path class="mtk" d="M60 24h52" pathLength="1" stroke-dasharray="1"/></svg><dt>Reply time</dt><dd class="tx">How fast each one was answered.</dd></div>
+        <div><svg class="mc" viewBox="0 0 120 48" aria-hidden="true"><path class="mbase" d="M2 46h116"/><path class="ml" pathLength="1" stroke-dasharray="1" d="M4 40 L22 36 L40 38 L58 27 L76 24 L94 14 L116 6"/><circle class="mend" cx="116" cy="6" r="3.5"/></svg><dt>Sales</dt><dd class="tx">How many enquiries became customers.</dd></div>
+        <div><svg class="mc" viewBox="0 0 120 48" aria-hidden="true"><path class="mbase" d="M2 46h116"/><path class="ml" pathLength="1" stroke-dasharray="1" d="M4 8 L22 12 L40 10 L58 22 L76 26 L94 33 L116 38"/><circle class="mend" cx="116" cy="38" r="3.5"/></svg><dt>Cost per enquiry</dt><dd class="tx">What each enquiry cost you in ads.</dd></div>
+        <div><svg class="mc" viewBox="0 0 120 48" aria-hidden="true"><path class="ms" transform="translate(2 12)" d="M10 0l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L10 15l-5.9 3.2 1.3-6.6L.5 7l6.6-.8z"/><path class="ms" transform="translate(25 12)" d="M10 0l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L10 15l-5.9 3.2 1.3-6.6L.5 7l6.6-.8z"/><path class="ms" transform="translate(48 12)" d="M10 0l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L10 15l-5.9 3.2 1.3-6.6L.5 7l6.6-.8z"/><path class="ms" transform="translate(71 12)" d="M10 0l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L10 15l-5.9 3.2 1.3-6.6L.5 7l6.6-.8z"/><path class="ms" transform="translate(94 12)" d="M10 0l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L10 15l-5.9 3.2 1.3-6.6L.5 7l6.6-.8z"/></svg><dt>Reviews</dt><dd class="tx">New reviews, and your rating.</dd></div>
+        <div><svg class="mc" viewBox="0 0 120 48" aria-hidden="true"><rect class="mq" x="4" y="4" width="14" height="18" rx="3"/><rect class="mq" x="23" y="4" width="14" height="18" rx="3"/><rect class="mq" x="42" y="4" width="14" height="18" rx="3"/><rect class="mq" x="61" y="4" width="14" height="18" rx="3"/><rect class="mq" x="80" y="4" width="14" height="18" rx="3"/><rect class="mq" x="99" y="4" width="14" height="18" rx="3"/><rect class="mq" x="4" y="26" width="14" height="18" rx="3"/><rect class="mq" x="23" y="26" width="14" height="18" rx="3"/><rect class="mq" x="42" y="26" width="14" height="18" rx="3"/><rect class="mq" x="61" y="26" width="14" height="18" rx="3"/><rect class="mq" x="80" y="26" width="14" height="18" rx="3"/><rect class="mq" x="99" y="26" width="14" height="18" rx="3"/></svg><dt>Content</dt><dd class="tx">What we posted, and how people responded.</dd></div>
+      </dl>
+    </div>
+    <p class="sm mt-24">We set targets with you for the paid parts. We never promise numbers we don't control.</p>
+  </section>
+
+  <section class="sheet lt sec" aria-labelledby="compare-h">
+    <p class="kick">Compare</p>
+    <h2 class="h2 mt-24" id="compare-h">Fledge, or marketing in pieces.</h2>
+    <table class="cmp mt-64" data-r="u">
+      <caption class="sr-only">Fledge, or marketing in pieces.</caption>
+      <thead><tr><td></td><th scope="col">Marketing in pieces</th><th scope="col" class="us"><span class="dot">Fledge</span></th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Who answers for results</th><td data-label="Marketing in pieces">Each supplier points at the others</td><td class="us" data-label="Fledge">One team, one contact</td></tr>
+        <tr><th scope="row">Your tools</th><td data-label="Marketing in pieces">A website, a page and a spreadsheet that don't connect</td><td class="us" data-label="Fledge">Website, ads, CRM and follow-up share the same information</td></tr>
+        <tr><th scope="row">Enquiries</th><td data-label="Marketing in pieces">Some get lost between inboxes</td><td class="us" data-label="Fledge">Every one lands in one place and gets a reply</td></tr>
+        <tr><th scope="row">Reporting</th><td data-label="Marketing in pieces">Several reports, or none</td><td class="us" data-label="Fledge">One report a month, in plain words</td></tr>
+        <tr><th scope="row">Your time</th><td data-label="Marketing in pieces">You manage the suppliers</td><td class="us" data-label="Fledge">We manage the work, you approve it</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sheet dk sec" aria-labelledby="fit-h">
+    <p class="kick">Is it right for you?</p>
+    <h2 class="h2 mt-24" id="fit-h">Fledge, or one service first.</h2>
+    <div class="fit mt-64" data-r="s">
+      <div class="card us"><h3>Fledge fits if</h3><ul><li>{{ck}}You want more customers and don't want to manage five suppliers</li><li>{{ck}}Your team can handle more work</li><li>{{ck}}You're ready to invest every month in growth</li><li>{{ck}}You want to see where every sale came from</li></ul></div>
+      <div class="card"><h3>Start with one service if</h3><ul><li>{{ck}}One problem is costing you the most right now</li><li>{{ck}}You're launching and need the basics first</li><li>{{ck}}You'd rather start with one piece and add the rest</li></ul></div>
+    </div>
+    <div class="plug">
+      <p class="tx">Every service we build plugs into Fledge later, so nothing is built twice.</p>
+      <ul><li><a href="/services/web-design">Websites and SEO{{ar}}</a></li><li><a href="/services/social-media-management">Social media{{ar}}</a></li><li><a href="/services/facebook-google-ads">Paid ads{{ar}}</a></li><li><a href="/services/marketing-automation-crm">Automation and CRM{{ar}}</a></li><li><a href="/services/ai-chatbots">AI implementation{{ar}}</a></li></ul>
+    </div>
+  </section>
+
+  <section class="sheet lt sec ghost name" aria-labelledby="name-h">
+    <span class="gl" aria-hidden="true">F</span>
+    <p class="cap">Why Fledge</p>
+    <h2 class="mt-32" id="name-h">To fledge is to grow your flight feathers and leave the nest.</h2>
+    <p class="tx mt-40">It is the moment a young bird stops waiting to be fed and starts flying on its own. That is what this system is for: a business that grows by design, not by luck.</p>
+  </section>
+
+  <section class="sheet dk sec" aria-labelledby="faq-h">
+    <div class="g12">
+      <div class="c1-5"><div class="stick"><p class="kick">Questions</p><h2 class="h2 mt-24" id="faq-h" style="max-width:11ch">Fledge questions, answered.</h2></div></div>
+      <div class="faq c7-12">
+        <details open><summary><h3>What is Fledge?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Fledge is our full marketing system. One team builds your website, social media, ads, CRM, follow-up and AI assistant to work as one, then runs it with you every month.</p></details>
+        <details><summary><h3>How is Fledge different from hiring a marketing agency?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Most agencies sell one piece: posts, ads or a website. Fledge covers the whole path, from the first time someone sees you to the day they buy again, and connects every step so no enquiry is lost in between.</p></details>
+        <details><summary><h3>Do I need everything from day one?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">No. We start with the problem that costs you the most and build from there. If you start with one service, it plugs into Fledge later, so nothing is built twice.</p></details>
+        <details><summary><h3>How much does Fledge cost?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">It depends on the size of your business and what is already in place. After a free growth call, we send a clear proposal with the setup fee and the monthly fee before any work starts. Ad budgets are paid by you, directly to the platforms.</p></details>
+        <details><summary><h3>How long do I commit for?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans"><span class="todo">[3 months, then 30 days' notice, to confirm.]</span></p></details>
+        <details><summary><h3>Who owns the website, the pages and the data?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans"><span class="todo">[You do. Your website content, your pages, your ad accounts and your customer list stay in your business's name. To confirm.]</span></p></details>
+        <details><summary><h3>Do you work outside Mauritius?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Yes. We're based in Mauritius and work with businesses here and abroad, in English, French and Creole.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet lt cta" aria-labelledby="cta-h">
+    <p class="kick">Get In Touch</p>
+    <h2 class="d1 mt-32" id="cta-h">Tell us where your business is leaking customers</h2>
+    <div class="btn-row mt-48"><a class="btn btn-p" href="/contact">Book a free growth call{{ar}}</a><a class="btn" href="/services">See all services</a></div>
+  </section>
+</main>`,
+  // Live motion: looping scenes played by dd-core's motion engine (see motion()).
+  motion: [
+ {
+  "root": ".metrics",
+  "D": 6400,
+  "still": 0.62,
+  "tracks": [
+   [
+    ".mb",
+    70,
+    [
+     [
+      500,
+      1300,
+      {
+       "transform": "scaleY(0)"
+      },
+      {
+       "transform": "scaleY(1)"
+      },
+      "sp"
+     ],
+     [
+      5300,
+      5900,
+      {},
+      {
+       "transform": "scaleY(0)"
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".mr",
+    0,
+    [
+     [
+      600,
+      2600,
+      {
+       "strokeDashoffset": 1
+      },
+      {
+       "strokeDashoffset": 0.12
+      },
+      "io"
+     ],
+     [
+      5300,
+      5900,
+      {},
+      {
+       "strokeDashoffset": 1
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".mdot",
+    0,
+    [
+     [
+      2400,
+      2800,
+      {
+       "transform": "scale(1)"
+      },
+      {
+       "transform": "scale(1.8)"
+      },
+      "sp"
+     ],
+     [
+      2800,
+      3200,
+      {},
+      {
+       "transform": "scale(1)"
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".mtk",
+    0,
+    [
+     [
+      1200,
+      2600,
+      {
+       "strokeDashoffset": 1
+      },
+      {
+       "strokeDashoffset": 0.6
+      },
+      "io"
+     ],
+     [
+      5300,
+      5900,
+      {},
+      {
+       "strokeDashoffset": 1
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".ml",
+    0,
+    [
+     [
+      700,
+      2700,
+      {
+       "strokeDashoffset": 1
+      },
+      {
+       "strokeDashoffset": 0
+      },
+      "io"
+     ],
+     [
+      5300,
+      5900,
+      {},
+      {
+       "strokeDashoffset": 1
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".mend",
+    0,
+    [
+     [
+      2500,
+      2900,
+      {
+       "opacity": 0,
+       "transform": "scale(.3)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scale(1)"
+      },
+      "sp"
+     ],
+     [
+      5200,
+      5500,
+      {},
+      {
+       "opacity": 0
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".ms",
+    140,
+    [
+     [
+      800,
+      1200,
+      {
+       "opacity": 0.14
+      },
+      {
+       "opacity": 1
+      },
+      "o"
+     ],
+     [
+      5300,
+      5800,
+      {},
+      {
+       "opacity": 0.14
+      },
+      "io"
+     ]
+    ]
+   ],
+   [
+    ".mq",
+    60,
+    [
+     [
+      700,
+      1100,
+      {
+       "opacity": 0.12,
+       "transform": "scaleY(.6)"
+      },
+      {
+       "opacity": 1,
+       "transform": "scaleY(1)"
+      },
+      "sp"
+     ],
+     [
+      5200,
+      5800,
+      {},
+      {
+       "opacity": 0.12,
+       "transform": "scaleY(.6)"
+      },
+      "io"
+     ]
+    ]
+   ]
+  ]
+ }
+],
+  // Hero gradient: GetLayers "chatoyance", tinted greyscale through its CONFIG. The shader is untouched.
+  gl: { cfg: {"bgColor":"#08080a","colorA":"#121212","colorB":"#4b4a48","colorC":"#72716e","colorD":"#cbcac4"}, poster: "", mount: function(canvas, __ovr, __opts) {
+ const __dummy = {
+  style: {},
+  textContent: ""
+ };
+ const __R = () => canvas.getBoundingClientRect();
+ const __W = () => canvas.clientWidth || 1;
+ const __H = () => canvas.clientHeight || 1;
+ const CONFIG = {
+  bgColor: "#070313",
+  colorA: "#1a0f33",
+  colorB: "#6b2bc8",
+  colorC: "#e02bc8",
+  colorD: "#f9d9ff",
+  scale: 1.75,
+  speed: .33,
+  angle: -1.18,
+  wander: .44,
+  wanderScale: .82,
+  fibreFreq: 7.8,
+  fibreGain: .52,
+  fibreLac: 2.15,
+  twist: 1.3,
+  tilt: .9,
+  lightAz: .88,
+  lightHeight: .34,
+  sheen: 76,
+  specular: .6,
+  diffuse: .08,
+  ambient: .03,
+  falloff: .85,
+  contrast: 1.2,
+  midpoint: .52,
+  sink: .22,
+  glow: .22,
+  grain: 0,
+  grainAnim: 0,
+  dither: 1.45,
+  vignette: .16,
+  cursor: 1,
+  pointerRadius: .5,
+  pointerComb: .66,
+  pointerLift: .18,
+  maxDpr: 1
+ };
+ Object.assign(CONFIG, __ovr || {});
+ function hexToVec3(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  return [ (n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255 ];
+ }
+ const gl = canvas.getContext("webgl2", {
+  alpha: false,
+  antialias: false,
+  depth: false,
+  stencil: false,
+  powerPreference: "high-performance"
+ });
+ if (!gl) return null;
+ const VERT = `#version 300 es
+void main() {
+  vec2 p = vec2((gl_VertexID << 1) & 2, gl_VertexID & 2);
+  gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
+}`;
+ const FRAG = `#version 300 es
+precision highp float;
+out vec4 fragColor;
+uniform vec2  iResolution;
+uniform float iTime;
+uniform vec2  iMouse;
+uniform vec3  uBg, uColorA, uColorB, uColorC, uColorD;
+uniform float uScale, uSpeed, uAngle, uWander, uWanderScale;
+uniform float uFibreFreq, uFibreGain, uFibreLac, uTwist, uTilt;
+uniform float uLightAz, uLightHeight, uSheen, uSpecular, uDiffuse, uAmbient, uFalloff;
+uniform float uContrast, uMidpoint, uSink, uGlow;
+uniform float uGrain, uDither, uVignette;
+uniform float uPointerRadius, uPointerComb, uPointerLift;
+#define FIBRES 4
+vec2 hash2(vec2 p) {
+  p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
+  return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+}
+float snoise(vec2 p) {
+  const float K1 = 0.366025404, K2 = 0.211324865;
+  vec2 i = floor(p + (p.x + p.y) * K1);
+  vec2 a = p - i + (i.x + i.y) * K2;
+  float m = step(a.y, a.x);
+  vec2 o = vec2(m, 1.0 - m);
+  vec2 b = a - o + K2;
+  vec2 c = a - 1.0 + 2.0 * K2;
+  vec3 h = max(0.5 - vec3(dot(a, a), dot(b, b), dot(c, c)), 0.0);
+  vec3 n = h * h * h * h * vec3(dot(a, hash2(i)), dot(b, hash2(i + o)), dot(c, hash2(i + 1.0)));
+  return dot(n, vec3(70.0));
+}
+vec3 ramp4(float t) {
+  vec3 c = mix(uColorA, uColorB, smoothstep(0.00, 0.36, t));
+  c = mix(c, uColorC, smoothstep(0.32, 0.70, t));
+  c = mix(c, uColorD, smoothstep(0.66, 1.00, t));
+  return c;
+}
+float triDither(vec2 fc) {
+  float a = fract(sin(dot(fc, vec2(12.9898, 78.233))) * 43758.5453);
+  float b = fract(sin(dot(fc + 17.0, vec2(12.9898, 78.233))) * 43758.5453);
+  return (a + b - 1.0) / 255.0;
+}
+vec2 rot(vec2 v, float a) { float c = cos(a), s = sin(a); return vec2(c * v.x - s * v.y, s * v.x + c * v.y); }
+uniform float uGrainAnim;
+float houseGrain(vec2 fc) {
+  uvec2 q = uvec2(fc) * uvec2(1597334677u, 3812015801u)
+          + uint(floor(iTime * 24.0 * uGrainAnim)) * 2654435769u;
+  uint n = q.x ^ q.y; n = n * 1664525u + 1013904223u; n ^= n >> 16u; n *= 2246822519u; n ^= n >> 13u;
+  float a = float(n & 0xffffu) / 65535.0;
+  n *= 3266489917u; n ^= n >> 16u;
+  float b = float(n & 0xffffu) / 65535.0;
+  return a + b - 1.0;
+}
+void main() {
+  vec2 uv = (gl_FragCoord.xy - 0.5 * iResolution) / iResolution.y;
+  float t = iTime * uSpeed;
+  vec2 dm = uv - iMouse;
+  float q = dot(dm, dm) / max(1e-4, uPointerRadius * uPointerRadius);
+  float near = 1.0 / ((1.0 + q) * (1.0 + q));
+  float swirl = near * uPointerComb;
+  vec2 m = iMouse * uScale;
+  vec2 p = rot(uv * uScale - m, swirl) + m;
+  float bend = snoise(p * uWanderScale + vec2(t * 0.11, -t * 0.08)) * 0.66
+             + snoise(p * uWanderScale * 2.17 - vec2(t * 0.06, t * 0.09)) * 0.28;
+  float a = uAngle + swirl + uWander * bend;
+  vec2 dir = vec2(cos(a), sin(a));
+  vec2 nrm = vec2(-dir.y, dir.x);
+  float xs = dot(p, nrm), ys = dot(p, dir);
+  float lift = 0.0, amp = 1.0, k = uFibreFreq;
+  for (int i = 0; i < FIBRES; i++) {
+    float fi = float(i);
+    lift += amp * sin(k * xs + uTwist * sin(k * 0.19 * ys + t * (0.57 + fi * 0.23)) + t * (0.79 + fi * 0.37));
+    amp *= uFibreGain;
+    k   *= uFibreLac;
+  }
+  vec3 T = normalize(vec3(dir, lift * uTilt));
+  vec3 L = normalize(vec3(cos(uLightAz), sin(uLightAz), uLightHeight));
+  float cl = dot(T, L), sl = sqrt(max(0.0, 1.0 - cl * cl));
+  float cv = T.z,       sv = sqrt(max(0.0, 1.0 - cv * cv));
+  float lobe = max(0.0, sl * sv - cl * cv);
+  float sheen = uSheen / (1.0 + uSheen * fwidth(lobe));
+  float spec = pow(lobe, sheen);
+  float axis = dot(uv, vec2(cos(uLightAz), sin(uLightAz)));
+  float expo = 1.0 + uFalloff * (smoothstep(-0.8, 0.8, axis) - 0.5) * 2.0;
+  float lum = (uAmbient + uDiffuse * sl + uSpecular * spec) * expo + near * uPointerLift;
+  float f = clamp((lum - uMidpoint) * uContrast + 0.5, 0.0, 1.0);
+  vec3 col = ramp4(f);
+  col += uColorD * uGlow * pow(f, 4.0);
+  col = mix(uBg, col, smoothstep(0.0, max(0.01, uSink), f) * 0.90 + 0.10);
+  col *= 1.0 - uVignette * dot(uv, uv);
+  { float hgL = clamp(dot(col, vec3(0.299, 0.587, 0.114)), 0.0, 1.0);
+    col += houseGrain(gl_FragCoord.xy) * uGrain * mix(1.0, 4.0 * hgL * (1.0 - hgL), 0.6); }
+  col += triDither(gl_FragCoord.xy) * uDither;
+  fragColor = vec4(clamp(col, 0.0, 1.0), 1.0);
+}`;
+ function compile(type, src) {
+  const sh = gl.createShader(type);
+  gl.shaderSource(sh, src);
+  gl.compileShader(sh);
+  if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh));
+  return sh;
+ }
+ const program = gl.createProgram();
+ gl.attachShader(program, compile(gl.VERTEX_SHADER, VERT));
+ gl.attachShader(program, compile(gl.FRAGMENT_SHADER, FRAG));
+ gl.linkProgram(program);
+ if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(program));
+ gl.useProgram(program);
+ gl.bindVertexArray(gl.createVertexArray());
+ const LOC = {};
+ const loc = n => n in LOC ? LOC[n] : LOC[n] = gl.getUniformLocation(program, n);
+ const u1f = (n, v) => gl.uniform1f(loc(n), v);
+ const u2f = (n, x, y) => gl.uniform2f(loc(n), x, y);
+ const u3c = (n, hex) => {
+  const c = hexToVec3(hex);
+  gl.uniform3f(loc(n), c[0], c[1], c[2]);
+ };
+ function applyConfig() {
+  gl.useProgram(program);
+  u3c("uBg", CONFIG.bgColor);
+  u3c("uColorA", CONFIG.colorA);
+  u3c("uColorB", CONFIG.colorB);
+  u3c("uColorC", CONFIG.colorC);
+  u3c("uColorD", CONFIG.colorD);
+  u1f("uScale", CONFIG.scale);
+  u1f("uSpeed", CONFIG.speed);
+  u1f("uAngle", CONFIG.angle);
+  u1f("uWander", CONFIG.wander);
+  u1f("uWanderScale", CONFIG.wanderScale);
+  u1f("uFibreFreq", CONFIG.fibreFreq);
+  u1f("uFibreGain", CONFIG.fibreGain);
+  u1f("uFibreLac", CONFIG.fibreLac);
+  u1f("uTwist", CONFIG.twist);
+  u1f("uTilt", CONFIG.tilt);
+  u1f("uLightAz", CONFIG.lightAz);
+  u1f("uLightHeight", CONFIG.lightHeight);
+  u1f("uSheen", CONFIG.sheen);
+  u1f("uSpecular", CONFIG.specular);
+  u1f("uDiffuse", CONFIG.diffuse);
+  u1f("uAmbient", CONFIG.ambient);
+  u1f("uFalloff", CONFIG.falloff);
+  u1f("uContrast", CONFIG.contrast);
+  u1f("uMidpoint", CONFIG.midpoint);
+  u1f("uSink", CONFIG.sink);
+  u1f("uGlow", CONFIG.glow);
+  u1f("uGrain", CONFIG.grain);
+  u1f("uGrainAnim", CONFIG.grainAnim);
+  u1f("uDither", CONFIG.dither);
+  u1f("uVignette", CONFIG.vignette);
+  u1f("uPointerRadius", CONFIG.pointerRadius);
+  u1f("uPointerComb", CONFIG.pointerComb);
+  u1f("uPointerLift", CONFIG.pointerLift);
+  resize();
+ }
+ let dpr = 1;
+ function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, CONFIG.maxDpr);
+  const w = Math.max(1, Math.round(__W() * dpr));
+  const h = Math.max(1, Math.round(__H() * dpr));
+  if (canvas.width !== w || canvas.height !== h) {
+   canvas.width = w;
+   canvas.height = h;
+  }
+  gl.viewport(0, 0, w, h);
+  gl.useProgram(program);
+  u2f("iResolution", w, h);
+ }
+ let resizeQueued = false;
+ addEventListener("resize", () => {
+  if (resizeQueued) return;
+  resizeQueued = true;
+  requestAnimationFrame(() => {
+   resizeQueued = false;
+   resize();
+  });
+ }, {
+  passive: true
+ });
+ const SPRING = .014, DAMP = .17;
+ const mouse = {
+  x: 0,
+  y: 0,
+  vx: 0,
+  vy: 0,
+  tx: 0,
+  ty: 0
+ };
+ const aim = e => {
+  const a = __W() / __H();
+  mouse.tx = ((e.clientX - __R().left) / __W() - .5) * a;
+  mouse.ty = .5 - (e.clientY - __R().top) / __H();
+ };
+ addEventListener("pointermove", aim, {
+  passive: true
+ });
+ addEventListener("pointerdown", aim, {
+  passive: true
+ });
+ const fadeEl = __dummy;
+ const fpsEl = __dummy;
+ let visible = true;
+ new IntersectionObserver(es => {
+  visible = es[0].isIntersecting;
+ }, {
+  threshold: 0
+ }).observe(canvas);
+ const t0 = performance.now();
+ let prevT = t0, clock = 0, fpsT = t0, fpsN = 0;
+ function frame(now) {
+  requestAnimationFrame(frame);
+  const raw = now - prevT;
+  prevT = now;
+  if (!visible || document.hidden) return;
+  const ms = raw > 50 ? 50 : raw < 4.167 ? 4.167 : raw;
+  const s = ms > 36.7 ? 2.2 : ms * .06;
+  clock += ms * .001;
+  mouse.vx += ((mouse.tx - mouse.x) * SPRING - mouse.vx * DAMP) * s;
+  mouse.vy += ((mouse.ty - mouse.y) * SPRING - mouse.vy * DAMP) * s;
+  mouse.x += mouse.vx * s;
+  mouse.y += mouse.vy * s;
+  u1f("iTime", clock);
+  if (mouse.rest === undefined) mouse.rest = {
+   x: mouse.tx,
+   y: mouse.ty
+  };
+  if (!CONFIG.cursor) {
+   mouse.tx = mouse.rest.x;
+   mouse.ty = mouse.rest.y;
+  }
+  u2f("iMouse", mouse.x, mouse.y);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  fpsN++;
+  if (now - fpsT > 500) {
+   fpsEl.textContent = Math.round(fpsN * 1e3 / (now - fpsT)) + " fps · " + dpr.toFixed(1) + "×";
+   fpsT = now;
+   fpsN = 0;
+  }
+ }
+ applyConfig();
+ gl.drawArrays(gl.TRIANGLES, 0, 3);
+ fadeEl.style.opacity = 0;
+ new ResizeObserver(() => resize()).observe(canvas);
+ if (__opts && __opts.still) {
+  gl.useProgram(program);
+  u1f("iTime", __opts.t || 6);
+  u1f("iIntro", 1);
+  u2f("iMouse", 0, 0);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+ } else requestAnimationFrame(frame);
+ return {
+  gl: gl
+ };
+} },
+  init: function (R) {
+    // the customer path fills as the section crosses the middle of the screen
+    var path = R.querySelector('.path'), line = R.querySelector('.path .line');
+    if (!path || !line) return;
+    var items = path.querySelectorAll('li'), ticking = false;
+    var vertical = function () { return innerWidth < 1024; };
+    function update() {
+      ticking = false;
+      var r = path.getBoundingClientRect(), mid = innerHeight * 0.62, p;
+      if (vertical()) p = (mid - r.top) / r.height;
+      else p = (mid - r.top + r.height) / (innerHeight * 0.55);
+      p = Math.min(1, Math.max(0, p));
+      line.style.setProperty('--p', p.toFixed(4));
+      items.forEach(function (li, i) { li.classList.toggle('on', p >= (i + 0.5) / items.length); });
+    }
+    addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    addEventListener('resize', update, { passive: true });
+    update();
+  },
+};
+DD.current = "fledge";
+if (DD.mount) DD.mount();
