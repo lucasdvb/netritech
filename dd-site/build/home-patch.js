@@ -31,7 +31,7 @@ const RJ_CSS = `
 .dz-svc-card:not(.ph) .dz-bg { filter: grayscale(1); }
 .dz-svc-card:not(.ph):hover .dz-bg { filter: blur(16px) grayscale(1) brightness(.9); }
 .dz-svc-card.ph .dz-bg { background-position: center 18%; }
-.dz-svc-card.ph-low .dz-bg { background-position: var(--x, 58%) center; }
+.dz-svc-card.ph-low .dz-bg { background-position: var(--xm, var(--x, 58%)) center; }
 @media (min-width: 768px) { .dz-svc-card.ph-low .dz-bg { background-size: auto var(--s, 86%); background-position: var(--x, 58%) 100%; background-repeat: no-repeat; } }
 /* an image narrower than its card: fade its side edges into the card (desktop) */
 @media (min-width: 768px) { .dz-svc-card.ph-fade { container-type: size; } .dz-svc-card.ph-fade .dz-bg { -webkit-mask-image: linear-gradient(90deg, transparent calc(50cqw - 38cqh), #000 calc(50cqw - 26cqh), #000 calc(50cqw + 26cqh), transparent calc(50cqw + 38cqh)); mask-image: linear-gradient(90deg, transparent calc(50cqw - 38cqh), #000 calc(50cqw - 26cqh), #000 calc(50cqw + 26cqh), transparent calc(50cqw + 38cqh)); } }
@@ -317,7 +317,7 @@ function patches(gl) {
     { find: 'function mvApp(R) {', replace: RJ_JS(gl) },
     {
       find: `<article class="dz-svc-card brand">\n            <a class="dz-card-link" href="/services/ai-chatbots" aria-label="Discover AI implementation"></a><span class="dz-bg" style="background-image:url('/uploads/jynwU4ZlUcvkFo7HdezFK-svc-gradient-cynosure.webp')"></span>`,
-      replace: `<article class="dz-svc-card brand ph ph-light ph-low ph-fade">\n            <a class="dz-card-link" href="/services/ai-chatbots" aria-label="Discover AI implementation"></a><span class="dz-bg" role="img" aria-label="A human hand and a robotic hand almost touching inside a thin black ring, with a small lime spark between them" style="background-image:url('/uploads/4DdNPqwJ3lBrJz9SNzfZA-svc-04-grow-without-team.webp');--s:76%;--x:50%"></span>`,
+      replace: `<article class="dz-svc-card brand ph ph-light ph-low">\n            <a class="dz-card-link" href="/services/ai-chatbots" aria-label="Discover AI implementation"></a><span class="dz-bg" role="img" aria-label="A tiny relaxed business owner sits on the fingertip of a giant white robotic arm, holding a lime coffee cup" style="background-image:url('/uploads/BFOlV8G42W1AFFf1_WN4E-svc-04-grow-without-team-v3.webp');--s:72%;--x:100%;--xm:38%"></span>`,
     },
     {
       find: `<article class="dz-svc-card lime">\n            <a class="dz-card-link" href="/services/branding-logo-design" aria-label="Discover Branding"></a><span class="dz-bg" style="background-image:url('/uploads/a77k9D6QYeB_rsP9prFT5-svc-gradient-meridian.webp')"></span>`,
