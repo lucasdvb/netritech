@@ -35,6 +35,10 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 - **No added text**, logos or watermarks unless the idea needs a real interface on a
   screen (as in the reference), and then keep it minimal and in greys.
 
+## Placing on cards
+
+- Service cards that carry a photo get the class `ph` on `.dz-svc-card`: the image keeps its colour (no greyscale filter), sits at the card's full height on the right with its left edge faded on screens 768px and up, and the card colour matches the image's black (#020202). Make each card image's black pure (about #020202) so it blends.
+
 ## Production
 
 - Model: what the client names for the job (currently **GPT Image 2.5 Sunburst**, 1K) via
@@ -46,4 +50,4 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 
 | Section | Card | Base | Accent | Reference | Status |
 |---|---|---|---|---|---|
-| Everything you need to grow | 01 Get Found. Get Chosen. | black | lime #E1FF01 (focus wheel) | binoculars over search page | v2 generated 2026-10-05 from v1 (Sunburst i2i, 1K, 2:3): left lens Google results for "my business", right lens Google Maps pin "My Business" (white pin). media/gen/01-get-found-v2.png, awaiting placement approval. v1 (white base) kept as 01-get-found.png |
+| Everything you need to grow | 01 Get Found. Get Chosen. | black | lime #E1FF01 (focus wheel) | binoculars over search page | LIVE 2026-10-05: /uploads/4SsE3nR2FS5MUv6PTN_CR-svc-01-get-found.webp (from media/gen/01-get-found-v2.png). Card class `ph`: image at full card height on the right, left edge faded, card colour #020202 |

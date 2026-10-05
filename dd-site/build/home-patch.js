@@ -22,6 +22,12 @@ const RJ_CSS = `
 .dz-svc-card h3 { font-size: 1.85rem; font-weight: 300; line-height: 1.08; letter-spacing: -0.025em; }
 .dz-btn, .hero-btn, .hero-btn-2, #dz-form-submit { font-weight: 400; text-transform: none; letter-spacing: -0.01em; }
 #dz-about-row { margin-top: 0; }
+/* service cards with a generated photo: keep the accent colour, a soft fade under the title, a gentle zoom */
+.dz-svc-card.ph { background: #020202; border-color: rgba(243,241,234,.12); }
+.dz-svc-card.ph .dz-bg { inset: 0; background-size: auto 100%; background-position: right bottom; background-repeat: no-repeat; filter: none; }
+.dz-svc-card.ph .dz-bg::after { background: linear-gradient(180deg, rgba(2,2,2,.55) 0%, rgba(2,2,2,0) 30%, rgba(2,2,2,0) 80%, rgba(2,2,2,.45) 100%); }
+.dz-svc-card.ph:hover .dz-bg { filter: none; transform: scale(1.04); }
+@media (min-width: 768px) { .dz-svc-card.ph .dz-bg { left: auto; width: auto; aspect-ratio: 2 / 3; background-size: cover; -webkit-mask-image: linear-gradient(90deg, transparent, #000 26%); mask-image: linear-gradient(90deg, transparent, #000 26%); } }
 #dz-about-stats dt, .head-count, .stat .label, .venture .cat, .venture .year, .voice-btn .vrole, .voices-quote footer { text-transform: none; letter-spacing: -0.005em; font-weight: 300; font-size: 0.95rem; line-height: 1.25; }
 
 /* preloader: a light curtain with the mark, lifting onto the black hero */
@@ -265,6 +271,10 @@ function patches(gl) {
       replace: '    qa(".inview").forEach((i) => i.classList.add("in-view"));\n    qa(".rj-hero").forEach((h) => h.classList.add("rj-in"));\n  }',
     },
     { find: 'function mvApp(R) {', replace: RJ_JS(gl) },
+    {
+      find: `<article class="dz-svc-card lime">\n            <a class="dz-card-link" href="/services/web-design" aria-label="Discover Websites and SEO"></a><span class="dz-bg" style="background-image:url('/uploads/rQj-rf6y8kzmTrOq8tCz6-svc-gradient-antipode.webp')"></span>`,
+      replace: `<article class="dz-svc-card lime ph">\n            <a class="dz-card-link" href="/services/web-design" aria-label="Discover Websites and SEO"></a><span class="dz-bg" role="img" aria-label="A hand holding binoculars whose lenses show Google search results and Google Maps for My Business" style="background-image:url('/uploads/4SsE3nR2FS5MUv6PTN_CR-svc-01-get-found.webp')"></span>`,
+    },
     { find: '<div><dd data-count="EN·FR"></dd><dt>We work in English and French</dt></div>', replace: '<div><dd data-count="EN·FR·KR"></dd><dt>We work in English, French and Creole</dt></div>' },
     { find: '      mvApp(shadow);\n      dzInit(shadow);', replace: '      mvApp(shadow);\n      dzInit(shadow);\n      rjInit(shadow);' },
   ];
