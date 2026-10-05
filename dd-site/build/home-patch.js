@@ -50,10 +50,8 @@ const RJ_CSS = `
 /* image under the title, never behind it: a wide image pinned to the bottom, full width, whole and uncut */
 .dz-svc-card.ph-under .dz-bg { inset: 50% 0 0 0; background-size: cover; background-position: center bottom; background-repeat: no-repeat; }
 @supports (aspect-ratio: 1) { .dz-svc-card.ph-under .dz-bg { top: auto; aspect-ratio: 16 / 9; } }
-/* card 05: the collage at full card width from the left edge, the hand resting on the bottom of the card; no fade */
-.dz-svc-card.ph-drop { container-type: size; }
-.dz-svc-card.ph-drop .dz-bg { background-size: 100% auto; background-position: 0 100%; background-repeat: no-repeat; }
-@supports (width: 1cqw) { .dz-svc-card.ph-drop .dz-bg { background-position: 0 calc(100cqh - 85cqw); } }
+/* card 05: the collage fills the card from the top edge (the cone of light starts at the top), full width from the left edge; no fade */
+.dz-svc-card.ph-drop .dz-bg { background-size: cover; background-position: 40% 0; background-repeat: no-repeat; }
 /* touch screens have no hover: the card that settles mid-screen opens up the same way */
 @media (hover: none) {
   .dz-svc-card h3 { font-size: clamp(2.3rem, 7vw, 2.9rem); }
