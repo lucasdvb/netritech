@@ -38,6 +38,11 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 - Service cards: the image covers the whole card under a light veil and the title sits big and bold on top. On hover the image blurs, the veil darkens, the title steps down and the description appears. On touch screens the card that settles mid-screen opens the same way after 0.7s.
 - A card with a real photo gets the class `ph` (keeps the accent colour; the other cards stay greyscale). Card colour #020202, so make each image's black about #020202.
 
+## Taste notes from the client
+
+- References are a starting idea, not something to copy. Push them edgier, bolder, more minimal and more aesthetic: fewer elements, more empty space, graphic shapes, hard light.
+- When the idea is loose, use text-to-image instead of image-to-image (image-to-image keeps the reference's background colour).
+
 ## Production
 
 - Model: what the client names for the job (currently **GPT Image 2.5 Sunburst**, 1K) via
@@ -51,3 +56,4 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 |---|---|---|---|---|---|
 | Everything you need to grow | 01 Get Found. Get Chosen. | black | lime #E1FF01 (focus wheel) | binoculars over search page | LIVE 2026-10-05: /uploads/4SsE3nR2FS5MUv6PTN_CR-svc-01-get-found.webp (from media/gen/01-get-found-v2.png). Card class `ph`: image at full card height on the right, left edge faded, card colour #020202 |
 | Everything you need to grow | 02 Get More Customers. | asked black (client), came out white | blue #0731D1 (floor marker) | crowd from above | v1 2026-10-05 (Sunburst i2i, 1K, 1:1) kept the reference's white floor: not used. media/gen/02-more-customers.png. Lesson: Sunburst i2i keeps the reference's base colour; invert the reference first when the base must flip |
+| Everything you need to grow | 02 Get More Customers. | black | lime #E1FF01 (meeting point) | crowd from above (loose inspiration) | v2 "Pull" 2026-10-05 (Sunburst t2i, 1K, 1:1): four streams of tiny off-white people converge on one lime point, top half empty black. media/gen/02-more-customers-v2.png, awaiting placement approval |
