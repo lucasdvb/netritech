@@ -10,12 +10,10 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 - **Black and white first.** Every image is monochrome. The base alternates between
   **black** (#08080a) and **white / off-white** (#f3f1ea) from one image to the next, so a
   row of cards reads black, white, black.
-- **One accent, small.** Exactly one small detail carries colour, and only one of:
-  - **Lime #E1FF01**
-  - **Blue #0731D1**
-  The accent is a detail (a ring, a wheel, a cursor, a dot, a thin edge), never a fill,
-  never the background, never more than a few percent of the frame. Alternate the two
-  accents across a set where it helps.
+- **One accent, small: lime #E1FF01.** Exactly one small detail carries colour, always lime
+  #E1FF01 (the client dropped blue #0731D1 on 2026-10-05). The accent is a detail (a ring,
+  a wheel, a marker, a dot, a thin edge), never a fill, never the background, never more
+  than a few percent of the frame.
 - **Editorial collage style** (from the reference): a real photographic subject, usually a
   hand or an everyday object, cut out and set on a flat, seamless base. Greyscale photo
   texture on the subject, crisp edges, soft contact shadow at most. One clear visual idea

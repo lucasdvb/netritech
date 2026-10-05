@@ -17,4 +17,4 @@
 
 # Disruptive Dodo images
 
-- Every generated image for the Disruptive Dodo site follows `dd-site/docs/image-direction.md`: black and white, the base alternating black / white, and one small accent detail in lime #E1FF01 or blue #0731D1. Work one image at a time from the client's reference. The generation permission rule above still applies to each one.
+- Every generated image for the Disruptive Dodo site follows `dd-site/docs/image-direction.md`: black and white, the base alternating black / white, and one small accent detail in lime #E1FF01 (no blue). Work one image at a time from the client's reference. The generation permission rule above still applies to each one.
