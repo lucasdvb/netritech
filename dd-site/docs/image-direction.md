@@ -37,7 +37,7 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 
 ## Placing on cards
 
-- Service cards that carry a photo get the class `ph` on `.dz-svc-card`: the image keeps its colour (no greyscale filter), sits at the card's full height on the right with its left edge faded on screens 768px and up, and the card colour matches the image's black (#020202). Make each card image's black pure (about #020202) so it blends.
+- Service cards that carry a photo get the class `ph` on `.dz-svc-card`: the image keeps its colour (no greyscale filter), sits at the full card height on the right (background-size auto 100%, the layer always covers the whole card) with its left edge faded on screens 768px and up through a container-query mask (do not size the layer with aspect-ratio: Safari collapses it to zero width), and the card colour matches the image's black (#020202). Make each card image's black pure (about #020202) so it blends.
 
 ## Production
 

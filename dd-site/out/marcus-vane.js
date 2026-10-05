@@ -700,7 +700,7 @@ main { position: relative; width: 100%; overflow-x: clip; }
 .dz-svc-card.ph .dz-bg { inset: 0; background-size: auto 100%; background-position: right bottom; background-repeat: no-repeat; filter: none; }
 .dz-svc-card.ph .dz-bg::after { background: linear-gradient(180deg, rgba(2,2,2,.55) 0%, rgba(2,2,2,0) 30%, rgba(2,2,2,0) 80%, rgba(2,2,2,.45) 100%); }
 .dz-svc-card.ph:hover .dz-bg { filter: none; transform: scale(1.04); }
-@media (min-width: 768px) { .dz-svc-card.ph .dz-bg { left: auto; width: auto; aspect-ratio: 2 / 3; background-size: cover; -webkit-mask-image: linear-gradient(90deg, transparent, #000 26%); mask-image: linear-gradient(90deg, transparent, #000 26%); } }
+@media (min-width: 768px) { .dz-svc-card.ph { container-type: size; } .dz-svc-card.ph .dz-bg { -webkit-mask-image: linear-gradient(90deg, transparent calc(100cqw - 66.7cqh), #000 calc(100cqw - 50cqh)); mask-image: linear-gradient(90deg, transparent calc(100cqw - 66.7cqh), #000 calc(100cqw - 50cqh)); } }
 #dz-about-stats dt, .head-count, .stat .label, .venture .cat, .venture .year, .voice-btn .vrole, .voices-quote footer { text-transform: none; letter-spacing: -0.005em; font-weight: 300; font-size: 0.95rem; line-height: 1.25; }
 
 /* preloader: a light curtain with the mark, lifting onto the black hero */
