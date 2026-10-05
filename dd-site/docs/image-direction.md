@@ -52,3 +52,4 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 | Section | Card | Base | Accent | Reference | Status |
 |---|---|---|---|---|---|
 | Everything you need to grow | 01 Get Found. Get Chosen. | black | lime #E1FF01 (focus wheel) | binoculars over search page | LIVE 2026-10-05: /uploads/4SsE3nR2FS5MUv6PTN_CR-svc-01-get-found.webp (from media/gen/01-get-found-v2.png). Card class `ph`: image at full card height on the right, left edge faded, card colour #020202 |
+| Everything you need to grow | 02 Get More Customers. | asked black (client), came out white | blue #0731D1 (floor marker) | crowd from above | v1 2026-10-05 (Sunburst i2i, 1K, 1:1) kept the reference's white floor: not used. media/gen/02-more-customers.png. Lesson: Sunburst i2i keeps the reference's base colour; invert the reference first when the base must flip |
