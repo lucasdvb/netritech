@@ -39,6 +39,10 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 - If the subject rises into the title on desktop, add `ph-low` (image at 86% of the card height, anchored to the bottom; only works when the image edges are pure black).
 - A card with a real photo gets the class `ph` (keeps the accent colour; the other cards stay greyscale). Card colour #020202, so make each image's black about #020202.
 
+## White-base images
+
+- On white, give lime a fine dark outline or halo so it reads, and draw rings and lines in black instead of light.
+
 ## Taste notes from the client
 
 - References are a starting idea, not something to copy. Push them edgier, bolder, more minimal and more aesthetic: fewer elements, more empty space, graphic shapes, hard light.
@@ -59,3 +63,4 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 | Everything you need to grow | 02 Get More Customers. | asked black (client), came out white | blue #0731D1 (floor marker) | crowd from above | v1 2026-10-05 (Sunburst i2i, 1K, 1:1) kept the reference's white floor: not used. media/gen/02-more-customers.png. Lesson: Sunburst i2i keeps the reference's base colour; invert the reference first when the base must flip |
 | Everything you need to grow | 02 Get More Customers. | black | lime #E1FF01 (meeting point) | crowd from above (loose inspiration) | v2 "Pull" 2026-10-05 (Sunburst t2i, 1K, 1:1): four streams of tiny off-white people converge on one lime point, top half empty black. LIVE 2026-10-05: /uploads/qXcz1kpuNDfZZunGNJ81I-svc-02-more-customers.webp (background-position 68% center so the lime point stays in frame on phones) |
 | Everything you need to grow | 03 Look Like the Leader. | black | lime #E1FF01 (light from the door gap) | ant in, elephant out (loose inspiration) | v1 2026-10-05 (Sunburst t2i, 1K, 1:1): a lone white door in a black void, the ant walks in, a rim-lit elephant walks out, lime light spills on the floor. LIVE 2026-10-05: /uploads/lswKF9BnskEC0aCrz1hvP-svc-03-look-like-leader.webp. Card class `ph ph-low`: on desktop the image sits at 86% height on the bottom so the title clears the door |
+| Everything you need to grow | 04 Grow Without Growing Your Team. | white (client) | lime #E1FF01 (spark between fingertips, dark outline) | human and robot hands in a ring (loose inspiration) | v1 2026-10-05 (Sunburst t2i, 1K, 1:1): human hand and chrome robotic hand almost touching inside a thin black ring on off-white. media/gen/04-grow-without-team.png, awaiting placement approval |
