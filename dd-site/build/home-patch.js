@@ -50,6 +50,9 @@ const RJ_CSS = `
 /* image under the title, never behind it: a wide image pinned to the bottom, full width, whole and uncut */
 .dz-svc-card.ph-under .dz-bg { inset: 50% 0 0 0; background-size: cover; background-position: center bottom; background-repeat: no-repeat; }
 @supports (aspect-ratio: 1) { .dz-svc-card.ph-under .dz-bg { top: auto; aspect-ratio: 16 / 9; } }
+/* image set low, its top fading in from black, so the title stays on clean black */
+.dz-svc-card.ph-drop .dz-bg { background-size: 100% auto; background-position: 0 100%; background-repeat: no-repeat; -webkit-mask-image: linear-gradient(180deg, transparent 40%, #000 52%); mask-image: linear-gradient(180deg, transparent 40%, #000 52%); }
+@media (min-width: 768px) { .dz-svc-card.ph-drop .dz-bg { background-size: auto 72%; -webkit-mask-image: linear-gradient(180deg, transparent 38%, #000 50%); mask-image: linear-gradient(180deg, transparent 38%, #000 50%); } }
 /* touch screens have no hover: the card that settles mid-screen opens up the same way */
 @media (hover: none) {
   .dz-svc-card h3 { font-size: clamp(2.3rem, 7vw, 2.9rem); }
@@ -324,6 +327,10 @@ function patches(gl) {
       replace: '    qa(".inview").forEach((i) => i.classList.add("in-view"));\n    qa(".rj-hero").forEach((h) => h.classList.add("rj-in"));\n  }',
     },
     { find: 'function mvApp(R) {', replace: RJ_JS(gl) },
+    {
+      find: `<article class="dz-svc-card lime">\n            <a class="dz-card-link" href="/services/marketing-automation-crm" aria-label="Discover Automation and CRM"></a><span class="dz-bg" style="background-image:url('/uploads/BVywNC3ExdKpfgDNuKj1K-svc-gradient-hearth.webp')"></span>`,
+      replace: `<article class="dz-svc-card lime ph ph-drop">\n            <a class="dz-card-link" href="/services/marketing-automation-crm" aria-label="Discover Automation and CRM"></a><span class="dz-bg" role="img" aria-label="A hand holding a stack of coins in a collage of leaves, engraved banknote pieces and a cone of light" style="background-image:url('/uploads/Li4cZA7TOd5NO4dqCY0tU-svc-05-close-more-sales.webp')"></span>`,
+    },
     {
       find: `<article class="dz-svc-card brand">\n            <a class="dz-card-link" href="/services/ai-chatbots" aria-label="Discover AI implementation"></a><span class="dz-bg" style="background-image:url('/uploads/jynwU4ZlUcvkFo7HdezFK-svc-gradient-cynosure.webp')"></span>`,
       replace: `<article class="dz-svc-card brand ph ph-lime ph-under">\n            <a class="dz-card-link" href="/services/ai-chatbots" aria-label="Discover AI implementation"></a><span class="dz-bg" role="img" aria-label="A white and chrome robotic hand typing on a keyboard on a lime background" style="background-image:url('/uploads/v3myoSUdgXACOKm9jF2E_-svc-04-robot-keyboard-wide.webp')"></span>`,
