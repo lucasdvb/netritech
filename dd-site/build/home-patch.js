@@ -50,9 +50,11 @@ const RJ_CSS = `
 /* image under the title, never behind it: a wide image pinned to the bottom, full width, whole and uncut */
 .dz-svc-card.ph-under .dz-bg { inset: 50% 0 0 0; background-size: cover; background-position: center bottom; background-repeat: no-repeat; }
 @supports (aspect-ratio: 1) { .dz-svc-card.ph-under .dz-bg { top: auto; aspect-ratio: 16 / 9; } }
-/* image set low, its top fading in from black, so the title stays on clean black */
-.dz-svc-card.ph-drop .dz-bg { background-size: 100% auto; background-position: 0 100%; background-repeat: no-repeat; -webkit-mask-image: linear-gradient(180deg, transparent 40%, #000 52%); mask-image: linear-gradient(180deg, transparent 40%, #000 52%); }
-@media (min-width: 768px) { .dz-svc-card.ph-drop .dz-bg { background-size: 100% auto; background-position: 0 3.25rem; -webkit-mask-image: linear-gradient(180deg, transparent 11.6rem, #000 13.6rem); mask-image: linear-gradient(180deg, transparent 11.6rem, #000 13.6rem); } }
+/* image set low, its top fading in from black, so the title stays on clean black. Sized to the space under the
+   title: full card width from the left edge when there is room, smaller on short cards, never cut at the bottom */
+.dz-svc-card.ph-drop { container-type: size; }
+.dz-svc-card.ph-drop .dz-bg { background-size: 100% auto; background-position: 0 100%; background-repeat: no-repeat; -webkit-mask-image: linear-gradient(180deg, transparent 11.6rem, #000 13.6rem); mask-image: linear-gradient(180deg, transparent 11.6rem, #000 13.6rem); }
+@supports (width: 1cqw) { .dz-svc-card.ph-drop .dz-bg { --S: min(100cqw, calc((100cqh - 12.2rem) / 0.5)); background-size: var(--S) var(--S); background-position: 0 calc(12.2rem - var(--S) * 0.3); } }
 /* touch screens have no hover: the card that settles mid-screen opens up the same way */
 @media (hover: none) {
   .dz-svc-card h3 { font-size: clamp(2.3rem, 7vw, 2.9rem); }
