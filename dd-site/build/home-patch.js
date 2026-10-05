@@ -31,6 +31,8 @@ const RJ_CSS = `
 .dz-svc-card:not(.ph) .dz-bg { filter: grayscale(1); }
 .dz-svc-card:not(.ph):hover .dz-bg { filter: blur(16px) grayscale(1) brightness(.9); }
 .dz-svc-card.ph .dz-bg { background-position: center 18%; }
+.dz-svc-card.ph-low .dz-bg { background-position: 58% center; }
+@media (min-width: 768px) { .dz-svc-card.ph-low .dz-bg { background-size: auto 86%; background-position: 58% 100%; background-repeat: no-repeat; } }
 /* touch screens have no hover: the card that settles mid-screen opens up the same way */
 @media (hover: none) {
   .dz-svc-card h3 { font-size: clamp(2.3rem, 7vw, 2.9rem); }
@@ -305,6 +307,10 @@ function patches(gl) {
       replace: '    qa(".inview").forEach((i) => i.classList.add("in-view"));\n    qa(".rj-hero").forEach((h) => h.classList.add("rj-in"));\n  }',
     },
     { find: 'function mvApp(R) {', replace: RJ_JS(gl) },
+    {
+      find: `<article class="dz-svc-card lime">\n            <a class="dz-card-link" href="/services/branding-logo-design" aria-label="Discover Branding"></a><span class="dz-bg" style="background-image:url('/uploads/a77k9D6QYeB_rsP9prFT5-svc-gradient-meridian.webp')"></span>`,
+      replace: `<article class="dz-svc-card lime ph ph-low">\n            <a class="dz-card-link" href="/services/branding-logo-design" aria-label="Discover Branding"></a><span class="dz-bg" role="img" aria-label="A tiny ant walks into a lone door and a huge elephant walks out, lit by a thin lime light" style="background-image:url('/uploads/lswKF9BnskEC0aCrz1hvP-svc-03-look-like-leader.webp')"></span>`,
+    },
     {
       find: `<article class="dz-svc-card brand">\n            <a class="dz-card-link" href="/services/facebook-google-ads" aria-label="Discover Paid ads"></a><span class="dz-bg" style="background-image:url('/uploads/pRFJj72VWCnd0T9r_233u-svc-gradient-gnomon.webp')"></span>`,
       replace: `<article class="dz-svc-card brand ph">\n            <a class="dz-card-link" href="/services/facebook-google-ads" aria-label="Discover Paid ads"></a><span class="dz-bg" role="img" aria-label="Streams of people seen from above converging on one glowing lime point on a black floor" style="background-image:url('/uploads/qXcz1kpuNDfZZunGNJ81I-svc-02-more-customers.webp');background-position:68% center"></span>`,
