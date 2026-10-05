@@ -46,4 +46,4 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 
 | Section | Card | Base | Accent | Reference | Status |
 |---|---|---|---|---|---|
-| Everything you need to grow | 01 Get Found. Get Chosen. | asked black, came out white | lime #E1FF01 (focus wheel) | binoculars over search page | generated 2026-10-05 (Sunburst i2i, 1K, 2:3; 4:5 is not accepted by Sunburst), awaiting client review: media/gen/01-get-found.png |
+| Everything you need to grow | 01 Get Found. Get Chosen. | black | lime #E1FF01 (focus wheel) | binoculars over search page | v2 generated 2026-10-05 from v1 (Sunburst i2i, 1K, 2:3): left lens Google results for "my business", right lens Google Maps pin "My Business" (white pin). media/gen/01-get-found-v2.png, awaiting placement approval. v1 (white base) kept as 01-get-found.png |
