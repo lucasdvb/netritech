@@ -7,7 +7,7 @@ for(const p of paths){const ctx=await b.newContext({viewport:{width:390,height:8
  const cdp=await ctx.newCDPSession(pg);await cdp.send('Emulation.setCPUThrottlingRate',{rate:4});await cdp.send('Performance.enable');
  await pg.addInitScript(()=>{window.__lt=[];window.__cls=0;new PerformanceObserver(l=>l.getEntries().forEach(e=>window.__lt.push(e.duration))).observe({type:'longtask',buffered:true});
   new PerformanceObserver(l=>l.getEntries().forEach(e=>{if(!e.hadRecentInput)window.__cls+=e.value})).observe({type:'layout-shift',buffered:true});});
- const t0=Date.now();await pg.goto('http://localhost:8788'+p,{waitUntil:'load'});const load=Date.now()-t0;await pg.waitForTimeout(2500);
+ const t0=Date.now();await pg.goto('http://localhost:8787'+p,{waitUntil:'load'});const load=Date.now()-t0;await pg.waitForTimeout(2500);
  const fcp=await pg.evaluate(()=>{const e=performance.getEntriesByName('first-contentful-paint')[0];return e?Math.round(e.startTime):null});
  // scroll in steps and sample frames
  const frames=await pg.evaluate(async()=>{const H=document.documentElement.scrollHeight;const gaps=[];let last=performance.now();let run=true;

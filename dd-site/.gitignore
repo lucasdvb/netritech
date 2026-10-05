@@ -5,3 +5,4 @@ gl/*.html
 build/gl-ported.json
 build/gl-test.html
 node_modules/
+media/

@@ -3,7 +3,7 @@ const {chromium}=require('/opt/node-tools/node_modules/playwright');const fs=req
 const errs=[];
 for (const [w,h] of [[1440,900],[390,844]]){
  const p=await b.newPage({viewport:{width:w,height:h},isMobile:w<600,hasTouch:w<600});p.on('pageerror',e=>errs.push(w+' '+e.message));
- await p.goto('http://localhost:8788/',{waitUntil:'networkidle'});await p.waitForTimeout(6500);
+ await p.goto('http://localhost:8787/',{waitUntil:'networkidle'});await p.waitForTimeout(6500);
  await p.screenshot({path:`shots/home2/top-${w}.jpg`,type:'jpeg',quality:65});
  const info=await p.evaluate(()=>({top:!!document.getElementById('dd-chrome-top'),foot:!!document.getElementById('dd-chrome-foot'),
    oldNav:getComputedStyle(document.getElementById('mv-root').shadowRoot.querySelector('.site-nav')).display,
