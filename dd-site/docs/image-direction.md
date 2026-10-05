@@ -50,6 +50,9 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 - References are a starting idea, not something to copy. Push them edgier, bolder, more minimal and more aesthetic: fewer elements, more empty space, graphic shapes, hard light.
 - When the idea is loose, use text-to-image instead of image-to-image (image-to-image keeps the reference's background colour).
 
+- The client likes creative, avant-garde staging: fashion-campaign tableaux, strict symmetry, deadpan figures, hard flash, surreal but readable ideas.
+- A lime base is allowed for a single standout card (client, card 04).
+
 ## Production
 
 - Model: what the client names for the job (currently **GPT Image 2.5 Sunburst**, 1K) via
@@ -66,3 +69,4 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 | Everything you need to grow | 02 Get More Customers. | black | lime #E1FF01 (meeting point) | crowd from above (loose inspiration) | v2 "Pull" 2026-10-05 (Sunburst t2i, 1K, 1:1): four streams of tiny off-white people converge on one lime point, top half empty black. LIVE 2026-10-05: /uploads/qXcz1kpuNDfZZunGNJ81I-svc-02-more-customers.webp (background-position 68% center so the lime point stays in frame on phones) |
 | Everything you need to grow | 03 Look Like the Leader. | black | lime #E1FF01 (light from the door gap) | ant in, elephant out (loose inspiration) | v1 2026-10-05 (Sunburst t2i, 1K, 1:1): a lone white door in a black void, the ant walks in, a rim-lit elephant walks out, lime light spills on the floor. LIVE 2026-10-05: /uploads/lswKF9BnskEC0aCrz1hvP-svc-03-look-like-leader.webp. Card class `ph ph-low`: on desktop the image sits at 86% height on the bottom so the title clears the door |
 | Everything you need to grow | 04 Grow Without Growing Your Team. | white (client) | lime #E1FF01 (spark between fingertips, dark outline) | human and robot hands in a ring (loose inspiration) | v1 2026-10-05 (Sunburst t2i, 1K, 1:1): human hand and chrome robotic hand almost touching inside a thin black ring on off-white. LIVE 2026-10-05: /uploads/4DdNPqwJ3lBrJz9SNzfZA-svc-04-grow-without-team.webp. Card class `ph ph-light ph-low ph-fade` with --s:76% --x:50%: dark text, image lowered on desktop, side edges faded into white |
+| Everything you need to grow | 04 Grow Without Growing Your Team. (v2, replaces the hands) | lime #E1FF01 (client) | the base is the colour; figures black and white | stressed owner with a robot (loose inspiration) | v2 "The Board" 2026-10-05 (Sunburst t2i, 1K, 1:1): avant-garde fashion editorial, the relaxed owner with coffee in front of three identical robots holding a phone, laptop and folder, hard flash. media/gen/04b-grow-without-team.png, awaiting placement approval |
