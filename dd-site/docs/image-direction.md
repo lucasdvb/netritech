@@ -28,16 +28,17 @@ approved the prompt, model and settings (see the generation rule in /CLAUDE.md).
 
 ## Composition for the site
 
-- Cards put their title at the top left. Keep the **top third quiet** (just base colour)
+- Cards put a big bold title at the top left over the image. Keep the **top third quiet** (just base colour)
   and place the subject in the lower two-thirds, slightly right of centre.
-- Default format **2:3 portrait** for cards (Sunburst does not accept 4:5). Wide sections
+- Default format **1:1 square** for service cards (the cards are square and the image fills the whole card). Sunburst does not accept 4:5. Wide sections
   use 16:9 or 21:9 with the same rules.
 - **No added text**, logos or watermarks unless the idea needs a real interface on a
   screen (as in the reference), and then keep it minimal and in greys.
 
 ## Placing on cards
 
-- Service cards that carry a photo get the class `ph` on `.dz-svc-card`: the image keeps its colour (no greyscale filter), sits at the full card height on the right (background-size auto 100%, the layer always covers the whole card) with its left edge faded on screens 768px and up through a container-query mask (do not size the layer with aspect-ratio: Safari collapses it to zero width), and the card colour matches the image's black (#020202). Make each card image's black pure (about #020202) so it blends.
+- Service cards: the image covers the whole card under a light veil and the title sits big and bold on top. On hover the image blurs, the veil darkens, the title steps down and the description appears. On touch screens the card that settles mid-screen opens the same way after 0.7s.
+- A card with a real photo gets the class `ph` (keeps the accent colour; the other cards stay greyscale). Card colour #020202, so make each image's black about #020202.
 
 ## Production
 

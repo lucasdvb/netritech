@@ -19,15 +19,28 @@ const RJ_CSS = `
 .principle h3, .venture h3, .voice-btn .vname, .dz-team-card figcaption .n, #dz-form-panel h3, #dz-form-done h3, .contact-email { font-weight: 400; letter-spacing: -0.015em; }
 .principle .idx { font-weight: 300; }
 .venture .outcome, #dz-form-panel label { font-weight: 400; text-transform: none; letter-spacing: -0.005em; font-size: 0.9rem; }
-.dz-svc-card h3 { font-size: 1.85rem; font-weight: 300; line-height: 1.08; letter-spacing: -0.025em; }
 .dz-btn, .hero-btn, .hero-btn-2, #dz-form-submit { font-weight: 400; text-transform: none; letter-spacing: -0.01em; }
 #dz-about-row { margin-top: 0; }
-/* service cards with a generated photo: keep the accent colour, a soft fade under the title, a gentle zoom */
-.dz-svc-card.ph { background: #020202; border-color: rgba(243,241,234,.12); }
-.dz-svc-card.ph .dz-bg { inset: 0; background-size: auto 100%; background-position: right bottom; background-repeat: no-repeat; filter: none; }
-.dz-svc-card.ph .dz-bg::after { background: linear-gradient(180deg, rgba(2,2,2,.55) 0%, rgba(2,2,2,0) 30%, rgba(2,2,2,0) 80%, rgba(2,2,2,.45) 100%); }
-.dz-svc-card.ph:hover .dz-bg { filter: none; transform: scale(1.04); }
-@media (min-width: 768px) { .dz-svc-card.ph { container-type: size; } .dz-svc-card.ph .dz-bg { -webkit-mask-image: linear-gradient(90deg, transparent calc(100cqw - 66.7cqh), #000 calc(100cqw - 50cqh)); mask-image: linear-gradient(90deg, transparent calc(100cqw - 66.7cqh), #000 calc(100cqw - 50cqh)); } }
+/* service cards: the image fills the card under a light veil, the title big and bold; on hover the image blurs, the veil darkens and the text appears */
+.dz-svc-card, .dz-svc-card.lime, .dz-svc-card.brand { background: #020202; color: #fff; border-color: rgba(243,241,234,.12); }
+.dz-svc-card .dz-bg { inset: 0; background-size: cover; background-position: center; filter: none; transform: scale(1.001); transition: filter .6s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1); }
+.dz-svc-card .dz-bg::after { background-color: rgba(2,2,2,0); background-image: linear-gradient(180deg, rgba(2,2,2,.5) 0%, rgba(2,2,2,.1) 38%, rgba(2,2,2,.08) 62%, rgba(2,2,2,.45) 100%); transition: background-color .6s ease; }
+.dz-svc-card:hover .dz-bg { filter: blur(16px) brightness(.9); transform: scale(1.08); }
+.dz-svc-card:hover .dz-bg::after { background-color: rgba(2,2,2,.5); }
+.dz-svc-card h3 { font-weight: 600; letter-spacing: -0.03em; }
+.dz-svc-card:not(.ph) .dz-bg { filter: grayscale(1); }
+.dz-svc-card:not(.ph):hover .dz-bg { filter: blur(16px) grayscale(1) brightness(.9); }
+.dz-svc-card.ph .dz-bg { background-position: center 18%; }
+/* touch screens have no hover: the card that settles mid-screen opens up the same way */
+@media (hover: none) {
+  .dz-svc-card h3 { font-size: clamp(2.3rem, 7vw, 2.9rem); }
+  .dz-svc-card .dz-sub { opacity: 0; transform: translateY(10px); }
+  .dz-svc-card.is-on h3 { font-size: 1.65rem; }
+  .dz-svc-card.is-on .dz-sub { opacity: .9; transform: none; }
+  .dz-svc-card.is-on .dz-bg { filter: blur(16px) brightness(.9); transform: scale(1.08); }
+  .dz-svc-card.is-on:not(.ph) .dz-bg { filter: blur(16px) grayscale(1) brightness(.9); }
+  .dz-svc-card.is-on .dz-bg::after { background-color: rgba(2,2,2,.5); }
+}
 #dz-about-stats dt, .head-count, .stat .label, .venture .cat, .venture .year, .voice-btn .vrole, .voices-quote footer { text-transform: none; letter-spacing: -0.005em; font-weight: 300; font-size: 0.95rem; line-height: 1.25; }
 
 /* preloader: a light curtain with the mark, lifting onto the black hero */
@@ -194,6 +207,27 @@ function rjInit(R) {
       catch (err) { cv.remove(); }
     };
     setTimeout(() => { if (window.requestIdleCallback) requestIdleCallback(go, { timeout: 800 }); else go(); }, RM ? 0 : 2600);
+  }
+
+  // touch screens: the service card nearest the middle opens after a short pause, so the image is seen first
+  if (window.matchMedia("(hover: none)").matches) {
+    const cards = [...R.querySelectorAll(".dz-svc-card")];
+    let busy = false, cur = null, next = null, wait = 0;
+    const pick = () => {
+      busy = false;
+      const mid = innerWidth / 2;
+      let best = null, bd = 1e9;
+      cards.forEach((c) => { const r = c.getBoundingClientRect(); if (r.bottom < 0 || r.top > innerHeight) return; const d = Math.abs(r.left + r.width / 2 - mid); if (d < bd && d < r.width * 0.35) { bd = d; best = c; } });
+      if (best === next) return;
+      next = best; clearTimeout(wait);
+      if (cur && cur !== best) { cur.classList.remove("is-on"); cur = null; }
+      if (best) wait = setTimeout(() => { best.classList.add("is-on"); cur = best; }, 700);
+    };
+    const ask = () => { if (!busy) { busy = true; requestAnimationFrame(pick); } };
+    addEventListener("scroll", ask, { passive: true });
+    const rail = R.getElementById("dz-svc-rail");
+    if (rail) rail.addEventListener("scroll", ask, { passive: true });
+    pick();
   }
 
   // the banner: a slow drift, pushed by scroll speed, turning with the scroll, leaning into it
