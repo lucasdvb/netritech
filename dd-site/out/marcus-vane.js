@@ -723,13 +723,14 @@ main { position: relative; width: 100%; overflow-x: clip; }
 /* image under the title, never behind it: a wide image pinned to the bottom, full width, whole and uncut */
 .dz-svc-card.ph-under .dz-bg { inset: 50% 0 0 0; background-size: cover; background-position: center bottom; background-repeat: no-repeat; }
 @supports (aspect-ratio: 1) { .dz-svc-card.ph-under .dz-bg { top: auto; aspect-ratio: 16 / 9; } }
-/* card 05: the collage enlarged so its art reaches the top edge (the empty top of the image is cropped off) and the hand
-   rests on the bottom; a smooth black gradient on top of the picture keeps the title readable */
+/* card 05: the collage at card width, starting at the left edge (the hand comes in from it) with the art centred in the
+   card; a smooth black gradient on top of the picture keeps the title readable */
 .dz-svc-card.ph-drop { container-type: size; }
-.dz-svc-card.ph-drop .dz-bg { background-size: cover; background-position: 30% 0; background-repeat: no-repeat; }
-/* cq units measure the card's content box, so add the card padding back (1.5rem, 2rem from 768px) to get the image layer's size */
-@supports (width: 1cqw) { .dz-svc-card.ph-drop .dz-bg { --p: 3rem; --S: max(calc(100cqw + var(--p)), calc((100cqh + var(--p)) * 1.39)); background-size: var(--S) var(--S); background-position: var(--x, 41%) calc(var(--S) * -0.21); } }
-@media (min-width: 768px) { .dz-svc-card.ph-drop .dz-bg { --p: 4rem; --x: 30%; } }
+.dz-svc-card.ph-drop .dz-bg { background-size: 100% auto; background-position: 0 60%; background-repeat: no-repeat; }
+/* cq units measure the card's content box, so add the card padding back (1.5rem, 2rem from 768px) to get the image layer's size.
+   The art spans 23% to 92% of the image height, so its middle (57.5%) goes to the middle of the card */
+@supports (width: 1cqw) { .dz-svc-card.ph-drop .dz-bg { --p: 3rem; background-position: 0 calc((100cqh + var(--p)) / 2 - (100cqw + var(--p)) * 0.575); } }
+@media (min-width: 768px) { .dz-svc-card.ph-drop .dz-bg { --p: 4rem; } }
 .dz-svc-card.ph-drop .dz-bg::after { background-image: linear-gradient(180deg, rgba(2,2,2,.94) 0%, rgba(2,2,2,.9) 8%, rgba(2,2,2,.8) 16%, rgba(2,2,2,.64) 24%, rgba(2,2,2,.45) 32%, rgba(2,2,2,.27) 40%, rgba(2,2,2,.13) 48%, rgba(2,2,2,.04) 56%, rgba(2,2,2,0) 64%, rgba(2,2,2,0) 76%, rgba(2,2,2,.3) 100%); }
 /* touch screens have no hover: the card that settles mid-screen opens up the same way */
 @media (hover: none) {
