@@ -72,7 +72,7 @@ DD.pages["automation"] = {
      "name": "Which CRM do you use?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "We build on GoHighLevel, which brings your inbox, pipeline, booking, email and automation into one place. If you already use a CRM, we look at it first and tell you honestly whether to keep it."
+      "text": "We build you a custom CRM that brings your inbox, pipeline, booking, email and automation into one place. If you already use a CRM, we look at it first and tell you honestly whether to keep it."
      }
     },
     {
@@ -217,7 +217,7 @@ DD.pages["automation"] = {
       <div class="c1-5"><p class="kick">In plain terms</p><h2 class="h2 mt-24" id="plain-h">What you get, in plain terms.</h2></div>
       <p class="lead fg c7-12">A CRM is one place where every enquiry and every customer is kept, with their full history. Automation is the work it does on its own: replies, reminders, follow-ups and review requests. We set up both, connect them to your website, your pages and your phone, and show your team how to use them.</p>
     </div>
-    <dl class="facts mt-96" data-r="s"><div><dt class="cap">Who it's for</dt><dd>Businesses that lose track of enquiries, or spend hours chasing them by hand.</dd></div><div><dt class="cap">What you get</dt><dd>A CRM set up for you, every enquiry in one place, instant alerts, follow-up, online booking, review requests.</dd></div><div><dt class="cap">Built on</dt><dd>GoHighLevel, or the CRM you already use if it does the job.</dd></div><div><dt class="cap">How you pay</dt><dd>A setup fee, then <span class="todo">[a monthly fee for the CRM and support, to confirm]</span>.</dd></div></dl>
+    <dl class="facts mt-96" data-r="s"><div><dt class="cap">Who it's for</dt><dd>Businesses that lose track of enquiries, or spend hours chasing them by hand.</dd></div><div><dt class="cap">What you get</dt><dd>A CRM set up for you, every enquiry in one place, instant alerts, follow-up, online booking, review requests.</dd></div><div><dt class="cap">Built on</dt><dd>A custom-built CRM, or the CRM you already use if it does the job.</dd></div><div><dt class="cap">How you pay</dt><dd>A setup fee, then <span class="todo">[a monthly fee for the CRM and support, to confirm]</span>.</dd></div></dl>
   </section>
 
   <section class="sheet dk sec" aria-labelledby="sf-h">
@@ -288,7 +288,7 @@ DD.pages["automation"] = {
       <div class="c1-5"><div class="stick"><p class="kick">Questions</p><h2 class="h2 mt-24" id="faq-h" style="max-width:12ch">CRM and automation questions, answered.</h2></div></div>
       <div class="faq c7-12">
         <details open><summary><h3>What is a CRM, in plain words?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">One place where you keep every enquiry and every customer, with their messages, calls, quotes and history. Your whole team sees the same thing.</p></details>
-        <details><summary><h3>Which CRM do you use?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">We build on GoHighLevel, which brings your inbox, pipeline, booking, email and automation into one place. If you already use a CRM, we look at it first and tell you honestly whether to keep it.</p></details>
+        <details><summary><h3>Which CRM do you use?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">We build you a custom CRM that brings your inbox, pipeline, booking, email and automation into one place. If you already use a CRM, we look at it first and tell you honestly whether to keep it.</p></details>
         <details><summary><h3>Can it work with WhatsApp?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Yes. WhatsApp messages can land in the same inbox as everything else, and your team can get a WhatsApp alert for every new enquiry.</p></details>
         <details><summary><h3>Will my customers know the replies are automatic?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">The first reply tells them you have their message and what happens next. Real conversations stay with your team. If you want an assistant that answers questions too, see <a href="/services/ai-chatbots">AI implementation</a>.</p></details>
         <details><summary><h3>Do I need to change how my team works?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">A little, for the better. We build around how you already sell, then show your team the new way. Most of what it removes is copying, chasing and remembering.</p></details>

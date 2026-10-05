@@ -88,7 +88,7 @@ DD.pages["ai"] = {
      "name": "Which languages does it speak?",
      "acceptedAnswer": {
       "@type": "Answer",
-      "text": "English and French. [Creole, to confirm.]"
+      "text": "English, French and Creole."
      }
     },
     {
@@ -216,7 +216,7 @@ DD.pages["ai"] = {
       <div class="c1-5"><p class="kick">In plain terms</p><h2 class="h2 mt-24" id="plain-h">What you get, in plain terms.</h2></div>
       <p class="lead fg c7-12">We put AI to work where it helps you sell: answering customer questions, collecting their details, booking calls and drafting follow-ups. It works from your business's information, follows your rules, and passes the conversation to a person when it should.</p>
     </div>
-    <dl class="facts mt-96" data-r="s"><div><dt class="cap">Who it's for</dt><dd>Businesses that get the same questions every day, or miss messages outside working hours.</dd></div><div><dt class="cap">What you get</dt><dd>An AI assistant on WhatsApp, Facebook, Instagram and your website, trained on your business and connected to your CRM.</dd></div><div><dt class="cap">Languages</dt><dd>English and French. <span class="todo">[Creole, to confirm]</span></dd></div><div><dt class="cap">How you pay</dt><dd>A setup fee, then <span class="todo">[a monthly fee for the AI and its upkeep, to confirm]</span>.</dd></div></dl>
+    <dl class="facts mt-96" data-r="s"><div><dt class="cap">Who it's for</dt><dd>Businesses that get the same questions every day, or miss messages outside working hours.</dd></div><div><dt class="cap">What you get</dt><dd>An AI assistant on WhatsApp, Facebook, Instagram and your website, trained on your business and connected to your CRM.</dd></div><div><dt class="cap">Languages</dt><dd>English, French and Creole.</dd></div><div><dt class="cap">How you pay</dt><dd>A setup fee, then <span class="todo">[a monthly fee for the AI and its upkeep, to confirm]</span>.</dd></div></dl>
   </section>
 
   <section class="sheet dk sec" aria-labelledby="sf-h">
@@ -288,7 +288,7 @@ DD.pages["ai"] = {
         <details open><summary><h3>What is an AI chatbot?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">A program that answers your customers' messages in everyday language, the way a person would. Ours are trained on your business and follow rules you approve.</p></details>
         <details><summary><h3>Will it give wrong answers?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">We limit it to the information you approve and test it before launch. When it isn't sure, it is set to hand over to your team instead of guessing. We also read the conversations and correct any answer that needs it.</p></details>
         <details><summary><h3>Does it work on WhatsApp?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Yes, through WhatsApp Business, as well as on Facebook, Instagram and your website. <span class="todo">[WhatsApp Business setup steps, to confirm.]</span></p></details>
-        <details><summary><h3>Which languages does it speak?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">English and French. <span class="todo">[Creole, to confirm.]</span></p></details>
+        <details><summary><h3>Which languages does it speak?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">English, French and Creole.</p></details>
         <details><summary><h3>Is my customers' data safe?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">The assistant gets only the information it needs, and your customer records stay in your CRM. <span class="todo">[Where conversations are stored and which AI provider is used, to confirm.]</span></p></details>
         <details><summary><h3>Can AI replace my team?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">No, and it shouldn't. It takes the repeated questions and the late-night messages, so your team spends its time on the customers ready to buy.</p></details>
         <details><summary><h3>Can the assistant book appointments?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Yes. It can offer times from your calendar, book the call or the appointment, and send the reminders.</p></details>

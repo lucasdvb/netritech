@@ -84,7 +84,7 @@ module.exports = {
       <div class="stat"><svg class="gx" viewBox="0 0 64 64" aria-hidden="true"><circle class="gt" cx="32" cy="32" r="26"/><circle class="gr" pathLength="1" stroke-dasharray="1" cx="32" cy="32" r="26" transform="rotate(-90 32 32)"/><line class="gh" x1="32" y1="32" x2="32" y2="15"/><circle cx="32" cy="32" r="2.6" fill="currentColor"/></svg><p class="fig">1 hr</p><p class="lab">Every enquiry answered within a business hour</p></div>
       <div class="stat"><svg class="gx" viewBox="0 0 64 64" aria-hidden="true"><circle class="gt" cx="32" cy="32" r="24"/><g class="go"><circle cx="32" cy="8" r="4.5" fill="currentColor"/></g><circle cx="32" cy="32" r="6" fill="none" stroke="currentColor" stroke-width="2"/></svg><p class="fig">24/7</p><p class="lab">Automated follow-up that never sleeps</p></div>
       <div class="stat"><svg class="gx" viewBox="0 0 64 64" aria-hidden="true"><rect class="gq" x="10" y="10" width="20" height="20" rx="5"/><rect class="gq" x="34" y="10" width="20" height="20" rx="5"/><rect class="gq" x="10" y="34" width="20" height="20" rx="5"/><rect class="gq" x="34" y="34" width="20" height="20" rx="5"/></svg><p class="fig">4</p><p class="lab">Growth stages, handled by one team</p></div>
-      <div class="stat"><svg class="gx" viewBox="0 0 64 64" aria-hidden="true"><g class="gb1"><path d="M8 12h30a6 6 0 0 1 6 6v12a6 6 0 0 1-6 6H20l-8 7v-7H8a6 6 0 0 1-6-6V18a6 6 0 0 1 6-6z" fill="currentColor"/></g><g class="gb2"><path d="M26 26h30a6 6 0 0 1 6 6v12a6 6 0 0 1-6 6h-4v7l-8-7H26a6 6 0 0 1-6-6V32a6 6 0 0 1 6-6z" fill="none" stroke="currentColor" stroke-width="2.2"/></g></svg><p class="fig">EN·FR</p><p class="lab">We work in English and French</p></div>
+      <div class="stat"><svg class="gx" viewBox="0 0 64 64" aria-hidden="true"><g class="gb1"><path d="M8 12h30a6 6 0 0 1 6 6v12a6 6 0 0 1-6 6H20l-8 7v-7H8a6 6 0 0 1-6-6V18a6 6 0 0 1 6-6z" fill="currentColor"/></g><g class="gb2"><path d="M26 26h30a6 6 0 0 1 6 6v12a6 6 0 0 1-6 6h-4v7l-8-7H26a6 6 0 0 1-6-6V32a6 6 0 0 1 6-6z" fill="none" stroke="currentColor" stroke-width="2.2"/></g></svg><p class="fig">EN·FR·KR</p><p class="lab">We work in English, French and Creole</p></div>
     </div>
   </section>
 
@@ -105,7 +105,7 @@ module.exports = {
       <div class="c1-5 glow" data-r="u"><div class="dodo"><img src="/uploads/8hzVIXmhSCC0RLLMXrB-F-hero-dodo.webp" alt="Disruptive Dodo mascot" width="921" height="1228" loading="lazy"></div></div>
       <div class="c7-12">
         <h2 class="d2" id="made-h">Built in Mauritius. Made to grow.</h2>
-        <p class="lead mt-32">We're based in Mauritius and work with businesses here and abroad, in English and French.</p>
+        <p class="lead mt-32">We're based in Mauritius and work with businesses here and abroad, in English, French and Creole.</p>
         <div class="btn-row mt-48"><a class="btn btn-p" href="/contact">Book a free growth call{{ar}}</a><a class="btn" href="/work">See our work</a></div>
       </div>
     </div>

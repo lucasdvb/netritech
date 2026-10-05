@@ -37,6 +37,13 @@ async function glForClean(id) {
   return g;
 }
 
+const LD_FIX = [
+  ['We build on GoHighLevel, which brings your inbox', 'We build you a custom CRM that brings your inbox'],
+  ['English and French. [Creole, to confirm.]', 'English, French and Creole.'],
+  ['here and abroad, in English and French.', 'here and abroad, in English, French and Creole.'],
+  ['Yes. We work in English and French.', 'Yes. We work in English, French and Creole.'],
+];
+
 const SERVICES = {
   websites: { gl: 'antipode', inc: 'bento' },
   'paid-ads': { gl: 'gnomon', inc: 'ledger' },
@@ -58,6 +65,11 @@ function buildCore() {
 
 async function buildPage(key) {
   const old = oldPage(key);
+  // copy decisions since the original pages: one custom-built CRM (no vendor named) and
+  // three working languages. The FAQ structured data says the same as the page.
+  let ldJson = JSON.stringify(old.ld);
+  for (const [from, to] of LD_FIX) ldJson = ldJson.split(from).join(to);
+  old.ld = JSON.parse(ldJson);
   let p;
   if (SERVICES[key]) {
     const d = JSON.parse(rd(`src/data/${key}.json`));

@@ -36,7 +36,7 @@
    },
    {
     "k": "Languages",
-    "v": "English and French. <span class=\"todo\">[Creole, to confirm]</span>"
+    "v": "English, French and Creole."
    },
    {
     "k": "How you pay",
@@ -243,7 +243,7 @@
    },
    {
     "q": "Which languages does it speak?",
-    "a": "English and French. <span class=\"todo\">[Creole, to confirm.]</span>",
+    "a": "English, French and Creole.",
     "open": false
    },
    {

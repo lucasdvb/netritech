@@ -37,7 +37,7 @@
    },
    {
     "k": "Built on",
-    "v": "GoHighLevel, or the CRM you already use if it does the job."
+    "v": "A custom-built CRM, or the CRM you already use if it does the job."
    },
    {
     "k": "How you pay",
@@ -244,7 +244,7 @@
    },
    {
     "q": "Which CRM do you use?",
-    "a": "We build on GoHighLevel, which brings your inbox, pipeline, booking, email and automation into one place. If you already use a CRM, we look at it first and tell you honestly whether to keep it.",
+    "a": "We build you a custom CRM that brings your inbox, pipeline, booking, email and automation into one place. If you already use a CRM, we look at it first and tell you honestly whether to keep it.",
     "open": false
    },
    {

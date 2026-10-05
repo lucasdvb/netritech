@@ -957,7 +957,7 @@ const MARKUP = `
           <div><dd data-count="1 hr"></dd><dt>Every enquiry answered within a business hour</dt></div>
           <div><dd data-count="24/7"></dd><dt>Automated follow-up that never sleeps</dt></div>
           <div><dd data-count="4"></dd><dt>Growth stages, handled by one team</dt></div>
-          <div><dd data-count="EN·FR"></dd><dt>We work in English and French</dt></div>
+          <div><dd data-count="EN·FR·KR"></dd><dt>We work in English, French and Creole</dt></div>
         </dl>
       </div>
       <div id="dz-about-right">

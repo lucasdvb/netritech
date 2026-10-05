@@ -276,7 +276,7 @@ module.exports = {
         <details><summary><h3>How much does Fledge cost?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">It depends on the size of your business and what is already in place. After a free growth call, we send a clear proposal with the setup fee and the monthly fee before any work starts. Ad budgets are paid by you, directly to the platforms.</p></details>
         <details><summary><h3>How long do I commit for?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans"><span class="todo">[3 months, then 30 days' notice, to confirm.]</span></p></details>
         <details><summary><h3>Who owns the website, the pages and the data?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans"><span class="todo">[You do. Your website content, your pages, your ad accounts and your customer list stay in your business's name. To confirm.]</span></p></details>
-        <details><summary><h3>Do you work outside Mauritius?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Yes. We're based in Mauritius and work with businesses here and abroad, in English and French.</p></details>
+        <details><summary><h3>Do you work outside Mauritius?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Yes. We're based in Mauritius and work with businesses here and abroad, in English, French and Creole.</p></details>
       </div>
     </div>
   </section>

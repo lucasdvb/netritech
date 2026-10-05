@@ -265,6 +265,7 @@ function patches(gl) {
       replace: '    qa(".inview").forEach((i) => i.classList.add("in-view"));\n    qa(".rj-hero").forEach((h) => h.classList.add("rj-in"));\n  }',
     },
     { find: 'function mvApp(R) {', replace: RJ_JS(gl) },
+    { find: '<div><dd data-count="EN·FR"></dd><dt>We work in English and French</dt></div>', replace: '<div><dd data-count="EN·FR·KR"></dd><dt>We work in English, French and Creole</dt></div>' },
     { find: '      mvApp(shadow);\n      dzInit(shadow);', replace: '      mvApp(shadow);\n      dzInit(shadow);\n      rjInit(shadow);' },
   ];
 }

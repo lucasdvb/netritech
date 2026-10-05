@@ -180,7 +180,7 @@ DD.pages["services"] = {
         <details open><summary><h3>How fast do you reply?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Within one business hour, by email or WhatsApp.</p></details>
         <details><summary><h3>Do I need all six services?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">No. Take one, or let us run them all as one system with Fledge. We start with the problem that costs you the most.</p></details>
         <details><summary><h3>How much does it cost?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">It depends on what you need. After a free growth call, we send a clear proposal with the price before any work starts.</p></details>
-        <details><summary><h3>Do you work in French?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Yes. We work in English and French.</p></details>
+        <details><summary><h3>Do you work in French?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Yes. We work in English, French and Creole.</p></details>
         <details><summary><h3>Do you only work with businesses in Mauritius?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">No. We're based in Mauritius and work with businesses here and abroad.</p></details>
         <details><summary><h3>Who does the work?</h3><span class="pm" aria-hidden="true"></span></summary><p class="tx ans">Our own team, in Mauritius. Local team. Real specialists. No outsourcing.</p></details>
       </div>
