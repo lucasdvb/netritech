@@ -1,0 +1,682 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>SPM Agent Shadows</title>
+    <script src="../assets/vendor/gsap.min.js"></script>
+    <script src="../assets/fx-data.js"></script>
+    <style>
+      @font-face {
+        font-family: "Bricolage";
+        src: url("../assets/bricolage.woff2") format("woff2");
+        font-weight: 200 800;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #020202;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: "Bricolage", sans-serif;
+      }
+      #stage {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="8"
+      data-width="1920"
+      data-height="1080"
+    >
+      <canvas
+        id="stage"
+        class="clip"
+        width="1920"
+        height="1080"
+        data-start="0"
+        data-duration="8"
+        data-track-index="0"
+      ></canvas>
+    </div>
+    <script>
+      // SPM — Agent Shadows. One deterministic canvas renderer: every frame is a pure function of t.
+      const W = 1920, H = 1080, CX = 960, CY = 540;
+      const FX = window.SPM_FX;
+      const NAMES = ["woman", "bald", "young"];
+      const TEAL = "34,128,138", NEON = "94,214,222", ICE = "220,236,242";
+      const cv = document.getElementById("stage");
+      const ctx = cv.getContext("2d");
+      const IMG = {};
+      let prepared = false;
+
+      // ---------- helpers ----------
+      const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+      const lerp = (a, b, u) => a + (b - a) * u;
+      const prog = (t, a, b) => clamp((t - a) / (b - a));
+      const sstep = (u) => u * u * (3 - 2 * u);
+      const easeOut = (u) => 1 - Math.pow(1 - u, 3);
+      const easeInOut = (u) => (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2);
+      function mulberry(seed) {
+        return function () {
+          seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
+          let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+          t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+          return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+        };
+      }
+      function load(name, src) {
+        return new Promise((res) => {
+          const i = new Image();
+          i.onload = () => { IMG[name] = i; res(); };
+          i.onerror = () => res();
+          i.src = src;
+        });
+      }
+      function off(w, h) {
+        const c = document.createElement("canvas"); c.width = w; c.height = h; return c;
+      }
+
+      // ---------- camera: monotone cubic keyframes on focus (x, y) and log-zoom ----------
+      const PAD = 320;
+      function agentXform(i) {
+        const a = FX.agents[i], [x, y, w, h] = a.bbox;
+        const S = [1.08, 1.08, 1.1][i];
+        const D = [[-250, -30], [-150, -150], [215, -75]][i];
+        return { ax: x + w / 2, ay: y + h, s: S, dx: D[0], dy: D[1], top: y, h };
+      }
+      function agentPt(i, px, py) {
+        const T = agentXform(i);
+        return [(px - T.ax) * T.s + T.ax + T.dx, (py - T.ay) * T.s + T.ay + T.dy];
+      }
+      const AGENT_P = 0.85;
+      // dive target: the woman's agent, just below its head (centered on the agent plane)
+      const DIVE = (() => {
+        const hd = FX.heads.woman;
+        const [ax, ay] = agentPt(0, hd[0] + 10, hd[1] + 150);
+        const zA = 7.2; // zoom of the agent plane at the end of the dive
+        const z = 1 + (zA - 1) / AGENT_P;
+        return { x: CX + (ax - CX) / AGENT_P, y: CY + (ay - CY) / AGENT_P, lz: Math.log(z) };
+      })();
+      const KF = [
+        [0.0, 960, 540, Math.log(1.0)],
+        [1.4, 1070, 532, Math.log(1.05)],
+        [2.6, 1130, 405, Math.log(1.1)],
+        [3.5, 1140, 384, Math.log(1.12)],
+        [4.9, 1112, 372, Math.log(1.15)],
+        [5.9, 1060, 362, Math.log(1.22)],
+        [7.0, DIVE.x, DIVE.y, DIVE.lz],
+        [8.0, DIVE.x, DIVE.y, DIVE.lz],
+      ];
+      function hermiteChannel(ch) {
+        const n = KF.length, xs = KF.map((k) => k[0]), ys = KF.map((k) => k[ch]);
+        const d = [], m = [];
+        for (let i = 0; i < n - 1; i++) d.push((ys[i + 1] - ys[i]) / (xs[i + 1] - xs[i]));
+        m[0] = 0; m[n - 1] = 0;
+        for (let i = 1; i < n - 1; i++) m[i] = d[i - 1] * d[i] <= 0 ? 0 : (d[i - 1] + d[i]) / 2;
+        for (let i = 0; i < n - 1; i++) {
+          if (d[i] === 0) { m[i] = 0; m[i + 1] = 0; continue; }
+          const a = m[i] / d[i], b = m[i + 1] / d[i], s = a * a + b * b;
+          if (s > 9) { const k = 3 / Math.sqrt(s); m[i] = k * a * d[i]; m[i + 1] = k * b * d[i]; }
+        }
+        return (t) => {
+          if (t <= xs[0]) return ys[0];
+          if (t >= xs[n - 1]) return ys[n - 1];
+          let i = 0; while (t > xs[i + 1]) i++;
+          const hh = xs[i + 1] - xs[i], u = (t - xs[i]) / hh, u2 = u * u, u3 = u2 * u;
+          return (2 * u3 - 3 * u2 + 1) * ys[i] + (u3 - 2 * u2 + u) * hh * m[i] + (-2 * u3 + 3 * u2) * ys[i + 1] + (u3 - u2) * hh * m[i + 1];
+        };
+      }
+      const camX = hermiteChannel(1), camY = hermiteChannel(2), camLZ = hermiteChannel(3);
+      let cam = { x: CX, y: CY, z: 1 };
+      function layer(p) {
+        const z = 1 + (cam.z - 1) * p;
+        const fx = CX + (cam.x - CX) * p, fy = CY + (cam.y - CY) * p;
+        return { z, ox: CX - fx * z, oy: CY - fy * z, p };
+      }
+      const S = (L, x, y) => [x * L.z + L.ox, y * L.z + L.oy];
+
+      // ---------- one-time preparation ----------
+      const R = mulberry(20260);
+      const DUST = Array.from({ length: 280 }, () => ({
+        x: lerp(-260, W + 260, R()), y: lerp(-260, H + 260, R()), p: lerp(0.35, 1.7, R()),
+        r: lerp(0.5, 1.7, R()), a: lerp(0.25, 1, R()), v: lerp(4, 14, R()),
+      }));
+      const BOKEH = Array.from({ length: 30 }, () => {
+        const ang = R() * Math.PI * 2, rad = lerp(60, 620, Math.sqrt(R()));
+        return { ang, rad, r: lerp(14, 70, R()), a: lerp(0.08, 0.28, R()), teal: R() < 0.55, k: lerp(0.6, 1.6, R()) };
+      });
+      const SCATTER = FX.agents.map((a, i) => {
+        const r = mulberry(100 + i);
+        return a.points.map(() => [lerp(-1, 1, r()), lerp(-1, 1, r()), r()]);
+      });
+      let grain, edgeGlow, outlineGlow, wallPad, deskPad, peopleDark;
+      function prepare() {
+        // padded wall: replicate edges and soften them so camera moves never reveal a border
+        wallPad = IMG.wallPad;
+        // padded desk: extend the desk surface to the right and down
+        deskPad = off(W + PAD, H + PAD);
+        const dc = deskPad.getContext("2d");
+        dc.drawImage(IMG.desk, 0, 0);
+        dc.drawImage(IMG.desk, W - 6, 795, 6, H - 795, W - 6, 795, PAD + 6, H - 795);
+        dc.drawImage(IMG.desk, 540, H - 6, W - 540, 6, 540, H - 6, W - 540 + PAD, PAD);
+        // dark silhouette of the people (keeps occlusion once the daylight has drained)
+        peopleDark = off(W, H);
+        const pc = peopleDark.getContext("2d");
+        pc.drawImage(IMG.people, 0, 0);
+        pc.globalCompositeOperation = "source-in";
+        pc.fillStyle = "#05080c"; pc.fillRect(0, 0, W, H);
+        // glow copies of the linework, tinted teal
+        const glow = (src, blur) => {
+          const c = off(W, H), g = c.getContext("2d");
+          g.filter = `blur(${blur}px)`; g.drawImage(src, 0, 0); g.filter = "none";
+          g.globalCompositeOperation = "source-in"; g.fillStyle = `rgb(${NEON})`; g.fillRect(0, 0, W, H);
+          return c;
+        };
+        edgeGlow = glow(IMG.edgesP, 5);
+        outlineGlow = glow(IMG.outline, 9);
+        // seeded film grain tile
+        grain = off(256, 256);
+        const gc = grain.getContext("2d"), id = gc.createImageData(256, 256), rr = mulberry(77);
+        for (let i = 0; i < id.data.length; i += 4) {
+          const v = 128 + (rr() - 0.5) * 255;
+          id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255;
+        }
+        gc.putImageData(id, 0, 0);
+        prepared = true;
+      }
+
+      // ---------- drawing pieces ----------
+      function drawImgLayer(img, L, dx, dy, alpha, filter) {
+        if (alpha <= 0.001) return;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        if (filter) ctx.filter = filter;
+        ctx.setTransform(L.z, 0, 0, L.z, L.ox, L.oy);
+        ctx.drawImage(img, dx, dy);
+        ctx.restore();
+      }
+      function ribbon(pts, wMax, alpha, grow, colA, colB) {
+        // tapered silk ribbon along a cubic bezier, drawn as a filled strip
+        if (alpha <= 0.002 || grow <= 0.001) return;
+        const [p0, p1, p2, p3] = pts, N = 48, top = [], bot = [];
+        const B = (u) => {
+          const v = 1 - u;
+          return [v * v * v * p0[0] + 3 * v * v * u * p1[0] + 3 * v * u * u * p2[0] + u * u * u * p3[0],
+                  v * v * v * p0[1] + 3 * v * v * u * p1[1] + 3 * v * u * u * p2[1] + u * u * u * p3[1]];
+        };
+        for (let k = 0; k <= N; k++) {
+          const u = (k / N) * grow, a = B(u), b = B(Math.min(1, u + 0.01));
+          let nx = -(b[1] - a[1]), ny = b[0] - a[0];
+          const l = Math.hypot(nx, ny) || 1; nx /= l; ny /= l;
+          const w = wMax * Math.pow(Math.sin(Math.PI * clamp(u / Math.max(grow, 0.001))), 0.85) * (0.55 + 0.45 * Math.sin(u * 9 + 1.3));
+          top.push([a[0] + nx * w, a[1] + ny * w]); bot.push([a[0] - nx * w * 0.35, a[1] - ny * w * 0.35]);
+        }
+        const g = ctx.createLinearGradient(p0[0], p0[1], B(grow)[0], B(grow)[1]);
+        g.addColorStop(0, `rgba(${colA},${0.05 * alpha})`);
+        g.addColorStop(0.55, `rgba(${colA},${0.55 * alpha})`);
+        g.addColorStop(1, `rgba(${colB},${0.95 * alpha})`);
+        ctx.beginPath();
+        top.forEach((q, k) => (k ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])));
+        for (let k = bot.length - 1; k >= 0; k--) ctx.lineTo(bot[k][0], bot[k][1]);
+        ctx.closePath();
+        ctx.fillStyle = g; ctx.fill();
+        // hairline spine + glowing tip
+        ctx.beginPath();
+        for (let k = 0; k <= N; k++) { const q = B((k / N) * grow); k ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); }
+        ctx.strokeStyle = `rgba(${ICE},${0.55 * alpha})`; ctx.lineWidth = 1; ctx.stroke();
+        const tip = B(grow);
+        const tg = ctx.createRadialGradient(tip[0], tip[1], 0, tip[0], tip[1], 16);
+        tg.addColorStop(0, `rgba(255,255,255,${0.95 * alpha})`); tg.addColorStop(0.35, `rgba(${NEON},${0.5 * alpha})`); tg.addColorStop(1, `rgba(${NEON},0)`);
+        ctx.fillStyle = tg; ctx.fillRect(tip[0] - 16, tip[1] - 16, 32, 32);
+        return B;
+      }
+      function packets(B, t, alpha, n, speed, seed) {
+        if (!B || alpha <= 0.01) return;
+        for (let k = 0; k < n; k++) {
+          const dir = k % 2 ? -1 : 1;
+          let u = ((t * speed * dir + k / n + seed) % 1 + 1) % 1;
+          const q = B(u), fade = Math.sin(Math.PI * u);
+          const g = ctx.createRadialGradient(q[0], q[1], 0, q[0], q[1], 7);
+          g.addColorStop(0, `rgba(255,255,255,${alpha * fade})`); g.addColorStop(1, `rgba(${NEON},0)`);
+          ctx.fillStyle = g; ctx.fillRect(q[0] - 7, q[1] - 7, 14, 14);
+        }
+      }
+      function flare(x, y, k) {
+        if (k <= 0.01) return;
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        let g = ctx.createRadialGradient(x, y, 0, x, y, 150);
+        g.addColorStop(0, `rgba(255,255,255,${0.9 * k})`); g.addColorStop(0.12, `rgba(${NEON},${0.55 * k})`); g.addColorStop(1, `rgba(${TEAL},0)`);
+        ctx.fillStyle = g; ctx.fillRect(x - 150, y - 150, 300, 300);
+        // anamorphic streak
+        for (const [hh, a, wd] of [[3, 0.85, 900], [16, 0.22, 1300], [46, 0.07, 1600]]) {
+          ctx.save(); ctx.translate(x, y); ctx.scale(1, hh / wd);
+          g = ctx.createRadialGradient(0, 0, 0, 0, 0, wd);
+          g.addColorStop(0, `rgba(${ICE},${a * k})`); g.addColorStop(0.4, `rgba(${NEON},${a * 0.45 * k})`); g.addColorStop(1, `rgba(${TEAL},0)`);
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, wd, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+        }
+        ctx.restore();
+      }
+      function roundRect(x, y, w, h, r) {
+        ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+      }
+
+      // ---------- agents ----------
+      const agentCv = off(W, H), agentOut = agentCv.getContext("2d");
+      const tmpCv = off(W, H), actx = tmpCv.getContext("2d");
+      const CUT = [330, 300, 225]; // keep head and shoulders: fade out below head_y + CUT
+      function drawAgents(t, L, q3, glowK) {
+        agentOut.clearRect(0, 0, W, H);
+        let any = false;
+        FX.agents.forEach((A, i) => {
+          const q = q3[i];
+          if (q <= 0.001) return;
+          any = true;
+          actx.clearRect(0, 0, W, H);
+          const T = agentXform(i), rise = (1 - easeOut(q)) * 170, sc = SCATTER[i];
+          const bottom = T.ay + T.dy, span = T.h * T.s;
+          const level = bottom - span * clamp(q * 1.25); // builds bottom-to-top
+          const P = (x, y) => { const a = agentPt(i, x, y); return [a[0] * L.z + L.ox, (a[1] + rise) * L.z + L.oy]; };
+          // soft inner core
+          const hd = FX.heads[NAMES[i]], c = P(hd[0], hd[1] + 260);
+          let g = actx.createRadialGradient(c[0], c[1], 0, c[0], c[1], 360 * L.z);
+          g.addColorStop(0, `rgba(${TEAL},${0.32 * q})`); g.addColorStop(1, `rgba(${TEAL},0)`);
+          actx.fillStyle = g; actx.fillRect(c[0] - 400 * L.z, c[1] - 400 * L.z, 800 * L.z, 800 * L.z);
+          // horizontal scan slices
+          actx.lineWidth = 1;
+          for (const [x1, y, x2] of A.slices) {
+            const a1 = agentPt(i, x1, y);
+            if (a1[1] < level) continue;
+            const p1 = P(x1, y), p2 = P(x2, y);
+            actx.strokeStyle = `rgba(${NEON},${0.32 * q})`;
+            actx.beginPath(); actx.moveTo(p1[0], p1[1]); actx.lineTo(p2[0], p2[1]); actx.stroke();
+          }
+          // point cloud, assembling from a scatter
+          const sp = Math.pow(1 - clamp(q * 1.3), 2) * 140 * L.z;
+          for (let k = 0; k < A.points.length; k++) {
+            const [x, y, m] = A.points[k];
+            const a1 = agentPt(i, x, y);
+            if (a1[1] < level) continue;
+            const p = P(x, y), s = sc[k];
+            const px = p[0] + s[0] * sp, py = p[1] + s[1] * sp;
+            const al = (0.5 + 0.5 * m) * q * (0.75 + 0.25 * Math.sin(t * 5 + s[2] * 20));
+            actx.fillStyle = m > 0.55 ? `rgba(235,252,255,${al})` : `rgba(${NEON},${al * 0.85})`;
+            const r = m > 0.55 ? 1.6 : 1.2;
+            actx.fillRect(px - r / 2, py - r / 2, r, r);
+          }
+          // neon silhouette
+          actx.save();
+          actx.beginPath();
+          A.contour.forEach(([x, y], k) => { const p = P(x, y); k ? actx.lineTo(p[0], p[1]) : actx.moveTo(p[0], p[1]); });
+          actx.closePath();
+          actx.fillStyle = `rgba(${TEAL},${0.24 * q})`; actx.fill();
+          actx.strokeStyle = `rgba(13,60,70,${0.7 * q})`; actx.lineWidth = 5; actx.stroke();
+          actx.shadowColor = `rgba(${NEON},${0.9 * q * glowK})`; actx.shadowBlur = 22;
+          actx.strokeStyle = `rgba(${NEON},${0.95 * q})`; actx.lineWidth = 2.6; actx.stroke();
+          actx.shadowBlur = 0; actx.strokeStyle = `rgba(235,252,255,${0.65 * q})`; actx.lineWidth = 0.8; actx.stroke();
+          actx.restore();
+          // build line (the "printing" edge)
+          if (q < 0.95) {
+            const yl = (level + rise) * L.z + L.oy, xs = [P(T.ax - 330, 0)[0], P(T.ax + 330, 0)[0]];
+            const lg = actx.createLinearGradient(xs[0], 0, xs[1], 0);
+            lg.addColorStop(0, `rgba(${NEON},0)`); lg.addColorStop(0.5, `rgba(235,252,255,${0.8 * (1 - q)})`); lg.addColorStop(1, `rgba(${NEON},0)`);
+            actx.fillStyle = lg; actx.fillRect(xs[0], yl - 1, xs[1] - xs[0], 2);
+          }
+          // living scan band drifting through the finished agent
+          if (q > 0.6) {
+            const hd2 = FX.heads[NAMES[i]];
+            const yb = P(0, hd2[1] - 120 + (((t * 0.55 + i * 0.37) % 1) * (CUT[i] + 120)))[1];
+            const bg = actx.createLinearGradient(0, yb - 26, 0, yb + 26);
+            bg.addColorStop(0, `rgba(${NEON},0)`); bg.addColorStop(0.5, `rgba(235,252,255,${0.22 * q})`); bg.addColorStop(1, `rgba(${NEON},0)`);
+            actx.globalCompositeOperation = "source-atop"; actx.fillStyle = bg; actx.fillRect(0, yb - 26, W, 52);
+            actx.globalCompositeOperation = "source-over";
+          }
+          // upper-body mask: the agent is the person's head-and-shoulders echo, never their arms
+          const hd3 = FX.heads[NAMES[i]];
+          const yc = P(0, hd3[1] + CUT[i])[1], yf = P(0, hd3[1] + CUT[i] + 170)[1];
+          const mg = actx.createLinearGradient(0, yc, 0, yf);
+          mg.addColorStop(0, "rgba(0,0,0,1)"); mg.addColorStop(1, "rgba(0,0,0,0)");
+          actx.globalCompositeOperation = "destination-in"; actx.fillStyle = mg; actx.fillRect(0, 0, W, H);
+          actx.globalCompositeOperation = "source-over";
+          agentOut.drawImage(tmpCv, 0, 0);
+        });
+        return any;
+      }
+
+      // ---------- panels (the agents' work) ----------
+      const PANELS = [
+        { who: 0, sx: 48, sy: 430, w: 320, h: 150, t0: 4.05 },
+        { who: 1, sx: 960, sy: 58, w: 330, h: 168, t0: 4.3 },
+        { who: 2, sx: 1560, sy: 120, w: 320, h: 196, t0: 4.55 },
+      ];
+      const PANEL_P = 0.9;
+      // panel world anchors from their intended screen spot at t = 4.9
+      function panelWorld(pn) {
+        const save = cam; cam = camAt(4.9); const L = layer(PANEL_P); cam = save;
+        return [(pn.sx - L.ox) / L.z, (pn.sy - L.oy) / L.z, L.z];
+      }
+      function camAt(t) { return { x: camX(t), y: camY(t), z: Math.exp(camLZ(t)) }; }
+      let PANEL_W = null;
+      function drawPanels(t, alphaAll) {
+        if (!PANEL_W) PANEL_W = PANELS.map(panelWorld);
+        const L = layer(PANEL_P);
+        PANELS.forEach((pn, i) => {
+          const u = prog(t, pn.t0, pn.t0 + 0.45);
+          if (u <= 0 || alphaAll <= 0.01) return;
+          const [wx, wy, z0] = PANEL_W[i];
+          const k = L.z / z0;
+          const pop = u < 1 ? 1 + 0.06 * Math.sin(u * Math.PI) - 0.06 * (1 - u) : 1;
+          const x = wx * L.z + L.ox, y = wy * L.z + L.oy, w = pn.w * k * pop, h = pn.h * k * pop;
+          const a = easeOut(u) * alphaAll;
+          ctx.save();
+          ctx.globalAlpha = a;
+          ctx.translate(x, y + (1 - easeOut(u)) * 18);
+          ctx.scale(w / pn.w, h / pn.h);
+          // frosted glass
+          roundRect(0, 0, pn.w, pn.h, 14);
+          ctx.fillStyle = "rgba(13,20,31,0.72)"; ctx.fill();
+          const gg = ctx.createLinearGradient(0, 0, pn.w, pn.h);
+          gg.addColorStop(0, "rgba(220,236,242,0.10)"); gg.addColorStop(1, "rgba(34,128,138,0.06)");
+          ctx.fillStyle = gg; ctx.fill();
+          ctx.strokeStyle = `rgba(${NEON},0.55)`; ctx.lineWidth = 1.2; ctx.stroke();
+          ctx.fillStyle = "rgba(220,236,242,0.55)";
+          ctx.font = "600 13px Bricolage"; ctx.textBaseline = "top";
+          if (i === 0) {
+            // live call: pulse dot, label, timer, voice waveform
+            const pulse = 0.5 + 0.5 * Math.sin(t * 7);
+            ctx.fillStyle = `rgba(${NEON},${0.6 + 0.4 * pulse})`; ctx.beginPath(); ctx.arc(24, 27, 5, 0, 7); ctx.fill();
+            ctx.fillStyle = "rgba(220,236,242,0.62)"; ctx.fillText("LIVE CALL", 38, 20);
+            const secs = 134 + Math.floor(t - pn.t0);
+            ctx.font = "500 30px Bricolage"; ctx.fillStyle = "rgba(249,250,251,0.95)";
+            ctx.fillText(`0${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, "0")}`, 22, 46);
+            for (let b = 0; b < 30; b++) {
+              const amp = 0.25 + 0.75 * Math.abs(Math.sin(b * 0.9 + t * 9) * Math.sin(b * 0.37 + t * 3.1));
+              const bh = 6 + 34 * amp, bx = 24 + b * 9.4;
+              ctx.fillStyle = b < 30 * clamp((t - pn.t0) / 0.6) ? `rgba(${NEON},0.85)` : "rgba(67,97,122,0.6)";
+              ctx.fillRect(bx, 122 - bh / 2, 4, bh);
+            }
+          } else if (i === 1) {
+            // ticket resolves
+            ctx.fillText("TICKET  #48217", 22, 20);
+            for (let r = 0; r < 3; r++) { ctx.fillStyle = "rgba(67,97,122,0.75)"; ctx.fillRect(22, 52 + r * 20, [250, 210, 160][r], 7); }
+            const done = prog(t, pn.t0 + 0.5, pn.t0 + 0.75);
+            ctx.save();
+            roundRect(22, 120, 132, 30, 15);
+            ctx.fillStyle = done > 0 ? `rgba(34,128,138,${0.35 + 0.55 * done})` : "rgba(67,97,122,0.5)"; ctx.fill();
+            ctx.fillStyle = "rgba(249,250,251,0.95)"; ctx.font = "600 13px Bricolage";
+            ctx.fillText(done > 0.5 ? "RESOLVED" : "IN PROGRESS", done > 0.5 ? 58 : 40, 129);
+            if (done > 0.5) {
+              ctx.strokeStyle = "rgba(249,250,251,0.95)"; ctx.lineWidth = 2.2; ctx.beginPath();
+              const dd = clamp((done - 0.5) * 2);
+              ctx.moveTo(36, 135); ctx.lineTo(36 + 5 * clamp(dd * 2), 135 + 5 * clamp(dd * 2));
+              if (dd > 0.5) ctx.lineTo(41 + 9 * clamp((dd - 0.5) * 2), 140 - 10 * clamp((dd - 0.5) * 2));
+              ctx.stroke();
+            }
+            ctx.restore();
+          } else {
+            // CSAT bars rise + count-up
+            ctx.fillText("CSAT · THIS WEEK", 22, 20);
+            const g = easeOut(prog(t, pn.t0 + 0.15, pn.t0 + 0.9));
+            ctx.font = "500 30px Bricolage"; ctx.fillStyle = "rgba(249,250,251,0.95)";
+            ctx.fillText((4.1 + 0.8 * g).toFixed(1), 22, 42);
+            ctx.font = "600 13px Bricolage"; ctx.fillStyle = `rgba(${NEON},0.9)`; ctx.fillText("▲ 18%", 92, 56);
+            const hs = [0.42, 0.55, 0.5, 0.68, 0.74, 0.86, 0.97];
+            hs.forEach((hv, b) => {
+              const bh = 92 * hv * clamp(g * 1.4 - b * 0.06);
+              ctx.fillStyle = b === hs.length - 1 ? `rgba(${NEON},0.95)` : "rgba(67,97,122,0.85)";
+              ctx.fillRect(24 + b * 40, 182 - bh, 26, bh);
+            });
+          }
+          ctx.restore();
+        });
+      }
+
+      // ---------- the frame ----------
+      function render(t) {
+        if (!prepared) return;
+        cam = camAt(t);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.globalAlpha = 1; ctx.globalCompositeOperation = "source-over"; ctx.filter = "none";
+        const drain = sstep(prog(t, 4.9, 5.9));
+        const endFade = 1 - sstep(prog(t, 7.05, 7.6)); // everything except the grid
+        const dive = prog(t, 5.9, 7.0);
+        // background: ink navy that sinks to the grid frame's near-black
+        const bgv = lerp(1, 0, sstep(prog(t, 5.6, 7.4)));
+        ctx.fillStyle = `rgb(${Math.round(lerp(2, 9, bgv))},${Math.round(lerp(2, 14, bgv))},${Math.round(lerp(2, 21, bgv))})`;
+        ctx.fillRect(0, 0, W, H);
+
+        const Lw = layer(0.55), Lp = layer(1.0), La = layer(AGENT_P);
+        const photoK = 1 - drain;
+        const fil = drain > 0 ? `brightness(${lerp(1, 0.05, drain)}) saturate(${lerp(1, 0.25, drain)})` : null;
+        const diveFade = 1 - sstep(prog(t, 5.95, 6.45));
+
+        // 1. room
+        drawImgLayer(wallPad, Lw, -PAD, -PAD, (photoK > 0.002 ? 1 : 0) * diveFade, fil);
+        // 2. room linework appears as the world drains
+        const roomLines = sstep(prog(t, 4.95, 5.5)) * (1 - sstep(prog(t, 6.0, 6.5)));
+        if (roomLines > 0.01) {
+          ctx.save(); ctx.globalCompositeOperation = "lighter";
+          drawImgLayer(IMG.edgesR, layer(0.75), 0, 0, 0.32 * roomLines, null);
+          ctx.restore();
+        }
+        // 3. agents (behind the desk and people)
+        const q3 = [0, 1, 2].map((i) => easeOut(prog(t, 3.5 + 0.25 * i, 4.35 + 0.25 * i)));
+        const agentFade = 1 - sstep(prog(t, 6.55, 6.95));
+        if (drawAgents(t, La, q3, 1 + drain)) {
+          ctx.save();
+          ctx.globalAlpha = agentFade;
+          const blur = Math.max(0, (cam.z - 1.8) * 1.6);
+          if (blur > 0.3) ctx.filter = `blur(${blur.toFixed(2)}px)`;
+          ctx.drawImage(agentCv, 0, 0);
+          ctx.restore();
+        }
+        // 4. desk and people (photo), darkening into silhouettes during the drain
+        drawImgLayer(deskPad, Lp, 0, 0, diveFade, fil);
+        drawImgLayer(IMG.people, Lp, 0, 0, photoK * diveFade, null);
+        drawImgLayer(peopleDark, Lp, 0, 0, drain * diveFade, null);
+        if (t < 0.4) drawImgLayer(IMG.photo, layer(1), 0, 0, 1 - sstep(prog(t, 0.05, 0.4)), null); // exact first frame
+
+        // 5. the scan: a hairline front from the woman's microphone
+        const mic = S(Lp, FX.mics.woman[0], FX.mics.woman[1]);
+        const scanU = prog(t, 2.62, 3.55), r = easeOut(scanU) * 1650 * Lp.z;
+        const lineK = (scanU > 0 ? 1 : 0) * diveFade;
+        if (lineK > 0) {
+          const persist = lerp(0.14, 0.85, drain), outlineK = lerp(0.55, 0.9, drain);
+          ctx.save();
+          ctx.beginPath(); ctx.arc(mic[0], mic[1], Math.max(1, r), 0, Math.PI * 2); ctx.clip();
+          ctx.globalCompositeOperation = "lighter";
+          drawImgLayer(edgeGlow, Lp, 0, 0, 0.55 * persist * lineK, null);
+          drawImgLayer(IMG.edgesP, Lp, 0, 0, persist * lineK, null);
+          drawImgLayer(outlineGlow, Lp, 0, 0, outlineK * lineK, null);
+          drawImgLayer(IMG.outline, Lp, 0, 0, 0.6 * outlineK * lineK, null);
+          ctx.restore();
+          if (scanU < 1) {
+            // bright band just behind the front
+            ctx.save();
+            ctx.beginPath(); ctx.arc(mic[0], mic[1], Math.max(1, r), 0, Math.PI * 2);
+            ctx.arc(mic[0], mic[1], Math.max(0.5, r - 120 * Lp.z), 0, Math.PI * 2, true); ctx.clip("evenodd");
+            ctx.globalCompositeOperation = "lighter";
+            drawImgLayer(IMG.edgesP, Lp, 0, 0, 1, null);
+            drawImgLayer(edgeGlow, Lp, 0, 0, 1, null);
+            ctx.restore();
+            // the front itself: a hairline neon ring
+            ctx.save(); ctx.globalCompositeOperation = "lighter";
+            ctx.beginPath(); ctx.arc(mic[0], mic[1], Math.max(1, r), 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(${NEON},${0.55 * (1 - scanU)})`; ctx.lineWidth = 6; ctx.shadowColor = `rgba(${NEON},0.9)`; ctx.shadowBlur = 18; ctx.stroke();
+            ctx.shadowBlur = 0; ctx.strokeStyle = `rgba(240,252,255,${0.9 * (1 - scanU)})`; ctx.lineWidth = 1.2; ctx.stroke();
+            ctx.restore();
+          }
+          // point cloud on clothes and hair
+          const pts = FX.people_points, dotK = lerp(0.42, 0.85, drain) * diveFade;
+          ctx.save(); ctx.globalCompositeOperation = "lighter";
+          for (let k = 0; k < pts.length; k++) {
+            const [x, y, , l] = pts[k];
+            const s = S(Lp, x, y), d = Math.hypot(s[0] - mic[0], s[1] - mic[1]);
+            if (d > r) continue;
+            const band = clamp(1 - (r - d) / (150 * Lp.z));
+            const a = dotK * (0.45 + 0.55 * l) * (0.55 + 0.9 * band);
+            ctx.fillStyle = `rgba(${band > 0.2 ? "240,252,255" : ICE},${clamp(a)})`;
+            ctx.fillRect(s[0] - 0.8, s[1] - 0.8, 1.6, 1.6);
+          }
+          ctx.restore();
+        }
+
+        // 6. ribbons: microphone -> agent, agent -> panel
+        const ribK = endFade * (1 - sstep(prog(t, 6.2, 6.7)));
+        if (ribK > 0.01) {
+          ctx.save(); ctx.globalCompositeOperation = "lighter";
+          NAMES.forEach((nm, i) => {
+            const g = easeInOut(prog(t, 3.75 + 0.25 * i, 4.45 + 0.25 * i));
+            if (g <= 0) return;
+            const m = S(Lp, FX.ears[nm][0], FX.ears[nm][1]);
+            const hd = FX.heads[nm], ah = agentPt(i, hd[0] - 10, hd[1] + 10);
+            const a = S(La, ah[0], ah[1]);
+            const B1 = ribbon([m, [m[0] - 30 * Lp.z, m[1] - 190 * Lp.z], [a[0] + 150 * La.z, a[1] - 150 * La.z], a], 13 * Lp.z, ribK, g, ICE, NEON);
+            packets(B1, t, ribK * g, 4, 0.55, i * 0.21);
+            // second strand to the panel
+            const pn = PANELS[i], pw = PANEL_W && PANEL_W[i];
+            const g2 = easeInOut(prog(t, pn.t0 - 0.05, pn.t0 + 0.5));
+            if (pw && g2 > 0) {
+              const Lq = layer(PANEL_P), k = Lq.z / pw[2];
+              const px = pw[0] * Lq.z + Lq.ox + (i === 0 ? pn.w * k : 0), py = pw[1] * Lq.z + Lq.oy + pn.h * k * 0.5;
+              const B2 = ribbon([a, [lerp(a[0], px, 0.3), a[1] - 160 * La.z], [lerp(a[0], px, 0.7), py - 90], [px, py]], 6 * La.z, ribK * 0.85, g2, ICE, NEON);
+              packets(B2, t + 0.3, ribK * g2 * 0.8, 3, 0.7, i * 0.37);
+            }
+          });
+          ctx.restore();
+        }
+        // 7. panels
+        drawPanels(t, (1 - sstep(prog(t, 6.15, 6.55))));
+
+        // 8. dive: bokeh, rings, converging ribbons and their floor reflection
+        const P = [960, 468];
+        if (dive > 0 && endFade > 0) {
+          const bk = Math.sin(Math.PI * clamp(prog(t, 5.95, 7.25))) * endFade;
+          ctx.save(); ctx.globalCompositeOperation = "lighter";
+          for (const b of BOKEH) {
+            const spread = 1 + dive * 2.4 * b.k;
+            const x = CX + Math.cos(b.ang) * b.rad * spread, y = CY - 40 + Math.sin(b.ang) * b.rad * spread * 0.7;
+            const rr = b.r * (1 + dive * 1.4 * b.k);
+            const g = ctx.createRadialGradient(x, y, rr * 0.55, x, y, rr);
+            const col = b.teal ? NEON : "120,150,178";
+            g.addColorStop(0, `rgba(${col},${b.a * bk})`); g.addColorStop(0.85, `rgba(${col},${b.a * bk * 0.8})`); g.addColorStop(1, `rgba(${col},0)`);
+            ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, rr, 0, Math.PI * 2); ctx.fill();
+          }
+          // two hairline rings rippling from the convergence point
+          for (let k = 0; k < 2; k++) {
+            const u = prog(t, 6.2 + k * 0.28, 7.25 + k * 0.28);
+            if (u <= 0 || u >= 1) continue;
+            ctx.beginPath(); ctx.arc(P[0], P[1], 24 + easeOut(u) * 640, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(${ICE},${0.5 * (1 - u) * endFade})`; ctx.lineWidth = 1.3; ctx.stroke();
+          }
+          // ribbons curl in from the frame edges and converge on one point
+          const g = easeInOut(prog(t, 6.05, 7.0));
+          const starts = [[-120, 220], [-160, 760], [520, 1180], [1460, 1200], [2060, 820], [2040, 160], [880, -140]];
+          const convK = endFade;
+          const Bs = [];
+          starts.forEach((s, k) => {
+            const mid = [lerp(s[0], P[0], 0.45) + (k % 2 ? 240 : -240), lerp(s[1], P[1], 0.45) + (k % 3 ? -160 : 160)];
+            const B = ribbon([s, mid, [lerp(mid[0], P[0], 0.6), lerp(mid[1], P[1], 0.9)], P], 16, convK, g, k % 2 ? NEON : ICE, NEON);
+            Bs.push(B);
+            packets(B, t, convK * g * 0.7, 2, 0.8, k * 0.13);
+          });
+          // glossy floor: mirrored, faded copy below a horizon line
+          const horizon = 700;
+          ctx.save();
+          ctx.beginPath(); ctx.rect(0, horizon, W, H - horizon); ctx.clip();
+          ctx.translate(0, horizon * 2); ctx.scale(1, -1);
+          ctx.globalAlpha = 0.22 * g;
+          starts.forEach((s, k) => {
+            const mid = [lerp(s[0], P[0], 0.45) + (k % 2 ? 240 : -240), lerp(s[1], P[1], 0.45) + (k % 3 ? -160 : 160)];
+            ribbon([s, mid, [lerp(mid[0], P[0], 0.6), lerp(mid[1], P[1], 0.9)], P], 16, convK, g, k % 2 ? NEON : ICE, NEON);
+          });
+          ctx.restore();
+          const hz = ctx.createLinearGradient(0, horizon, 0, H);
+          hz.addColorStop(0, "rgba(2,2,2,0)"); hz.addColorStop(1, "rgba(2,2,2,0.9)");
+          ctx.globalCompositeOperation = "source-over"; ctx.fillStyle = hz; ctx.fillRect(0, horizon, W, H - horizon);
+          ctx.restore();
+        }
+
+        // 9. dust in depth
+        const dustK = lerp(0.18, 0.75, drain) * endFade;
+        ctx.save(); ctx.globalCompositeOperation = "lighter";
+        for (const d of DUST) {
+          const L = layer(d.p);
+          const x = d.x * L.z + L.ox, y = (d.y - t * d.v) * L.z + L.oy;
+          if (x < -4 || x > W + 4 || y < -4 || y > H + 4) continue;
+          ctx.fillStyle = `rgba(${ICE},${dustK * d.a * 0.6})`;
+          const rr = d.r * Math.min(3, Math.sqrt(L.z));
+          ctx.fillRect(x - rr, y - rr, rr * 2, rr * 2);
+        }
+        ctx.restore();
+
+        // 10. anamorphic flares: scan birth and convergence
+        flare(mic[0], mic[1], Math.sin(Math.PI * prog(t, 2.5, 3.15)) * 0.95);
+        flare(P[0], P[1], Math.sin(Math.PI * prog(t, 6.85, 7.5)) * 0.9);
+
+        // 11. the grid (supplied last frame) and a subtle grade
+        const gridK = sstep(prog(t, 7.0, 7.6));
+        if (gridK > 0) { ctx.save(); ctx.globalAlpha = gridK; ctx.drawImage(IMG.last, 0, 0); ctx.restore(); }
+        const vig = Math.min(prog(t, 0.6, 2.0), 1 - prog(t, 7.0, 7.5)) * 0.55;
+        if (vig > 0.01) {
+          const vg = ctx.createRadialGradient(CX, CY, 520, CX, CY, 1180);
+          vg.addColorStop(0, "rgba(2,4,8,0)"); vg.addColorStop(1, `rgba(2,4,8,${vig})`);
+          ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+        }
+        const gk = Math.min(prog(t, 0.4, 0.9), 1 - prog(t, 7.1, 7.55)) * 0.045;
+        if (gk > 0.002) {
+          ctx.save(); ctx.globalAlpha = gk; ctx.globalCompositeOperation = "overlay";
+          const f = Math.floor(t * 30), ox = (f * 97) % 256, oy = (f * 61) % 256;
+          ctx.translate(-ox, -oy);
+          ctx.fillStyle = ctx.createPattern(grain, "repeat"); ctx.fillRect(0, 0, W + 256, H + 256);
+          ctx.restore();
+        }
+      }
+
+      // ---------- timeline + readiness ----------
+      const clock = { t: 0 };
+      const tl = gsap.timeline({ paused: true, onUpdate: () => render(tl.time()) });
+      tl.to(clock, { t: 8, duration: 8, ease: "none" }, 0);
+      window.addEventListener("hf-seek", (e) => render(e.detail && typeof e.detail.time === "number" ? e.detail.time : tl.time()));
+      const ready = Promise.all([
+        load("photo", "../assets/first-frame.jpg"),
+        load("wallPad", "../assets/layer-wall-pad.jpg"),
+        load("desk", "../assets/layer-desk.png"),
+        load("people", "../assets/layer-people.png"),
+        load("edgesP", "../assets/fx-edges-people.png"),
+        load("outline", "../assets/fx-outline-people.png"),
+        load("edgesR", "../assets/fx-edges-room.png"),
+        load("last", "../assets/last-frame.png"),
+        document.fonts.load("500 30px Bricolage"),
+        document.fonts.load("600 13px Bricolage"),
+      ]).then(() => { prepare(); render(tl.time()); });
+      window.__hf = window.__hf || {};
+      window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady["spm-agent-shadows"] = ready;
+      window.__timelines = window.__timelines || {};
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
