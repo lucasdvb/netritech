@@ -123,12 +123,12 @@
   const PERCH = [-150, 404, 474];
   // hover points solved in screen space: each sits beside its payoff and >= 150 px from every face
   const PATH = [
-    [2.55, -415, -300, 6], [2.95, -420, -220, 330],            // lifts off its print on the sheet (front-left)
+    [2.55, -355, -240, 6], [2.95, -380, -180, 330],            // lifts off its print on the floor panel (front-left)
     [3.35, -390, 0, 420], [3.75, -394, -10, 414],               // Support: beside the left-wall bubbles
-    [4.45, -370, -395, 220], [4.85, -364, -400, 210],           // Admin: front-left of the paper stack
+    [4.45, -355, -395, 220], [4.85, -350, -400, 210],           // Admin: front-left of the paper stack
     [5.2, -60, -500, 200],                                      // low pass in front of the desks
-    [5.55, 170, -390, 272], [5.95, 176, -384, 266],             // Recruitment: in front of her desk cards
-    [6.3, 120, -60, 540],
+    [5.55, 170, -390, 272], [5.95, 190, -405, 300],             // Recruitment: in front of her desk cards
+    [6.3, 120, -60, 600],
     [6.65, 180, 260, 400], [7.05, 172, 262, 394],               // Sales: in front of the wall chart
     [7.7, -20, 330, 560], [8.35, PERCH[0], PERCH[1], PERCH[2] + 18], [8.65, PERCH[0], PERCH[1], PERCH[2] - 6],
     [8.95, ...PERCH], [10.2, ...PERCH],
@@ -280,7 +280,7 @@
     const G = {
       support:   { r: { x: 76, y: -352, bend: 34 } },                          // hand to the headset
       admin:     { r: { x: 128, y: -392, bend: 24 } },                          // a wave
-      recruiter: { l: { x: -124, y: -398, bend: -22 }, r: { x: 124, y: -398, bend: 22 } },   // both hands up
+      recruiter: { l: { x: -118, y: -318, bend: -30 }, r: { x: 124, y: -398, bend: 22 } },   // a cheer: one hand up, one at the shoulder
       sales:     { r: { x: 160, y: -430, bend: -14 } },                           // points up at the chart
     }[s.key];
     const mixArm = (rest, tgt) => (tgt ? { x: lerp(rest.x, tgt.x, clamp(a)) + 8 * wob, y: lerp(rest.y, tgt.y, clamp(a)) + 10 * wob, bend: lerp(rest.bend, tgt.bend, clamp(a)) } : rest);
@@ -373,7 +373,7 @@
     let g = '';
     const s = ST.support;
     const bubbles = [
-      { cx: -60, cy: 300, w: 210, h: 92, col: shade(P.grey, 0.12), side: -1, at: 0.0 },
+      { cx: -60, cy: 300, w: 210, h: 92, col: '#FCFDFF', side: -1, at: 0.0 },   // lit shading brings this to ≈ #DADDE0
       { cx: 60, cy: 186, w: 210, h: 92, col: P.steel, side: 1, at: 0.3 },
     ];
     for (const b of bubbles) {
