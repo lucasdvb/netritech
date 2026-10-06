@@ -3,7 +3,7 @@ import { useLayoutEffect } from "react";
 import { useCurrentFrame } from "remotion";
 import { PerspectiveCamera, Vector3 } from "three";
 import { cues } from "../theme";
-import { CONVERGE, MIC_TIP } from "../lib/layout";
+import { MIC_TIP } from "../lib/layout";
 import { Key, clamp01, ease, lerp, ramp, spline } from "../lib/math";
 
 export type CameraPose = {
@@ -39,8 +39,8 @@ const TGT: Key[] = [
   { f: 138, v: [2.5, 0.0, -7.0] },
   { f: cues.diveStart, v: [2.6, 0.0, -7.2] },
   { f: 176, v: [M[0] + 0.1, M[1], M[2] - 0.3] },
-  { f: 191, v: [M[0], M[1], M[2]] },
-  { f: 200, v: [M[0], M[1], M[2]] },
+  { f: 191, v: [M[0], M[1], M[2] + 0.004] },
+  { f: 200, v: [M[0], M[1], M[2] + 0.011] }, // mic sits ~60 px above centre: the finale's convergence point
 ];
 const FOV: Key[] = [
   { f: 0, v: [28] },
@@ -56,10 +56,10 @@ export const cameraAt = (f: number): CameraPose => {
   if (f >= cues.cut) {
     // Finale: low, frontal, slow push towards the convergence point just above the floor.
     const t = ramp(f, cues.cut, 240, ease.outCubic);
-    const z = lerp(5.6, 4.9, t);
+    const z = lerp(5.8, 5.0, t);
     return {
-      pos: [0, lerp(0.54, 0.5, t), z],
-      target: [0, lerp(-0.02, 0.0, t), 0],
+      pos: [0, lerp(0.2, 0.24, t), z],
+      target: [0, lerp(-0.1, -0.08, t), 0],
       up: [0, 1, 0],
       fov: 34,
       focus: z,
@@ -117,4 +117,3 @@ export const CameraRig: React.FC = () => {
   return null;
 };
 
-export const CONVERGE_POINT = CONVERGE;

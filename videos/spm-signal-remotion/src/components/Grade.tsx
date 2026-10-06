@@ -19,10 +19,10 @@ export const Grade: React.FC = () => {
       <AbsoluteFill
         style={{
           opacity: calm,
-          background: "radial-gradient(ellipse 36% 27% at 50% 76%, rgba(6,10,16,0.62) 0%, rgba(6,10,16,0.34) 55%, rgba(6,10,16,0) 100%)",
+          background: "radial-gradient(ellipse 40% 30% at 50% 76%, rgba(5,8,12,0.8) 0%, rgba(5,8,12,0.5) 50%, rgba(5,8,12,0) 100%)",
         }}
       />
-      <AbsoluteFill style={{ opacity: 0.05, mixBlendMode: "overlay" }}>
+      <AbsoluteFill style={{ opacity: 0.05 * (1 - grid), mixBlendMode: "overlay" }}>
         <svg width="100%" height="100%">
           <filter id={`g${seed}`}>
             <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed={seed} stitchTiles="stitch" />

@@ -144,7 +144,7 @@ export const Finale: React.FC = () => {
       }
       tubes.push({
         g: taperedTube(pts, 140, 10),
-        attrs: { aStart: cues.cut - 6 + r() * 12, aSeed: r(), aLen: 0.5 + r() * 0.25, aWidth: 0.11 + r() * 0.12 },
+        attrs: { aStart: cues.cut - 15 + r() * 13, aSeed: r(), aLen: 0.5 + r() * 0.25, aWidth: 0.11 + r() * 0.12 },
       });
     }
     return mergeTubes(tubes);
@@ -157,7 +157,9 @@ export const Finale: React.FC = () => {
   useLayoutEffect(() => {
     mat.uniforms.uFrame.value = frame;
     mat.uniforms.uFade.value = fade * w.finale;
-    flare.uniforms.uI.value = (0.15 * ramp(frame, cues.cut, cues.cut + 6) + 0.85 * arrive) * w.finale;
+    // the cut matches the mic's glow to this point, which settles, then flares as the ribbons arrive
+    const matchGlow = 0.2 + 0.45 * Math.exp(-(frame - cues.cut) / 5);
+    flare.uniforms.uI.value = Math.max(matchGlow, 0.2 + 0.8 * arrive) * w.finale;
   });
   return (
     <group visible={w.finale > 0}>

@@ -50,7 +50,7 @@ export const Post: React.FC<{ multisampling?: number }> = ({ multisampling = 4 }
     camera.layers.set(PARKED);
     fx.dofPass.enabled = w.dof > 0.02;
     fx.dof.cocMaterial.focusDistance = w.cam.focus;
-    fx.dof.cocMaterial.focusRange = Math.max(0.08, w.cam.focus * 0.22);
+    fx.dof.cocMaterial.focusRange = Math.max(0.1, w.cam.focus * 0.36);
     fx.dof.bokehScale = w.dof;
     // lines carry the light after the drain; let them bloom a touch more
     fx.bloom.intensity = 1.0 + 0.5 * (1 - w.warm);

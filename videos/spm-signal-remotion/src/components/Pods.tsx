@@ -22,7 +22,7 @@ import {
   Vector3,
 } from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import { cues, lin, palette } from "../theme";
+import { cues, lin } from "../theme";
 import { DESK_TOP, HEADSET_BASE, PLANTS, PODS, SEAT_LOCAL, scanFrameAt } from "../lib/layout";
 import { edgePositions, lineGeometry, surfaceSamples } from "../lib/geo";
 import { makeBokehPointsMaterial, makeScanLineMaterial } from "../lib/materials";
@@ -282,4 +282,3 @@ export const Pods: React.FC = () => {
   );
 };
 
-export const POD_COLOR = palette.ice;

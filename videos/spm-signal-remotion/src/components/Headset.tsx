@@ -19,8 +19,8 @@ import {
   BoxGeometry,
 } from "three";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
-import { cues, lin, palette } from "../theme";
-import { DESK_TOP, HEADSET_BASE, LED_LOCAL, LED_POS, MIC_LOCAL } from "../lib/layout";
+import { cues, lin } from "../theme";
+import { DESK_TOP, HEADSET_BASE, LED_POS, MIC_LOCAL } from "../lib/layout";
 import { edgePositions, lineGeometry, surfaceSamples } from "../lib/geo";
 import { blobTexture, glowTexture, makeBokehPointsMaterial, makeScanLineMaterial } from "../lib/materials";
 import { ramp, rng } from "../lib/math";
@@ -184,7 +184,7 @@ export const Headset: React.FC = () => {
   const steady = ramp(frame, cues.scanStart, cues.scanStart + 6);
   const led = onset * (0.25 + 0.75 * breath) * (1 - steady) + steady * 0.8 + release * 2.5;
   const camDist = new Vector3(...w.cam.pos).distanceTo(new Vector3(...LED_POS));
-  const glowSize = Math.max(0.016, camDist * 0.016) * (1 + release * 2.5);
+  const glowSize = Math.max(0.024, camDist * 0.016) * (1 + release * 2.5);
 
   useLayoutEffect(() => {
     lineMat.uniforms.uFrame.value = frame;
@@ -228,6 +228,8 @@ export const Headset: React.FC = () => {
       <points geometry={ptsGeo} material={ptsMat} frustumCulled={false} />
       {/* the incoming-call LED */}
       <mesh geometry={ledGeo} material={ledMat} position={LED_POS} scale={[1, 0.55, 1]} />
+      {/* the LED spills a little teal onto the anodised cup */}
+      <pointLight position={[LED_POS[0], LED_POS[1], LED_POS[2] + 0.004]} color={tealGlow} intensity={0.012 * led * w.warm} distance={0.12} decay={2} />
       <sprite position={LED_POS} scale={[glowSize, glowSize, 1]}>
         <spriteMaterial map={glowTexture} color={tealGlow.clone().multiplyScalar(0.6 + led * 2.2)} blending={AdditiveBlending} depthWrite={false} transparent toneMapped={false} />
       </sprite>
@@ -235,5 +237,3 @@ export const Headset: React.FC = () => {
   );
 };
 
-export const HEADSET_LED_COLOR = palette.neonTeal;
-export const LED_OFFSET = LED_LOCAL;

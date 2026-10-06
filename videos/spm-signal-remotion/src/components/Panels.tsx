@@ -1,7 +1,7 @@
 import { loadFont } from "@remotion/fonts";
 import React from "react";
 import { AbsoluteFill, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
-import { cues, palette } from "../theme";
+import { palette } from "../theme";
 import { PODS, agentTop } from "../lib/layout";
 import { clamp01, ease, ramp } from "../lib/math";
 import { projectAt } from "./CameraRig";
@@ -112,7 +112,7 @@ export const Panels: React.FC = () => {
   const exit = ramp(frame, 162, 172, ease.inCubic);
   return (
     <AbsoluteFill style={{ fontFamily: UI_FONT, pointerEvents: "none" }}>
-      {PANELS.map((p, idx) => {
+      {PANELS.map((p) => {
         const pod = podAt(...p.pod);
         const top = agentTop(pod);
         const anchor: [number, number, number] = [top[0], top[1] + p.lift, top[2]];
@@ -150,7 +150,6 @@ export const Panels: React.FC = () => {
             >
               {body}
             </div>
-            <span style={{ display: "none" }}>{idx}</span>
           </div>
         );
       })}
@@ -158,4 +157,3 @@ export const Panels: React.FC = () => {
   );
 };
 
-export const PANEL_CUES = cues;

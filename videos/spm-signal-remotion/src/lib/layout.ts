@@ -24,7 +24,7 @@ export const LED_POS: [number, number, number] = [
 export const HEADSET_CENTER: [number, number, number] = [HEADSET_BASE[0], DESK_TOP + 0.1, HEADSET_BASE[2]];
 
 /** The convergence point of the finale, just above the glossy floor. */
-export const CONVERGE: [number, number, number] = [0, 0.12, 0];
+export const CONVERGE: [number, number, number] = [0, 0.1, 0];
 
 export const COL_STEP = 3.2;
 export const ROW_STEP = 3.3;

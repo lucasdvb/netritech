@@ -38,7 +38,7 @@ const windowMask = (() => {
       const wy = (y / Hh) * WALL_H;
       const col = ((wx % 3.2) + 3.2) % 3.2; // bay of 3.2 m
       const inBay = col > 0.42 && col < 2.78;
-      const inH = wy > 0.35 && wy < 13.2;
+      const inH = wy > 0.35 && wy < 9.95;
       const row = ((wy - 0.35) % 3.2 + 3.2) % 3.2;
       const transom = row < 0.09;
       const mullion = Math.abs(col - 1.6) < 0.035;
@@ -79,10 +79,10 @@ const wallMaterial = () =>
       void main() {
         float open = texture2D(uMask, vUv).r;
         vec2 m = vec2((vUv.x - 0.5) * ${WALL_W.toFixed(1)}, vUv.y * ${WALL_H.toFixed(1)});
-        vec3 sky = mix(uLow, uHigh, smoothstep(0.0, 13.0, m.y));
+        vec3 sky = mix(uLow, uHigh, smoothstep(0.0, 10.0, m.y));
         // the low sun sits behind the left bays
-        float sun = exp(-length((m - vec2(-8.5, 9.5)) * vec2(0.22, 0.3)));
-        sky = sky * (1.15 + 4.2 * sun);
+        float sun = exp(-length((m - vec2(-8.5, 8.2)) * vec2(0.22, 0.3)));
+        sky = sky * (0.72 + 3.4 * sun);
         vec3 c = mix(uWall * 0.6, sky, open);
         gl_FragColor = vec4(c * uWarm, 1.0);
       }`,
@@ -145,12 +145,12 @@ export const Scene: React.FC = () => {
     fog.color.copy(bg);
     fog.density = w.office ? lerp(0.006, 0.017, w.warm) : 0.0;
     scene.fog = fog;
-    scene.environmentIntensity = 0.9 * w.warm * w.office;
+    scene.environmentIntensity = 0.75 * w.warm * w.office;
     // warm-to-cool: the sun cools slightly as the camera leaves the desk
     sunColor.set(palette.sunWarm).lerp(new Color(palette.sunPale), w.cool * 0.6);
     if (sun.current) {
       sun.current.color.copy(sunColor);
-      sun.current.intensity = 4.2 * w.warm * w.office;
+      sun.current.intensity = 7.5 * w.warm * w.office;
     }
     wallMat.uniforms.uWarm.value = w.warm * w.office;
     [moteMat, dustMat].forEach((m) => {
@@ -166,7 +166,7 @@ export const Scene: React.FC = () => {
   });
 
   // sun direction of travel: from the windows towards +Z, low and slightly from the left
-  const D = [0.22, -0.31, 1];
+  const D = [0.22, -0.45, 1];
   const len = Math.hypot(D[0], D[1], D[2]);
   const sunPos: [number, number, number] = [-(D[0] / len) * 70, -(D[1] / len) * 70, -(D[2] / len) * 70 - 6];
 
@@ -179,11 +179,13 @@ export const Scene: React.FC = () => {
         <Lightformer form="rect" intensity={1.8} color="#dbe8f0" position={[-1, 2.6, 5]} scale={[9, 3.5, 1]} />
         <Lightformer form="rect" intensity={1.2} color="#e9f1f6" position={[0, 6, 1]} scale={[5, 5, 1]} />
         <Lightformer form="rect" intensity={0.5} color="#d8e6ee" position={[6, 3, 1]} scale={[3, 6, 1]} />
-        <Lightformer form="rect" intensity={1.6} color={palette.sunPale} position={[-5, 1.2, -1]} scale={[2.5, 5, 1]} />
+        <Lightformer form="rect" intensity={1.3} color="#f1ede8" position={[-5, 1.2, -1]} scale={[2.5, 5, 1]} />
         <Lightformer form="rect" intensity={1.1} color="#cfe0ea" position={[5, 1.0, 1.5]} scale={[2, 4, 1]} />
       </Environment>
 
-      <hemisphereLight args={["#9cb3c4", "#2c2018", 0.35 * w.warm * w.office]} />
+      {/* lights only the floor once the solids have faded: the reflector multiplies its reflection into the albedo */}
+      <ambientLight intensity={w.finale ? 1.7 : 1.5 * ramp(frame, 148, 162)} color="#ffffff" />
+      <hemisphereLight args={["#9cb3c4", "#2c2018", 0.2 * w.warm * w.office]} />
       <directionalLight position={[-3, 2.2, 4]} intensity={0.45 * w.warm * w.office} color="#a8c6d6" />
       <spotLight position={[hc[0] + 0.05, 1.25, hc[2] - 1.1]} target-position={hc} angle={0.5} penumbra={1} intensity={5 * w.warm * w.office} color={palette.sunPale} distance={4} decay={2} />
       <primitive object={sunTarget} position={[0, 0, -6]} />
@@ -215,15 +217,15 @@ export const Scene: React.FC = () => {
           resolution={768}
           blur={[420, 120]}
           mixBlur={1}
-          mixStrength={w.finale ? 4.5 : lerp(0.7, 1.8, 1 - w.warm)}
+          mixStrength={w.finale ? 1.5 : lerp(0.7, 1.6, 1 - w.warm)}
           mixContrast={1}
-          mirror={w.finale ? 0.9 : lerp(0.25, 0.55, 1 - w.warm)}
+          mirror={w.finale ? 1 : lerp(0.25, 1, 1 - w.warm)}
           depthScale={w.finale ? 0 : 0.6}
           minDepthThreshold={0.3}
           maxDepthThreshold={1.3}
-          roughness={w.finale ? 0.3 : 0.7}
+          roughness={w.finale ? 1 : 0.7}
           metalness={0.15}
-          color={new Color("#3d3631").lerp(new Color("#04070a"), 1 - w.warm * w.office)}
+          color={new Color("#4f463f").lerp(new Color("#b9c6cf"), 1 - w.warm * w.office)}
         />
       </mesh>
 
