@@ -53,7 +53,7 @@ for i,k in enumerate(order):
     m=masks[k].astype(np.uint8)
     nearer=np.zeros_like(m)
     for kk in order[:i]: nearer|=masks[kk].astype(np.uint8)
-    grow=cv2.dilate(m,np.ones((161,161),np.uint8))
+    grow=cv2.dilate(m,np.ones((91,91),np.uint8))
     e=(m|(nearer&grow)).astype(np.uint8)
     fill=(e&(1-m)).astype(np.uint8)
     tex=photo.copy()

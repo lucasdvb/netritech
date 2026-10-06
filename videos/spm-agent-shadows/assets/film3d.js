@@ -570,14 +570,14 @@ function renderAt(t) {
       fx.fillStyle = g; fx.beginPath(); fx.arc(x, y, r, 0, Math.PI * 2); fx.fill();
     }
     for (let k = 0; k < 2; k++) {
-      const u = prog(t, 6.1 + k * 0.28, 7.2 + k * 0.28); if (u <= 0 || u >= 1) continue;
+      const u = prog(t, 5.9 + k * 0.28, 7.0 + k * 0.28); if (u <= 0 || u >= 1) continue;
       fx.beginPath(); fx.arc(P[0], P[1], 24 + easeOut(u) * 680, 0, Math.PI * 2);
       fx.strokeStyle = `rgba(220,236,242,${0.5 * (1 - u) * fadeAll})`; fx.lineWidth = 1.3; fx.stroke();
     }
     fx.restore();
   }
   // finale: smoky ribbons swirl to one point, mirrored on a glossy floor
-  const fin = easeInOut(prog(t, 6.2, 7.15));
+  const fin = easeInOut(prog(t, 5.95, 7.05));
   if (fin > 0 && fadeAll > 0) {
     const draw = (alphaMul) => SMOKE.forEach((s) => {
       const c = s.curl, mid = [lerp(s.s[0], P[0], 0.45) + (P[1] - s.s[1]) * c * 0.5, lerp(s.s[1], P[1], 0.45) - (P[0] - s.s[0]) * c * 0.35];
