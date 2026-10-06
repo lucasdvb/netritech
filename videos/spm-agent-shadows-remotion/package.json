@@ -1,0 +1,23 @@
+{
+  "name": "spm-agent-shadows-remotion",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SPM Agent Shadows: 8s scroll-scrub hero film built in Remotion",
+  "scripts": {
+    "dev": "remotion studio",
+    "typecheck": "tsc --noEmit",
+    "still": "remotion still src/index.ts SpmAgentShadows --browser-executable=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell",
+    "render": "remotion render src/index.ts SpmAgentShadows out/spm-agent-shadows-remotion.mp4 --codec=h264 --crf=16 --pixel-format=yuv420p --muted --image-format=png --browser-executable=/opt/pw-browsers/chromium_headless_shell-1194/chrome-linux/headless_shell"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.533",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "remotion": "4.0.533"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "typescript": "7.0.2"
+  }
+}
