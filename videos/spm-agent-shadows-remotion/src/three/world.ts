@@ -1,5 +1,5 @@
 import { ease } from "../theme";
-import { clamp, lerp, mulberry, prog } from "../lib/math";
+import { lerp, mulberry, prog } from "../lib/math";
 import raw from "../data/scene.json";
 
 /**
@@ -143,4 +143,3 @@ export const HERO_AGENT_T = [2.35, 2.55, 2.75];
 export const agentTime = (seat: Seat, i: number) =>
   seat.hero ? HERO_AGENT_T[i] : Math.max(2.6, revealAt(seat.pos) + 0.3);
 
-export const clamp01 = (v: number) => clamp(v);

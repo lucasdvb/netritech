@@ -23,8 +23,8 @@ const KEYS: Key[] = [
   { t: 3.6, pos: [4.6, 7.4, 4.8], tgt: [1.5, 0.4, -4.6], fov: 46 },
   { t: 4.2, pos: [6.6, 7.8, 3.0], tgt: [1.9, 0.4, -5.0], fov: 46 },
   { t: 5.2, pos: [7.0, 8.2, -0.6], tgt: [1.4, 0.6, -3.8], fov: 46 },
-  { t: 6.6, pos: [HERO_C[0], 3.3, HERO_C[2]], tgt: [HERO_C[0], 0.75, HERO_C[2]], fov: 44 },
-  { t: 8.0, pos: [HERO_C[0], 2.9, HERO_C[2]], tgt: [HERO_C[0], 0.75, HERO_C[2]], fov: 44 },
+  { t: 6.6, pos: [HERO_C[0] - 0.2, 4.9, HERO_C[2] - 0.15], tgt: [HERO_C[0] - 0.2, 0.75, HERO_C[2] - 0.15], fov: 44 },
+  { t: 8.0, pos: [HERO_C[0] - 0.2, 4.1, HERO_C[2] - 0.15], tgt: [HERO_C[0] - 0.2, 0.75, HERO_C[2] - 0.15], fov: 44 },
 ];
 const ts = KEYS.map((k) => k.t);
 const curve = (pick: (k: Key) => number) => monotoneCurve(ts, KEYS.map(pick));
@@ -62,7 +62,7 @@ export function applyPose(cam: PerspectiveCamera, p: CamPose) {
 
 const probe = new PerspectiveCamera(SD.fov, W / H, 0.05, 200);
 /** Screen position of a world point at time t (for 2D overlays such as the flare). */
-export function projectAt(t: number, p: V3): Vec & { behind?: boolean } {
+export function projectAt(t: number, p: V3): Vec {
   applyPose(probe, camPoseAt(t));
   const v = new Vector3(...p).project(probe);
   return [(v.x * 0.5 + 0.5) * W, (-v.y * 0.5 + 0.5) * H];

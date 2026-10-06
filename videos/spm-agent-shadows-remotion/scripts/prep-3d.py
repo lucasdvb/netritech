@@ -37,7 +37,7 @@ F = (H / 2) / np.tan(np.radians(FOV / 2))
 CAM_Y = 1.3
 DESK_Y = 0.75
 NAMES = ["woman", "bald", "young"]
-BASE = {"woman": 2.0, "bald": 2.8, "young": 3.6}
+BASE = {"woman": 2.0, "bald": 2.65, "young": 3.3}
 BULGE = 0.22
 rng = np.random.default_rng(20261006)
 
@@ -58,14 +58,18 @@ def unproject(u, v, d):
 masks = {n: np.load(PREP / f"mask_{n}.npy").astype(np.uint8) for n in NAMES}
 yy, xx = np.mgrid[0:H, 0:W]
 pr, pg, pb = (photo[..., k].astype(int) for k in range(3))
-blue = ((pb - pr) > 18) & (pb > 150) & (pg > 140) & (pr > 110)  # light-blue shirt, not the dark headset
+blue = ((pb - pr) > 26) & ((pb - pg) > 8) & (pb > 150) & (pr > 110)  # his light-blue shirt; her white shirt is neutral
 white = (np.minimum(np.minimum(pr, pg), pb) > 185) & ((np.maximum(np.maximum(pr, pg), pb) - np.minimum(np.minimum(pr, pg), pb)) < 30)
 # the polygon split leaves the bald man's blue shirt inside the woman's matte, and a piece of the
 # young man inside the bald man's; hand those pixels back to their owner
-w2b = (masks["woman"] > 0) & (xx > 600) & (yy > 330) & (yy < 760) & blue
+w2b = ((masks["woman"] > 0) & (xx > 600) & (yy > 330) & (yy < 760) & blue).astype(np.uint8)
+# only blue regions connected to the bald man's own matte
+k, lab, _, _ = cv2.connectedComponentsWithStats(w2b)
+touch = np.unique(lab[(cv2.dilate(masks["bald"], np.ones((5, 5), np.uint8)) > 0) & (w2b > 0)])
+w2b = np.isin(lab, touch[touch > 0])
 masks["woman"][w2b] = 0
 masks["bald"][w2b] = 1
-b2y = (masks["bald"] > 0) & (((xx > 1110) & (yy < 480)) | ((xx > 1040) & (yy < 760) & white))
+b2y = (masks["bald"] > 0) & (((xx > 1145) & (yy < 440)) | ((xx > 1060) & (yy > 430) & (yy < 760) & white))
 masks["bald"][b2y] = 0
 masks["young"][b2y] = 1
 for n in NAMES:  # drop crumbs
@@ -80,7 +84,7 @@ for n in NAMES:  # drop crumbs
 # Each person behind another is extended under the front person (colours inpainted from their own
 # pixels), so the camera's parallax reveals more of them instead of a hole.
 FRONT = {"woman": [], "bald": ["woman"], "young": ["woman", "bald"]}
-ell = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (121, 121))
+ell = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (201, 201))
 depth_maps = {}
 person_info = {}
 for name in NAMES:
@@ -89,6 +93,8 @@ for name in NAMES:
     for f in FRONT[name]:
         occl |= masks[f]
     ext = cv2.dilate(m, ell) & occl
+    # only the body continues behind the person in front; above the shoulders it is the wall
+    ext[: {"woman": 0, "bald": 360, "young": 440}[name]] = 0
     full = (m | ext).astype(np.uint8)
     # colour of the hidden part: the nearest pixel of this same person, softened
     _, (iy, ix) = ndimage.distance_transform_edt(1 - m, return_indices=True)
@@ -100,7 +106,11 @@ for name in NAMES:
     depth_maps[name] = d
     soft = cv2.GaussianBlur(cv2.dilate(m, np.ones((3, 3), np.uint8)).astype(np.float32), (0, 0), 1.1)
     # close pin-holes in the matte (headset highlights, scalp) so the wall never shows through
-    solid = cv2.erode(ndimage.binary_fill_holes(m).astype(np.uint8), np.ones((7, 7), np.uint8)).astype(np.float32)
+    holes = ndimage.binary_fill_holes(m) & (m == 0)
+    hl, hn = ndimage.label(holes)
+    sizes = ndimage.sum(holes, hl, range(1, hn + 1))
+    small = np.isin(hl, 1 + np.flatnonzero(sizes < 600))
+    solid = cv2.erode((m | small).astype(np.uint8), np.ones((5, 5), np.uint8)).astype(np.float32)
     a = np.clip(np.maximum.reduce([people_alpha * soft, ext.astype(np.float32), solid]), 0, 1)
     rgb = np.where(m[..., None] > 0, photo, colour)
     Image.fromarray(np.dstack([rgb, (a * 255).astype(np.uint8)])).save(OUT / f"person-{name}.png", optimize=True)
@@ -152,7 +162,8 @@ for pi, name in enumerate(NAMES):
     xs = (xs + rng.integers(0, step, xs.shape)).clip(0, W - 1)
     keep = (a[ys, xs] > 0.6) & (person_info[name]["mask"][ys, xs] > 0)
     ys, xs = ys[keep], xs[keep]
-    d = depth_maps[name][ys, xs]
+    # a little depth thickness so the cloud reads as a volume, not a sheet, from above
+    d = depth_maps[name][ys, xs] + np.clip(rng.normal(0, 0.055, len(xs)), -0.14, 0.14)
     P = unproject(xs, ys, d)
     col = photo[ys, xs].astype(np.float32) / 255
     luma = col @ np.array([0.299, 0.587, 0.114])
@@ -206,7 +217,7 @@ for i, name in enumerate(NAMES):
     p = np.array(A["points"], np.float64)
     lim = hy + CUT[name] + CUT_FADE * rng.random(len(p))
     p = p[p[:, 1] < lim]
-    P = unproject(p[:, 0], p[:, 1], depth_at(name, p[:, 0], p[:, 1]))
+    P = unproject(p[:, 0], p[:, 1], depth_at(name, p[:, 0], p[:, 1]) + rng.uniform(-0.12, 0.12, len(p)))
     agent_pts = np.column_stack([to_local(P, seats[name]), p[:, 2]])
     c = np.array(A["contour"], np.float64)
     c3 = to_local(unproject(c[:, 0], c[:, 1], depth_at(name, c[:, 0], c[:, 1]) + 0.02), seats[name])

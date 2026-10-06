@@ -3,13 +3,11 @@
 
 Local, deterministic image processing only (Pillow + NumPy). No generation APIs.
 
-- copies the plates, linework, end frame and font;
-- converts fx-data.js (window.SPM_FX = {...}) into src/data/fx-data.json;
+- copies the opening and closing frames and the UI font;
 - builds padded plates so camera moves never reveal a border:
     wall-pad.jpg : room plate centred on a blurred, stretched copy (PAD px each side);
     desk-pad.png : desk layer with its surface extended right and down (PAD px).
 """
-import json
 import shutil
 import sys
 from pathlib import Path
@@ -20,35 +18,16 @@ from PIL import Image, ImageFilter
 HERE = Path(__file__).resolve().parent.parent
 SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else HERE.parent / "spm-agent-shadows" / "assets"
 PUB = HERE / "public"
-DATA = HERE / "src" / "data"
 W, H, PAD = 1920, 1080, 320
 
 PUB.mkdir(exist_ok=True)
-DATA.mkdir(parents=True, exist_ok=True)
 
-for name in [
-    "first-frame.jpg",
-    "layer-wall.jpg",
-    "layer-desk.png",
-    "layer-people.png",
-    "fx-edges-people.png",
-    "fx-outline-people.png",
-    "fx-edges-room.png",
-    "last-frame.png",
-    "bricolage.woff2",
-]:
+for name in ["first-frame.jpg", "last-frame.png", "bricolage.woff2"]:
     shutil.copyfile(SRC / name, PUB / name)
-
-# fx-data.js -> JSON
-js = (SRC / "fx-data.js").read_text()
-fx = json.loads(js[js.index("{") : js.rindex("}") + 1])
-(DATA / "fx-data.json").write_text(json.dumps(fx, separators=(",", ":")))
 
 # padded wall: blurred stretch underneath, sharp plate on top, soft seam
 wall = Image.open(SRC / "layer-wall.jpg").convert("RGB")
 big = wall.resize((W + 2 * PAD, H + 2 * PAD), Image.LANCZOS).filter(ImageFilter.GaussianBlur(26))
-mask = Image.new("L", (W, H), 0)
-m = np.zeros((H, W), np.float32)
 yy, xx = np.mgrid[0:H, 0:W]
 edge = np.minimum.reduce([xx, W - 1 - xx, yy, H - 1 - yy]).astype(np.float32)
 m = np.clip(edge / 24.0, 0, 1)  # 24 px feather into the blurred surround

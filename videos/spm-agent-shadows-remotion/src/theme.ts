@@ -24,28 +24,19 @@ export const C = {
 
 export const rgba = (c: string, a: number) => `rgba(${c},${Math.max(0, Math.min(1, a)).toFixed(4)})`;
 
-/** Beat boundaries in seconds (storyboard v2). */
+/** Beat boundaries in seconds (storyboard v3, 3D lorry structure). */
 export const BEAT = {
-  establish: [0, 1.4],
-  rise: [1.4, 2.6],
-  scan: [2.6, 3.5],
-  agents: [3.5, 4.9],
-  drain: [4.9, 5.9],
-  dive: [5.9, 7.0],
-  grid: [7.0, 8.0],
+  heroTrack: [0, 1.4],
+  scanCrane: [1.4, 2.6],
+  floor: [2.6, 4.2],
+  drain: [4.2, 5.2],
+  dive: [5.2, 6.6],
+  converge: [6.6, 7.6],
+  grid: [7.6, 8.0],
 } as const;
 
 /** Frames 228-239 must equal the supplied last frame. */
 export const LOCK_FROM = 228;
-
-/** Parallax planes: 0 = infinitely far, 1 = the people/desk plane. */
-export const PLANE = {
-  wall: 0.5,
-  roomLines: 0.5,
-  agents: 0.85,
-  panels: 0.9,
-  people: 1.0,
-} as const;
 
 export const ease = {
   /** easeOutExpo-like: entrances, pops. */

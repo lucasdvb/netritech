@@ -49,7 +49,7 @@ export const WT = {
 const PAD = 320;
 
 // ---------- relief ----------
-const Relief: React.FC<{ assets: WorldAssets }> = ({ assets }) => {
+const Relief: React.FC<{ assets: WorldAssets; t: number }> = ({ assets, t }) => {
   const parts = useMemo(() => {
     const plane = new PlaneGeometry(1, 1, 192, 108);
     const hi = new PlaneGeometry(1, 1, 320, 180);
@@ -72,10 +72,15 @@ const Relief: React.FC<{ assets: WorldAssets }> = ({ assets }) => {
       }),
     ];
   }, [assets]);
+  // painter's order (wall, desk, young, bald, woman) exactly like the photo's own layering;
+  // whatever the scan front has not reached by 2.45 s goes with the room
+  const gone = 1 - sstep(prog(t, 1.95, 2.45));
   for (const p of parts) {
     p.mat.depthTest = false;
     p.mat.depthWrite = false;
+    p.mat.uniforms.uOpacity.value = gone;
   }
+  if (gone <= 0) return null;
   return (
     <>
       {parts.map((p) => (
@@ -277,7 +282,7 @@ export const World: React.FC<{ frame: number; assets: WorldAssets }> = ({ frame,
       agentPtsMat: agentPointsMaterial(10),
       agentPtsMirror: agentPointsMaterial(10, true),
       agentGlow: agents.glow,
-      agentGlowMat: agentGlowMaterial(1.5, 0.22),
+      agentGlowMat: agentGlowMaterial(1.5, 0.3),
       agentLinesMat: agentLinesMaterial(0.9),
       agentLinesMirror: agentLinesMaterial(0.9, true),
       ribHero,
@@ -301,7 +306,7 @@ export const World: React.FC<{ frame: number; assets: WorldAssets }> = ({ frame,
 
   return (
     <>
-      <Relief assets={assets} />
+      <Relief assets={assets} t={t} />
       <mesh position={[HERO_CENTER[0], 0, HERO_CENTER[2] - 4]} rotation={[-Math.PI / 2, 0, 0]} renderOrder={5} frustumCulled={false}>
         <planeGeometry args={[90, 90]} />
         <primitive object={built.floor} attach="material" />
