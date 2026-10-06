@@ -83,10 +83,10 @@ export function reliefMaterial(opts: {
         vec4 c = texture2D(uMap, vUv);
         float dist = length(vWorld - uMic);
         float keep = mix(1.0, smoothstep(uR - 0.45, uR + 0.02, dist), uDissolve);
-        float rim = uR > 0.01 ? exp(-abs(dist - uR) * 10.0) : 0.0;
+        float rim = uR > 0.01 ? exp(-abs(dist - uR) * 24.0) : 0.0;
         float a = c.a * uOpacity * keep;
         if (a < 0.03) discard;
-        vec3 col = c.rgb + NEON * rim * 1.3 * uDissolve;
+        vec3 col = mix(c.rgb, NEON * 1.15, rim * 0.55 * uDissolve);
         gl_FragColor = vec4(col, a);
       }
     `,
@@ -125,7 +125,7 @@ export function scanPointsMaterial(size: number, photoColour: boolean) {
         gl_PointSize = clamp(px, 1.4, 9.0) * (1.0 + band);
         float sub = clamp(px / 1.4, 0.25, 1.0);
         vCol = col;
-        vA = on * sub * fogK(vd) * (0.55 + 0.45 * (1.0 - uPhoto * (1.0 - settle)));
+        vA = on * sub * fogK(vd) * smoothstep(0.35, 1.3, vd) * (0.55 + 0.45 * (1.0 - uPhoto * (1.0 - settle)));
         gl_Position = projectionMatrix * mv;
       }
     `,
@@ -212,11 +212,11 @@ export function agentPointsMaterial(size: number, mirror = false) {
         vec4 mv = modelViewMatrix * vec4(risePos(q), 1.0);
         float vd = -mv.z;
         float px = uSize * uPix / 1000.0 / vd;
-        gl_PointSize = clamp(px, 1.3, 10.0);
-        float hot = step(0.55, aM);
-        vCol = mix(NEON, CORE, hot * 0.85);
+        gl_PointSize = clamp(px, 1.6, 12.0);
+        float hot = step(0.78, aM);
+        vCol = mix(NEON, CORE, hot * 0.7);
         float twinkle = 0.8 + 0.2 * sin(uTime * 5.0 + aScatter.x * 40.0);
-        vA = q * (0.35 + 0.65 * aM) * twinkle * fogK(vd) * clamp(px / 1.3, 0.3, 1.0);
+        vA = q * (0.45 + 0.55 * aM) * twinkle * fogK(vd) * clamp(px / 1.6, 0.4, 1.0) * smoothstep(0.35, 1.3, vd);
         gl_Position = projectionMatrix * mv;
       }
     `,
@@ -242,11 +242,12 @@ export function agentLinesMaterial(alpha: number, mirror = false) {
     vertexShader: /* glsl */ `
       ${FOG}
       ${AGENT_RISE}
+      attribute float aKind;
       varying float vA;
       void main() {
         float q = riseQ();
         vec4 mv = modelViewMatrix * vec4(risePos(q), 1.0);
-        vA = q * fogK(-mv.z);
+        vA = q * fogK(-mv.z) * mix(1.0, 0.22, aKind) * smoothstep(0.35, 1.3, -mv.z);
         gl_Position = projectionMatrix * mv;
       }
     `,
@@ -256,7 +257,7 @@ export function agentLinesMaterial(alpha: number, mirror = false) {
       varying float vA;
       void main() {
         float a = vA * uFade * uAlpha;
-        gl_FragColor = vec4(mix(NEON, CORE, 0.25) * a, a);
+        gl_FragColor = vec4(mix(NEON, CORE, 0.2) * a, a);
       }
     `,
   });
@@ -286,7 +287,7 @@ export function ribbonMaterial(width: number, alpha: number, mirror = false) {
         vec3 p = position + aOff * w;
         if (uMirror > 0.5) p.y = -p.y;
         vec4 mv = modelViewMatrix * vec4(p, 1.0);
-        vU = aU; vGrow = g; vSeed = aSeed; vFog = fogK(-mv.z);
+        vU = aU; vGrow = g; vSeed = aSeed; vFog = fogK(-mv.z) * smoothstep(0.7, 2.4, -mv.z);
         vEdge = taper;
         gl_Position = projectionMatrix * mv;
       }
@@ -324,7 +325,7 @@ export function floorMaterial() {
     `,
     fragmentShader: /* glsl */ `
       ${GLSL_COLORS}
-      uniform float uR; uniform vec3 uMic; uniform float uDrain; uniform float uFade;
+      uniform float uR; uniform vec3 uMic; uniform float uDrain; uniform float uFade; uniform float uTime;
       varying vec3 vWorld;
       void main() {
         float inside = uR - length(vWorld - uMic);
@@ -332,8 +333,46 @@ export function floorMaterial() {
         float far = 1.0 - smoothstep(6.0, 30.0, length(vWorld.xz - uMic.xz));
         float sheen = 0.5 + 0.5 * far;
         vec3 base = mix(vec3(0.106, 0.165, 0.22), vec3(0.051, 0.078, 0.122), 0.4 + 0.6 * uDrain);
-        vec3 col = base * sheen + NEON * exp(-abs(inside) * 3.0) * 0.18 * step(0.0, inside);
+        float ring = exp(-abs(inside) * 3.0) * 0.18 * step(0.0, inside) * (1.0 - smoothstep(3.9, 4.4, uTime));
+        vec3 col = base * sheen + NEON * ring;
         gl_FragColor = vec4(col, on * far * uFade * 0.9);
+      }
+    `,
+  });
+}
+
+// ---------------------------------------------------------------------------------------------
+// Agent glow: one soft teal sprite per agent, sized in metres (a cheap, stable bloom).
+// ---------------------------------------------------------------------------------------------
+export function agentGlowMaterial(sizeM: number, alpha: number) {
+  return new ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    blending: AdditiveBlending,
+    uniforms: { ...U, uSize: { value: sizeM }, uAlpha: { value: alpha }, uMirror: { value: 0 } },
+    vertexShader: /* glsl */ `
+      ${FOG}
+      ${AGENT_RISE}
+      uniform float uSize; uniform float uPix;
+      varying float vA;
+      void main() {
+        float q = riseQ();
+        vec4 mv = modelViewMatrix * vec4(risePos(q), 1.0);
+        float vd = -mv.z;
+        gl_PointSize = clamp(uSize * uPix / vd, 2.0, 900.0);
+        vA = q * fogK(vd) * smoothstep(0.6, 2.5, vd);
+        gl_Position = projectionMatrix * mv;
+      }
+    `,
+    fragmentShader: /* glsl */ `
+      ${GLSL_COLORS}
+      uniform float uFade; uniform float uAlpha;
+      varying float vA;
+      void main() {
+        float r = length(gl_PointCoord - 0.5) * 2.0;
+        float a = exp(-r * r * 4.0) * (1.0 - r) * vA * uFade * uAlpha;
+        if (a <= 0.0) discard;
+        gl_FragColor = vec4(mix(TEAL, NEON, 0.5) * a, a);
       }
     `,
   });

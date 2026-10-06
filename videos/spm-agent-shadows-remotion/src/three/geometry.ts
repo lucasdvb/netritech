@@ -148,6 +148,9 @@ export function agentGeometry() {
   const lines: number[] = [];
   const lt: number[] = [];
   const ls: number[] = [];
+  const lk: number[] = [];
+  const glow: number[] = [];
+  const gt: number[] = [];
   for (const slot of AGENT_SLOTS) {
     const tpl = SD.agents[slot.tpl];
     const step = slot.seat.hero ? 1 : 2;
@@ -167,13 +170,17 @@ export function agentGeometry() {
       lines.push(...seatWorld(slot.seat, agentLocal(a)), ...seatWorld(slot.seat, agentLocal(b)));
       lt.push(slot.t, slot.t);
       ls.push(0, 0, 0, 0, 0, 0);
+      lk.push(0, 0);
     }
     for (const s of tpl.slices) {
       if (!slot.seat.hero && r() < 0.5) continue;
       lines.push(...seatWorld(slot.seat, agentLocal([s[0], s[1], s[2]])), ...seatWorld(slot.seat, agentLocal([s[3], s[4], s[5]])));
       lt.push(slot.t + 0.1, slot.t + 0.1);
       ls.push(0, 0, 0, 0, 0, 0);
+      lk.push(1, 1);
     }
+    glow.push(slot.head[0], slot.head[1] - 0.22, slot.head[2]);
+    gt.push(slot.t);
   }
   const gp = new BufferGeometry();
   attr(gp, "position", pts, 3);
@@ -184,7 +191,12 @@ export function agentGeometry() {
   attr(gl, "position", lines, 3);
   attr(gl, "aT", lt, 1);
   attr(gl, "aScatter", ls, 3);
-  return { points: gp, lines: gl };
+  attr(gl, "aKind", lk, 1);
+  const gg = new BufferGeometry();
+  attr(gg, "position", glow, 3);
+  attr(gg, "aT", gt, 1);
+  attr(gg, "aScatter", new Float32Array(glow.length), 3);
+  return { points: gp, lines: gl, glow: gg };
 }
 
 // ---------- ribbons ----------

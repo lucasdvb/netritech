@@ -18,7 +18,7 @@ const HERO_C = localToWorld(ORIGIN, [DESK.f - 0.35, 0, DESK.a]);
 type Key = { t: number; pos: V3; tgt: V3; fov: number };
 const KEYS: Key[] = [
   { t: 0.0, pos: [0, SD.camY, 0], tgt: [0, SD.camY, -3], fov: SD.fov },
-  { t: 1.4, pos: [0.62, 1.36, -0.22], tgt: [0.38, 1.22, -3.0], fov: SD.fov },
+  { t: 1.4, pos: [0.5, 1.36, -0.2], tgt: [0.32, 1.22, -3.0], fov: SD.fov },
   { t: 2.6, pos: [2.2, 3.5, 2.3], tgt: [0.6, 0.95, -3.0], fov: 43 },
   { t: 3.6, pos: [4.6, 7.4, 4.8], tgt: [1.5, 0.4, -4.6], fov: 46 },
   { t: 4.2, pos: [6.6, 7.8, 3.0], tgt: [1.9, 0.4, -5.0], fov: 46 },

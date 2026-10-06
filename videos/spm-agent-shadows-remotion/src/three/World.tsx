@@ -18,6 +18,7 @@ import { clamp, lerp, prog, sstep } from "../lib/math";
 import { applyPose, camPoseAt, HERO_CENTER } from "./cameraPath";
 import {
   agentLinesMaterial,
+  agentGlowMaterial,
   agentPointsMaterial,
   floorMaterial,
   reliefMaterial,
@@ -92,9 +93,9 @@ const PANEL_SPECS: PanelSpec[] = (() => {
   const heads = AGENT_SLOTS.filter((s) => s.seat.hero).map((s) => s.head);
   const ax = SD.axis;
   const specs: PanelSpec[] = [
-    { kind: "call", pos: up([heads[0][0] - ax[0] * 0.75, heads[0][1], heads[0][2] - ax[2] * 0.75], 0.62), t0: 2.95, size: 1.2, hero: true },
-    { kind: "ticket", pos: up(heads[1], 0.95), t0: 3.15, size: 1.2, hero: true },
-    { kind: "csat", pos: up([heads[2][0] + ax[0] * 0.8, heads[2][1], heads[2][2] + ax[2] * 0.8], 0.7), t0: 3.35, size: 1.2, hero: true },
+    { kind: "call", pos: up([heads[0][0] - ax[0] * 0.75, heads[0][1], heads[0][2] - ax[2] * 0.75], 0.62), t0: 2.95, size: 1.65, hero: true },
+    { kind: "ticket", pos: up(heads[1], 0.95), t0: 3.15, size: 1.65, hero: true },
+    { kind: "csat", pos: up([heads[2][0] + ax[0] * 0.8, heads[2][1], heads[2][2] + ax[2] * 0.8], 0.7), t0: 3.35, size: 1.65, hero: true },
   ];
   // the same work happening at other pods across the floor
   const kinds: PanelKind[] = ["csat", "call", "ticket", "call", "ticket", "csat"];
@@ -273,8 +274,10 @@ export const World: React.FC<{ frame: number; assets: WorldAssets }> = ({ frame,
       furnMat: scanLinesMaterial(1),
       agentPts: agents.points,
       agentLines: agents.lines,
-      agentPtsMat: agentPointsMaterial(7.5),
-      agentPtsMirror: agentPointsMaterial(7.5, true),
+      agentPtsMat: agentPointsMaterial(10),
+      agentPtsMirror: agentPointsMaterial(10, true),
+      agentGlow: agents.glow,
+      agentGlowMat: agentGlowMaterial(1.5, 0.22),
       agentLinesMat: agentLinesMaterial(0.9),
       agentLinesMirror: agentLinesMaterial(0.9, true),
       ribHero,
@@ -309,6 +312,7 @@ export const World: React.FC<{ frame: number; assets: WorldAssets }> = ({ frame,
       <points geometry={built.agentPts} material={built.agentPtsMirror} renderOrder={13} frustumCulled={false} />
       <lineSegments geometry={built.agentLines} material={built.agentLinesMirror} renderOrder={13} frustumCulled={false} />
       <mesh geometry={built.ribFloor} material={built.ribMirror} renderOrder={13} frustumCulled={false} />
+      <points geometry={built.agentGlow} material={built.agentGlowMat} renderOrder={14} frustumCulled={false} />
       <points geometry={built.agentPts} material={built.agentPtsMat} renderOrder={14} frustumCulled={false} />
       <lineSegments geometry={built.agentLines} material={built.agentLinesMat} renderOrder={14} frustumCulled={false} />
       <mesh geometry={built.ribFloor} material={built.ribHaloF} renderOrder={15} frustumCulled={false} />

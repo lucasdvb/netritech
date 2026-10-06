@@ -22,6 +22,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 from PIL import Image
+from scipy import ndimage
 
 HERE = Path(__file__).resolve().parent.parent
 SRC = HERE.parent / "spm-agent-shadows"
@@ -57,11 +58,11 @@ def unproject(u, v, d):
 masks = {n: np.load(PREP / f"mask_{n}.npy").astype(np.uint8) for n in NAMES}
 yy, xx = np.mgrid[0:H, 0:W]
 pr, pg, pb = (photo[..., k].astype(int) for k in range(3))
-blue = ((pb - pr) > 18) & (pb > 120)
+blue = ((pb - pr) > 18) & (pb > 150) & (pg > 140) & (pr > 110)  # light-blue shirt, not the dark headset
 white = (np.minimum(np.minimum(pr, pg), pb) > 185) & ((np.maximum(np.maximum(pr, pg), pb) - np.minimum(np.minimum(pr, pg), pb)) < 30)
 # the polygon split leaves the bald man's blue shirt inside the woman's matte, and a piece of the
 # young man inside the bald man's; hand those pixels back to their owner
-w2b = (masks["woman"] > 0) & (xx > 600) & (yy < 760) & blue
+w2b = (masks["woman"] > 0) & (xx > 600) & (yy > 330) & (yy < 760) & blue
 masks["woman"][w2b] = 0
 masks["bald"][w2b] = 1
 b2y = (masks["bald"] > 0) & (((xx > 1110) & (yy < 480)) | ((xx > 1040) & (yy < 760) & white))
@@ -89,15 +90,18 @@ for name in NAMES:
         occl |= masks[f]
     ext = cv2.dilate(m, ell) & occl
     full = (m | ext).astype(np.uint8)
-    band = cv2.dilate(m, ell) & (1 - m)
-    colour = cv2.inpaint(photo, (band * 255).astype(np.uint8), 9, cv2.INPAINT_TELEA) if ext.any() else photo
+    # colour of the hidden part: the nearest pixel of this same person, softened
+    _, (iy, ix) = ndimage.distance_transform_edt(1 - m, return_indices=True)
+    colour = cv2.GaussianBlur(photo[iy, ix], (0, 0), 5)
     dt = cv2.distanceTransform(full, cv2.DIST_L2, 5)
     dtn = np.sqrt(dt / max(dt.max(), 1))
     dtn = cv2.GaussianBlur(dtn.astype(np.float32), (0, 0), 6)
     d = BASE[name] - BULGE * dtn
     depth_maps[name] = d
     soft = cv2.GaussianBlur(cv2.dilate(m, np.ones((3, 3), np.uint8)).astype(np.float32), (0, 0), 1.1)
-    a = np.clip(np.maximum(people_alpha * soft, ext.astype(np.float32)), 0, 1)
+    # close pin-holes in the matte (headset highlights, scalp) so the wall never shows through
+    solid = cv2.erode(ndimage.binary_fill_holes(m).astype(np.uint8), np.ones((7, 7), np.uint8)).astype(np.float32)
+    a = np.clip(np.maximum.reduce([people_alpha * soft, ext.astype(np.float32), solid]), 0, 1)
     rgb = np.where(m[..., None] > 0, photo, colour)
     Image.fromarray(np.dstack([rgb, (a * 255).astype(np.uint8)])).save(OUT / f"person-{name}.png", optimize=True)
     lo, hi = BASE[name] - 0.4, BASE[name] + 0.1

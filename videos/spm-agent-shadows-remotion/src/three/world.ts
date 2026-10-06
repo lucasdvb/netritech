@@ -67,9 +67,9 @@ export const DESK = (() => {
 })();
 
 /** Agent placement relative to its figure: a head taller, a step behind. */
-export const AGENT_SCALE = 1.08;
-export const AGENT_BACK = 0.34;
-export const AGENT_UP = 0.06;
+export const AGENT_SCALE = 1.12;
+export const AGENT_BACK = 0.5;
+export const AGENT_UP = 0.16;
 /** Local agent position for a template point, relative to the seat. */
 export const agentLocal = (p: V3): V3 => [p[0] * AGENT_SCALE - AGENT_BACK, p[1] * AGENT_SCALE + AGENT_UP, p[2] * AGENT_SCALE];
 
