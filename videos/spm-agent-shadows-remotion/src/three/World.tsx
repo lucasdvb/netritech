@@ -14,7 +14,7 @@ import {
   type Texture,
 } from "three";
 import { FPS, spring, ease } from "../theme";
-import { bump, clamp, lerp, prog, sstep } from "../lib/math";
+import { clamp, lerp, prog, sstep } from "../lib/math";
 import { applyPose, camPoseAt, HERO_CENTER } from "./cameraPath";
 import {
   agentLinesMaterial,
@@ -322,4 +322,4 @@ export const World: React.FC<{ frame: number; assets: WorldAssets }> = ({ frame,
   );
 };
 
-export { bump };
+

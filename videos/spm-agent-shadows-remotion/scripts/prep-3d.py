@@ -53,25 +53,57 @@ def unproject(u, v, d):
     return np.stack([(u - W / 2) / F * d, CAM_Y - (v - H / 2) / F * d, -d], -1)
 
 
-# ---------- people: matte, depth with a body bulge ----------
+# ---------- people: mattes ----------
+masks = {n: np.load(PREP / f"mask_{n}.npy").astype(np.uint8) for n in NAMES}
+yy, xx = np.mgrid[0:H, 0:W]
+pr, pg, pb = (photo[..., k].astype(int) for k in range(3))
+blue = ((pb - pr) > 18) & (pb > 120)
+white = (np.minimum(np.minimum(pr, pg), pb) > 185) & ((np.maximum(np.maximum(pr, pg), pb) - np.minimum(np.minimum(pr, pg), pb)) < 30)
+# the polygon split leaves the bald man's blue shirt inside the woman's matte, and a piece of the
+# young man inside the bald man's; hand those pixels back to their owner
+w2b = (masks["woman"] > 0) & (xx > 600) & (yy < 760) & blue
+masks["woman"][w2b] = 0
+masks["bald"][w2b] = 1
+b2y = (masks["bald"] > 0) & (((xx > 1110) & (yy < 480)) | ((xx > 1040) & (yy < 760) & white))
+masks["bald"][b2y] = 0
+masks["young"][b2y] = 1
+for n in NAMES:  # drop crumbs
+    k, lab, st, _ = cv2.connectedComponentsWithStats(masks[n])
+    keep = np.zeros_like(masks[n])
+    for c in range(1, k):
+        if st[c, 4] > 1500:
+            keep[lab == c] = 1
+    masks[n] = keep
+
+# ---------- people: occlusion fill + depth with a body bulge ----------
+# Each person behind another is extended under the front person (colours inpainted from their own
+# pixels), so the camera's parallax reveals more of them instead of a hole.
+FRONT = {"woman": [], "bald": ["woman"], "young": ["woman", "bald"]}
+ell = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (121, 121))
 depth_maps = {}
 person_info = {}
 for name in NAMES:
-    m = np.load(PREP / f"mask_{name}.npy").astype(np.uint8)
-    dt = cv2.distanceTransform(m, cv2.DIST_L2, 5)
+    m = masks[name]
+    occl = np.zeros_like(m)
+    for f in FRONT[name]:
+        occl |= masks[f]
+    ext = cv2.dilate(m, ell) & occl
+    full = (m | ext).astype(np.uint8)
+    band = cv2.dilate(m, ell) & (1 - m)
+    colour = cv2.inpaint(photo, (band * 255).astype(np.uint8), 9, cv2.INPAINT_TELEA) if ext.any() else photo
+    dt = cv2.distanceTransform(full, cv2.DIST_L2, 5)
     dtn = np.sqrt(dt / max(dt.max(), 1))
     dtn = cv2.GaussianBlur(dtn.astype(np.float32), (0, 0), 6)
     d = BASE[name] - BULGE * dtn
     depth_maps[name] = d
-    # feathered matte: the person's own region of the people alpha
-    region = cv2.dilate(m, np.ones((5, 5), np.uint8)).astype(np.float32)
-    region = cv2.GaussianBlur(region, (0, 0), 1.2)
-    a = np.clip(people_alpha * region, 0, 1)
-    Image.fromarray(np.dstack([photo, (a * 255).astype(np.uint8)])).save(OUT / f"person-{name}.png", optimize=True)
+    soft = cv2.GaussianBlur(cv2.dilate(m, np.ones((3, 3), np.uint8)).astype(np.float32), (0, 0), 1.1)
+    a = np.clip(np.maximum(people_alpha * soft, ext.astype(np.float32)), 0, 1)
+    rgb = np.where(m[..., None] > 0, photo, colour)
+    Image.fromarray(np.dstack([rgb, (a * 255).astype(np.uint8)])).save(OUT / f"person-{name}.png", optimize=True)
     lo, hi = BASE[name] - 0.4, BASE[name] + 0.1
     enc = np.clip((d - lo) / (hi - lo), 0, 1)
     Image.fromarray((enc * 255).astype(np.uint8)).save(OUT / f"depth-{name}.png")
-    person_info[name] = {"range": [lo, hi], "mask": m, "alpha": a}
+    person_info[name] = {"range": [lo, hi], "mask": m, "alpha": np.clip(people_alpha * soft, 0, 1)}
 
 # ---------- desk: horizontal plane, laptop lids stood up at their hinge depth ----------
 def poly(pts):

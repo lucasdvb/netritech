@@ -210,13 +210,13 @@ export const RIBBONS: { hero: RibbonSpec[]; floor: RibbonSpec[]; network: Ribbon
   const network: RibbonSpec[] = [];
   AGENT_SLOTS.forEach((slot, k) => {
     if (slot.seat.hero) {
-      const ear = SD.ears[NAMES3[k]];
+      const ear = SD.ears[NAMES3[slot.tpl]];
       const head = slot.head;
       hero.push({
         p: [ear, along(up(ear, 0.75), FACE, -0.25), along(up(head, 0.6), FACE, 0.2), head],
         t0: slot.t + 0.1,
         dur: 0.7,
-        seed: k * 0.31,
+        seed: slot.tpl * 0.31,
         width: 0.012,
       });
     } else {
