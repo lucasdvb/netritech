@@ -101,8 +101,8 @@
       const PAD = 320;
       function agentXform(i) {
         const a = FX.agents[i], [x, y, w, h] = a.bbox;
-        const S = [1.06, 1.06, 1.06][i];
-        const D = [[-110, -60], [-85, -70], [-70, -70]][i];
+        const S = [1.08, 1.08, 1.1][i];
+        const D = [[-250, -30], [-150, -150], [215, -75]][i];
         return { ax: x + w / 2, ay: y + h, s: S, dx: D[0], dy: D[1], top: y, h };
       }
       function agentPt(i, px, py) {
@@ -173,12 +173,7 @@
       let grain, edgeGlow, outlineGlow, wallPad, deskPad, peopleDark;
       function prepare() {
         // padded wall: replicate edges and soften them so camera moves never reveal a border
-        wallPad = off(W + PAD * 2, H + PAD * 2);
-        const wc = wallPad.getContext("2d");
-        wc.filter = "blur(26px)";
-        wc.drawImage(IMG.wall, 0, 0, W, H, 0, 0, W + PAD * 2, H + PAD * 2);
-        wc.filter = "none";
-        wc.drawImage(IMG.wall, PAD, PAD);
+        wallPad = IMG.wallPad;
         // padded desk: extend the desk surface to the right and down
         deskPad = off(W + PAD, H + PAD);
         const dc = deskPad.getContext("2d");
@@ -291,7 +286,7 @@
       // ---------- agents ----------
       const agentCv = off(W, H), agentOut = agentCv.getContext("2d");
       const tmpCv = off(W, H), actx = tmpCv.getContext("2d");
-      const CUT = [300, 290, 262]; // keep head and shoulders: fade out below head_y + CUT
+      const CUT = [330, 300, 225]; // keep head and shoulders: fade out below head_y + CUT
       function drawAgents(t, L, q3, glowK) {
         agentOut.clearRect(0, 0, W, H);
         let any = false;
@@ -315,7 +310,7 @@
             const a1 = agentPt(i, x1, y);
             if (a1[1] < level) continue;
             const p1 = P(x1, y), p2 = P(x2, y);
-            actx.strokeStyle = `rgba(${NEON},${0.2 * q})`;
+            actx.strokeStyle = `rgba(${NEON},${0.32 * q})`;
             actx.beginPath(); actx.moveTo(p1[0], p1[1]); actx.lineTo(p2[0], p2[1]); actx.stroke();
           }
           // point cloud, assembling from a scatter
@@ -326,7 +321,7 @@
             if (a1[1] < level) continue;
             const p = P(x, y), s = sc[k];
             const px = p[0] + s[0] * sp, py = p[1] + s[1] * sp;
-            const al = (0.35 + 0.65 * m) * q * (0.75 + 0.25 * Math.sin(t * 5 + s[2] * 20));
+            const al = (0.5 + 0.5 * m) * q * (0.75 + 0.25 * Math.sin(t * 5 + s[2] * 20));
             actx.fillStyle = m > 0.55 ? `rgba(235,252,255,${al})` : `rgba(${NEON},${al * 0.85})`;
             const r = m > 0.55 ? 1.6 : 1.2;
             actx.fillRect(px - r / 2, py - r / 2, r, r);
@@ -336,10 +331,10 @@
           actx.beginPath();
           A.contour.forEach(([x, y], k) => { const p = P(x, y); k ? actx.lineTo(p[0], p[1]) : actx.moveTo(p[0], p[1]); });
           actx.closePath();
-          actx.save(); actx.clip();
-          actx.restore();
+          actx.fillStyle = `rgba(${TEAL},${0.24 * q})`; actx.fill();
+          actx.strokeStyle = `rgba(13,60,70,${0.7 * q})`; actx.lineWidth = 5; actx.stroke();
           actx.shadowColor = `rgba(${NEON},${0.9 * q * glowK})`; actx.shadowBlur = 22;
-          actx.strokeStyle = `rgba(${NEON},${0.9 * q})`; actx.lineWidth = 2; actx.stroke();
+          actx.strokeStyle = `rgba(${NEON},${0.95 * q})`; actx.lineWidth = 2.6; actx.stroke();
           actx.shadowBlur = 0; actx.strokeStyle = `rgba(235,252,255,${0.65 * q})`; actx.lineWidth = 0.8; actx.stroke();
           actx.restore();
           // build line (the "printing" edge)
@@ -372,9 +367,9 @@
 
       // ---------- panels (the agents' work) ----------
       const PANELS = [
-        { who: 0, sx: 70, sy: 250, w: 320, h: 150, t0: 4.05 },
-        { who: 1, sx: 905, sy: 70, w: 330, h: 168, t0: 4.3 },
-        { who: 2, sx: 1440, sy: 205, w: 320, h: 196, t0: 4.55 },
+        { who: 0, sx: 48, sy: 430, w: 320, h: 150, t0: 4.05 },
+        { who: 1, sx: 960, sy: 58, w: 330, h: 168, t0: 4.3 },
+        { who: 2, sx: 1560, sy: 120, w: 320, h: 196, t0: 4.55 },
       ];
       const PANEL_P = 0.9;
       // panel world anchors from their intended screen spot at t = 4.9
@@ -667,7 +662,7 @@
       window.addEventListener("hf-seek", (e) => render(e.detail && typeof e.detail.time === "number" ? e.detail.time : tl.time()));
       const ready = Promise.all([
         load("photo", "assets/first-frame.jpg"),
-        load("wall", "assets/layer-wall.jpg"),
+        load("wallPad", "assets/layer-wall-pad.jpg"),
         load("desk", "assets/layer-desk.png"),
         load("people", "assets/layer-people.png"),
         load("edgesP", "assets/fx-edges-people.png"),

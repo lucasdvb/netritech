@@ -36,7 +36,7 @@ fps: 30
 - duration: 1.4s
 - poster: 0.7
 - transition_in: cut
-- status: outline
+- status: built
 - src: index.html
 - rules: multi-phase-camera, depth-of-field-blur
 - seam_out: continuous camera (no cut)
@@ -49,7 +49,7 @@ fps: 30
 - duration: 1.2s
 - poster: 2.0
 - transition_in: continuous
-- status: outline
+- status: built
 - src: index.html
 - rules: multi-phase-camera, 3d-camera-flight
 - seam_out: continuous camera
@@ -62,7 +62,7 @@ fps: 30
 - duration: 0.9s
 - poster: 3.1
 - transition_in: continuous
-- status: outline
+- status: built
 - src: index.html
 - rules: svg-path-draw, center-outward-expansion, ambient-glow-bloom
 - seam_out: continuous
@@ -75,7 +75,7 @@ fps: 30
 - duration: 1.4s
 - poster: 4.6
 - transition_in: continuous
-- status: outline
+- status: built
 - src: index.html
 - rules: depth-scatter-assemble, svg-path-draw, ambient-glow-bloom, stat-bars-and-fills, spring-pop-entrance
 - seam_out: continuous
@@ -88,7 +88,7 @@ fps: 30
 - duration: 1.0s
 - poster: 5.6
 - transition_in: continuous
-- status: outline
+- status: built
 - src: index.html
 - rules: theme-crossfade-morph, ambient-glow-bloom
 - seam_out: continuous
@@ -101,7 +101,7 @@ fps: 30
 - duration: 1.1s
 - poster: 6.5
 - transition_in: continuous
-- status: outline
+- status: built
 - src: index.html
 - rules: 3d-camera-flight, depth-of-field-blur, center-outward-expansion
 - seam_out: continuous
@@ -114,7 +114,7 @@ fps: 30
 - duration: 1.0s
 - poster: 7.8
 - transition_in: continuous
-- status: outline
+- status: built
 - src: index.html
 - rules: svg-path-draw, ambient-glow-bloom
 - seam_out: end (hold)
