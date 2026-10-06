@@ -1,7 +1,7 @@
 {
   "note": "SPM hero #10 The Juggler. Silent scroll-scrubbed hero: no music, no SFX. Marks are beats on a nominal 120 bpm grid (1 beat = 0.5 s). Catch times are computed in film.js: each ball is thrown from the owner's hand on the catcher's side at its first throw after <role>_in + 0.5 s, and lands 0.62 s later.",
   "title": "SPM \u2014 The Juggler (hero scroll film)",
-  "duration": 11,
+  "duration": 12,
   "fps": 60,
   "bpm": 120,
   "formats": [
@@ -13,20 +13,20 @@
     "hook": 0,
     "pull": 1,
     "pulled": 5.5,
-    "sup_orb": 3.9,
-    "sup_in": 4.65,
-    "adm_orb": 5.85,
-    "adm_in": 6.6,
-    "sal_orb": 9.1,
-    "sal_in": 9.85,
-    "rec_orb": 11.05,
-    "rec_in": 11.8,
-    "relax": 14.7,
-    "coffee": 15.4,
-    "work": 15.8,
-    "link": 18,
-    "push": 15,
-    "done": 22
+    "sup_orb": 3.27,
+    "sup_in": 4.02,
+    "adm_orb": 7.11,
+    "adm_in": 7.86,
+    "sal_orb": 10.31,
+    "sal_in": 11.06,
+    "rec_orb": 14.15,
+    "rec_in": 14.9,
+    "relax": 17.6,
+    "coffee": 18.2,
+    "link": 18.8,
+    "finale": 19.4,
+    "push": 16,
+    "done": 24
   },
   "sfx": []
 }

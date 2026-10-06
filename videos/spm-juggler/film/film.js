@@ -19,16 +19,16 @@
   // ------------------------------------------------------------------ world layout (16:9 world = 1920×1080 at camera s = 1)
   const OWNER = { x: 960, y: 930, s: 1.15 };
   const TEAM = [
-    { key: 'support',   ball: 3, x: 300,  y: 950, s: 1.0, side: 1,  m: 'sup' },
-    { key: 'admin',     ball: 0, x: 595,  y: 985, s: 1.0, side: 1,  m: 'adm' },
-    { key: 'sales',     ball: 1, x: 1325, y: 985, s: 1.0, side: -1, m: 'sal' },
-    { key: 'recruiter', ball: 2, x: 1620, y: 950, s: 1.0, side: -1, m: 'rec' },
+    { key: 'support',   ball: 0, x: 280,  y: 950, s: 1.0, side: 1,  m: 'sup' },
+    { key: 'admin',     ball: 2, x: 560,  y: 985, s: 1.0, side: 1,  m: 'adm' },
+    { key: 'sales',     ball: 3, x: 1360, y: 985, s: 1.0, side: -1, m: 'sal' },
+    { key: 'recruiter', ball: 1, x: 1640, y: 950, s: 1.0, side: -1, m: 'rec' },
   ];
-  const ICONS = ['doc', 'chart', 'cv', 'headset'];   // by ball index
+  const ICONS = ['headset', 'cv', 'doc', 'chart'];   // by ball index
   const toWorld = (who, lx, ly) => ({ x: who.x + who.s * lx, y: who.y + who.s * ly });
 
   // ------------------------------------------------------------------ juggling (closed form)
-  const D = 0.326, CYC = 4 * D;                         // throw interval, one ball's full cycle (L→R→L)
+  const D = 0.32, CYC = 4 * D;                         // throw interval, one ball's full cycle (L→R→L)
   const BALL_R = 40, HOLD = -48;                       // ball sits this far above the palm
   const theta = (t) => (2 * Math.PI * t) / D;
   const bob = (t) => 5 * Math.sin(theta(t) + 0.6);
@@ -45,9 +45,9 @@
       const a = handWorld(ta, from), b = handWorld(tb, to);
       return { x: lerp(a.x, b.x, v), y: lerp(a.y, b.y, v) - 4 * apex * v * (1 - v), spin: (to - from) * 9 * Math.sin(Math.PI * v) };
     };
-    if (u < 0.4) return leg(0, 0.4, -1, 1, 340);
+    if (u < 0.4) return leg(0, 0.4, -1, 1, 370);
     if (u < 0.5) return { ...handWorld(t, 1), spin: 0 };
-    if (u < 0.9) return leg(0.5, 0.9, 1, -1, 190);
+    if (u < 0.9) return leg(0.5, 0.9, 1, -1, 170);
     return { ...handWorld(t, -1), spin: 0 };
   }
 
@@ -60,14 +60,15 @@
     const k = Math.ceil((earliest + off - u * CYC) / CYC - 1e-9);
     m.from = m.side > 0 ? -1 : 1;
     m.tr = k * CYC + u * CYC - off; m.tc = m.tr + THROW_T; m.catchBeat = C.beatAt(m.tc);
+    m.workBeat = m.catchBeat + 1.6;                   // each prop comes alive shortly after its own catch
   }
 
   // ------------------------------------------------------------------ teammates: orb → reveal → person → reach → catch → prop
   const FLY = 0.6;                                     // seconds the ball travels from pattern to catcher
-  const REACH = (m) => ({ x: m.side * 150, y: -390 });  // catching hand (local), toward the owner
+  const REACH = (m) => ({ x: m.side * 80, y: -452 });   // hand up above the head, away from the owner  // catching hand (local), toward the owner
   function hold(m) {                                    // where the catching hand rests with the prop (local)
     switch (m.key) {
-      case 'support':   return { x: m.side * 84, y: -350, bend: m.side * 30 };   // touching the headset
+      case 'support':   return { x: m.side * 66, y: -432, bend: m.side * 30 };   // placing the headset on top of the head
       case 'admin':     return { x: m.side * 92, y: -238, bend: m.side * 26 };
       case 'sales':     return { x: m.side * 40, y: -176, bend: m.side * 34 };
       default:          return { x: m.side * 52, y: -172, bend: m.side * 30 };
@@ -115,10 +116,10 @@
     if (live <= 0.001) return '';
     const bx = m.side * 120, by = -500, s = 0.85 + 0.15 * live;
     const dots = [0, 1, 2].map((j) => {
-      const ph = Math.sin((t - sec('work')) * 9 - j * 0.9);
+      const ph = Math.sin((t - bt(m.workBeat)) * 9 - j * 0.9);
       return `<circle cx="${-22 + j * 22}" cy="${f(-2 - 5 * Math.max(0, ph))}" r="6.5" fill="#fff"/>`;
     }).join('');
-    const tick = sp(t, C.beatOf('work') + 2, 'snappy');
+    const tick = sp(t, m.workBeat + 2, 'snappy');
     const body = tick > 0.02
       ? `<path d="M-16 0 L-4 12 L18 -12" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="60" stroke-dashoffset="${f(60 * (1 - tick))}"/>`
       : dots;
@@ -129,8 +130,8 @@
   function propAdmin(t, m, k, live, hand) {
     // stack of papers on the palm; on 'work' the loose sheets square up and a teal tick lands
     if (k <= 0.001) return '';
-    const sq = sp(t, C.beatOf('work') + 0.5, 'default');
-    const tick = sp(t, C.beatOf('work') + 1.25, 'snappy');
+    const sq = sp(t, m.workBeat + 0.5, 'default');
+    const tick = sp(t, m.workBeat + 1.25, 'snappy');
     const offs = [[-16, 9, -9], [14, -6, 7], [-6, 3, -4], [0, 0, 0]];
     let s = '';
     offs.forEach(([dx, dy, r], j) => {
@@ -146,11 +147,11 @@
   function propSales(t, m, k, live, hand) {
     if (k <= 0.001) return '';
     const bars = [0.42, 0.62, 1].map((hgt, j) => {
-      const g = sp(t, C.beatOf('work') + 1 + j * 0.25, 'snappy');
+      const g = sp(t, m.workBeat + 1 + j * 0.25, 'snappy');
       const h = 18 + 70 * hgt * g;
       return `<rect x="${-46 + j * 34}" y="${f(34 - h)}" width="24" height="${f(h)}" rx="5" fill="${j === 2 ? P.teal : P.steel}"/>`;
     }).join('');
-    const ar = sp(t, C.beatOf('work') + 2, 'default');
+    const ar = sp(t, m.workBeat + 2, 'default');
     const arrow = ar > 0.01 ? `<path d="M-40 -16 L-10 -34 L10 -22 L40 -58" fill="none" stroke="${P.teal}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="110" stroke-dashoffset="${f(110 * (1 - ar))}"/>
       <path d="M26 -60 L42 -60 L42 -44" fill="none" stroke="${P.teal}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="${f(clamp((ar - 0.7) * 5))}"/>` : '';
     return `<g transform="translate(${f(hand.x - m.side * 30)} ${f(hand.y - 52)}) rotate(${f(m.side * -4)}) scale(${f(0.78 * (0.45 + 0.55 * k))})">
@@ -159,8 +160,8 @@
   }
   function propRecruiter(t, m, k, live, hand) {
     if (k <= 0.001) return '';
-    const fan = sp(t, C.beatOf('work') + 1.5, 'default');
-    const pick = sp(t, C.beatOf('work') + 2.25, 'snappy');
+    const fan = sp(t, m.workBeat + 1.5, 'default');
+    const pick = sp(t, m.workBeat + 2.25, 'snappy');
     const card = (j) => {
       const r = (j - 1) * 16 * fan, lift = j === 1 ? -14 * pick : 0;
       return `<g transform="rotate(${f(r)} 0 40) translate(0 ${f(lift)})">
@@ -225,6 +226,14 @@
         }
         g += `<path d="${d}" fill="none" stroke="${P.teal}" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="2 13" pathLength="1600"
           stroke-dashoffset="0" opacity="0.75" style="clip-path: inset(0 ${f(100 - 100 * ln)}% 0 0)"/>`;
+        // a teal pulse travels along the link, out and back, so the resting frame stays alive
+        const pl = seg(t, C.beatOf('link') + 2.5, C.beatOf('done') + 6);
+        if (pl > 0) {
+          const ph = (pl * 2.4) % 2, q = ph < 1 ? ph : 2 - ph, sgi = Math.min(2, Math.floor(q * 3)), v = q * 3 - sgi;
+          const a = pts[sgi], c = pts[sgi + 1], ctl = { x: (a.x + c.x) / 2, y: Math.min(a.y, c.y) - (sgi + 1 === 2 ? 120 : 46) };
+          const dp = bez(a, ctl, c, ease.inOut(v));
+          g += `<circle cx="${f(dp.x)}" cy="${f(dp.y)}" r="7" fill="${P.teal}"/>`;
+        }
       }
 
       // a thin teal ring travels out of each orb as its teammate is revealed: behind everyone, thinning to nothing
@@ -242,7 +251,7 @@
           const far = { x: -m.side * Math.abs(rest.x), y: rest.y, bend: -m.side * 20 };
           const near = st.near;
           const k = sp(t, m.catchBeat + 0.5, 'snappy');      // prop grows out from under the ball
-          const live = sp(t, 'work', 'snappy');
+          const live = sp(t, m.workBeat, 'snappy');
           const pose = {
             x: m.x, y: m.y + 230 * s * (1 - st.grow) * 0, s, mood: happy ? 'happy' : 'neutral',
             look: m.side * (st.caught ? 0.2 : 0.9), blink: blinkAt(t, [3.9 + j * 0.7, 8.6 + j * 0.45]),
@@ -252,13 +261,16 @@
           };
           // revealed by a circle that opens out of the orb (full opacity, never a fade), growing 0.9 → 1
           const cx = m.x, cy = m.y - 230 * m.s, gs = 0.9 + 0.1 * st.grow;
-          const rr = 640 * ease.out(clamp(st.grow * 1.15));
+          const rr = 640 * ease.out(clamp(st.grow * 1.6));
           const clip = st.grow < 0.999 ? `clip-path="url(#rv${j})"` : '';
-          if (clip) g += `<clipPath id="rv${j}"><circle cx="${f(h.pos.x)}" cy="${f(h.pos.y)}" r="${f(rr)}"/></clipPath>`;
+          if (clip) g += `<clipPath id="rv${j}"><circle cx="${f(cx)}" cy="${f(cy - 60 * m.s)}" r="${f(rr)}"/></clipPath>`;
           g += `<g ${clip}><g transform="translate(${f(cx)} ${f(cy)}) scale(${f(gs)}) translate(${f(-cx)} ${f(-cy)})">`;
           g += person(SPECS[m.key], { ...pose, s: m.s });
           const handL = { x: near.x, y: near.y };
-          g += `<g transform="translate(${m.x} ${m.y}) scale(${m.s})">${PROPS[m.key](t, m, k, live, handL)}</g>`;
+          const fb = C.beatOf('finale') + j;                                // staggered half-second bumps
+          const bump = 1 + 0.15 * (sp(t, fb, 'snappy') - sp(t, fb + 0.45, 'default'));
+          const hp = toWorld(m, handL.x, handL.y - 60);
+          g += `<g transform="translate(${f(hp.x)} ${f(hp.y)}) scale(${bump.toFixed(4)}) translate(${f(-hp.x)} ${f(-hp.y)})"><g transform="translate(${m.x} ${m.y}) scale(${m.s})">${PROPS[m.key](t, m, k, live, handL)}</g></g>`;
           g += `</g></g>`;
         }
         if (h.visible) fg += orb(h.pos.x, h.pos.y, h.r, 1);
@@ -276,7 +288,10 @@
           p = { x: lerp(p0.x, target.x, v), y: lerp(p0.y, target.y, v) - 4 * A * v * (1 - v) };
           spin = -m.side * 14 * Math.sin(Math.PI * v);
           tint = 1;                                                    // the hand-off reads the moment it leaves the owner
-          if (t >= m.tc) p = toWorld(m, st.near.x, st.near.y + HOLD * 0.8);
+          if (t >= m.tc) {                                            // rides the hand down, swung out past the cheek
+            const out = m.key === 'support' ? 0 : m.side * 82 * smooth((t - m.tc) / 0.12);
+            p = toWorld(m, st.near.x + out, st.near.y + HOLD * 0.8);
+          }
           s = 1 - sp(t, m.catchBeat + (m.key === 'support' ? 1.0 : 0.65), 'snappy');
         }
         fg += ball(i, p.x, p.y, s, spin, tint);
@@ -317,7 +332,7 @@
         const y0 = -44, d = `M${-8 + j * 14} ${y0} c ${f(-10 + 4 * Math.sin(ph))} -14 ${f(12 + 4 * Math.sin(ph + 1))} -22 0 -38 c ${f(-12 + 3 * Math.sin(ph + 2))} -14 ${f(10)} -22 0 -36`;
         return `<path d="${d}" fill="none" stroke="${P.steel}" stroke-width="7" stroke-linecap="round" opacity="${f(a * (0.38 + 0.12 * Math.sin(ph * 1.7)))}"/>`;
       }).join('');
-      s += `<g transform="translate(${f(mx)} ${f(my)}) scale(${f(ms)})">${steam}
+      s += `<g transform="translate(${f(mx)} ${f(my + 30 * OWNER.s)}) scale(${f(ms)}) translate(0 -30)">${steam}
         <path d="M22 -16 q 22 0 22 16 q 0 16 -22 16" fill="none" stroke="${P.navy}" stroke-width="7"/>
         <rect x="-28" y="-36" width="54" height="66" rx="12" fill="${P.navy}"/><rect x="-28" y="-36" width="54" height="10" rx="5" fill="${P.ink}"/>
         </g>`;

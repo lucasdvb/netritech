@@ -115,19 +115,23 @@
   const DESK_H = 96;
 
   // timings (seconds). The crane's arrival at each stop IS that role's activation time.
-  const T = { lines: [0.0, 0.5], foldB: [0.3, 1.4], foldL: [0.6, 1.7], cam: [0.0, 2.8], drift: [2.8, 9.2],
-    cards: [1.55, 0.18], desks: [2.15, 0.14], crane: 2.85, perch: 7.35 };
-  ST.support.t = 3.5; ST.admin.t = 4.45; ST.recruiter.t = 5.4; ST.sales.t = 6.35;
+  const T = { foldB: [0.0, 1.15], foldL: [0.3, 1.45], cam: [0.0, 2.8], drift: [2.8, 9.0],
+    cards: [1.15, 0.15], desks: [1.75, 0.14], crane: 2.55, perch: 8.35 };
+  ST.support.t = 3.35; ST.admin.t = 4.45; ST.recruiter.t = 5.55; ST.sales.t = 6.65;
 
   // crane path: keyframes [t, x, y, z]; each stop has an arrive and a leave key a little apart (a hover)
   const PERCH = [-150, 404, 474];
+  // hover points solved in screen space: each sits beside its payoff and >= 150 px from every face
   const PATH = [
-    [2.85, 1150, -760, 900], [3.2, 200, -420, 600],
-    [3.5, -420, 0, 380], [3.9, -428, -18, 372],                 // Support: in front of the left-wall bubbles
-    [4.45, -420, -360, 300], [4.8, -412, -370, 292],            // Admin: beside the paper stack
-    [5.4, 430, -360, 300], [5.75, 438, -352, 292],              // Recruitment: beside the desk cards
-    [6.35, 120, 250, 360], [6.7, 112, 256, 352],                // Sales: in front of the wall chart
-    [7.1, -60, 360, 520], [7.35, PERCH[0], PERCH[1], PERCH[2] + 24], [7.75, ...PERCH], [10.2, ...PERCH],
+    [2.55, -415, -300, 6], [2.95, -420, -220, 330],            // lifts off its print on the sheet (front-left)
+    [3.35, -390, 0, 420], [3.75, -394, -10, 414],               // Support: beside the left-wall bubbles
+    [4.45, -370, -395, 220], [4.85, -364, -400, 210],           // Admin: front-left of the paper stack
+    [5.2, -60, -500, 200],                                      // low pass in front of the desks
+    [5.55, 170, -390, 272], [5.95, 176, -384, 266],             // Recruitment: in front of her desk cards
+    [6.3, 120, -60, 540],
+    [6.65, 180, 260, 400], [7.05, 172, 262, 394],               // Sales: in front of the wall chart
+    [7.7, -20, 330, 560], [8.35, PERCH[0], PERCH[1], PERCH[2] + 18], [8.65, PERCH[0], PERCH[1], PERCH[2] - 6],
+    [8.95, ...PERCH], [10.2, ...PERCH],
   ];
   function pathAt(t) {
     const K = PATH, n = K.length;
@@ -141,9 +145,13 @@
   }
 
   // ------------------------------------------------------------------ the crane (AI) — local: x forward, y left, z up
-  function cranePolys(pos, heading, flap, scale) {
+  function cranePolys(pos, heading, flap, scale, roll = 0) {
+    const cr_ = Math.cos(roll), sr_ = Math.sin(roll);
     const ch = Math.cos(heading), sh = Math.sin(heading);
-    const X = (q) => [pos[0] + scale * (q[0] * ch - q[1] * sh), pos[1] + scale * (q[0] * sh + q[1] * ch), pos[2] + scale * q[2]];
+    const X = (q0) => {
+      const q = [q0[0], q0[1] * cr_ - q0[2] * sr_, q0[1] * sr_ + q0[2] * cr_];   // roll about the body axis
+      return [pos[0] + scale * (q[0] * ch - q[1] * sh), pos[1] + scale * (q[0] * sh + q[1] * ch), pos[2] + scale * q[2]];
+    };
     const wy = 88 * Math.cos(flap), wz = 88 * Math.sin(flap);
     const tris = [
       [[-40, 0, 0], [40, 0, 0], [0, -10, -30], P.teal],
@@ -156,6 +164,14 @@
     ];
     return tris.map(([a, b, c, col]) => ({ pts: [X(a), X(b), X(c)], col }));
   }
+  // before take-off the crane is printed flat on the sheet: a teal dashed fold-mark (it is the AI, so teal is allowed)
+  const P0 = PATH[0].slice(1), H0 = Math.atan2(PATH[1][2] - PATH[0][2], PATH[1][1] - PATH[0][1]);
+  function cranePrint(t) {
+    if (t >= T.crane + 0.2) return '';
+    let svg = '';
+    for (const o of cranePolys([P0[0], P0[1], 0.6], H0, 90 * D2R, 1.35, -90 * D2R)) svg += poly(o.pts, P.teal, `fill-opacity="0.14" stroke="${P.teal}" stroke-width="2" stroke-dasharray="7 6" stroke-linejoin="round"`);
+    return svg;
+  }
   function crane(t) {
     if (t < T.crane) return null;
     const p = pathAt(t);
@@ -164,11 +180,13 @@
     const a = pathAt(tt - 0.15), b = pathAt(tt + 0.15);
     let heading = Math.atan2(b[1] - a[1], b[0] - a[0]);
     const settle = E.io(seg(t, T.perch, T.perch + 0.6));
+    const above = clamp((480 - p[2]) / 60);                   // no floor shadow once above the walls
     heading = lerp(heading, 0, settle);                       // perched facing along the wall
     // wings: ~2.2 Hz beat in flight, settling into a folded V on the perch
     const beat = (24 + 30 * Math.sin(2 * Math.PI * 2.2 * (t - T.crane))) * D2R;
-    const flap = lerp(beat, 58 * D2R, settle);
-    const tris = cranePolys(p, heading, flap, 1.35);
+    const flap = lerp(beat, 46 * D2R, settle);
+    const fold = E.out(seg(t, T.crane, T.crane + 0.3));                // folds up out of the print as it lifts
+    const tris = cranePolys(p, heading, lerp(90 * D2R, flap, fold), 1.35, lerp(-90 * D2R, 0, fold));
     let svg = '';
     const ds = tris.map((o) => ({ ...o, d: depthOf(o.pts) })).sort((x, y) => y.d - x.d);
     for (const o of ds) svg += poly(o.pts, lit(o.col, faceNormal(o.pts)), `stroke="${shade(o.col, -0.2)}" stroke-width="0.8" stroke-linejoin="round"`);
@@ -176,9 +194,11 @@
     let shadow = '';
     const sx = p[0] - p[2] * 0.22, sy = p[1] - p[2] * 0.3;
     if (Math.abs(sx) < RW / 2 - 60 && Math.abs(sy) < RL / 2 - 60 && settle < 0.5) {
-      const op = clamp(0.16 - p[2] / 5000, 0.04, 0.12) * (1 - settle * 2);
+      const op = clamp(0.16 - p[2] / 5000, 0.04, 0.12) * (1 - settle * 2) * above;
       shadow = poly(circle2(0, 0, 64, 16).map(([u, d]) => [sx + u, sy + d * 0.65, 0.3]), P.ink, `opacity="${f(op)}" filter="url(#soft)"`);
     }
+    // perched: a small contact shadow on the wall top so it sits, not hovers
+    if (settle > 0.01) svg = poly(circle2(0, 0, 34, 14).map(([u, d]) => [PERCH[0] + u * 1.4, PERCH[1] + d * 0.25, 431]), P.ink, `opacity="${f(0.18 * settle)}" filter="url(#soft)"`) + svg;
     return { svg, shadow, d: depth(p) - 60, p };
   }
 
@@ -190,9 +210,10 @@
     const drift = E.io(seg(t, T.drift[0], T.drift[1]));
     const yaw = lerp(8, -34, cm) - 3 * drift;
     const pitch = lerp(86, 33, cm) + 2 * drift;
-    const S = lerp(0.7, 0.84, cm) * (1 + 0.025 * drift);
-    const focus = [lerp(-200, 10, cm), lerp(230, 10, cm), lerp(0, 175, cm)];
-    setCam(yaw, pitch, S, focus, W / 2, lerp(H / 2, H / 2 + 48, cm));
+    const S = lerp(0.64, 0.8, cm) * (1 + 0.025 * drift);
+    const fm = E.out(seg(t, 0, 1.6));                          // keep the sheet centred while it folds
+    const focus = [lerp(-210, 10, fm), lerp(210, 10, fm), lerp(0, 175, cm)];
+    setCam(yaw, pitch, S, focus, W / 2, lerp(H / 2 + 40, H / 2 + 30, cm));
 
     const fb = 90 * E.back(seg(t, T.foldB[0], T.foldB[1])) * D2R;
     const fl = 90 * E.back(seg(t, T.foldL[0], T.foldL[1])) * D2R;
@@ -203,9 +224,10 @@
     let g = '';
     // contact shadow under the whole paper model
     g += poly([at(FL, -RW / 2 - 18, -RL / 2 - 24, 0), at(FL, RW / 2 + 18, -RL / 2 - 24, 0), at(FL, RW / 2 + 18, RL / 2 + 10, 0), at(FL, -RW / 2 - 18, RL / 2 + 10, 0)],
-      P.steel, `opacity="0.32" filter="url(#soft)"`);
+      P.steel, `opacity="0.45" filter="url(#soft)"`);
     g += poly([at(FL, -RW / 2, -RL / 2), at(FL, RW / 2, -RL / 2), at(FL, RW / 2, RL / 2), at(FL, -RW / 2, RL / 2)], FLOOR);
     g += poly(rrect(0, -70, 880, 580, 60).map(([u, d]) => at(FL, u, d, 0.2)), shade(FLOOR, -0.03));
+    g += cranePrint(t);
 
     const walls = [
       { F: LWin, u0: -RL / 2, u1: RL / 2, name: 'L' },
@@ -219,10 +241,10 @@
     }
 
     // creases: dashed fold lines draw on from frame 0 and retire as the folds close
-    const ld = E.out(seg(t, T.lines[0], T.lines[1]));
+    const ld = 1;
     const lf = 1 - seg(t, T.foldL[1] - 0.3, T.foldL[1] + 0.2);
     if (lf > 0) {
-      const crease = (a, b) => `<line x1="${f(proj(a)[0])}" y1="${f(proj(a)[1])}" x2="${f(proj(b)[0])}" y2="${f(proj(b)[1])}" stroke="${LINE}" stroke-width="3" stroke-linecap="round" pathLength="100" opacity="${f(0.85 * lf)}" style="stroke-dasharray:${f(Math.max(0.01, 100 * ld))} 200"/>`;
+      const crease = (a, b) => `<line x1="${f(proj(a)[0])}" y1="${f(proj(a)[1])}" x2="${f(proj(b)[0])}" y2="${f(proj(b)[1])}" stroke="${P.navy}" stroke-width="3" stroke-dasharray="12 10" stroke-linecap="round" opacity="${f(0.9 * lf * ld)}"/>`;
       g += crease([-RW / 2, -RL / 2, 0.5], [-RW / 2, RL / 2, 0.5]) + crease([RW / 2, RL / 2, 0.5], [-RW / 2, RL / 2, 0.5]);
     }
 
@@ -259,7 +281,7 @@
       support:   { r: { x: 76, y: -352, bend: 34 } },                          // hand to the headset
       admin:     { r: { x: 128, y: -392, bend: 24 } },                          // a wave
       recruiter: { l: { x: -124, y: -398, bend: -22 }, r: { x: 124, y: -398, bend: 22 } },   // both hands up
-      sales:     { r: { x: 150, y: -440, bend: 8 } },                           // points up at the chart
+      sales:     { r: { x: 160, y: -430, bend: -14 } },                           // points up at the chart
     }[s.key];
     const mixArm = (rest, tgt) => (tgt ? { x: lerp(rest.x, tgt.x, clamp(a)) + 8 * wob, y: lerp(rest.y, tgt.y, clamp(a)) + 10 * wob, bend: lerp(rest.bend, tgt.bend, clamp(a)) } : rest);
     const pose = {
@@ -271,21 +293,19 @@
     const art = person(SPECS[s.key], pose);
     // the die-cut paper silhouette is printed on the sheet; the colour comes up with the flip
     g += artOn(CF, 0, 0, k, art, 0.6, `filter="url(#paper)"`);
-    const ink = E.io(seg(t, t0 + 0.08, t0 + 0.42));
+    const ink = E.io(seg(t, t0 + 0.12, t0 + 0.3));
     if (ink > 0.001) g += artOn(CF, 0, 0, k, art, 0.8, ink < 0.999 ? `opacity="${f(ink)}"` : '');
 
     // desk rises out of the floor in front of the teammate
     const dt0 = T.desks[0] + s.idx * T.desks[1];
     const dk = E.back(seg(t, dt0, dt0 + 0.55));
     const dh = DESK_H * dk;
-    g += box(FL, s.x, s.y - 60, 250, 120, dh, '#FFFFFF', { cols: ['#FFFFFF', P.grey, P.grey, P.grey, P.grey] }).svg;
+    if (dk > 0.001) g += box(FL, s.x, s.y - 60, 250, 120, dh, '#FFFFFF', { cols: ['#FFFFFF', P.grey, P.grey, P.grey, P.grey] }).svg;
     const mk = E.back(seg(t, dt0 + 0.4, dt0 + 0.85));
     if (dk > 0.98 && mk > 0.001) {
       const TF = { O: [0, 0, dh], U: [1, 0, 0], D: [0, 1, 0], N: [0, 0, 1] };
       g += box(TF, s.x - 64, s.y - 40, 18, 24, 10 * mk, P.ink).svg;
       g += box(TF, s.x - 64, s.y - 40, 104, 12, 62 * mk, P.steel, { cols: [shade(P.steel, 0.1), P.steel, P.navy, P.steel, P.navy] }).svg;
-      const MF = { O: at(TF, s.x - 64, s.y - 46.5, 0), U: [1, 0, 0], D: [0, 0, 1], N: [0, -1, 0] };
-      if (a > 0.01) g += poly(circle2(0, 38 * mk, 7 * clamp(a), 14).map(([u, d]) => at(MF, u, d, 0.6)), P.teal);
       g += box(TF, s.x + 34, s.y - 96, 84, 24, 5 * mk, P.grey).svg;
       if (s.key === 'admin') g += adminStack(t, s, TF);
       if (s.key === 'recruiter') g += deskCards(t, s, TF);
@@ -331,17 +351,17 @@
     let g = '';
     // window: a paper frame with two panes (no motion, it anchors the composition)
     g += extrude(F, rrect(-300, 250, 250, 170, 16), 6, '#FFFFFF', P.grey);
-    g += poly(rrect(-300, 250, 222, 142, 10).map(([u, d]) => at(F, u, d, 6.5)), '#E6EEF1');
+    g += poly(rrect(-300, 250, 222, 142, 10).map(([u, d]) => at(F, u, d, 6.5)), '#E6E9EC');
     g += poly([[-302, 179], [-298, 179], [-298, 321], [-302, 321]].map(([u, d]) => at(F, u, d, 7)), '#FFFFFF');
     const s = ST.sales, as = act(t, s, 0.05);
     g += extrude(F, rrect(235, 240, 340, 250, 22), 2 + 6 * clamp(as), '#FFFFFF', P.grey);
     [0.35, 0.55, 0.72, 1].forEach((hh, j) => {
-      const k = E.back(seg(t, s.t + 0.1 + j * 0.1, s.t + 0.5 + j * 0.1));
+      const k = E.back(seg(t, s.t + 0.1 + j * 0.16, s.t + 0.75 + j * 0.16));
       const h0 = 22 + 150 * hh * k, x = 130 + j * 70;
       const pts = [[x - 22, 140], [x + 22, 140], [x + 22, 140 + h0], [x - 22, 140 + h0]];
       g += extrude(F, pts, 6 + 18 * k, k > 0.01 ? (j === 3 ? P.teal : P.steel) : P.grey);
     });
-    const tl = E.io(seg(t, s.t + 0.5, s.t + 1.1));
+    const tl = E.io(seg(t, s.t + 0.7, s.t + 1.5));
     if (tl > 0.001) {
       const L = [[105, 210], [175, 250], [245, 240], [335, 330]].map(([u, d]) => proj(at(F, u, d, 30)));
       g += `<path d="M${L.map((q) => f(q[0]) + ' ' + f(q[1])).join(' L')}" fill="none" stroke="${P.teal}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" pathLength="100" style="stroke-dasharray:${f(100 * tl)} 200"/>`;
@@ -353,8 +373,8 @@
     let g = '';
     const s = ST.support;
     const bubbles = [
-      { cx: -60, cy: 300, w: 210, h: 92, col: P.steel, side: -1, at: 0.0 },
-      { cx: 60, cy: 186, w: 210, h: 92, col: P.navy, side: 1, at: 0.3 },
+      { cx: -60, cy: 300, w: 210, h: 92, col: shade(P.grey, 0.12), side: -1, at: 0.0 },
+      { cx: 60, cy: 186, w: 210, h: 92, col: P.steel, side: 1, at: 0.3 },
     ];
     for (const b of bubbles) {
       const k = act(t, s, b.at, 0.4);
@@ -369,7 +389,7 @@
       for (let j = 0; j < 3; j++) {
         const bounce = b.at > 0 && resolved < 0.01 ? 8 * Math.max(0, Math.sin((t - s.t) * 9 - j * 0.9)) : 0;
         const r = 11 * (1 - resolved);
-        if (r > 0.5) g += poly(circle2(b.cx - 44 + j * 44, b.cy + bounce, r, 12).map(sc).map(([u, d]) => at(F, u, d, e + 0.5)), '#FFFFFF');
+        if (r > 0.5) g += poly(circle2(b.cx - 44 + j * 44, b.cy + bounce, r, 12).map(sc).map(([u, d]) => at(F, u, d, e + 0.5)), b.at > 0 ? '#FFFFFF' : P.steel);
       }
       if (resolved > 0.001) { const p = proj(at(F, b.cx, b.cy, e + 1)); g += tick(p[0], p[1], resolved, 30); }
     }

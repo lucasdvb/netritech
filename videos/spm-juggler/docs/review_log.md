@@ -196,3 +196,58 @@ Smaller issues for the same round:
 - Change Recruitment's #2F4455 to a palette hex (Deep navy #1B2A38 with a steel collar works).
 
 **Verdict:** ANOTHER ROUND (round 3; Readability, Variety, Composition and Polish are below 8)
+
+---
+
+## Round 4: renders/draft_16x9.mp4 re-render (12.0 s, 30 fps, 1920x1080, silent, text-free; 16x9 only)
+
+**Did the round-3 fixes land?** Each caught ball was tracked by its teal ring at full resolution, every 2nd frame from 2.4 to 9.0 s.
+
+- **R3 fix 1 (separate entrances from catches): LANDED.**
+  - Support catch 3.20 s → Admin orb first visible ~3.73 s.
+  - Admin catch ~5.10 s → Sales orb ~5.50 s.
+  - Sales catch ~6.70 s → Recruitment orb ~7.40 s.
+  - No ringed ball is in flight while another orb or ring is on screen. Each beat is one ball and one catcher (contact 2.5–8.5 s; phone 3 s, 5 s, 6 s, 8 s).
+- **R3 fix 2 (throws travel to the catcher): LANDED.**
+
+  | Throw | Release | Apex | Catch | Apex rise | Sideways travel | Gap to owner's nearest hand at catch |
+  |---|---|---|---|---|---|---|
+  | Support | 2.60 s (796,406) | 2.87–2.93 s (~570,234) | 3.20 s (358,388) | 172 px | 438 px | far side of frame |
+  | Admin | 4.53 s (810,400) | 4.80 s (728,268) | ~5.10 s (~645,410) | 132 px | ~165 px | ~170 px |
+  | Sales | 6.13 s (1106,400) | 6.40 s (1188,268) | ~6.70 s (~1270,390) | 132 px | ~164 px | ~180 px |
+  | Recruitment | 8.07 s (1142,376) | 8.33 s (1344,230) | ~8.63 s (~1550,380) | 146 px | ~400 px | far side of frame |
+
+  Admin and Sales are slightly under the 180 px sideways I asked for, but the catches are overhead and clearly away from the owner. No ringed ball overlaps a juggled ball in any tracked frame.
+- **R3 fix 3 (back-half pacing): LANDED on screen.**
+  - Props come alive about 0.8 s after their own catch: bubble 4.1 s, paper tick ~5.9 s, chart ~7.5 s, card ~9.4 s.
+  - Relax ~8.9 s, mug 9.13–9.40 s, staggered finale bumps, arc draw-on with a travelling pulse 9.8–10.6 s.
+  - Frame-diff stays 0.8–1.4 through 7–9 s and 0.4–0.9 through 9–10.6 s, then settles into the rest.
+- **Smaller fixes:**
+  - Landed: the recruitment ball no longer crosses Sales' orb; the mug grows from the palm (scales about its base, 9.13–9.40 s, solid every frame); Recruitment wears Deep navy with a steel collar, on palette; no isolated frame-diff spikes anywhere after 2 s.
+  - Partly landed: the headset is placed from the top of the head (3.6–4.0 s).
+  - Not landed: juggled balls still kiss in the cascade (strip_fast2 f21, 0.70 s; strip_fast f40, 1.33 s).
+
+**Correction to my rounds 1–3 Variety scores.** I re-read scripts/review.py. `max_gap_between_visual_events` adds the film's end (DUR) as the last "event", so every reported gap so far ran to the last frame and included the resting end card. Round 1: 5.13 + 5.87 = 11.0. Round 2: 6.4 + 4.6 = 11.0. Round 3: 5.93 + 5.07 = 11.0. Now: 7.47 + 4.53 = 12.0. The brief requires that rest, and the rubric exempts the end card. Measured to the start of the rest (longest_static from 10.8 s), the real gap is 3.33 s. I applied the cap mechanically before; I no longer apply it.
+
+| Criterion | Score | Evidence (timestamps, frame numbers, metric values) |
+|---|---|---|
+| Hook (first 2 s) | 8 | f0 reads at 0.0 s: close-up of the overloaded owner with 4 keylined icon balls and sweat. The pull-back reveals white space by 1.5 s. Held at 8 by balls touching in the cascade (0.70 s, 1.33 s). |
+| Readability at phone size (story read) | 8 | phone_16x9 at 360 px reads the whole story with no competing element. 0–1 s overloaded owner. 3 s Support holding the ringed headset ball overhead. 4 s bubble. 5 s Admin with the ringed doc ball. 6 s Sales reaching. 7 s chart card. 8 s Recruitment reaching for the ringed ball. 9 s owner relaxed with mug. 10–11 s team line-up with linked orbs. Each prop is legible at 360 px. |
+| Motion quality | 8 | No fades, pops or stepping. All four throws are measured parabolas with 132–172 px apex rise. Reveal rings thin out behind the characters. The mug grows from the palm on a spring. Held from 9: as each ball rides the hand down after a catch it crosses the catcher's cheek for 2–3 frames (Admin 5.17–5.30 s, Sales ~6.80 s, Recruitment ~8.70 s). Catch arms go dead-straight overhead, which is a stiff pose. |
+| Variety / pacing | 8 | Something new every ≤ 1 s from 2 s to 10.6 s: entrance, throw, catch, prop beat, next entrance, relax, mug, finale bumps, arc pulse. The camera pulls back, then pushes in on the rest. The build lands in a calm resting frame (longest_static 1.17 s from 10.8 s). Metric max gap 4.53 s from 7.47 s runs to the film's end and includes the rest (see correction). |
+| Brand accuracy (palette, no text/logos) | 8 | No text, logos or glow. Every colour is one of the five palette hexes or the muted skin tones. Teal appears only on AI elements: orbs, rings, caught-ball keylines, headset mic tip, bubble, ticks, winning bar, link arcs and pulse. |
+| Sound sync | N/A | Silent web hero. |
+| Composition (16x9 only; 9:16 N/A) | 8 | Final frame: five figures, head x ≈ 250 / 545 / 955 / 1375 / 1670. The owner sits in the widest gaps (410 / 420 px against 295 px outside), so he reads as the hero. Arc orbs sit over heads; contact shadows ground each figure; props are readable. No limb collisions at any catch; catch hands are ≥ 170 px from the owner's. Minor: the circular reveal shows Admin as a floating head for ~2 frames at 4.0 s (f120) before her body opens. |
+| Polish | 8 | No blank, ghost or double-exposed frames. No pops; no orb or ring crossing faces. Remaining small items: ball-over-cheek frames during the ride-down (5.2 s, 6.8 s, 8.7 s), the floating-head reveal frame (4.0 s), and touching juggle balls (0.70 s, 1.33 s). |
+
+**3 worst problems** (ranked by damage to the film, each with timestamp + cause)
+1. **The ball crosses the catcher's face on the ride-down** (Admin 5.17–5.30 s, Sales ~6.80 s, Recruitment ~8.70 s). The ball travels straight down the hand path from overhead to chest, and that path runs over the cheek. A visitor who stops scrolling there sees a ball on someone's face.
+2. **Juggled balls still touch in the cascade** (0.70 s, 1.33 s). Two of the four balls kiss or overlap in the hook, which slightly muddies the "four jobs" count.
+3. **Floating-head reveal frame at 4.0 s** (f120). The circular reveal opens from the orb above the head, so for ~2 frames Admin is only a head; the same pattern applies to the other reveals. Stiff vertical catch arms are a related nit.
+
+**Fixes for a polish pass (optional; none blocks ship)**
+1. Ride-down: route the caught ball on a short outward arc that keeps it ≥ 20 px outside the head silhouette, e.g. a hand path offset 60 px to the outer side before it comes in to the chest. Verify: stills at 5.23, 6.80 and 8.70 s show no ball pixels over skin.
+2. Juggle: add 1–2 frames of phase offset between the two balls that cross at 0.70 s and 1.33 s. Verify: strip_fast and strip_fast2 show a clear gap between every pair of balls.
+3. Reveal: centre the reveal circle on the figure's chest instead of the orb, or start it at a radius that already covers the head and shoulders. Verify: f118–f122 show at least head plus torso in every frame. Optionally give the catch arm a 10–15° elbow bend.
+
+**Verdict:** SHIP (round 4 ≥ 3; every scored criterion is ≥ 8; Sound sync N/A for a silent hero)

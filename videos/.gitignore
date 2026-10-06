@@ -4,5 +4,5 @@ spm-juggler/review/
 spm-juggler/renders/draft_*
 spm-juggler/renders/clip_*
 spm-origami/review/
-spm-origami/snaps/
 spm-origami/renders/draft*
+spm-origami/snaps*/

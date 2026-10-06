@@ -123,7 +123,7 @@
       s += `<path d="M-20 -313 L0 -292 L20 -313Z" fill="${shade(top, 0.25)}"/>`;
       s += `<path d="M-7 -294 L7 -294 L10 -214 L0 -202 L-10 -214Z" fill="${spec.tie || P.ink}" transform="rotate(${f(spec.tieSwing || 0)} 0 -294)"/>`;
     } else {
-      s += `<path d="M-24 -313 C-18 -292 18 -292 24 -313Z" fill="${d}"/>`;
+      s += `<path d="M-24 -313 C-18 -292 18 -292 24 -313Z" fill="${spec.collar || d}"/>`;
     }
     s += `<rect x="-64" y="-166" width="128" height="20" rx="9" fill="${spec.trousers}"/>`;
     return s;
@@ -175,7 +175,7 @@
     support:   { skin: '#8A5A3E', hair: 'curly',    hairCol: P.ink,     top: P.navy,  topStyle: 'crew', trousers: P.ink },
     admin:     { skin: '#F2D3BC', hair: 'bun',      hairCol: '#4A3426', top: P.ink,   topStyle: 'blazer', inner: P.grey, trousers: P.steel, glasses: true },
     sales:     { skin: '#C68E6A', hair: 'sidepart', hairCol: P.ink,     top: P.navy,  topStyle: 'blazer', inner: P.white, trousers: P.steel },
-    recruiter: { skin: '#6E4532', hair: 'long',     hairCol: P.ink,     top: '#2F4455', topStyle: 'crew', trousers: P.navy },
+    recruiter: { skin: '#6E4532', hair: 'long',     hairCol: P.ink,     top: P.navy, topStyle: 'crew', collar: P.steel, trousers: P.navy },
   };
 
   // ------------------------------------------------------------------ icons (drawn in a 100×100 box centred on 0,0)
