@@ -1,0 +1,110 @@
+/* ============================================================
+   SPM V3 — mobile layout pass (modelled on terminal-industries.com
+   mobile): 20px gutters, single-column stacks, horizontal tab rows and
+   swipeable card carousels, full-width CTAs, ≥44px tap targets.
+   Page-scoped to SPM V3. Desktop is untouched (max-width queries only).
+   ============================================================ */
+
+/* ---------- tabs → one swipeable row (TI pattern) ---------- */
+@media (max-width: 860px) {
+  .hlab-tm2-tabs, .hlab-sf-tabs {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    /* bleed to the screen edges, keep the 20px gutter as padding */
+    margin-left: -20px !important; margin-right: -20px !important;
+    padding: 2px 20px !important;
+    scroll-padding-inline: 20px;
+    gap: 8px !important;
+    justify-content: flex-start !important;
+    max-width: none !important;
+    width: auto !important;
+  }
+  /* the FAQ wrap is an auto-sized grid: stop the nowrap row from widening it */
+  .hlab-sf-wrap { grid-template-columns: minmax(0, 1fr) !important; }
+  .hlab-sf-main, .hlab-tm2-bar > * { min-width: 0; }
+  .hlab-tm2-tabs::-webkit-scrollbar, .hlab-sf-tabs::-webkit-scrollbar { display: none; }
+  .hlab-tm2-tab, .hlab-sf-tab {
+    flex: 0 0 auto !important;
+    white-space: nowrap;
+    scroll-snap-align: start;
+    min-height: 44px;
+  }
+  .hlab-tm2-bar { margin-top: 28px !important; }
+  .hlab-tm2-panels { margin-top: 24px !important; }
+
+  /* ---------- "Une équipe SPM pensée pour chaque métier": card carousel ---------- */
+  .hlab-tm2-cards {
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    margin-left: -20px; margin-right: -20px;
+    padding: 0 20px 4px;
+    scroll-padding-inline: 20px;
+    gap: 12px !important;
+  }
+  .hlab-tm2-cards::-webkit-scrollbar { display: none; }
+  .hlab-tm2-card, .hlab-tm2-card.hlab-is-open {
+    flex: 0 0 min(86%, 360px) !important;     /* next card peeks in */
+    min-width: 0 !important;
+    min-height: min(500px, 118vw) !important;
+    scroll-snap-align: start;
+    cursor: default;
+  }
+  .hlab-tm2-card:not(.hlab-is-open):hover { opacity: 1; }
+  .hlab-tm2-card-inner { position: absolute !important; inset: 0 !important; padding: 24px !important; }
+  /* every card shows its copy on touch (no accordion to discover) */
+  .hlab-tm2-card .hlab-tm2-body { opacity: 1 !important; transform: none !important; max-height: none !important; font-size: 16px !important; line-height: 1.45; margin-top: 12px; }
+  .hlab-tm2-title { font-size: 26px !important; line-height: 1.1 !important; }
+  .hlab-tm2-card-inner > :last-child:not(.hlab-tm2-body):not(.hlab-tm2-title) { margin-top: auto !important; }
+}
+
+@media (max-width: 767px) {
+  /* ---------- cost calculator: inputs, then results (TI calculator) ---------- */
+  .hlab-ti-calc-grid { grid-template-columns: 1fr !important; border-radius: 20px !important; }
+  .hlab-ti-calc-left, .hlab-ti-calc-grid .hlab-ti-calc-panel { padding: 24px 20px !important; min-width: 0; }
+  .hlab-ti-calc-left .hlab-ti-fields { gap: 16px !important; }
+  .hlab-ti-calc-left .hlab-ti-field label { line-height: 1.4; }
+  .hlab-ti-calc-left .hlab-ti-field input { min-height: 48px; }
+  .hlab-ti-calc-panel .hlab-ti-panel-row { gap: 12px; }
+  .hlab-ti-calc-panel .hlab-ti-panel-row > :last-child { text-align: right; white-space: nowrap; }
+  .hlab-ti-calc-panel .hlab-ti-panel-cta, .hlab-ti-calc-panel .hlab-ti-btn { width: 100% !important; justify-content: center; white-space: normal; text-align: center; }
+
+  /* ---------- "Notre approche": full-width copy, shorter media ---------- */
+  .hlab-ti-sticky-wrap { gap: 8px !important; margin-top: 40px !important; }
+  .hlab-ti-sticky-media { position: relative !important; top: auto !important; aspect-ratio: 16 / 10 !important; max-width: none !important; width: 100%; }
+  .hlab-ti-feature-list .hlab-ti-feature { padding: 28px 0 !important; }
+  .hlab-ti-feature-list .hlab-ti-feature h4, .hlab-ti-feature-list .hlab-ti-feature p { max-width: none !important; }
+  .hlab-ti-feature-list .hlab-ti-feature h4 { font-size: 24px !important; line-height: 1.15 !important; margin-bottom: 10px !important; }
+  .hlab-ti-feature-list .hlab-ti-feature p { font-size: 16px !important; line-height: 1.55 !important; }
+  .hlab-ti-feature.hlab-ti-fade { opacity: .55; }
+  .hlab-ti-feature.hlab-ti-fade.hlab-ti-active { opacity: 1; }
+
+  /* ---------- section CTAs: full width like TI ---------- */
+  .hlab-ti-card-cta.hlab-bx, .hlab-spm-lead-submit.hlab-bx { width: 100%; justify-content: center; }
+
+  /* ---------- footer: 2-up nav tiles, 2-up addresses, bigger tap targets ---------- */
+  .hlab-ft-top { gap: 20px !important; }
+  .hlab-ft-cta.hlab-bx { width: 100%; justify-content: space-between; }
+  .hlab-ft-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  .hlab-ft-tile.hlab-bx { min-height: 56px; height: auto !important; padding: 12px 14px !important; font-size: 14.5px !important; line-height: 1.25; }
+  .hlab-ft-tile .hlab-bx-l { justify-content: flex-start; text-align: left; min-width: 0; }
+  .hlab-ft-addr { grid-template-columns: 1fr 1fr !important; column-gap: 16px !important; row-gap: 24px !important; }
+  .hlab-ft-addr .hlab-ft-col:first-child { grid-column: 1 / -1; }
+  .hlab-ft-addr .hlab-ft-col { min-width: 0; overflow-wrap: anywhere; }
+  .hlab-ft-ln, .hlab-ft-legal a, .hlab-ft-bar a { display: inline-flex; align-items: center; min-height: 44px; }
+  .hlab-ft-legal { column-gap: 18px !important; row-gap: 0 !important; flex-wrap: wrap; }
+  .hlab-lang-opt { min-height: 44px; }
+}
+
+@media (max-width: 380px) {
+  .hlab-ft-grid { grid-template-columns: 1fr !important; }
+  .hlab-ft-tile.hlab-bx { min-height: 52px; }
+  .hlab-ft-addr { grid-template-columns: 1fr !important; }
+}

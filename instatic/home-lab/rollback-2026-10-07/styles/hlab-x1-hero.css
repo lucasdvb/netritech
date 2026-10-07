@@ -1,0 +1,236 @@
+/* ============================================================
+   SPM V3 hero — scroll-driven motion video + character reveal.
+   Self-contained + namespaced (hlab-). Page-scoped to SPM V3.
+   The hero is a tall pin: .hlab-hero is the scroll track, and
+   .hlab-hero-stage stays pinned while the video scrubs and the
+   three lines reveal, then it releases into the ti-root sections.
+   The sticky glass menu is a faithful restore of the original nav.
+   ============================================================ */
+.hlab-hero {
+  --a: #22808a;
+  --a2: #3aa3ad;
+  --navy: #0d141f;
+  position: relative;
+  margin: 0;
+  background: #0d141f;
+  color: #f4f7f9;
+  font-family: var(--font-body), "Bricolage Grotesque", system-ui, sans-serif;
+  /* height is set by the script (100vh + scroll track); fallback below */
+  min-height: 100vh;
+}
+.hlab-hero *, .hlab-hero *::before, .hlab-hero *::after { box-sizing: border-box; }
+
+/* --- Pinned stage --- */
+.hlab-hero-stage {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  background: #0d141f;
+}
+/* Full-stage canvas image-sequence (TI-style; scrubbed by scroll). */
+.hlab-hero-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: #0d141f;
+}
+/* Hidden decode source — its frames are drawn to the canvas; kept in the DOM
+   (not display:none) so it decodes reliably for capture. */
+.hlab-hero-video {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+/* Lighter veil — subtle depth without hiding the sequence. */
+.hlab-hero-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(135% 105% at 50% 50%, rgba(6,10,16,.28) 0%, rgba(6,10,16,.16) 44%, rgba(6,10,16,.04) 74%, rgba(6,10,16,0) 100%),
+    linear-gradient(0deg, rgba(6,10,16,.22) 0%, rgba(6,10,16,.05) 42%, rgba(6,10,16,.09) 100%);
+}
+
+/* --- Revealing copy (centered) --- */
+.hlab-hero-copy {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+.hlab-beat {
+  position: absolute;
+  left: 50%;
+  bottom: 8.4375rem;            /* TI: bottom-anchored, padding-bottom ~135px */
+  width: auto;
+  max-width: 94vw;
+  white-space: nowrap;   /* forced \n breaks define the line count → 3 lines max */
+  margin: 0;
+  text-align: center;
+  font-weight: 400;
+  line-height: 1.02;
+  letter-spacing: -.01em;
+  font-size: clamp(26px, 5.6vw, 44px);
+  color: #fff;
+  /* glyph-hugging shadow (keeps text legible without darkening the video) */
+  text-shadow: 0 1px 2px rgba(6,10,16,.6), 0 2px 22px rgba(6,10,16,.7), 0 0 60px rgba(6,10,16,.4);
+  transform: translateX(-50%);
+  will-change: transform, opacity;
+}
+@media (min-width: 1024px) {
+  .hlab-beat { font-size: min(4.79vw, 122px); letter-spacing: min(-.046vw, -1.173px); }
+}
+.hlab-beat .hlab-word { display: inline-block; white-space: nowrap; }
+/* No per-char will-change/transition: ~150 promoted layers made every scroll
+   frame a heavy compositor commit; the script already eases opacity/colour. */
+.hlab-beat .hlab-ch, .hlab-beat .hlab-sp { display: inline-block; }
+.hlab-beat .hlab-sp { width: .28em; }
+
+.hlab-sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* --- Scroll hint --- */
+.hlab-scroll-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: rgba(244,247,249,.8);
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+.hlab-sh-dot { width: 24px; height: 38px; border: 1.5px solid rgba(244,247,249,.5); border-radius: 14px; position: relative; }
+.hlab-sh-dot::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; border-radius: 2px; background: var(--a2); transform: translateX(-50%); animation: hlabSD 1.5s ease-in-out infinite; }
+
+/* --- Cursor-follower "Défiler pour explorer" (TI-style) --- */
+.hlab-cursor { position: fixed; left: 0; top: 0; z-index: 60; pointer-events: none; opacity: 0; transition: opacity .35s ease; font-size: 11px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: #fff; text-shadow: 0 1px 6px rgba(6,10,16,.65); white-space: nowrap; will-change: transform, opacity; }
+@media (pointer: fine) { .hlab-scroll-hint { display: none; } }
+@keyframes hlabSD { 0% { opacity: 0; transform: translate(-50%, 0); } 30% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%, 12px); } }
+
+/* --- Preloader (TI-style: off-white split panels, centred SPM logomark, curtain reveal) --- */
+.hlab-preloader { position: fixed; inset: 0; z-index: 9999; overflow: hidden; pointer-events: auto; will-change: opacity; }
+.hlab-pre-half { position: absolute; left: 0; width: 100%; height: 50vh; height: 50svh; overflow: hidden; background: #ededed; will-change: transform; }
+.hlab-pre-top { top: 0; }
+.hlab-pre-bottom { bottom: 0; }
+.hlab-pre-inner { position: absolute; left: 0; width: 100%; height: 100vh; height: 100svh; display: flex; align-items: center; justify-content: center; will-change: transform; }
+.hlab-pre-top .hlab-pre-inner { top: 0; }
+.hlab-pre-bottom .hlab-pre-inner { bottom: 0; }
+.hlab-pre-logo { width: 128px; height: auto; display: block; opacity: 0; will-change: opacity, transform; }
+@media (max-width: 600px) { .hlab-pre-logo { width: 104px; } }
+
+/* --- Loading spinner (legacy; unused, replaced by preloader) --- */
+.hlab-hero-loader { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; pointer-events: none; transition: opacity .5s ease; }
+.hlab-hero-spin { width: 34px; height: 34px; border-radius: 50%; border: 2px solid rgba(255,255,255,.22); border-top-color: var(--a2); animation: hlabSpin .8s linear infinite; }
+@keyframes hlabSpin { to { transform: rotate(360deg); } }
+
+/* ============================================================
+   Sticky top menu — original floating glass nav (restored)
+   ============================================================ */
+.hlab-site-header {
+  --nav-ink: #0D141F;
+  --accent: #22808A;
+  position: fixed;
+  left: 0;
+  top: 2vmin;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 0 2vmin;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity .7s ease-in-out, transform .7s ease-in-out;
+}
+.hlab-site-header.hlab-revealed { opacity: 1; transform: translateY(0); }
+.hlab-nav-bar {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.85vmin;
+  width: auto;
+  max-width: calc(100% - 4vmin);
+  background: rgba(255, 255, 255, .93);
+  -webkit-backdrop-filter: blur(30px) saturate(150%);
+          backdrop-filter: blur(30px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, .96);
+  border-radius: 18px;
+  padding: 8px 8px 8px 14px;
+  box-shadow: 0 18px 50px -20px rgba(13, 20, 31, .55), inset 0 1px 0 rgba(255, 255, 255, .9);
+  transition: box-shadow .3s ease, background .3s ease;
+}
+.hlab-nav-bar:hover { box-shadow: 0 24px 64px -22px rgba(13, 20, 31, .62), inset 0 1px 0 rgba(255, 255, 255, .95); }
+.hlab-nav-logo { display: flex; align-items: center; flex: none; text-decoration: none; margin-right: 24px; }
+.hlab-nav-logo img { height: 51px; width: auto; display: block; transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
+.hlab-nav-logo:hover img { transform: scale(1.06); }
+.hlab-nav-links { display: none; align-items: center; gap: 18px; list-style: none; margin: 0; padding: 0; }
+.hlab-nav-links a { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 450; color: var(--nav-ink); text-decoration: none; white-space: nowrap; opacity: .92; position: relative; transition: opacity .25s ease, color .25s ease, transform .25s ease; }
+.hlab-nav-links a:hover { opacity: 1; color: var(--accent); transform: translateY(-1px); }
+.hlab-nav-links .hlab-caret { font-size: 11px; opacity: .5; transform: translateY(1px); transition: transform .25s ease, opacity .25s ease; }
+.hlab-nav-links a:hover .hlab-caret { opacity: .9; transform: translateY(1px) rotate(180deg); }
+.hlab-nav-links a::after { content: ""; position: absolute; left: 2px; right: 2px; bottom: -5px; height: 2px; border-radius: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left center; transition: transform .3s cubic-bezier(.16, 1, .3, 1); }
+.hlab-nav-links a:hover::after { transform: scaleX(1); }
+.hlab-nav-actions { display: none; align-items: center; gap: 6px; margin-left: calc(18px - 0.85vmin); }
+.hlab-nav-icon { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 10px; border: 0; background: var(--accent); color: #fff; flex: none; text-decoration: none; }
+.hlab-nav-icon svg { width: 18px; height: 18px; }
+.hlab-nav-icon:hover { filter: brightness(1.08); }
+.hlab-nav-btn { display: inline-flex; align-items: center; justify-content: center; text-align: center; min-width: 72px; height: 42px; padding: 0 13px; border-radius: 10px; font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; line-height: 1.08; text-decoration: none; transition: transform .25s cubic-bezier(.16, 1, .3, 1), background .25s ease, box-shadow .25s ease, filter .25s ease; }
+.hlab-nav-btn:hover { transform: translateY(-2px); }
+.hlab-nav-btn-white { background: #1B2A38; color: #fff; border: 0; }
+.hlab-nav-btn-white:hover { background: #0d141f; box-shadow: 0 12px 26px -10px rgba(13, 20, 31, .6); }
+.hlab-nav-btn-grey { background: #DADDE0; color: var(--nav-ink); }
+.hlab-nav-btn-grey:hover { background: #c9ced4; box-shadow: 0 12px 24px -12px rgba(13, 20, 31, .4); }
+.hlab-nav-menu-btn { display: inline-flex; flex-direction: column; justify-content: center; gap: 4px; width: 46px; height: 46px; border-radius: 11px; background: #fff; border: 1px solid rgba(13, 20, 31, .12); cursor: pointer; margin-left: auto; color: var(--nav-ink); }
+.hlab-nav-menu-btn .hlab-bar { display: block; width: 18px; height: 2px; background: currentColor; margin: 0 auto; transition: .3s; }
+.hlab-nav-menu-btn.open .hlab-bar:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.hlab-nav-menu-btn.open .hlab-bar:nth-child(2) { opacity: 0; }
+.hlab-nav-menu-btn.open .hlab-bar:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+.hlab-nav-dropdown { margin-top: 8px; width: calc(100% - 4vmin); max-width: 520px; overflow: hidden; border-radius: 16px; background: rgba(237, 240, 243, .7); -webkit-backdrop-filter: blur(22px) saturate(160%); backdrop-filter: blur(22px) saturate(160%); border: 1px solid rgba(255, 255, 255, .55); padding: 8px; opacity: 0; transform: translateY(-8px); pointer-events: none; transition: opacity .3s cubic-bezier(.2, .8, .2, 1), transform .3s cubic-bezier(.2, .8, .2, 1); }
+.hlab-nav-dropdown.open { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.hlab-nav-dropdown ul { list-style: none; display: flex; flex-direction: column; gap: 2px; margin: 0; padding: 0; }
+.hlab-nav-dropdown a { height: 48px; width: 100%; display: flex; align-items: center; padding: 0 14px; border-radius: 9px; font-size: 16px; color: var(--nav-ink); text-decoration: none; }
+.hlab-nav-dropdown a:hover { background: rgba(13, 20, 31, .05); }
+@media (min-width: 1080px) {
+  .hlab-nav-links { display: flex; }
+  .hlab-nav-actions { display: flex; }
+  .hlab-nav-menu-btn { display: none; }
+  .hlab-nav-dropdown { display: none; }
+}
+
+@media (max-width: 560px) {
+  .hlab-beat { font-size: clamp(18px, 6vw, 26px); bottom: 6rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hlab-scroll-hint { display: none; }
+  .hlab-site-header { transition: none; }
+}
+
+/* --- Hold below-the-fold photos while the hero preloader runs ---
+   These card photos sit several screens down but would otherwise download
+   during the preloader and compete with the hero frames. !important beats
+   their inline/background styles from the very first style pass (so nothing
+   is requested); the hero script adds .hlab-media-ready when the curtain
+   opens, and hlab-hero-nav.js adds it after 8s as an independent failsafe. */
+/* Home Lab: hold removed (no hero preloader on this page). */

@@ -1,0 +1,1 @@
+/* hlab-hero-scroll.js: intentionally empty. The Home Lab page will use a different scroll video. Safe to delete. */

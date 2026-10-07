@@ -1,0 +1,146 @@
+/* ============================================================
+   SPM V3 — page polish: soft brand gradient behind the light sections,
+   Apple-style buttons, and the Terminal-Industries button hover
+   (a panel slides up from the bottom edge, the label changes colour and
+   a hairline underline draws in left → right, retracting to the right).
+   Buttons are tagged by src/scripts/hlab-buttons.js. Page-scoped to V3.
+   ============================================================ */
+
+/* ---------- 1. Subtle gradient (Blanc brume + teal / steel glows) ---------- */
+.hlab-ti-root {
+  background:
+    radial-gradient(62% 900px at 88% 1500px, rgba(34, 128, 138, .075), transparent 70%),
+    radial-gradient(56% 1000px at 6% 3700px, rgba(67, 97, 122, .07), transparent 70%),
+    radial-gradient(62% 1000px at 92% 6300px, rgba(34, 128, 138, .06), transparent 70%),
+    radial-gradient(56% 900px at 8% 8900px, rgba(67, 97, 122, .06), transparent 70%),
+    radial-gradient(62% 1000px at 86% 11200px, rgba(34, 128, 138, .06), transparent 70%),
+    linear-gradient(180deg, #fff 0, #f9fafb 1100px, #f5f7f9 50%, #f9fafb 88%, #fff 100%);
+}
+.hlab-ti-root > .hlab-ti-sec { background-color: transparent !important; }
+
+/* ---------- 2. Apple-style buttons ---------- */
+.hlab-bx {
+  --bx-ease: cubic-bezier(.19, 1, .22, 1);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;                       /* the hover panel sits under the label */
+  -webkit-tap-highlight-color: transparent;
+  text-transform: none !important;
+  letter-spacing: -.005em !important;
+  font-weight: 500 !important;
+  border: 0 !important;
+  background: var(--bx-bg) !important;
+  color: var(--bx-fg) !important;
+  box-shadow: var(--bx-shadow) !important;
+  transition: color .3s cubic-bezier(.39, .575, .565, 1), transform .25s var(--bx-ease), box-shadow .3s ease !important;
+  -webkit-font-smoothing: antialiased;
+}
+.hlab-bx-pill { border-radius: 980px !important; }
+.hlab-bx-round { border-radius: 50% !important; }
+
+/* variants — fill / text / hover panel / hover text */
+.hlab-bx--dark {
+  --bx-bg: linear-gradient(180deg, #2a3e51 0%, #1b2a38 55%, #15212c 100%);
+  --bx-fg: #fff;
+  --bx-hover-bg: #22808a;
+  --bx-hover-fg: #fff;
+  --bx-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 1px 2px rgba(13, 20, 31, .22), 0 10px 24px -12px rgba(13, 20, 31, .55);
+}
+.hlab-bx--teal {
+  --bx-bg: linear-gradient(180deg, #2f9ea9 0%, #22808a 58%, #1c6f78 100%);
+  --bx-fg: #fff;
+  --bx-hover-bg: #0d141f;
+  --bx-hover-fg: #8edbe1;
+  --bx-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 1px 2px rgba(13, 20, 31, .2), 0 10px 26px -12px rgba(34, 128, 138, .7);
+}
+.hlab-bx--light {
+  --bx-bg: linear-gradient(180deg, #fff 0%, #f3f5f7 100%);
+  --bx-fg: #0d141f;
+  --bx-hover-bg: #0d141f;
+  --bx-hover-fg: #8edbe1;
+  --bx-shadow: inset 0 0 0 1px rgba(13, 20, 31, .08), inset 0 1px 0 #fff, 0 1px 2px rgba(13, 20, 31, .06), 0 8px 18px -12px rgba(13, 20, 31, .3);
+}
+.hlab-bx--teal-ondark {                       /* teal CTA on a navy surface */
+  --bx-bg: linear-gradient(180deg, #2f9ea9 0%, #22808a 58%, #1c6f78 100%);
+  --bx-fg: #fff;
+  --bx-hover-bg: #fff;
+  --bx-hover-fg: #0d141f;
+  --bx-shadow: inset 0 1px 0 rgba(255, 255, 255, .22), 0 1px 2px rgba(0, 0, 0, .25), 0 12px 28px -12px rgba(34, 128, 138, .8);
+}
+.hlab-bx--light-ondark {                      /* white CTA on a dark card */
+  --bx-bg: linear-gradient(180deg, #fff 0%, #eef1f4 100%);
+  --bx-fg: #0d141f;
+  --bx-hover-bg: #22808a;
+  --bx-hover-fg: #fff;
+  --bx-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(0, 0, 0, .2), 0 10px 24px -12px rgba(0, 0, 0, .6);
+}
+.hlab-bx--tile {                              /* footer navigation tiles (on navy) */
+  --bx-bg: linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .03));
+  --bx-fg: #f4f7f9;
+  --bx-hover-bg: #22808a;
+  --bx-hover-fg: #fff;
+  --bx-shadow: inset 0 0 0 1px rgba(255, 255, 255, .09), inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+.hlab-bx--tab {                               /* segmented tabs: quiet until hovered */
+  --bx-bg: transparent;
+  --bx-fg: #43617a;
+  --bx-hover-bg: #0d141f;
+  --bx-hover-fg: #fff;
+  --bx-shadow: none;
+}
+.hlab-bx--tab.hlab-sf-active, .hlab-bx--tab.hlab-is-on {
+  --bx-bg: linear-gradient(180deg, #2a3e51 0%, #1b2a38 55%, #15212c 100%);
+  --bx-fg: #fff;
+  --bx-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 6px 16px -10px rgba(13, 20, 31, .6);
+}
+
+/* sizes — Apple's comfortable pill proportions */
+.hlab-nav-btn.hlab-bx { height: 40px !important; padding: 0 18px !important; font-size: 13.5px !important; line-height: 1 !important; min-width: 0 !important; }
+.hlab-nav-icon.hlab-bx { width: 40px !important; height: 40px !important; }
+.hlab-ti-card-cta.hlab-bx { min-height: 46px; font-size: 14.5px !important; }
+.hlab-ti-panel-cta.hlab-bx, .hlab-spm-lead-submit.hlab-bx { min-height: 46px; font-size: 15px !important; }
+.hlab-tm2-cta.hlab-bx { height: 44px !important; padding: 0 20px !important; font-size: 14px !important; }
+.hlab-tm2-arrow.hlab-bx { width: 48px !important; height: 48px !important; }
+.hlab-tm2-tab.hlab-bx, .hlab-sf-tab.hlab-bx { font-size: 13.5px !important; }
+.hlab-ft-cta.hlab-bx { font-size: 15px !important; padding-left: 26px !important; padding-right: 22px !important; }
+.hlab-bx .hlab-bx-l > span { font-size: inherit !important; text-transform: none !important; letter-spacing: inherit !important; font-weight: inherit !important; }
+.hlab-ft-tile.hlab-bx { border-radius: 14px !important; }
+
+/* press + keyboard focus */
+.hlab-bx.hlab-bx:active { transform: scale(.97) !important; transition-duration: .12s !important; }
+.hlab-bx:focus { outline: none; }
+.hlab-bx:focus-visible { box-shadow: var(--bx-shadow), 0 0 0 3px #fff, 0 0 0 5px rgba(34, 128, 138, .65) !important; }
+
+/* ---------- 3. Terminal-Industries hover ---------- */
+.hlab-bx::before {
+  content: "";
+  position: absolute;
+  left: -1px; top: -1px;
+  width: calc(100% + 2px); height: calc(100% + 2px);
+  z-index: -1;                               /* above the button's own fill, below the label */
+  background: var(--bx-hover-bg);
+  transform: translate3d(0, 101%, 0);
+  transition: transform .7s var(--bx-ease);
+  pointer-events: none;
+}
+.hlab-bx-l { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: inherit; pointer-events: none; }
+.hlab-bx-l::after {
+  content: "";
+  position: absolute; left: 0; bottom: -.22em;
+  width: 100%; height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform .7s var(--bx-ease);
+}
+.hlab-bx.hlab-bx-icon .hlab-bx-l::after { display: none; }   /* icon-only buttons: no underline */
+@media (hover: hover) and (pointer: fine) {
+  .hlab-bx.hlab-bx:hover { color: var(--bx-hover-fg) !important; transform: none !important; filter: none !important; }
+  .hlab-bx:hover::before { transform: translate3d(0, 0, 0); }
+  .hlab-bx:hover .hlab-bx-l::after { transform: scaleX(1); transform-origin: left; }
+  .hlab-bx--tab.hlab-sf-active:hover::before, .hlab-bx--tab.hlab-is-on:hover::before { transform: translate3d(0, 101%, 0); }
+  .hlab-bx--tab.hlab-sf-active:hover, .hlab-bx--tab.hlab-is-on:hover { color: var(--bx-fg) !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hlab-bx, .hlab-bx::before, .hlab-bx-l::after { transition-duration: .01s !important; }
+}

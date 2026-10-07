@@ -1,0 +1,83 @@
+/* ============================================================
+   SPM V3 — "Une équipe SPM pensée pour chaque métier" carousel, matched to
+   terminal-industries.com "One modular platform" cards:
+   · collapsed, not hovered → solid brand colour
+   · collapsed, hovered     → photo fades in sharp (scale 1.2 → 1) under a
+                              radial shade + a notch slides into the right edge
+   · expanded               → softly blurred photo, text fully readable,
+                              content staggers in (src/scripts/hlab-tm2.js)
+   Page-scoped to SPM V3.
+   ============================================================ */
+.hlab-tm2 {
+  --tm-ease: cubic-bezier(.19, 1, .22, 1);
+  --tm-shade-open: linear-gradient(100deg, rgba(13, 20, 31, .76) 0%, rgba(13, 20, 31, .52) 55%, rgba(13, 20, 31, .3) 100%);
+}
+.hlab-tm2 .hlab-tm2-card[data-tone="teal"]  { --tm-tone: 27, 111, 120;  background: #1b6f78; }
+.hlab-tm2 .hlab-tm2-card[data-tone="grey"]  { --tm-tone: 27, 42, 56;    background: #1b2a38; }
+.hlab-tm2 .hlab-tm2-card[data-tone="navy"]  { --tm-tone: 13, 20, 31;    background: #0d141f; }
+.hlab-tm2 .hlab-tm2-card[data-tone="steel"] { --tm-tone: 67, 97, 122;   background: #43617a; }
+
+/* card: TI's expand timing */
+.hlab-tm2 .hlab-tm2-card {
+  transition: flex-grow .6s var(--tm-ease), min-width .6s var(--tm-ease);
+}
+.hlab-tm2 .hlab-tm2-card:not(.hlab-is-open):hover { opacity: 1; }
+
+/* photo layer */
+.hlab-tm2 .hlab-tm2-card::before {
+  inset: 0;
+  opacity: 0;
+  filter: none;
+  transform: scale(1.2);
+  transition: opacity .9s var(--tm-ease), transform 1.2s var(--tm-ease), filter .6s var(--tm-ease);
+  will-change: opacity, transform;
+}
+/* shade layer */
+.hlab-tm2 .hlab-tm2-card[data-tone]::after {
+  opacity: 0;
+  background: radial-gradient(circle, rgba(0, 0, 0, .3) 0, rgba(0, 0, 0, .5), rgba(0, 0, 0, .7));
+  transition: opacity .9s var(--tm-ease);
+}
+
+/* expanded: photo visible, lightly blurred, shade keeps the copy readable */
+.hlab-tm2 .hlab-tm2-card.hlab-is-open::before {
+  opacity: 1;
+  transform: scale(1.06);
+  filter: blur(6px) saturate(1.05);
+}
+.hlab-tm2 .hlab-tm2-card.hlab-is-open[data-tone]::after {
+  opacity: 1;
+  background: var(--tm-shade-open), linear-gradient(rgba(var(--tm-tone), .3), rgba(var(--tm-tone), .3));
+}
+
+/* collapsed + hover (mouse only): sharp photo under a radial shade */
+@media (hover: hover) and (pointer: fine) {
+  .hlab-tm2 .hlab-tm2-card:not(.hlab-is-open):hover::before { opacity: 1; transform: scale(1); filter: none; }
+  .hlab-tm2 .hlab-tm2-card:not(.hlab-is-open):hover::after { opacity: 1; }
+}
+/* touch / small screens: no hover, so every card shows its photo like the open one */
+@media (hover: none), (max-width: 860px) {
+  .hlab-tm2 .hlab-tm2-card::before { opacity: 1; transform: scale(1.06); filter: blur(6px) saturate(1.05); }
+  .hlab-tm2 .hlab-tm2-card[data-tone]::after { opacity: 1; background: var(--tm-shade-open), linear-gradient(rgba(var(--tm-tone), .3), rgba(var(--tm-tone), .3)); }
+}
+
+/* typography: titles on two lines when expanded (width set by hlab-tm2.js),
+   real space between title and copy, copy 15% larger */
+.hlab-tm2 .hlab-tm2-card .hlab-tm2-title { text-wrap: balance; }
+.hlab-tm2 .hlab-tm2-card .hlab-tm2-body {
+  margin-top: 28px;
+  font-size: 26.5px;               /* 23px + 15% */
+  line-height: 1.42;
+  max-width: 34ch;
+}
+.hlab-tm2 .hlab-tm2-card.hlab-is-open .hlab-tm2-body { max-height: 600px; }
+@media (max-width: 1100px) {
+  .hlab-tm2 .hlab-tm2-card .hlab-tm2-body { font-size: 21.85px; margin-top: 22px; }   /* 19px + 15% */
+}
+@media (max-width: 860px) {
+  .hlab-tm2 .hlab-tm2-card .hlab-tm2-body { font-size: 18.4px !important; margin-top: 16px !important; }  /* 16px + 15% */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hlab-tm2 .hlab-tm2-card, .hlab-tm2 .hlab-tm2-card::before, .hlab-tm2 .hlab-tm2-card::after { transition: none !important; }
+}

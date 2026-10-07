@@ -1,0 +1,113 @@
+/* ============================================================
+   SPM V3 — partner logo grids (Terminal-Industries "LogoWall" /
+   "LogoGrid" pattern). Square tiles on a 12-col page grid; a cursor-
+   following radial light shows through a 2px inset mask, so the tile
+   borders nearest the pointer light up like a grille; the hovered tile
+   gets a faint wash; corner crosses breathe on a 5s loop.
+   Built by src/scripts/hlab-spm-logos.js. Page-scoped to SPM V3.
+   ============================================================ */
+.hlab-lg-sec { overflow-x: clip; }                     /* clip the fading extenders */
+.hlab-spm-logostrip .hlab-spm-logos-grid.hlab-lg-host,
+.hlab-ti-builtby .hlab-ti-logos.hlab-lg-host { display: block; max-width: none; place-items: normal; }
+
+.hlab-lg {
+  --lg-line: #e5e5e5;
+  --lg-cross: #979797;
+  --lg-glow: 34, 128, 138;                            /* Sarcelle #22808A */
+  --lg-fill: #fff;
+  --lg-m: 5.128vw;                                    /* page margin (mobile) */
+  --lg-w: calc(var(--lg-vw, 100vw) - 2 * var(--lg-m));
+  --lg-ext-h: min(7.292vw, 186.667px);                /* side extenders */
+  --lg-ext-v: min(7.292vw, 120px);                    /* top/bottom extenders */
+  --mx: -9999px; --my: -9999px;                       /* cursor, relative to the grid */
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  width: var(--lg-w);
+  margin-left: calc(50% - var(--lg-w) / 2);
+  padding: var(--lg-ext-v) 0;
+  justify-self: start;                                /* the host may still centre block children */
+  text-align: initial;
+}
+.hlab-lg--grid { --lg-ext-h: min(14.583vw, 373.333px); }
+@media (min-width: 1024px) {
+  .hlab-lg {
+    --lg-m: min(3.646vw, 93.333px);
+    --lg-g: min(1.042vw, 26.667px);
+    /* 10 of 12 columns of the page grid */
+    --lg-w: calc((var(--lg-vw, 100vw) - 2 * var(--lg-m) - 11 * var(--lg-g)) / 12 * 10 + 9 * var(--lg-g));
+  }
+}
+
+/* --- tile --- */
+.hlab-lg-cell { position: relative; flex: 0 0 50%; aspect-ratio: 1; container-type: size; }
+@media (min-width: 1024px) {
+  .hlab-lg--wall .hlab-lg-cell { flex-basis: 10%; }
+  .hlab-lg--grid .hlab-lg-cell { flex-basis: 20%; }
+}
+.hlab-lg-ow { position: relative; width: calc(100% + 1px); height: calc(100% + 1px); overflow: hidden; overflow: clip; }
+.hlab-lg-frame { position: absolute; inset: 0; border: 1px solid var(--lg-line); }
+.hlab-lg-light, .hlab-lg-wash {
+  position: absolute; left: 0; top: 0; width: 30rem; height: 30rem; pointer-events: none;
+  /* --tx/--ty = this tile's offset inside the grid (set by JS) */
+  transform: translate3d(calc(var(--mx) - var(--tx, 0px) - 50%), calc(var(--my) - var(--ty, 0px) - 50%), 0);
+}
+.hlab-lg-light { background: radial-gradient(circle at 50% 50%, rgb(var(--lg-glow)), transparent 15rem); }
+.hlab-lg-fill { position: absolute; left: 2px; top: 2px; width: calc(100% - 4px); height: calc(100% - 4px); background: var(--lg-fill); }
+.hlab-lg-slot { position: relative; z-index: 2; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.hlab-lg-wash {
+  z-index: 1; opacity: 0; transition: opacity .5s;
+  background: radial-gradient(circle at 50% 50%, rgba(var(--lg-glow), .8), transparent 15rem) no-repeat;
+}
+.hlab-lg-slot:hover + .hlab-lg-wash { opacity: .2; }
+.hlab-lg--wall .hlab-lg-slot:hover + .hlab-lg-wash { opacity: .08; }
+@media (hover: hover) and (pointer: fine) {
+  .hlab-lg--wall .hlab-lg-light { background: radial-gradient(circle at 50% 50%, rgba(var(--lg-glow), .4), transparent 8rem); }
+}
+
+/* --- logo inside a tile (TI sizing: ≤4.5rem tall, ≤85% wide, ×scale) --- */
+.hlab-lg-logo {
+  --s: 1;
+  display: flex; align-items: center; justify-content: center;
+  max-width: min(95%, 85% * clamp(.5, var(--s), 2));
+  max-height: calc(4.5rem * clamp(.5, var(--s), 2));
+  opacity: .3;
+  transition: opacity 2.4s cubic-bezier(.16, 1, .3, 1) calc(var(--i, 0) * .1s);
+}
+.hlab-lg.is-in .hlab-lg-logo { opacity: 1; }
+.hlab-lg-logo img { display: block; max-width: 100%; max-height: calc(4.5rem * clamp(.5, var(--s), 2)); object-fit: contain; }
+/* placeholder glyph + wordmark logos scale with the tile (container units) */
+.hlab-lg .hlab-spm-clogo { font-size: clamp(10px, 10.5cqw, 26px); gap: .45em; white-space: nowrap; }
+@media (min-width: 1024px) { .hlab-lg--grid .hlab-spm-clogo { font-size: clamp(12px, 7.6cqw, 26px); } }
+.hlab-lg .hlab-spm-clogo-ic { width: 1.5em; height: 1.5em; }
+.hlab-lg .hlab-spm-clogo-name { font-size: 1em; }
+
+/* --- corner crosses (CrossFlicker): arms collapse/expand, 5s loop --- */
+.hlab-lg-xs { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.hlab-lg-x { position: absolute; width: 0; height: 0; }
+.hlab-lg-x.tl { left: 1px; top: 1px; }
+.hlab-lg-x.tr { right: -1px; top: 1px; }
+.hlab-lg-x.bl { left: 1px; bottom: -1px; }
+.hlab-lg-x.br { right: -1px; bottom: -1px; }
+.hlab-lg-x i { position: absolute; background: var(--lg-cross); transform-origin: center; }
+.hlab-lg-x i:first-child { left: -1px; top: -6px; width: 1px; height: 11px; animation: hlabLgV 5s cubic-bezier(.87, 0, .13, 1) var(--d, 0s) infinite; }
+.hlab-lg-x i:last-child { left: -6px; top: -1px; width: 11px; height: 1px; animation: hlabLgH 5s cubic-bezier(.87, 0, .13, 1) var(--d, 0s) infinite; }
+@keyframes hlabLgV { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0); } }
+@keyframes hlabLgH { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(0); } }
+/* only the outer-left crosses on the first column, top crosses on the first row */
+.hlab-lg-cell:not(.c1) .tl, .hlab-lg-cell:not(.c1) .bl, .hlab-lg-cell:not(.r1) .tl, .hlab-lg-cell:not(.r1) .tr { display: none; }
+
+/* --- fading extenders beyond the grid edge --- */
+.hlab-lg-ext { position: absolute; pointer-events: none; background-repeat: no-repeat; }
+.hlab-lg-ext.l, .hlab-lg-ext.r { top: 0; width: var(--lg-ext-h); height: calc(100% + 1px); }
+.hlab-lg-ext.l { left: 1px; transform: translateX(-100%); background-image: linear-gradient(90deg, transparent, var(--lg-line)), linear-gradient(90deg, transparent, var(--lg-line)); background-size: 100% 1px; background-position: top, bottom; }
+.hlab-lg-ext.r { right: 0; transform: translateX(100%); background-image: linear-gradient(-90deg, transparent, var(--lg-line)), linear-gradient(-90deg, transparent, var(--lg-line)); background-size: 100% 1px; background-position: top, bottom; }
+.hlab-lg-ext.t, .hlab-lg-ext.b { left: 0; width: calc(100% + 1px); height: var(--lg-ext-v); }
+.hlab-lg-ext.t { top: 1px; transform: translateY(-100%); background-image: linear-gradient(180deg, transparent, var(--lg-line)), linear-gradient(180deg, transparent, var(--lg-line)); background-size: 1px 100%; background-position: left, right; }
+.hlab-lg-ext.b { bottom: 0; transform: translateY(100%); background-image: linear-gradient(0deg, transparent, var(--lg-line)), linear-gradient(0deg, transparent, var(--lg-line)); background-size: 1px 100%; background-position: left, right; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hlab-lg-x i { animation: none; }
+  .hlab-lg-logo { transition: none; opacity: 1; }
+}

@@ -1,0 +1,112 @@
+/* ============================================================
+   SPM V3 — "Notre approche" on phones/tablets (≤ 1024px), matched to the
+   terminal-industries.com "Why Terminal" steps on mobile. Only applies once
+   src/scripts/hlab-fs.js adds .hlab-fs-h; desktop is untouched.
+   Page-scoped to SPM V3.
+   ============================================================ */
+.hlab-fs-count, .hlab-fs-bar, .hlab-fs-btns { display: none; }
+@media (max-width: 1024px) {
+  .hlab-ti-sticky-wrap.hlab-fs-h { display: flex !important; flex-direction: column; align-items: stretch !important; gap: 0 !important; min-width: 0; }
+  .hlab-fs-h > * { min-width: 0; }
+
+  /* full-bleed video on top (TI: 400/480, no frame), notch travels with the step */
+  .hlab-fs-h .hlab-ti-sticky-media {
+    order: -1;
+    position: relative !important;
+    top: auto !important;
+    /* explicit size (no aspect-ratio): Safari would otherwise narrow the box
+       to honour the height cap — it must always span the full screen width */
+    flex: none !important;
+    align-self: stretch !important;
+    box-sizing: border-box !important;
+    width: calc(100% + var(--fs-gut-l, 20px) + var(--fs-gut-r, 20px)) !important;
+    min-width: calc(100% + var(--fs-gut-l, 20px) + var(--fs-gut-r, 20px)) !important;
+    max-width: none !important;
+    margin: 0 0 0 calc(-1 * var(--fs-gut-l, 20px)) !important;
+    aspect-ratio: auto !important;
+    height: min(120vw, 62svh) !important;
+    max-height: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transition: clip-path 1s cubic-bezier(.5, 1, .89, 1);
+  }
+  .hlab-fs-h .hlab-ti-sticky-media video { position: absolute; inset: 0; width: 100% !important; height: 100% !important; max-width: none !important; object-fit: cover; }
+  .hlab-fs-h .hlab-fs-btns {
+    position: absolute; right: 1.25rem; bottom: 2.5rem; z-index: 2;
+    display: flex; gap: .625rem; touch-action: manipulation;
+  }
+  .hlab-fs-btn {
+    width: 3.75rem; aspect-ratio: 1; display: grid; place-items: center;
+    border: 0; border-radius: 8px; background: #fff; color: #0d141f; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity .3s ease, transform .2s ease;
+  }
+  .hlab-fs-btn:active { transform: scale(.94); }
+  .hlab-fs-btn[disabled] { opacity: .4; cursor: default; }
+
+  /* 01 02 03 04 */
+  .hlab-fs-h .hlab-fs-count {
+    display: flex; column-gap: 1.125rem; margin: 2rem 0 1.375rem;
+    font-size: .8125rem; font-weight: 600; letter-spacing: .14625rem; line-height: .81;
+    font-variant-numeric: tabular-nums;
+  }
+  .hlab-fs-count span { color: #eaeaea; transition: color .5s; }
+  .hlab-fs-count span.is-on { color: #a9a9a9; }
+
+  /* the four points: one horizontal snap row, next point peeking in */
+  .hlab-fs-h .hlab-ti-feature-list {
+    flex-direction: row !important;
+    overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 calc(-1 * var(--fs-gut-r, 20px)) 0 calc(-1 * var(--fs-gut-l, 20px));
+    padding: 0 var(--fs-gut-r, 20px) 0 var(--fs-gut-l, 20px);
+    scroll-padding-inline-start: var(--fs-gut-l, 20px);
+  }
+  .hlab-fs-h .hlab-ti-feature-list::-webkit-scrollbar { display: none; }
+  .hlab-fs-h .hlab-ti-feature-list .hlab-ti-feature {
+    flex: 0 0 85%;
+    padding: 0 1.875rem 0 0 !important;
+    border: 0 !important;
+    scroll-snap-align: start;
+  }
+  .hlab-fs-h .hlab-ti-feature-list .hlab-ti-feature.hlab-ti-fade { opacity: 1 !important; transform: none !important; }
+  .hlab-fs-h .hlab-ti-feature-list .hlab-ti-feature:last-child { flex-basis: 100%; }
+  .hlab-fs-h .hlab-ti-feature-list .hlab-ti-feature h4 {
+    font-size: 1.25rem !important; line-height: 1.26 !important; font-weight: 700 !important;
+    letter-spacing: -.01em !important; max-width: none !important; margin: 0 0 1.5rem !important;
+  }
+  .hlab-fs-h .hlab-ti-feature-list .hlab-ti-feature p {
+    font-size: 1.25rem !important; line-height: 1.26 !important; font-weight: 400 !important;
+    letter-spacing: -.01em !important; max-width: none !important; color: inherit !important;
+  }
+
+  /* letters: grey until their point is current, then sweep grey → teal → ink */
+  .hlab-ti-sticky-wrap.hlab-fs-h .hlab-ti-feature-list .hlab-ti-feature .hlab-ti-char {
+    color: #dddddd;
+    animation: none;
+    transition: color .5s 0s;
+  }
+  .hlab-ti-sticky-wrap.hlab-fs-h .hlab-ti-feature-list .hlab-ti-feature.hlab-fs-on .hlab-ti-char {
+    color: #0d141f;
+    animation: tiCharSweep .5s ease-out var(--v-delay, 0s) both;
+    transition: color 0s var(--v-delay, 0s);
+  }
+
+  /* progress bar */
+  .hlab-fs-h .hlab-fs-bar { display: block; position: relative; height: 2px; margin-top: 1.5rem; background: #f0f1f2; overflow: hidden; }
+  .hlab-fs-bar i {
+    position: absolute; left: 0; top: 0; height: 100%;
+    width: calc(100% / var(--fs-n, 4));
+    background: #0d141f;
+    transform: translateX(calc(var(--fs-i, 0) * 100%));
+    transition: transform .3s cubic-bezier(.16, 1, .3, 1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hlab-ti-sticky-wrap.hlab-fs-h .hlab-ti-feature-list .hlab-ti-feature.hlab-fs-on .hlab-ti-char { animation: none; transition: none; }
+  .hlab-fs-h .hlab-ti-sticky-media, .hlab-fs-bar i { transition: none; }
+}

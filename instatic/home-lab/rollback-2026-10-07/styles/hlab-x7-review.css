@@ -1,0 +1,59 @@
+/* ============================================================
+   SPM V3 — client testimonial, matched to the terminal-industries.com quote
+   section (full-screen photo, notched top/bottom edges, parallax) with a
+   light 3D layer. Behaviour: src/scripts/hlab-review.js. Page-scoped to SPM V3.
+   ============================================================ */
+.hlab-spm-review.hlab-rv { padding: 0 !important; background: transparent !important; overflow: visible; }
+.hlab-rv .hlab-spm-review-frame {
+  height: 100svh !important;
+  min-height: 560px;
+  max-height: 1100px;
+  border-radius: 0 !important;
+  background: #0d141f;
+}
+/* photo layer: 116% tall so the ±8% parallax never shows an edge */
+.hlab-rv .hlab-spm-review-scale {
+  inset: -8% -2% !important;              /* + a little side overscan for the pointer drift */
+  will-change: transform;
+  transform-origin: 50% 50%;
+}
+.hlab-spm-review-bg { background-image: none !important; }   /* replaced by the responsive <img> (never download the old photo) */
+.hlab-rv-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: 62% 55%;      /* keep the road + car in frame */
+  opacity: 0; transition: opacity .9s cubic-bezier(.16, 1, .3, 1);
+}
+.hlab-rv-loaded .hlab-rv-img { opacity: 1; }
+/* shade: keeps the white quote readable over any part of the photo */
+.hlab-rv .hlab-spm-review-frame::before {
+  background: radial-gradient(120% 90% at 50% 50%, rgba(13, 20, 31, .62) 0%, rgba(13, 20, 31, .38) 55%, rgba(13, 20, 31, .2) 100%) !important;
+}
+.hlab-rv .hlab-spm-review-frame::after { content: none !important; }
+
+/* quote: TI proportions, rises in when the section is on screen */
+.hlab-rv .hlab-spm-review-inner { transform-style: preserve-3d; will-change: transform; }
+.hlab-rv .hlab-spm-review-quote {
+  max-width: 860px !important;
+  font-size: clamp(26px, 3.2vw, 48px) !important;
+  line-height: 1.22 !important;
+}
+.hlab-rv .hlab-spm-review-quote,
+.hlab-rv .hlab-spm-review-author {
+  opacity: 0;
+  transform: translateY(28px);
+  filter: blur(6px);
+  transition: opacity .9s cubic-bezier(.16, 1, .3, 1), transform 1.1s cubic-bezier(.16, 1, .3, 1), filter .9s cubic-bezier(.16, 1, .3, 1);
+}
+.hlab-rv .hlab-spm-review-author { transition-delay: .18s; }
+.hlab-rv-in .hlab-spm-review-quote,
+.hlab-rv-in .hlab-spm-review-author { opacity: 1; transform: none; filter: none; }
+
+@media (max-width: 767px) {
+  .hlab-rv .hlab-spm-review-frame { height: 88svh !important; min-height: 480px; }
+  .hlab-rv .hlab-spm-review-quote { max-width: 100% !important; font-size: clamp(24px, 6.6vw, 30px) !important; }
+  .hlab-rv-img { object-position: 84% 60%; }                 /* phones: bring the road + car into the crop */
+}
+@media (prefers-reduced-motion: reduce) {
+  .hlab-rv .hlab-spm-review-quote, .hlab-rv .hlab-spm-review-author { opacity: 1; transform: none; filter: none; transition: none; }
+  .hlab-rv .hlab-spm-review-scale { inset: 0 !important; }
+}

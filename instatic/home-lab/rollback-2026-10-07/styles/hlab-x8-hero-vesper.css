@@ -1,0 +1,142 @@
+/* hlab-hero-vesper.css — Home Lab hero only (Vesper scroll scene + overlays).
+   Overlay layout is Vesper's Figma artboard in vw (px / 14.4), ported from the
+   GetLayers portable master; fonts follow the site (Bricolage Grotesque). */
+.hlab-hero.hlab-hero {
+  --vx-ink: #fdfdfd;
+  --vx-signal: #22808A;
+  --vx-void: #0D141F;
+  --vx-eq: cubic-bezier(.22,1,.36,1);
+  /* height: set by hlab-hero-vesper.js on the live page (7 x viewport) */
+  background: #0D141F;
+}
+.hlab-hero .hlab-hero-stage { background: #0D141F; }
+.hlab-hero .hlab-hero-canvas { background: var(--vx-void); }
+.hlab-hero .hlab-hero-veil {
+  background: radial-gradient(120% 80% at 50% 40%, transparent 40%, rgba(13,20,31,.55) 100%);
+  z-index: 1;
+}
+.hlab-hero .hlab-hero-copy { z-index: 3; pointer-events: none; }
+
+/* ---------- overlays (one per scene phase) ---------- */
+.hlab-vx-ov { position: absolute; inset: 0; color: #fff; pointer-events: none; visibility: hidden; opacity: 0; }
+.hlab-vx-ov h2, .hlab-vx-ov p { margin: 0; }
+.hlab-vx-ov .hlab-vx-pe { pointer-events: auto; }
+.hlab-vx-disp { font-weight: 300; line-height: .9; letter-spacing: -.022em; text-shadow: 0 0 30px rgba(255,255,255,.08); }
+
+.hlab-vx-send { display: inline-flex; align-items: center; gap: .278vw; text-decoration: none; }
+.hlab-vx-send .hlab-vx-fill { display: inline-flex; align-items: center; justify-content: center; padding: 1.111vw 4.167vw;
+  font-weight: 500; font-size: 1.111vw; line-height: 1.2; background: var(--vx-ink); color: #0b0517; transition: background .25s, color .25s; }
+.hlab-vx-send .hlab-vx-arrow { width: 3.542vw; height: 3.542vw; flex: none; display: grid; place-items: center;
+  background: var(--vx-ink); color: #0b0517; font-size: 1.4vw; transition: background .25s; }
+.hlab-vx-send:hover .hlab-vx-fill, .hlab-vx-send:hover .hlab-vx-arrow { background: var(--vx-signal); color: #fff; }
+
+/* Hero (orb) */
+.hlab-vx-ov-hero .hlab-vx-title { position: absolute; top: 9.028vw; left: 1.667vw; width: 44vw; font-size: 4.3vw; }
+.hlab-vx-ov-hero .hlab-vx-cluster { position: absolute; right: 1.667vw; bottom: 2.153vw; left: 1.667vw; height: 14.514vw; }
+.hlab-vx-ov-hero .hlab-vx-tagline { position: absolute; top: 0; left: 0; width: 27.5vw; font-size: 1.111vw; line-height: 1.2; text-transform: uppercase; }
+.hlab-vx-ov-hero .hlab-vx-support { position: absolute; top: 0; right: 0; width: 19.348vw; font-size: 1.111vw; line-height: 1.2; }
+.hlab-vx-ov-hero .hlab-vx-tags { position: absolute; top: 13.194vw; left: 0; display: flex; align-items: center; gap: 1.667vw;
+  font-size: 1.111vw; line-height: 1.2; white-space: nowrap; text-transform: uppercase; }
+.hlab-vx-ov-hero .hlab-vx-tags i { width: .208vw; height: .208vw; flex: none; background: #fff; display: block; }
+.hlab-vx-ov-hero .hlab-vx-cta { position: absolute; top: 10.972vw; right: 0; }
+
+/* Galaxy */
+.hlab-vx-ov-galaxy .hlab-vx-title { position: absolute; top: 7.014vw; left: 50%; width: 62vw; transform: translateX(-50%); text-align: center; font-size: 4.4vw; }
+.hlab-vx-ov-galaxy .hlab-vx-cluster { position: absolute; left: 0; right: 0; bottom: 0; height: 16.181vw; }
+.hlab-vx-ov-galaxy .hlab-vx-support { position: absolute; top: 0; left: 50%; width: 32vw; transform: translateX(-50%); text-align: center; font-size: 1.111vw; line-height: 1.2; }
+.hlab-vx-ov-galaxy .hlab-vx-rule { position: absolute; left: 0; right: 0; top: 4.792vw; border-top: 1px solid rgba(255,255,255,.2); }
+.hlab-vx-ov-galaxy .hlab-vx-vrule { position: absolute; top: 4.792vw; height: 11.389vw; border-left: 1px solid rgba(255,255,255,.2); }
+.hlab-vx-ov-galaxy .hlab-vx-vr1 { left: 25vw; } .hlab-vx-ov-galaxy .hlab-vx-vr2 { left: 50vw; } .hlab-vx-ov-galaxy .hlab-vx-vr3 { left: 75vw; }
+.hlab-vx-ov-galaxy .hlab-vx-stat { position: absolute; top: 8.333vw; width: 14vw; display: flex; flex-direction: column; align-items: flex-start; gap: .833vw;
+  border-left: 1px solid rgba(255,255,255,.8); padding-left: 1.111vw; }
+.hlab-vx-ov-galaxy .hlab-vx-s1 { left: 6.944vw; } .hlab-vx-ov-galaxy .hlab-vx-s2 { left: 31.944vw; }
+.hlab-vx-ov-galaxy .hlab-vx-s3 { left: 56.944vw; } .hlab-vx-ov-galaxy .hlab-vx-s4 { left: 81.944vw; }
+.hlab-vx-ov-galaxy .hlab-vx-v { font-size: 2.222vw; line-height: 1; font-weight: 300; }
+.hlab-vx-ov-galaxy .hlab-vx-l { font-size: 1.111vw; line-height: 1.2; font-weight: 400; }
+
+/* Brain (four corners) */
+.hlab-vx-ov-brain .hlab-vx-tl-left { position: absolute; top: 9.028vw; left: 1.667vw; width: 46vw; font-size: 5.556vw; }
+.hlab-vx-ov-brain .hlab-vx-tl-right { position: absolute; right: 1.667vw; bottom: 1.667vw; width: 46vw; text-align: right; font-size: 5.556vw; }
+.hlab-vx-ov-brain .hlab-vx-flank-left { position: absolute; top: calc(50% + 2.361vw); left: 1.667vw; width: 26.597vw; font-size: 1.111vw; line-height: 1.2; text-transform: uppercase; }
+.hlab-vx-ov-brain .hlab-vx-flank-right { position: absolute; top: calc(50% + 2.361vw); right: 1.667vw; width: 14.583vw; text-align: right; font-size: 1.111vw; line-height: 1.2; text-transform: uppercase; }
+.hlab-vx-ov-brain .hlab-vx-cta { position: absolute; bottom: 1.667vw; left: 1.667vw; }
+
+/* ---------- reveals (Vesper spring-feel timings) ---------- */
+.hlab-vx-tl { display: block; }
+.hlab-vx-tl .hlab-vx-word { display: inline-block; white-space: nowrap; }
+.hlab-vx-tl .hlab-vx-ch { display: inline-block; opacity: 0; filter: blur(12px); transition: opacity 1000ms var(--vx-eq), filter 1000ms var(--vx-eq); }
+.hlab-vx-tl.hlab-vx-in .hlab-vx-ch { opacity: 1; filter: blur(0); }
+.hlab-vx-tw { display: flex; flex-wrap: wrap; gap: 0 .25em; }
+.hlab-vx-tw.hlab-vx-center { justify-content: center; }
+.hlab-vx-tw.hlab-vx-right { justify-content: flex-end; }
+.hlab-vx-tw .hlab-vx-wd { display: inline-block; opacity: 0; transform: translateY(16px); filter: blur(8px);
+  transition: opacity 1200ms var(--vx-eq), transform 1200ms var(--vx-eq), filter 1200ms var(--vx-eq); }
+.hlab-vx-tw.hlab-vx-in .hlab-vx-wd { opacity: 1; transform: none; filter: blur(0); }
+.hlab-vx-ur { opacity: 0; transform: translateY(20px); filter: blur(10px); transition: opacity 1000ms var(--vx-eq), transform 1000ms var(--vx-eq), filter 1000ms var(--vx-eq); }
+.hlab-vx-ur.hlab-vx-in { opacity: 1; transform: none; filter: blur(0); }
+
+/* ---------- < 1024px: Vesper's plain stacks ---------- */
+@media (max-width: 1023px) {
+  .hlab-vx-ov .hlab-vx-title, .hlab-vx-ov .hlab-vx-cluster, .hlab-vx-ov .hlab-vx-support, .hlab-vx-ov .hlab-vx-tagline,
+  .hlab-vx-ov-brain .hlab-vx-tl-left, .hlab-vx-ov-brain .hlab-vx-tl-right, .hlab-vx-ov-brain .hlab-vx-flank-left,
+  .hlab-vx-ov-brain .hlab-vx-flank-right, .hlab-vx-ov .hlab-vx-cta, .hlab-vx-ov-hero .hlab-vx-tags { position: static; }
+  .hlab-vx-ov { display: flex; flex-direction: column; justify-content: center; gap: 1.25rem; padding: 6.5rem 1.5rem 2rem; }
+  .hlab-vx-ov .hlab-vx-title, .hlab-vx-ov .hlab-vx-tl-left, .hlab-vx-ov .hlab-vx-tl-right { width: 100% !important; font-size: 2.5rem !important; text-align: left !important; transform: none !important; }
+  .hlab-vx-ov .hlab-vx-support, .hlab-vx-ov .hlab-vx-tagline, .hlab-vx-ov-brain .hlab-vx-flank-left, .hlab-vx-ov-brain .hlab-vx-flank-right {
+    width: 100% !important; font-size: .9375rem !important; text-align: left !important; transform: none !important; justify-content: flex-start !important; }
+  .hlab-vx-ov-galaxy .hlab-vx-cluster, .hlab-vx-ov-hero .hlab-vx-cluster { height: auto; display: flex; flex-direction: column; gap: 1.5rem; }
+  .hlab-vx-ov-hero .hlab-vx-tags { gap: .75rem; font-size: .75rem; flex-wrap: wrap; }
+  .hlab-vx-ov-hero .hlab-vx-tags i { width: 3px; height: 3px; }
+  .hlab-vx-ov-galaxy .hlab-vx-rule, .hlab-vx-ov-galaxy .hlab-vx-vrule { display: none; }
+  .hlab-vx-ov-galaxy .hlab-vx-stat { position: static; width: auto; border-left: 0; padding-left: 0; gap: .25rem; }
+  .hlab-vx-ov-galaxy .hlab-vx-v { font-size: 1.5rem; } .hlab-vx-ov-galaxy .hlab-vx-l { font-size: .75rem; color: rgba(255,255,255,.7); }
+  .hlab-vx-send .hlab-vx-fill { padding: .9375rem 1.5rem; font-size: 1rem; }
+  .hlab-vx-send .hlab-vx-arrow { width: 3.125rem; height: 3.125rem; font-size: 1.25rem; }
+}
+/* editor canvas: no scene, copy shown as-is */
+.hlab-vx-static .hlab-vx-ch, .hlab-vx-static .hlab-vx-ur, .hlab-vx-static .hlab-vx-wd { opacity: 1 !important; filter: none !important; transform: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hlab-vx-tl .hlab-vx-ch, .hlab-vx-tw .hlab-vx-wd, .hlab-vx-ur { transition: none !important; }
+}
+
+/* ---------- V3 scroll sweep chars (main headlines) ---------- */
+.hlab-vx-ov .hlab-vx-word { display: inline-block; white-space: nowrap; }
+.hlab-vx-ov .hlab-vx-bch { display: inline-block; }
+
+/* ---------- Menu: light Apple-style glass, logo kept crisp ---------- */
+.hlab-site-header .hlab-nav-bar {
+  background: linear-gradient(180deg, rgba(255,255,255,.88) 0%, rgba(255,255,255,.80) 100%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%) brightness(1.1);
+          backdrop-filter: blur(30px) saturate(180%) brightness(1.1);
+  border: 1px solid rgba(255,255,255,.7);
+  border-radius: 20px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.85),
+    inset 0 -1px 0 rgba(255,255,255,.22),
+    inset 0 0 0 .5px rgba(255,255,255,.25),
+    0 12px 40px -14px rgba(5,10,18,.55);
+}
+.hlab-site-header .hlab-nav-bar:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.9),
+    inset 0 -1px 0 rgba(255,255,255,.25),
+    inset 0 0 0 .5px rgba(255,255,255,.3),
+    0 18px 50px -16px rgba(5,10,18,.6);
+}
+/* logo sits directly on the one glass surface (no separate backing) */
+.hlab-site-header .hlab-nav-logo { padding: 0; background: none; box-shadow: none; border-radius: 0; }
+.hlab-site-header .hlab-nav-links a { color: #0D141F; font-weight: 500; }
+.hlab-site-header .hlab-nav-btn-grey { background: rgba(255,255,255,.62); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.6); }
+.hlab-site-header .hlab-nav-btn-grey:hover { background: rgba(255,255,255,.85); }
+.hlab-site-header .hlab-nav-menu-btn { background: rgba(255,255,255,.62); box-shadow: inset 0 0 0 1px rgba(255,255,255,.6); }
+.hlab-site-header .hlab-nav-dropdown {
+  background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.80));
+  -webkit-backdrop-filter: blur(30px) saturate(180%) brightness(1.1);
+          backdrop-filter: blur(30px) saturate(180%) brightness(1.1);
+  border: 1px solid rgba(255,255,255,.55);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.85), 0 18px 50px -18px rgba(5,10,18,.55);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .hlab-site-header .hlab-nav-bar, .hlab-site-header .hlab-nav-dropdown { background: rgba(255,255,255,.9); }
+}
