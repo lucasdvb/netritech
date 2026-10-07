@@ -1,6 +1,6 @@
 # Home Lab hero: woman with headset in the galaxy slot
 
-**Status: v5 in draft, not published.** v5 removes the orb-to-woman and woman-to-brain hand-offs, so the entry and exit match the original galaxy exactly (no white ball before the brain). It also gives her the brain's point style (bigger, peaked dots with no haze) and makes the light mode less eager (it only kicks in under 30 fps, at 0.8× resolution). v4 (live) was sha256 `6c7ae8e5…`. v4 added: a clear face, a darker steel-blue headset with a small mic light, a camera push-in and pull-back, a light sweep, exit trails, headset signal rings, hover ripples, a light mode for slow devices, and a headline glow. The version before the woman is saved in `../rollback-2026-10-07/`.
+**Status: v5 live.** v5 removes the orb-to-woman and woman-to-brain hand-offs, so the entry and exit match the original galaxy exactly (no white ball before the brain). It also gives her the brain's point style (bigger, peaked dots with no haze) and makes the light mode less eager (it only kicks in under 30 fps, at 0.8× resolution). v4 was sha256 `6c7ae8e5…`. v4 added: a clear face, a darker steel-blue headset with a small mic light, a camera push-in and pull-back, a light sweep, exit trails, headset signal rings, hover ripples, a light mode for slow devices, and a headline glow. The version before the woman is saved in `../rollback-2026-10-07/`.
 
 ![preview](preview.jpg)
 
