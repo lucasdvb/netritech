@@ -49,12 +49,11 @@ export function openCheckin(date = today()) {
     ui,
     render: (s) => html`<div class="form">
       <div class="ci-sleep">
-        <p class="form-label">Sleep</p>
+        <div class="ci-head"><p class="form-label">Sleep</p><p class="ci-dur tnum" aria-live="polite">${durationHM(hours() * 60)}</p></div>
         <div class="ci-times">
           <label class="time-field"><span>Bedtime</span><input type="time" value="${s.ui.bedtime}" data-input="field" data-field="bedtime"></label>
           <span class="ci-arrow">${icon('arrow-right', { size: 16 })}</span>
           <label class="time-field"><span>Woke</span><input type="time" value="${s.ui.wake}" data-input="field" data-field="wake"></label>
-          <p class="ci-dur tnum" aria-live="polite">${durationHM(hours() * 60)}</p>
         </div>
       </div>
       <div><p class="form-label">Sleep quality</p>${scale10(s.ui.quality, { action: 'pick', data: { field: 'quality' }, low: 'Restless', high: 'Deep', name: 'Sleep quality' })}</div>

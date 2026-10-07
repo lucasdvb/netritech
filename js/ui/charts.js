@@ -98,7 +98,7 @@ export function lineChart({ labels, series, height = 180, fmt = (v) => v, yFmt =
   const dotsHtml = series.filter((s) => !s.noDot).map((s) => {
     const i = lastIdx(s.values);
     if (i < 0) return '';
-    return raw(`<span class="chart-dot" style="left:${(X(i) / 10).toFixed(2)}%;top:${(Y(s.values[i]) / 10).toFixed(2)}%;--c:${s.color}"></span>`);
+    return raw(`<span class="chart-dot${s.fill ? ' chart-dot--lime' : ''}" style="left:${(X(i) / 10).toFixed(2)}%;top:${(Y(s.values[i]) / 10).toFixed(2)}%;--c:${s.color}"></span>`);
   });
   const marks = series.filter((s) => s.marks).map((s) => s.values.map((v, i) => (v == null ? '' : raw(`<span class="chart-mark" style="left:${(X(i) / 10).toFixed(2)}%;top:${(Y(v) / 10).toFixed(2)}%;--c:${s.color}"></span>`))));
   const step = Math.max(1, Math.ceil(n / xTicks));
@@ -109,7 +109,7 @@ export function lineChart({ labels, series, height = 180, fmt = (v) => v, yFmt =
   return html`<figure class="chart" data-chart="${id}" style="height:${height}px">
     <div class="chart-plot">
       <svg viewBox="0 0 ${W} ${HGT}" preserveAspectRatio="none" aria-hidden="true">
-        <defs>${series.map((s, si) => raw(`<linearGradient id="g-${id}-${si}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${s.color}" stop-opacity=".18"/><stop offset="1" stop-color="${s.color}" stop-opacity="0"/></linearGradient>`))}</defs>
+        <defs>${series.map((s, si) => raw(`<linearGradient id="g-${id}-${si}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${s.fill || s.color}" stop-opacity="${s.fill ? '.75' : '.18'}"/><stop offset="1" stop-color="${s.fill || s.color}" stop-opacity="0"/></linearGradient>`))}</defs>
         ${r.ticks.map((t) => raw(`<line class="chart-grid" x1="0" x2="${W}" y1="${Y(t)}" y2="${Y(t)}" vector-effect="non-scaling-stroke"/>`))}
         ${goal ? raw(`<line class="chart-goal-line" x1="0" x2="${W}" y1="${Y(goal.value)}" y2="${Y(goal.value)}" vector-effect="non-scaling-stroke"/>`) : ''}
         ${paths}
@@ -125,21 +125,26 @@ export function lineChart({ labels, series, height = 180, fmt = (v) => v, yFmt =
   </figure>`;
 }
 
-/** Vertical bars. values may contain null. */
-export function barChart({ labels, values, height = 150, color = 'var(--accent)', fmt = (v) => v, goal, max, highlightLast = true, tipLabels, colors }) {
+/** Every 7th index, ending on the last one: date labels under long bar charts. */
+const weekly = (n) => { const out = []; for (let i = n - 1; i >= 0; i -= 7) out.unshift(i); return out; };
+
+/** Vertical bars. values may contain null. Bars that meet a minimum goal are dark, the latest is lime. */
+export function barChart({ labels, values, height = 150, color = 'var(--accent)', fmt = (v) => v, goal, max, highlightLast = true, tipLabels, colors, goalIsMin = true }) {
   const vals = values.map((v) => (v == null ? null : Number(v)));
   const hi = Math.max(max ?? 0, goal?.value ?? 0, ...vals.filter((v) => v != null), 1);
   const id = `c${++seq}`;
-  remember(id, { labels: tipLabels || labels, series: [{ values: vals, color, label: '' }], fmt, n: vals.length, bars: true });
+  remember(id, { labels: tipLabels || labels, series: [{ values: vals, color: 'var(--lime)', label: '' }], fmt, n: vals.length, bars: true });
   return html`<figure class="chart chart--bars" data-chart="${id}" style="height:${height}px">
     <div class="chart-plot">
       ${goal ? html`<span class="chart-goal-bar" style="bottom:${((goal.value / hi) * 100).toFixed(2)}%"><b>${goal.label}</b></span>` : ''}
-      <div class="bars">${vals.map((v, i) => html`<span class="bar-col${highlightLast && i === vals.length - 1 ? ' is-last' : ''}${v == null ? ' is-empty' : ''}">
-        <i style="height:${v == null ? 0 : Math.max(2, (v / hi) * 100).toFixed(2)}%;${colors?.[i] ? `background:${colors[i]}` : `background:${color}`}"></i></span>`)}</div>
+      <div class="bars">${vals.map((v, i) => html`<span class="bar-col${highlightLast && i === vals.length - 1 ? ' is-last' : ''}${v == null ? ' is-empty' : ''}${goal && goalIsMin && v != null && v >= goal.value ? ' is-hit' : ''}">
+        <i style="height:${v == null ? 0 : Math.max(2, (v / hi) * 100).toFixed(2)}%;${colors?.[i] ? `background:${colors[i]}` : ''}"></i></span>`)}</div>
       <span class="chart-cursor" hidden></span>
       <div class="chart-tip" hidden></div>
     </div>
-    <div class="chart-x chart-x--bars">${labels.map((l) => html`<span>${l}</span>`)}</div>
+    ${labels.length > 14
+      ? html`<div class="chart-x chart-x--sparse">${weekly(labels.length).map((i) => html`<span style="left:${(((i + 0.5) / labels.length) * 100).toFixed(2)}%">${(tipLabels || labels)[i]}</span>`)}</div>`
+      : html`<div class="chart-x chart-x--bars">${labels.map((l) => html`<span>${l}</span>`)}</div>`}
     <figcaption class="sr-only">${chartSummary([{ values: vals, label: '' }], labels, fmt)}</figcaption>
   </figure>`;
 }

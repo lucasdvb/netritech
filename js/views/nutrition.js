@@ -96,7 +96,7 @@ export default {
       </section>
       <section class="block">
         <div class="block-head"><h2 class="block-title">Calories · 14 days</h2><span class="block-meta tnum">${kcal7.n ? `${num(kcal7.value)} avg` : ''}</span></div>
-        <div class="card">${barChart({ labels: days.map((d) => fmtDayShort(d).slice(0, 1)), tipLabels: days.map(fmtMD), values: kcal, color: 'var(--c-body)', fmt: (v) => `${num(v)} kcal`, goal: { value: t.kcal, label: num(t.kcal) } })}</div>
+        <div class="card">${barChart({ labels: days.map((d) => fmtDayShort(d).slice(0, 1)), tipLabels: days.map(fmtMD), values: kcal, color: 'var(--c-body)', fmt: (v) => `${num(v)} kcal`, goal: { value: t.kcal, label: num(t.kcal) }, goalIsMin: false })}</div>
       </section>
       <section class="block">${adaptiveCard()}</section>
 

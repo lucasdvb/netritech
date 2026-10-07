@@ -24,6 +24,8 @@ export async function setup({ base = 'http://localhost:4173/', out = './test-sho
     await page.waitForTimeout(450);
     const over = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     if (over > 1) errors.push(`${n}: page is ${over}px wider than the screen`);
+    const sheetOver = await page.evaluate(() => [...document.querySelectorAll('.sheet-content')].map((c) => c.scrollWidth - c.clientWidth).find((d) => d > 1) || 0);
+    if (sheetOver) errors.push(`${n}: sheet content is ${sheetOver}px wider than the sheet`);
     await page.screenshot({ path: `${out}/${n}.png`, fullPage: true });
   };
   const go = async (hash, sel) => {

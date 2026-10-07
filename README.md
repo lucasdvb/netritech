@@ -121,6 +121,16 @@ Nothing in the app is a medical claim:
 
 ---
 
+## Design
+
+The look follows modern finance-app references: near-black and white surfaces with a single bright lime accent (`#D3F36B`), plus soft lavender, peach and mint for the Today metric tiles.
+
+- **Shapes:** pill buttons and chips, round icon buttons, and big flat cards with 30 px corners.
+- **Navigation:** a floating black tab bar with round buttons on phones; a black sidebar on desktop.
+- **Black cards:** the Today score and the Body weight card carry the key numbers. Ticks fill lime.
+- **Charts:** bars stand on hatched tracks. They are black where the target was hit, grey where it wasn't, and the latest day is lime. Line charts are black over a lime fill.
+- **Light and dark:** both themes come from the same tokens in `css/tokens.css`. Dark cards re-scope the text colours locally, so anything placed inside them stays readable.
+
 ## Architecture
 
 ```

@@ -24,7 +24,7 @@ export function weightCard() {
       <p class="muted">One morning weigh-in. The 7-day average does the rest.</p>
       <span class="btn btn--primary btn--sm">${icon('plus', { size: 16 })} Log weight</span></button>`;
   }
-  return html`<div class="card body-hero">
+  return html`<div class="card card--ink body-hero">
     <div class="body-hero-top">
       <a class="body-hero-main" href="#/body/weight" data-action="nav" data-to="body/weight">
         <p class="section-label">Weight · 7-day average</p>
@@ -32,7 +32,7 @@ export function weightCard() {
         <p class="hero-meta">${s.weekChange != null ? html`<span class="${cx('delta', s.weekChange < -0.05 && 'is-down', s.weekChange > 0.05 && 'is-up')}">${signed(kgOut(s.weekChange), 1)} ${weightUnit()}</span> this week` : 'Change appears after a week'}
           ${s.sinceStart != null ? html` · ${signed(kgOut(s.sinceStart), 1)} since start` : ''}</p>
       </a>
-      <div class="body-hero-spark">${sparkline(series, { color: 'var(--c-body)', width: 96, height: 40 })}</div>
+      <div class="body-hero-spark">${sparkline(series, { color: 'var(--lime)', width: 104, height: 44 })}</div>
     </div>
     <div class="body-hero-foot">
       <span class="muted">${s.latest ? `Last weigh-in ${relativeDay(s.latest.date).toLowerCase()} · ${fw(s.latest.kg)}` : ''}</span>

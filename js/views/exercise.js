@@ -29,7 +29,7 @@ export default {
         <div class="stat"><p class="stat-label">Heaviest</p><p class="stat-value tnum">${pb?.load ? `${num(pb.load, pb.load % 1 ? 1 : 0)}` : '—'}<span class="stat-unit">${pb?.load ? 'kg' : ''}</span></p></div>
       </div>
       <section class="block"><div class="block-head"><h2 class="block-title">${isTime ? 'Best hold per session' : isMin ? 'Minutes per session' : 'Total reps per session'}</h2></div>
-        <div class="card">${lineChart({ labels, series: [{ values: primary, color: 'var(--c-body)', area: true, label: isTime ? 'Hold' : isMin ? 'Minutes' : 'Reps', marks: true }], fmt: (v) => (isTime ? `${num(v)} s` : isMin ? `${num(v)} min` : `${num(v)} reps`), zero: true, empty: 'Log this exercise twice to see a trend.' })}</div>
+        <div class="card">${lineChart({ labels, series: [{ values: primary, color: 'var(--chart-1)', fill: 'var(--lime)', area: true, label: isTime ? 'Hold' : isMin ? 'Minutes' : 'Reps', marks: true }], fmt: (v) => (isTime ? `${num(v)} s` : isMin ? `${num(v)} min` : `${num(v)} reps`), zero: true, empty: 'Log this exercise twice to see a trend.' })}</div>
       </section>
       ${load.some((x) => x) ? html`<section class="block"><div class="block-head"><h2 class="block-title">Load</h2></div>
         <div class="card">${lineChart({ labels, series: [{ values: load, color: 'var(--c-posture)', label: 'Top load', marks: true }], fmt: (v) => `${num(v, 1)} kg`, zero: true })}</div></section>` : ''}

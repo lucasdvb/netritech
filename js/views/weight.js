@@ -53,8 +53,8 @@ export default {
       <div class="card chart-card">${lineChart({
         labels: days.map((d) => fmtMD(d)),
         series: [
-          { values: days.map((d) => (M.weight(d) != null ? kgOut(M.weight(d)) : null)), color: 'var(--c-body)', line: false, marks: true, noDot: true, label: 'Weigh-in' },
-          { values: days.map((d) => { const a = M.weightAvg(d, 7); return a != null && store.all('weightEntries').some((e) => e.date <= d) ? kgOut(a) : null; }), color: 'var(--c-body)', area: true, width: 2.4, label: '7-day avg' },
+          { values: days.map((d) => (M.weight(d) != null ? kgOut(M.weight(d)) : null)), color: 'var(--text-3)', line: false, marks: true, noDot: true, label: 'Weigh-in' },
+          { values: days.map((d) => { const a = M.weightAvg(d, 7); return a != null && store.all('weightEntries').some((e) => e.date <= d) ? kgOut(a) : null; }), color: 'var(--chart-1)', fill: 'var(--lime)', area: true, width: 2.4, label: '7-day avg' },
         ],
         fmt: (v) => `${num(v, 1)} ${weightUnit()}`, height: 210,
         goal: c.goalWeight ? { value: kgOut(c.goalWeight), label: `goal ~${num(kgOut(c.goalWeight), 1)}` } : null,
