@@ -49,7 +49,7 @@ const ORB_CONFIG={colorTop:'#45D6C4',colorBottom:'#3A6FD0',colorEdge:'#2B4F9A',d
   oilDrag:0.95,rippleFreq:11,rippleSpeed:4,iridescence:0.25,radius:1,approach:2.6,distortGain:3.4}
 const GALAXY_CONFIG={colorEdge:'#3A6FD0',colorCore:'#45D6C4',opacity:0.55,pointSize:6,brightness:1.02,
   armSpin:0.4,tilt:-0.5,scale:0.18,cameraZ:48,dive:30,diveTilt:0.5,parallax:4,pointerRadius:5,pointerStrength:2}
-const WOMAN_CONFIG={radius:84,opacity:1.05,faceY:0.4,faceZ:0.15,coreRadius:0.5,ambient:0.9,rim:0.3,backDim:0.3,breath:0.4,turn:0.22,turnSpeed:0.22,tilt:0.04,restY:-4.6,dive:8,graze:0.8,star:0.5,faceLow:0.05,faceHigh:0.78,faceBoost:2.0,curvBoost:0.0,curvShade:0.25,occlusion:0.9,pointerRadius:4.2,pointerStrength:1.2,light:[-0.75,0.45,0.5],front:0.25,density:0.75,cursorPlaneZ:0.2,followYaw:0.38,followPitch:0.14,followShift:0.7,hoverCalm:0.6,springK:14,opacityScatter:1.7,formSize:3.4,flowAmount:0.8,flowSpeed:1.6,waveAmp:1.3,waveFreq:0.12,waveSpeed:1.6,wisp:0.05,wispDist:22,wispSpeed:0.12,bottomFade:0.45,px:6.5,zRef:42,deform:3.0,noiseScale:1.2,synapseRate:0.08,spacing:0.75,oversample:2.5,headColor:'#3D5F7E',headAmt:1.0,faceDim:0.62,pulse:3.2,pulseAmt:0.9,orbR:1.1,ripK:2.2,ripS:5.0,ripAmp:0.45,trails:[[0.035,0.5],[0.07,0.3],[0.105,0.16]],camPush:9,camPull:4,camLook:0.6,sweepAmt:0.9,sweepEvery:7,curvFace:1.3,faceSpacing:0.62}
+const WOMAN_CONFIG={radius:84,opacity:1.15,faceY:0.4,faceZ:0.15,coreRadius:0.5,ambient:0.9,rim:0.3,backDim:0.3,breath:0.4,turn:0.22,turnSpeed:0.22,tilt:0.04,restY:-4.6,dive:8,graze:0.8,star:0.5,faceLow:0.05,faceHigh:0.78,faceBoost:2.0,curvBoost:0.0,curvShade:0.25,occlusion:0.9,pointerRadius:4.2,pointerStrength:1.2,light:[-0.75,0.45,0.5],front:0.25,density:0.95,cursorPlaneZ:0.2,followYaw:0.38,followPitch:0.14,followShift:0.7,hoverCalm:0.6,springK:14,opacityScatter:1.7,formSize:3.4,flowAmount:0.8,flowSpeed:1.6,waveAmp:1.3,waveFreq:0.12,waveSpeed:1.6,wisp:0.05,wispDist:22,wispSpeed:0.12,bottomFade:0.45,px:3.8,zRef:42,deform:3.0,noiseScale:1.2,synapseRate:0.08,spacing:0.75,oversample:2.5,headColor:'#3D5F7E',headAmt:1.0,faceDim:0.62,pulse:3.2,pulseAmt:0.9,orbR:1.1,ripK:2.2,ripS:5.0,ripAmp:0.45,trails:[[0.035,0.5],[0.07,0.3],[0.105,0.16]],camPush:9,camPull:4,camLook:0.6,sweepAmt:0.9,sweepEvery:7,curvFace:1.3,faceSpacing:0.62}
 const BRAIN_CONFIG={colorCool:'#3A6FD0',colorWarm:'#45D6C4',colorEdge:'#2B4F9A',colorCenter:'#0D141F',
   colorSynapse:'#DCEBF2',colorDeep:'#0D141F',colorCursor:'#5ED6DE',centerRadius:0.37,centerFalloff:4,
   size:0.067,synapseRate:0.1,flowSpeed:2.3,flowAmount:0.025,glow:1.4,depthDarkness:1,radius:1.15,
@@ -472,7 +472,7 @@ function womanPart(x,y,z,nz){
   if(y>0.08&&y<0.78&&Math.abs(x)<0.34&&z>0&&nz>0.2) return 1
   return 0
 }
-/* light mode: if the first seconds of the hero run under ~42 fps, drop the pixel ratio a notch,
+/* light mode: if the first seconds of the hero run under ~30 fps, drop the pixel ratio a notch,
    thin the point clouds and switch the exit trails off */
 let perfN=0,LITE=false
 const perfAcc=[]
@@ -482,7 +482,7 @@ function perfSample(dt){
   perfAcc.push(dt)
   if(perfAcc.length===110){
     perfAcc.sort((a,b)=>a-b)
-    if(perfAcc[55]>1/42){ LITE=true; DPR_SCALE=0.7; resize(); Galaxy.setLite(true); if(Brain.setLite) Brain.setLite(true) }
+    if(perfAcc[55]>1/30){ LITE=true; DPR_SCALE=0.8; resize(); Galaxy.setLite(true); if(Brain.setLite) Brain.setLite(true) }
   }
 }
 function buildWomanGeometry(buffer,count,radius){
@@ -580,8 +580,8 @@ const Galaxy=(()=>{
     uWisp:{value:W0.wisp},uWispDist:{value:W0.wispDist},uWispSpeed:{value:W0.wispSpeed},uBottomFade:{value:W0.bottomFade},
     uColHead:{value:linVec(W0.headColor)},uHeadAmt:{value:W0.headAmt},uFaceDim:{value:W0.faceDim},
     uSweepY:{value:-2},uSweepAmt:{value:0},uMic:{value:new THREE.Vector3(...WOMAN_MIC)},uPulse:{value:W0.pulse},uPulseAmt:{value:W0.pulseAmt},
-    uOrigin:{value:new THREE.Vector3()},uOrbR:{value:ORB_CONFIG.radius*W0.orbR/GALAXY_CONFIG.scale},uHandIn:{value:1},
-    uHandOut:{value:1},uHandFade:{value:1},uBrainR:{value:BRAIN_CONFIG.radius*0.9/GALAXY_CONFIG.scale},
+    uOrigin:{value:new THREE.Vector3()},uOrbR:{value:ORB_CONFIG.radius*W0.orbR/GALAXY_CONFIG.scale},uHandIn:{value:0},
+    uHandOut:{value:0},uHandFade:{value:1},uBrainR:{value:BRAIN_CONFIG.radius*0.9/GALAXY_CONFIG.scale},
     uCurvFace:{value:W0.curvFace},    uRipK:{value:W0.ripK},uRipS:{value:W0.ripS},uRipAmp:{value:W0.ripAmp},uTrail:{value:0},uTrailAlpha:{value:1},
   }
   const mat=new THREE.ShaderMaterial({uniforms:u,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
@@ -695,10 +695,10 @@ const Galaxy=(()=>{
         vec2 xy=gl_PointCoord-0.5;
         float ll=length(xy);
         if(ll>0.5) discard;
-        /* orb sprite while formed: soft halo + tight bright core; galaxy sprite while scattered */
-        float soft=smoothstep(0.5,0.0,ll); soft=soft*soft*1.2;
+        /* formed: the brain's sharply peaked dot with a small bright core; galaxy sprite while scattered */
+        float soft=pow(smoothstep(0.5,0.0,ll),2.2);
         float core=smoothstep(0.13,0.0,ll);
-        float a=mix(smoothstep(0.5,0.1,ll),soft+core*0.35,vForm);
+        float a=mix(smoothstep(0.5,0.1,ll),soft+core*0.3,vForm);
         vec3 col=vColor+core*vForm*(vec3(0.45)*smoothstep(0.5,1.0,vLit)+vec3(0.12));
         col+=uSynapse*vSpark*2.0*(soft+core);
         gl_FragColor=vec4(col*uBrightness,vFade*a*vAlpha*uAppear*uFade*(1.0+vSpark)*uTrailAlpha);

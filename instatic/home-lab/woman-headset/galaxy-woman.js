@@ -22,7 +22,7 @@ function womanPart(x,y,z,nz){
   if(y>0.08&&y<0.78&&Math.abs(x)<0.34&&z>0&&nz>0.2) return 1
   return 0
 }
-/* light mode: if the first seconds of the hero run under ~42 fps, drop the pixel ratio a notch,
+/* light mode: if the first seconds of the hero run under ~30 fps, drop the pixel ratio a notch,
    thin the point clouds and switch the exit trails off */
 let perfN=0,LITE=false
 const perfAcc=[]
@@ -32,7 +32,7 @@ function perfSample(dt){
   perfAcc.push(dt)
   if(perfAcc.length===110){
     perfAcc.sort((a,b)=>a-b)
-    if(perfAcc[55]>1/42){ LITE=true; DPR_SCALE=0.7; resize(); Galaxy.setLite(true); if(Brain.setLite) Brain.setLite(true) }
+    if(perfAcc[55]>1/30){ LITE=true; DPR_SCALE=0.8; resize(); Galaxy.setLite(true); if(Brain.setLite) Brain.setLite(true) }
   }
 }
 function buildWomanGeometry(buffer,count,radius){
@@ -130,8 +130,8 @@ const Galaxy=(()=>{
     uWisp:{value:W0.wisp},uWispDist:{value:W0.wispDist},uWispSpeed:{value:W0.wispSpeed},uBottomFade:{value:W0.bottomFade},
     uColHead:{value:linVec(W0.headColor)},uHeadAmt:{value:W0.headAmt},uFaceDim:{value:W0.faceDim},
     uSweepY:{value:-2},uSweepAmt:{value:0},uMic:{value:new THREE.Vector3(...WOMAN_MIC)},uPulse:{value:W0.pulse},uPulseAmt:{value:W0.pulseAmt},
-    uOrigin:{value:new THREE.Vector3()},uOrbR:{value:ORB_CONFIG.radius*W0.orbR/GALAXY_CONFIG.scale},uHandIn:{value:1},
-    uHandOut:{value:1},uHandFade:{value:1},uBrainR:{value:BRAIN_CONFIG.radius*0.9/GALAXY_CONFIG.scale},
+    uOrigin:{value:new THREE.Vector3()},uOrbR:{value:ORB_CONFIG.radius*W0.orbR/GALAXY_CONFIG.scale},uHandIn:{value:0},
+    uHandOut:{value:0},uHandFade:{value:1},uBrainR:{value:BRAIN_CONFIG.radius*0.9/GALAXY_CONFIG.scale},
     uCurvFace:{value:W0.curvFace},    uRipK:{value:W0.ripK},uRipS:{value:W0.ripS},uRipAmp:{value:W0.ripAmp},uTrail:{value:0},uTrailAlpha:{value:1},
   }
   const mat=new THREE.ShaderMaterial({uniforms:u,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
@@ -245,10 +245,10 @@ const Galaxy=(()=>{
         vec2 xy=gl_PointCoord-0.5;
         float ll=length(xy);
         if(ll>0.5) discard;
-        /* orb sprite while formed: soft halo + tight bright core; galaxy sprite while scattered */
-        float soft=smoothstep(0.5,0.0,ll); soft=soft*soft*1.2;
+        /* formed: the brain's sharply peaked dot with a small bright core; galaxy sprite while scattered */
+        float soft=pow(smoothstep(0.5,0.0,ll),2.2);
         float core=smoothstep(0.13,0.0,ll);
-        float a=mix(smoothstep(0.5,0.1,ll),soft+core*0.35,vForm);
+        float a=mix(smoothstep(0.5,0.1,ll),soft+core*0.3,vForm);
         vec3 col=vColor+core*vForm*(vec3(0.45)*smoothstep(0.5,1.0,vLit)+vec3(0.12));
         col+=uSynapse*vSpark*2.0*(soft+core);
         gl_FragColor=vec4(col*uBrightness,vFade*a*vAlpha*uAppear*uFade*(1.0+vSpark)*uTrailAlpha);

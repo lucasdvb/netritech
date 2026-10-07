@@ -1,6 +1,6 @@
 # Home Lab hero: woman with headset in the galaxy slot
 
-**Status: v4 live.** v4 adds: a clear face (denser face points, crease shading, no white cores) and a darker steel-blue headset with a small mic light; a camera push-in and pull-back; a light sweep; exit trails; orb-to-woman and woman-to-brain hand-offs; headset signal rings; hover ripples; an automatic light mode for slow devices; and a headline glow. v3 (live) was sha256 `609d25fb…`. The version before the woman is saved in `../rollback-2026-10-07/`.
+**Status: v5 in draft, not published.** v5 removes the orb-to-woman and woman-to-brain hand-offs, so the entry and exit match the original galaxy exactly (no white ball before the brain). It also gives her the brain's point style (bigger, peaked dots with no haze) and makes the light mode less eager (it only kicks in under 30 fps, at 0.8× resolution). v4 (live) was sha256 `6c7ae8e5…`. v4 added: a clear face, a darker steel-blue headset with a small mic light, a camera push-in and pull-back, a light sweep, exit trails, headset signal rings, hover ripples, a light mode for slow devices, and a headline glow. The version before the woman is saved in `../rollback-2026-10-07/`.
 
 ![preview](preview.jpg)
 
@@ -34,7 +34,7 @@ So the face reads at hero size:
 
 | Item | Value |
 |---|---|
-| `hlab-hero-vesper.js` | 242,617 characters (was 111,070); the baked bust adds about 112K as base64 |
+| `hlab-hero-vesper.js` | 242,614 characters (was 111,070); the baked bust adds about 112K as base64 |
 | Points, desktop above 1440 px | ~217k |
 | Points, 1025–1440 px | ~140k |
 | Points, 641–1024 px | ~81k |
@@ -46,7 +46,7 @@ Instatic stores every `hlab-*` file as "all pages", because the MCP ignores `run
 
 | File | What it is |
 |---|---|
-| `hlab-hero-vesper.js` | The built candidate (sha256 `6c7ae8e5bc6172c34a4adcfb57ea87c9b57c77a91160fb361362506d5f6466b4`). |
+| `hlab-hero-vesper.js` | The built candidate (sha256 `c7f990b67b9187e236d73052bd7eec635ae4b070823fe92eacc310c9547dc4ba`). |
 | `galaxy-woman.js` | The replacement `Galaxy` module plus `buildWomanGeometry`. |
 | `config.json` | `WOMAN_CONFIG` values (size, light, shading, density, hover push, follow, springs, camera dive). |
 | `woman-headset.vbrn` | Baked bust, VBRN container (same format as the brain). Holds 8k triangles (4k on the face), then `VIS1` with one visibility byte per triangle, then `CRV1` with one int8 curvature value per vertex. |
