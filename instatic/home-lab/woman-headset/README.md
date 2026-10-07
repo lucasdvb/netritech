@@ -1,6 +1,6 @@
 # Home Lab hero: woman with headset in the galaxy slot
 
-**Status: v4 written to the Instatic draft, not yet published.** v4 adds: a clear face (denser face points, crease shading, no white cores) and a darker steel-blue headset with a small mic light; a camera push-in and pull-back; a light sweep; exit trails; orb-to-woman and woman-to-brain hand-offs; headset signal rings; hover ripples; an automatic light mode for slow devices; and a headline glow. v3 (live) was sha256 `609d25fb…`. The version before the woman is saved in `../rollback-2026-10-07/`.
+**Status: v4 live.** v4 adds: a clear face (denser face points, crease shading, no white cores) and a darker steel-blue headset with a small mic light; a camera push-in and pull-back; a light sweep; exit trails; orb-to-woman and woman-to-brain hand-offs; headset signal rings; hover ripples; an automatic light mode for slow devices; and a headline glow. v3 (live) was sha256 `609d25fb…`. The version before the woman is saved in `../rollback-2026-10-07/`.
 
 ![preview](preview.jpg)
 
