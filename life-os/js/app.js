@@ -1,5 +1,6 @@
 import * as store from './data/store.js';
-import { seedIfNeeded } from './data/seed.js';
+import { SEED_VERSION } from './data/schema.js';
+import { runMigrations, markAllApplied } from './data/migrations.js';
 import { patch } from './ui/patch.js';
 import * as router from './ui/router.js';
 import * as sheet from './ui/sheet.js';
@@ -7,7 +8,7 @@ import { toast } from './ui/toast.js';
 import { icon } from './ui/icons.js';
 import { html } from './ui/dom.js';
 import { app, APP_NAME } from './ui/app-api.js';
-import { today } from './domain/dates.js';
+import { today, setDayEnd } from './domain/dates.js';
 
 const TABS = [
   { id: 'today', label: 'Today', icon: 'sun', path: 'today' },
@@ -309,7 +310,12 @@ async function boot() {
 
   try {
     await store.init();
-    await seedIfNeeded();
+    // The built-in habit system is only loaded on first run, or when it has an update.
+    const seeded = store.get('meta', 'seed');
+    const { seedIfNeeded } = !seeded || (seeded.version || 1) < SEED_VERSION ? await import('./data/seed.js') : {};
+    if (seedIfNeeded && await seedIfNeeded()) markAllApplied();
+    else await runMigrations();
+    setDayEnd(store.profile()?.dayEndsAt);
   } catch (err) {
     console.error(err);
     main.innerHTML = String(html`<div class="view"><div class="empty empty--page">
@@ -322,12 +328,15 @@ async function boot() {
 
   applyTheme();
   store.subscribe((ev) => {
-    if (ev.type === 'error') toast(ev.message, { tone: 'danger', icon: 'circle-alert' });
-    else {
-      if (ev.stores.has('settings')) applyTheme();
-      refresh();
-    }
+    if (ev.type === 'error') { toast(ev.message, { tone: 'danger', icon: 'circle-alert' }); return; }
+    if (ev.stores.has('settings')) applyTheme();
+    if (ev.stores.has('profile')) setDayEnd(store.profile()?.dayEndsAt);
+    // Background summaries rebuilding don't change what's on screen.
+    if ([...ev.stores].some((s) => s !== 'daySnapshots')) refresh();
   });
+  // Anything still queued goes to disk before the app is hidden or closed.
+  addEventListener('pagehide', () => store.flush());
+  document.addEventListener('visibilitychange', () => { if (document.hidden) store.flush(); });
 
   if (!location.hash) history.replaceState(null, '', '#/today');
   await navigate();
@@ -345,6 +354,7 @@ async function boot() {
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
 
   import('./domain/reminders.js').then((r) => r.start()).catch((err) => console.warn(err));
+  import('./domain/snapshots.js').then((m) => m.start()).catch((err) => console.warn(err));
   import('./ui/install.js').then((m) => m.maybePrompt()).catch(() => {});
   if (navigator.storage?.persist) navigator.storage.persisted().then((p) => { if (!p) navigator.storage.persist(); });
   window.__lifeos = { store, app, ready: true };

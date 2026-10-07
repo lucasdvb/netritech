@@ -130,7 +130,7 @@ The look is built from the [GetLayers](https://www.getlayers.ai) library. Its de
 - **Colours: the brand palette.** White paper in light mode and true black in dark mode.
   - **Cards are one solid colour** from the palette: off-white `#F5F5F7` (near-black `#1D1D1F` in dark mode), near-black for the Today score and Body weight cards, and blue for the first Today tile. No card mixes colours.
   - **Blue (`#0071E3`)** is the one accent: actions, ticks, the active tab, today's bar and the latest bar in charts. In dark mode, blue text is lifted to `#2997FF` so it stays readable on black.
-  - **Greys, kept quiet:** near-black for text, mid grey `#6E6E73` for secondary text, dark grey `#434344` for raised and selected surfaces in dark mode.
+  - **Greys, kept quiet:** near-black for text, dark grey `#434344` for secondary text and mid grey `#6E6E73` for tertiary text, so every line of text clears 4.5:1 contrast (a unit test checks this). In dark mode, dark grey is used for raised and selected surfaces.
   - **Status uses the greys, not extra colours.** "Needs attention" is the strongest grey; rest days are a soft grey. Red appears only on delete buttons and error messages.
   - Selected tabs and chips are near-black (off-white in dark mode), so the blue stays rationed.
 - **Style: Stride** from GetLayers sets the layout, the shapes and how sparingly the accent is used.
@@ -147,39 +147,58 @@ Every colour is a token in `css/tokens.css` (`--brand`, `--ink`, the greys, the 
 index.html             app shell (tab bar / sidebar, main, sheets, toasts)
 manifest.webmanifest   PWA manifest (standalone, icons, shortcuts)
 sw.js                  service worker: precache, cache-first, offline navigation
-css/                   tokens.css (themes, palette, type) · base · components · views
+css/                   tokens.css (palette, type scale, motion tokens) · base · components ·
+                       views · motion (screen transitions, reduced motion)
 js/app.js              router, view lifecycle, event delegation, focus management
-js/data/               store (in-memory cache + optimistic writes), IndexedDB adapter,
-                       schema, first-run seed (your habit system), backup, sample data
+js/data/               store (in-memory cache + batched optimistic writes), storage
+                       adapters (IndexedDB, in-memory), schema, migrations and safety
+                       copies, first-run seed (your habit system), backup, sample data
 js/domain/             habit engine, scoring, metrics, fitness, coach, goals, reviews,
-                       reminders, tasks, dates
+                       reminders, tasks, dates (with the day boundary), day snapshots
 js/ui/                 html`` templates, keyed DOM morphing, components, charts,
-                       sheets, toasts, haptics, icons
+                       sheets, toasts, haptics, icons, motion (springs, FLIP)
 js/screens/            one module per screen, loaded on demand
-tools/                 build-sw.mjs · build-icons.mjs · render-icons.mjs
-tests/                 Playwright browser tests at iPhone 14 size
+tools/                 build-sw.mjs · check-budgets.mjs · build-icons.mjs · render-icons.mjs
+tests/                 unit/ (node --test, no browser) and Playwright browser suites
+docs/                  the owner's brief and the architecture and build plan
 ```
 
 - **No framework.** It uses ES modules, a tagged-template `html` that escapes by default, and a small keyed DOM morph (`js/ui/patch.js`). Re-renders therefore keep existing elements, so animations, focus, scroll and half-typed text survive.
-- **Data flow:** `store` loads every store into memory at start. Reads are synchronous, and writes are optimistic: the UI updates first, IndexedDB is written in the background, and a failed write rolls back and shows a message. Derived numbers are memoised per data version.
+- **Data flow:** `store` loads every store into memory at start. Reads are synchronous, and writes are optimistic: the UI updates first, and everything written in the same moment goes to disk in one transaction. A failed write rolls back and shows a message. Derived numbers are memoised per data version. Screens never touch IndexedDB; the store talks to a storage adapter, so a sync-backed one can replace it later.
+- **Ready for sync:** every record carries `rev` (+1 per write), and dated records carry the time zone they were written in. Deleting leaves a tombstone (no data, just the id and `deletedAt`), and every change leaves its latest entry in the `outbox`. Nothing reads these yet; they are the hooks a future sync needs.
+- **Migrations:** changes to stored data are ordered, one-time migrations (`js/data/migrations.js`). Before any of them run, a safety copy of everything you entered is saved on the device (the last three are kept, and can be restored from *Settings › Data*). Backups from older versions catch up through the same migrations when restored.
+- **Day boundary:** the day ends at 03:00 by default (*Settings › My day ends at*), so ticking a habit at 00:30 counts for the day you're still living.
+- **Day snapshots** (`js/domain/snapshots.js`): one compact summary per finished day (score, sleep, weight, steps, protein, workouts, mood, tasks done), rebuilt in the background in small slices whenever that day's data changes. Later features (Progress, insights, the year view) read these.
+- **Text size:** all type is in `rem` on a 17px base, so it follows the phone's text-size setting (Dynamic Type on iPhone); a test renders every screen at 85% and 200% and fails if text is cut off.
 - **Habit engine** (`js/domain/habits.js`): each habit has a type, schedule, thresholds (`min` / `target` / `mvdMin` / ramp) and an optional *source*, so its value comes from your logs instead of a second tap.
 - **Score:** the daily score uses the habits marked "in daily score". Minimum days score the Minimum-day habits; sick days pause scoring. Rolling consistency excludes days before tracking started.
 - **Coach** (`js/domain/coach.js`): plain rules that separate *facts from your data* from *suggestions*. Nothing is generated or sent anywhere.
 
 ### Data model (IndexedDB stores)
 
-`profile`, `settings`, `habits`, `habitLogs` (`habitId:date`), `goals`, `exercises`, `templates`, `workouts`, `workoutSets`, `foods`, `nutritionLogs`, `waterLogs`, `stepLogs`, `weightEntries` (one per date), `measurements`, `bodyFatEstimates`, `photos` + `photoBlobs`, `sleepEntries`, `moodEntries`, `journalEntries`, `readingSessions`, `learningSessions`, `meditationSessions`, `spiritualSessions`, `relationshipEntries`, `dailyReviews` (check-in, Top 3, shutdown, counters), `weeklyReviews`, `monthlyReviews`, `reminderLog`, `tasks` (one-off and repeating; a repeating task is a chain of instances), `meta`.
+`profile` (including `dayEndsAt`), `settings`, `habits`, `habitLogs` (`habitId:date`), `goals`, `exercises`, `templates`, `workouts`, `workoutSets`, `foods`, `nutritionLogs`, `waterLogs`, `stepLogs`, `weightEntries` (one per date), `measurements`, `bodyFatEstimates`, `photos` + `photoBlobs`, `sleepEntries`, `moodEntries`, `journalEntries`, `readingSessions`, `learningSessions`, `meditationSessions`, `spiritualSessions`, `relationshipEntries`, `dailyReviews` (check-in, Top 3, shutdown, counters), `weeklyReviews`, `monthlyReviews`, `reminderLog`, `tasks` (one-off and repeating; a repeating task is a chain of instances), `meta` (seed version, applied migrations).
 
-Dates are local `YYYY-MM-DD` strings. Every record has `id`, `createdAt` and `updatedAt`.
+Device-only stores, never in backups or a future sync: `daySnapshots` (derived), `outbox` (latest change per record), `localBackups` (safety copies).
+
+Dates are local `YYYY-MM-DD` strings. Every record has `id`, `createdAt`, `updatedAt` and `rev`.
 
 ---
 
 ## Tests
 
-The tests run in Chromium at iPhone 14 size, using Playwright from the global npm root:
+Unit tests cover the rules and the data layer without a browser (store, migrations, day boundary, day snapshots, colour contrast, motion tokens):
+
+```sh
+npm run test:unit          # node --test tests/unit/*.test.mjs
+npm run build              # regenerate the offline file list, then check size budgets
+```
+
+The browser suites run in Chromium at iPhone 14 size, using Playwright from the global npm root:
 
 ```sh
 node tests/serve.mjs 4173 &
+NODE_PATH=$(npm root -g) node tests/phase0.mjs http://localhost:4173/ ./test-shots   # upgrades, safety copies, reloads mid-write,
+                                                                                    # day boundary, text at 85% and 200%
 NODE_PATH=$(npm root -g) node tests/smoke.mjs  http://localhost:4173/ ./test-shots   # Today, habits, modes
 NODE_PATH=$(npm root -g) node tests/phase3.mjs http://localhost:4173/ ./test-shots   # weight, food, training, photos
 NODE_PATH=$(npm root -g) node tests/phase4.mjs http://localhost:4173/ ./test-shots   # progress, modules, reviews, backup

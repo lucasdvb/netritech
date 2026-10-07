@@ -3,7 +3,7 @@ import * as H from '../domain/habits.js';
 import { PRIORITIES, CATEGORIES, SECTIONS, HABIT_TYPES, SCHEDULES, catColor } from '../domain/taxonomy.js';
 import { html, raw, cx, attr } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { pageHead, segmented, stepper, toggle, settingRow } from '../ui/components.js';
+import { pageHead, segmented, stepper, toggle, settingRow, fieldError } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 
@@ -40,7 +40,7 @@ export default {
         <section class="ed-group">
           <label class="field"><span class="field-label">Name</span>
             <input class="input${e.name ? ' is-invalid' : ''}" name="name" value="${d.name}" data-input="f" data-f="name" placeholder="e.g. Evening walk" maxlength="60" ${raw(params.id ? '' : 'autofocus')} aria-invalid="${!!e.name}">
-            ${e.name ? html`<span class="field-error">${e.name}</span>` : ''}</label>
+            ${fieldError(e.name)}</label>
           <label class="field"><span class="field-label">Description <small>optional</small></span>
             <textarea class="input" rows="2" data-input="f" data-f="description" placeholder="What counts? Keep it simple.">${d.description || ''}</textarea></label>
           <div class="field"><span class="field-label">Icon</span>
@@ -63,7 +63,7 @@ export default {
               <label class="field"><span class="field-label">Maximum <small>optional</small></span><input class="input" type="number" inputmode="decimal" step="any" min="0" value="${d.max ?? ''}" data-input="num" data-f="max"></label>
               <label class="field"><span class="field-label">Quick-add step</span><input class="input" type="number" inputmode="decimal" step="any" min="0" value="${d.step ?? 1}" data-input="num" data-f="step"></label>
             </div>
-            ${e.target ? html`<span class="field-error">${e.target}</span>` : ''}` : ''}
+            ${fieldError(e.target)}` : ''}
           ${d.type === 'binary' || d.type === 'check' ? html`<div class="field"><span class="field-label">Steps <small>optional — one tick still completes it</small></span>
             <ul class="step-edit">${d.checklist.map((item, i) => html`<li data-key="st-${i}"><span class="tnum muted">${i + 1}</span><input class="input" value="${item}" data-input="step" data-i="${i}" aria-label="Step ${i + 1}">
               <button type="button" class="icon-btn icon-btn--sm" data-action="del-step" data-i="${i}" aria-label="Remove step ${i + 1}">${icon('x', { size: 16 })}</button></li>`)}</ul>
@@ -74,7 +74,7 @@ export default {
           <h2 class="ed-title">Schedule</h2>
           <label class="field"><span class="field-label">Frequency</span><select class="input" data-change="kind">${SCHEDULES.map((x) => html`<option value="${x.id}" ${raw(s.kind === x.id ? 'selected' : '')}>${x.label}</option>`)}</select></label>
           ${s.kind === 'weekdays' ? html`<div class="field"><span class="field-label">Days</span><div class="day-pick" role="group" aria-label="Days">${DAYS.map(([v, l]) => html`<button type="button" class="${cx('day-opt', (s.days || []).includes(v) && 'is-on')}" aria-pressed="${(s.days || []).includes(v)}" aria-label="${DAY_NAMES[v]}" data-action="day" data-v="${v}">${l}</button>`)}</div>
-            ${e.days ? html`<span class="field-error">${e.days}</span>` : ''}</div>` : ''}
+            ${fieldError(e.days)}</div>` : ''}
           ${s.kind === 'perWeek' || s.kind === 'perMonth' ? html`<div class="field"><span class="field-label">Times per ${s.kind === 'perWeek' ? 'week' : 'month'}</span>${stepper(s.count || 1, { action: 'count', step: 1, min: 1 })}</div>` : ''}
           ${s.kind === 'interval' ? html`<div class="field"><span class="field-label">Every</span>${stepper(s.every || 7, { action: 'every', step: 1, unit: 'days', min: 2 })}</div>` : ''}
           <div class="grid-2">

@@ -121,7 +121,7 @@ export function lineChart({ labels, series, height = 180, fmt = (v) => v, yFmt =
       <div class="chart-tip" hidden></div>
     </div>
     <div class="chart-x">${xl.map((i) => html`<span style="left:${(X(i) / 10).toFixed(2)}%">${labels[i]}</span>`)}</div>
-    <figcaption class="sr-only">${chartSummary(series, labels, fmt)}</figcaption>
+    <figcaption class="sr-only">${chartSummary(series, tipLabels || labels, fmt)}</figcaption>
   </figure>`;
 }
 
@@ -145,7 +145,7 @@ export function barChart({ labels, values, height = 150, color = 'var(--accent)'
     ${labels.length > 14
       ? html`<div class="chart-x chart-x--sparse">${weekly(labels.length).map((i) => html`<span style="left:${(((i + 0.5) / labels.length) * 100).toFixed(2)}%">${(tipLabels || labels)[i]}</span>`)}</div>`
       : html`<div class="chart-x chart-x--bars">${labels.map((l) => html`<span>${l}</span>`)}</div>`}
-    <figcaption class="sr-only">${chartSummary([{ values: vals, label: '' }], labels, fmt)}</figcaption>
+    <figcaption class="sr-only">${chartSummary([{ values: vals, label: '' }], tipLabels || labels, fmt)}</figcaption>
   </figure>`;
 }
 

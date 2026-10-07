@@ -2,7 +2,7 @@
 // "Tasks" column of the workbook's Week Plan. A repeating task is a chain of
 // single tasks: finishing one creates the next, so a slipped week never piles up.
 import * as store from '../data/store.js';
-import { today, addDays, weekday, fromISO, toISO } from './dates.js';
+import { today, addDays, weekday, fromISO, toISO, dayOf } from './dates.js';
 
 const ORD = ['', 'st', 'nd', 'rd'];
 const ordinal = (n) => `${n}${(n % 100 > 10 && n % 100 < 14) ? 'th' : ORD[n % 10] || 'th'}`;
@@ -24,7 +24,7 @@ export const anytime = () => open().filter((t) => !t.date);
 /** Open tasks dated after `from`. */
 export const later = (from = today()) => open().filter((t) => t.date && t.date > from);
 /** Local calendar day a task was ticked off. */
-export const doneDay = (t) => (t.doneAt ? toISO(new Date(t.doneAt)) : null);
+export const doneDay = (t) => (t.doneAt ? dayOf(new Date(t.doneAt)) : null);
 /** Finished in the last `days` days, newest first. */
 export const doneRecently = (days = 14) => {
   const since = addDays(today(), -days);

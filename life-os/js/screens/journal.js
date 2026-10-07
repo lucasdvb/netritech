@@ -41,7 +41,7 @@ export default {
         <button type="button" class="write-btn" data-action="new" data-kind="free">${icon('feather', { size: 18 })}<span>Free entry</span></button>
       </div>
       ${all.length ? segmented([{ id: 'all', label: 'All' }, { id: 'morning', label: 'Morning' }, { id: 'evening', label: 'Evening' }, { id: 'free', label: 'Free' }], filter, { action: 'filter', name: 'Filter' }) : ''}
-      ${!list.length ? empty({ ic: 'notebook-pen', title: 'Nothing written yet.', body: 'Three questions in the morning, three at night. Or just write.' })
+      ${!list.length ? empty({ ic: 'notebook-pen', title: 'Start today’s reflection.', body: 'Three questions in the morning, three at night. Or just write.' })
         : html`<ul class="list block">${list.map((j) => html`<li><a class="row journal-row" href="#/more/journal/${j.id}" data-action="nav" data-to="more/journal/${j.id}">
           <span class="row-main"><span class="row-title">${KIND_LABEL[j.kind]} <span class="muted">· ${relativeDay(j.date)}</span></span><span class="row-sub journal-preview">${preview(j)}</span></span>
           <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>`)}</ul>`}`;

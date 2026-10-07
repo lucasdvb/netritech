@@ -1,7 +1,11 @@
-// IndexedDB schema. Every record has `id`, `createdAt` and `updatedAt`.
-// Date-keyed records also carry `date` ('YYYY-MM-DD') which is indexed.
+// IndexedDB schema. Every record carries an envelope: `id`, `createdAt`, `updatedAt` and `rev`
+// (+1 per write). Deleted records stay on disk as tombstones (`deletedAt`, no payload) so a
+// future sync can learn about deletions. Date-keyed records also carry `date` ('YYYY-MM-DD',
+// indexed) and `tz`, the time zone they were first written in.
 export const DB_NAME = 'life-os';
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
+// Version of the built-in habit system (the seed); seed.js brings older installs up to date.
+export const SEED_VERSION = 2;
 
 export const STORES = {
   meta: { indexes: [] },                     // schema/seed bookkeeping
@@ -36,7 +40,22 @@ export const STORES = {
   monthlyReviews: { indexes: [] },
   reminderLog: { indexes: ['date'] },
   tasks: { indexes: ['date'] },              // one-off and repeating to-dos (Week Plan tasks)
+  daySnapshots: { indexes: [] },             // derived per-day summary (id = date), rebuilt from the logs
+  outbox: { indexes: [] },                   // latest change per record ('store:id'), for a future sync
+  localBackups: { indexes: [] },             // automatic copies taken before data migrations (last three)
 };
 
-// Stores kept fully in memory for instant rendering (photoBlobs is not).
-export const CACHED = Object.keys(STORES).filter((s) => s !== 'photoBlobs');
+// Stores kept fully in memory for instant rendering. Photo data, the outbox and the
+// safety backups are only ever read on demand.
+const UNCACHED = new Set(['photoBlobs', 'outbox', 'localBackups']);
+export const CACHED = Object.keys(STORES).filter((s) => !UNCACHED.has(s));
+
+// Stores that describe this device rather than your life: never synced. Of these, only meta
+// goes into backups, because it records which migrations the data has already had.
+export const LOCAL_ONLY = new Set(['meta', 'daySnapshots', 'reminderLog', 'outbox', 'localBackups']);
+
+// Derived stores: rebuilt from other data, so their writes don't count as changes to your day.
+export const DERIVED = new Set(['daySnapshots']);
+
+// What a backup file holds: everything you entered (photo data is optional and handled apart).
+export const BACKUP_STORES = Object.keys(STORES).filter((s) => s !== 'photoBlobs' && (!LOCAL_ONLY.has(s) || s === 'meta'));

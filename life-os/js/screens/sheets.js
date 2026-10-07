@@ -19,8 +19,8 @@ const setField = ({ el, ui, value }) => {
 const n = (v) => (v === '' || v == null || Number.isNaN(Number(v)) ? null : Number(v));
 const dayLabel = (date) => (date === today() ? 'today' : relativeDay(date).toLowerCase());
 
-export const reviewOf = (date) => store.get('dailyReviews', date) || { id: date, date };
-export const saveReview = (date, patch) => store.put('dailyReviews', { ...reviewOf(date), ...patch, id: date, date });
+import { reviewOf, saveReview } from '../domain/day.js';
+export { reviewOf, saveReview };
 
 /* ---------- morning check-in ---------- */
 export function openCheckin(date = today()) {

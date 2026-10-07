@@ -1,45 +1,69 @@
-// Local-first data layer: every store is mirrored in memory for instant reads,
-// writes update memory first and persist to IndexedDB in the background.
-// Failed writes are rolled back and reported as a friendly 'error' event.
-import * as idb from './adapter-idb.js';
-import { CACHED } from './schema.js';
+// Local-first data layer: every store is mirrored in memory for instant reads.
+// Writes update memory first, then reach storage in the background: everything written
+// in the same moment goes to disk in one transaction. A failed write is rolled back and
+// reported as a friendly 'error' event.
+//
+// Each record carries an envelope (createdAt, updatedAt, rev, and tz on dated records).
+// Deleting leaves a tombstone on disk, and every change to your data leaves its latest
+// entry in the outbox, so a sync can be added later without changing screens or rules.
+import * as idbAdapter from './adapter-idb.js';
+import { CACHED, LOCAL_ONLY, DERIVED } from './schema.js';
 
-const cache = Object.create(null);
+let adapter = idbAdapter;
+/** Swap the storage backend (the unit tests use the in-memory adapter). Call before init(). */
+export function useAdapter(next) { adapter = next; }
+
+const cache = Object.create(null);   // store → Map(id → live record)
+const tombs = Object.create(null);   // store → Map(id → tombstone), so revisions keep counting
 const dateIndex = Object.create(null);
 const listeners = new Set();
 const versions = Object.create(null);
 const memos = new Map();
 let changed = new Set();
+let changedDates = new Set();
 let scheduled = false;
+let pending = [];
+let draining = false;
 let writes = Promise.resolve();
+
+const TZ = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || null; } catch { return null; } })();
 
 export const uid = () => (crypto.randomUUID ? crypto.randomUUID() : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`);
 export const now = () => new Date().toISOString();
 
 export async function init() {
-  await idb.open();
-  const results = await Promise.all(CACHED.map((s) => idb.getAll(s)));
+  await adapter.open();
+  const results = await Promise.all(CACHED.map((s) => adapter.getAll(s)));
   CACHED.forEach((s, i) => {
-    cache[s] = new Map(results[i].map((r) => [r.id, r]));
+    const live = new Map();
+    const dead = new Map();
+    for (const r of results[i]) (r.deletedAt ? dead : live).set(r.id, r);
+    cache[s] = live;
+    tombs[s] = dead;
+    delete dateIndex[s];
   });
 }
 
+/** Listeners get {type: 'change', stores, dates} (dates your data changed on) or {type: 'error', message}. */
 export function subscribe(fn) {
   listeners.add(fn);
   return () => listeners.delete(fn);
 }
 
-function emit(store) {
+function emit(store, records = []) {
   changed.add(store);
   versions[store] = (versions[store] || 0) + 1;
   delete dateIndex[store];
+  if (!DERIVED.has(store)) for (const r of records) if (r?.date) changedDates.add(r.date);
   if (scheduled) return;
   scheduled = true;
   queueMicrotask(() => {
     scheduled = false;
     const stores = changed;
+    const dates = changedDates;
     changed = new Set();
-    for (const fn of listeners) fn({ type: 'change', stores });
+    changedDates = new Set();
+    for (const fn of listeners) fn({ type: 'change', stores, dates });
   });
 }
 
@@ -48,13 +72,124 @@ function fail(err, message) {
   for (const fn of listeners) fn({ type: 'error', message });
 }
 
-function queue(task, rollback, message = 'Couldn’t save that entry. Your data is still safe. Try again.') {
-  writes = writes.then(task).catch((err) => {
-    rollback();
-    fail(err, message);
+/* ---------- writing ---------- */
+
+const SAVE_FAILED = 'Couldn’t save that entry. Your data is still safe. Try again.';
+const DELETE_FAILED = 'Couldn’t delete that. Nothing was lost. Try again.';
+
+// Queue disk operations; everything queued in the same moment lands in one transaction.
+function enqueue(ops, rollback, message) {
+  pending.push({ ops, rollback, message });
+  if (!draining) {
+    draining = true;
+    queueMicrotask(drain);
+  }
+}
+
+function drain() {
+  draining = false;
+  if (!pending.length) return writes;
+  const group = pending;
+  pending = [];
+  const ops = group.flatMap((g) => g.ops);
+  writes = writes.then(() => adapter.write(ops)).catch((err) => {
+    for (const g of [...group].reverse()) g.rollback();
+    fail(err, group[group.length - 1].message);
   });
   return writes;
 }
+
+/** Send anything queued to disk now, and resolve once every write has landed. */
+export const flush = () => drain();
+
+const outboxEntry = (store, rec, op) => ({ store: 'outbox', value: { id: `${store}:${rec.id}`, store, recId: rec.id, op, rev: rec.rev, at: rec.updatedAt } });
+
+/** A record with its envelope filled in, ready to write. */
+function stamp(store, record, ts) {
+  const id = record.id || uid();
+  const prev = cache[store].get(id);
+  const base = prev || tombs[store].get(id);
+  const rec = { ...record, id, createdAt: record.createdAt || prev?.createdAt || ts, updatedAt: ts, rev: (base?.rev || 0) + 1 };
+  delete rec.deletedAt;
+  if (rec.date && !rec.tz) {
+    const tz = prev?.tz || TZ;
+    if (tz) rec.tz = tz;
+  }
+  return rec;
+}
+
+function tombstoneOf(prev, ts) {
+  const t = { id: prev.id, createdAt: prev.createdAt, updatedAt: ts, deletedAt: ts, rev: (prev.rev || 0) + 1 };
+  if (prev.date) t.date = prev.date;
+  return t;
+}
+
+// Memory side of one operation: applies it and returns how to persist and how to undo it.
+function apply(store, op, ts) {
+  if (!('delete' in op) && !op.value.id) op = { ...op, value: { ...op.value, id: uid() } };
+  const id = op.delete ?? op.value.id;
+  const prev = cache[store].get(id);
+  const prevTomb = tombs[store].get(id);
+  const undo = () => {
+    if (prev) cache[store].set(prev.id, prev);
+    else cache[store].delete(id);
+    if (prevTomb) tombs[store].set(prevTomb.id, prevTomb);
+    else tombs[store].delete(id);
+  };
+  if ('delete' in op) {
+    if (!prev) return null;
+    cache[store].delete(id);
+    if (LOCAL_ONLY.has(store)) return { disk: [{ store, delete: id }], undo, touched: [prev], prev };
+    const t = tombstoneOf(prev, ts);
+    tombs[store].set(id, t);
+    return { disk: [{ store, value: t }, outboxEntry(store, t, 'delete')], undo, touched: [prev], prev };
+  }
+  const rec = stamp(store, op.value, ts);
+  cache[store].set(rec.id, rec);
+  tombs[store].delete(rec.id);
+  const disk = [{ store, value: rec }];
+  if (!LOCAL_ONLY.has(store)) disk.push(outboxEntry(store, rec, 'put'));
+  return { disk, undo, touched: [rec, prev], value: rec };
+}
+
+export function put(store, record) {
+  return batch([{ store, value: record }])[0];
+}
+
+export function update(store, id, patch) {
+  const prev = cache[store].get(id);
+  if (!prev) return null;
+  return put(store, { ...prev, ...patch });
+}
+
+/** Deletes a record (leaving a tombstone) and returns what it was, so callers can offer Undo. */
+export function remove(store, id) {
+  const prev = cache[store].get(id);
+  if (!prev) return null;
+  batch([{ store, delete: id }], DELETE_FAILED);
+  return prev;
+}
+
+/** Several writes that must land together. ops: [{store, value}] | [{store, delete: id}] */
+export function batch(ops, message = SAVE_FAILED) {
+  const ts = now();
+  const applied = [];
+  for (const op of ops) {
+    const res = apply(op.store, op, ts);
+    if (res) applied.push({ store: op.store, ...res });
+  }
+  if (!applied.length) return [];
+  const byStore = new Map();
+  for (const a of applied) byStore.set(a.store, [...(byStore.get(a.store) || []), ...a.touched]);
+  byStore.forEach((recs, store) => emit(store, recs));
+  enqueue(applied.flatMap((a) => a.disk), () => {
+    for (const a of [...applied].reverse()) a.undo();
+    byStore.forEach((recs, store) => emit(store, recs));
+  }, message);
+  return applied.filter((a) => a.value).map((a) => a.value);
+}
+
+/* ---------- reading ---------- */
 
 /** Cache a derived value until any of the listed stores changes. */
 export function memo(key, stores, fn) {
@@ -71,6 +206,8 @@ export const all = (store) => [...cache[store].values()];
 export const get = (store, id) => cache[store].get(id);
 export const has = (store, id) => cache[store].has(id);
 export const count = (store) => cache[store].size;
+/** The tombstone left by deleting a record, if any. */
+export const deleted = (store, id) => tombs[store]?.get(id);
 
 /** Records of a date-indexed store for one date (cached per store until it changes). */
 export function onDate(store, date) {
@@ -94,79 +231,35 @@ export function where(store, fn) {
   return out;
 }
 
-export function put(store, record) {
-  const ts = now();
-  const prev = cache[store].get(record.id);
-  const rec = { ...record, id: record.id || uid(), createdAt: record.createdAt || prev?.createdAt || ts, updatedAt: ts };
-  cache[store].set(rec.id, rec);
-  emit(store);
-  queue(() => idb.put(store, rec), () => {
-    if (prev) cache[store].set(rec.id, prev);
-    else cache[store].delete(rec.id);
-    emit(store);
-  });
-  return rec;
-}
-
-export function update(store, id, patch) {
-  const prev = cache[store].get(id);
-  if (!prev) return null;
-  return put(store, { ...prev, ...patch });
-}
-
-export function remove(store, id) {
-  const prev = cache[store].get(id);
-  if (!prev) return;
-  cache[store].delete(id);
-  emit(store);
-  queue(() => idb.del(store, id), () => {
-    cache[store].set(id, prev);
-    emit(store);
-  }, 'Couldn’t delete that. Nothing was lost. Try again.');
-}
-
-/** Several writes that must land together. ops: [{store, value}] | [{store, delete: id}] */
-export function batch(ops) {
-  const ts = now();
-  const undo = [];
-  const persisted = ops.map((op) => {
-    const prev = cache[op.store].get(op.delete ?? op.value.id);
-    undo.push({ store: op.store, id: op.delete ?? op.value.id, prev });
-    if ('delete' in op) {
-      cache[op.store].delete(op.delete);
-      return op;
-    }
-    const value = { ...op.value, id: op.value.id || uid(), createdAt: op.value.createdAt || prev?.createdAt || ts, updatedAt: ts };
-    cache[op.store].set(value.id, value);
-    return { store: op.store, value };
-  });
-  new Set(ops.map((o) => o.store)).forEach(emit);
-  queue(() => idb.batch(persisted), () => {
-    for (const u of undo.reverse()) {
-      if (u.prev) cache[u.store].set(u.id, u.prev);
-      else cache[u.store].delete(u.id);
-      emit(u.store);
-    }
-  });
-  return persisted.filter((p) => p.value).map((p) => p.value);
-}
-
-/** Wait for every queued write to reach disk. */
-export const flush = () => writes;
-
 /** Reload memory from disk after bulk operations such as restore. */
 export async function reload() {
   await flush();
   await init();
-  CACHED.forEach(emit);
+  CACHED.forEach((s) => emit(s));
 }
 
-// Photo blobs live outside the memory cache.
+/** Direct access to the storage adapter, for bulk operations (restore, erase, safety backups). */
+export const disk = () => adapter;
+
+// Photo data lives outside the memory cache and is read on demand.
 export const blobs = {
-  get: (id) => idb.get('photoBlobs', id),
-  put: (id, blob) => idb.put('photoBlobs', { id, blob, createdAt: now(), updatedAt: now() }),
-  del: (id) => idb.del('photoBlobs', id),
-  all: () => idb.getAll('photoBlobs'),
+  async get(id) {
+    const r = await adapter.get('photoBlobs', id);
+    return r && !r.deletedAt ? r : null;
+  },
+  async put(id, blob) {
+    const ts = now();
+    const prev = await adapter.get('photoBlobs', id);
+    const rec = { id, blob, createdAt: (!prev?.deletedAt && prev?.createdAt) || ts, updatedAt: ts, rev: (prev?.rev || 0) + 1 };
+    await adapter.write([{ store: 'photoBlobs', value: rec }, outboxEntry('photoBlobs', rec, 'put')]);
+  },
+  async del(id) {
+    const prev = await adapter.get('photoBlobs', id);
+    if (!prev || prev.deletedAt) return;
+    const t = tombstoneOf(prev, now());
+    await adapter.write([{ store: 'photoBlobs', value: t }, outboxEntry('photoBlobs', t, 'delete')]);
+  },
+  all: async () => (await adapter.getAll('photoBlobs')).filter((b) => !b.deletedAt),
 };
 
 export const settings = () => cache.settings.get('app');

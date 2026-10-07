@@ -86,7 +86,7 @@ export default {
           <div class="row swipe-content"><span class="row-main"><span class="row-title">${l.name || 'Food'}</span><span class="row-sub">${l.at ? fmtTime(new Date(l.at)) : ''}${l.approx ? ' · approx.' : ''}</span></span>
             <span class="row-right tnum">${num(l.protein, l.protein % 1 ? 1 : 0)} g<br><span class="muted">${num(l.kcal)} kcal</span></span>
             <button type="button" class="icon-btn icon-btn--sm" data-action="del" data-id="${l.id}" aria-label="Delete ${l.name}">${icon('x', { size: 16 })}</button></div></li>`)}</ul>`
-          : empty({ ic: 'utensils', title: 'Nothing logged yet', body: 'Quick foods are one tap. Protein first; calories when you can.', cta: 'Log food', action: 'food' })}
+          : empty({ ic: 'utensils', title: 'Log your first meal of the day', body: 'Quick foods are one tap. Protein first; calories when you can.', cta: 'Log food', action: 'food' })}
         ${waters.length ? html`<p class="quiet-line">${icon('droplet', { size: 15 })} ${litres(M.waterMl(date))} water from ${waters.length} entr${waters.length === 1 ? 'y' : 'ies'} <button type="button" class="link-btn" data-action="water">Edit</button></p>` : ''}
       </section>
 

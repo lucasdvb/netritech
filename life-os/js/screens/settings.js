@@ -9,6 +9,7 @@ import { requestPermission, permissionState, stats as reminderStats } from '../d
 
 const n = (v) => (v === '' || v == null || Number.isNaN(Number(v)) ? null : Number(v));
 const DAYS = [[1, 'M'], [2, 'T'], [3, 'W'], [4, 'T'], [5, 'F'], [6, 'S'], [7, 'S']];
+const DAY_ENDS = [['00:00', 'Midnight'], ['01:00', '01:00'], ['02:00', '02:00'], ['03:00', '03:00'], ['04:00', '04:00'], ['05:00', '05:00']];
 const NOTIFS = [
   ['morning', 'Morning routine', 'time'], ['workout', 'Workout', 'time'], ['water', 'Water', 'every'], ['movement', 'Movement breaks (work hours)', 'every'],
   ['eyes', 'Visual breaks (work hours)', 'every'], ['evening', 'Evening routine', 'time'], ['weeklyReview', 'Weekly review (Sunday)', 'time'], ['habits', 'Habit reminders (per habit)', null],
@@ -52,6 +53,8 @@ export default {
           ${profileField('Work starts', 'workStart', 'time')}
           ${profileField('Work ends', 'workEnd', 'time')}
           ${profileField('Lights out', 'bedTime', 'time')}
+          ${settingRow('My day ends at', html`<select class="input input--inline" data-change="profile" data-k="dayEndsAt" aria-label="My day ends at">
+            ${DAY_ENDS.map(([v, l]) => html`<option value="${v}" ${(p.dayEndsAt || '00:00') === v ? 'selected' : ''}>${l}</option>`)}</select>`, { hint: 'Anything you log before then counts for the day before.' })}
           <div class="set-row"><span class="set-text"><span class="set-label">Work days</span></span><span class="set-ctl"><div class="day-pick day-pick--sm">${DAYS.map(([v, l]) => html`<button type="button" class="${cx('day-opt', (p.workDays || []).includes(v) && 'is-on')}" aria-pressed="${(p.workDays || []).includes(v)}" data-action="workday" data-v="${v}" aria-label="${['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][v]}">${l}</button>`)}</div></span></div>
         </div></section>
       <section class="block"><p class="section-label">Targets</p>
