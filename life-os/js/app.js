@@ -68,7 +68,7 @@ export function applyTheme(theme = store.settings()?.theme || 'system') {
   document.documentElement.setAttribute('data-theme', theme);
   try { localStorage.setItem('lifeos.theme', theme); } catch { /* private mode */ }
   const dark = theme === 'dark' || (theme === 'system' && media.matches);
-  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', dark ? '#0B0B0C' : '#F6F5F2'));
+  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', dark ? '#0A0A0A' : '#EFF0EB'));
 }
 media.addEventListener?.('change', () => applyTheme());
 

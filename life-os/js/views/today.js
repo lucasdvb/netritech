@@ -135,7 +135,7 @@ function briefing(date, ph, mode) {
     return html`<button type="button" class="checkin-cta" data-action="open-checkin" data-key="brief">
       <span class="checkin-ic">${icon('sunrise', { size: 22 })}</span>
       <span><span class="checkin-title">Morning check-in</span><span class="checkin-sub">Sleep, energy, stress, mood · 30 seconds</span></span>
-      ${icon('chevron-right', { size: 18, cls: 'checkin-chev' })}</button>`;
+      <span class="checkin-chev">${icon('arrow-up-right', { size: 18 })}</span></button>`;
   }
   if (ph === 'morning' || (ph === 'work' && checked && new Date().getHours() < 12)) {
     const sl = M.sleep(date);
