@@ -1,26 +1,37 @@
 import * as store from '../data/store.js';
 import * as H from '../domain/habits.js';
-import { PRIORITIES, CATEGORIES, SECTIONS, habitColor } from '../domain/taxonomy.js';
-import { today } from '../domain/dates.js';
-import { html, cx } from '../ui/dom.js';
+import { CATEGORIES, SECTIONS, habitColor } from '../domain/taxonomy.js';
+import { today, fmtMD } from '../domain/dates.js';
+import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, segmented, dots, empty } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { attachSwipe } from '../ui/swipe.js';
 
-const GROUPINGS = [{ id: 'priority', label: 'Priority' }, { id: 'area', label: 'Area' }, { id: 'time', label: 'Time of day' }];
+const GROUPINGS = [{ id: 'state', label: 'State' }, { id: 'area', label: 'Area' }, { id: 'time', label: 'Time of day' }];
+const STATE_GROUPS = [
+  { id: 'focus', title: 'Your three' },
+  { id: 'autopilot', title: 'Autopilot' },
+  { id: 'queue', title: 'Later' },
+  { id: 'paused', title: 'Paused' },
+];
 
 function groups(by, list) {
   if (by === 'area') return CATEGORIES.map((c) => ({ id: c.id, title: c.label, items: list.filter((h) => h.category === c.id) }));
   if (by === 'time') return SECTIONS.map((s) => ({ id: s.id, title: s.label, items: list.filter((h) => h.section === s.id) }));
-  return PRIORITIES.map((p) => ({ id: p.id, title: p.label, hint: p.hint, items: list.filter((h) => h.priority === p.id) }));
+  return STATE_GROUPS.map((g) => ({ ...g, hint: H.STATES[g.id].hint, items: g.id === 'focus' ? H.focusHabits() : g.id === 'queue' ? H.queue() : list.filter((h) => H.stateOf(h) === g.id) }));
 }
 
 function habitRow(h) {
+  const st = H.stateOf(h);
   const c = H.consistency(h, today(), H.isFlexible(h) ? 28 : 7);
   const flexible = H.isFlexible(h);
-  const sub = [H.scheduleLabel(h), h.affectsScore && h.priority !== 'optional' ? 'In daily score' : '', h.mvd ? 'Minimum day' : ''].filter(Boolean).join(' · ');
+  const r = st === 'focus' ? H.runs(h) : null;
+  const sub = [H.scheduleLabel(h),
+    st === 'paused' && h.pausedUntil ? `back ${fmtMD(h.pausedUntil)}` : '',
+    r?.current >= 2 ? `${r.current}-${r.unit} run` : r?.missesInRow === 1 ? 'don’t miss twice' : '',
+    h.anchor || ''].filter(Boolean).join(' · ');
   const right = flexible
     ? html`<span class="hl-week tnum">${H.periodLabel(h, today()).replace(' this week', '').replace(' this month', '')}</span>`
     : dots(H.dots(h, today(), 7), { size: 'sm' });
@@ -29,7 +40,7 @@ function habitRow(h) {
     <a class="row swipe-content" href="#/habits/${h.id}" data-action="nav" data-to="habits/${h.id}">
       <span class="row-ic" style="--ic:${habitColor(h)}">${icon(h.icon, { size: 18 })}</span>
       <span class="row-main"><span class="row-title">${h.name}</span><span class="row-sub">${sub}</span></span>
-      <span class="row-right hl-right">${right}${c.ratio != null && !flexible ? html`<span class="hl-pct tnum">${Math.round(c.ratio * 100)}%</span>` : ''}</span>
+      <span class="row-right hl-right">${st === 'queue' || st === 'paused' ? '' : right}${c.ratio != null && !flexible && st !== 'queue' && st !== 'paused' ? html`<span class="hl-pct tnum">${Math.round(c.ratio * 100)}%</span>` : ''}</span>
       <span class="row-chev">${icon('chevron-right', { size: 18 })}</span>
     </a>
   </li>`;
@@ -39,19 +50,23 @@ export default {
   id: 'habits',
   title: 'Habits',
   render({ ui }) {
-    const by = ui.by || 'priority';
+    const by = ui.by || 'state';
     const all = H.habits();
     const active = all.filter((h) => !h.archived);
     const archived = all.filter((h) => h.archived);
-    const core = active.filter((h) => h.priority === 'core').length;
+    const focus = H.focusHabits().length;
     return html`
-      ${pageHead({ title: 'Habits', sub: `${active.length} active · ${core} in the foundation`,
+      ${pageHead({ title: 'Habits', sub: `${focus} of ${H.FOCUS_LIMIT} in focus · ${active.length} active`,
         actions: html`<button type="button" class="icon-btn" data-action="open-search" aria-label="Search">${icon('search', { size: 20 })}</button>
           <button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New habit">${icon('plus', { size: 20 })}</button>` })}
       ${segmented(GROUPINGS, by, { action: 'by', name: 'Group habits by' })}
-      ${!active.length ? empty({ ic: 'list-checks', title: 'No habits yet', body: 'Start with one small thing you want to do most days.', cta: 'Create a habit', action: 'new' }) : ''}
+      ${!active.length ? empty({ ic: 'list-checks', title: 'No habits yet', body: 'Start with one small thing you want to do most days. Three questions and it’s on Today.', cta: 'Add a habit', action: 'new' }) : ''}
+      ${by === 'state' && active.length ? html`<button type="button" class="card card--link sort-cta" data-action="nav" data-to="habits/sort" data-key="sort-cta">
+        <span class="sort-cta-text"><span class="card-title">${focus ? 'Change your three' : 'Choose your three'}</span>
+          <span class="row-sub">Sort every habit into Focus, Autopilot or Later on one screen.</span></span>
+        ${icon('chevron-right', { size: 18 })}</button>` : ''}
       ${groups(by, active).filter((g) => g.items.length).map((g) => html`<section class="block" data-key="g-${g.id}">
-        <div class="block-head"><h2 class="block-title">${g.title}</h2><span class="block-meta">${g.items.length}</span></div>
+        <div class="block-head"><h2 class="block-title">${g.title}</h2><span class="block-meta tnum">${g.id === 'focus' ? `${g.items.length} of ${H.FOCUS_LIMIT}` : g.items.length}</span></div>
         ${g.hint ? html`<p class="block-hint">${g.hint}</p>` : ''}
         <ul class="list">${g.items.map(habitRow)}</ul>
       </section>`)}
@@ -67,7 +82,7 @@ export default {
   mount(el) { attachSwipe(el); },
   actions: {
     by: ({ data, ui }) => { ui.by = data.value; hap.tap(); app.refresh(); },
-    new: () => app.go('habits/new'),
+    new: async () => (await import('./habit-new.js')).openNewHabit(),
     archive: ({ data }) => {
       const h = H.habit(data.id);
       store.update('habits', h.id, { archived: true });

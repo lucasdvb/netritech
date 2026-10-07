@@ -3,7 +3,7 @@
 import * as store from '../data/store.js';
 import * as M from './metrics.js';
 import * as F from './fitness.js';
-import { activeHabits, consistency, isDone, dueOn, dayMode, periodDone, isScheduledDay, started, habit } from './habits.js';
+import { activeHabits, consistency, isDone, dueOn, dayMode, periodDone, isScheduledDay, started, habit, stateOf, focusHabits, graduationDue, runUnit } from './habits.js';
 import { rolling, dayScore } from './scoring.js';
 import { today, addDays, minutesOfDay, parseHM, weekday, startOfWeek, endOfWeek, diffDays, lastNDays, range } from './dates.js';
 import { num, litres } from '../ui/format.js';
@@ -125,6 +125,15 @@ export function guidance(date = today(), now = new Date()) {
       body: `Last 7 days: ${Math.round(r7.ratio * 100)}%. No need to add habits because it’s going well.` }));
   }
 
+  // A focus habit that has become automatic frees its slot (you decide).
+  for (const h of focusHabits(date)) {
+    const g = graduationDue(h, date);
+    if (!g) continue;
+    out.push(item({ id: `grad-${h.id}`, priority: 30, fact: true, title: `${h.name} is ready for autopilot`,
+      body: `Done on ${Math.round(g.ratio * 100)}% of ${runUnit(h) === 'day' ? 'days' : 'weeks'} for six weeks. Moving it to autopilot frees a slot for the next habit.`,
+      action: { label: 'Review', act: 'nav', data: { to: `habits/${h.id}` } } }));
+  }
+
   for (const w of weightGuidance(date)) out.push(w);
   for (const r of recoveryGuidance(date)) out.push(r);
 
@@ -196,10 +205,9 @@ export function needsAttention(date = today()) {
   if (mode === 'sick' || mode === 'minimum') return [];
   const out = [];
   for (const h of activeHabits()) {
-    if (h.priority === 'optional' || h.optional || !started(h, addDays(date, -1))) continue;
+    if (stateOf(h, date) !== 'focus' || !started(h, addDays(date, -1))) continue;
     const s = h.schedule || {};
     if (s.kind === 'daily' || s.kind === 'weekdays') {
-      if (h.priority !== 'core') continue;
       const days = lastNDays(addDays(date, -1), 7).filter((d) => started(h, d) && isScheduledDay(h, d) && dayMode(d) !== 'sick');
       const missed = days.filter((d) => !isDone(h, d)).length;
       if (days.length >= 3 && missed >= 2 && missed / days.length >= 0.4) {

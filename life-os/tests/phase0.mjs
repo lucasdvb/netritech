@@ -174,6 +174,7 @@ const clipped = () => page.evaluate(() => {
 // Every main screen, with the text at 85% and at 200% of the default size.
 const SCREENS = [
   ['#/today', '.today'], ['#/progress', '[data-view="progress"]'], ['#/habits', '[data-view="habits"]'], ['#/habits/h-protein', '[data-view="habit"]'],
+  ['#/habits/sort', '[data-view="habit-sort"]'], ['#/habits/h-prayer/edit', '[data-view="habit-edit"]'],
   ['#/body', '[data-view="body"]'], ['#/body/training', '[data-view="training"]'], ['#/body/weight', '[data-view="weight"]'],
   ['#/more', '[data-view="more"]'], ['#/more/tasks', '[data-view="tasks"]'], ['#/more/journal', '[data-view="journal"]'],
   ['#/more/goals', '[data-view="goals"]'], ['#/more/settings', '[data-view="settings"]'], ['#/more/data', '[data-view="data"]'],

@@ -170,7 +170,7 @@ export function openDay(date) {
     title: fmtLong(date),
     render: () => {
       const s = dayScore(date);
-      const hs = H.activeHabits().filter((h) => H.dueOn(h, date) && h.priority !== 'optional');
+      const hs = H.activeHabits().filter((h) => H.dueOn(h, date));
       const n = M.nutrition(date);
       const sl = M.sleep(date);
       const mood = M.mood(date);

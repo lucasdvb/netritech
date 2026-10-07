@@ -2,7 +2,7 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
-**Status.** Phase 0 is done (see section 15). Phases 1–11 are next, in order.
+**Status.** Phases 0 and 1 are done (see section 15). Phases 2–11 are next, in order.
 
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
@@ -969,7 +969,10 @@ What shipped, against the acceptance criteria: all 54 earlier steps still pass; 
 - **Tests:** migration fixtures, day-boundary maths, snapshot builder, contrast test for all text tokens, an overflow test at 200% text.
 - **UX:** nothing should look different, except larger text if your phone uses it.
 
-### Phase 1: The habit system (L)
+### Phase 1: The habit system (L) · done
+
+What shipped, against the acceptance criteria: after the sort, Today shows at most three focus habits (in their own block) and nothing twice; the score explains itself from a tap on the ring or the number; one miss never resets a run, and comebacks are counted; a new habit takes three fields in a sheet, well under 30 seconds; the sort, the migration and every state change keep habit and log counts identical. Until routines arrive in Phase 3, Today's time-of-day groups hold the habits on autopilot (they count nothing). A minimum-day tap logs the tiny version. *Not yet* on a graduation suggestion puts it off for two weeks. Free-text habit answers grow to fit instead of cutting text off at large sizes. 47 unit tests and 12 new browser steps cover it; first-render JavaScript is 222 KB (limit 240 KB), and Phase 3's split of Today brings it back under the 200 KB target.
+
 
 - **Objective:** make the system smaller and kinder before redesigning any screen.
 - **Features:**

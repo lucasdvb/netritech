@@ -135,6 +135,9 @@
 .check .check-no { stroke: var(--text-3); stroke-width: 2.2; stroke-linecap: round; }
 .check--done .check-ring { stroke: transparent; }
 .check--done .check-fill { transform: scale(1); }
+.check--tiny .check-ring { stroke: var(--accent); }
+.check .check-tiny { fill: var(--accent); transform-origin: 12px 12px; animation: tiny-in var(--dur-med) var(--spring-snappy) both; }
+@keyframes tiny-in { from { transform: scale(0); } }
 .check--done .check-mark { stroke-dashoffset: 0; }
 .check:active svg { transform: scale(.9); transition: transform 80ms; }
 .check--sm svg { width: 22px; height: 22px; }
@@ -152,9 +155,9 @@
   font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-2);
   transition: background var(--dur-fast), color var(--dur-fast), box-shadow var(--dur-fast);
 }
-.seg-btn[aria-selected='true'] { background: var(--ink); color: var(--on-ink); font-weight: var(--weight-semibold); }
-:root[data-theme='dark'] .seg-btn[aria-selected='true'], :root[data-theme='dark'] .chip.is-active { background: var(--text); color: var(--text-inv); }
-@media (prefers-color-scheme: dark) { :root[data-theme='system'] .seg-btn[aria-selected='true'], :root[data-theme='system'] .chip.is-active { background: var(--text); color: var(--text-inv); } }
+.seg-btn[aria-selected='true'], .seg-btn[aria-checked='true'] { background: var(--ink); color: var(--on-ink); font-weight: var(--weight-semibold); }
+:root[data-theme='dark'] .seg-btn[aria-selected='true'], :root[data-theme='dark'] .seg-btn[aria-checked='true'], :root[data-theme='dark'] .chip.is-active { background: var(--text); color: var(--text-inv); }
+@media (prefers-color-scheme: dark) { :root[data-theme='system'] .seg-btn[aria-selected='true'], :root[data-theme='system'] .seg-btn[aria-checked='true'], :root[data-theme='system'] .chip.is-active { background: var(--text); color: var(--text-inv); } }
 .seg--wrap { flex-wrap: wrap; background: none !important; padding: 0; gap: 6px; }
 .seg--wrap .seg-btn { flex: none; background: var(--surface-2); min-height: 40px; }
 .seg--wrap .seg-btn[aria-selected='true'] { background: var(--ink); color: var(--on-ink); }
@@ -245,6 +248,8 @@ button.row:active { background: var(--surface-2); }
   -webkit-appearance: none; appearance: none;
 }
 textarea.input { padding: 12px 14px; resize: vertical; min-height: 80px; line-height: 1.45; }
+/* one-line answers that wrap instead of hiding text at large sizes */
+textarea.input--grow { min-height: 0; resize: none; overflow: hidden; field-sizing: content; padding-block: 11px; line-height: var(--leading-body); }
 .input:focus, .input-unit:focus-within, .search-field:focus-within { box-shadow: 0 0 0 2px var(--focus); outline: none; }
 .input::placeholder, .input-unit input::placeholder, .search-field input::placeholder { color: var(--text-3); }
 .input-unit { display: flex; align-items: center; gap: 6px; padding: 0 14px 0 0; }
@@ -540,3 +545,6 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 .heat-legend span { display: inline-flex; align-items: center; gap: 5px; }
 .heat-legend .heat-cell { width: 10px; height: 10px; }
 @media (prefers-reduced-motion: reduce) { .chart-line, .bar-col i, .chart-area { animation: none; } }
+/* the tiny version: an accent ring, not a fill, so it reads differently without colour */
+.dot--tiny { background: transparent; box-shadow: inset 0 0 0 1.6px var(--accent); }
+.heat--tiny { background: transparent; box-shadow: inset 0 0 0 2px var(--accent); }

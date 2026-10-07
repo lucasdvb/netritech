@@ -5,6 +5,7 @@ import { today, addDays } from '../domain/dates.js';
 import { firstDate } from '../domain/tasks.js';
 
 import { SEED_VERSION } from './schema.js';
+import { TINY_VERSIONS } from './tiny-versions.js';
 export { SEED_VERSION };
 
 const WORKDAYS = [1, 2, 3, 4, 5];
@@ -87,8 +88,17 @@ const h = (o) => ({
   priority: 'high', goalId: null, affectsScore: false, showOnToday: true, optional: false,
   streaks: false, weekly: true, source: null, ramp: null, checklist: null,
   mvd: false, mvdMin: null, mvdLabel: null, color: null, archived: false,
+  // Nothing starts in focus: you choose your first three on day one.
+  state: o.priority === 'optional' ? 'queue' : 'autopilot', anchor: null,
+  tiny: tinyFor(o),
   ...o,
 });
+
+function tinyFor(o) {
+  const t = TINY_VERSIONS[o.id];
+  if (!t && !o.mvdLabel && o.mvdMin == null) return null;
+  return { label: o.mvdLabel || t?.label || null, min: o.mvdMin ?? t?.min ?? null };
+}
 
 export function habitsSeed() {
   const list = [

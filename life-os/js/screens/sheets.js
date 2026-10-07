@@ -11,6 +11,7 @@ import * as T from '../domain/tasks.js';
 import { num, litres, kgIn, kgOut, weightUnit, habitValue, habitTarget, plural } from '../ui/format.js';
 import { today, fmtLong, relativeDay, parseHM, fmtHM, durationHM, addDays, fmtTime } from '../domain/dates.js';
 import { MODES, habitColor } from '../domain/taxonomy.js';
+import { dayScore } from '../domain/scoring.js';
 
 const setField = ({ el, ui, value }) => {
   const f = el.dataset.field;
@@ -332,6 +333,39 @@ export function setMode(date, mode) {
 }
 
 /* ---------- habit quick sheet ---------- */
+/* ---------- what counts today (the score, explained) ---------- */
+const KIND = { focus: 'Your three', essential: 'Essential', top3: 'Top 3' };
+export function openPlan(date = today()) {
+  app.sheet({
+    title: date === today() ? 'What counts today' : `What counted ${relativeDay(date).toLowerCase()}`,
+    render: () => {
+      const s = dayScore(date);
+      const note = {
+        minimum: 'Minimum day: the tiny versions of your three, plus your essentials.',
+        rest: 'Rest day: training is out of the plan. Walking and mobility still help.',
+        sick: 'Sick day: the score is paused. Rest is the plan.',
+      }[s.mode];
+      return html`<div class="form">
+        <p class="sheet-note">Your score is the share of today’s plan that’s done. Tiny versions count. Habits on autopilot never lower it.</p>
+        ${note ? html`<p class="notice">${icon(MODES[s.mode].icon, { size: 16 })} ${note}</p>` : ''}
+        ${s.items.length ? html`<ul class="counts-list">${s.items.map((it) => {
+          const name = it.kind === 'top3' ? it.text : it.habit.name;
+          const kind = it.kind === 'top3' ? KIND.top3 : H.stateOf(it.habit, date) === 'focus' ? KIND.focus : KIND.essential;
+          const st = it.level === 'tiny' ? 'tiny' : it.done ? 'done' : 'open';
+          return html`<li class="counts-item" data-key="${it.kind}-${it.kind === 'top3' ? it.index : it.habit.id}">
+            <span class="${cx('counts-state', `counts-state--${st}`)}">${st === 'done' ? icon('check', { size: 14, stroke: 2.4 }) : ''}</span>
+            <span class="counts-main"><span class="counts-name">${name}</span><span class="counts-kind">${kind}${st === 'tiny' ? ' · tiny version' : st === 'done' ? ' · done' : ''}</span></span>
+          </li>`;
+        })}</ul>
+        <p class="counts-total tnum">${s.done} of ${s.total} done${s.tiny ? ` · ${s.tiny} tiny` : ''} = ${s.ratio == null ? '—' : `${Math.round(s.ratio * 100)}%`}</p>`
+          : html`<p class="empty-body">${s.mode === 'sick' ? 'Nothing is counted today.' : 'Nothing is planned yet. Choose your three, or write today’s Top 3.'}</p>`}
+        <button type="button" class="btn btn--soft btn--block" data-action="sort">${H.focusHabits(date).length ? 'Change your three' : 'Choose your three'}</button>
+      </div>`;
+    },
+    actions: { sort: ({ sheet }) => { app.closeSheet(sheet); app.go('habits/sort'); } },
+  });
+}
+
 export function openHabit(id, date = today()) {
   const h = H.habit(id);
   if (!h) return;
@@ -342,9 +376,11 @@ export function openHabit(id, date = today()) {
       const hb = H.habit(id);
       const mode = H.dayMode(date);
       const done = H.isDone(hb, date, mode);
+      const lv = H.level(hb, date, mode);
+      const tiny = H.tinyOf(hb);
       const v = H.value(hb, date);
       const l = H.log(hb.id, date);
-      const c7 = H.consistency(hb, today(), 7);
+      const r = H.runs(hb, date);
       return html`<div class="form">
         <div class="habit-sheet-head" style="--ic:${habitColor(hb)}">
           <span class="row-ic">${icon(hb.icon, { size: 18 })}</span>
@@ -365,10 +401,14 @@ export function openHabit(id, date = today()) {
         ${hb.type === 'binary' || hb.type === 'check' ? html`<button type="button" class="${cx('btn btn--block', done ? 'btn--ghost' : 'btn--primary')}" data-action="toggle">
           ${done ? (hb.type === 'check' ? 'Clear' : 'Mark as not done') : (hb.type === 'check' ? 'Yes, done' : 'Mark done')}</button>` : ''}
         ${H.isNumeric(hb) && hb.type !== 'rating' ? html`<button type="button" class="btn btn--ghost btn--block" data-action="toggle">${l?.completed ? 'Remove manual completion' : 'Mark done anyway'}</button>` : ''}
+        ${tiny && !done && hb.type !== 'check' && hb.type !== 'rating' ? (lv === 'tiny' && l?.tiny
+          ? html`<p class="tiny-line">${icon('check', { size: 15, stroke: 2.2 })} Tiny version logged${tiny.label ? html` · ${tiny.label}` : ''}. It counts. <button type="button" class="link-btn" data-action="tiny-off">Undo</button></p>`
+          : lv === 'tiny' ? html`<p class="tiny-line">${icon('check', { size: 15, stroke: 2.2 })} Past the tiny amount${tiny.label ? html` · ${tiny.label}` : ''}. It counts.</p>`
+            : html`<button type="button" class="btn btn--soft btn--block" data-action="tiny-on">Did the tiny version${tiny.label ? html`<span class="btn-sub">${tiny.label}</span>` : ''}</button>`) : ''}
         <label class="field"><span class="field-label">Note for ${dayLabel(date)}</span>
           <input class="input" value="${l?.note || ''}" data-change="note" placeholder="Optional"></label>
         <div class="sheet-foot">
-          <span class="muted">${c7.ratio != null ? `${Math.round(c7.done)} of last ${Math.round(c7.expected) || 7} · ${H.scheduleLabel(hb)}` : H.scheduleLabel(hb)}</span>
+          <span class="muted">${H.STATES[H.stateOf(hb, date)]?.label || ''} · ${r.current ? `${r.current}-${r.unit} run` : H.scheduleLabel(hb)}${r.comebacks ? ` · ${plural(r.comebacks, 'comeback')}` : ''}</span>
           <button type="button" class="link-btn" data-action="details">Details ${icon('chevron-right', { size: 16 })}</button>
         </div>
       </div>`;
@@ -376,6 +416,8 @@ export function openHabit(id, date = today()) {
     inputs: { note: ({ value }) => H.setLog(H.habit(id), date, { note: value }) },
     actions: {
       toggle: () => { const now = H.toggle(H.habit(id), date); if (now) hap.success(); else hap.tap(); },
+      'tiny-on': () => { H.setTiny(H.habit(id), date, true); hap.success(); },
+      'tiny-off': () => { H.setTiny(H.habit(id), date, false); hap.tap(); },
       cl: ({ data }) => { H.toggleChecklistItem(H.habit(id), date, Number(data.i)); hap.tap(); },
       rate: ({ data }) => { H.setValue(H.habit(id), date, Number(data.value)); hap.tap(); },
       'set-value': ({ form }) => { H.setValue(H.habit(id), date, form.v); hap.tap(); },

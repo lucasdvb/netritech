@@ -91,12 +91,15 @@ function hero(date) {
       <div class="hero-text"><p class="hero-label">Today</p><p class="hero-big">Paused</p><p class="hero-sub">Sick days don’t count against you.</p></div>
     </section>`;
   }
+  // The ring and the number both open "What counts today"; the number is the keyboard and screen reader route.
   return html`<section class="${cx('hero', complete && 'is-complete')}" data-key="hero" aria-label="Today’s score">
-    <div class="hero-ring">${ring(s.ratio || 0, { size: 96, stroke: 7, label: `${pct(s.ratio)} of key habits done` })}
-      <span class="hero-pct tnum" data-tween="${Math.round((s.ratio || 0) * 100)}" data-tween-suffix="%"><span data-tween-text>${Math.round((s.ratio || 0) * 100)}%</span></span></div>
+    <div class="hero-ring" data-action="plan">${ring(s.ratio || 0, { size: 96, stroke: 7 })}
+      <span class="hero-pct tnum" data-tween="${Math.round((s.ratio || 0) * 100)}" data-tween-suffix="%" aria-hidden="true"><span data-tween-text>${Math.round((s.ratio || 0) * 100)}%</span></span></div>
     <div class="hero-text">
-      <p class="hero-label">${s.mode === 'minimum' ? 'Minimum day' : 'Today'}</p>
-      <p class="hero-big tnum"><span>${s.done}</span> of ${s.total} <span class="hero-big-sub">${s.mode === 'minimum' ? 'essentials' : 'key habits'}</span></p>
+      <p class="hero-label">${s.mode === 'minimum' ? 'Minimum day' : s.mode === 'rest' ? 'Rest day' : 'Today'}</p>
+      <button type="button" class="hero-big tnum" data-action="plan" aria-label="${s.total ? `${s.done} of ${s.total} planned done${s.tiny ? `, ${s.tiny} as tiny versions` : ''}` : 'Nothing planned yet'}. What counts today">
+        ${s.total ? html`<span>${s.done}</span> of ${s.total} <span class="hero-big-sub">planned${s.tiny ? html` · <span class="tnum">${s.tiny}</span> tiny` : ''}</span>` : html`<span class="hero-big-sub">Nothing planned yet</span>`}
+        ${icon('chevron-right', { size: 18, cls: 'hero-chev' })}</button>
       <div class="hero-week" aria-label="Last 7 days">
         <div class="mini-bars">${week.map((w) => html`<span class="${cx('mini-bar', w.d === date && 'is-today', w.before && 'is-off', w.s.mode === 'sick' && 'is-off')}" title="${fmtDay(w.d)}: ${pct(w.s.ratio)}"><i style="--h:${Math.max(0.06, Math.round((w.s.ratio || 0) * 100) / 100)}"></i><b>${fmtDayLetter(w.d)}</b></span>`)}</div>
         <p class="hero-sub">${r7.ratio != null && r7.days >= 3 ? html`Last 7 days <strong class="tnum">${pct(r7.ratio)}</strong> · <span class="band band--${b.key}">${b.label}</span>` : r7.days ? `Building your baseline · ${r7.days} of 7 days logged` : 'Your 7-day consistency builds from today.'}</p>
@@ -163,8 +166,7 @@ function briefing(date, ph, mode) {
 
 function dayComplete(date, ph, mode) {
   if (date !== today() || !(ph === 'night' || (ph === 'evening' && new Date().getHours() >= 21))) return '';
-  const due = H.activeHabits().filter((h) => H.dueOn(h, date, mode) && h.priority !== 'optional');
-  const done = due.filter((h) => H.isDone(h, date, mode)).length;
+  const plan = dayScore(date);
   const n = M.nutrition(date);
   const t = M.targets();
   const workouts = F.workoutsOn(date);
@@ -175,7 +177,7 @@ function dayComplete(date, ph, mode) {
   return html`<section class="day-complete" data-key="complete">
     <p class="section-label">Day complete</p>
     <div class="dc-grid">
-      <div><dt>Habits</dt><dd class="tnum">${done} / ${due.length}</dd></div>
+      <div><dt>Plan</dt><dd class="tnum">${plan.done} / ${plan.total}</dd></div>
       <div><dt>Protein</dt><dd class="tnum">${num(n.protein)} g</dd></div>
       <div><dt>Water</dt><dd class="tnum">${litres(M.waterMl(date))}</dd></div>
       <div><dt>Steps</dt><dd class="tnum">${M.steps(date) != null ? num(M.steps(date)) : '—'}</dd></div>
@@ -274,10 +276,12 @@ function counterRow(h, date, mode) {
   </div>`;
 }
 
-function habitRow(h, date, mode, ui) {
+function habitRow(h, date, mode, ui, { focus = false } = {}) {
   const done = H.isDone(h, date, mode);
+  const lv = H.level(h, date, mode);
   const l = H.log(h.id, date);
-  const name = mode === 'minimum' && h.mvdLabel ? h.mvdLabel : h.name;
+  const tiny = H.tinyOf(h);
+  const name = mode === 'minimum' && tiny?.label && !h.source ? tiny.label : h.name;
   let sub = '';
   if (h.id === 'h-training') {
     const call = trainingCall(date);
@@ -301,18 +305,29 @@ function habitRow(h, date, mode, ui) {
   } else {
     sub = h.time || '';
   }
+  if (lv === 'tiny') sub = tiny?.label ? `Tiny version · ${tiny.label}` : 'Tiny version';
+  else if (focus && !lv) {
+    // Runs survive one miss; after a miss the row asks, quietly, for the next one.
+    const r = H.runs(h, date);
+    const run = r.missesInRow === 1 ? 'Don’t miss twice' : r.current >= 3 ? `${r.current}-${r.unit} run` : '';
+    sub = [sub, run].filter(Boolean).join(' · ');
+  }
   const expanded = ui.expanded?.[h.id];
-  const state = h.type === 'check' && H.value(h, date) === 0 ? 'no' : undefined;
+  const state = h.type === 'check' && H.value(h, date) === 0 ? 'no' : lv === 'tiny' ? 'tiny' : undefined;
   const isSleep = h.source === 'sleep';
+  const canTiny = focus && !lv && tiny && !isSleep && h.type !== 'check';
   return html`<li class="${cx('hrow', done && 'is-done', expanded && 'is-expanded')}" data-key="${h.id}" style="--ic:${habitColor(h)}">
     ${isSleep
       ? html`<span class="${cx('auto-ic', done && 'is-done')}">${done ? icon('check', { size: 16, stroke: 2.2 }) : icon('bed', { size: 16 })}</span>`
-      : check(done, { action: 'toggle', data: { id: h.id }, label: `${name}${done ? ', done' : ''}`, color: habitColor(h), state })}
+      : check(done, { action: 'toggle', data: { id: h.id }, label: `${name}${done ? ', done' : lv === 'tiny' ? ', tiny version done' : ''}`, color: habitColor(h), state })}
     <button type="button" class="hrow-main" data-action="habit" data-id="${h.id}">
-      <span class="hrow-name">${name}${h.priority === 'optional' ? html`<span class="tag tag--quiet">Bonus</span>` : ''}</span>
+      <span class="hrow-name">${name}</span>
       ${sub ? html`<span class="hrow-sub">${sub}</span>` : ''}
     </button>
-    ${h.checklist?.length ? html`<button type="button" class="icon-btn icon-btn--sm hrow-expand" data-action="expand" data-id="${h.id}" aria-expanded="${!!expanded}" aria-label="Show steps">${icon('chevron-down', { size: 18 })}</button>` : ''}
+    ${canTiny || h.checklist?.length ? html`<span class="hrow-tools">
+      ${canTiny ? html`<button type="button" class="tiny-btn" data-action="tiny" data-id="${h.id}" aria-label="Log the tiny version of ${h.name}${tiny.label ? `: ${tiny.label}` : ''}">Tiny</button>` : ''}
+      ${h.checklist?.length ? html`<button type="button" class="icon-btn icon-btn--sm hrow-expand" data-action="expand" data-id="${h.id}" aria-expanded="${!!expanded}" aria-label="Show steps">${icon('chevron-down', { size: 18 })}</button>` : ''}
+    </span>` : ''}
     ${h.checklist?.length && expanded ? html`<ul class="hrow-steps">${h.checklist.map((item, i) => html`<li data-key="${h.id}-s${i}">
       ${check(!!l?.checklist?.[i] || (l?.value === 1 && !l?.checklist), { action: 'step', data: { id: h.id, i }, label: item, cls: 'check--sm', color: habitColor(h) })}<span>${item}</span></li>`)}</ul>` : ''}
   </li>`;
@@ -337,15 +352,51 @@ function chipGroup(list, date, label) {
     })}</div></div>`;
 }
 
-function sectionBlock(sec, date, mode, ph, ui) {
-  const due = H.activeHabits().filter((h) => h.section === sec.id && H.dueOn(h, date, mode) && h.source !== 'top3');
-  if (!due.length) return '';
-  const tiles = due.filter((h) => METRIC_SOURCES.includes(h.source));
-  const counters = due.filter((h) => COUNTER_SOURCES.includes(h.source));
-  const flexible = due.filter((h) => H.isFlexible(h) && !tiles.includes(h) && !counters.includes(h));
-  const rows = due.filter((h) => !tiles.includes(h) && !counters.includes(h) && !flexible.includes(h))
+/** Split habits into metric tiles, rows, counters and weekly chips. */
+function split(list) {
+  const tiles = list.filter((h) => METRIC_SOURCES.includes(h.source));
+  const counters = list.filter((h) => COUNTER_SOURCES.includes(h.source));
+  const flexible = list.filter((h) => H.isFlexible(h) && !tiles.includes(h) && !counters.includes(h));
+  const rows = list.filter((h) => !tiles.includes(h) && !counters.includes(h) && !flexible.includes(h))
     .sort((a, b) => (a.time || '99').localeCompare(b.time || '99') || a.order - b.order);
-  const counted = [...rows, ...tiles, ...counters].filter((h) => h.priority !== 'optional');
+  return { tiles, counters, flexible, rows };
+}
+
+/** Your three: the focus habits due today, at the top, with their tiny versions one tap away. */
+function focusBlock(date, mode, ui) {
+  if (mode === 'sick' || mode === 'minimum') return '';
+  const focus = H.focusHabits(date);
+  if (!focus.length) {
+    const until = store.settings().focusPromptUntil;
+    if (date !== today() || (until && today() < until)) return '';
+    return html`<section class="choose3" data-key="focus" aria-label="Choose your three">
+      <h2 class="block-title">Choose your three</h2>
+      <p class="card-lead">Pick up to three habits to train. They count in your score. Everything else keeps running on autopilot and never counts against you.</p>
+      <div class="btn-row"><button type="button" class="btn btn--primary" data-action="nav" data-to="habits/sort">Choose</button>
+        <button type="button" class="btn btn--ghost" data-action="focus-later">Not now</button></div>
+    </section>`;
+  }
+  const due = focus.filter((h) => H.dueOn(h, date, mode) && h.source !== 'top3');
+  const { tiles, counters, flexible, rows } = split(due);
+  const doneN = due.filter((h) => H.counts(h, date, mode)).length;
+  const off = focus.filter((h) => !due.includes(h));
+  return html`<section class="${cx('focus3', due.length && doneN === due.length && 'is-complete')}" data-key="focus" aria-label="Your three">
+    <div class="block-head"><h2 class="block-title">Your three</h2>
+      <span class="block-meta tnum">${due.length ? `${doneN} of ${due.length}` : ''}</span>
+      <button type="button" class="link-btn" data-action="nav" data-to="habits/sort">Change</button></div>
+    ${tiles.length ? html`<div class="tiles">${tiles.map((h) => metricTile(h, date, mode))}</div>` : ''}
+    ${rows.length || flexible.length ? html`<ul class="hlist">${[...rows, ...flexible].map((h) => habitRow(h, date, mode, ui, { focus: true }))}</ul>` : ''}
+    ${counters.length ? html`<div class="counters">${counters.map((h) => counterRow(h, date, mode))}</div>` : ''}
+    ${off.length ? html`<p class="focus3-off">${off.map((h) => h.name).join(' · ')} ${off.length === 1 ? 'isn’t' : 'aren’t'} due today.</p>` : ''}
+  </section>`;
+}
+
+function sectionBlock(sec, date, mode, ph, ui) {
+  // Your three sit in their own block; groups hold everything on autopilot.
+  const due = H.activeHabits().filter((h) => h.section === sec.id && H.dueOn(h, date, mode) && h.source !== 'top3' && H.stateOf(h, date) !== 'focus');
+  if (!due.length) return '';
+  const { tiles, counters, flexible, rows } = split(due);
+  const counted = [...rows, ...tiles, ...counters];
   const doneN = counted.filter((h) => H.isDone(h, date, mode)).length;
   const allDone = counted.length && doneN === counted.length;
   const phaseKey = date === today() ? ph : 'review';
@@ -433,6 +484,7 @@ export default {
         </div>
         <div class="today-main">
           ${shutdownCard(date, ph, mode)}
+          ${focusBlock(date, mode, ui)}
           ${top3(date, ph, mode)}
           ${tasksCard(date, ph, mode)}
           ${body}
@@ -456,7 +508,7 @@ export default {
         if (!sessionStorage.getItem(key) && !localStorage.getItem(key)) {
           localStorage.setItem(key, '1');
           hap.success();
-          app.toast(s.mode === 'minimum' ? `All ${essentials().toLowerCase()} essentials. That’s a good day.` : `All ${s.total} key habits. Quiet win.`, { icon: 'sparkles' });
+          app.toast(s.mode === 'minimum' ? 'Everything on your minimum day. That’s a good day.' : 'Everything you planned today. Quiet win.', { icon: 'sparkles' });
         }
       } catch { /* storage unavailable */ }
     }
@@ -468,10 +520,19 @@ export default {
       const date = params.date || today();
       const h = H.habit(data.id);
       const wasDone = H.isDone(h, date);
-      const now = H.toggle(h, date);
+      const now = H.tap(h, date);
       if (wasDone && now) { app.toast('Done from your logged data. Edit the entry to change it.'); return; }
       now ? hap.success() : hap.tap();
     },
+    tiny: ({ data, params }) => {
+      const date = params.date || today();
+      const h = H.habit(data.id);
+      H.setTiny(h, date, true);
+      hap.success();
+      app.toast('Tiny version logged. It counts.', { action: { label: 'Undo', fn: () => H.setTiny(H.habit(h.id), date, false) } });
+    },
+    plan: async ({ params }) => (await sheets()).openPlan(params.date || today()),
+    'focus-later': () => store.setSettings({ focusPromptUntil: addDays(today(), 7) }),
     step: ({ data, params }) => { H.toggleChecklistItem(H.habit(data.id), params.date || today(), Number(data.i)); hap.tap(); },
     expand: ({ data, ui }) => { ui.expanded = { ...(ui.expanded || {}), [data.id]: !ui.expanded?.[data.id] }; app.refresh(); },
     habit: async ({ data, params }) => {

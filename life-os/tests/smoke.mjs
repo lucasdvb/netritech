@@ -88,7 +88,9 @@ await step('habits list + detail', async () => {
 await step('create habit', async () => {
   await page.goto(base + '#/habits/new');
   await page.waitForSelector('.editor');
-  await page.fill('.editor input[data-f="name"]', 'Evening walk');
+  await page.fill('.editor [data-f="name"]', 'Evening walk');
+  await page.locator('.ed-more > summary').click();
+  await page.waitForSelector('.ed-more[open] select[data-change="kind"]');
   await page.selectOption('select[data-change="kind"]', 'perWeek');
   await page.locator('[data-action="count"][data-delta="1"]').click();
   await page.locator('.switch[data-f="streaks"]').click();
@@ -104,7 +106,7 @@ await step('create habit', async () => {
 await step('edit + archive + restore', async () => {
   await page.locator('[data-action="edit"]').click();
   await page.waitForSelector('.editor');
-  await page.fill('.editor input[data-f="name"]', 'Evening walk outside');
+  await page.fill('.editor [data-f="name"]', 'Evening walk outside');
   await page.locator('.editor button[type="submit"]').click();
   await page.waitForFunction(() => document.querySelector('.page-title')?.textContent.includes('outside'));
   await page.locator('[data-action="archive"]').click();
@@ -125,7 +127,8 @@ await step('past day + minimum mode', async () => {
   await page.waitForSelector('.minday');
   await shot('13-minimum-day');
   const n = await page.locator('.minday .hrow, .minday .tile').count();
-  if (n !== 8) throw new Error('minimum day shows ' + n + ' items');
+  // the 8 essentials, plus Evening walk: created above, it took a free slot in your three
+  if (n !== 9) throw new Error('minimum day shows ' + n + ' items');
   await page.locator('.minday [data-action="set-mode"]').click();
   await page.waitForSelector('.minday', { state: 'detached' });
 });

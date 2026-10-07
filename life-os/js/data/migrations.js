@@ -4,6 +4,7 @@
 // update can always be undone from Settings › Data.
 import * as store from './store.js';
 import { BACKUP_STORES, DB_VERSION } from './schema.js';
+import { TINY_VERSIONS } from './tiny-versions.js';
 
 /** Each run() returns store.batch ops; it must leave already-migrated data unchanged. */
 export const MIGRATIONS = [
@@ -14,6 +15,17 @@ export const MIGRATIONS = [
       const me = store.profile();
       return me && me.dayEndsAt == null ? [{ store: 'profile', value: { ...me, dayEndsAt: '03:00' } }] : [];
     },
+  },
+  {
+    id: '2026-10-habit-states',
+    about: 'focus, autopilot and tiny versions for your habits',
+    // Priorities become states (optional habits wait in Later, the rest run on autopilot until
+    // you choose your three), and every habit gets its tiny version.
+    run: () => store.all('habits').filter((h) => !h.state).map((h) => {
+      const t = TINY_VERSIONS[h.id];
+      const tiny = h.tiny || (t || h.mvdLabel || h.mvdMin != null ? { label: h.mvdLabel || t?.label || null, min: h.mvdMin ?? t?.min ?? null } : null);
+      return { store: 'habits', value: { ...h, state: h.priority === 'optional' ? 'queue' : 'autopilot', tiny, anchor: h.anchor ?? null } };
+    }),
   },
 ];
 
