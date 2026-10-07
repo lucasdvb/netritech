@@ -18,3 +18,11 @@
 # Disruptive Dodo images
 
 - Every generated image for the Disruptive Dodo site follows `dd-site/docs/image-direction.md`: black and white, the base alternating black / white, and one small accent detail in lime #E1FF01 (no blue). Work one image at a time from the client's reference. The generation permission rule above still applies to each one.
+
+# Life OS (`life-os/`)
+
+- The owner's master brief is `life-os/docs/master-brief.md`; the agreed architecture and build plan is `life-os/docs/product-architecture.md`. Read both before changing Life OS.
+- Committed scope: the whole brief plus all 30 agreed ideas (U1–U10, H1–H10, G1–G10, listed in section 13 of the plan). Every one gets built; none are optional.
+- Build phase by phase in the plan's order. Each phase ends with all test suites green, light and dark screenshots, a commit and a push.
+- Design rules: brand palette only, solid single-colour cards, one colour per element, blue (#0071E3) as the only accent, red only for delete and errors. Data stays on the device and everything must work offline.
+- Moments and ceremonies: render a HyperFrames preview and get the owner's approval before building them into the app.
