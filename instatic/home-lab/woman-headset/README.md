@@ -4,6 +4,8 @@
 
 ![preview](preview.jpg)
 
+`preview-hover.mp4` shows the mouse interaction. It was recorded with software rendering, so it is choppier than on a real GPU.
+
 ## What changes
 
 The 2nd hero object (the galaxy) becomes a particle bust of a woman wearing a headset. The source model is `assets/3d/woman-headset.glb` (Meshy).
