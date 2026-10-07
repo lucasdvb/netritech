@@ -8,8 +8,9 @@ await step('load sample data', async () => {
   await go('#/more/data', '[data-view="data"]');
   await page.locator('[data-action="demo-on"]').click();
   await page.waitForSelector('[data-action="demo-off"]', { timeout: 15000 });
-  await go('#/more', '[data-view="more"] .notice--warn');
-  await shot('40-more');
+  await go('#/you', '.sheet .you .notice--warn');
+  await shot('40-you');
+  await page.keyboard.press('Escape');
 });
 
 await step('progress trends', async () => {
@@ -74,7 +75,7 @@ await step('mind / faith / relationships / work', async () => {
 await step('goal milestone', async () => {
   await go('#/more/goals', '.goal-list');
   await shot('50-goals');
-  await page.locator('a[href="#/more/goals/g-strength"]').click();
+  await page.locator('a[href="#/plan/goals/g-strength"]').click();
   await page.waitForSelector('.milestone');
   await page.locator('.milestone .check').first().click();
   await page.waitForSelector('.milestone.is-done');

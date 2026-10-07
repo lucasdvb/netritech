@@ -36,7 +36,7 @@ export default {
     const perm = permissionState();
     const rs = reminderStats();
     return html`
-      ${pageHead({ title: 'Settings', back: { to: 'more', label: 'More' } })}
+      ${pageHead({ title: 'Settings', back: { to: 'today', label: 'Today' } })}
       <section class="block block--first"><h2 class="set-section">Profile</h2>
         <div class="set-list">
           ${profileField('Name', 'name')}

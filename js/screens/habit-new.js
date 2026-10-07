@@ -9,10 +9,6 @@ import { fieldError } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 
-/** A draft handed to the full editor by "More options". */
-let pending = null;
-export const takePending = () => { const d = pending; pending = null; return d; };
-
 /** The habit the three answers describe, with everything else defaulted. */
 export function draftFrom({ name = '', anchor = '', tiny = '' }) {
   const shape = H.guessShape(name, anchor);
@@ -60,10 +56,10 @@ export function openNewHabit(prefill = {}) {
     },
     actions: {
       anchor: ({ data, sheet }) => { sheet.ui.anchor = sheet.ui.anchor === data.v ? '' : data.v; hap.tap(); sheet.refresh(); },
-      more: ({ sheet }) => {
-        pending = draftFrom(sheet.ui);
+      more: async ({ sheet }) => {
+        const draft = draftFrom(sheet.ui);
         app.closeSheet(sheet);
-        app.go('habits/new');
+        (await import('./habit-edit.js')).openHabitEditor(draft);
       },
       save: ({ sheet }) => {
         if (!sheet.ui.name.trim()) {
@@ -77,7 +73,7 @@ export function openNewHabit(prefill = {}) {
         hap.success();
         app.closeSheet(sheet);
         app.toast(h.state === 'focus' ? `${h.name} is one of your three.` : `${h.name} is waiting in Later.`, {
-          icon: 'check', action: { label: 'Open', fn: () => app.go(`habits/${h.id}`) },
+          icon: 'check', action: { label: 'Open', fn: () => app.go(`plan/habits/${h.id}`) },
         });
       },
     },

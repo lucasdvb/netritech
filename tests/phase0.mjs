@@ -72,7 +72,7 @@ await step('upgrading a version 2 database keeps every record and takes a safety
   if (s.dayEndsAt !== '03:00') throw new Error(`dayEndsAt ${s.dayEndsAt}`);
   if (s.copies.length !== 1) throw new Error(`${s.copies.length} safety copies`);
   if (s.copies[0].counts.habitLogs !== fixture.counts.habitLogs) throw new Error('the safety copy is incomplete');
-  await go('#/more/data', '[data-action="copy-restore"]');
+  await go('#/you/data', '[data-action="copy-restore"]');
   await shot('01-safety-copy');
 });
 
@@ -144,7 +144,7 @@ await step('the day ends at 03:00 unless you change it', async () => {
   await p.waitForFunction(() => window.__lifeos?.ready, null, { timeout: 15000 });
   const late = await p.evaluate(async () => (await import('./js/domain/dates.js')).today());
   if (late !== '2026-10-07') throw new Error(`at 01:30 today is ${late}`);
-  await p.goto(`${base}#/more/settings`);
+  await p.goto(`${base}#/you/settings`);
   await p.selectOption('select[data-k="dayEndsAt"]', '00:00');
   await p.waitForFunction(() => window.__lifeos.store.profile().dayEndsAt === '00:00');
   const after = await p.evaluate(async () => (await import('./js/domain/dates.js')).today());
@@ -173,11 +173,13 @@ const clipped = () => page.evaluate(() => {
 
 // Every main screen, with the text at 85% and at 200% of the default size.
 const SCREENS = [
-  ['#/today', '.today'], ['#/progress', '[data-view="progress"]'], ['#/habits', '[data-view="habits"]'], ['#/habits/h-protein', '[data-view="habit"]'],
-  ['#/habits/sort', '[data-view="habit-sort"]'], ['#/habits/h-prayer/edit', '[data-view="habit-edit"]'],
-  ['#/body', '[data-view="body"]'], ['#/body/training', '[data-view="training"]'], ['#/body/weight', '[data-view="weight"]'],
-  ['#/more', '[data-view="more"]'], ['#/more/tasks', '[data-view="tasks"]'], ['#/more/journal', '[data-view="journal"]'],
-  ['#/more/goals', '[data-view="goals"]'], ['#/more/settings', '[data-view="settings"]'], ['#/more/data', '[data-view="data"]'],
+  ['#/today', '.today'], ['#/plan', '[data-view="plan"]'], ['#/plan/habits', '[data-view="habits"]'], ['#/plan/habits/h-protein', '[data-view="habit"]'],
+  ['#/plan/habits/sort', '[data-view="habit-sort"]'], ['#/plan/tasks', '[data-view="tasks"]'], ['#/plan/goals', '[data-view="goals"]'],
+  ['#/plan/training', '[data-view="training"]'], ['#/plan/playbook', '[data-view="playbook"]'],
+  ['#/progress', '[data-view="progress"]'], ['#/progress/body', '[data-view="body"]'], ['#/progress/body/weight', '[data-view="weight"]'],
+  ['#/progress/areas/mind', '[data-view="mind"]'], ['#/progress/areas/health', '[data-view="area"]'],
+  ['#/reflect', '[data-view="reflect"]'], ['#/reflect/journal', '[data-view="journal"]'],
+  ['#/you/settings', '[data-view="settings"]'], ['#/you/data', '[data-view="data"]'],
 ];
 for (const [label, size] of [['85', '90.3125%'], ['200', '212.5%']]) {
   await step(`text at ${label}% fits every screen`, async () => {

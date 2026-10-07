@@ -2,7 +2,7 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
-**Status.** Phases 0 and 1 are done (see section 15). Phases 2–11 are next, in order.
+**Status.** Phases 0–2 are done (see section 15). Phases 3–11 are next, in order.
 
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
@@ -995,7 +995,10 @@ What shipped, against the acceptance criteria: after the sort, Today shows at mo
 - **Tests:** unit (score, runs, comebacks, graduation, tiny); e2e (sort flow, create flow, miss-then-comeback over simulated days).
 - **UX:** the sort must feel like relief, not homework. One screen, drag or tap, sensible suggestions, and an "I'll decide later" path that defaults safely.
 
-### Phase 2: Navigation and the spatial model (M)
+### Phase 2: Navigation and the spatial model (M) · done
+
+What shipped, against the acceptance criteria: every older address (35 of them, in `js/routes.js`) lands on its new home; a crawl from the four places reaches every screen in three levels or fewer (a workout page opens from starting or reviewing a session); back restores the exact scroll position, and a list beside its detail keeps its own; Tab reaches every control on Today and 1–4, J/K, X, E, N, / and ? work without a mouse; a View Transition with a title morph drops no more than three frames in the test profile, and reduced motion turns it into a fade. Plan, Reflect, the area pages, You and capture are new; More and the Body tab are gone (Body lives under Progress, with logging one tap away on +). The habit editor became a sheet that saves as you go, and deletes use Undo instead of a confirmation. First-render JavaScript is 233 KB (limit 240 KB) after reminders' rules and the migrations moved out of the start-up path; Phase 3's split of Today brings it under the 200 KB target. 48 unit tests and 16 new browser steps cover it.
+
 
 - **Objective:** four places, one interaction language, things growing out of what you tap.
 - **Features:**

@@ -1,5 +1,6 @@
 // Progress photos: stored as blobs in IndexedDB on this device only.
 import * as store from '../data/store.js';
+import { deleteWithUndo } from '../ui/undo.js';
 import { today, fmtMDY, fmtMonth, monthKey } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
@@ -53,7 +54,7 @@ export default {
     const other = mode === 'first' ? list[0] : list[list.length - 2];
     const months = [...new Set(all.map((p) => monthKey(p.date)))];
     return html`
-      ${pageHead({ title: 'Photos', back: { to: 'body', label: 'Body' } })}
+      ${pageHead({ title: 'Photos', back: { to: 'progress/body', label: 'Body' } })}
       <p class="privacy-line">${icon('lock', { size: 14 })} Stored only on this device. Never uploaded. Not included in backups unless you choose to.</p>
       <div class="photo-add card">
         <p class="section-label">Add this month’s photos</p>
@@ -95,13 +96,16 @@ export default {
   actions: {
     pose: ({ data, ui }) => { ui.pose = data.value; app.refresh(); },
     mode: ({ data, ui }) => { ui.mode = data.value; app.refresh(); },
-    del: async ({ data }) => {
-      const ok = await app.confirm({ title: 'Delete this photo?', body: 'It’s removed from this device. This can’t be undone.', confirm: 'Delete', tone: 'danger' });
-      if (!ok) return;
-      store.remove('photos', data.id);
-      await store.blobs.del(data.id);
-      const u = urls.get(data.id);
-      if (u) { URL.revokeObjectURL(u); urls.delete(data.id); }
+    del: ({ data }) => {
+      // The image file stays until the chance to undo has passed.
+      deleteWithUndo([{ store: 'photos', id: data.id }], 'Photo deleted', {
+        onGone: async () => {
+          if (store.get('photos', data.id)) return;
+          await store.blobs.del(data.id);
+          const u = urls.get(data.id);
+          if (u) { URL.revokeObjectURL(u); urls.delete(data.id); }
+        },
+      });
     },
   },
   inputs: {

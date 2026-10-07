@@ -1,4 +1,5 @@
 import * as store from '../data/store.js';
+import { deleteWithUndo } from '../ui/undo.js';
 import * as F from '../domain/fitness.js';
 import { today, fmtMDY, relativeDay, fmtMD } from '../domain/dates.js';
 import { html, raw, cx } from '../ui/dom.js';
@@ -84,7 +85,7 @@ export default {
   title: ({ params }) => store.get('workouts', params.id)?.title || 'Workout',
   render({ params, ui }) {
     const w = store.get('workouts', params.id);
-    if (!w) return html`${pageHead({ title: 'Workout', back: { to: 'body/training', label: 'Training' } })}${empty({ ic: 'dumbbell', title: 'This session doesn’t exist anymore.' })}`;
+    if (!w) return html`${pageHead({ title: 'Workout', back: { to: 'plan/training', label: 'Training' } })}${empty({ ic: 'dumbbell', title: 'This session doesn’t exist anymore.' })}`;
     const gs = groups(w.id);
     const active = w.status === 'active';
     const progress = active ? null : F.workoutProgress(w);
@@ -92,7 +93,7 @@ export default {
     const total = F.setsOf(w.id).length;
     const tpl = w.templateId ? F.template(w.templateId) : null;
     return html`
-      ${pageHead({ title: w.title, eyebrow: `${fmtMDY(w.date)}${active ? ' · in progress' : ''}`, back: { to: 'body/training', label: 'Training' },
+      ${pageHead({ title: w.title, eyebrow: `${fmtMDY(w.date)}${active ? ' · in progress' : ''}`, back: { to: 'plan/training', label: 'Training' },
         actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="menu" aria-label="Session options">${icon('ellipsis', { size: 20 })}</button>` })}
       <div class="wo-bar">
         <span class="wo-stat"><span class="muted">Time</span> <b class="tnum" id="wo-timer">${elapsed(w)}</b></span>
@@ -184,7 +185,7 @@ function exerciseMenu(workoutId, order) {
         hap.tap();
         app.closeSheet(sheet);
       },
-      history: ({ sheet }) => { app.closeSheet(sheet); app.go(`body/exercise/${e.id}`); },
+      history: ({ sheet }) => { app.closeSheet(sheet); app.go(`plan/training/exercises/${e.id}`); },
       remove: ({ sheet }) => {
         store.batch(sets.map((s) => ({ store: 'workoutSets', delete: s.id })));
         app.closeSheet(sheet);
@@ -257,11 +258,10 @@ function sessionMenu(workoutId) {
       },
       discard: async ({ sheet }) => {
         app.closeSheet(sheet);
-        const ok = await app.confirm({ title: w.status === 'active' ? 'Discard this session?' : 'Delete this session?', body: 'Its sets will be removed. This can’t be undone.', confirm: w.status === 'active' ? 'Discard' : 'Delete', tone: 'danger' });
-        if (!ok) return;
         const sets = F.setsOf(w.id);
-        store.batch([{ store: 'workouts', delete: w.id }, ...sets.map((s) => ({ store: 'workoutSets', delete: s.id }))]);
-        app.replace('body/training');
+        app.replace('plan/training');
+        deleteWithUndo([{ store: 'workouts', id: w.id }, ...sets.map((s) => ({ store: 'workoutSets', id: s.id }))],
+          w.status === 'active' ? 'Session discarded' : 'Session deleted');
       },
     },
   });

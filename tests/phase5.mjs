@@ -130,7 +130,7 @@ await step('a year of data stays fast', async () => {
     return Math.round(performance.now() - t0);
   }, [hash, sel]);
   for (const [h, s] of [['#/today', '[data-view="today"] .hero'], ['#/progress', '[data-view="progress"] .chart-line'], ['#/progress/calendar', '.cal-grid'], ['#/habits', '[data-view="habits"] .row'], ['#/body/weight', '[data-view="weight"] .chart-line'], ['#/more/review/week', '[data-view="review-week"] .review-grid']]) {
-    await time('#/more', '[data-view="more"]');
+    await time('#/plan', '[data-view="plan"]');
     timings.push([h, await time(h, s)]);
   }
   const counts = await page.evaluate(() => ({ logs: window.__lifeos.store.all('habitLogs').length, sets: window.__lifeos.store.all('workoutSets').length }));

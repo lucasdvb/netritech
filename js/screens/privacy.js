@@ -16,7 +16,7 @@ export default {
   title: 'Privacy',
   render() {
     return html`
-      ${pageHead({ title: 'Privacy', back: { to: 'more', label: 'More' } })}
+      ${pageHead({ title: 'Privacy', back: { to: 'today', label: 'Today' } })}
       <p class="lead">A personal system holds personal things. Here’s exactly where they go: nowhere.</p>
       <ul class="privacy-list">${POINTS.map(([ic, t, b]) => html`<li><span class="row-ic" style="--ic:var(--accent)">${icon(ic, { size: 18 })}</span><div><p class="card-title">${t}</p><p class="muted">${b}</p></div></li>`)}</ul>
       <p class="fine-print">If you clear Safari’s website data for this site, your Life OS data is deleted with it. Keep a recent backup.</p>`;

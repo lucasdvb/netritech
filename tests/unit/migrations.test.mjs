@@ -69,3 +69,9 @@ test('a safety copy restores like a backup file', async () => {
   assert.equal(info.counts.weightEntries, 1);
   assert.equal(info.counts.profile, 1);
 });
+
+test('schema names the newest migration, so start-up knows when to load them', async () => {
+  const { LATEST_MIGRATION } = await import('../../js/data/schema.js');
+  const { MIGRATIONS } = await import('../../js/data/migrations.js');
+  assert.equal(MIGRATIONS.at(-1).id, LATEST_MIGRATION);
+});

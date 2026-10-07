@@ -37,9 +37,9 @@ function habitRow(h) {
     : dots(H.dots(h, today(), 7), { size: 'sm' });
   return html`<li class="swipe" data-key="${h.id}" data-swipe>
     <div class="swipe-actions"><button type="button" class="swipe-btn" data-action="archive" data-id="${h.id}">${icon('archive', { size: 18 })}<span>Archive</span></button></div>
-    <a class="row swipe-content" href="#/habits/${h.id}" data-action="nav" data-to="habits/${h.id}">
+    <a class="row swipe-content" href="#/plan/habits/${h.id}" data-action="nav" data-to="plan/habits/${h.id}">
       <span class="row-ic" style="--ic:${habitColor(h)}">${icon(h.icon, { size: 18 })}</span>
-      <span class="row-main"><span class="row-title">${h.name}</span><span class="row-sub">${sub}</span></span>
+      <span class="row-main"><span class="row-title" data-morph="habit-${h.id}">${h.name}</span><span class="row-sub">${sub}</span></span>
       <span class="row-right hl-right">${st === 'queue' || st === 'paused' ? '' : right}${c.ratio != null && !flexible && st !== 'queue' && st !== 'paused' ? html`<span class="hl-pct tnum">${Math.round(c.ratio * 100)}%</span>` : ''}</span>
       <span class="row-chev">${icon('chevron-right', { size: 18 })}</span>
     </a>
@@ -61,7 +61,7 @@ export default {
           <button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New habit">${icon('plus', { size: 20 })}</button>` })}
       ${segmented(GROUPINGS, by, { action: 'by', name: 'Group habits by' })}
       ${!active.length ? empty({ ic: 'list-checks', title: 'No habits yet', body: 'Start with one small thing you want to do most days. Three questions and it’s on Today.', cta: 'Add a habit', action: 'new' }) : ''}
-      ${by === 'state' && active.length ? html`<button type="button" class="card card--link sort-cta" data-action="nav" data-to="habits/sort" data-key="sort-cta">
+      ${by === 'state' && active.length ? html`<button type="button" class="card card--link sort-cta" data-action="nav" data-to="plan/habits/sort" data-key="sort-cta">
         <span class="sort-cta-text"><span class="card-title">${focus ? 'Change your three' : 'Choose your three'}</span>
           <span class="row-sub">Sort every habit into Focus, Autopilot or Later on one screen.</span></span>
         ${icon('chevron-right', { size: 18 })}</button>` : ''}
@@ -79,7 +79,13 @@ export default {
       </details>` : ''}
       <p class="foot-note">Swipe left on a habit to archive it. Archived habits keep their history.</p>`;
   },
-  mount(el) { attachSwipe(el); },
+  mount(el, ctx) {
+    attachSwipe(el);
+    if (ctx.query.new) {
+      window.history.replaceState(window.history.state, '', location.hash.split('?')[0]);
+      import('./habit-new.js').then((m) => m.openNewHabit());
+    }
+  },
   actions: {
     by: ({ data, ui }) => { ui.by = data.value; hap.tap(); app.refresh(); },
     new: async () => (await import('./habit-new.js')).openNewHabit(),

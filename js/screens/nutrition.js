@@ -63,7 +63,7 @@ export default {
     const logs = [...n.logs].sort((a, b) => (a.at < b.at ? 1 : -1));
     const waters = store.onDate('waterLogs', date);
     return html`
-      ${pageHead({ title: 'Nutrition', back: { to: 'body', label: 'Body' } })}
+      ${pageHead({ title: 'Nutrition', back: { to: 'progress/body', label: 'Body' } })}
       <div class="date-switch">
         <button type="button" class="icon-btn icon-btn--sm" data-action="day" data-delta="-1" aria-label="Previous day">${icon('chevron-left', { size: 18 })}</button>
         <p class="date-switch-label">${relativeDay(date)}</p>
@@ -101,7 +101,7 @@ export default {
       <section class="block">${adaptiveCard()}</section>
 
       <section class="block">
-        <div class="block-head"><h2 class="block-title">Targets</h2><button type="button" class="link-btn" data-action="nav" data-to="more/settings">Edit</button></div>
+        <div class="block-head"><h2 class="block-title">Targets</h2><button type="button" class="link-btn" data-action="nav" data-to="you/settings">Edit</button></div>
         <dl class="facts">
           <div><dt>Protein</dt><dd>${t.proteinG} g · breakfast 30–40 · lunch 35–45 · snack 20–30 · dinner 40–50</dd></div>
           <div><dt>Calories</dt><dd>${num(t.kcal)} kcal (start ${num(t.kcalMin)}–${num(t.kcalMax)})</dd></div>

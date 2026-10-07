@@ -362,7 +362,7 @@ export function openPlan(date = today()) {
         <button type="button" class="btn btn--soft btn--block" data-action="sort">${H.focusHabits(date).length ? 'Change your three' : 'Choose your three'}</button>
       </div>`;
     },
-    actions: { sort: ({ sheet }) => { app.closeSheet(sheet); app.go('habits/sort'); } },
+    actions: { sort: ({ sheet }) => { app.closeSheet(sheet); app.go('plan/habits/sort'); } },
   });
 }
 
@@ -423,7 +423,7 @@ export function openHabit(id, date = today()) {
       'set-value': ({ form }) => { H.setValue(H.habit(id), date, form.v); hap.tap(); },
       inc: () => { const hb = H.habit(id); H.setValue(hb, date, (Number(H.value(hb, date)) || 0) + (hb.step || 1)); hap.tap(); },
       source: ({ sheet }) => { app.closeSheet(sheet); openSource(H.habit(id), date); },
-      details: ({ sheet }) => { app.closeSheet(sheet); app.go(`habits/${id}`); },
+      details: ({ sheet }) => { app.closeSheet(sheet); app.go(`plan/habits/${id}`); },
     },
   });
 }
@@ -444,14 +444,14 @@ export function openSource(h, date = today()) {
   if (src === 'sleep') return openCheckin(date);
   if (src === 'mind') return openSession('reading', date);
   if (src === 'meditation') return openSession('meditation', date);
-  if (src === 'journal') return app.go('more/journal');
+  if (src === 'journal') return app.go('reflect/journal');
   if (src === 'shutdown') return openShutdown(date);
   if (src.startsWith('rel:')) return openRelationship(src.slice(4), date);
-  if (src.startsWith('workout:')) return app.go('body/training');
-  if (src === 'measurements') return app.go('body/measurements');
-  if (src === 'photos') return app.go('body/photos');
-  if (src === 'weeklyReview') return app.go('more/review/week');
-  if (src === 'monthlyReview') return app.go('more/review/month');
+  if (src.startsWith('workout:')) return app.go('plan/training');
+  if (src === 'measurements') return app.go('progress/body/measurements');
+  if (src === 'photos') return app.go('progress/body/photos');
+  if (src === 'weeklyReview') return app.go('reflect/review/week');
+  if (src === 'monthlyReview') return app.go('reflect/review/month');
   if (['deepWork', 'breaks', 'eyeBreaks'].includes(src)) return bumpCounter(date, src, 1);
   return openHabit(h.id, date);
 }

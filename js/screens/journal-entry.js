@@ -1,4 +1,5 @@
 import * as store from '../data/store.js';
+import { deleteWithUndo } from '../ui/undo.js';
 import { today, fmtLong, fmtTime } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
@@ -20,10 +21,10 @@ export default {
   title: 'Journal',
   render({ params }) {
     const j = store.get('journalEntries', params.id);
-    if (!j) return html`${pageHead({ title: 'Journal', back: { to: 'more/journal', label: 'Journal' } })}${empty({ ic: 'notebook-pen', title: 'This entry was deleted.' })}`;
+    if (!j) return html`${pageHead({ title: 'Journal', back: { to: 'reflect/journal', label: 'Journal' } })}${empty({ ic: 'notebook-pen', title: 'This entry was deleted.' })}`;
     const prompts = PROMPTS[j.kind] || [];
     return html`
-      ${pageHead({ title: KIND_LABEL[j.kind], eyebrow: fmtLong(j.date), back: { to: 'more/journal', label: 'Journal' },
+      ${pageHead({ title: KIND_LABEL[j.kind], morph: `journal-${j.id}`, eyebrow: fmtLong(j.date), back: { to: 'reflect/journal', label: 'Journal' },
         actions: html`<button type="button" class="icon-btn" data-action="del" aria-label="Delete entry">${icon('trash-2', { size: 19 })}</button>` })}
       <div class="journal-form">
         ${prompts.map((q, i) => html`<label class="prompt"><span class="prompt-q">${q}</span>
@@ -44,12 +45,10 @@ export default {
     text: ({ value, params }) => saveLater(params.id, () => ({ text: value })),
   },
   actions: {
-    del: async ({ params }) => {
-      const ok = await app.confirm({ title: 'Delete this entry?', body: 'It’s removed from this device. This can’t be undone.', confirm: 'Delete', tone: 'danger' });
-      if (!ok) return;
+    del: ({ params }) => {
       clearTimeout(timers.get(params.id));
-      store.remove('journalEntries', params.id);
-      app.replace('more/journal');
+      app.replace('reflect/journal');
+      deleteWithUndo([{ store: 'journalEntries', id: params.id }], 'Entry deleted');
     },
   },
   unmount(el, { params }) {
