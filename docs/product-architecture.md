@@ -400,24 +400,14 @@ On Sunday evening, Today shows a review card; Reflect shows it too. The review r
 
 ### 9.1 Typography
 
-Manrope (self-hosted, variable 200–800). Sizes are in **rem** on a 17px root, so the whole scale follows the phone's text-size setting. On iPhone the root comes from the system body font (Dynamic Type, 17px at the default size); elsewhere it is 106.25% of the browser's default. Fields never go below 16px, so iPhone doesn't zoom into them.
-
-| Role | Size | Line height | Weight | Tracking | Use |
-|---|---|---|---|---|---|
-| Display | 2.125rem | 1.1 | 650 | −0.035em | Greeting, hero numbers |
-| Title 1 | 1.5rem | 1.2 | 650 | −0.025em | Screen titles |
-| Title 2 | 1.25rem | 1.25 | 620 | −0.02em | Card titles, sheet titles |
-| Headline | 1.0625rem | 1.35 | 600 | −0.01em | Row titles, emphasised body |
-| Body | 0.9375rem | 1.45 | 450 | 0 | Default text |
-| Callout | 0.8125rem | 1.4 | 500 | 0 | Secondary lines |
-| Caption | 0.75rem | 1.35 | 500 | 0 | Metadata |
-| Label | 0.6875rem | 1.2 | 600 | +0.08em, uppercase | Sparing section labels |
-| Metric XL / L | 3rem / 2rem | 1.0 | 640 | −0.04em | Big numbers, tabular figures |
+Inter in four weights (400, 500, 600, 700), following the owner's rules in [`typography.md`](typography.md): Display XL/Large/Medium for metrics, H1–H4 for titles, Body (Large, Default, Medium, Strong), Caption (and Medium), Footnote and Micro. Every role is a token in `css/tokens.css`, with mobile values by default and tablet (600 px+) and desktop (1024 px+) steps for display type and headings; `css/type.css` exposes them as semantic classes. Sizes are in rem on a 17px root, so they match the design sizes at the default text size and follow the phone's text-size setting. Fields stay at 16px or more on touch screens.
 
 **Rules**
-- Nothing smaller than 0.6875rem (11 px at default size).
-- Numbers are always tabular.
-- At most three sizes per card.
+- Components use roles, never their own sizes or weights (unit tests enforce it).
+- SemiBold is the heading weight; Bold is for exceptional moments only.
+- Numbers that change or line up use tabular figures.
+- Paragraphs stop at about 65 characters; the journal is a 17–18px column at 1.65 line height.
+- Uppercase only for a handful of small labels (TODAY, THIS WEEK, weekday letters, table headers).
 
 ### 9.2 Colour
 

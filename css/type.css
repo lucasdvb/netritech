@@ -1,0 +1,28 @@
+/* Semantic typography: one class per role in docs/typography.md, built only from the tokens in
+   tokens.css. Markup can use these classes directly; component styles use the same tokens, so
+   the same kind of element always looks the same. */
+
+.text-display-xl { font-size: var(--text-display-xl); font-weight: var(--weight-semibold); line-height: var(--leading-display-xl); letter-spacing: var(--tracking-display-xl); }
+.text-display-lg { font-size: var(--text-display-lg); font-weight: var(--weight-semibold); line-height: var(--leading-display-lg); letter-spacing: var(--tracking-display-lg); }
+.text-display-md { font-size: var(--text-display-md); font-weight: var(--weight-semibold); line-height: var(--leading-display-md); letter-spacing: var(--tracking-display-md); }
+.text-h1 { font-size: var(--text-h1); font-weight: var(--weight-semibold); line-height: var(--leading-h1); letter-spacing: var(--tracking-h1); }
+.text-h2 { font-size: var(--text-h2); font-weight: var(--weight-semibold); line-height: var(--leading-h2); letter-spacing: var(--tracking-h2); }
+.text-h3 { font-size: var(--text-h3); font-weight: var(--weight-semibold); line-height: var(--leading-h3); letter-spacing: var(--tracking-h3); }
+.text-h4 { font-size: var(--text-h4); font-weight: var(--weight-semibold); line-height: var(--leading-h4); letter-spacing: var(--tracking-h4); }
+.text-body-lg { font-size: var(--text-body-lg); font-weight: var(--weight-regular); line-height: var(--leading-body-lg); letter-spacing: var(--tracking-body); }
+.text-body { font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+.text-body-medium { font-size: var(--text-body); font-weight: var(--weight-medium); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); }
+.text-body-strong { font-size: var(--text-body); font-weight: var(--weight-semibold); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); }
+.text-caption { font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+.text-caption-medium { font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+.text-footnote { font-size: var(--text-footnote); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+.text-micro { font-size: var(--text-micro); font-weight: var(--weight-medium); line-height: var(--leading-micro); letter-spacing: var(--tracking-body); }
+/* The rare uppercase label (TODAY, THIS WEEK, MORNING): never for ordinary content. */
+.text-label { font-size: var(--text-micro); font-weight: var(--weight-medium); line-height: var(--leading-micro); letter-spacing: var(--tracking-label); text-transform: uppercase; }
+/* Writing: a calm column with room between lines. */
+.text-journal { font-size: var(--text-journal); font-weight: var(--weight-regular); line-height: var(--leading-relaxed); letter-spacing: var(--tracking-body); max-width: var(--measure); }
+
+/* Numbers that change or line up (timers, counters, statistics, calendars) keep their width. */
+.num, .tnum { font-variant-numeric: tabular-nums; }
+/* Paragraphs never run wider than a comfortable line. */
+.measure { max-width: var(--measure); }

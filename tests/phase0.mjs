@@ -157,6 +157,7 @@ const clipped = () => page.evaluate(() => {
   const out = [];
   for (const el of document.querySelectorAll('.view *, .sheet-content *')) {
     if (!el.getClientRects().length || el.clientWidth <= 1) continue;
+    if (el.matches('.swipe')) continue; // swipe rows hide their actions until you swipe
     if (el.tagName === 'INPUT') {
       if (!['checkbox', 'radio', 'range', 'file', 'hidden'].includes(el.type) && el.scrollWidth > el.clientWidth + 2) out.push(`input ${el.type} "${el.value}"`);
       continue;

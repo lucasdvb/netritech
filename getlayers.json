@@ -21,12 +21,12 @@
     "gl-accent-ink": "#ffffff",
     "gl-line": "rgba(29, 29, 31, 0.08)",
     "gl-glow": "#0071e3",
-    "gl-font-display": "'Manrope', ui-sans-serif, system-ui, sans-serif",
-    "gl-font-body": "'Manrope', ui-sans-serif, system-ui, sans-serif",
+    "gl-font-display": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+    "gl-font-body": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
     "gl-radius": "1rem",
     "gl-radius-lg": "1.875rem",
     "gl-ease": "cubic-bezier(0.16, 1, 0.3, 1)"
   },
   "placed": [],
-  "notes": "Life OS is a daily-use PWA, so no immersive loader (GetLayers guidance for app shells). Font: Manrope from the GetLayers catalogue, self-hosted in assets/fonts so it works offline. Meridian was placed on the Today and Body stage cards, then removed at the owner's request: cards are one solid brand colour. Buttons borrow Aerra's sheen + arrow tile and Relay's clockwise ring; entrances use the house blur-rise reveal. Colours are the owner's brand palette: white for light mode, black for dark mode, #0071e3 as the only accent (lifted to #2997ff only for blue text in dark mode), the greys kept minimal. No element mixes colours; status reads through the greys, red only for delete and errors. All tokens live in css/tokens.css."
+  "notes": "Life OS is a daily-use PWA, so no immersive loader (GetLayers guidance for app shells). Font: Inter (the owner's typography system, docs/typography.md), self-hosted in assets/fonts so it works offline; it replaced Manrope from the GetLayers catalogue. Meridian was placed on the Today and Body stage cards, then removed at the owner's request: cards are one solid brand colour. Buttons borrow Aerra's sheen + arrow tile and Relay's clockwise ring; entrances use the house blur-rise reveal. Colours are the owner's brand palette: white for light mode, black for dark mode, #0071e3 as the only accent (lifted to #2997ff only for blue text in dark mode), the greys kept minimal. No element mixes colours; status reads through the greys, red only for delete and errors. All tokens live in css/tokens.css."
 }

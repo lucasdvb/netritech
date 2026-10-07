@@ -90,7 +90,43 @@ test('springs start at rest, end at rest and overshoot only a little', () => {
 
 test('no text smaller than 11px in the type scale', () => {
   for (const [k, v] of Object.entries(light)) {
-    if (!k.startsWith('fs-')) continue;
+    if (!k.startsWith('text-')) continue;
     for (const m of v.matchAll(/([\d.]+)rem/g)) assert.ok(Number(m[1]) * 17 >= 10.99, `${k} is ${Number(m[1]) * 17}px`);
   }
+});
+
+// docs/typography.md: every size and weight comes from a token; uppercase is rare.
+const sheets = ['base', 'type', 'components', 'views', 'motion'].map((n) => [n, readFileSync(new URL(`../../css/${n}.css`, import.meta.url), 'utf8')]);
+const UPPERCASE_OK = new Set(['.text-label', '.hero-label', '.weekly-label', '.ws-name', '.wset-row--head', '.plan-dow']);
+
+test('font sizes only come from typography tokens', () => {
+  const bad = [];
+  for (const [name, src] of sheets) {
+    for (const m of src.matchAll(/font-size:\s*([^;}]+)/g)) {
+      const v = m[1].trim();
+      if (!/^(var\(--text-[\w-]+\)|min\(var\(--text-[\w-]+\), \d+px\)|106\.25%)$/.test(v)) bad.push(`${name}.css: ${v}`);
+    }
+  }
+  assert.deepEqual(bad, []);
+});
+
+test('only the four Inter weights, always through tokens', () => {
+  const bad = [];
+  for (const [name, src] of sheets) {
+    for (const m of src.matchAll(/font-weight:\s*([^;}]+)/g)) if (!/^var\(--weight-(regular|medium|semibold|bold)\)$/.test(m[1].trim())) bad.push(`${name}.css: ${m[1]}`);
+  }
+  assert.deepEqual(bad, []);
+  const faces = [...css.matchAll(/@font-face \{[^}]*font-weight: (\d+)/g)].map((m) => Number(m[1]));
+  assert.deepEqual([...new Set(faces)].sort(), [400, 500, 600, 700]);
+});
+
+test('uppercase is reserved for the few small labels allowed', () => {
+  const bad = [];
+  for (const [name, src] of sheets) {
+    for (const m of src.matchAll(/([^{}]+)\{[^{}]*text-transform:\s*uppercase/g)) {
+      const sel = m[1].replace(/\/\*[\s\S]*?\*\//g, '').trim();
+      if (!UPPERCASE_OK.has(sel)) bad.push(`${name}.css: ${sel}`);
+    }
+  }
+  assert.deepEqual(bad, []);
 });

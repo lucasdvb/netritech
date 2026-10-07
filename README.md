@@ -134,7 +134,7 @@ The look is built from the [GetLayers](https://www.getlayers.ai) library. Its de
   - **Status uses the greys, not extra colours.** "Needs attention" is the strongest grey; rest days are a soft grey. Red appears only on delete buttons and error messages.
   - Selected tabs and chips are near-black (off-white in dark mode), so the blue stays rationed.
 - **Style: Stride** from GetLayers sets the layout, the shapes and how sparingly the accent is used.
-- **Font: Manrope.** It is variable and self-hosted in `assets/fonts` (SIL OFL), so it works offline.
+- **Typography: Inter.** Self-hosted in `assets/fonts` (SIL OFL) in the four weights the system uses (400, 500, 600, 700), so it works offline. Every size, weight, line height and letter spacing comes from a semantic role (Display, H1–H4, Body, Caption, Footnote, Micro) defined once in `css/tokens.css`, stepping up on tablet and desktop. The owner's rules are in [`docs/typography.md`](docs/typography.md), and unit tests fail if a stray size, weight or uppercase label appears.
 - **Details from other GetLayers styles:** Aerra's sheen sweep and swapping arrow tile on the main buttons, Relay's ring that draws itself clockwise on hover and focus, and the house reveal (blocks rise out of a slight blur in a short stagger, numbers sharpen as they stop counting).
 - **Shapes:** pill buttons and chips, round icon buttons, a floating near-black tab bar on phones and a near-black sidebar on desktop.
 - **Charts:** bars are near-black where the target was hit and grey where it wasn't; the latest bar is blue. Line charts are near-black over a soft blue fill.
@@ -219,4 +219,4 @@ Anything that needs a server (push notifications to a closed app, sync between d
 
 ---
 
-Icons: [Lucide](https://lucide.dev) (ISC). Font: [Manrope](https://github.com/sharanda/manrope) (OFL). Both are self-hosted. Layout, button and motion details come from the GetLayers library.
+Icons: [Lucide](https://lucide.dev) (ISC). Font: [Inter](https://rsms.me/inter/) (OFL). Both are self-hosted. Layout, button and motion details come from the GetLayers library.

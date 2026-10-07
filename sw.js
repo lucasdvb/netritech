@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = 'd159a4ce2e';
+const VERSION = '4b508940d1';
 const ASSETS = [
   "./",
   "./index.html",
@@ -9,6 +9,7 @@ const ASSETS = [
   "./css/components.css",
   "./css/motion.css",
   "./css/tokens.css",
+  "./css/type.css",
   "./css/views.css",
   "./js/app.js",
   "./js/data/adapter-idb.js",
@@ -82,8 +83,14 @@ const ASSETS = [
   "./js/ui/sheet.js",
   "./js/ui/swipe.js",
   "./js/ui/toast.js",
-  "./assets/fonts/Manrope-latin-ext.woff2",
-  "./assets/fonts/Manrope-latin.woff2",
+  "./assets/fonts/Inter-latin-400.woff2",
+  "./assets/fonts/Inter-latin-500.woff2",
+  "./assets/fonts/Inter-latin-600.woff2",
+  "./assets/fonts/Inter-latin-700.woff2",
+  "./assets/fonts/Inter-latin-ext-400.woff2",
+  "./assets/fonts/Inter-latin-ext-500.woff2",
+  "./assets/fonts/Inter-latin-ext-600.woff2",
+  "./assets/fonts/Inter-latin-ext-700.woff2",
   "./assets/icons/apple-touch-icon.png",
   "./assets/icons/favicon-32.png",
   "./assets/icons/icon-192.png",
