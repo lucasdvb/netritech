@@ -1,6 +1,6 @@
 # Home Lab hero: woman with headset in the galaxy slot
 
-**Status: written to the Instatic draft on 2026-10-07 and verified (stored sha256 matches the build below). Not published yet.** The published site still runs the version saved in `../rollback-2026-10-07/`.
+**Status: live.** Written to the Instatic draft on 2026-10-07 and verified: the stored sha256 matches the build below. Published the same day (site publish, 10 pages). The previous version is saved in `../rollback-2026-10-07/`.
 
 ![preview](preview.jpg)
 
