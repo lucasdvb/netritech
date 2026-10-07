@@ -6,7 +6,8 @@ import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
-import { check, scale10, segmented, stepper, field, ring, bar } from '../ui/components.js';
+import { check, scale10, segmented, stepper, field, ring, bar, toggle } from '../ui/components.js';
+import * as T from '../core/tasks.js';
 import { num, litres, kgIn, kgOut, weightUnit, habitValue, habitTarget, plural } from '../ui/format.js';
 import { today, fmtLong, relativeDay, parseHM, fmtHM, durationHM, addDays, fmtTime } from '../core/dates.js';
 import { MODES, habitColor } from '../core/taxonomy.js';
@@ -267,18 +268,26 @@ export function openWeight(date = today()) {
 export function openShutdown(date = today()) {
   const r = reviewOf(date);
   const top3 = (r.top3 || []).filter((p) => (p.text || '').trim());
+  const unfinished = () => T.open().filter((t) => t.date && t.date <= date);
   app.sheet({
     title: 'Close the work day',
-    ui: { completed: r.shutdown?.completed || top3.filter((p) => p.done).map((p) => p.text).join('\n'), remains: r.shutdown?.remains || top3.filter((p) => !p.done).map((p) => p.text).join('\n'), first: r.shutdown?.first || '' },
-    render: (s) => html`<div class="form">
+    ui: { completed: r.shutdown?.completed || top3.filter((p) => p.done).map((p) => p.text).join('\n'), remains: r.shutdown?.remains || top3.filter((p) => !p.done).map((p) => p.text).join('\n'), first: r.shutdown?.first || '', move: true },
+    render: (s) => {
+      const left = unfinished().length;
+      return html`<div class="form">
       <label class="field"><span class="field-label">What did I complete?</span><textarea class="input" rows="3" data-input="field" data-field="completed">${s.ui.completed}</textarea></label>
       <label class="field"><span class="field-label">What remains?</span><textarea class="input" rows="2" data-input="field" data-field="remains">${s.ui.remains}</textarea></label>
       <label class="field"><span class="field-label">Tomorrow’s first priority</span><input class="input" value="${s.ui.first}" data-input="field" data-field="first" placeholder="The one thing to start with"></label>
+      ${left ? html`<div class="set-row set-row--plain"><span class="set-text"><span class="set-label">Move ${plural(left, 'unfinished task')} to tomorrow</span><span class="set-hint">So nothing lingers as overdue tonight.</span></span>
+        <span class="set-ctl">${toggle(s.ui.move, { action: 'move', label: 'Move unfinished tasks to tomorrow' })}</span></div>` : ''}
       <button type="button" class="btn btn--primary btn--block" data-action="done">${icon('power', { size: 18 })} Work is done for today</button>
-    </div>`,
+    </div>`;
+    },
     inputs: { field: setField },
     actions: {
+      move: ({ sheet }) => { sheet.ui.move = !sheet.ui.move; sheet.refresh(); },
       done: ({ sheet }) => {
+        if (sheet.ui.move) T.moveUnfinished(date, addDays(date, 1));
         const first = (sheet.ui.first || '').trim();
         const ops = [{ store: 'dailyReviews', value: { ...reviewOf(date), id: date, date, shutdown: { done: true, at: new Date().toISOString(), completed: sheet.ui.completed, remains: sheet.ui.remains, first } } }];
         if (first) {
@@ -319,7 +328,7 @@ export function openMode(date = today()) {
 export function setMode(date, mode) {
   saveReview(date, { mode: mode === 'normal' ? null : mode });
   hap.tap();
-  if (mode === 'minimum') app.toast('Minimum day. Seven essentials. That’s enough.', { icon: 'leaf' });
+  if (mode === 'minimum') app.toast('Minimum day. Just the essentials. That’s enough.', { icon: 'leaf' });
   if (mode === 'sick') app.toast('Sick day. Scoring is paused. Rest well.', { icon: 'thermometer' });
 }
 

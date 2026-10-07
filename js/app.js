@@ -35,6 +35,8 @@ const ROUTES = [
   { path: 'body/photos', tab: 'body', depth: 1, load: v('photos') },
   { path: 'body/sleep', tab: 'body', depth: 1, load: v('sleep') },
   { path: 'body', tab: 'body', depth: 0, load: v('body') },
+  { path: 'more/tasks', tab: 'more', depth: 1, load: v('tasks') },
+  { path: 'more/plan', tab: 'more', depth: 1, load: v('plan') },
   { path: 'more/journal/:id', tab: 'more', depth: 2, load: v('journal-entry') },
   { path: 'more/journal', tab: 'more', depth: 1, load: v('journal') },
   { path: 'more/mind', tab: 'more', depth: 1, load: v('mind') },

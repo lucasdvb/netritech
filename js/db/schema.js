@@ -1,7 +1,7 @@
 // IndexedDB schema. Every record has `id`, `createdAt` and `updatedAt`.
 // Date-keyed records also carry `date` ('YYYY-MM-DD') which is indexed.
 export const DB_NAME = 'life-os';
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
 export const STORES = {
   meta: { indexes: [] },                     // schema/seed bookkeeping
@@ -35,6 +35,7 @@ export const STORES = {
   weeklyReviews: { indexes: [] },
   monthlyReviews: { indexes: [] },
   reminderLog: { indexes: ['date'] },
+  tasks: { indexes: ['date'] },              // one-off and repeating to-dos (Week Plan tasks)
 };
 
 // Stores kept fully in memory for instant rendering (photoBlobs is not).

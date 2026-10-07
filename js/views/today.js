@@ -14,6 +14,8 @@ import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import * as S from './sheets.js';
 import { startWorkout, openStartSheet } from './workout-actions.js';
+import * as T from '../core/tasks.js';
+import { taskRow, taskActions, openTask } from './task-ui.js';
 
 const DEFAULT_OPEN = {
   morning: ['morning', 'body'],
@@ -26,6 +28,10 @@ const LATER = { morning: ['evening'], work: ['evening'] };
 const METRIC_SOURCES = ['water', 'protein', 'steps', 'produce'];
 const COUNTER_SOURCES = ['deepWork', 'breaks', 'eyeBreaks'];
 
+const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
+/** "Eight" — the number of Minimum-day habits, in words. */
+const essentials = () => { const n = H.activeHabits().filter((h) => h.mvd).length; return WORDS[n] || String(n); };
+
 function greeting(now = new Date()) {
   const h = now.getHours();
   if (h < 5) return 'Good night';
@@ -35,7 +41,7 @@ function greeting(now = new Date()) {
 }
 
 function subline(date, ph, mode) {
-  if (mode === 'minimum') return 'Minimum day. Seven essentials. That’s enough.';
+  if (mode === 'minimum') return `Minimum day. ${essentials()} essentials. That’s enough.`;
   if (mode === 'sick') return 'Rest is the plan. Fluids, food, sleep.';
   const call = trainingCall(date);
   const shutdown = M.review(date)?.shutdown?.done;
@@ -201,6 +207,27 @@ function top3(date, ph, mode) {
   </section>`;
 }
 
+// The workbook's Week Plan put tasks right under the Top 3; so does Today.
+function tasksCard(date, ph, mode) {
+  if (mode === 'sick' || mode === 'minimum') return '';
+  const isToday = date === today();
+  const list = T.forToday(date);
+  const open = list.filter((t) => !t.done).length;
+  if (!isToday && !list.length) return '';
+  if (isToday && ph === 'night' && !open) return '';
+  return html`<section class="tasks-card" data-key="tasks" aria-label="Tasks">
+    <div class="block-head"><h2 class="block-title">Tasks</h2>
+      <span class="block-meta tnum">${list.length ? `${list.length - open}/${list.length}` : ''}</span>
+      <button type="button" class="link-btn" data-action="nav" data-to="more/tasks">All tasks</button></div>
+    ${list.length ? html`<ul class="tlist">${list.map((t) => taskRow(t, { showDue: t.date !== date, ref: date }))}</ul>` : ''}
+    ${isToday ? html`<div class="task-add">
+      <span class="task-add-ic" aria-hidden="true">${icon('plus', { size: 18 })}</span>
+      <input class="task-add-input" data-change="task-add" placeholder="${list.length ? 'Add another' : 'Add a task for today'}" aria-label="Add a task for today" enterkeyhint="done" maxlength="140">
+      <button type="button" class="icon-btn icon-btn--sm" data-action="task-new" aria-label="New task with a date, repeat or area">${icon('ellipsis', { size: 18 })}</button>
+    </div>` : ''}
+  </section>`;
+}
+
 function shutdownCard(date, ph, mode) {
   if (date !== today() || !isWorkday(date) || mode === 'sick') return '';
   const r = M.review(date);
@@ -343,7 +370,7 @@ function minimumDay(date, ui) {
   const tiles = list.filter((h) => METRIC_SOURCES.includes(h.source));
   const rows = list.filter((h) => !tiles.includes(h));
   return html`<section class="minday" data-key="minday">
-    <div class="minday-head"><p class="minday-title">Seven essentials</p><p class="minday-sub">Never abandon the system completely. This is enough today.</p></div>
+    <div class="minday-head"><p class="minday-title">${essentials()} essentials</p><p class="minday-sub">Never abandon the system completely. This is enough today.</p></div>
     ${tiles.length ? html`<div class="tiles">${tiles.map((h) => metricTile(h, date, 'minimum'))}</div>` : ''}
     <ul class="hlist">${rows.map((h) => habitRow(h, date, 'minimum', ui))}</ul>
     <button type="button" class="link-btn" data-action="set-mode" data-mode="normal">Back to a normal day</button>
@@ -405,6 +432,7 @@ export default {
         <div class="today-main">
           ${shutdownCard(date, ph, mode)}
           ${top3(date, ph, mode)}
+          ${tasksCard(date, ph, mode)}
           ${body}
           ${mode !== 'sick' ? attention(date) : ''}
           ${winCard(date, ui)}
@@ -423,12 +451,14 @@ export default {
         if (!sessionStorage.getItem(key) && !localStorage.getItem(key)) {
           localStorage.setItem(key, '1');
           hap.success();
-          app.toast(s.mode === 'minimum' ? 'All seven essentials. That’s a good day.' : `All ${s.total} key habits. Quiet win.`, { icon: 'sparkles' });
+          app.toast(s.mode === 'minimum' ? `All ${essentials().toLowerCase()} essentials. That’s a good day.` : `All ${s.total} key habits. Quiet win.`, { icon: 'sparkles' });
         }
       } catch { /* storage unavailable */ }
     }
   },
   actions: {
+    ...taskActions,
+    'task-new': ({ params }) => openTask(null, { date: params.date || today() }),
     toggle: ({ data, params }) => {
       const date = params.date || today();
       const h = H.habit(data.id);
@@ -496,6 +526,13 @@ export default {
     'focus-win': () => document.getElementById('win-input')?.focus(),
   },
   inputs: {
+    'task-add': ({ el, value, params }) => {
+      const title = value.trim();
+      if (!title) return;
+      T.add({ title, date: params.date || today() });
+      el.value = '';
+      hap.tap();
+    },
     'top3-text': ({ el, value, params }) => {
       const date = params.date || today();
       const r = S.reviewOf(date);

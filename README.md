@@ -55,7 +55,7 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
 ## What's inside
 
 - **Today**: a time-aware greeting and a daily score from 9 key habits. Habits are grouped by time of day and open progressively. One tap completes with a small animation and haptic feedback.
-  - **Top 3 priorities** (drag or arrow keys to reorder), plus the **next useful action** from the coach.
+  - **Top 3 priorities** (drag or arrow keys to reorder), then **Tasks** for the day with quick add, plus the **next useful action** from the coach.
   - **Win of the day**, morning check-in and evening shutdown.
   - **Normal / Minimum / Sick** day modes.
 - **Habits**: every type: yes/no, numeric, duration, quantity, rating and checklist.
@@ -67,9 +67,30 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
 - **Training**: today's planned session with a smart call ("train as planned", "go lighter", "walk instead") based on sleep, energy and stress.
   - Workout logger prefilled from last time, with progressive-overload comparison.
   - Exercise library with history; dedicated calf, core and posture tracking.
+- **Tasks**: one-off jobs and weekly or monthly chores, grouped into Overdue, Today, the next six days, Later and Anytime.
+  - Ticking a repeating task schedules the next one, so a missed week never piles up.
+  - The evening shutdown can move unfinished tasks to tomorrow.
 - **Progress**: trends, consistency by area, a calendar of every day, weekly insights, personal bests and "needs attention".
-- **More**: Journal, Mind (reading, learning, meditation), Faith, Relationships, Work (deep work, shutdown), Goals, and Weekly and Monthly reviews.
+- **More**: Tasks, Journal, Mind (reading, learning, meditation), Faith, Relationships, Work (deep work, shutdown), Your plan, Goals, and Weekly and Monthly reviews.
+  - **Your plan** is the workbook's Plan & Routines playbook: your day, your week, routines, training templates, food targets and the rules. It is built from your live habits, templates and targets, so editing them updates it.
   - Also: Search, Settings (units, theme, targets, reminders), Data and Privacy.
+
+### Preloaded on first launch
+
+Your whole system from the Life OS spec and workbook is there on day one. Nothing needs typing in:
+
+- **Profile and day:** 35, 180 cm, 76 kg, ~25% → 15% body fat, wake 06:00, train 06:30, work 10:00–20:00, lights out 22:00.
+- **Habits:** 41 habits across the 8 pillars, with three priority levels, the 9 that make up the daily score and the 8 Minimum-day essentials. Morning reset, mobility and evening routine are one-tick checklists.
+  - Caffeine cutoff and alcohol-free days are included but archived, because the spec says to track them only if they apply. A task asks you to decide.
+- **Training:** the Mon–Sun split with five templates (upper + posture, lower + calves + core, walk + mobility, cardio, 20-minute minimum) and about 40 exercises with progressions.
+  - Upper days end with a short calf and core finisher, so both reach the spec's 3–4 sessions a week.
+- **Tasks:**
+  - one-off: book an eye-specialist follow-up, book a dental / orthodontic assessment, set up the desk, turn on reminders, and the caffeine and alcohol decisions;
+  - weekly chores: laundry, room and bathroom on Saturday, groceries and calendar review on Sunday;
+  - monthly: back up Life OS.
+- **Goals, targets and foods:** 8 goals with milestones; protein 150 g, 1,800–2,000 kcal, water 2.5–3 L, a 7k → 8k → 9k steps ramp and sleep targets; Mauritius-friendly quick foods, including whey isolate at 25.5 g / 113 kcal.
+
+Opening the app on a device that already holds an older Life OS version adds whatever is new. Anything you've edited is left alone.
 
 ### Reminders on iPhone, honestly
 
@@ -127,7 +148,7 @@ tests/                 Playwright browser tests at iPhone 14 size
 
 ### Data model (IndexedDB stores)
 
-`profile`, `settings`, `habits`, `habitLogs` (`habitId:date`), `goals`, `exercises`, `templates`, `workouts`, `workoutSets`, `foods`, `nutritionLogs`, `waterLogs`, `stepLogs`, `weightEntries` (one per date), `measurements`, `bodyFatEstimates`, `photos` + `photoBlobs`, `sleepEntries`, `moodEntries`, `journalEntries`, `readingSessions`, `learningSessions`, `meditationSessions`, `spiritualSessions`, `relationshipEntries`, `dailyReviews` (check-in, Top 3, shutdown, counters), `weeklyReviews`, `monthlyReviews`, `reminderLog`, `meta`.
+`profile`, `settings`, `habits`, `habitLogs` (`habitId:date`), `goals`, `exercises`, `templates`, `workouts`, `workoutSets`, `foods`, `nutritionLogs`, `waterLogs`, `stepLogs`, `weightEntries` (one per date), `measurements`, `bodyFatEstimates`, `photos` + `photoBlobs`, `sleepEntries`, `moodEntries`, `journalEntries`, `readingSessions`, `learningSessions`, `meditationSessions`, `spiritualSessions`, `relationshipEntries`, `dailyReviews` (check-in, Top 3, shutdown, counters), `weeklyReviews`, `monthlyReviews`, `reminderLog`, `tasks` (one-off and repeating; a repeating task is a chain of instances), `meta`.
 
 Dates are local `YYYY-MM-DD` strings. Every record has `id`, `createdAt` and `updatedAt`.
 
@@ -144,6 +165,7 @@ NODE_PATH=$(npm root -g) node tests/phase3.mjs http://localhost:4173/ ./test-sho
 NODE_PATH=$(npm root -g) node tests/phase4.mjs http://localhost:4173/ ./test-shots   # progress, modules, reviews, backup
 NODE_PATH=$(npm root -g) node tests/phase5.mjs http://localhost:4173/ ./test-shots   # reminders, restore, offline,
                                                                                     # keyboard, 1-year dataset, desktop
+NODE_PATH=$(npm root -g) node tests/phase6.mjs http://localhost:4173/ ./test-shots   # preloaded setup, tasks, plan, migration
 ```
 
 Every suite fails on console errors or a page wider than the screen. The smoke and progress suites also flag buttons without an accessible label.

@@ -1,9 +1,10 @@
 // Initial database, converted from the Life OS workbook (Settings, Habit Library,
 // Plan & Routines). Seeded once on first launch; never overwrites your data.
 import * as store from '../core/store.js';
-import { today } from '../core/dates.js';
+import { today, addDays } from '../core/dates.js';
+import { firstDate } from '../core/tasks.js';
 
-export const SEED_VERSION = 1;
+export const SEED_VERSION = 2;
 
 const WORKDAYS = [1, 2, 3, 4, 5];
 
@@ -66,6 +67,18 @@ export function settingsSeed() {
   };
 }
 
+const MORNING_RESET = ['Out of bed at 06:00', 'Bathroom, then weigh in', '500–750 ml water', 'Make the bed', '5–15 min outdoor light',
+  'No social media for 30 min'];
+
+// Only if they apply to you (spec §21–22), so they start archived. Restore from Habits → Archived.
+const OPTIONAL_HABITS = [
+  { id: 'h-caffeine', name: 'Caffeine cutoff 14:00', section: 'body', category: 'health', icon: 'coffee', priority: 'high', archived: true,
+    goalId: 'g-health', description: 'No coffee or tea after 14:00, to protect sleep. Only if you drink caffeine.' },
+  { id: 'h-alcohol', name: 'Alcohol-free day', section: 'evening', category: 'health', icon: 'glass-water', priority: 'optional', optional: true,
+    weekly: false, archived: true, goalId: 'g-health',
+    description: 'Not a moral rule: alcohol makes calorie control, sleep and recovery harder. Only if it applies.' },
+];
+
 const h = (o) => ({
   description: '', type: 'binary', unit: '', target: 1, min: null, max: null, step: 1,
   schedule: { kind: 'daily' }, time: null, reminder: null, difficulty: 2,
@@ -80,7 +93,7 @@ export function habitsSeed() {
     // MORNING
     h({ id: 'h-morning-reset', name: 'Morning reset', section: 'morning', category: 'health', icon: 'sunrise', priority: 'core', time: '06:00',
       description: 'One tick for the whole routine.', goalId: 'g-health',
-      checklist: ['Out of bed at 06:00', '500–750 ml water', 'Make the bed', '5–15 min outdoor light', 'No social media for 30 min'] }),
+      checklist: MORNING_RESET }),
     h({ id: 'h-sleep', name: 'Sleep', section: 'morning', category: 'health', icon: 'bed', type: 'duration', unit: 'h', target: 7.5, min: 7,
       source: 'sleep', priority: 'core', affectsScore: true, goalId: 'g-health',
       description: 'From your morning check-in. 7.5–8.5 hours is the target.' }),
@@ -179,10 +192,10 @@ export function habitsSeed() {
       source: 'shutdown', priority: 'core', time: '20:00',
       description: 'What did I complete? What remains? Tomorrow’s first priority? Then stop.' }),
     h({ id: 'h-fiancee', name: 'Time with your fiancée', section: 'evening', category: 'relationships', icon: 'heart', priority: 'core',
-      affectsScore: true, mvd: true, mvdLabel: '10 minutes, phone away', time: '20:00', source: 'rel:fiancee', goalId: 'g-relationships',
+      affectsScore: true, mvd: true, mvdLabel: '10 minutes with your fiancée, phone away', time: '20:00', source: 'rel:fiancee', goalId: 'g-relationships',
       description: '10–20 minutes, phone away. “How are you really doing?”' }),
     h({ id: 'h-home', name: 'Home reset', section: 'evening', category: 'life', icon: 'house', schedule: { kind: 'perWeek', count: 5 },
-      description: 'Five-minute tidy, dishes and kitchen reset.' }),
+      mvd: true, mvdLabel: '5-minute tidy', description: 'Five-minute tidy, dishes and kitchen reset.' }),
     h({ id: 'h-evening', name: 'Evening routine', section: 'evening', category: 'health', icon: 'moon', priority: 'core', time: '21:00', goalId: 'g-health',
       description: 'Wind down so 22:00 is easy.',
       checklist: ['Clothes and training kit ready', 'Tomorrow’s calendar reviewed', 'Hygiene and teeth', 'Screens down for the last 30 min', 'Short prayer'] }),
@@ -190,6 +203,7 @@ export function habitsSeed() {
       optional: true, weekly: false, description: 'Breaks taken, eyes not rubbed, prescribed correction worn. Healthy habits only — not a treatment.' }),
     h({ id: 'h-lights-out', name: 'Lights out by 22:00', section: 'evening', category: 'health', icon: 'moon-star', priority: 'core', mvd: true,
       mvdLabel: 'Sleep on time', time: '22:00', goalId: 'g-health', description: '7.5–8.5 hours before a 06:00 wake.' }),
+    ...OPTIONAL_HABITS.map(h),
   ];
   return list.map((x, i) => ({ ...x, order: i }));
 }
@@ -215,8 +229,7 @@ export function goalsSeed() {
       habitIds: ['h-mobility', 'h-breaks', 'h-desk'], milestones: [] },
     { id: 'g-health', name: 'Health', category: 'health', type: 'consistency', status: 'active', order: 4, deadline: null,
       description: 'Better sleep, hydration and daily movement.',
-      habitIds: ['h-sleep', 'h-water', 'h-steps', 'h-lights-out'],
-      milestones: [m('Book a follow-up with your eye specialist'), m('Dental / orthodontic assessment if the jaw concern persists')] },
+      habitIds: ['h-sleep', 'h-water', 'h-steps', 'h-lights-out'], milestones: [] },
     { id: 'g-mind', name: 'Mind', category: 'mind', type: 'consistency', status: 'active', order: 5, deadline: null,
       description: 'Consistent reading and deliberate learning.',
       habitIds: ['h-read', 'h-meditation'], milestones: [m('Finish one book this month')] },
@@ -277,13 +290,16 @@ export function exercisesSeed() {
 }
 
 const it = (exerciseId, sets, reps, o = {}) => ({ exerciseId, sets, reps, load: null, ...o });
+// Mon/Thu finisher so calves and core each get 4 sessions a week (spec: calves 2–4, core 3–4).
+const UPPER_FINISHER = [it('e-calf-raise', 3, '15–20'), it('e-plank', 2, '30–45 s')];
 
 export function templatesSeed() {
   return [
-    { id: 't-upper', name: 'Upper body + posture', kind: 'strength', minutes: 50, order: 0, items: [
+    { id: 't-upper', name: 'Upper body + posture', kind: 'strength', minutes: 55, order: 0,
+      note: 'Ends with a short calf and core finisher, so both get 4 sessions a week.', items: [
       it('e-pushup', 4, '6–15'), it('e-pike-pushup', 3, '5–10'), it('e-db-row', 4, '8–15', { load: 10 }),
       it('e-floor-press', 3, '8–12', { load: 10 }), it('e-reverse-fly', 3, '15–20', { load: 2 }), it('e-y-raise', 2, '12–15', { load: 2 }),
-      it('e-scap-pushup', 2, '10–12')] },
+      it('e-scap-pushup', 2, '10–12'), ...UPPER_FINISHER] },
     { id: 't-lower', name: 'Lower body + calves + core', kind: 'strength', minutes: 55, order: 1, items: [
       it('e-bss', 3, '8–12', { load: 10 }), it('e-goblet-squat', 3, '12–20', { load: 10 }), it('e-sl-rdl', 3, '8–12', { load: 10 }),
       it('e-sl-bridge', 3, '10–15'), it('e-sl-calf', 4, '8–15'), it('e-dead-bug', 3, '8'), it('e-side-plank', 3, '30–45 s'),
@@ -322,8 +338,70 @@ export function foodsSeed() {
   ].map((f, i) => ({ ...f, order: i }));
 }
 
+// The workbook's Week Plan tasks and the one-off jobs from the spec. Dates are relative to day one.
+export function tasksSeed(start = today()) {
+  const t = (title, area, o = {}) => ({ id: store.uid(), title, area, notes: '', date: null, repeat: null, done: false, doneAt: null, ...o });
+  const weekly = (day) => ({ repeat: { kind: 'weekly', day }, date: firstDate({ kind: 'weekly', day }, start) });
+  const list = [
+    // one-off setup
+    t('Book a follow-up with your eye specialist', 'health', { date: start,
+      notes: 'Keratoconus check-ups are medical appointments, not exercises. Ask how often they want to see you, then make this a repeating task.' }),
+    t('Book a dental / orthodontic assessment', 'health', { date: start,
+      notes: 'For the jaw alignment concern. Relax the jaw rather than forcing it into position; let a professional assess it.' }),
+    t('Set up the desk for posture', 'posture', { date: addDays(start, 1),
+      notes: 'Screen near eye level, feet supported, shoulders relaxed, elbows comfortable. Plan to alternate sitting and standing.' }),
+    t('Turn on reminders', 'life', { date: addDays(start, 1),
+      notes: 'More → Settings → Reminders: morning reset 06:05, training 06:25, water, movement breaks, evening routine 21:00, Sunday review 19:00.' }),
+    t('Coffee or tea? Decide on a 14:00 caffeine cutoff', 'health', {
+      notes: 'If you drink caffeine, restore “Caffeine cutoff 14:00” from Habits → Archived. If you don’t, just tick this off.' }),
+    t('Alcohol: decide whether to track alcohol-free days', 'health', {
+      notes: 'Only if it applies. Restore “Alcohol-free day” from Habits → Archived, or tick this off.' }),
+    // weekly chores (Home & life admin)
+    t('Laundry', 'life', weekly(6)),
+    t('Clean your room', 'life', weekly(6)),
+    t('Clean the bathroom', 'life', weekly(6)),
+    t('Plan the week’s groceries', 'life', { ...weekly(7),
+      notes: 'Before meal prep. Chicken, eggs, lean beef, dholl, yoghurt, milk, oats, rice, potatoes, brèdes and veg, fruit, whey.' }),
+    t('Review next week’s calendar', 'work', { ...weekly(7), notes: 'Block training at 06:30, deep work, couple time and family time first.' }),
+    // monthly
+    t('Back up Life OS', 'life', { repeat: { kind: 'monthly', day: 1 }, date: firstDate({ kind: 'monthly', day: 1 }, addDays(start, 1)),
+      notes: 'More → Data → Download backup, then save it to Files or iCloud Drive. Your data lives only on this phone.' }),
+  ];
+  return list.map((x, i) => ({ ...x, order: i }));
+}
+
+const untouched = (r) => r && r.updatedAt === r.createdAt;
+
+/** Bring an earlier seed up to date without touching anything you've changed. */
+function migrate(from) {
+  const ops = [];
+  if (from < 2) {
+    if (!store.count('tasks')) ops.push(...tasksSeed().map((value) => ({ store: 'tasks', value })));
+    const all = habitsSeed();
+    for (const id of ['h-caffeine', 'h-alcohol']) {
+      if (!store.get('habits', id)) ops.push({ store: 'habits', value: all.find((x) => x.id === id) });
+    }
+    const reset = store.get('habits', 'h-morning-reset');
+    if (untouched(reset)) ops.push({ store: 'habits', value: { ...reset, checklist: MORNING_RESET } });
+    const home = store.get('habits', 'h-home');
+    if (untouched(home)) ops.push({ store: 'habits', value: { ...home, mvd: true, mvdLabel: '5-minute tidy' } });
+    const upper = store.get('templates', 't-upper');
+    if (untouched(upper)) ops.push({ store: 'templates', value: templatesSeed().find((x) => x.id === 't-upper') });
+    const fiancee = store.get('habits', 'h-fiancee');
+    if (untouched(fiancee)) ops.push({ store: 'habits', value: { ...fiancee, mvdLabel: '10 minutes with your fiancée, phone away' } });
+    const health = store.get('goals', 'g-health');
+    if (untouched(health)) ops.push({ store: 'goals', value: { ...health, milestones: [] } });
+  }
+  ops.push({ store: 'meta', value: { ...store.get('meta', 'seed'), version: SEED_VERSION, migratedAt: new Date().toISOString() } });
+  store.batch(ops);
+}
+
 export async function seedIfNeeded() {
-  if (store.get('meta', 'seed')) return false;
+  const meta = store.get('meta', 'seed');
+  if (meta) {
+    if ((meta.version || 1) < SEED_VERSION) { migrate(meta.version || 1); await store.flush(); }
+    return false;
+  }
   const ops = [
     { store: 'profile', value: profileSeed() },
     { store: 'settings', value: settingsSeed() },
@@ -332,6 +410,7 @@ export async function seedIfNeeded() {
     ...exercisesSeed().map((value) => ({ store: 'exercises', value })),
     ...templatesSeed().map((value) => ({ store: 'templates', value })),
     ...foodsSeed().map((value) => ({ store: 'foods', value })),
+    ...tasksSeed().map((value) => ({ store: 'tasks', value })),
     { store: 'meta', value: { id: 'seed', version: SEED_VERSION, source: 'Life OS workbook', at: new Date().toISOString() } },
   ];
   store.batch(ops);
