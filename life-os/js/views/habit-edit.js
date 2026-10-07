@@ -1,6 +1,6 @@
 import * as store from '../core/store.js';
 import * as H from '../core/habits.js';
-import { PRIORITIES, CATEGORIES, SECTIONS, HABIT_TYPES, SCHEDULES, COLORS, catColor, catLabel } from '../core/taxonomy.js';
+import { PRIORITIES, CATEGORIES, SECTIONS, HABIT_TYPES, SCHEDULES, catColor } from '../core/taxonomy.js';
 import { html, raw, cx, attr } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, segmented, stepper, toggle, settingRow } from '../ui/components.js';
@@ -45,10 +45,6 @@ export default {
             <textarea class="input" rows="2" data-input="f" data-f="description" placeholder="What counts? Keep it simple.">${d.description || ''}</textarea></label>
           <div class="field"><span class="field-label">Icon</span>
             <div class="icon-grid" role="radiogroup" aria-label="Icon">${ICONS.map((ic) => html`<button type="button" role="radio" aria-checked="${d.icon === ic}" aria-label="${ic}" class="${cx('icon-opt', d.icon === ic && 'is-on')}" data-action="icon" data-v="${ic}" style="--ic:${catColor(d.color || d.category)}">${icon(ic, { size: 18 })}</button>`)}</div></div>
-          <div class="field"><span class="field-label">Colour</span>
-            <div class="color-row" role="radiogroup" aria-label="Colour">
-              <button type="button" role="radio" aria-checked="${!d.color}" class="${cx('color-opt color-opt--auto', !d.color && 'is-on')}" data-action="color" data-v="" aria-label="Match area">Auto</button>
-              ${COLORS.map((c) => html`<button type="button" role="radio" aria-checked="${d.color === c}" aria-label="${catLabel(c)}" class="${cx('color-opt', d.color === c && 'is-on')}" style="--c:${catColor(c)}" data-action="color" data-v="${c}"></button>`)}</div></div>
           <div class="grid-2">
             <label class="field"><span class="field-label">Area</span><select class="input" data-change="f" data-f="category">${CATEGORIES.map((c) => html`<option value="${c.id}" ${raw(d.category === c.id ? 'selected' : '')}>${c.label}</option>`)}</select></label>
             <label class="field"><span class="field-label">Today group</span><select class="input" data-change="f" data-f="section">${SECTIONS.map((c) => html`<option value="${c.id}" ${raw(d.section === c.id ? 'selected' : '')}>${c.label}</option>`)}</select></label>
@@ -119,7 +115,6 @@ export default {
   },
   actions: {
     icon: ({ data, ui }) => { ui.draft.icon = data.v; hap.tap(); app.refresh(); },
-    color: ({ data, ui }) => { ui.draft.color = data.v || null; hap.tap(); app.refresh(); },
     day: ({ data, ui }) => {
       const sch = ui.draft.schedule;
       const v = Number(data.v);

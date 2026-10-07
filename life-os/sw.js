@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = '12a9b49830';
+const VERSION = '1d84742011';
 const ASSETS = [
   "./",
   "./index.html",
@@ -35,7 +35,6 @@ const ASSETS = [
   "./js/ui/haptics.js",
   "./js/ui/icons.js",
   "./js/ui/install.js",
-  "./js/ui/meridian.js",
   "./js/ui/patch.js",
   "./js/ui/router.js",
   "./js/ui/sheet.js",

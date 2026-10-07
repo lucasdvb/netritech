@@ -53,14 +53,18 @@
 
   /* Brand palette: black #000000, near-black #1D1D1F, dark grey #434344, mid grey #6E6E73,
      off-white #F5F5F7 and blue #0071E3. White paper in light mode, true black in dark mode;
-     the blue is the one accent and the greys stay quiet. Every colour in the app comes from here. */
+     the blue is the one accent and the greys stay quiet. Cards are one solid colour, and nothing
+     carries more than one colour: status reads through the greys, not extra hues (red is kept
+     only for deleting and errors). Every colour in the app comes from here. */
   --brand: #0071E3;
   --brand-2: #0062C4;   /* the brand blue a step deeper: hover and pressed */
-  --glow: #2997FF;      /* the brand blue lifted, for light on the dark stages */
   --ink: #1D1D1F;
   --ink-2: #2C2C2E;
   --ink-3: #434344;
   --on-ink: #FFFFFF;
+  --sel: var(--ink);    /* a selected option: near-black in light mode, off-white in dark */
+  --on-sel: #FFFFFF;
+  --ink-sel: var(--ink); /* a selected card that keeps white text: near-black, dark grey in dark mode */
 
   /* light palette */
   --bg: #FFFFFF;
@@ -81,8 +85,8 @@
   --accent-line: rgba(0, 113, 227, .45);
   --focus: var(--brand);
   --tint-base: #FFFFFF;
-  --warn: #A3640B;
-  --warn-soft: rgba(214, 150, 46, .15);
+  --warn: #1D1D1F;      /* "needs attention" is the strongest grey, not a new colour */
+  --warn-soft: rgba(110, 110, 115, .2);
   --danger: #C2362B;
   --danger-soft: rgba(194, 54, 43, .1);
   --track: rgba(29, 29, 31, .07);
@@ -105,7 +109,7 @@
 
   --chart-1: var(--ink);
   --chart-2: var(--brand);
-  --chart-3: var(--glow);
+  --chart-3: #86868B;
   --chart-grid: rgba(29, 29, 31, .06);
   --bar-ink: #1D1D1F;
   --bar-soft: #DADADD;
@@ -127,13 +131,13 @@
   --ink-2: #2C2C2E;
   --ink-3: #434344;
   --accent: #0071E3;
-  --accent-ink: #2997FF;
+  --accent-ink: #2997FF;  /* the brand blue lifted so blue text stays readable on black */
   --accent-soft: rgba(0, 113, 227, .2);
   --accent-line: rgba(41, 151, 255, .5);
   --focus: #2997FF;
   --tint-base: #1D1D1F;
-  --warn: #E2AE55;
-  --warn-soft: rgba(226, 174, 85, .14);
+  --warn: #F5F5F7;
+  --warn-soft: rgba(110, 110, 115, .4);
   --danger: #FF6B5E;
   --danger-soft: rgba(255, 107, 94, .14);
   --track: rgba(245, 245, 247, .09);
@@ -144,6 +148,10 @@
   --blur-bg: rgba(0, 0, 0, .78);
   --scrim: rgba(0, 0, 0, .62);
   --chart-1: #F5F5F7;
+  --chart-3: #6E6E73;
+  --sel: #F5F5F7;
+  --on-sel: #000000;
+  --ink-sel: #434344;
   --chart-grid: rgba(245, 245, 247, .07);
   --bar-ink: #F5F5F7;
   --bar-soft: #434344;
@@ -166,13 +174,13 @@
     --ink-2: #2C2C2E;
     --ink-3: #434344;
     --accent: #0071E3;
-    --accent-ink: #2997FF;
+    --accent-ink: #2997FF;  /* the brand blue lifted so blue text stays readable on black */
     --accent-soft: rgba(0, 113, 227, .2);
     --accent-line: rgba(41, 151, 255, .5);
     --focus: #2997FF;
     --tint-base: #1D1D1F;
-    --warn: #E2AE55;
-    --warn-soft: rgba(226, 174, 85, .14);
+    --warn: #F5F5F7;
+    --warn-soft: rgba(110, 110, 115, .4);
     --danger: #FF6B5E;
     --danger-soft: rgba(255, 107, 94, .14);
     --track: rgba(245, 245, 247, .09);
@@ -183,6 +191,10 @@
     --blur-bg: rgba(0, 0, 0, .78);
     --scrim: rgba(0, 0, 0, .62);
     --chart-1: #F5F5F7;
+    --chart-3: #6E6E73;
+    --sel: #F5F5F7;
+    --on-sel: #000000;
+    --ink-sel: #434344;
     --chart-grid: rgba(245, 245, 247, .07);
     --bar-ink: #F5F5F7;
     --bar-soft: #434344;

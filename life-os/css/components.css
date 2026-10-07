@@ -110,8 +110,8 @@
 .band { font-weight: 560; }
 .band--strong { color: var(--accent-ink); }
 .band--steady { color: var(--text); }
-.band--attention { color: var(--warn); }
-.band--simplify { color: var(--danger); }
+.band--attention { color: var(--warn); font-weight: 650; }
+.band--simplify { color: var(--text); font-weight: 650; }
 
 /* ---------- ring / bar ---------- */
 .ring .ring-val { transition: stroke-dashoffset 600ms var(--ease); }
@@ -321,7 +321,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 .sheet .scale-btn.is-on { background: var(--accent); }
 .sheet .chip.is-active { background: var(--ink); color: var(--on-ink); }
 .sheet .scale-btn.is-under { background: var(--accent-soft); }
-.sheet .day-opt.is-on { background: var(--ink); }
+.sheet .day-opt.is-on { background: var(--sel); }
 .sheet-note { font-size: var(--fs-sub); color: var(--text-2); }
 .sheet-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); font-size: var(--fs-caption); }
 .has-sheet body { overflow: hidden; }
@@ -351,7 +351,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 }
 .toast.is-leaving { animation: toast-out 200ms var(--ease) both; }
 .toast--danger { background: var(--danger); color: #fff; }
-.toast-ic { display: grid; place-items: center; color: var(--glow); }
+.toast-ic { display: grid; place-items: center; color: currentColor; }
 .toast-msg { flex: 1; padding-right: 8px; }
 .toast-btn { min-height: 36px; padding: 0 14px; border-radius: var(--r-pill); background: var(--accent); font-weight: 650; color: var(--on-accent); }
 @keyframes toast-in { from { opacity: 0; transform: translateY(12px) scale(.96); } }
@@ -366,7 +366,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
   transform: translateY(20px); opacity: 0; transition: transform 360ms var(--spring), opacity 240ms;
 }
 .install-hint.is-open { transform: none; opacity: 1; }
-.install-mark { width: 42px; height: 42px; border-radius: 50%; background: var(--ink); color: var(--glow); display: grid; place-items: center; flex: none; }
+.install-mark { width: 42px; height: 42px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; flex: none; }
 .install-text { flex: 1; }
 .install-title { font-size: var(--fs-sub); font-weight: 600; }
 .install-body { font-size: var(--fs-caption); color: var(--text-2); line-height: 1.4; }
@@ -411,14 +411,14 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 /* day mode list */
 .mode-list { display: flex; flex-direction: column; gap: 8px; }
 .mode-opt { display: flex; align-items: center; gap: 14px; padding: 14px 16px 14px 14px; border-radius: var(--r-lg); background: var(--surface); text-align: left; min-height: 70px; }
-.mode-opt.is-on { background: var(--ink); color: var(--on-ink); }
+.mode-opt.is-on { background: var(--ink-sel); color: var(--on-ink); }
 .mode-opt.is-on .mode-hint { color: rgba(255, 255, 255, .62); }
 .mode-ic { width: 42px; height: 42px; border-radius: 50%; background: var(--surface-2); display: grid; place-items: center; color: var(--text); flex: none; }
 .mode-opt.is-on .mode-ic { background: var(--accent); color: var(--on-accent); }
 .mode-text { flex: 1; display: flex; flex-direction: column; }
 .mode-name { font-weight: 600; }
 .mode-hint { font-size: var(--fs-caption); color: var(--text-2); }
-.mode-check { color: var(--glow); }
+.mode-check { color: currentColor; }
 
 /* check-in */
 .ci-times { display: flex; align-items: flex-end; gap: 8px; }

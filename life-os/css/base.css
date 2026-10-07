@@ -122,7 +122,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
     display: flex; align-items: center; gap: 10px; padding: 0 10px 24px;
     font-weight: 650; font-size: 16px; letter-spacing: -0.02em; color: #fff;
   }
-  .tab-brand .ic { color: var(--glow); }
+  .tab-brand .ic { color: var(--accent); }
   .tab {
     width: auto; height: 46px; border-radius: var(--r-pill); background: transparent;
     display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding: 0 16px;
