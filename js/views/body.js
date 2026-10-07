@@ -25,7 +25,6 @@ export function weightCard() {
       <span class="btn btn--primary btn--sm">${icon('plus', { size: 16 })} Log weight</span></button>`;
   }
   return html`<div class="card card--ink body-hero">
-    <div class="meridian" data-static="meridian" data-key="meridian" aria-hidden="true"></div>
     <div class="body-hero-top">
       <a class="body-hero-main" href="#/body/weight" data-action="nav" data-to="body/weight">
         <p class="section-label">Weight · 7-day average</p>
@@ -33,7 +32,7 @@ export function weightCard() {
         <p class="hero-meta">${s.weekChange != null ? html`<span class="${cx('delta', s.weekChange < -0.05 && 'is-down', s.weekChange > 0.05 && 'is-up')}">${signed(kgOut(s.weekChange), 1)} ${weightUnit()}</span> this week` : 'Change appears after a week'}
           ${s.sinceStart != null ? html` · ${signed(kgOut(s.sinceStart), 1)} since start` : ''}</p>
       </a>
-      <div class="body-hero-spark">${sparkline(series, { color: 'var(--glow)', width: 104, height: 44 })}</div>
+      <div class="body-hero-spark">${sparkline(series, { color: 'var(--text-2)', width: 104, height: 44 })}</div>
     </div>
     <div class="body-hero-foot">
       <span class="muted">${s.latest ? `Last weigh-in ${relativeDay(s.latest.date).toLowerCase()} · ${fw(s.latest.kg)}` : ''}</span>

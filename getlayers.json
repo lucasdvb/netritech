@@ -20,17 +20,13 @@
     "gl-accent": "#0071e3",
     "gl-accent-ink": "#ffffff",
     "gl-line": "rgba(29, 29, 31, 0.08)",
-    "gl-glow": "#2997ff",
+    "gl-glow": "#0071e3",
     "gl-font-display": "'Manrope', ui-sans-serif, system-ui, sans-serif",
     "gl-font-body": "'Manrope', ui-sans-serif, system-ui, sans-serif",
     "gl-radius": "1rem",
     "gl-radius-lg": "1.875rem",
     "gl-ease": "cubic-bezier(0.16, 1, 0.3, 1)"
   },
-  "placed": [
-    { "sectionId": "today-hero", "slot": 0, "sceneId": "meridian",
-      "sceneParams": { "bgColor": "#000000", "colorA": "#020a16", "colorB": "#0071e3", "colorC": "#2997ff", "colorD": "#9ccaff", "roll": "meridian-004", "level": -0.45, "ambient": 0.06, "bright": 1.05, "core": 0.1, "reach": 0.32 } },
-    { "sectionId": "body-weight-card", "slot": 1, "sceneId": "meridian", "sceneParams": "same as today-hero" }
-  ],
-  "notes": "Life OS is a daily-use PWA, so no immersive loader (GetLayers guidance for app shells). Font: Manrope from the GetLayers catalogue, self-hosted in assets/fonts so it works offline. Meridian runs from js/ui/meridian.js (shader and motion unchanged from the master; CONFIG only, palette BRAND). Buttons borrow Aerra's sheen + arrow tile and Relay's clockwise ring; entrances use the house blur-rise reveal. Colours are the owner's brand palette: white for light mode, black for dark mode, #0071e3 as the only accent (lifted to #2997ff for light on the dark stages and blue text in dark mode), the greys kept minimal. All tokens live in css/tokens.css."
+  "placed": [],
+  "notes": "Life OS is a daily-use PWA, so no immersive loader (GetLayers guidance for app shells). Font: Manrope from the GetLayers catalogue, self-hosted in assets/fonts so it works offline. Meridian was placed on the Today and Body stage cards, then removed at the owner's request: cards are one solid brand colour. Buttons borrow Aerra's sheen + arrow tile and Relay's clockwise ring; entrances use the house blur-rise reveal. Colours are the owner's brand palette: white for light mode, black for dark mode, #0071e3 as the only accent (lifted to #2997ff only for blue text in dark mode), the greys kept minimal. No element mixes colours; status reads through the greys, red only for delete and errors. All tokens live in css/tokens.css."
 }
