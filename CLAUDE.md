@@ -25,4 +25,6 @@
 - Committed scope: the whole brief plus all 30 agreed ideas (U1–U10, H1–H10, G1–G10, listed in section 13 of the plan). Every one gets built; none are optional.
 - Build phase by phase in the plan's order. Each phase ends with all test suites green, light and dark screenshots, a commit and a push.
 - Design rules: brand palette only, solid single-colour cards, one colour per element, blue (#0071E3) as the only accent, red only for delete and errors. Data stays on the device and everything must work offline.
-- Moments and ceremonies: render a HyperFrames preview and get the owner's approval before building them into the app.
+- Typography: Inter, semantic tokens only, as specified in `life-os/docs/typography.md` (the owner's rules). No hard-coded font sizes or arbitrary weights.
+- The owner asked (2026-10-07) for every phase to be built back to back without stopping to ask, then a full bug-hunt, cleanup and optimisation pass. Make strong product decisions from the brief and report them; don't wait for approval.
+- Moments and ceremonies: render a HyperFrames preview and share it with the owner, then build it into the app without waiting (per the instruction above).

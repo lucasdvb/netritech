@@ -1,42 +1,91 @@
-/* Manrope (SIL OFL 1.1), self-hosted so the app works offline. Chosen from the GetLayers font catalogue. */
-@font-face {
-  font-family: 'Manrope';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 200 800;
-  src: url('../assets/fonts/Manrope-latin.woff2') format('woff2');
+/* Inter (SIL OFL 1.1), self-hosted so the app works offline: only the four weights the
+   typography system uses (docs/typography.md), each split into Latin and Latin Extended. */
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url('../assets/fonts/Inter-latin-400.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
-    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: 'Manrope';
-  font-style: normal;
-  font-display: swap;
-  font-weight: 200 800;
-  src: url('../assets/fonts/Manrope-latin-ext.woff2') format('woff2');
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400; font-display: swap;
+  src: url('../assets/fonts/Inter-latin-ext-400.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
-    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap;
+  src: url('../assets/fonts/Inter-latin-500.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 500; font-display: swap;
+  src: url('../assets/fonts/Inter-latin-ext-500.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap;
+  src: url('../assets/fonts/Inter-latin-600.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 600; font-display: swap;
+  src: url('../assets/fonts/Inter-latin-ext-600.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: swap;
+  src: url('../assets/fonts/Inter-latin-700.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 700; font-display: swap;
+  src: url('../assets/fonts/Inter-latin-ext-700.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+    U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
 
 :root {
-  --font: 'Manrope', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  /* ---------- typography (docs/typography.md) ----------
+     Sizes are in rem on a 17px root (base.css), so they equal the design sizes at the default
+     text size and follow the phone's text-size setting. Values here are mobile; tablet and
+     desktop steps follow below. Components use these roles, never their own sizes or weights. */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
-  /* type scale: in rem, so all text follows the phone's text-size setting.
-     The root is 17px at the default size (see base.css), so 1rem = 17px. */
-  --fs-micro: 0.6471rem;      /* 11: labels, the smallest text allowed */
-  --fs-caption: 0.7059rem;    /* 12: metadata */
-  --fs-sub: 0.7647rem;        /* 13: secondary lines */
-  --fs-body: 0.8824rem;       /* 15: default text */
-  --fs-body-lg: 0.9412rem;    /* 16: lead text */
-  --fs-input: max(16px, 0.9412rem); /* 16+: iOS zooms into any field below 16px */
-  --fs-headline: 1rem;        /* 17: row titles */
-  --fs-title-sm: 1.1765rem;   /* 20: card titles */
-  --fs-title-md: 1.2941rem;   /* 22: sheet titles */
-  --fs-title: 1.4118rem;      /* 24: screen titles */
-  --fs-title-lg: 1.5294rem;   /* 26: large values */
-  --fs-metric: 1.8824rem;     /* 32: big numbers */
-  --fs-metric-xl: 3.0588rem;  /* 52: hero numbers */
-  --fs-display: clamp(1.8235rem, 1.1rem + 4vw, 2.4706rem); /* 31-42: greetings */
+  --weight-regular: 400;   /* information */
+  --weight-medium: 500;    /* emphasis, labels, navigation, metadata */
+  --weight-semibold: 600;  /* importance: headings, metrics, primary buttons, selection */
+  --weight-bold: 700;      /* exceptional emphasis only */
+
+  --text-display-xl: 2.3529rem;  /* 40 */
+  --text-display-lg: 2.1176rem;  /* 36 */
+  --text-display-md: 1.8824rem;  /* 32 */
+  --text-h1: 1.6471rem;          /* 28 */
+  --text-h2: 1.3529rem;          /* 23 */
+  --text-h3: 1.1765rem;          /* 20 */
+  --text-h4: 1rem;               /* 17 */
+  --text-body-lg: 1rem;          /* 17 */
+  --text-body: 0.8824rem;        /* 15 */
+  --text-caption: 0.7647rem;     /* 13 */
+  --text-footnote: 0.7059rem;    /* 12 */
+  --text-micro: 0.6471rem;       /* 11 */
+  --text-button-lg: 0.9412rem;   /* 16 */
+  --text-input: max(16px, 0.9412rem); /* 16 or more: phones zoom into smaller fields */
+  --text-journal: 1rem;          /* 17 */
+
+  --leading-display-xl: 1.05;
+  --leading-display-lg: 1.08;
+  --leading-display-md: 1.1;
+  --leading-h1: 1.15;
+  --leading-h2: 1.2;
+  --leading-h3: 1.25;
+  --leading-h4: 1.3;
+  --leading-body-lg: 1.5;
+  --leading-body: 1.45;
+  --leading-tight: 1.4;          /* body medium and strong, buttons */
+  --leading-caption: 1.35;
+  --leading-micro: 1.3;
+  --leading-relaxed: 1.65;       /* journal and long-form writing */
+
+  --tracking-display-xl: -0.03em;
+  --tracking-display-lg: -0.03em;
+  --tracking-display-md: -0.025em;
+  --tracking-h1: -0.018em;
+  --tracking-h2: -0.015em;
+  --tracking-h3: -0.01em;
+  --tracking-h4: -0.005em;
+  --tracking-body: 0;
+  --tracking-label: 0.03em;      /* the rare uppercase label */
+
+  --measure: 65ch;               /* comfortable line length for paragraphs and writing */
 
   /* spacing */
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px; --s7: 32px; --s8: 40px; --s9: 56px;
@@ -129,6 +178,35 @@
   --chart-grid: rgba(29, 29, 31, .06);
   --bar-ink: #1D1D1F;
   --bar-soft: #DADADD;
+}
+
+/* Typography steps up on larger screens: headings and display type grow, body text stays put. */
+@media (min-width: 600px) {
+  :root {
+    --text-display-xl: 2.8235rem;  /* 48 */
+    --text-display-lg: 2.4706rem;  /* 42 */
+    --text-display-md: 2.1176rem;  /* 36 */
+    --text-h1: 1.7647rem;          /* 30 */
+    --text-h2: 1.4118rem;          /* 24 */
+    --text-h3: 1.2353rem;          /* 21 */
+    --text-h4: 1.0588rem;          /* 18 */
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --text-display-xl: 3.2941rem;  /* 56 */
+    --text-display-lg: 2.8235rem;  /* 48 */
+    --text-display-md: 2.3529rem;  /* 40 */
+    --text-h1: 1.8824rem;          /* 32 */
+    --text-h2: 1.5294rem;          /* 26 */
+    --text-h3: 1.2941rem;          /* 22 */
+    --text-h4: 1.1176rem;          /* 19 */
+    --text-journal: 1.0588rem;     /* 18 */
+  }
+}
+/* With a mouse or trackpad, fields can use body size; touch screens keep 16px or more. */
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  :root { --text-input: 0.8824rem; }
 }
 
 /* Springs sampled from js/ui/motion.js (SPRINGS); a unit test keeps these in step. */

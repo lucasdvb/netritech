@@ -74,6 +74,8 @@ await step('bad backup file is rejected without changes', async () => {
 
 await step('keyboard: toggle with Space, sheet focus trap, Escape returns focus', async () => {
   await go('#/today', '.today');
+  // Late at night every group starts folded; open one so there is a habit to reach.
+  if (!(await page.locator('.hrow .check >> visible=true').count())) await page.locator('.hsec-head').first().click();
   const first = page.locator('.hrow .check >> visible=true').first();
   await first.focus();
   const id = await first.getAttribute('data-id');
@@ -112,8 +114,8 @@ await step('offline: reload with the network off', async () => {
   // the self-hosted font must work with the network off
   await page.goto(base + '#/today');
   await page.waitForSelector('.hero');
-  const font = await page.evaluate(async () => { await document.fonts.ready; return document.fonts.check('600 16px Manrope'); });
-  if (!font) throw new Error('Manrope not available offline');
+  const font = await page.evaluate(async () => { await document.fonts.ready; return document.fonts.check('600 16px Inter'); });
+  if (!font) throw new Error('Inter not available offline');
   await shot('63-offline-today');
   await ctx.setOffline(false);
 });

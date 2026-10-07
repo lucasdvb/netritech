@@ -37,7 +37,7 @@ export default {
     const rs = reminderStats();
     return html`
       ${pageHead({ title: 'Settings', back: { to: 'more', label: 'More' } })}
-      <section class="block block--first"><p class="section-label">Profile</p>
+      <section class="block block--first"><h2 class="set-section">Profile</h2>
         <div class="set-list">
           ${profileField('Name', 'name')}
           ${profileField('Age', 'age', 'number', { attrs: 'inputmode="numeric" min="10" max="100"' })}
@@ -46,7 +46,7 @@ export default {
           ${profileField('Body fat (estimate)', 'startBodyFat', 'number', { unit: '%', attrs: 'step="0.5"' })}
           ${profileField('Goal body fat', 'goalBodyFat', 'number', { unit: '%', attrs: 'step="0.5"' })}
         </div></section>
-      <section class="block"><p class="section-label">Day</p>
+      <section class="block"><h2 class="set-section">Day</h2>
         <div class="set-list">
           ${profileField('Wake', 'wakeTime', 'time')}
           ${profileField('Training', 'trainTime', 'time')}
@@ -57,7 +57,7 @@ export default {
             ${DAY_ENDS.map(([v, l]) => html`<option value="${v}" ${(p.dayEndsAt || '00:00') === v ? 'selected' : ''}>${l}</option>`)}</select>`, { hint: 'Anything you log before then counts for the day before.' })}
           <div class="set-row"><span class="set-text"><span class="set-label">Work days</span></span><span class="set-ctl"><div class="day-pick day-pick--sm">${DAYS.map(([v, l]) => html`<button type="button" class="${cx('day-opt', (p.workDays || []).includes(v) && 'is-on')}" aria-pressed="${(p.workDays || []).includes(v)}" data-action="workday" data-v="${v}" aria-label="${['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][v]}">${l}</button>`)}</div></span></div>
         </div></section>
-      <section class="block"><p class="section-label">Targets</p>
+      <section class="block"><h2 class="set-section">Targets</h2>
         <div class="set-list">
           ${targetField('Protein', 'proteinG', 'g')}
           ${targetField('Calories', 'kcal', 'kcal', 50)}
@@ -67,18 +67,18 @@ export default {
           ${targetField('Movement breaks', 'movementBreaks', '/day')}
         </div>
         <p class="fine-print">Steps adapt on their own: 7,000 → 8,000 → 9,000 over your first three weeks. Calories adapt from your weight trend in Nutrition.</p></section>
-      <section class="block"><p class="section-label">Units</p>
+      <section class="block"><h2 class="set-section">Units</h2>
         <div class="set-list">
           ${settingRow('Weight', segmented([{ id: 'kg', label: 'kg' }, { id: 'lb', label: 'lb' }], s.units.weight, { action: 'unit', name: 'Weight unit', size: 'sm', cls: 'seg--compact' }), { key: 'u-w' })}
           ${settingRow('Length', segmented([{ id: 'cm', label: 'cm' }, { id: 'in', label: 'in' }], s.units.length, { action: 'unit-len', name: 'Length unit', size: 'sm', cls: 'seg--compact' }), { key: 'u-l' })}
         </div></section>
-      <section class="block"><p class="section-label">Appearance</p>
+      <section class="block"><h2 class="set-section">Appearance</h2>
         <div class="set-list">
           ${settingRow('Theme', segmented([{ id: 'system', label: 'System' }, { id: 'light', label: 'Light' }, { id: 'dark', label: 'Dark' }], s.theme, { action: 'theme', name: 'Theme', cls: 'seg--compact' }))}
           ${settingRow('Haptics', toggle(s.haptics !== false, { action: 'haptics', label: 'Haptics' }), { hint: 'Subtle taps where the device supports them.' })}
           ${settingRow('Show every section on Today', toggle(s.showAllSections, { action: 'all-sections', label: 'Show every section' }), { hint: 'Off: Today shows what fits the time of day.' })}
         </div></section>
-      <section class="block"><p class="section-label">Reminders</p>
+      <section class="block"><h2 class="set-section">Reminders</h2>
         <div class="card">
           <p class="card-lead" style="margin-top:0">Quiet and adaptive: if you already do something without the nudge, Life OS stops nudging. If you keep dismissing one, it asks whether a different time would suit you better.</p>
           <p class="fine-print">${perm === 'unsupported' ? 'This browser doesn’t support notifications. Reminders show inside the app while it’s open.'
@@ -90,7 +90,7 @@ export default {
             ${kind === 'every' && nt[k]?.on ? html`<select class="input input--inline" data-change="notif-every" data-k="${k}" aria-label="${label} interval">${(k === 'eyes' ? [20, 30, 45] : k === 'water' ? [90, 120, 180] : [45, 50, 60]).map((m) => html`<option value="${m}" ${raw(nt[k].every === m ? 'selected' : '')}>every ${m} min</option>`)}</select>` : ''}
             ${toggle(nt[k]?.on, { action: 'notif', data: { k }, label })}`, { key: `n-${k}`, hint: rs[k]?.note || '' })) : ''}
         </div></section>
-      <section class="block"><p class="section-label">About</p>
+      <section class="block"><h2 class="set-section">About</h2>
         <dl class="facts">
           <div><dt>Version</dt><dd>1.0 · local-first</dd></div>
           <div><dt>Habit system</dt><dd>Imported from your Life OS workbook</dd></div>
