@@ -1,0 +1,161 @@
+# Life OS
+
+A private, local-first app for habits, health, training and life. It is built for daily use on an iPhone from the Home Screen, and works in any modern browser.
+
+Everything you log stays on the device that logged it. There are no accounts, no servers, no analytics and no third-party services.
+
+---
+
+## Using it on your iPhone
+
+To install from Safari, a PWA has to be served over **HTTPS**. Hosting only serves the app's code; your data never leaves the phone.
+
+1. Host the `life-os/` folder on any static host (see below).
+2. Open the URL in **Safari** on the iPhone.
+3. Tap **Share → Add to Home Screen**.
+4. Open Life OS from the Home Screen icon. It runs full-screen and works offline.
+
+The first time you open it from the Home Screen, go to **More → Data** and make a backup habit of it. Safari can clear website storage for sites that aren't used for weeks. Installing to the Home Screen and taking regular backups avoids that.
+
+### Hosting options (any of these works)
+
+| Host | How |
+|---|---|
+| **Netlify Drop** | Go to app.netlify.com/drop and drag the `life-os` folder in. You get an HTTPS URL in seconds. |
+| **Cloudflare Pages** | Create a project, choose "Direct upload" and upload the `life-os` folder. |
+| **GitHub Pages** | Enable Pages for the repo and point it at the branch. The app lives at `https://<user>.github.io/<repo>/life-os/`. Paths are all relative, so a sub-path is fine. |
+
+Hosting makes the app's code reachable at that URL, but not your data. Each device keeps its own data in its own browser storage.
+
+### Updating
+
+After changing any file, rebuild the service-worker asset list, then redeploy:
+
+```sh
+node tools/build-sw.mjs
+```
+
+This gives the cache a new version. The next time the app is opened online, it fetches the update and reloads once.
+
+---
+
+## Running locally
+
+No build step and no dependencies. Serve the folder over HTTP:
+
+```sh
+node tests/serve.mjs 4173          # → http://localhost:4173/
+# or: python3 -m http.server 4173
+```
+
+`localhost` counts as a secure origin, so the service worker and installation also work there on a desktop browser.
+
+---
+
+## What's inside
+
+- **Today**: a time-aware greeting and a daily score from 9 key habits. Habits are grouped by time of day and open progressively. One tap completes with a small animation and haptic feedback.
+  - **Top 3 priorities** (drag or arrow keys to reorder), plus the **next useful action** from the coach.
+  - **Win of the day**, morning check-in and evening shutdown.
+  - **Normal / Minimum / Sick** day modes.
+- **Habits**: every type: yes/no, numeric, duration, quantity, rating and checklist.
+  - Schedules: daily, chosen weekdays, X per week, X per month, every N days.
+  - Three priority levels and Minimum-day versions; per-habit reminders.
+  - Values can come from your logs automatically (water, protein, steps, sleep, workouts, reviews).
+- **Body**: weight with 7/14/30-day trends; nutrition with quick foods, protein and adaptive calories; water and steps.
+  - Measurements every two weeks; private progress photos with a compare slider; body-composition estimates; sleep.
+- **Training**: today's planned session with a smart call ("train as planned", "go lighter", "walk instead") based on sleep, energy and stress.
+  - Workout logger prefilled from last time, with progressive-overload comparison.
+  - Exercise library with history; dedicated calf, core and posture tracking.
+- **Progress**: trends, consistency by area, a calendar of every day, weekly insights, personal bests and "needs attention".
+- **More**: Journal, Mind (reading, learning, meditation), Faith, Relationships, Work (deep work, shutdown), Goals, and Weekly and Monthly reviews.
+  - Also: Search, Settings (units, theme, targets, reminders), Data and Privacy.
+
+### Reminders on iPhone, honestly
+
+Reminders show as a banner while Life OS is open. If you allow notifications, they also arrive as system notifications while the app is recently used. The rules are adaptive:
+
+- a habit you usually finish before its reminder time stops being reminded;
+- a reminder ignored three times in a row pauses and suggests a different time;
+- changing a reminder's time, or switching it off and on, gives it a fresh start.
+
+iOS only delivers notifications to a fully closed web app through a push server. This private, server-free version deliberately doesn't use one, and the Settings screen says so.
+
+---
+
+## Your data
+
+- **Storage:** IndexedDB in the browser (`life-os` database), on this device only. Photos are stored as blobs and are never uploaded.
+- **Backup:** More → Data → *Download backup*. You get one JSON file, with photos optional. On iPhone it opens the share sheet, so you can save it to Files or iCloud Drive yourself.
+- **Restore:** you can merge (keeps the newer version of each record) or replace everything (asks you to confirm first). An invalid file is rejected and nothing changes.
+- **CSV:** export weight, measurements, habits, nutrition, water, steps, sleep, workouts and journal for spreadsheets.
+- **Sample data:** opt-in, clearly labelled and removable in one tap. Every sample record carries `demo: true` and never overwrites a real entry.
+- **Erase:** More → Data → *Erase everything* (asks twice).
+
+Nothing in the app is a medical claim:
+
+- body-fat figures are labelled estimates;
+- eye breaks are comfort habits, not treatment for keratoconus;
+- jaw concerns are routed to a dentist or orthodontist rather than exercises.
+
+---
+
+## Architecture
+
+```
+index.html             app shell (tab bar / sidebar, main, sheets, toasts)
+manifest.webmanifest   PWA manifest (standalone, icons, shortcuts)
+sw.js                  service worker: precache, cache-first, offline navigation
+css/                   tokens.css (themes, palette, type) · base · components · views
+js/app.js              router, view lifecycle, event delegation, focus management
+js/db/                 IndexedDB wrapper, schema, first-run seed (your habit system)
+js/core/               store (in-memory cache + optimistic writes), habit engine,
+                       scoring, metrics, fitness, coach, goals, reviews, reminders,
+                       backup, sample data
+js/ui/                 html`` templates, keyed DOM morphing, components, charts,
+                       sheets, toasts, haptics, icons
+js/views/              one module per screen, loaded on demand
+tools/                 build-sw.mjs · build-icons.mjs · render-icons.mjs
+tests/                 Playwright browser tests at iPhone 14 size
+```
+
+- **No framework.** It uses ES modules, a tagged-template `html` that escapes by default, and a small keyed DOM morph (`js/ui/patch.js`). Re-renders therefore keep existing elements, so animations, focus, scroll and half-typed text survive.
+- **Data flow:** `store` loads every store into memory at start. Reads are synchronous, and writes are optimistic: the UI updates first, IndexedDB is written in the background, and a failed write rolls back and shows a message. Derived numbers are memoised per data version.
+- **Habit engine** (`js/core/habits.js`): each habit has a type, schedule, thresholds (`min` / `target` / `mvdMin` / ramp) and an optional *source*, so its value comes from your logs instead of a second tap.
+- **Score:** the daily score uses the habits marked "in daily score". Minimum days score the Minimum-day habits; sick days pause scoring. Rolling consistency excludes days before tracking started.
+- **Coach** (`js/core/coach.js`): plain rules that separate *facts from your data* from *suggestions*. Nothing is generated or sent anywhere.
+
+### Data model (IndexedDB stores)
+
+`profile`, `settings`, `habits`, `habitLogs` (`habitId:date`), `goals`, `exercises`, `templates`, `workouts`, `workoutSets`, `foods`, `nutritionLogs`, `waterLogs`, `stepLogs`, `weightEntries` (one per date), `measurements`, `bodyFatEstimates`, `photos` + `photoBlobs`, `sleepEntries`, `moodEntries`, `journalEntries`, `readingSessions`, `learningSessions`, `meditationSessions`, `spiritualSessions`, `relationshipEntries`, `dailyReviews` (check-in, Top 3, shutdown, counters), `weeklyReviews`, `monthlyReviews`, `reminderLog`, `meta`.
+
+Dates are local `YYYY-MM-DD` strings. Every record has `id`, `createdAt` and `updatedAt`.
+
+---
+
+## Tests
+
+The tests run in Chromium at iPhone 14 size, using Playwright from the global npm root:
+
+```sh
+node tests/serve.mjs 4173 &
+NODE_PATH=$(npm root -g) node tests/smoke.mjs  http://localhost:4173/ ./test-shots   # Today, habits, modes
+NODE_PATH=$(npm root -g) node tests/phase3.mjs http://localhost:4173/ ./test-shots   # weight, food, training, photos
+NODE_PATH=$(npm root -g) node tests/phase4.mjs http://localhost:4173/ ./test-shots   # progress, modules, reviews, backup
+NODE_PATH=$(npm root -g) node tests/phase5.mjs http://localhost:4173/ ./test-shots   # reminders, restore, offline,
+                                                                                    # keyboard, 1-year dataset, desktop
+```
+
+Every suite fails on console errors or a page wider than the screen. The smoke and progress suites also flag buttons without an accessible label.
+
+---
+
+## Adding integrations later
+
+The app is deliberately self-contained. If you want automatic steps, sleep or weight later, the cleanest local-first route is an **Apple Shortcut** that reads Health data and builds a JSON file in the backup format, which you then import with *Merge*. This keeps everything on the phone without a server.
+
+Anything that needs a server (push notifications to a closed app, sync between devices) would be a separate, opt-in addition. It is not pretended here.
+
+---
+
+Icons: [Lucide](https://lucide.dev) (ISC). Font: [Inter](https://rsms.me/inter/) (OFL). Both are self-hosted.
