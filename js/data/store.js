@@ -33,6 +33,7 @@ export const now = () => new Date().toISOString();
 
 export async function init() {
   await adapter.open();
+  memos.clear(); // the data is being replaced, so nothing derived from it still holds
   const results = await Promise.all(CACHED.map((s) => adapter.getAll(s)));
   CACHED.forEach((s, i) => {
     const live = new Map();

@@ -22,10 +22,11 @@ export function bar(value, { color = 'var(--accent)', cls = '', label = '' } = {
 export function check(done, { action, data = {}, label, color, cls = '', state } = {}) {
   const dataAttrs = Object.entries(data).map(([k, v]) => ` data-${k}="${String(v).replace(/"/g, '&quot;')}"`).join('');
   const s = state || (done ? 'done' : 'open');
-  return html`<button type="button" class="${cx('check', `check--${s}`, cls)}" role="checkbox" aria-checked="${s === 'done' ? 'true' : s === 'no' ? 'mixed' : 'false'}"
+  // tiny: the two-minute version was done. It counts, so it reads as partly checked, not empty.
+  return html`<button type="button" class="${cx('check', `check--${s}`, cls)}" role="checkbox" aria-checked="${s === 'done' ? 'true' : s === 'no' || s === 'tiny' ? 'mixed' : 'false'}"
     aria-label="${label}" data-action="${action}"${raw(dataAttrs)}${raw(color ? ` style="--check:${color}"` : '')}>
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle class="check-ring" cx="12" cy="12" r="10.5"/><circle class="check-fill" cx="12" cy="12" r="10.5"/>
-      <path class="check-mark" d="M7.5 12.4l3 3 6-6.6" pathLength="1"/>${s === 'no' ? raw('<path class="check-no" d="M8 12h8"/>') : ''}</svg>
+      <path class="check-mark" d="M7.5 12.4l3 3 6-6.6" pathLength="1"/>${s === 'no' ? raw('<path class="check-no" d="M8 12h8"/>') : ''}${s === 'tiny' ? raw('<circle class="check-tiny" cx="12" cy="12" r="5"/>') : ''}</svg>
   </button>`;
 }
 

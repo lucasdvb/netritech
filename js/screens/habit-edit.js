@@ -1,11 +1,13 @@
 import * as store from '../data/store.js';
 import * as H from '../domain/habits.js';
-import { PRIORITIES, CATEGORIES, SECTIONS, HABIT_TYPES, SCHEDULES, catColor } from '../domain/taxonomy.js';
-import { html, raw, cx, attr } from '../ui/dom.js';
+import { CATEGORIES, SECTIONS, HABIT_TYPES, SCHEDULES, catColor } from '../domain/taxonomy.js';
+import { fmtMD } from '../domain/dates.js';
+import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, segmented, stepper, toggle, settingRow, fieldError } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
+import { takePending } from './habit-new.js';
 
 const ICONS = ['circle', 'sunrise', 'sun', 'moon', 'moon-star', 'bed', 'droplet', 'beef', 'apple', 'salad', 'egg', 'coffee', 'activity', 'dumbbell',
   'footprints', 'bike', 'person-standing', 'heart-pulse', 'scan-eye', 'eye', 'pill', 'leaf', 'flower-2', 'sprout', 'book-open', 'graduation-cap',
@@ -14,15 +16,21 @@ const ICONS = ['circle', 'sunrise', 'sun', 'moon', 'moon-star', 'bed', 'droplet'
 const DAYS = [[1, 'M'], [2, 'T'], [3, 'W'], [4, 'T'], [5, 'F'], [6, 'S'], [7, 'S']];
 const DAY_NAMES = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const n = (v) => (v === '' || v == null ? null : Number(v));
+const STATE_CHOICES = ['focus', 'autopilot', 'queue'].map((id) => ({ id, label: H.STATES[id].label }));
 
 function draftFor(params, ui) {
-  if (ui.draft && ui.draftFor === (params.id || 'new')) return ui.draft;
-  const base = params.id ? structuredClone(H.habit(params.id)) : H.newHabit();
-  ui.draft = { ...base, checklist: base.checklist ? [...base.checklist] : [] };
+  const handed = !params.id && takePending();
+  if (!handed && ui.draft && ui.draftFor === (params.id || 'new')) return ui.draft;
+  const base = handed || (params.id ? structuredClone(H.habit(params.id)) : H.newHabit());
+  ui.draft = { ...base, checklist: base.checklist ? [...base.checklist] : [], tiny: base.tiny ? { ...base.tiny } : H.tinyOf(base) ? { ...H.tinyOf(base) } : null, state: H.stateOf(base) };
   ui.draftFor = params.id || 'new';
   ui.errors = {};
+  // Arriving from the three-question sheet means you came here for the other options.
+  ui.more = !!handed;
   return ui.draft;
 }
+
+const focusOthers = (id) => H.focusHabits().filter((h) => h.id !== id).length;
 
 export default {
   id: 'habit-edit',
@@ -39,8 +47,28 @@ export default {
       <form class="editor" data-submit="save" novalidate>
         <section class="ed-group">
           <label class="field"><span class="field-label">Name</span>
-            <input class="input${e.name ? ' is-invalid' : ''}" name="name" value="${d.name}" data-input="f" data-f="name" placeholder="e.g. Evening walk" maxlength="60" ${raw(params.id ? '' : 'autofocus')} aria-invalid="${!!e.name}">
+            <textarea class="input input--grow${e.name ? ' is-invalid' : ''}" rows="1" data-grow name="name" data-input="f" data-f="name" placeholder="e.g. Evening walk" maxlength="60" ${raw(params.id ? '' : 'autofocus')} aria-invalid="${!!e.name}" enterkeyhint="done">${d.name}</textarea>
             ${fieldError(e.name)}</label>
+          <div class="field"><span class="field-label">When <small>after something you already do</small></span>
+            <div class="chips" role="group" aria-label="Suggested moments">${H.anchorSuggestions().slice(0, 6).map((a) => html`<button type="button" class="${cx('chip', d.anchor === a && 'is-active')}" aria-pressed="${d.anchor === a}" data-action="anchor" data-v="${a}">${a}</button>`)}</div>
+            <textarea class="input input--grow" rows="1" data-grow data-input="f" data-f="anchor" placeholder="After I…" maxlength="60" aria-label="When, in your own words" enterkeyhint="done">${d.anchor || ''}</textarea></div>
+          <div class="${numeric && d.type !== 'rating' ? 'grid-2' : ''}">
+            <label class="field"><span class="field-label">Tiny version</span>
+              <textarea class="input input--grow" rows="1" data-grow data-input="tiny" data-k="label" placeholder="${d.name ? `The two-minute ${d.name.toLowerCase()}` : 'e.g. Read one page'}" maxlength="60" enterkeyhint="done">${d.tiny?.label || ''}</textarea></label>
+            ${numeric && d.type !== 'rating' ? html`<label class="field"><span class="field-label">Tiny amount <small>${d.unit || 'counts as tiny'}</small></span>
+              <input class="input" type="number" inputmode="decimal" step="any" min="0" value="${d.tiny?.min ?? ''}" data-input="tiny" data-k="min"></label>` : ''}
+          </div>
+          <p class="field-hint">What you’d still do on your worst day. It always counts, for your score and your run.</p>
+          <div class="field"><span class="field-label">State</span>
+            ${segmented(STATE_CHOICES, d.state, { action: 'state', name: 'State' })}
+            ${fieldError(e.state)}
+            <span class="field-hint">${d.state === 'paused' ? `Paused${d.pausedUntil ? ` until ${fmtMD(d.pausedUntil)}` : ''}. Pick a state to bring it back now.` : H.STATES[d.state]?.hint || ''}</span></div>
+        </section>
+
+        <details class="disclosure ed-more" ${raw(ui.more ? 'open' : '')}>
+          <summary data-action="toggle-more">More options</summary>
+          <div class="ed-more-body">
+        <section class="ed-group">
           <label class="field"><span class="field-label">Description <small>optional</small></span>
             <textarea class="input" rows="2" data-input="f" data-f="description" placeholder="What counts? Keep it simple.">${d.description || ''}</textarea></label>
           <div class="field"><span class="field-label">Icon</span>
@@ -50,7 +78,6 @@ export default {
             <label class="field"><span class="field-label">Today group</span><select class="input" data-change="f" data-f="section">${SECTIONS.map((c) => html`<option value="${c.id}" ${raw(d.section === c.id ? 'selected' : '')}>${c.label}</option>`)}</select></label>
           </div>
         </section>
-
         <section class="ed-group">
           <h2 class="ed-title">Tracking</h2>
           <label class="field"><span class="field-label">Type</span><select class="input" data-change="type">${HABIT_TYPES.map((t) => html`<option value="${t.id}" ${raw(d.type === t.id ? 'selected' : '')}>${t.label} — ${t.hint}</option>`)}</select></label>
@@ -84,9 +111,7 @@ export default {
         </section>
 
         <section class="ed-group">
-          <h2 class="ed-title">Priority</h2>
-          ${segmented(PRIORITIES.map((p) => ({ id: p.id, label: p.label })), d.priority, { action: 'priority', name: 'Priority' })}
-          <p class="field-hint">${PRIORITIES.find((p) => p.id === d.priority)?.hint}</p>
+          <h2 class="ed-title">Effort and goal</h2>
           <div class="field"><span class="field-label">Difficulty</span>${segmented([{ id: 1, label: 'Easy' }, { id: 2, label: 'Medium' }, { id: 3, label: 'Hard' }].map((x) => ({ ...x, id: String(x.id) })), String(d.difficulty || 2), { action: 'difficulty', name: 'Difficulty' })}</div>
           <label class="field"><span class="field-label">Goal</span><select class="input" data-change="f" data-f="goalId"><option value="">None</option>${goals.map((g) => html`<option value="${g.id}" ${raw(d.goalId === g.id ? 'selected' : '')}>${g.name}</option>`)}</select></label>
         </section>
@@ -94,18 +119,14 @@ export default {
         <section class="ed-group">
           <h2 class="ed-title">Behaviour</h2>
           <div class="set-list">
-            ${settingRow('Counts toward daily score', toggle(d.affectsScore, { action: 'flag', data: { f: 'affectsScore' }, label: 'Counts toward daily score' }), { hint: d.priority === 'optional' ? 'Optional habits never affect the score.' : 'Keep the score to a handful of key habits.' })}
             ${settingRow('Show on Today', toggle(d.showOnToday !== false, { action: 'flag', data: { f: 'showOnToday' }, label: 'Show on Today' }))}
-            ${settingRow('Optional', toggle(d.optional, { action: 'flag', data: { f: 'optional' }, label: 'Optional' }), { hint: 'Never creates guilt when missed.' })}
             ${settingRow('Weekly consistency', toggle(d.weekly !== false, { action: 'flag', data: { f: 'weekly' }, label: 'Counts toward weekly consistency' }))}
             ${settingRow('Show best run', toggle(d.streaks, { action: 'flag', data: { f: 'streaks' }, label: 'Show best run' }), { hint: 'A quiet line on the detail screen. No streak pressure on Today.' })}
-            ${settingRow('Part of Minimum Day', toggle(d.mvd, { action: 'flag', data: { f: 'mvd' }, label: 'Part of Minimum Day' }))}
+            ${settingRow('Essential on a minimum day', toggle(d.mvd, { action: 'flag', data: { f: 'mvd' }, label: 'Essential on a minimum day' }), { hint: 'Kept, in its tiny version, when you switch a day to Minimum.' })}
           </div>
-          ${d.mvd ? html`<div class="grid-2">
-            <label class="field"><span class="field-label">Minimum-day label</span><input class="input" value="${d.mvdLabel || ''}" data-input="f" data-f="mvdLabel" placeholder="${d.name || 'e.g. 5-minute version'}"></label>
-            ${numeric ? html`<label class="field"><span class="field-label">Minimum-day target</span><input class="input" type="number" inputmode="decimal" step="any" value="${d.mvdMin ?? ''}" data-input="num" data-f="mvdMin"></label>` : ''}
-          </div>` : ''}
         </section>
+          </div>
+        </details>
 
         <div class="ed-actions">
           <button type="button" class="btn btn--ghost" data-action="cancel">Cancel</button>
@@ -126,19 +147,22 @@ export default {
     },
     count: ({ data, ui }) => { const sch = ui.draft.schedule; sch.count = Math.max(1, Math.min(sch.kind === 'perWeek' ? 7 : 31, (sch.count || 1) + Number(data.delta))); app.refresh(); },
     every: ({ data, ui }) => { const sch = ui.draft.schedule; sch.every = Math.max(2, Math.min(90, (sch.every || 7) + Number(data.delta))); app.refresh(); },
-    priority: ({ data, ui }) => {
-      ui.draft.priority = data.value;
-      if (data.value === 'optional') { ui.draft.optional = true; ui.draft.affectsScore = false; }
-      else ui.draft.optional = false;
+    state: ({ data, ui, params }) => {
+      if (data.value === 'focus' && ui.draft.state !== 'focus' && focusOthers(params.id) >= H.FOCUS_LIMIT) {
+        app.toast('Your three are full. Swap one out first.', { action: { label: 'Choose', fn: () => app.go('habits/sort') } });
+        return;
+      }
+      ui.draft.state = data.value;
+      ui.errors = { ...ui.errors, state: '' };
       hap.tap();
       app.refresh();
     },
+    anchor: ({ data, ui }) => { ui.draft.anchor = ui.draft.anchor === data.v ? null : data.v; hap.tap(); app.refresh(); },
+    'toggle-more': ({ ui, event }) => { event.preventDefault(); ui.more = !ui.more; app.refresh(); },
     difficulty: ({ data, ui }) => { ui.draft.difficulty = Number(data.value); app.refresh(); },
     flag: ({ data, ui }) => {
       const f = data.f;
       ui.draft[f] = f === 'showOnToday' || f === 'weekly' ? ui.draft[f] === false : !ui.draft[f];
-      if (f === 'optional' && ui.draft.optional) { ui.draft.priority = 'optional'; ui.draft.affectsScore = false; }
-      if (f === 'optional' && !ui.draft.optional && ui.draft.priority === 'optional') ui.draft.priority = 'high';
       hap.tap();
       app.refresh();
     },
@@ -151,9 +175,21 @@ export default {
       if (!d.name.trim()) errors.name = 'Give it a short name.';
       if (H.isNumeric(d) && d.type !== 'rating' && !(Number(d.target) > 0)) errors.target = 'Set a target above zero.';
       if (d.schedule.kind === 'weekdays' && !(d.schedule.days || []).length) errors.days = 'Pick at least one day.';
+      const before = params.id ? H.habit(params.id) : null;
+      const was = before ? H.stateOf(before) : null;
+      if (d.state === 'focus' && was !== 'focus' && focusOthers(params.id) >= H.FOCUS_LIMIT) errors.state = 'Your three are full. Choose Later, or swap one out first.';
       ui.errors = errors;
-      if (Object.keys(errors).length) { app.refresh(); app.toast('A couple of fields need a look.'); return; }
-      const clean = { ...d, name: d.name.trim(), checklist: d.checklist.map((x) => x.trim()).filter(Boolean) };
+      if (Object.keys(errors).length) {
+        if (errors.target || errors.days) ui.more = true;
+        app.refresh();
+        app.toast('A couple of fields need a look.');
+        return;
+      }
+      const tiny = d.tiny && ((d.tiny.label || '').trim() || d.tiny.min != null) ? { label: (d.tiny.label || '').trim() || null, min: d.tiny.min ?? null } : null;
+      // The tiny version replaces the old minimum-day label and target.
+      const clean = { ...d, name: d.name.trim(), anchor: (d.anchor || '').trim() || null, tiny, mvdLabel: null, mvdMin: null, checklist: d.checklist.map((x) => x.trim()).filter(Boolean) };
+      // A new state brings its own bookkeeping: when focus began, the place in the queue.
+      if (d.state !== was && d.state !== 'paused') Object.assign(clean, H.statePatch(before || { ...d, state: 'autopilot' }, d.state, { focusCount: 0 }));
       if (!clean.checklist.length) clean.checklist = null;
       if (clean.type === 'rating') { clean.target = 10; clean.unit = ''; }
       if (clean.type === 'binary' || clean.type === 'check') { clean.target = 1; }
@@ -161,13 +197,18 @@ export default {
       store.put('habits', clean);
       hap.success();
       ui.draft = null;
-      app.toast(params.id ? 'Habit updated' : 'Habit created', { icon: 'check' });
+      app.toast(params.id ? 'Habit updated' : clean.state === 'focus' ? `${clean.name} is one of your three.` : 'Habit created', { icon: 'check' });
       app.replace(`habits/${clean.id}`);
     },
   },
   inputs: {
     f: ({ el, value, ui }) => { ui.draft[el.dataset.f] = value === '' && ['time', 'reminder', 'goalId'].includes(el.dataset.f) ? null : value; if (el.tagName === 'SELECT') app.refresh(); },
     num: ({ el, value, ui }) => { ui.draft[el.dataset.f] = n(value); },
+    tiny: ({ el, value, ui }) => {
+      const t = { label: null, min: null, ...(ui.draft.tiny || {}) };
+      t[el.dataset.k] = el.dataset.k === 'min' ? n(value) : value;
+      ui.draft.tiny = t;
+    },
     step: ({ el, value, ui }) => { ui.draft.checklist[Number(el.dataset.i)] = value; },
     type: ({ value, ui }) => {
       ui.draft.type = value;

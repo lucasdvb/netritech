@@ -23,6 +23,7 @@ const ROUTES = [
   { path: 'today/:date?', tab: 'today', depth: 0, load: v('today') },
   { path: 'progress/:seg?', tab: 'progress', depth: 0, load: v('progress') },
   { path: 'habits/new', tab: 'habits', depth: 1, load: v('habit-edit') },
+  { path: 'habits/sort', tab: 'habits', depth: 1, load: v('habit-sort') },
   { path: 'habits/:id/edit', tab: 'habits', depth: 2, load: v('habit-edit') },
   { path: 'habits/:id', tab: 'habits', depth: 1, load: v('habit') },
   { path: 'habits', tab: 'habits', depth: 0, load: v('habits') },
@@ -129,6 +130,7 @@ async function navigate() {
   const y = dir === 'view--pop' ? scrollMemory.get(path) || 0 : 0;
   window.scrollTo(0, y);
   view.mount?.(el, ctxOf(current));
+  growAll(el);
   renderTabbar();
   document.title = view.title ? `${typeof view.title === 'function' ? view.title(ctxOf(current)) : view.title} · ${APP_NAME}` : APP_NAME;
   if (prev) {
@@ -147,6 +149,7 @@ function refresh() {
       const restore = focusAnchor(current.el);
       patch(current.el, current.view.render(ctxOf(current)));
       current.view.update?.(current.el, ctxOf(current));
+      growAll(current.el);
       restore();
     } catch (err) {
       console.error(err);
@@ -221,6 +224,24 @@ for (const type of ['input', 'change']) {
     if (handler) run(handler, el, e, { value: el.type === 'checkbox' ? el.checked : el.value });
   });
 }
+
+// Grow-to-fit answers: one line that wraps. Enter still means "done", like a normal field.
+const growNative = CSS.supports?.('field-sizing', 'content');
+function grow(el) {
+  if (el.value.includes('\n')) el.value = el.value.replace(/\s*\n+\s*/g, ' ');
+  if (growNative) return;
+  el.style.height = 'auto';
+  el.style.height = `${el.scrollHeight + 2}px`;
+}
+document.addEventListener('input', (e) => { if (e.target.matches?.('textarea[data-grow]')) grow(e.target); }, true);
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter' || e.isComposing || !e.target.matches?.('textarea[data-grow]')) return;
+  e.preventDefault();
+  const form = e.target.closest('form');
+  if (form?.dataset.submit) form.requestSubmit();
+  else e.target.blur();
+});
+export const growAll = (root = document) => { if (!growNative) root.querySelectorAll('textarea[data-grow]').forEach(grow); };
 
 document.addEventListener('submit', (e) => {
   const form = e.target.closest('form[data-submit]');
@@ -300,7 +321,7 @@ async function boot() {
     replace: (path) => router.go(path, { replace: true }),
     back,
     refresh,
-    sheet: (opts) => sheet.open(opts),
+    sheet: (opts) => { const s = sheet.open(opts); growAll(s.el); return s; },
     closeSheet: (s) => sheet.close(s),
     toast,
     confirm: confirmDialog,

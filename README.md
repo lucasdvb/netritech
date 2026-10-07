@@ -56,13 +56,15 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
 
 ## What's inside
 
-- **Today**: a time-aware greeting and a daily score from 9 key habits. Habits are grouped by time of day and open progressively. One tap completes with a small animation and haptic feedback.
+- **Today**: a time-aware greeting and a daily score from *your three* focus habits plus your Top 3. Tap the score to see exactly what counts. Your three sit at the top, each with a one-tap **Tiny** version; everything else runs on autopilot, grouped by time of day. One tap completes with a small animation and haptic feedback.
   - **Top 3 priorities** (drag or arrow keys to reorder), then **Tasks** for the day with quick add, plus the **next useful action** from the coach.
   - **Win of the day**, morning check-in and evening shutdown.
   - **Normal / Minimum / Sick** day modes.
 - **Habits**: every type: yes/no, numeric, duration, quantity, rating and checklist.
   - Schedules: daily, chosen weekdays, X per week, X per month, every N days.
-  - Three priority levels and Minimum-day versions; per-habit reminders.
+  - **Focus on three:** each habit is in Focus (at most three), Autopilot, Later or Paused (until a date). *Choose your three* sorts every habit on one screen, with suggestions.
+  - **Tiny versions** that always count, **runs** that survive one miss ("don't miss twice"), comebacks, and a suggestion to move a habit to autopilot after six steady weeks.
+  - A new habit takes three questions (what, when, the tiny version); everything else is under *More options*. Per-habit reminders.
   - Values can come from your logs automatically (water, protein, steps, sleep, workouts, reviews).
 - **Body**: weight with 7/14/30-day trends; nutrition with quick foods, protein and adaptive calories; water and steps.
   - Measurements every two weeks; private progress photos with a compare slider; body-composition estimates; sleep.
@@ -82,7 +84,7 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
 Your whole system from the Life OS spec and workbook is there on day one. Nothing needs typing in:
 
 - **Profile and day:** 35, 180 cm, 76 kg, ~25% → 15% body fat, wake 06:00, train 06:30, work 10:00–20:00, lights out 22:00.
-- **Habits:** 41 habits across the 8 pillars, with three priority levels, the 9 that make up the daily score and the 8 Minimum-day essentials. Morning reset, mobility and evening routine are one-tick checklists.
+- **Habits:** 41 habits across the 8 pillars, each with a tiny version, all on autopilot until you choose your three (the optional ones wait in Later), and the 8 Minimum-day essentials. Morning reset, mobility and evening routine are one-tick checklists.
   - Caffeine cutoff and alcohol-free days are included but archived, because the spec says to track them only if they apply. A task asks you to decide.
 - **Training:** the Mon–Sun split with five templates (upper + posture, lower + calves + core, walk + mobility, cardio, 20-minute minimum) and about 40 exercises with progressions.
   - Upper days end with a short calf and core finisher, so both reach the spec's 3–4 sessions a week.
@@ -170,8 +172,8 @@ docs/                  the owner's brief and the architecture and build plan
 - **Day boundary:** the day ends at 03:00 by default (*Settings › My day ends at*), so ticking a habit at 00:30 counts for the day you're still living.
 - **Day snapshots** (`js/domain/snapshots.js`): one compact summary per finished day (score, sleep, weight, steps, protein, workouts, mood, tasks done), rebuilt in the background in small slices whenever that day's data changes. Later features (Progress, insights, the year view) read these.
 - **Text size:** all type is in `rem` on a 17px base, so it follows the phone's text-size setting (Dynamic Type on iPhone); a test renders every screen at 85% and 200% and fails if text is cut off.
-- **Habit engine** (`js/domain/habits.js`): each habit has a type, schedule, thresholds (`min` / `target` / `mvdMin` / ramp) and an optional *source*, so its value comes from your logs instead of a second tap.
-- **Score:** the daily score uses the habits marked "in daily score". Minimum days score the Minimum-day habits; sick days pause scoring. Rolling consistency excludes days before tracking started.
+- **Habit engine** (`js/domain/habits.js`): each habit has a type, schedule, thresholds (`min` / `target` / ramp), a `tiny` version (`{ label, min }`), a `state` (focus, autopilot, queue, paused) and an optional *source*, so its value comes from your logs instead of a second tap. Runs are judged per scheduled day (or per week / month for flexible habits), and only two misses in a row end one.
+- **Score** (`js/domain/scoring.js`): today's score is the share of today's plan that is done: your focus habits that are due, plus your Top 3. Tiny versions count; autopilot never lowers it. Minimum days plan the tiny versions of your three plus the essentials; rest days drop training; sick days pause scoring. Rolling consistency excludes days before tracking started.
 - **Coach** (`js/domain/coach.js`): plain rules that separate *facts from your data* from *suggestions*. Nothing is generated or sent anywhere.
 
 ### Data model (IndexedDB stores)
@@ -200,6 +202,8 @@ node tests/serve.mjs 4173 &
 NODE_PATH=$(npm root -g) node tests/phase0.mjs http://localhost:4173/ ./test-shots   # upgrades, safety copies, reloads mid-write,
                                                                                     # day boundary, text at 85% and 200%
 NODE_PATH=$(npm root -g) node tests/smoke.mjs  http://localhost:4173/ ./test-shots   # Today, habits, modes
+NODE_PATH=$(npm root -g) node tests/phase1.mjs http://localhost:4173/ ./test-shots   # choose your three, tiny versions, runs,
+                                                                                    # the score sheet, new habit, pause, graduation
 NODE_PATH=$(npm root -g) node tests/phase3.mjs http://localhost:4173/ ./test-shots   # weight, food, training, photos
 NODE_PATH=$(npm root -g) node tests/phase4.mjs http://localhost:4173/ ./test-shots   # progress, modules, reviews, backup
 NODE_PATH=$(npm root -g) node tests/phase5.mjs http://localhost:4173/ ./test-shots   # reminders, restore, offline,
