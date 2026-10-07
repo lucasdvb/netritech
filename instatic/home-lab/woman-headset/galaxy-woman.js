@@ -7,6 +7,34 @@
 ================================================================ */
 /* Area sampling like buildBrainGeometry, but the face gets WOMAN_CONFIG.faceBoost
    times more points so it reads at hero size (points pile up on the silhouette). */
+/* headset parts, located on the model by hand (mesh units): mic tip, boom to the earcup, headband */
+const WOMAN_MIC=[0.08,0.18,0.27], WOMAN_CUP=[0.44,0.26,-0.2]
+function womanPart(x,y,z,nz){
+  const M=WOMAN_MIC,C=WOMAN_CUP
+  if(Math.hypot(x-M[0],y-M[1],z-M[2])<0.055) return 3
+  const ax=C[0]-M[0],ay=C[1]-M[1],az=C[2]-M[2],L=ax*ax+ay*ay+az*az
+  const t=Math.min(1,Math.max(0,((x-M[0])*ax+(y-M[1])*ay+(z-M[2])*az)/L))
+  const boom=Math.hypot(x-M[0]-ax*t,y-M[1]-ay*t,z-M[2]-az*t)<0.035
+  const cup=Math.hypot((x-C[0])/0.09,(y-C[1])/0.12,(z-C[2])/0.12)<1
+  const e=Math.hypot(x/0.475,(y-0.28)/0.70)
+  const band=Math.abs(e-1)<0.045&&y>0.25&&Math.abs(z+0.17)<0.12
+  if(boom||cup||band) return 2
+  if(y>0.08&&y<0.78&&Math.abs(x)<0.34&&z>0&&nz>0.2) return 1
+  return 0
+}
+/* light mode: if the first seconds of the hero run under ~42 fps, drop the pixel ratio a notch,
+   thin the point clouds and switch the exit trails off */
+let perfN=0,LITE=false
+const perfAcc=[]
+function perfSample(dt){
+  if(LITE||perfN>150||window.__hlabNoLite) return
+  perfN++; if(perfN<=30) return
+  perfAcc.push(dt)
+  if(perfAcc.length===110){
+    perfAcc.sort((a,b)=>a-b)
+    if(perfAcc[55]>1/42){ LITE=true; DPR_SCALE=0.7; resize(); Galaxy.setLite(true); if(Brain.setLite) Brain.setLite(true) }
+  }
+}
 function buildWomanGeometry(buffer,count,radius){
   const mesh=decodeBrainMesh(buffer)
   const verts=mesh.positions, indices=mesh.indices, triCount=indices.length/3, F=WOMAN_CONFIG
@@ -36,7 +64,7 @@ function buildWomanGeometry(buffer,count,radius){
   for(let i=0;i<vn.length;i+=3){ const l=Math.hypot(vn[i],vn[i+1],vn[i+2])||1; vn[i]/=l; vn[i+1]/=l; vn[i+2]/=l }
   /* evenly spaced points (blue-noise dart throwing, like the orb's even lattice): draw extra
      candidates and keep only those not too close to an accepted one; a spatial hash keeps it fast */
-  const positions=new Float32Array(count*3),normals=new Float32Array(count*3),vis=new Float32Array(count),curv=new Float32Array(count)
+  const positions=new Float32Array(count*3),normals=new Float32Array(count*3),vis=new Float32Array(count),curv=new Float32Array(count),parts=new Float32Array(count)
   const minD=Math.sqrt(area*radius*radius/count)*F.spacing, minD2=minD*minD, inv=1/minD
   const HS=1<<20, head=new Int32Array(HS).fill(-1), nextIdx=new Int32Array(count)
   const hash=(x,y,z)=>(((x*73856093)^(y*19349663)^(z*83492791))>>>0)&(HS-1)
@@ -50,13 +78,16 @@ function buildWomanGeometry(buffer,count,radius){
     let u=Math.random(),v=Math.random(); if(u+v>1){u=1-u;v=1-v} const w=1-u-v
     for(let k=0;k<3;k++){ tmpP[k]=(w*verts[a+k]+u*verts[b+k]+v*verts[c+k])*radius; tmpN[k]=w*vn[a+k]+u*vn[b+k]+v*vn[c+k] }
     const cx=Math.floor(tmpP[0]*inv),cy=Math.floor(tmpP[1]*inv),cz=Math.floor(tmpP[2]*inv)
+    const nlen=Math.hypot(tmpN[0],tmpN[1],tmpN[2])||1
+    const part=womanPart(tmpP[0]/radius,tmpP[1]/radius,tmpP[2]/radius,tmpN[2]/nlen)
+    const lim2=part===1?minD2*F.faceSpacing*F.faceSpacing:minD2   // the face packs tighter so features resolve
     let ok=tries>cand   // after the candidate budget, fill the rest without the spacing test
     if(!ok){
       ok=true
       for(let dx=-1;dx<=1&&ok;dx++) for(let dy=-1;dy<=1&&ok;dy++) for(let dz=-1;dz<=1&&ok;dz++){
         for(let q=head[hash(cx+dx,cy+dy,cz+dz)];q>=0;q=nextIdx[q]){
           const ex=positions[q*3]-tmpP[0],ey=positions[q*3+1]-tmpP[1],ez=positions[q*3+2]-tmpP[2]
-          if(ex*ex+ey*ey+ez*ez<minD2){ ok=false; break }
+          if(ex*ex+ey*ey+ez*ez<lim2){ ok=false; break }
         }
       }
     }
@@ -65,6 +96,7 @@ function buildWomanGeometry(buffer,count,radius){
     const nl=Math.hypot(tmpN[0],tmpN[1],tmpN[2])||1; normals[n*3]=tmpN[0]/nl; normals[n*3+1]=tmpN[1]/nl; normals[n*3+2]=tmpN[2]/nl
     vis[n]=triVis?triVis[lo]/255:1
     curv[n]=(w*crv[a/3]+u*crv[b/3]+v*crv[c/3])/127
+    parts[n]=part
     const h=hash(cx,cy,cz); nextIdx[n]=head[h]; head[h]=n; n++
   }
   const g=new THREE.BufferGeometry()
@@ -72,6 +104,7 @@ function buildWomanGeometry(buffer,count,radius){
   g.setAttribute('aNormal',new THREE.BufferAttribute(normals,3))
   g.setAttribute('aVis',new THREE.BufferAttribute(vis,1))
   g.setAttribute('aCurv',new THREE.BufferAttribute(curv,1))
+  g.setAttribute('aPart',new THREE.BufferAttribute(parts,1))
   return g
 }
 const Galaxy=(()=>{
@@ -95,10 +128,18 @@ const Galaxy=(()=>{
     uPx:{value:W0.px},uZRef:{value:W0.zRef},uDeform:{value:W0.deform},uNoise:{value:W0.noiseScale},
     uFlowAmount:{value:W0.flowAmount},uFlowSpeed:{value:W0.flowSpeed},uSynRate:{value:W0.synapseRate},
     uWisp:{value:W0.wisp},uWispDist:{value:W0.wispDist},uWispSpeed:{value:W0.wispSpeed},uBottomFade:{value:W0.bottomFade},
+    uColHead:{value:linVec(W0.headColor)},uHeadAmt:{value:W0.headAmt},uFaceDim:{value:W0.faceDim},
+    uSweepY:{value:-2},uSweepAmt:{value:0},uMic:{value:new THREE.Vector3(...WOMAN_MIC)},uPulse:{value:W0.pulse},uPulseAmt:{value:W0.pulseAmt},
+    uOrigin:{value:new THREE.Vector3()},uOrbR:{value:ORB_CONFIG.radius*W0.orbR/GALAXY_CONFIG.scale},uHandIn:{value:1},
+    uHandOut:{value:1},uHandFade:{value:1},uBrainR:{value:BRAIN_CONFIG.radius*0.9/GALAXY_CONFIG.scale},
+    uCurvFace:{value:W0.curvFace},    uRipK:{value:W0.ripK},uRipS:{value:W0.ripS},uRipAmp:{value:W0.ripAmp},uTrail:{value:0},uTrailAlpha:{value:1},
   }
   const mat=new THREE.ShaderMaterial({uniforms:u,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
     vertexShader:`
-      attribute vec3 aNormal;attribute vec4 aRnd;attribute float aVis;attribute float aCurv;
+      attribute vec3 aNormal;attribute vec4 aRnd;attribute float aVis;attribute float aCurv;attribute float aPart;
+      uniform vec3 uColHead;uniform float uHeadAmt;uniform float uFaceDim;uniform float uSweepY;uniform float uSweepAmt;uniform vec3 uMic;uniform float uPulse;uniform float uPulseAmt;
+      uniform vec3 uOrigin;uniform float uOrbR;uniform float uHandIn;uniform float uHandOut;uniform float uHandFade;uniform float uBrainR;
+      uniform float uCurvFace;uniform float uRipK;uniform float uRipS;uniform float uRipAmp;uniform float uTrail;
       uniform float uTime;uniform float uSize;uniform float uScale;uniform float uBlow;uniform float uAssemble;
       uniform vec3 uColEdge;uniform vec3 uColCore;uniform vec3 uColTop;uniform vec3 uColBottom;uniform vec3 uColRim;
       uniform vec3 uCursor;uniform float uRepelRadius;uniform float uRepelStrength;uniform float uActivity;
@@ -133,25 +174,47 @@ const Galaxy=(()=>{
         float at=clamp((1.0-uAssemble-delay)/(1.0-delay),0.0,1.0);
         float aEase=1.0-pow(1.0-at,3.0);
         vec3 spawn=galaxyPos+blowDir*70.0+vec3(0.0,(gRnd3-0.5)*26.0,0.0);
+        /* hand-off in: most points start on the orb's shell, where the orb was */
+        vec3 sdir=normalize(vec3(gRnd2,gRnd3,gRnd1)-0.5+0.0001);
+        float fromOrb=uHandIn*step(gRnd2,0.7);
+        spawn=mix(spawn,uOrigin+sdir*uOrbR*(0.92+0.16*gRnd4),fromOrb);
         galaxyPos=mix(spawn,galaxyPos,aEase);
-        galaxyPos+=blowDir*uBlow*90.0;
+        float blowEff=max(uBlow-uTrail,0.0);   // trail copies run a little behind
+        galaxyPos+=blowDir*blowEff*90.0;
+        /* hand-off out: a quarter of the points gather where the brain forms */
+        float toBrain=step(gRnd3,0.25)*smoothstep(0.35,0.9,blowEff)*uHandOut;
+        vec3 bdir=normalize(vec3(gRnd4,gRnd1,gRnd2)-0.5+0.0001);
+        galaxyPos=mix(galaxyPos,uOrigin+bdir*uBrainR*pow(gRnd2,0.33),toBrain);
         vec3 finalPos=galaxyPos*uScale;
         vec4 modelPosition=modelMatrix*vec4(finalPos,1.0);
+        vec3 n=normalize(mat3(modelMatrix)*nrm);
+        /* hover: the galaxy's push plus ripples spreading out from the cursor */
         vec3 toP=modelPosition.xyz-uCursor;
         float cd=length(toP);
         float fall=smoothstep(uRepelRadius,0.0,cd);
-        modelPosition.xyz+=normalize(toP+vec3(0.0001))*fall*uRepelStrength*uActivity;
+        float rip=sin(cd*uRipK-uTime*uRipS)*fall;
+        modelPosition.xyz+=normalize(toP+vec3(0.0001))*fall*uRepelStrength*uActivity+n*rip*uRipAmp*uActivity;
+        float vRip=max(rip,0.0)*uActivity;
         vec4 mvPosition=viewMatrix*modelPosition;
         float form=aEase*(1.0-uBlow);
         /* formed colour, orb style: bottom blue -> top turquoise, deep blue at the silhouette,
            crests lit; hidden layers and the far side drop away so the front reads crisp */
-        vec3 n=normalize(mat3(modelMatrix)*nrm);
         vec3 v=normalize(cameraPosition-modelPosition.xyz);
         float facing=dot(n,v);
         float vt=clamp(q.y*0.55+0.55+(gRnd2-0.5)*0.12,0.0,1.0);
         vec3 col=mix(uColBottom,uColTop,vt);
         col=mix(col,uColRim,smoothstep(0.45,0.95,1.0-abs(facing))*0.7);
         col*=(0.78+0.42*lit)*mix(uAmbient,1.0,max(dot(n,uLightDir),0.0)*0.6+0.4);
+        float isFace=step(0.5,aPart)*step(aPart,1.5), isHead=step(1.5,aPart)*step(aPart,2.5), isMic=step(2.5,aPart);
+        col*=max(0.15,1.0+uCurvFace*aCurv*isFace);                // face: creases (eyes, smile) fall darker so features read
+        col=mix(col,uColHead*(0.8+0.4*lit),isHead*uHeadAmt);   // headset: darker steel blue, reads as an object
+        col=mix(col,uColTop*1.15,isMic);                         // mic tip: small turquoise light
+        float sweep=exp(-pow((q.y-uSweepY)/0.07,2.0))*uSweepAmt; // light sweep up the body
+        col+=uColTop*sweep*1.1;
+        float pt=fract(uTime/uPulse);                            // signal rings from the mic
+        float ring=exp(-pow((length(q-uMic)-pt*1.5)/0.04,2.0))*(1.0-pt)*uPulseAmt*(1.0-isHead);
+        col+=uColTop*ring*1.3;
+        col+=uColTop*vRip*0.8;
         float vis=mix(1.0,aVis,uOcc)*mix(uBackDim,1.0,smoothstep(-0.2,0.2,facing));
         /* brain-style synapse sparkles on a few points */
         float period=mix(3.0,9.0,gRnd3);
@@ -161,21 +224,22 @@ const Galaxy=(()=>{
         float galaxyR=pow(gRnd1,2.0)*60.0+pow(gRnd2,3.0)*30.0;
         vec3 scattered=mix(uColEdge,uColCore,smoothstep(80.0,0.0,galaxyR));
         vColor=mix(scattered,col,form);
-        vSpark=fire*form; vLit=lit*form;
+        vSpark=fire*form*(1.0-isHead); vLit=lit*form*(1.0-isFace*0.75)*(1.0-isHead);   // no white cores washing out the face
         float isOrb=step(0.98,fract(gRnd1*77.77))*(1.0-form);
         float starSize=mix(1.0,3.0,isOrb);
         vFade=mix(0.7,1.0,isOrb);
         vFade*=mix(1.0,(1.0-life)*smoothstep(0.0,0.12,life),wisp*form);
-        vFade*=mix(1.0,smoothstep(-1.0,-1.0+uBottomFade,q.y)*vis*(0.38+0.72*lit),form);
-        vForm=form; vAlpha=mix(uOpacityScatter,uOpacity,form);
+        vFade*=mix(1.0,smoothstep(-1.0,-1.0+uBottomFade,q.y)*vis*(0.38+0.72*lit)*mix(1.0,uFaceDim,isFace)*(1.0+isHead*0.2+isMic*0.15),form);
+        vFade*=1.0-toBrain*(1.0-uHandFade);
+        vForm=form; vAlpha=mix(uOpacityScatter,uOpacity,form)*mix(1.0,mix(0.22,1.0,aEase),fromOrb);   // faint while still on the orb's shell
         /* size: the galaxy's formula while scattered; true device pixels while formed (crisp on retina) */
-        float galaxySize=uSize*starSize*(10.0/-mvPosition.z);
+        float galaxySize=uSize*starSize*(10.0/-mvPosition.z)*(1.0-toBrain*0.5);
         float formedSize=uPx*uDpr*(uZRef/-mvPosition.z)*(1.0+fire*0.9);
         gl_PointSize=max(mix(galaxySize,formedSize,form),1.5);
         gl_Position=projectionMatrix*mvPosition;
       }`,
     fragmentShader:`
-      uniform float uBrightness;uniform float uAppear;uniform float uFade;uniform vec3 uSynapse;
+      uniform float uBrightness;uniform float uAppear;uniform float uFade;uniform vec3 uSynapse;uniform float uTrailAlpha;
       varying float vFade;varying vec3 vColor;varying float vForm;varying float vAlpha;varying float vSpark;varying float vLit;
       void main(){
         vec2 xy=gl_PointCoord-0.5;
@@ -187,11 +251,20 @@ const Galaxy=(()=>{
         float a=mix(smoothstep(0.5,0.1,ll),soft+core*0.35,vForm);
         vec3 col=vColor+core*vForm*(vec3(0.45)*smoothstep(0.5,1.0,vLit)+vec3(0.12));
         col+=uSynapse*vSpark*2.0*(soft+core);
-        gl_FragColor=vec4(col*uBrightness,vFade*a*vAlpha*uAppear*uFade*(1.0+vSpark));
+        gl_FragColor=vec4(col*uBrightness,vFade*a*vAlpha*uAppear*uFade*(1.0+vSpark)*uTrailAlpha);
       }`})
   const group=new THREE.Group()
   const points=new THREE.Points(geo,mat); points.frustumCulled=false
   group.add(points); scene.add(group)
+  /* exit trails: three lagging copies of the cloud (shared geometry and uniforms) */
+  const trails=W0.trails.map(([lag,alpha])=>{
+    const m=new THREE.ShaderMaterial({uniforms:{...u,uTrail:{value:lag},uTrailAlpha:{value:alpha}},vertexShader:mat.vertexShader,
+      fragmentShader:mat.fragmentShader,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending})
+    const tp=new THREE.Points(geo,m); tp.frustumCulled=false; tp.visible=false; group.add(tp); return tp
+  })
+  let lite=false
+  const origin=new THREE.Vector3(),faceW=new THREE.Vector3(),faceNdc=new THREE.Vector3()
+  let glowChars=null,glowRects=[],glowFrame=0,glowW=0,glowH=0
   const cursor=new THREE.Vector3(),cursorTarget=new THREE.Vector3(),ndc=new THREE.Vector3(),rayDir=new THREE.Vector3()
   const loc=new THREE.Vector3(),qInv=new THREE.Quaternion()
   const S=GALAXY_CONFIG.scale, W=WOMAN_CONFIG
@@ -220,8 +293,14 @@ const Galaxy=(()=>{
   const spring=(st,target,dt)=>{ const k=W.springK,c=2*Math.sqrt(k); st[1]+=((target-st[0])*k-st[1]*c)*dt; st[0]+=st[1]*dt; return st[0] }
   const sRY=[0,0],sRX=[W.tilt,0],sX=[0,0],sY=[0,0]
   let hover=0
-  return{ render(t,delta){
-    const state=timeline.getState()
+  /* camera: push in toward her face while the headline reveals, ease back before she breaks */
+  const camPush=p=>smoothstep(0.55,1.55,p), camPull=p=>smoothstep(1.55,2.05,p)
+  return{
+  camZ(p){ return GALAXY_CONFIG.cameraZ-W.camPush*camPush(p)+W.camPull*camPull(p) },
+  lookY(p){ return (group.position.y+W.faceY*R*S)*W.camLook*camPush(p)*(1-0.5*camPull(p)) },
+  setLite(on){ lite=on; geo.setDrawRange(0,on?Math.floor(count*0.65):Infinity) },
+  render(t,delta){
+    const state=timeline.getState(), progress=timeline.getProgress()
     const appear=galaxyAppear(state),blow=galaxyBlow(state),assemble=galaxyAssemble(state)
     u.uTime.value=t; u.uAppear.value=appear; u.uBlow.value=blow; u.uFade.value=1-blow; u.uAssemble.value=assemble
     const live=PARAMS.pointerReaction&&pointerHas
@@ -249,5 +328,33 @@ const Galaxy=(()=>{
     const over=live&&blow<0.02?smoothstep(0.3,0.7,hoverAt(loc.x,loc.y)):0
     hover+=(over-hover)*Math.min(1,delta*5); u.uActivity.value=hover
     group.visible=(appear>0.001||assemble<0.999)&&blow<0.999
+    u.uDpr.value=renderer.getPixelRatio()
+    /* hand-offs: the world origin (orb / brain centre) in her local units */
+    group.updateMatrixWorld(); origin.set(0,0,0); group.worldToLocal(origin); u.uOrigin.value.copy(origin).divideScalar(S)
+    u.uHandFade.value=1-brainAppear(progress)
+    /* light sweep: once as she finishes forming, then a softer pass every few seconds */
+    const st=clamp01((progress-0.95)/0.6), idle=(t%W.sweepEvery)/1.6
+    const once=Math.sin(Math.PI*st)*W.sweepAmt, rep2=idle<1?Math.sin(Math.PI*idle)*W.sweepAmt*0.45:0
+    if(once>=rep2){ u.uSweepY.value=lerp(-1.2,1.3,st); u.uSweepAmt.value=once } else { u.uSweepY.value=lerp(-1.2,1.3,idle); u.uSweepAmt.value=rep2 }
+    const trailsOn=!lite&&PARAMS.bloom&&blow>0.01&&blow<0.999
+    for(const tp of trails) tp.visible=trailsOn
+    /* the galaxy headline catches her glow: letters near her face light up most */
+    const shine=appear*(1-blow)*(1-assemble)
+    if(++glowFrame%2===0){
+      if(!glowChars) glowChars=[...STAGE.querySelectorAll('.hlab-vx-ov-galaxy .hlab-vx-title .hlab-vx-ch')]
+      if(glowW!==innerWidth||glowH!==innerHeight||glowFrame%60===0){
+        glowW=innerWidth; glowH=innerHeight
+        glowRects=glowChars.map(c=>{const r=c.getBoundingClientRect(); return [r.left+r.width/2,r.top+r.height/2]})
+      }
+      faceW.set(0,W.faceY*R*S,W.faceZ*R*S); group.localToWorld(faceW); faceNdc.copy(faceW).project(camera)
+      const fx=(faceNdc.x*0.5+0.5)*innerWidth, fy=(-faceNdc.y*0.5+0.5)*innerHeight
+      glowChars.forEach((c,i)=>{
+        const r=glowRects[i]; if(!r) return
+        const d=Math.hypot(r[0]-fx,r[1]-fy)/innerHeight
+        const g=shine*(0.15*u.uSweepAmt.value+0.65*Math.exp(-((d/0.38)**2)))
+        const v=g>0.02?'0 0 '+(6+18*g).toFixed(1)+'px rgba(69,214,196,'+(0.75*g).toFixed(3)+')':''
+        if(c.__glow!==v){ c.__glow=v; c.style.textShadow=v }
+      })
+    }
   }}
 })()
