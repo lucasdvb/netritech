@@ -1,6 +1,6 @@
 # Home Lab hero: woman with headset in the galaxy slot
 
-**Status: v2 written to the Instatic draft (bigger bust, brain-like density and flow, the galaxy colours on exit). Not yet published.** The live site runs v1 (sha256 `7bbbe4e7…`). The version before the woman is saved in `../rollback-2026-10-07/`.
+**Status: v2 live** (bigger bust, brain-like density and flow, the galaxy colours on exit). v1 was sha256 `7bbbe4e7…`. The version before the woman is saved in `../rollback-2026-10-07/`.
 
 ![preview](preview.jpg)
 
