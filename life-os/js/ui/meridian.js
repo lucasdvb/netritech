@@ -1,7 +1,7 @@
 // Meridian, a GetLayers gradient: "one line of light across the frame with a falloff".
 // Ported from its single-HTML master with the shader and motion untouched (the contract
-// preserves motion); only CONFIG is set here: the committed Stride palette (royal blue and
-// its cyan glow on a near-black stage) over GetLayers' saved 004 field, with the band moved
+// preserves motion); only CONFIG is set here: the brand palette (the brand blue and a lifted,
+// paler blue on a true-black stage) over GetLayers' saved 004 field, with the band moved
 // low and right so the copy on the card stays on dark. Bundled with the app, so it works
 // offline. It draws only while on screen, at most ~30 frames a second, a single still
 // frame under reduced motion, and falls back to CSS when WebGL2 is unavailable.
@@ -15,10 +15,10 @@ const BASE = {
   cursor: 1, parallax: 0.002, maxDpr: 1,
 };
 
-/** Stride tint over the saved 004 field: a near-black stage with the band low and to the right,
- *  so card copy sits on dark; royal blue and the cyan glow meet through pale-blue light. */
-export const STRIDE = {
-  bgColor: '#04060d', colorA: '#060b22', colorB: '#1246e2', colorC: '#2ad4ff', colorD: '#8fc4ff',
+/** Brand tint over the saved 004 field: a true-black stage with the band low and to the right,
+ *  so card copy sits on dark; the brand blue #0071E3 lifts to #2997FF and a pale blue light. */
+export const BRAND = {
+  bgColor: '#000000', colorA: '#020a16', colorB: '#0071e3', colorC: '#2997ff', colorD: '#9ccaff',
   tilt: 0.72, level: -0.45, core: 0.1, reach: 0.32, bright: 1.05, skirt: 0.3, ambient: 0.06, warp: 0.18,
   contrast: 1.4, midpoint: 0.44, sink: 0.14, glow: 0.2, seam: 0.2, vignette: 0.26, grain: 0.028,
 };
@@ -186,7 +186,7 @@ const UNIFORMS = { bgColor: 'uBg', colorA: 'uColorA', colorB: 'uColorB', colorC:
 const reduceMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /** Mount the gradient inside `host` (an empty, positioned element). Returns null on fallback. */
-export function mount(host, palette = STRIDE) {
+export function mount(host, palette = BRAND) {
   if (host.dataset.meridian) return null;
   host.dataset.meridian = 'on';
   const CONFIG = { ...BASE, ...palette };

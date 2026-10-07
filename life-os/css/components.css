@@ -122,13 +122,13 @@
 
 /* ---------- checkbox (morphing) ---------- */
 .check {
-  --check: var(--glow);
+  --check: var(--accent);
   width: 44px; height: 44px; flex: none; display: grid; place-items: center; margin: -6px; border-radius: 50%;
   -webkit-tap-highlight-color: transparent;
 }
 .check svg { width: 26px; height: 26px; overflow: visible; }
 .check .check-ring { fill: none; stroke: var(--border-strong); stroke-width: 1.7; transition: stroke var(--t-med); }
-.check .check-fill { fill: var(--glow); transform-origin: 12px 12px; transform: scale(0); transition: transform 320ms var(--spring); }
+.check .check-fill { fill: var(--accent); transform-origin: 12px 12px; transform: scale(0); transition: transform 320ms var(--spring); }
 .check .check-mark {
   fill: none; stroke: #FFFFFF; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round;
   stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset 260ms var(--ease) 90ms;
@@ -345,7 +345,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 .has-sheet .toast-layer { bottom: calc(var(--safe-bottom) + 16px); }
 .toast {
   display: flex; align-items: center; gap: 10px; max-width: 460px; min-height: 52px; padding: 8px 8px 8px 18px;
-  border-radius: var(--r-pill); background: #141414; color: #fff; box-shadow: var(--shadow-lg);
+  border-radius: var(--r-pill); background: var(--ink); color: #fff; box-shadow: var(--shadow-lg);
   font-size: var(--fs-sub); font-weight: 500; pointer-events: auto;
   animation: toast-in 280ms var(--spring) both;
 }
@@ -366,7 +366,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
   transform: translateY(20px); opacity: 0; transition: transform 360ms var(--spring), opacity 240ms;
 }
 .install-hint.is-open { transform: none; opacity: 1; }
-.install-mark { width: 42px; height: 42px; border-radius: 50%; background: #141414; color: var(--glow); display: grid; place-items: center; flex: none; }
+.install-mark { width: 42px; height: 42px; border-radius: 50%; background: var(--ink); color: var(--glow); display: grid; place-items: center; flex: none; }
 .install-text { flex: 1; }
 .install-title { font-size: var(--fs-sub); font-weight: 600; }
 .install-body { font-size: var(--fs-caption); color: var(--text-2); line-height: 1.4; }
@@ -437,7 +437,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 .tpl-item.is-suggested .tpl-go { background: #fff; color: var(--accent); }
 .tpl-name { font-weight: 600; }
 .tpl-meta { font-size: var(--fs-caption); color: var(--text-3); grid-row: 2; }
-.tpl-go { grid-row: 1 / 3; grid-column: 2; align-self: center; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #141414; color: #fff; }
+.tpl-go { grid-row: 1 / 3; grid-column: 2; align-self: center; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: #fff; }
 
 /* ---------- switch ---------- */
 .switch {
@@ -494,7 +494,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 .chart-cursor { position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border-strong); pointer-events: none; }
 .chart-tip {
   position: absolute; top: -8px; transform: translate(-50%, -100%); z-index: 3; pointer-events: none;
-  background: #141414; color: #fff; border-radius: 12px; padding: 7px 10px; font-size: 12px; white-space: nowrap;
+  background: var(--ink); color: #fff; border-radius: 12px; padding: 7px 10px; font-size: 12px; white-space: nowrap;
   display: flex; flex-direction: column; gap: 2px; box-shadow: var(--shadow-md);
 }
 .tip-label { opacity: .65; font-size: 11px; }
@@ -514,7 +514,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 .chart--bars .chart-plot { top: 18px; }
 @keyframes bar-grow { from { transform: scaleY(0); } }
 .chart-goal-bar { position: absolute; left: 0; right: 0; border-top: 1.5px dashed var(--text-2); opacity: .7; z-index: 1; pointer-events: none; }
-.chart-goal-bar b { position: absolute; right: 0; top: -20px; font-size: 10.5px; font-weight: 650; color: #fff; background: #141414; padding: 2px 7px; border-radius: var(--r-pill); }
+.chart-goal-bar b { position: absolute; right: 0; top: -20px; font-size: 10.5px; font-weight: 650; color: #fff; background: var(--ink); padding: 2px 7px; border-radius: var(--r-pill); }
 .chart-x--bars { left: 0; right: 0; display: flex; gap: clamp(3px, 1.6%, 10px); }
 .chart-x--bars span { position: static; flex: 1; text-align: center; transform: none !important; overflow: hidden; }
 .chart-x--sparse { left: 0; right: 0; }

@@ -125,18 +125,22 @@ Nothing in the app is a medical claim:
 
 The look is built from the [GetLayers](https://www.getlayers.ai) library. Its decisions are recorded in `getlayers.json`:
 
-- **Style: Stride.** White paper in light mode and true black in dark mode. One royal blue (`#1246E2`) is used for actions, ticks and the active tab. Its cyan glow (`#2AD4FF`) appears only as light on the dark "stage" cards. Selected tabs and chips are black, so the blue stays rationed.
+- **Colours: the brand palette.** White paper in light mode and true black in dark mode.
+  - **Blue (`#0071E3`)** is the one accent: actions, ticks, the active tab and the latest bar. A lifted blue (`#2997FF`) is used only as light on the dark "stage" cards and as blue text in dark mode.
+  - **Greys, kept quiet:** near-black `#1D1D1F` for text, the tab bar and the stage cards; mid grey `#6E6E73` for secondary text; off-white `#F5F5F7` for cards in light mode and text in dark mode; dark grey `#434344` for raised surfaces in dark mode.
+  - Selected tabs and chips are near-black (off-white in dark mode), so the blue stays rationed.
+- **Style: Stride** from GetLayers sets the layout, the shapes and how sparingly the accent is used.
 - **Font: Manrope.** It is variable and self-hosted in `assets/fonts` (SIL OFL), so it works offline.
-- **Moving background: Meridian.** One line of light runs behind the Today score card and the Body weight card. It is ported into `js/ui/meridian.js` with its shader and motion untouched; only its settings set the Stride palette and move the band away from the text. It:
+- **Moving background: Meridian.** One line of light runs behind the Today score card and the Body weight card. It is ported into `js/ui/meridian.js` with its shader and motion untouched; only its settings set the brand palette (the blue on a black stage) and move the band away from the text. It:
   - draws only while on screen, at about 30 fps;
   - shows a single still frame when reduced motion is on;
   - falls back to a CSS gradient without WebGL2;
   - frees its GPU context when the card leaves the page.
 - **Details from other GetLayers styles:** Aerra's sheen sweep and swapping arrow tile on the main buttons, Relay's ring that draws itself clockwise on hover and focus, and the house reveal (blocks rise out of a slight blur in a short stagger, numbers sharpen as they stop counting).
-- **Shapes:** pill buttons and chips, round icon buttons, a floating black tab bar on phones and a black sidebar on desktop.
-- **Charts:** bars are black where the target was hit and grey where it wasn't; the latest bar is blue. Line charts are black over a soft blue fill.
+- **Shapes:** pill buttons and chips, round icon buttons, a floating near-black tab bar on phones and a near-black sidebar on desktop.
+- **Charts:** bars are near-black where the target was hit and grey where it wasn't; the latest bar is blue. Line charts are near-black over a soft blue fill.
 
-Every colour is a token in `css/tokens.css` (`--brand`, `--glow`, the pillar colours). A different brand palette swaps in there, plus the Meridian palette in `js/ui/meridian.js`.
+Every colour is a token in `css/tokens.css` (`--brand`, `--glow`, `--ink`, the greys and the pillar colours). The Meridian palette sits in `js/ui/meridian.js` (`BRAND`).
 
 ## Architecture
 

@@ -97,7 +97,7 @@ function hero(date) {
       <p class="hero-label">${s.mode === 'minimum' ? 'Minimum day' : 'Today'}</p>
       <p class="hero-big tnum"><span>${s.done}</span> of ${s.total} <span class="hero-big-sub">${s.mode === 'minimum' ? 'essentials' : 'key habits'}</span></p>
       <div class="hero-week" aria-label="Last 7 days">
-        <div class="mini-bars">${week.map((w) => html`<span class="${cx('mini-bar', w.d === date && 'is-today', w.before && 'is-off', w.s.mode === 'sick' && 'is-off')}" title="${fmtDay(w.d)}: ${pct(w.s.ratio)}"><i style="height:${Math.max(6, Math.round((w.s.ratio || 0) * 100))}%"></i><b>${fmtDayLetter(w.d)}</b></span>`)}</div>
+        <div class="mini-bars">${week.map((w) => html`<span class="${cx('mini-bar', w.d === date && 'is-today', w.before && 'is-off', w.s.mode === 'sick' && 'is-off')}" title="${fmtDay(w.d)}: ${pct(w.s.ratio)}"><i style="--h:${Math.max(0.06, Math.round((w.s.ratio || 0) * 100) / 100)}"></i><b>${fmtDayLetter(w.d)}</b></span>`)}</div>
         <p class="hero-sub">${r7.ratio != null && r7.days >= 3 ? html`Last 7 days <strong class="tnum">${pct(r7.ratio)}</strong> · <span class="band band--${b.key}">${b.label}</span>` : r7.days ? `Building your baseline · ${r7.days} of 7 days logged` : 'Your 7-day consistency builds from today.'}</p>
       </div>
     </div>
