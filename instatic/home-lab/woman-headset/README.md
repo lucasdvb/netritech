@@ -1,6 +1,6 @@
 # Home Lab hero: woman with headset in the galaxy slot
 
-**Status: candidate, not applied to Instatic yet.** The live hero is still the version saved in `../rollback-2026-10-07/`.
+**Status: written to the Instatic draft on 2026-10-07 and verified (stored sha256 matches the build below). Not published yet.** The published site still runs the version saved in `../rollback-2026-10-07/`.
 
 ![preview](preview.jpg)
 
