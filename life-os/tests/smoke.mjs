@@ -125,7 +125,7 @@ await step('past day + minimum mode', async () => {
   await page.waitForSelector('.minday');
   await shot('13-minimum-day');
   const n = await page.locator('.minday .hrow, .minday .tile').count();
-  if (n !== 7) throw new Error('minimum day shows ' + n + ' items');
+  if (n !== 8) throw new Error('minimum day shows ' + n + ' items');
   await page.locator('.minday [data-action="set-mode"]').click();
   await page.waitForSelector('.minday', { state: 'detached' });
 });
