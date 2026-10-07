@@ -1,6 +1,6 @@
 # Home Lab hero CTAs: Apple-style pills
 
-**Status: in draft, not published.**
+**Status: live.**
 
 The two hero buttons ("Prendre rendez-vous" on the orb, "Parlons-en" on the brain) become one pill each:
 - Pearl gradient (white → `#F1F3F5` → Gris Perle `#DADDE0`), a top highlight and a soft drop shadow.
