@@ -59,7 +59,7 @@ await step('persist after reload', async () => {
 });
 
 await step('check-in sheet', async () => {
-  await page.evaluate(() => import('./js/views/sheets.js').then((m) => m.openCheckin()));
+  await page.evaluate(() => import('./js/screens/sheets.js').then((m) => m.openCheckin()));
   await page.waitForSelector('.sheet-wrap.is-open');
   await page.locator('.sheet [data-field="energy"][data-value="7"]').click();
   await page.locator('.sheet [data-field="stress"][data-value="3"]').click();

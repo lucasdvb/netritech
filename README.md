@@ -149,22 +149,22 @@ manifest.webmanifest   PWA manifest (standalone, icons, shortcuts)
 sw.js                  service worker: precache, cache-first, offline navigation
 css/                   tokens.css (themes, palette, type) · base · components · views
 js/app.js              router, view lifecycle, event delegation, focus management
-js/db/                 IndexedDB wrapper, schema, first-run seed (your habit system)
-js/core/               store (in-memory cache + optimistic writes), habit engine,
-                       scoring, metrics, fitness, coach, goals, reviews, reminders,
-                       backup, sample data
+js/data/               store (in-memory cache + optimistic writes), IndexedDB adapter,
+                       schema, first-run seed (your habit system), backup, sample data
+js/domain/             habit engine, scoring, metrics, fitness, coach, goals, reviews,
+                       reminders, tasks, dates
 js/ui/                 html`` templates, keyed DOM morphing, components, charts,
                        sheets, toasts, haptics, icons
-js/views/              one module per screen, loaded on demand
+js/screens/            one module per screen, loaded on demand
 tools/                 build-sw.mjs · build-icons.mjs · render-icons.mjs
 tests/                 Playwright browser tests at iPhone 14 size
 ```
 
 - **No framework.** It uses ES modules, a tagged-template `html` that escapes by default, and a small keyed DOM morph (`js/ui/patch.js`). Re-renders therefore keep existing elements, so animations, focus, scroll and half-typed text survive.
 - **Data flow:** `store` loads every store into memory at start. Reads are synchronous, and writes are optimistic: the UI updates first, IndexedDB is written in the background, and a failed write rolls back and shows a message. Derived numbers are memoised per data version.
-- **Habit engine** (`js/core/habits.js`): each habit has a type, schedule, thresholds (`min` / `target` / `mvdMin` / ramp) and an optional *source*, so its value comes from your logs instead of a second tap.
+- **Habit engine** (`js/domain/habits.js`): each habit has a type, schedule, thresholds (`min` / `target` / `mvdMin` / ramp) and an optional *source*, so its value comes from your logs instead of a second tap.
 - **Score:** the daily score uses the habits marked "in daily score". Minimum days score the Minimum-day habits; sick days pause scoring. Rolling consistency excludes days before tracking started.
-- **Coach** (`js/core/coach.js`): plain rules that separate *facts from your data* from *suggestions*. Nothing is generated or sent anywhere.
+- **Coach** (`js/domain/coach.js`): plain rules that separate *facts from your data* from *suggestions*. Nothing is generated or sent anywhere.
 
 ### Data model (IndexedDB stores)
 

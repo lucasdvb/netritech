@@ -41,7 +41,7 @@ await step('quick add and tick a task on Today', async () => {
 
 await step('overdue tasks surface on Today', async () => {
   await ev(async () => {
-    const { addDays, today } = await import('./js/core/dates.js');
+    const { addDays, today } = await import('./js/domain/dates.js');
     window.__lifeos.store.put('tasks', { id: 'late-1', title: 'Renew car insurance', area: 'life', date: addDays(today(), -2), done: false, repeat: null, order: 99 });
   });
   await page.waitForSelector('.tasks-card .trow.is-late:has-text("Renew car insurance")');
@@ -70,7 +70,7 @@ await step('tasks screen groups and new repeating task', async () => {
 await step('repeating chore: tick schedules the next, untick takes it back', async () => {
   const [l] = await taskBy('Laundry');
   const res = await ev(async (id) => {
-    const T = await import('./js/core/tasks.js');
+    const T = await import('./js/domain/tasks.js');
     T.toggle(id);
     const done = T.task(id);
     const next = T.task(done.nextId);
@@ -103,8 +103,8 @@ await step('edit, delete and undo', async () => {
 await step('shutdown moves unfinished tasks to tomorrow', async () => {
   await go('#/today', '.today');
   const moved = await ev(async () => {
-    const S = await import('./js/views/sheets.js');
-    const { today } = await import('./js/core/dates.js');
+    const S = await import('./js/screens/sheets.js');
+    const { today } = await import('./js/domain/dates.js');
     S.openShutdown(today());
   });
   await page.waitForSelector('.sheet [data-action="move"][aria-checked="true"]');
@@ -112,8 +112,8 @@ await step('shutdown moves unfinished tasks to tomorrow', async () => {
   await page.locator('.sheet [data-action="done"]').click();
   await page.waitForSelector('.sheet-wrap', { state: 'detached' });
   const left = await ev(async () => {
-    const T = await import('./js/core/tasks.js');
-    const { today, addDays } = await import('./js/core/dates.js');
+    const T = await import('./js/domain/tasks.js');
+    const { today, addDays } = await import('./js/domain/dates.js');
     return { overdueOrToday: T.open().filter((x) => x.date && x.date <= today()).length, tomorrow: T.onDay(addDays(today(), 1)).filter((x) => x.title.includes('eye specialist')).length };
   });
   if (left.overdueOrToday || !left.tomorrow) throw new Error(JSON.stringify(left));

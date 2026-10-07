@@ -1,4 +1,4 @@
-import * as store from '../core/store.js';
+import * as store from '../data/store.js';
 
 const nf = new Map();
 const numFmt = (d) => {

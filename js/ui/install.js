@@ -1,5 +1,5 @@
 // A single, dismissible "Add to Home Screen" hint. Never repeats once dismissed.
-import * as store from '../core/store.js';
+import * as store from '../data/store.js';
 import { html } from './dom.js';
 import { icon } from './icons.js';
 
