@@ -4,6 +4,8 @@ A private, local-first app for habits, health, training and life. It is built fo
 
 Everything you log stays on the device that logged it. There are no accounts, no servers, no analytics and no third-party services.
 
+Where it's heading: the owner's brief is in [`docs/master-brief.md`](docs/master-brief.md), and the architecture and phased build plan in [`docs/product-architecture.md`](docs/product-architecture.md).
+
 ---
 
 ## Using it on your iPhone
