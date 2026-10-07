@@ -1,6 +1,6 @@
 # Home Lab hero: woman with headset in the galaxy slot
 
-**Status: v2 live** (bigger bust, brain-like density and flow, the galaxy colours on exit). v1 was sha256 `7bbbe4e7…`. The version before the woman is saved in `../rollback-2026-10-07/`.
+**Status: v3 written to the Instatic draft, not yet published.** v3 adds the orb/brain point quality: evenly spaced points, the orb sprite (soft halo with a bright core), orb shimmer and colours, brain sparkles, and true device-pixel sizing. v2 (live) was sha256 `50c5c79e…`. The version before the woman is saved in `../rollback-2026-10-07/`.
 
 ![preview](preview.jpg)
 
@@ -34,7 +34,7 @@ So the face reads at hero size:
 
 | Item | Value |
 |---|---|
-| `hlab-hero-vesper.js` | 232,283 characters (was 111,070); the baked bust adds about 112K as base64 |
+| `hlab-hero-vesper.js` | 234,520 characters (was 111,070); the baked bust adds about 112K as base64 |
 | Points, desktop above 1440 px | ~217k |
 | Points, 1025–1440 px | ~140k |
 | Points, 641–1024 px | ~81k |
@@ -46,7 +46,7 @@ Instatic stores every `hlab-*` file as "all pages", because the MCP ignores `run
 
 | File | What it is |
 |---|---|
-| `hlab-hero-vesper.js` | The built candidate (sha256 `50c5c79efe82677e9abd3a3a0455f243ad8da8a9d35a24c29759cf6b7ebf0ed8`). |
+| `hlab-hero-vesper.js` | The built candidate (sha256 `609d25fb9b6b720ee4dca62a59209347a5509e1020c0838df5a1c1940b4ca57a`). |
 | `galaxy-woman.js` | The replacement `Galaxy` module plus `buildWomanGeometry`. |
 | `config.json` | `WOMAN_CONFIG` values (size, light, shading, density, hover push, follow, springs, camera dive). |
 | `woman-headset.vbrn` | Baked bust, VBRN container (same format as the brain). Holds 8k triangles (4k on the face), then `VIS1` with one visibility byte per triangle, then `CRV1` with one int8 curvature value per vertex. |

@@ -49,7 +49,7 @@ const ORB_CONFIG={colorTop:'#45D6C4',colorBottom:'#3A6FD0',colorEdge:'#2B4F9A',d
   oilDrag:0.95,rippleFreq:11,rippleSpeed:4,iridescence:0.25,radius:1,approach:2.6,distortGain:3.4}
 const GALAXY_CONFIG={colorEdge:'#3A6FD0',colorCore:'#45D6C4',opacity:0.55,pointSize:6,brightness:1.02,
   armSpin:0.4,tilt:-0.5,scale:0.18,cameraZ:48,dive:30,diveTilt:0.5,parallax:4,pointerRadius:5,pointerStrength:2}
-const WOMAN_CONFIG={radius:84,opacity:0.75,faceY:0.4,faceZ:0.15,coreRadius:0.5,ambient:0.55,rim:0.3,backDim:0.45,breath:0.4,turn:0.22,turnSpeed:0.22,tilt:0.04,restY:-4.6,dive:8,graze:0.8,star:0.5,faceLow:0.05,faceHigh:0.78,faceBoost:0.3,curvBoost:0.0,curvShade:0.25,occlusion:0.6,pointerRadius:4.2,pointerStrength:2.0,light:[-0.75,0.45,0.5],front:0.25,density:0.85,cursorPlaneZ:0.2,followYaw:0.38,followPitch:0.14,followShift:0.7,hoverCalm:0.6,springK:14,opacityScatter:1.7,formSize:3.4,flowAmount:1.5,flowSpeed:1.6,waveAmp:1.3,waveFreq:0.12,waveSpeed:1.6,wisp:0.05,wispDist:22,wispSpeed:0.12,bottomFade:0.45}
+const WOMAN_CONFIG={radius:84,opacity:1.05,faceY:0.4,faceZ:0.15,coreRadius:0.5,ambient:0.9,rim:0.3,backDim:0.3,breath:0.4,turn:0.22,turnSpeed:0.22,tilt:0.04,restY:-4.6,dive:8,graze:0.8,star:0.5,faceLow:0.05,faceHigh:0.78,faceBoost:0.3,curvBoost:0.0,curvShade:0.25,occlusion:0.9,pointerRadius:4.2,pointerStrength:2.0,light:[-0.75,0.45,0.5],front:0.25,density:0.75,cursorPlaneZ:0.2,followYaw:0.38,followPitch:0.14,followShift:0.7,hoverCalm:0.6,springK:14,opacityScatter:1.7,formSize:3.4,flowAmount:0.8,flowSpeed:1.6,waveAmp:1.3,waveFreq:0.12,waveSpeed:1.6,wisp:0.05,wispDist:22,wispSpeed:0.12,bottomFade:0.45,px:6.5,zRef:42,deform:3.0,noiseScale:1.2,synapseRate:0.08,spacing:0.75,oversample:2.5}
 const BRAIN_CONFIG={colorCool:'#3A6FD0',colorWarm:'#45D6C4',colorEdge:'#2B4F9A',colorCenter:'#0D141F',
   colorSynapse:'#DCEBF2',colorDeep:'#0D141F',colorCursor:'#5ED6DE',centerRadius:0.37,centerFalloff:4,
   size:0.067,synapseRate:0.1,flowSpeed:2.3,flowAmount:0.025,glow:1.4,depthDarkness:1,radius:1.15,
@@ -465,7 +465,7 @@ function buildWomanGeometry(buffer,count,radius){
   /* per-vertex signed curvature ('CRV1' + one int8 per vertex): ridges > 0, creases < 0 */
   const cOff=vOff+triCount+4, vCount=verts.length/3
   const crv=buffer.byteLength>=cOff+vCount?new Int8Array(buffer,cOff,vCount):new Int8Array(vCount)
-  const cdf=new Float32Array(triCount), nrm=new Float32Array(triCount*3); let total=0
+  const cdf=new Float32Array(triCount), nrm=new Float32Array(triCount*3); let total=0,area=0
   for(let t=0;t<triCount;t++){
     const a=indices[t*3]*3,b=indices[t*3+1]*3,c=indices[t*3+2]*3
     const ux=verts[b]-verts[a],uy=verts[b+1]-verts[a+1],uz=verts[b+2]-verts[a+2]
@@ -476,23 +476,45 @@ function buildWomanGeometry(buffer,count,radius){
     const face=smoothstep(F.faceLow,F.faceLow+0.08,cy)*(1-smoothstep(F.faceHigh-0.08,F.faceHigh,cy))
       *smoothstep(-0.05,0.08,cz)*smoothstep(0.1,0.4,nz/len)*(1-smoothstep(0.32,0.42,Math.abs(cx)))
     const ridge=(Math.abs(crv[indices[t*3]])+Math.abs(crv[indices[t*3+1]])+Math.abs(crv[indices[t*3+2]]))/381
-    total+=len*0.5*(1+F.faceBoost*face)*(1+F.curvBoost*ridge); cdf[t]=total
+    area+=len*0.5; total+=len*0.5*(1+F.faceBoost*face)*(1+F.curvBoost*ridge); cdf[t]=total
   }
   for(let t=0;t<triCount;t++) cdf[t]/=total
   /* smooth (area-weighted) vertex normals so the light follows the face, not the facets */
   const vn=new Float32Array(verts.length)
   for(let t=0;t<triCount;t++){ const ar=(t?cdf[t]-cdf[t-1]:cdf[0]); for(let j=0;j<3;j++){ const i=indices[t*3+j]*3; for(let k=0;k<3;k++) vn[i+k]+=nrm[t*3+k]*ar } }
   for(let i=0;i<vn.length;i+=3){ const l=Math.hypot(vn[i],vn[i+1],vn[i+2])||1; vn[i]/=l; vn[i+1]/=l; vn[i+2]/=l }
+  /* evenly spaced points (blue-noise dart throwing, like the orb's even lattice): draw extra
+     candidates and keep only those not too close to an accepted one; a spatial hash keeps it fast */
   const positions=new Float32Array(count*3),normals=new Float32Array(count*3),vis=new Float32Array(count),curv=new Float32Array(count)
-  for(let s=0;s<count;s++){
+  const minD=Math.sqrt(area*radius*radius/count)*F.spacing, minD2=minD*minD, inv=1/minD
+  const HS=1<<20, head=new Int32Array(HS).fill(-1), nextIdx=new Int32Array(count)
+  const hash=(x,y,z)=>(((x*73856093)^(y*19349663)^(z*83492791))>>>0)&(HS-1)
+  const cand=Math.round(count*F.oversample), tmpP=[0,0,0], tmpN=[0,0,0]
+  let n=0, tries=0
+  while(n<count&&tries<cand*2){
+    tries++
     const pick=Math.random(); let lo=0,hi=triCount-1
     while(lo<hi){const mid=(lo+hi)>>1; if(cdf[mid]<pick) lo=mid+1; else hi=mid}
     const a=indices[lo*3]*3,b=indices[lo*3+1]*3,c=indices[lo*3+2]*3
     let u=Math.random(),v=Math.random(); if(u+v>1){u=1-u;v=1-v} const w=1-u-v
-    for(let k=0;k<3;k++){ positions[s*3+k]=(w*verts[a+k]+u*verts[b+k]+v*verts[c+k])*radius; normals[s*3+k]=w*vn[a+k]+u*vn[b+k]+v*vn[c+k] }
-    const nl=Math.hypot(normals[s*3],normals[s*3+1],normals[s*3+2])||1; normals[s*3]/=nl; normals[s*3+1]/=nl; normals[s*3+2]/=nl
-    vis[s]=triVis?triVis[lo]/255:1
-    curv[s]=(w*crv[a/3]+u*crv[b/3]+v*crv[c/3])/127
+    for(let k=0;k<3;k++){ tmpP[k]=(w*verts[a+k]+u*verts[b+k]+v*verts[c+k])*radius; tmpN[k]=w*vn[a+k]+u*vn[b+k]+v*vn[c+k] }
+    const cx=Math.floor(tmpP[0]*inv),cy=Math.floor(tmpP[1]*inv),cz=Math.floor(tmpP[2]*inv)
+    let ok=tries>cand   // after the candidate budget, fill the rest without the spacing test
+    if(!ok){
+      ok=true
+      for(let dx=-1;dx<=1&&ok;dx++) for(let dy=-1;dy<=1&&ok;dy++) for(let dz=-1;dz<=1&&ok;dz++){
+        for(let q=head[hash(cx+dx,cy+dy,cz+dz)];q>=0;q=nextIdx[q]){
+          const ex=positions[q*3]-tmpP[0],ey=positions[q*3+1]-tmpP[1],ez=positions[q*3+2]-tmpP[2]
+          if(ex*ex+ey*ey+ez*ez<minD2){ ok=false; break }
+        }
+      }
+    }
+    if(!ok) continue
+    positions[n*3]=tmpP[0]; positions[n*3+1]=tmpP[1]; positions[n*3+2]=tmpP[2]
+    const nl=Math.hypot(tmpN[0],tmpN[1],tmpN[2])||1; normals[n*3]=tmpN[0]/nl; normals[n*3+1]=tmpN[1]/nl; normals[n*3+2]=tmpN[2]/nl
+    vis[n]=triVis?triVis[lo]/255:1
+    curv[n]=(w*crv[a/3]+u*crv[b/3]+v*crv[c/3])/127
+    const h=hash(cx,cy,cz); nextIdx[n]=head[h]; head[h]=n; n++
   }
   const g=new THREE.BufferGeometry()
   g.setAttribute('position',new THREE.BufferAttribute(positions,3))
@@ -512,38 +534,44 @@ const Galaxy=(()=>{
   const u={
     uTime:{value:0},uAppear:{value:0},uFade:{value:1},uBlow:{value:0},uAssemble:{value:1},
     uColEdge:{value:linVec(GALAXY_CONFIG.colorEdge)},uColCore:{value:linVec(GALAXY_CONFIG.colorCore)},
+    uColTop:{value:linVec(ORB_CONFIG.colorTop)},uColBottom:{value:linVec(ORB_CONFIG.colorBottom)},uColRim:{value:linVec(ORB_CONFIG.colorEdge)},
+    uSynapse:{value:linVec(BRAIN_CONFIG.colorSynapse)},
     uOpacity:{value:W0.opacity},uOpacityScatter:{value:W0.opacityScatter},uSize:{value:GALAXY_CONFIG.pointSize},uBrightness:{value:GALAXY_CONFIG.brightness},
     uScale:{value:GALAXY_CONFIG.scale},uCursor:{value:new THREE.Vector3()},
     uRepelRadius:{value:W0.pointerRadius},uRepelStrength:{value:W0.pointerStrength},uActivity:{value:0},
     uR:{value:R},uLightDir:{value:new THREE.Vector3(...W0.light).normalize()},uAmbient:{value:W0.ambient},
-    uRim:{value:W0.rim},uFront:{value:W0.front},uGraze:{value:W0.graze},uStar:{value:W0.star},uOcc:{value:W0.occlusion},
-    uCurv:{value:W0.curvShade},uDpr:{value:renderer.getPixelRatio()},uBackDim:{value:W0.backDim},uBreath:{value:W0.breath},
-    uFormSize:{value:W0.formSize},uFlowAmount:{value:W0.flowAmount},uFlowSpeed:{value:W0.flowSpeed},
-    uWaveAmp:{value:W0.waveAmp},uWaveFreq:{value:W0.waveFreq},uWaveSpeed:{value:W0.waveSpeed},
+    uBackDim:{value:W0.backDim},uOcc:{value:W0.occlusion},uDpr:{value:renderer.getPixelRatio()},
+    uPx:{value:W0.px},uZRef:{value:W0.zRef},uDeform:{value:W0.deform},uNoise:{value:W0.noiseScale},
+    uFlowAmount:{value:W0.flowAmount},uFlowSpeed:{value:W0.flowSpeed},uSynRate:{value:W0.synapseRate},
     uWisp:{value:W0.wisp},uWispDist:{value:W0.wispDist},uWispSpeed:{value:W0.wispSpeed},uBottomFade:{value:W0.bottomFade},
   }
   const mat=new THREE.ShaderMaterial({uniforms:u,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
     vertexShader:`
       attribute vec3 aNormal;attribute vec4 aRnd;attribute float aVis;attribute float aCurv;
       uniform float uTime;uniform float uSize;uniform float uScale;uniform float uBlow;uniform float uAssemble;
-      uniform vec3 uColEdge;uniform vec3 uColCore;uniform vec3 uCursor;uniform float uRepelRadius;uniform float uRepelStrength;uniform float uActivity;
-      uniform float uR;uniform vec3 uLightDir;uniform float uAmbient;uniform float uRim;uniform float uBackDim;uniform float uBreath;uniform float uFront;
-      uniform float uGraze;uniform float uStar;uniform float uOcc;uniform float uCurv;uniform float uDpr;uniform float uFormSize;
-      uniform float uFlowAmount;uniform float uFlowSpeed;uniform float uWaveAmp;uniform float uWaveFreq;uniform float uWaveSpeed;
+      uniform vec3 uColEdge;uniform vec3 uColCore;uniform vec3 uColTop;uniform vec3 uColBottom;uniform vec3 uColRim;
+      uniform vec3 uCursor;uniform float uRepelRadius;uniform float uRepelStrength;uniform float uActivity;
+      uniform float uR;uniform vec3 uLightDir;uniform float uAmbient;uniform float uBackDim;uniform float uOcc;uniform float uDpr;
+      uniform float uPx;uniform float uZRef;uniform float uDeform;uniform float uNoise;
+      uniform float uFlowAmount;uniform float uFlowSpeed;uniform float uSynRate;
       uniform float uWisp;uniform float uWispDist;uniform float uWispSpeed;uniform float uBottomFade;
       uniform float uOpacity;uniform float uOpacityScatter;
-      varying float vFade;varying vec3 vColor;varying float vForm;varying float vAlpha;
+      varying float vFade;varying vec3 vColor;varying float vForm;varying float vAlpha;varying float vSpark;varying float vLit;
+      ${SNOISE}
       void main(){
         float gRnd1=aRnd.x,gRnd2=aRnd.y,gRnd3=aRnd.z,gRnd4=aRnd.w;
-        float ny=position.y/uR;
-        /* flow: each point circles on the surface (like the brain), a slow wave climbs the body,
-           and a few wisps lift off and fade */
+        vec3 q=position/uR;
         vec3 nrm=normalize(aNormal+vec3(1e-5));
+        /* the orb's liquid surface: two noise octaves push the points along the normal and
+           light the crests; the brain's small loop keeps every point alive */
+        float n1=snoise(q*1.6*uNoise+vec3(0.0,uTime*0.18,0.0));
+        float n2=snoise(q*3.3*uNoise-vec3(uTime*0.12));
+        float disp=n1*0.72+n2*0.28;
+        float lit=smoothstep(-0.25,0.5,disp);
         vec3 ref=abs(nrm.y)<0.95?vec3(0.0,1.0,0.0):vec3(1.0,0.0,0.0);
         vec3 tA=normalize(cross(nrm,ref)); vec3 tB=cross(nrm,tA);
         float ph=uTime*uFlowSpeed+gRnd4*6.2831853;
-        vec3 rest=position+(tA*cos(ph)+tB*sin(ph))*uFlowAmount;
-        rest+=nrm*(sin(position.y*uWaveFreq-uTime*uWaveSpeed+gRnd1*0.9)*uWaveAmp+sin(uTime*1.3+gRnd1*6.2831853)*uBreath);
+        vec3 rest=position+nrm*disp*uDeform+(tA*cos(ph)+tB*sin(ph))*uFlowAmount;
         float wisp=step(1.0-uWisp,fract(gRnd3*13.7));
         float life=fract(uTime*uWispSpeed+gRnd2);
         rest+=(nrm*0.7+vec3(0.0,1.0,0.0))*life*uWispDist*wisp;
@@ -564,42 +592,51 @@ const Galaxy=(()=>{
         modelPosition.xyz+=normalize(toP+vec3(0.0001))*fall*uRepelStrength*uActivity;
         vec4 mvPosition=viewMatrix*modelPosition;
         float form=aEase*(1.0-uBlow);
-        /* gentle surface light while she is formed (no hard detail) */
+        /* formed colour, orb style: bottom blue -> top turquoise, deep blue at the silhouette,
+           crests lit; hidden layers and the far side drop away so the front reads crisp */
         vec3 n=normalize(mat3(modelMatrix)*nrm);
         vec3 v=normalize(cameraPosition-modelPosition.xyz);
         float facing=dot(n,v);
-        float shade=mix(uAmbient,1.0,max(dot(n,uLightDir),0.0))+pow(1.0-abs(facing),2.0)*uRim+pow(max(facing,0.0),2.0)*uFront;
-        shade*=mix(uBackDim,1.0,smoothstep(-0.15,0.15,facing));
-        shade*=mix(uGraze,1.0,abs(facing));
-        shade*=max(0.0,1.0+uCurv*aCurv);
-        shade*=mix(1.0,aVis,uOcc);
-        /* colour: the brain's cool -> warm climb while formed; the galaxy's own mix while scattered */
-        float vt=clamp(smoothstep(-0.85,0.85,ny)+(gRnd2-0.5)*0.3,0.0,1.0);
-        vec3 formed=mix(uColEdge,uColCore,vt)*shade;
+        float vt=clamp(q.y*0.55+0.55+(gRnd2-0.5)*0.12,0.0,1.0);
+        vec3 col=mix(uColBottom,uColTop,vt);
+        col=mix(col,uColRim,smoothstep(0.45,0.95,1.0-abs(facing))*0.7);
+        col*=(0.78+0.42*lit)*mix(uAmbient,1.0,max(dot(n,uLightDir),0.0)*0.6+0.4);
+        float vis=mix(1.0,aVis,uOcc)*mix(uBackDim,1.0,smoothstep(-0.2,0.2,facing));
+        /* brain-style synapse sparkles on a few points */
+        float period=mix(3.0,9.0,gRnd3);
+        float ft=mod(uTime+gRnd1*period,period);
+        float fire=pow(clamp(1.0-ft/0.4,0.0,1.0),2.5)*step(gRnd4,uSynRate);
+        /* scattered colour = the galaxy's own mix */
         float galaxyR=pow(gRnd1,2.0)*60.0+pow(gRnd2,3.0)*30.0;
         vec3 scattered=mix(uColEdge,uColCore,smoothstep(80.0,0.0,galaxyR));
-        vColor=mix(scattered,formed,form);
-        float isOrb=step(0.98,fract(gRnd1*77.77));
-        isOrb*=step(fract(gRnd2*31.7),mix(1.0,uStar,form));
+        vColor=mix(scattered,col,form);
+        vSpark=fire*form; vLit=lit*form;
+        float isOrb=step(0.98,fract(gRnd1*77.77))*(1.0-form);
         float starSize=mix(1.0,3.0,isOrb);
         vFade=mix(0.7,1.0,isOrb);
         vFade*=mix(1.0,(1.0-life)*smoothstep(0.0,0.12,life),wisp*form);
-        vFade*=mix(1.0,smoothstep(-1.0,-1.0+uBottomFade,ny),form);
+        vFade*=mix(1.0,smoothstep(-1.0,-1.0+uBottomFade,q.y)*vis*(0.38+0.72*lit),form);
         vForm=form; vAlpha=mix(uOpacityScatter,uOpacity,form);
-        gl_PointSize=uSize*starSize*(10.0/-mvPosition.z)*sqrt(uDpr)*mix(1.0,uFormSize,form);
-        gl_PointSize=max(gl_PointSize,1.5);
+        /* size: the galaxy's formula while scattered; true device pixels while formed (crisp on retina) */
+        float galaxySize=uSize*starSize*(10.0/-mvPosition.z);
+        float formedSize=uPx*uDpr*(uZRef/-mvPosition.z)*(1.0+fire*0.9);
+        gl_PointSize=max(mix(galaxySize,formedSize,form),1.5);
         gl_Position=projectionMatrix*mvPosition;
       }`,
     fragmentShader:`
-      uniform float uBrightness;uniform float uAppear;uniform float uFade;
-      varying float vFade;varying vec3 vColor;varying float vForm;varying float vAlpha;
+      uniform float uBrightness;uniform float uAppear;uniform float uFade;uniform vec3 uSynapse;
+      varying float vFade;varying vec3 vColor;varying float vForm;varying float vAlpha;varying float vSpark;varying float vLit;
       void main(){
         vec2 xy=gl_PointCoord-0.5;
         float ll=length(xy);
         if(ll>0.5) discard;
-        /* galaxy sprite while scattered, the brain's softer sprite while formed */
-        float a=mix(smoothstep(0.5,0.1,ll),pow(smoothstep(0.5,0.0,ll),2.2),vForm);
-        gl_FragColor=vec4(vColor*uBrightness,vFade*a*vAlpha*uAppear*uFade);
+        /* orb sprite while formed: soft halo + tight bright core; galaxy sprite while scattered */
+        float soft=smoothstep(0.5,0.0,ll); soft=soft*soft*1.2;
+        float core=smoothstep(0.13,0.0,ll);
+        float a=mix(smoothstep(0.5,0.1,ll),soft+core*0.35,vForm);
+        vec3 col=vColor+core*vForm*(vec3(0.45)*smoothstep(0.5,1.0,vLit)+vec3(0.12));
+        col+=uSynapse*vSpark*2.0*(soft+core);
+        gl_FragColor=vec4(col*uBrightness,vFade*a*vAlpha*uAppear*uFade*(1.0+vSpark));
       }`})
   const group=new THREE.Group()
   const points=new THREE.Points(geo,mat); points.frustumCulled=false
