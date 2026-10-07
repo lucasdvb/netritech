@@ -93,7 +93,7 @@ function overview(ui) {
         <div class="stat"><p class="stat-label">30 days</p><p class="stat-value tnum">${pct(c30.ratio)}</p><p class="stat-sub">${c30.days} days scored</p></div>
         <div class="stat"><p class="stat-label">90 days</p><p class="stat-value tnum">${pct(c90.ratio)}</p><p class="stat-sub">${c90.days} days scored</p></div>
       </div>
-      <div class="card chart-card">${lineChart({ labels: lab, series: [{ values: scores, color: 'var(--chart-1)', fill: 'var(--lime)', area: true, label: 'Rolling 7-day' }], fmt: pctFmt, yFmt: axisPct, yMin: 0, yMax: 1, goal: { value: 0.85, label: 'strong' }, empty: 'Your rolling consistency appears after a few days.' })}</div>
+      <div class="card chart-card">${lineChart({ labels: lab, series: [{ values: scores, color: 'var(--chart-1)', fill: 'var(--accent)', area: true, label: 'Rolling 7-day' }], fmt: pctFmt, yFmt: axisPct, yMin: 0, yMax: 1, goal: { value: 0.85, label: 'strong' }, empty: 'Your rolling consistency appears after a few days.' })}</div>
       <div class="card block-tight">
         <p class="section-label">By area · 30 days</p>
         <ul class="area-bars">${CATEGORIES.map((c) => { const v = categoryConsistency(c.id, end, 30); return html`<li><span class="area-name">${c.label}</span>
@@ -102,7 +102,7 @@ function overview(ui) {
     </section>
 
     <section class="block" data-key="weight"><div class="block-head"><h2 class="block-title">Weight · 7-day average</h2><a class="link-btn" href="#/body/weight" data-action="nav" data-to="body/weight">Details</a></div>
-      <div class="card chart-card">${lineChart({ labels: lab, series: [{ values: weights, color: 'var(--chart-1)', fill: 'var(--lime)', area: true, label: '7-day avg' }], fmt: (v) => `${num(v, 1)} ${weightUnit()}`, empty: 'Weigh in a few mornings to see the trend.' })}</div></section>
+      <div class="card chart-card">${lineChart({ labels: lab, series: [{ values: weights, color: 'var(--chart-1)', fill: 'var(--accent)', area: true, label: '7-day avg' }], fmt: (v) => `${num(v, 1)} ${weightUnit()}`, empty: 'Weigh in a few mornings to see the trend.' })}</div></section>
 
     <section class="block" data-key="waist"><div class="block-head"><h2 class="block-title">Waist</h2><a class="link-btn" href="#/body/measurements" data-action="nav" data-to="body/measurements">Measurements</a></div>
       <div class="card chart-card">${lineChart({ labels: waist.map((m) => fmtMD(m.date)), series: [{ values: waist.map((m) => cmOut(m.waist)), color: 'var(--c-posture)', area: true, marks: true, label: 'Waist' }], fmt: (v) => `${num(v, 1)} ${lengthUnit()}`, empty: 'Measure every two weeks to see this.' })}</div></section>

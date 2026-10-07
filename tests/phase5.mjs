@@ -109,6 +109,13 @@ await step('offline: reload with the network off', async () => {
   await page.goto(base + '#/progress');
   await page.waitForSelector('[data-view="progress"]');
   await shot('62-offline-progress');
+  // the self-hosted font and the bundled gradient must both work with the network off
+  await page.goto(base + '#/today');
+  await page.waitForSelector('.hero .meridian.is-live, .hero .meridian.is-fallback', { timeout: 15000 });
+  const offline = await page.evaluate(async () => { await document.fonts.ready; return { font: document.fonts.check('600 16px Manrope'), stage: document.querySelector('.hero .meridian').className }; });
+  if (!offline.font) throw new Error('Manrope not available offline');
+  if (!offline.stage.includes('is-live')) throw new Error('gradient did not mount offline: ' + offline.stage);
+  await shot('63-offline-today');
   await ctx.setOffline(false);
 });
 

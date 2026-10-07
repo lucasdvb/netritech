@@ -90,6 +90,7 @@ function hero(date) {
     </section>`;
   }
   return html`<section class="${cx('hero', complete && 'is-complete')}" data-key="hero" aria-label="Today’s score">
+    <div class="meridian" data-static="meridian" data-key="meridian" aria-hidden="true"></div>
     <div class="hero-ring">${ring(s.ratio || 0, { size: 96, stroke: 7, label: `${pct(s.ratio)} of key habits done` })}
       <span class="hero-pct tnum" data-tween="${Math.round((s.ratio || 0) * 100)}" data-tween-suffix="%"><span data-tween-text>${Math.round((s.ratio || 0) * 100)}%</span></span></div>
     <div class="hero-text">
@@ -123,7 +124,7 @@ function coachItem(c, primary) {
     <p class="coach-body">${c.body}</p>
     <div class="coach-foot">
       ${c.fact ? html`<span class="tag" title="Based on your logged data">From your data</span>` : html`<span class="tag tag--soft">Suggestion</span>`}
-      ${c.action ? html`<button type="button" class="btn btn--sm ${primary ? 'btn--primary' : 'btn--soft'}" data-action="${c.action.act}"${raw(d)}>${c.action.label}</button>` : ''}
+      ${c.action ? html`<button type="button" class="btn btn--sm ${primary ? 'btn--primary btn--arrow' : 'btn--soft'}" data-action="${c.action.act}"${raw(d)}>${c.action.label}${primary ? html`<span class="btn-tile" aria-hidden="true">${icon('arrow-up-right', { size: 16 })}${icon('arrow-up-right', { size: 16 })}</span>` : ''}</button>` : ''}
     </div>
   </div>`;
 }
