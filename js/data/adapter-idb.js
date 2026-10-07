@@ -1,3 +1,6 @@
+// Storage adapter for IndexedDB. The store talks only to this interface
+// (open, getAll, get, write, replaceAll, clearAll), so another adapter, such as
+// a sync-backed one, can replace it without touching screens or rules.
 import { DB_NAME, DB_VERSION, STORES } from './schema.js';
 
 let dbp = null;
@@ -13,14 +16,19 @@ const done = (tx) => new Promise((resolve, reject) => {
   tx.onabort = () => reject(tx.error || new Error('Transaction aborted'));
 });
 
+// Ask the browser to commit now instead of waiting for the next task.
+const commit = (tx) => { try { tx.commit?.(); } catch { /* already committing */ } };
+
 export function open() {
   if (dbp) return dbp;
   dbp = new Promise((resolve, reject) => {
-    if (!('indexedDB' in window)) {
+    if (typeof indexedDB === 'undefined') {
       reject(new Error('IndexedDB unavailable'));
       return;
     }
     const r = indexedDB.open(DB_NAME, DB_VERSION);
+    // Structural upgrades only ever add stores and indexes, so they can't lose data.
+    // Changes to the data itself run later as migrations, after a safety backup.
     r.onupgradeneeded = () => {
       const db = r.result;
       for (const [name, def] of Object.entries(STORES)) {
@@ -53,22 +61,8 @@ export async function get(store, id) {
   return req(db.transaction(store).objectStore(store).get(id));
 }
 
-export async function put(store, value) {
-  const db = await open();
-  const tx = db.transaction(store, 'readwrite');
-  tx.objectStore(store).put(value);
-  return done(tx);
-}
-
-export async function del(store, id) {
-  const db = await open();
-  const tx = db.transaction(store, 'readwrite');
-  tx.objectStore(store).delete(id);
-  return done(tx);
-}
-
 /** Writes many records across stores in one transaction: [{store, value}] or [{store, delete: id}]. */
-export async function batch(ops) {
+export async function write(ops) {
   if (!ops.length) return;
   const db = await open();
   const names = [...new Set(ops.map((o) => o.store))];
@@ -78,6 +72,7 @@ export async function batch(ops) {
     if ('delete' in op) s.delete(op.delete);
     else s.put(op.value);
   }
+  commit(tx);
   return done(tx);
 }
 
@@ -91,6 +86,7 @@ export async function replaceAll(data) {
     s.clear();
     for (const rec of data[name]) s.put(rec);
   }
+  commit(tx);
   return done(tx);
 }
 
@@ -99,5 +95,6 @@ export async function clearAll() {
   const names = [...db.objectStoreNames];
   const tx = db.transaction(names, 'readwrite');
   for (const n of names) tx.objectStore(n).clear();
+  commit(tx);
   return done(tx);
 }

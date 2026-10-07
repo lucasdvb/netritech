@@ -12,8 +12,10 @@ import { ring, check, dots, empty } from '../ui/components.js';
 import { num, litres, weight as fmtWeight, habitValue, habitTarget, pct } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
-import * as S from './sheets.js';
-import { startWorkout, openStartSheet } from './workout-actions.js';
+import { reviewOf, saveReview } from '../domain/day.js';
+// Sheets load on first use, and are fetched in the background once Today is on screen.
+const sheets = () => import('./sheets.js');
+const workouts = () => import('./workout-actions.js');
 import * as T from '../domain/tasks.js';
 import { taskRow, taskActions, openTask } from './task-ui.js';
 
@@ -441,7 +443,10 @@ export default {
       </div>
     </div>`;
   },
-  mount(el, ctx) { attachTop3Drag(el, ctx); },
+  mount(el, ctx) {
+    attachTop3Drag(el, ctx);
+    setTimeout(() => Promise.all([sheets(), workouts()]).catch(() => {}), 1500);
+  },
   update(el, ctx) {
     const date = ctx.params.date || today();
     const s = dayScore(date);
@@ -469,27 +474,27 @@ export default {
     },
     step: ({ data, params }) => { H.toggleChecklistItem(H.habit(data.id), params.date || today(), Number(data.i)); hap.tap(); },
     expand: ({ data, ui }) => { ui.expanded = { ...(ui.expanded || {}), [data.id]: !ui.expanded?.[data.id] }; app.refresh(); },
-    habit: ({ data, params }) => {
+    habit: async ({ data, params }) => {
       const date = params.date || today();
       const h = H.habit(data.id);
       if (h.id === 'h-training') {
         const active = F.activeWorkout();
         if (active) return app.go(`body/workout/${active.id}`);
         if (F.workoutsOn(date).length) return app.go('body/training');
-        return openStartSheet(date);
+        return (await workouts()).openStartSheet(date);
       }
-      if (h.source && !COUNTER_SOURCES.includes(h.source) && !h.source.startsWith('workout:')) return S.openSource(h, date);
-      S.openHabit(h.id, date);
+      if (h.source && !COUNTER_SOURCES.includes(h.source) && !h.source.startsWith('workout:')) return (await sheets()).openSource(h, date);
+      (await sheets()).openHabit(h.id, date);
     },
-    source: ({ data, params }) => S.openSource(H.habit(data.id), params.date || today()),
-    wchip: ({ data, params }) => {
+    source: async ({ data, params }) => (await sheets()).openSource(H.habit(data.id), params.date || today()),
+    wchip: async ({ data, params }) => {
       const date = params.date || today();
       const h = H.habit(data.id);
-      if (h.source) return S.openSource(h, date);
+      if (h.source) return (await sheets()).openSource(h, date);
       const now = H.toggle(h, date);
       now ? hap.success() : hap.tap();
     },
-    counter: ({ data, params }) => S.bumpCounter(params.date || today(), data.source, Number(data.delta)),
+    counter: async ({ data, params }) => (await sheets()).bumpCounter(params.date || today(), data.source, Number(data.delta)),
     section: ({ data, ui }) => {
       const el = document.querySelector(`[data-key="sec-${data.id}"]`);
       const open = el?.classList.contains('is-open');
@@ -498,14 +503,14 @@ export default {
     },
     'toggle-all': () => store.setSettings({ showAllSections: !store.settings().showAllSections }),
     'toggle-coach': ({ ui, event }) => { event.preventDefault(); ui.coachOpen = !ui.coachOpen; app.refresh(); },
-    'add-water': ({ data, params }) => S.addWater(params.date || today(), Number(data.ml) || 500),
-    'open-checkin': ({ params }) => S.openCheckin(params.date || today()),
-    'open-shutdown': ({ params }) => S.openShutdown(params.date || today()),
-    'log-steps': ({ params }) => S.openSteps(params.date || today()),
-    'log-food': ({ params }) => S.openFood(params.date || today()),
-    'start-workout': ({ data, params }) => startWorkout(data.template, params.date || today()),
-    'set-mode': ({ data, params }) => S.setMode(params.date || today(), data.mode),
-    mode: ({ params }) => S.openMode(params.date || today()),
+    'add-water': async ({ data, params }) => (await sheets()).addWater(params.date || today(), Number(data.ml) || 500),
+    'open-checkin': async ({ params }) => (await sheets()).openCheckin(params.date || today()),
+    'open-shutdown': async ({ params }) => (await sheets()).openShutdown(params.date || today()),
+    'log-steps': async ({ params }) => (await sheets()).openSteps(params.date || today()),
+    'log-food': async ({ params }) => (await sheets()).openFood(params.date || today()),
+    'start-workout': async ({ data, params }) => (await workouts()).startWorkout(data.template, params.date || today()),
+    'set-mode': async ({ data, params }) => (await sheets()).setMode(params.date || today(), data.mode),
+    mode: async ({ params }) => (await sheets()).openMode(params.date || today()),
     day: ({ data, params }) => {
       const cur = params.date || today();
       const next = addDays(cur, Number(data.delta));
@@ -515,12 +520,12 @@ export default {
     'go-today': () => app.replace('today'),
     'top3-check': ({ data, params }) => {
       const date = params.date || today();
-      const r = S.reviewOf(date);
+      const r = reviewOf(date);
       const list = [...(r.top3 || [])];
       const i = Number(data.i);
       if (!list[i]?.text) { document.querySelector(`[data-i="${i}"].top3-input`)?.focus(); return; }
       list[i] = { ...list[i], done: !list[i].done };
-      S.saveReview(date, { top3: list });
+      saveReview(date, { top3: list });
       list[i].done ? hap.success() : hap.tap();
     },
     'focus-win': () => document.getElementById('win-input')?.focus(),
@@ -535,14 +540,14 @@ export default {
     },
     'top3-text': ({ el, value, params }) => {
       const date = params.date || today();
-      const r = S.reviewOf(date);
+      const r = reviewOf(date);
       const list = [...(r.top3 || [])];
       const i = Number(el.dataset.i);
       while (list.length <= i) list.push({ id: store.uid(), text: '', done: false });
       list[i] = { ...list[i], id: list[i].id?.startsWith('empty-') ? store.uid() : list[i].id || store.uid(), text: value.trim() };
-      S.saveReview(date, { top3: list });
+      saveReview(date, { top3: list });
     },
-    win: ({ value, params }) => S.saveReview(params.date || today(), { win: value.trim() }),
+    win: ({ value, params }) => saveReview(params.date || today(), { win: value.trim() }),
   },
 };
 
@@ -550,13 +555,13 @@ export default {
 function attachTop3Drag(root, ctx) {
   const date = () => ctx.params.date || today();
   const move = (from, to) => {
-    const r = S.reviewOf(date());
+    const r = reviewOf(date());
     const list = [...(r.top3 || [])];
     while (list.length < 3) list.push({ id: store.uid(), text: '', done: false });
     if (to < 0 || to > 2 || from === to) return;
     const [it] = list.splice(from, 1);
     list.splice(to, 0, it);
-    S.saveReview(date(), { top3: list });
+    saveReview(date(), { top3: list });
     hap.tap();
   };
   root.addEventListener('keydown', (e) => {

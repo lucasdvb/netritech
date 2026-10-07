@@ -21,15 +21,22 @@
 :root {
   --font: 'Manrope', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 
-  /* type scale */
-  --fs-display: clamp(31px, 8.4vw, 42px);
-  --fs-title: 24px;
-  --fs-title-sm: 20px;
-  --fs-headline: 17px;
-  --fs-body: 15px;
-  --fs-sub: 13px;
-  --fs-caption: 12px;
-  --fs-micro: 11px;
+  /* type scale: in rem, so all text follows the phone's text-size setting.
+     The root is 17px at the default size (see base.css), so 1rem = 17px. */
+  --fs-micro: 0.6471rem;      /* 11: labels, the smallest text allowed */
+  --fs-caption: 0.7059rem;    /* 12: metadata */
+  --fs-sub: 0.7647rem;        /* 13: secondary lines */
+  --fs-body: 0.8824rem;       /* 15: default text */
+  --fs-body-lg: 0.9412rem;    /* 16: lead text */
+  --fs-input: max(16px, 0.9412rem); /* 16+: iOS zooms into any field below 16px */
+  --fs-headline: 1rem;        /* 17: row titles */
+  --fs-title-sm: 1.1765rem;   /* 20: card titles */
+  --fs-title-md: 1.2941rem;   /* 22: sheet titles */
+  --fs-title: 1.4118rem;      /* 24: screen titles */
+  --fs-title-lg: 1.5294rem;   /* 26: large values */
+  --fs-metric: 1.8824rem;     /* 32: big numbers */
+  --fs-metric-xl: 3.0588rem;  /* 52: hero numbers */
+  --fs-display: clamp(1.8235rem, 1.1rem + 4vw, 2.4706rem); /* 31-42: greetings */
 
   /* spacing */
   --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px; --s7: 32px; --s8: 40px; --s9: 56px;
@@ -39,10 +46,19 @@
   --r-sm: 12px; --r-md: 16px; --r-lg: 24px; --r-xl: 30px; --r-pill: 999px;
 
   /* motion */
-  --ease: cubic-bezier(.2, .8, .2, 1);
-  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
-  --spring: cubic-bezier(.34, 1.36, .64, 1);
-  --t-fast: 120ms; --t-med: 220ms; --t-slow: 360ms;
+  /* durations: exits run shorter than entrances; ceremonies are timed on their own */
+  --dur-instant: 80ms;   /* press feedback */
+  --dur-fast: 140ms;     /* checks, toggles, chips, tab cross-fade */
+  --dur-med: 240ms;      /* sheets, expand and collapse, list changes */
+  --dur-slow: 380ms;     /* page push and pop, card-to-detail morph */
+  --ease-standard: cubic-bezier(.2, .8, .2, 1);
+  --ease-enter: cubic-bezier(.16, 1, .3, 1);
+  --ease-exit: cubic-bezier(.4, 0, 1, 1);
+  /* springs: curve fallbacks here, real springs below where linear() is supported */
+  --spring-snappy: cubic-bezier(.34, 1.36, .64, 1);
+  --spring-gentle: cubic-bezier(.16, 1, .3, 1);
+  --dur-snappy: 334ms;
+  --dur-gentle: 425ms;
 
   /* layout */
   --tabbar-h: 64px;
@@ -75,12 +91,12 @@
   --border: rgba(29, 29, 31, .08);
   --border-strong: rgba(29, 29, 31, .16);
   --text: #1D1D1F;
-  --text-2: #6E6E73;
-  --text-3: #86868B;
+  --text-2: #434344;      /* brand dark grey: 4.5:1 or better on every surface */
+  --text-3: #6E6E73;      /* brand mid grey: 4.5:1 on white and on cards */
   --text-inv: #FFFFFF;
   --accent: var(--brand);
   --on-accent: #FFFFFF;
-  --accent-ink: #0071E3;
+  --accent-ink: #0062C4;  /* blue text: the brand blue a step deeper, 4.5:1 on cards */
   --accent-soft: rgba(0, 113, 227, .1);
   --accent-line: rgba(0, 113, 227, .45);
   --focus: var(--brand);
@@ -115,6 +131,14 @@
   --bar-soft: #DADADD;
 }
 
+/* Springs sampled from js/ui/motion.js (SPRINGS); a unit test keeps these in step. */
+@supports (transition-timing-function: linear(0, 1)) {
+  :root {
+    --spring-snappy: linear(0, 0.019, 0.069, 0.14, 0.225, 0.317, 0.411, 0.504, 0.591, 0.672, 0.744, 0.808, 0.863, 0.91, 0.948, 0.979, 1.003, 1.02, 1.033, 1.042, 1.046, 1.048, 1.048, 1.046, 1.043, 1.039, 1.035, 1.03, 1.025, 1.021, 1.017, 1.014, 1.01, 1.007, 1.005, 1.003, 1.001, 1, 0.999, 0.999, 1);
+    --spring-gentle: linear(0, 0.013, 0.048, 0.096, 0.155, 0.218, 0.284, 0.35, 0.414, 0.475, 0.533, 0.586, 0.636, 0.681, 0.722, 0.758, 0.791, 0.82, 0.846, 0.868, 0.888, 0.905, 0.92, 0.932, 0.943, 0.953, 0.961, 0.968, 0.973, 0.978, 0.982, 0.986, 0.989, 0.991, 0.993, 0.994, 0.996, 0.997, 0.998, 0.998, 1);
+  }
+}
+
 :root[data-theme='dark'] {
   --bg: #000000;
   --bg-elevated: #111112;
@@ -125,7 +149,7 @@
   --border-strong: rgba(245, 245, 247, .16);
   --text: #F5F5F7;
   --text-2: #A1A1A6;
-  --text-3: #6E6E73;
+  --text-3: #8E8E93;
   --text-inv: #000000;
   --ink: #1D1D1F;
   --ink-2: #2C2C2E;
@@ -168,7 +192,7 @@
     --border-strong: rgba(245, 245, 247, .16);
     --text: #F5F5F7;
     --text-2: #A1A1A6;
-    --text-3: #6E6E73;
+    --text-3: #8E8E93;
     --text-inv: #000000;
     --ink: #1D1D1F;
     --ink-2: #2C2C2E;
@@ -203,8 +227,8 @@
 
 @media (prefers-contrast: more) {
   :root {
-    --text-2: #434344;
-    --text-3: #6E6E73;
+    --text-2: #2C2C2E;
+    --text-3: #434344;
     --border: rgba(29, 29, 31, .2);
   }
 }

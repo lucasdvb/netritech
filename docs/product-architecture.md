@@ -2,6 +2,8 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
+**Status.** Phase 0 is done (see section 15). Phases 1–11 are next, in order.
+
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
 **How to read this.** Section 1 is a one-page summary. Sections 2 to 4 are the audit and the problems with the brief itself. Sections 5 to 12 are the architecture. Section 14 is the build plan, phase by phase. Section 17 lists the decisions the owner may want to overrule.
@@ -398,7 +400,7 @@ On Sunday evening, Today shows a review card; Reflect shows it too. The review r
 
 ### 9.1 Typography
 
-Manrope (self-hosted, variable 200–800). Sizes are in **rem**, so the whole scale follows the phone's text-size setting. On iPhone this is done by deriving the root size from the system body font, then applying Manrope on top.
+Manrope (self-hosted, variable 200–800). Sizes are in **rem** on a 17px root, so the whole scale follows the phone's text-size setting. On iPhone the root comes from the system body font (Dynamic Type, 17px at the default size); elsewhere it is 106.25% of the browser's default. Fields never go below 16px, so iPhone doesn't zoom into them.
 
 | Role | Size | Line height | Weight | Tracking | Use |
 |---|---|---|---|---|---|
@@ -426,8 +428,8 @@ Already in `css/tokens.css`, from the brand palette:
 | bg | #FFFFFF | #000000 | Page |
 | surface | #F5F5F7 | #1D1D1F | Cards |
 | ink | #1D1D1F | #1D1D1F | Stage cards, tab bar, selections (light) |
-| text / text-2 / text-3 | #1D1D1F / #6E6E73 / #86868B | #F5F5F7 / #A1A1A6 / #6E6E73 | Type hierarchy |
-| accent | #0071E3 | #0071E3 (text #2997FF) | The one accent |
+| text / text-2 / text-3 | #1D1D1F / #434344 / #6E6E73 | #F5F5F7 / #A1A1A6 / #8E8E93 | Type hierarchy |
+| accent | #0071E3 (blue text #0062C4) | #0071E3 (blue text #2997FF) | The one accent |
 | sel / ink-sel | near-black | off-white / #434344 | Selected states |
 | danger | #C2362B | #FF6B5E | Delete and errors only |
 
@@ -947,7 +949,9 @@ Twelve phases. Each lists objective, features, files, dependencies, acceptance c
 5. Commit, push, and send the owner the screenshots plus a short note of what changed and anything to decide.
 6. Moments and ceremonies only: render HyperFrames previews and wait for approval before building them in.
 
-### Phase 0: Foundations and safety net (L)
+### Phase 0: Foundations and safety net (L) · done
+
+What shipped, against the acceptance criteria: all 54 earlier steps still pass; a real version 2 database upgrades with identical record counts and a safety copy taken first; a version 2 backup file restores and catches up; 400 records written right before a reload all survive; every main screen and the check-in sheet keep their text uncut at 85% and 200% text size. 29 unit tests and 9 new browser steps cover it. Secondary and tertiary text moved to the brand dark and mid greys, and blue text to the deeper brand blue, so every text colour clears 4.5:1. JavaScript for the first render is 202 KB against the 200 KB target (well inside the 240 KB limit); Phase 3's split of the Today screen brings it under.
 
 - **Objective:** make the codebase ready for everything else, with no visible change except text size.
 - **Features:**

@@ -95,13 +95,16 @@ export function row({ ic, color, title, sub, right = '', action, data = {}, chev
 }
 
 /** Labelled form field wrapper. */
-export function field(label, control, { hint = '', id, cls = '' } = {}) {
-  return html`<label class="${cx('field', cls)}"${attr(id, 'for', id)}>
+export function field(label, control, { hint = '', id, cls = '', error = '' } = {}) {
+  return html`<label class="${cx('field', cls, error && 'field--error')}"${attr(id, 'for', id)}>
     <span class="field-label">${label}</span>
     ${control}
-    ${hint ? html`<span class="field-hint">${hint}</span>` : ''}
+    ${error ? fieldError(error) : hint ? html`<span class="field-hint">${hint}</span>` : ''}
   </label>`;
 }
+
+/** What went wrong with one field, announced to screen readers. The input itself is never cleared. */
+export const fieldError = (message) => (message ? html`<span class="field-error" role="alert">${message}</span>` : '');
 
 export function stepper(value, { action, data = {}, step = 1, unit = '', min = 0 } = {}) {
   const d = Object.entries(data).map(([k, v]) => ` data-${k}="${v}"`).join('');

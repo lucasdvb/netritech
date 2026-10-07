@@ -6,7 +6,20 @@ export const fromISO = (s) => {
   const [y, m, d] = s.split('-').map(Number);
   return new Date(y, m - 1, d, 12);
 };
-export const today = () => toISO(new Date());
+// The day you're living doesn't end at midnight: until `dayEndsAt` (03:00 by default)
+// it is still the previous day, so late-night logging lands where you expect.
+let dayEnd = 180;
+export const setDayEnd = (hm) => {
+  const m = parseHM(hm);
+  dayEnd = m == null ? 0 : Math.max(0, Math.min(m, 360));
+};
+export const dayEndMinutes = () => dayEnd;
+/** The calendar day a moment belongs to. */
+export const dayOf = (date = new Date()) => {
+  const iso = toISO(date);
+  return minutesOfDay(date) < dayEnd ? addDays(iso, -1) : iso;
+};
+export const today = () => dayOf(new Date());
 export const addDays = (iso, n) => {
   const d = fromISO(iso);
   d.setDate(d.getDate() + n);

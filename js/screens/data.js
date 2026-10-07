@@ -1,8 +1,8 @@
 import * as store from '../data/store.js';
-import * as idb from '../data/adapter-idb.js';
 import { buildBackup, inspect, restore, CSV_SETS, saveFile } from '../data/backup.js';
 import { loadDemo, removeDemo, hasDemo } from '../data/demo.js';
-import { today, fmtMDY, relativeDay } from '../domain/dates.js';
+import { safetyBackups, safetyBackupFile } from '../data/migrations.js';
+import { today, fmtMDY, fmtTime, relativeDay, dayOf } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, toggle, settingRow } from '../ui/components.js';
@@ -15,6 +15,11 @@ async function refreshStorage() {
   const est = await navigator.storage?.estimate?.().catch(() => null);
   const persisted = await navigator.storage?.persisted?.().catch(() => null);
   storageInfo = { usage: est?.usage ?? null, quota: est?.quota ?? null, persisted };
+  app.refresh();
+}
+let copies = [];
+async function refreshCopies() {
+  copies = await safetyBackups().catch(() => []);
   app.refresh();
 }
 const mb = (b) => (b == null ? '—' : `${num(b / 1024 / 1024, 1)} MB`);
@@ -41,6 +46,10 @@ export default {
           <label class="btn btn--soft btn--block block-tight file-btn">${icon('upload', { size: 18 })} Choose backup file<input type="file" accept="application/json,.json" class="sr-only" data-change="restore-file"></label>
         </div>
       </section>
+      ${copies.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Safety copies</h2></div>
+        <p class="fine-print">Saved automatically, on this device, before Life OS updates how your data is stored. The last three are kept.</p>
+        <ul class="list">${copies.map((c) => html`<li data-key="copy-${c.id}"><button type="button" class="row" data-action="copy-restore" data-id="${c.id}"><span class="row-ic">${icon('history', { size: 16 })}</span><span class="row-main"><span class="row-title">${fmtMDY(dayOf(new Date(c.id)))} · ${fmtTime(new Date(c.id))}</span><span class="row-sub">${c.reason}</span></span><span class="row-right">Restore</span></button></li>`)}</ul>
+      </section>` : ''}
       <section class="block"><div class="block-head"><h2 class="block-title">Export as CSV</h2></div>
         <ul class="list">${Object.entries(CSV_SETS).map(([k, v]) => html`<li><button type="button" class="row" data-action="csv" data-k="${k}"><span class="row-ic">${icon('file-spreadsheet', { size: 16 })}</span><span class="row-main"><span class="row-title">${v.label}</span></span><span class="row-right">${icon('download', { size: 16 })}</span></button></li>`)}</ul>
       </section>
@@ -62,9 +71,19 @@ export default {
         <button type="button" class="btn btn--ghost btn--block btn--danger-text" data-action="reset">Erase everything on this device</button>
       </section>`;
   },
-  mount() { refreshStorage(); },
+  mount() { refreshStorage(); refreshCopies(); },
   actions: {
     photos: ({ ui }) => { ui.photos = !ui.photos; app.refresh(); },
+    'copy-restore': async ({ data }) => {
+      const ok = await app.confirm({ title: 'Restore this safety copy?', body: 'Your data goes back to how it was when the copy was saved. Anything entered since then will be replaced.', confirm: 'Restore', tone: 'danger' });
+      if (!ok) return;
+      try {
+        await doRestore(await safetyBackupFile(data.id), 'replace');
+      } catch (err) {
+        console.error(err);
+        app.toast(`${err.message} Nothing was changed.`, { tone: 'danger' });
+      }
+    },
     backup: async ({ ui }) => {
       try {
         const data = await buildBackup({ includePhotos: !!ui.photos });
@@ -88,7 +107,7 @@ export default {
       const sure = await app.confirm({ title: 'Last check', body: 'Life OS will restart with the original habit system and no history.', confirm: 'Yes, erase', tone: 'danger' });
       if (!sure) return;
       await store.flush();
-      await idb.clearAll();
+      await store.disk().clearAll();
       try { localStorage.removeItem('lifeos.theme'); } catch { /* ignore */ }
       location.reload();
     },

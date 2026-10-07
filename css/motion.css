@@ -1,0 +1,39 @@
+/* Motion: how screens arrive, and what happens when your phone asks for reduced motion.
+   Tokens (durations, easings, springs) live in tokens.css; JS helpers in js/ui/motion.js.
+   Rules: animate only transform and opacity, exits run shorter than entrances, staggers
+   stop after five items, and every movement explains a change. */
+
+/* screens: a fade between places, a short slide when going deeper or back */
+.view { animation: view-in var(--dur-med) var(--ease-standard) both; }
+.view.view--push { animation-name: view-push; }
+.view.view--pop { animation-name: view-pop; }
+
+/* GetLayers reveal: blocks rise out of a slight blur in a short stagger, solid early in the curve */
+.view > *, .today-aside > *, .today-main > * { animation: rise-in 640ms var(--ease-enter) both; }
+.view > :nth-child(2), .today-aside > :nth-child(1), .today-main > :nth-child(1) { animation-delay: 50ms; }
+.view > :nth-child(3), .today-aside > :nth-child(2), .today-main > :nth-child(2) { animation-delay: 100ms; }
+.view > :nth-child(4), .today-aside > :nth-child(3), .today-main > :nth-child(3) { animation-delay: 150ms; }
+.view > :nth-child(5), .today-aside > :nth-child(4), .today-main > :nth-child(4) { animation-delay: 200ms; }
+.view > :nth-child(n+6), .today-main > :nth-child(n+5) { animation-delay: 240ms; }
+.today > .today-grid { animation: none; }
+
+@keyframes rise-in { from { opacity: 0; transform: translateY(14px); filter: blur(5px); } 30% { opacity: 1; } to { opacity: 1; transform: none; filter: none; } }
+@keyframes view-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes view-push { from { opacity: 0; transform: translateX(22px); } to { opacity: 1; transform: none; } }
+@keyframes view-pop { from { opacity: 0; transform: translateX(-22px); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } }
+
+/* Reduced motion: nothing moves or loops. Screens and blocks still fade in briefly, so a
+   change stays visible; everything else is instant. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+  .view, .view > *, .today-aside > *, .today-main > * {
+    animation: fade-in 120ms linear both !important;
+    animation-delay: 0ms !important;
+  }
+}

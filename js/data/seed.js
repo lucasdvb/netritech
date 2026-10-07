@@ -4,7 +4,8 @@ import * as store from './store.js';
 import { today, addDays } from '../domain/dates.js';
 import { firstDate } from '../domain/tasks.js';
 
-export const SEED_VERSION = 2;
+import { SEED_VERSION } from './schema.js';
+export { SEED_VERSION };
 
 const WORKDAYS = [1, 2, 3, 4, 5];
 
@@ -25,6 +26,7 @@ export function profileSeed() {
     workEnd: '20:00',
     windDown: '21:00',
     bedTime: '22:00',
+    dayEndsAt: '03:00',
     workDays: WORKDAYS,
     trackingStart: today(),
     equipment: 'Bodyweight · 1 × 10 kg dumbbell · 2 × 2 kg dumbbells',

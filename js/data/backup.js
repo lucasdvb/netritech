@@ -1,10 +1,9 @@
 // Export, import and backup. Nothing leaves the device unless you save or share the file.
 import * as store from './store.js';
-import * as idb from './adapter-idb.js';
-import { STORES, DB_VERSION } from './schema.js';
+import { STORES, DB_VERSION, BACKUP_STORES } from './schema.js';
 
 export const APP_ID = 'life-os';
-const DATA_STORES = Object.keys(STORES).filter((s) => s !== 'photoBlobs');
+const DATA_STORES = BACKUP_STORES;
 
 const blobToDataURL = (blob) => new Promise((resolve, reject) => {
   const r = new FileReader();
@@ -51,21 +50,26 @@ export async function restore(json, mode = 'replace') {
     photoBlobs = await Promise.all(json.data.photoBlobs.map(async (p) => ({ id: p.id, blob: await dataURLToBlob(p.dataUrl), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() })));
   }
   if (mode === 'replace') {
-    const payload = { ...incoming };
+    // Day summaries are rebuilt from the restored logs, so the old ones are cleared too.
+    const payload = { ...incoming, daySnapshots: [] };
     if (photoBlobs) payload.photoBlobs = photoBlobs;
-    await idb.replaceAll(payload);
+    await store.disk().replaceAll(payload);
   } else {
     const ops = [];
     for (const s of DATA_STORES) {
       for (const rec of incoming[s]) {
-        const cur = store.get(s, rec.id);
+        // Keep the newer version; a record deleted here after the backup was made stays deleted.
+        const cur = store.get(s, rec.id) || store.deleted(s, rec.id);
         if (!cur || (rec.updatedAt || '') > (cur.updatedAt || '')) ops.push({ store: s, value: rec });
       }
     }
     if (photoBlobs) photoBlobs.forEach((p) => ops.push({ store: 'photoBlobs', value: p }));
-    await idb.batch(ops);
+    await store.disk().write(ops);
   }
   await store.reload();
+  // Older backups catch up with any data migrations they predate.
+  const { runMigrations } = await import('./migrations.js');
+  await runMigrations({ backup: false });
 }
 
 /* ---------- CSV ---------- */
