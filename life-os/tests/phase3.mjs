@@ -51,7 +51,7 @@ await step('training: start, log, finish', async () => {
   await page.locator('.sheet [data-action="done"]').click();
   await page.waitForSelector('.sheet-wrap', { state: 'detached' });
   await page.waitForSelector('.wo-actions [data-action="finish-edit"]');
-  const facts = await page.evaluate(async () => (await import('./js/core/fitness.js')).workoutFacts(new Date().toISOString().slice(0, 10)));
+  const facts = await page.evaluate(async () => (await import('./js/domain/fitness.js')).workoutFacts(new Date().toISOString().slice(0, 10)));
   if (!facts.strength || !facts.calves || !facts.core) throw new Error('facts ' + JSON.stringify(facts));
   await shot('35-workout-done');
   await a11y('workout');
@@ -59,14 +59,14 @@ await step('training: start, log, finish', async () => {
 
 await step('second session shows progression vs last time', async () => {
   const verdict = await page.evaluate(async () => {
-    const F = await import('./js/core/fitness.js');
+    const F = await import('./js/domain/fitness.js');
     const { store } = window.__lifeos;
     const w = F.allWorkouts()[0];
     // Pretend the first session was a week ago, then log a better one today.
     const d = new Date(); d.setDate(d.getDate() - 7); const past = d.toISOString().slice(0, 10);
     store.put('workouts', { ...w, date: past });
     for (const s of F.setsOf(w.id)) store.put('workoutSets', { ...s, date: past });
-    const { startWorkout } = await import('./js/views/workout-actions.js');
+    const { startWorkout } = await import('./js/screens/workout-actions.js');
     const nw = startWorkout('t-lower');
     for (const s of F.setsOf(nw.id)) store.put('workoutSets', { ...s, reps: (s.reps || 10) + 2, completed: s.order < 2 });
     store.put('workouts', { ...store.get('workouts', nw.id), status: 'done', endedAt: new Date().toISOString() });
@@ -106,7 +106,7 @@ await step('photos: upload two and compare', async () => {
 });
 
 await step('sleep view after check-in', async () => {
-  await page.evaluate(async () => (await import('./js/views/sheets.js')).openCheckin());
+  await page.evaluate(async () => (await import('./js/screens/sheets.js')).openCheckin());
   await page.locator('.sheet [data-action="save"]').click();
   await go('#/body/sleep', '[data-view="sleep"] .chart');
   await shot('39-sleep');

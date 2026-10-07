@@ -25,8 +25,8 @@ await step('reminder banner shows and records outcome', async () => {
 
 await step('ignored three times → suggestion, new time → fresh start', async () => {
   const titles = () => page.evaluate(async () => {
-    const C = await import('./js/core/coach.js');
-    const { today } = await import('./js/core/dates.js');
+    const C = await import('./js/domain/coach.js');
+    const { today } = await import('./js/domain/dates.js');
     return C.guidance(today()).map((g) => g.title).join(' | ');
   });
   await page.evaluate(async () => {
@@ -77,7 +77,7 @@ await step('keyboard: toggle with Space, sheet focus trap, Escape returns focus'
   const first = page.locator('.hrow .check >> visible=true').first();
   await first.focus();
   const id = await first.getAttribute('data-id');
-  const doneNow = () => page.evaluate(async (hid) => { const H = await import('./js/core/habits.js'); const { today } = await import('./js/core/dates.js'); return H.isDone(H.habit(hid), today()); }, id);
+  const doneNow = () => page.evaluate(async (hid) => { const H = await import('./js/domain/habits.js'); const { today } = await import('./js/domain/dates.js'); return H.isDone(H.habit(hid), today()); }, id);
   const was = await doneNow();
   await page.keyboard.press('Space');
   await page.waitForTimeout(400);
@@ -120,7 +120,7 @@ await step('offline: reload with the network off', async () => {
 
 await step('a year of data stays fast', async () => {
   await go('#/today', '.today');
-  await page.evaluate(async () => { const D = await import('./js/core/demo.js'); await D.loadDemo(365); });
+  await page.evaluate(async () => { const D = await import('./js/data/demo.js'); await D.loadDemo(365); });
   const time = async (hash, sel) => page.evaluate(async ([h, s]) => {
     const t0 = performance.now();
     location.hash = h;
@@ -139,8 +139,8 @@ await step('a year of data stays fast', async () => {
 
 await step('weekly review shows a real weight change', async () => {
   const change = await page.evaluate(async () => {
-    const { weekFacts } = await import('./js/core/review-data.js');
-    const { startOfWeek, today, addDays } = await import('./js/core/dates.js');
+    const { weekFacts } = await import('./js/domain/review-data.js');
+    const { startOfWeek, today, addDays } = await import('./js/domain/dates.js');
     return weekFacts(addDays(startOfWeek(today()), -7)).weight.change;
   });
   if (change == null || change === 0) throw new Error('weight change ' + change);
@@ -165,7 +165,7 @@ await step('desktop layout', async () => {
     const p = await c.newPage();
     await p.goto(base + '#/more/data');
     await p.waitForFunction(() => window.__lifeos?.ready);
-    await p.evaluate(async () => { const D = await import('./js/core/demo.js'); await D.loadDemo(60); });
+    await p.evaluate(async () => { const D = await import('./js/data/demo.js'); await D.loadDemo(60); });
     for (const [h, s, n] of [['#/today', '.today', 'today'], ['#/progress', '.chart-line', 'progress'], ['#/body', '[data-view="body"]', 'body'], ['#/habits', '[data-view="habits"]', 'habits']]) {
       await p.goto(base + h);
       await p.waitForSelector(s);

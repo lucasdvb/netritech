@@ -1,5 +1,5 @@
-import * as store from './core/store.js';
-import { seedIfNeeded } from './db/seed.js';
+import * as store from './data/store.js';
+import { seedIfNeeded } from './data/seed.js';
 import { patch } from './ui/patch.js';
 import * as router from './ui/router.js';
 import * as sheet from './ui/sheet.js';
@@ -7,7 +7,7 @@ import { toast } from './ui/toast.js';
 import { icon } from './ui/icons.js';
 import { html } from './ui/dom.js';
 import { app, APP_NAME } from './ui/app-api.js';
-import { today } from './core/dates.js';
+import { today } from './domain/dates.js';
 
 const TABS = [
   { id: 'today', label: 'Today', icon: 'sun', path: 'today' },
@@ -17,7 +17,7 @@ const TABS = [
   { id: 'more', label: 'More', icon: 'layout-grid', path: 'more' },
 ];
 
-const v = (name) => () => import(`./views/${name}.js`);
+const v = (name) => () => import(`./screens/${name}.js`);
 const ROUTES = [
   { path: 'today/:date?', tab: 'today', depth: 0, load: v('today') },
   { path: 'progress/:seg?', tab: 'progress', depth: 0, load: v('progress') },
@@ -304,7 +304,7 @@ async function boot() {
     toast,
     confirm: confirmDialog,
     current: () => current,
-    search: async () => (await import('./views/search.js')).openSearch(),
+    search: async () => (await import('./screens/search.js')).openSearch(),
   });
 
   try {
@@ -344,7 +344,7 @@ async function boot() {
   }, 15000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
 
-  import('./core/reminders.js').then((r) => r.start()).catch((err) => console.warn(err));
+  import('./domain/reminders.js').then((r) => r.start()).catch((err) => console.warn(err));
   import('./ui/install.js').then((m) => m.maybePrompt()).catch(() => {});
   if (navigator.storage?.persist) navigator.storage.persisted().then((p) => { if (!p) navigator.storage.persist(); });
   window.__lifeos = { store, app, ready: true };
