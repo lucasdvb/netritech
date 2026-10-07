@@ -28,7 +28,7 @@ await step('a fresh start asks you to choose your three, and nothing is counted 
 let before;
 await step('the sort suggests three, saves them, and loses nothing', async () => {
   before = await state();
-  await page.locator('.choose3 [data-to="habits/sort"]').click();
+  await page.locator('.choose3 [data-to="plan/habits/sort"]').click();
   await page.waitForSelector('[data-view="habit-sort"] .sort-slot');
   const filled = await page.locator('.sort-slot:not(.is-empty)').count();
   if (filled !== 3) throw new Error(`${filled} suggestions`);
@@ -86,7 +86,7 @@ await step('tapping the score shows exactly what counts', async () => {
 });
 
 await step('a new habit takes three answers, and waits in Later when your three are full', async () => {
-  await go('#/habits', '[data-view="habits"] .sort-cta');
+  await go('#/plan/habits', '[data-view="habits"] .sort-cta');
   const t0 = Date.now();
   await page.locator('[data-action="new"]').first().click();
   await page.waitForSelector('.sheet .new-habit');
@@ -112,11 +112,13 @@ await step('“More options” carries the three answers into the full editor', 
   await page.fill('.new-habit [data-f="name"]', 'Stretch hamstrings');
   await page.fill('.new-habit [data-f="tiny"]', 'One stretch');
   await page.locator('.new-habit [data-action="more"]').click();
-  await page.waitForSelector('[data-view="habit-edit"] .ed-more[open]');
-  if ((await page.inputValue('.editor [data-f="name"]')) !== 'Stretch hamstrings') throw new Error('name lost');
-  if ((await page.inputValue('.editor [data-k="label"]')) !== 'One stretch') throw new Error('tiny lost');
+  await page.waitForSelector('.sheet .editor .ed-more[open]');
+  if ((await page.inputValue('.sheet .editor [data-f="name"]')) !== 'Stretch hamstrings') throw new Error('name lost');
+  if ((await page.inputValue('.sheet .editor [data-k="label"]')) !== 'One stretch') throw new Error('tiny lost');
   await shot('p1-06-editor-more');
-  await page.locator('.editor [data-action="cancel"]').click();
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('.sheet-wrap', { state: 'detached' });
+  if (await ev(() => window.__lifeos.store.all('habits').some((x) => x.name === 'Stretch hamstrings'))) throw new Error('a draft was saved without Create');
 });
 
 await step('one miss keeps the run going; a comeback is counted', async () => {

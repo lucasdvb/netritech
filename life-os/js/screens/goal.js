@@ -1,4 +1,5 @@
 import * as store from '../data/store.js';
+import { deleteWithUndo } from '../ui/undo.js';
 import * as G from '../domain/goals.js';
 import * as M from '../domain/metrics.js';
 import { catLabel, catColor, habitColor } from '../domain/taxonomy.js';
@@ -17,14 +18,14 @@ export default {
   title: ({ params }) => store.get('goals', params.id)?.name || 'Goal',
   render({ params }) {
     const g = store.get('goals', params.id);
-    if (!g) return html`${pageHead({ title: 'Goal', back: { to: 'more/goals', label: 'Goals' } })}${empty({ ic: 'target', title: 'This goal was deleted.' })}`;
+    if (!g) return html`${pageHead({ title: 'Goal', back: { to: 'plan/goals', label: 'Goals' } })}${empty({ ic: 'target', title: 'This goal was deleted.' })}`;
     const p = G.progress(g);
     const hc = G.habitConsistency(g);
     const habits = store.all('habits').filter((h) => !h.archived);
     const est = g.metric === 'bodyFat' ? store.all('bodyFatEstimates').sort((a, b) => (a.date < b.date ? -1 : 1)) : [];
     const calves = g.id === 'g-calves' ? store.all('measurements').filter((m) => m.calves).sort((a, b) => (a.date < b.date ? -1 : 1)) : [];
     return html`
-      ${pageHead({ title: g.name, eyebrow: catLabel(g.category), back: { to: 'more/goals', label: 'Goals' }, actions: html`<button type="button" class="btn btn--soft btn--sm" data-action="edit">Edit</button>` })}
+      ${pageHead({ title: g.name, morph: `goal-${g.id}`, eyebrow: catLabel(g.category), back: { to: 'plan/goals', label: 'Goals' }, actions: html`<button type="button" class="btn btn--soft btn--sm" data-action="edit">Edit</button>` })}
       ${g.description ? html`<p class="lead">${g.description}</p>` : ''}
       <div class="card goal-hero" style="--ic:${catColor(g.category)}">
         <span class="goal-ring">${ring(p.ratio || 0, { size: 84, stroke: 7, color: 'var(--ic)' })}<span class="goal-pct tnum">${p.ratio != null ? pct(p.ratio) : '—'}</span></span>
@@ -45,7 +46,7 @@ export default {
       </section>
 
       <section class="block"><div class="block-head"><h2 class="block-title">Habits that carry it</h2><button type="button" class="link-btn" data-action="link">Choose</button></div>
-        ${hc.rows.length ? html`<ul class="list">${hc.rows.map((r) => html`<li><a class="row" href="#/habits/${r.habit.id}" data-action="nav" data-to="habits/${r.habit.id}">
+        ${hc.rows.length ? html`<ul class="list">${hc.rows.map((r) => html`<li><a class="row" href="#/plan/habits/${r.habit.id}" data-action="nav" data-to="plan/habits/${r.habit.id}">
           <span class="row-ic" style="--ic:${habitColor(r.habit)}">${icon(r.habit.icon, { size: 16 })}</span>
           <span class="row-main"><span class="row-title">${r.habit.name}</span><span class="row-sub">30 days</span></span><span class="row-right tnum">${pct(r.c.ratio)}</span></a></li>`)}</ul>`
           : html`<p class="muted small">Link habits and their consistency shows here.</p>`}
@@ -92,11 +93,10 @@ export default {
       } },
     }),
     status: ({ data, params }) => { store.update('goals', params.id, { status: data.v }); hap.tap(); },
-    delete: async ({ params }) => {
-      const ok = await app.confirm({ title: 'Delete this goal?', body: 'Linked habits stay as they are.', confirm: 'Delete', tone: 'danger' });
-      if (!ok) return;
-      store.remove('goals', params.id);
-      app.replace('more/goals');
+    delete: ({ params }) => {
+      const g = store.get('goals', params.id);
+      app.replace('plan/goals');
+      deleteWithUndo([{ store: 'goals', id: params.id }], `“${g?.name || 'Goal'}” deleted. Linked habits stay as they are.`);
     },
   },
 };

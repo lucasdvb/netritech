@@ -52,12 +52,12 @@ export default {
     const list = F.exercises().filter((e) => (cat === 'all' || e.category === cat) && (!q || e.name.toLowerCase().includes(q)));
     const groups = F.CATEGORIES.map((c) => ({ ...c, items: list.filter((e) => e.category === c.id) })).filter((g) => g.items.length);
     return html`
-      ${pageHead({ title: 'Exercises', back: { to: 'body/training', label: 'Training' },
+      ${pageHead({ title: 'Exercises', back: { to: 'plan/training', label: 'Training' },
         actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New exercise">${icon('plus', { size: 20 })}</button>` })}
       <div class="search-field">${icon('search', { size: 16 })}<input type="search" placeholder="Search ${F.exercises().length} exercises" value="${ui.q || ''}" data-input="q" aria-label="Search exercises"></div>
       <div class="block-tight">${segmented([{ id: 'all', label: 'All' }, ...F.CATEGORIES], cat, { action: 'cat', name: 'Category' })}</div>
       ${groups.map((g) => html`<section class="block" data-key="g-${g.id}"><div class="block-head"><h2 class="block-title">${g.label}</h2><span class="block-meta">${g.items.length}</span></div>
-        <ul class="list">${g.items.map((e) => html`<li><a class="row" href="#/body/exercise/${e.id}" data-action="nav" data-to="body/exercise/${e.id}">
+        <ul class="list">${g.items.map((e) => html`<li><a class="row" href="#/plan/training/exercises/${e.id}" data-action="nav" data-to="plan/training/exercises/${e.id}">
           <span class="row-main"><span class="row-title">${e.name}</span><span class="row-sub">${[e.metric === 'time' ? 'Seconds' : e.metric === 'minutes' ? 'Minutes' : 'Reps', e.unilateral ? 'per side' : '', e.defaultLoad ? `${e.defaultLoad} kg` : '', e.family ? `level ${e.level}` : ''].filter(Boolean).join(' · ')}</span></span>
           <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>`)}</ul></section>`)}
       ${!groups.length ? html`<p class="muted center block">No exercises match.</p>` : ''}`;

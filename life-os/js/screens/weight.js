@@ -41,7 +41,7 @@ export default {
     const rate = s.trend ? -s.trend.perWeek : null;
     const rateNote = rate == null ? 'Needs about 5 weigh-ins' : rate > (t.lossMaxKg ?? 0.8) ? 'Faster than the 0.4–0.8 kg target' : rate >= (t.lossMinKg ?? 0.4) ? 'Inside the 0.4–0.8 kg target' : rate > 0.05 ? 'Slower than target' : 'Roughly flat';
     return html`
-      ${pageHead({ title: 'Weight', back: { to: 'body', label: 'Body' },
+      ${pageHead({ title: 'Weight', back: { to: 'progress/body', label: 'Body' },
         actions: html`<button type="button" class="btn btn--primary btn--sm" data-action="add">${icon('plus', { size: 16 })} Log</button>` })}
       ${!entries.length ? empty({ ic: 'scale', title: 'Give us a starting point.', body: 'Weigh in tomorrow morning after the bathroom. Daily readings feed a 7-day average, which is the number decisions are based on.', cta: 'Log first weigh-in', action: 'add' }) : html`
       <div class="metric-top">

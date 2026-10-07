@@ -1,4 +1,5 @@
 import * as store from '../data/store.js';
+import { areaBlocks } from './area.js';
 import * as H from '../domain/habits.js';
 import { today, lastNDays, startOfWeek, relativeDay, fmtDayLetter } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
@@ -21,7 +22,7 @@ export default {
     const wk = startOfWeek(today());
     const moments = store.all('relationshipEntries').sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (b.createdAt || '').localeCompare(a.createdAt || '')));
     return html`
-      ${pageHead({ title: 'Relationships', back: { to: 'more', label: 'More' } })}
+      ${pageHead({ title: 'Relationships', back: { to: 'progress', label: 'Progress' } })}
       <p class="lead">Presence, not performance. Notes here are for remembering, not scoring.</p>
       <div class="people">${PEOPLE.map((p) => {
         const h = H.habit(p.habit);
@@ -37,7 +38,8 @@ export default {
         ${moments.length ? html`<ul class="list">${moments.slice(0, 20).map((m) => html`<li><button type="button" class="row" data-action="edit" data-id="${m.id}">
           <span class="row-main"><span class="row-title">${PEOPLE_LABELS[m.person]} · ${m.kind}</span><span class="row-sub">${relativeDay(m.date)}${m.minutes ? ` · ${m.minutes} min` : ''}${m.note ? ` · ${m.note}` : ''}</span></span></button></li>`)}</ul>`
           : html`<p class="muted">Ticking “Time with your fiancée” on Today is enough. Log a moment when there’s something worth remembering.</p>`}
-      </section>`;
+      </section>
+      ${areaBlocks('relationships')}`;
   },
   actions: {
     log: ({ data }) => openRelationship(data.person, today()),

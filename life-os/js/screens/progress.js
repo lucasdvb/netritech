@@ -1,4 +1,5 @@
 import * as store from '../data/store.js';
+import { areaList } from './area.js';
 import * as M from '../domain/metrics.js';
 import * as F from '../domain/fitness.js';
 import * as H from '../domain/habits.js';
@@ -101,10 +102,10 @@ function overview(ui) {
       </div>
     </section>
 
-    <section class="block" data-key="weight"><div class="block-head"><h2 class="block-title">Weight · 7-day average</h2><a class="link-btn" href="#/body/weight" data-action="nav" data-to="body/weight">Details</a></div>
+    <section class="block" data-key="weight"><div class="block-head"><h2 class="block-title">Weight · 7-day average</h2><a class="link-btn" href="#/progress/body/weight" data-action="nav" data-to="progress/body/weight">Details</a></div>
       <div class="card chart-card">${lineChart({ labels: lab, series: [{ values: weights, color: 'var(--chart-1)', fill: 'var(--accent)', area: true, label: '7-day avg' }], fmt: (v) => `${num(v, 1)} ${weightUnit()}`, empty: 'Weigh in a few mornings to see the trend.' })}</div></section>
 
-    <section class="block" data-key="waist"><div class="block-head"><h2 class="block-title">Waist</h2><a class="link-btn" href="#/body/measurements" data-action="nav" data-to="body/measurements">Measurements</a></div>
+    <section class="block" data-key="waist"><div class="block-head"><h2 class="block-title">Waist</h2><a class="link-btn" href="#/progress/body/measurements" data-action="nav" data-to="progress/body/measurements">Measurements</a></div>
       <div class="card chart-card">${lineChart({ labels: waist.map((m) => fmtMD(m.date)), series: [{ values: waist.map((m) => cmOut(m.waist)), color: 'var(--c-posture)', area: true, marks: true, label: 'Waist' }], fmt: (v) => `${num(v, 1)} ${lengthUnit()}`, empty: 'Measure every two weeks to see this.' })}</div></section>
 
     <section class="block" data-key="protein"><div class="block-head"><h2 class="block-title">Protein</h2><span class="block-meta">${avgLine(span, (d) => M.nutrition(d).protein, 'g')}</span></div>
@@ -116,7 +117,7 @@ function overview(ui) {
     <section class="block" data-key="steps"><div class="block-head"><h2 class="block-title">Steps</h2><span class="block-meta">${avgLine(span, (d) => M.steps(d), '')}</span></div>
       <div class="card chart-card">${barChart({ labels: barLabels, tipLabels: lab, values: span.map((d) => M.steps(d)), color: 'var(--c-life)', fmt: (v) => num(v), goal: { value: M.stepsTarget(end), label: `${num(M.stepsTarget(end) / 1000)}k` }, highlightLast: false })}</div></section>
 
-    <section class="block" data-key="sleep"><div class="block-head"><h2 class="block-title">Sleep</h2><a class="link-btn" href="#/body/sleep" data-action="nav" data-to="body/sleep">Consistency</a></div>
+    <section class="block" data-key="sleep"><div class="block-head"><h2 class="block-title">Sleep</h2><a class="link-btn" href="#/progress/body/sleep" data-action="nav" data-to="progress/body/sleep">Consistency</a></div>
       <div class="card chart-card">${barChart({ labels: barLabels, tipLabels: lab, values: span.map((d) => M.sleepHours(d)), color: 'var(--c-posture)', fmt: (v) => durationHM(v * 60), goal: { value: t.sleepH, label: `${t.sleepH}h` }, highlightLast: false })}</div></section>
 
     <section class="block" data-key="train"><div class="block-head"><h2 class="block-title">Training · sessions per week</h2></div>
@@ -253,7 +254,13 @@ export default {
       ${pageHead({ title: 'Progress', sub: 'Where things are heading — quietly.',
         actions: html`<button type="button" class="icon-btn" data-action="open-search" aria-label="Search">${icon('search', { size: 20 })}</button>` })}
       ${segmented(SEGS, seg, { action: 'seg', name: 'Progress views' })}
-      <div class="seg-body">${seg === 'calendar' ? calendar(ui) : seg === 'insights' ? insights() : overview(ui)}</div>`;
+      <div class="seg-body">${seg === 'calendar' ? calendar(ui) : seg === 'insights' ? insights() : overview(ui)}</div>
+      ${seg === 'overview' ? html`<section class="block" data-key="body-link">
+        <div class="block-head"><h2 class="block-title">Body</h2></div>
+        <a class="card card--link sort-cta" href="#/progress/body" data-action="nav" data-to="progress/body">
+          <span class="sort-cta-text"><span class="card-title">Weight, food, sleep and training</span><span class="row-sub">Trends, composition, measurements and photos</span></span>
+          ${icon('chevron-right', { size: 18 })}</a></section>
+      <section class="block" data-key="areas"><div class="block-head"><h2 class="block-title">Areas</h2></div>${areaList()}</section>` : ''}`;
   },
   actions: {
     seg: ({ data, ui }) => { ui.seg = data.value; hap.tap(); app.replace(`progress/${data.value}`); },

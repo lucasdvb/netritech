@@ -1,4 +1,5 @@
 import * as store from '../data/store.js';
+import { areaBlocks } from './area.js';
 import * as M from '../domain/metrics.js';
 import { today, lastNDays, startOfWeek, startOfMonth, relativeDay, fmtMD, fmtDayShort, range } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
@@ -32,7 +33,7 @@ export default {
     const all = [...reading.map((r) => ({ ...r, k: 'reading' })), ...learning.map((r) => ({ ...r, k: 'learning' })), ...meditation.map((r) => ({ ...r, k: 'meditation' }))]
       .sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 15);
     return html`
-      ${pageHead({ title: 'Mind', back: { to: 'more', label: 'More' } })}
+      ${pageHead({ title: 'Mind', back: { to: 'progress', label: 'Progress' } })}
       <div class="quick-row quick-row--top">
         <button type="button" class="btn btn--primary btn--sm" data-action="log" data-kind="reading">${icon('book-open', { size: 16 })} Reading</button>
         <button type="button" class="btn btn--soft btn--sm" data-action="log-learning">${icon('graduation-cap', { size: 16 })} Learning</button>
@@ -61,7 +62,8 @@ export default {
           <span class="row-ic" style="--ic:var(--c-mind)">${icon(s.k === 'reading' ? 'book-open' : s.k === 'learning' ? 'graduation-cap' : 'leaf', { size: 16 })}</span>
           <span class="row-main"><span class="row-title">${s.book || s.topic || (s.k === 'meditation' ? `Meditation · ${s.kind || ''}` : 'Session')}</span><span class="row-sub">${relativeDay(s.date)} · ${s.minutes || 0} min${s.notes ? ` · ${s.notes.slice(0, 50)}` : ''}</span></span></button></li>`)}</ul>`
           : empty({ ic: 'book-open', title: 'No sessions yet', body: '20 minutes a day. Minutes, not pages.' })}
-      </section>`;
+      </section>
+      ${areaBlocks('mind')}`;
   },
   actions: {
     log: ({ data }) => openSession(data.kind, today()),

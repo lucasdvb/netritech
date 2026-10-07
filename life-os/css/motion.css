@@ -37,3 +37,31 @@
     animation-delay: 0ms !important;
   }
 }
+
+/* View Transitions: one hand-over between screens, and the tapped title growing into the next
+   screen's title. The rail and the list beside a detail stay put. */
+.tabbar { view-transition-name: tabbar; }
+.split-list { view-transition-name: split-list; }
+::view-transition-old(root) { animation: vt-out var(--dur-fast) var(--ease-exit) both; }
+::view-transition-new(root) { animation: vt-in var(--dur-med) var(--ease-enter) both; }
+html[data-nav='push']::view-transition-new(root) { animation-name: vt-push-in; animation-duration: var(--dur-slow); }
+html[data-nav='pop']::view-transition-new(root) { animation-name: vt-pop-in; animation-duration: var(--dur-slow); }
+::view-transition-group(morph) { animation-duration: var(--dur-slow); animation-timing-function: var(--spring-gentle); }
+::view-transition-old(morph), ::view-transition-new(morph) { height: 100%; width: auto; object-fit: none; object-position: left top; }
+::view-transition-group(tabbar), ::view-transition-group(split-list) { animation: none; }
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(6px); } }
+@keyframes vt-push-in { from { opacity: 0; transform: translateX(28px); } }
+@keyframes vt-pop-in { from { opacity: 0; transform: translateX(-28px); } }
+/* a screen that arrived by a transition doesn't also run the CSS entrances */
+.view--vt, .view--vt > *, .view--vt .today-aside > *, .view--vt .today-main > * { animation: none; }
+
+/* pull down to search */
+.pull-search {
+  position: fixed; z-index: 70; left: 50%; top: calc(var(--safe-top) + 8px);
+  display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: var(--r-pill);
+  background: var(--surface); color: var(--text-2); box-shadow: var(--shadow-md); opacity: var(--pull, 0);
+  font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body);
+  pointer-events: none;
+}
+.pull-search.is-ready { background: var(--accent); color: var(--on-accent); }

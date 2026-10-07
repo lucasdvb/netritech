@@ -7,7 +7,7 @@ import { activeHabits, consistency, isDone, dueOn, dayMode, periodDone, isSchedu
 import { rolling, dayScore } from './scoring.js';
 import { today, addDays, minutesOfDay, parseHM, weekday, startOfWeek, endOfWeek, diffDays, lastNDays, range } from './dates.js';
 import { num, litres } from '../ui/format.js';
-import { suggestions as reminderSuggestions } from './reminders.js';
+import { suggestions as reminderSuggestions } from './reminder-rules.js';
 
 export function phase(now = new Date()) {
   const p = store.profile() || {};
@@ -131,14 +131,14 @@ export function guidance(date = today(), now = new Date()) {
     if (!g) continue;
     out.push(item({ id: `grad-${h.id}`, priority: 30, fact: true, title: `${h.name} is ready for autopilot`,
       body: `Done on ${Math.round(g.ratio * 100)}% of ${runUnit(h) === 'day' ? 'days' : 'weeks'} for six weeks. Moving it to autopilot frees a slot for the next habit.`,
-      action: { label: 'Review', act: 'nav', data: { to: `habits/${h.id}` } } }));
+      action: { label: 'Review', act: 'nav', data: { to: `plan/habits/${h.id}` } } }));
   }
 
   for (const w of weightGuidance(date)) out.push(w);
   for (const r of recoveryGuidance(date)) out.push(r);
 
   for (const r of reminderSuggestions()) {
-    out.push(item({ id: `rem-${r.cat}`, priority: 40, title: r.title, body: r.body, action: { label: 'Change time', act: 'nav', data: { to: 'more/settings' } } }));
+    out.push(item({ id: `rem-${r.cat}`, priority: 40, title: r.title, body: r.body, action: { label: 'Change time', act: 'nav', data: { to: 'you/settings' } } }));
   }
 
   if (ph === 'evening' && isWorkday(date) && !(M.review(date)?.shutdown?.done)) {
@@ -159,7 +159,7 @@ export function weightGuidance(date = today()) {
     out.push(item({ id: 'weight-stall', priority: 30, fact: true,
       title: 'Weight trend has been flat for about two weeks',
       body: `7-day average ${num(now7, 1)} kg vs ${num(then7, 1)} kg two weeks ago. Worth reviewing portions, calories, daily steps and how accurately meals are logged. One small change, not a crash diet.`,
-      action: { label: 'Open nutrition', act: 'nav', data: { to: 'body/nutrition' } } }));
+      action: { label: 'Open nutrition', act: 'nav', data: { to: 'progress/body/nutrition' } } }));
   }
   const t = M.targets();
   const wk = M.weightAvg(addDays(date, -7), 7);

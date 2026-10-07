@@ -88,7 +88,7 @@ export default {
     const last = all[all.length - 1];
     const due = last ? Math.max(0, 14 - diffDays(today(), last.date)) : 0;
     return html`
-      ${pageHead({ title: 'Measurements', back: { to: 'body', label: 'Body' },
+      ${pageHead({ title: 'Measurements', back: { to: 'progress/body', label: 'Body' },
         actions: html`<button type="button" class="btn btn--primary btn--sm" data-action="add">${icon('plus', { size: 16 })} Measure</button>` })}
       <p class="lead">${last ? (due ? `Next in ${due} day${due === 1 ? '' : 's'}. Every two weeks is enough.` : 'Due now. Every two weeks is enough.') : 'Every two weeks: waist, chest, arms, thighs, calves.'}</p>
       ${!all.length ? empty({ ic: 'ruler', title: 'No measurements yet', body: 'Waist is the most useful number while losing fat. Calves show your priority work paying off.', cta: 'Take measurements', action: 'add' }) : html`

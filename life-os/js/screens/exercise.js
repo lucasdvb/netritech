@@ -11,7 +11,7 @@ export default {
   title: ({ params }) => F.exercise(params.id)?.name || 'Exercise',
   render({ params }) {
     const e = F.exercise(params.id);
-    if (!e) return html`${pageHead({ title: 'Exercise', back: { to: 'body/exercises', label: 'Exercises' } })}${empty({ ic: 'dumbbell', title: 'Not found' })}`;
+    if (!e) return html`${pageHead({ title: 'Exercise', back: { to: 'plan/training/exercises', label: 'Exercises' } })}${empty({ ic: 'dumbbell', title: 'Not found' })}`;
     const hist = F.exerciseHistory(e.id, 30);
     const pb = F.personalBests().find((p) => p.exercise.id === e.id);
     const family = e.family ? F.exercises().filter((x) => x.family === e.family).sort((a, b) => a.level - b.level) : [];
@@ -20,7 +20,7 @@ export default {
     const primary = hist.map((h) => (isTime ? h.perf.topSeconds : isMin ? h.perf.minutes : h.perf.totalReps));
     const load = hist.map((h) => h.perf.topLoad || null);
     return html`
-      ${pageHead({ title: e.name, eyebrow: F.categoryLabel(e.category), back: { to: 'body/exercises', label: 'Exercises' },
+      ${pageHead({ title: e.name, eyebrow: F.categoryLabel(e.category), back: { to: 'plan/training/exercises', label: 'Exercises' },
         actions: html`<button type="button" class="btn btn--soft btn--sm" data-action="edit">Edit</button>` })}
       ${e.cues ? html`<p class="lead">${e.cues}</p>` : ''}
       <div class="stat-row stat-row--3">
@@ -36,7 +36,7 @@ export default {
       ${family.length > 1 ? html`<section class="block"><div class="block-head"><h2 class="block-title">Progression path</h2></div>
         <ol class="ladder">${family.map((f) => html`<li class="${f.id === e.id ? 'is-current' : ''}"><span class="tnum">${f.level}</span>${f.name}</li>`)}</ol></section>` : ''}
       <section class="block"><div class="block-head"><h2 class="block-title">Sessions</h2></div>
-        ${hist.length ? html`<ul class="list">${[...hist].reverse().map((h) => html`<li><a class="row" href="#/body/workout/${h.workout.id}" data-action="nav" data-to="body/workout/${h.workout.id}">
+        ${hist.length ? html`<ul class="list">${[...hist].reverse().map((h) => html`<li><a class="row" href="#/workout/${h.workout.id}" data-action="nav" data-to="workout/${h.workout.id}">
           <span class="row-main"><span class="row-title tnum">${isTime ? `${h.perf.sets} × best ${h.perf.topSeconds} s` : isMin ? `${h.perf.minutes} min` : `${h.perf.sets} sets · ${h.perf.totalReps} reps${h.perf.topLoad ? ` · ${num(h.perf.topLoad, 1)} kg` : ''}`}</span>
           <span class="row-sub">${relativeDay(h.workout.date)} · ${h.workout.title}</span></span></a></li>`)}</ul>`
           : html`<p class="muted">Not logged yet.</p>`}

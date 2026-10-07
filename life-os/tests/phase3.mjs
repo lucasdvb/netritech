@@ -77,7 +77,7 @@ await step('second session shows progression vs last time', async () => {
 
 await step('exercise library + detail', async () => {
   await go('#/body/exercises', '[data-view="exercises"] .list');
-  await page.locator('a[href="#/body/exercise/e-bss"]').click();
+  await page.locator('a[href="#/plan/training/exercises/e-bss"]').click();
   await page.waitForSelector('[data-view="exercise"]');
   await shot('36-exercise');
 });

@@ -50,7 +50,7 @@ await step('overdue tasks surface on Today', async () => {
 });
 
 await step('tasks screen groups and new repeating task', async () => {
-  await go('#/more/tasks', '[data-view="tasks"]');
+  await go('#/plan/tasks', '[data-view="tasks"]');
   for (const g of ['Overdue', 'Today', 'Anytime']) if (!(await page.textContent('[data-view="tasks"]')).includes(g)) throw new Error('missing group ' + g);
   if (!(await page.textContent('[data-key="g-Anytime"]')).includes('caffeine')) throw new Error('anytime group');
   await shot('81-tasks');
@@ -85,7 +85,7 @@ await step('repeating chore: tick schedules the next, untick takes it back', asy
 });
 
 await step('edit, delete and undo', async () => {
-  await go('#/more/tasks', '[data-view="tasks"]');
+  await go('#/plan/tasks', '[data-view="tasks"]');
   await page.locator('.trow-main:has-text("Book a dental")').click();
   await page.waitForSelector('.sheet .task-form');
   await page.fill('.sheet input[data-input="title"]', 'Book a dental / orthodontic assessment (jaw)');
@@ -120,8 +120,8 @@ await step('shutdown moves unfinished tasks to tomorrow', async () => {
 });
 
 await step('your plan page', async () => {
-  await go('#/more/plan', '[data-view="plan"]');
-  const txt = await page.textContent('[data-view="plan"]');
+  await go('#/plan/playbook', '[data-view="playbook"]');
+  const txt = await page.textContent('[data-view="playbook"]');
   for (const s of ['Your day', 'Your week', 'Routines', 'Training', 'Food', 'Rules', 'Upper body + posture', 'Laundry', 'Church', 'Deliberately not included', '150 g'])
     if (!txt.includes(s)) throw new Error('plan missing ' + s);
   const sat = await page.textContent('.plan-week li:nth-child(6)');
@@ -135,13 +135,13 @@ await step('your plan page', async () => {
 });
 
 await step('search finds tasks; csv and backup include them', async () => {
-  await go('#/more', '[data-view="more"]');
-  if (!(await page.textContent('[data-view="more"]')).includes('Tasks')) throw new Error('more menu');
-  await page.locator('[data-view="more"] [data-action="open-search"]').click();
+  await go('#/plan', '[data-view="plan"]');
+  if (!(await page.textContent('[data-view="plan"]')).includes('Tasks')) throw new Error('plan has no tasks link');
+  await page.locator('[data-view="plan"] [data-action="open-search"]').click();
   await page.fill('.sheet input[type="search"]', 'laundry');
   await page.waitForSelector('.sheet .section-label:has-text("Tasks")');
   await page.keyboard.press('Escape');
-  await go('#/more/data', '[data-view="data"]');
+  await go('#/you/data', '[data-view="data"]');
   const [dl] = await Promise.all([page.waitForEvent('download'), page.locator('[data-action="csv"][data-k="tasks"]').click()]);
   const csv = readFileSync(await dl.path(), 'utf8');
   if (!csv.startsWith('date,title,area,repeat,done') || !csv.includes('Laundry')) throw new Error(csv.slice(0, 80));
@@ -172,9 +172,9 @@ await step('older install is brought up to date without overwriting edits', asyn
 
 await step('dark mode tasks + plan', async () => {
   await page.emulateMedia({ colorScheme: 'dark' });
-  await go('#/more/tasks', '[data-view="tasks"]');
+  await go('#/plan/tasks', '[data-view="tasks"]');
   await shot('85-tasks-dark');
-  await go('#/more/plan', '[data-view="plan"]');
+  await go('#/plan/playbook', '[data-view="playbook"]');
   await shot('86-plan-dark');
   await page.emulateMedia({ colorScheme: 'light' });
 });

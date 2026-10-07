@@ -70,7 +70,8 @@ function header(date, ph, mode, isToday) {
       </div>
       <div class="today-tools">
         <button type="button" class="${cx('mode-chip', mode !== 'normal' && `mode-chip--${mode}`)}" data-action="mode" aria-label="Day mode: ${mod.label}">${icon(mod.icon, { size: 15 })}<span>${mod.short}</span></button>
-        <button type="button" class="icon-btn" data-action="open-search" aria-label="Search">${icon('search', { size: 20 })}</button>
+        <button type="button" class="icon-btn" data-action="open-search" aria-label="Search" aria-keyshortcuts="/">${icon('search', { size: 20 })}</button>
+        <button type="button" class="you-btn" data-action="you" aria-label="You: settings, data and privacy">${(store.profile().name || 'Y').slice(0, 1).toUpperCase()}</button>
       </div>
     </div>
     ${isToday
@@ -222,7 +223,7 @@ function tasksCard(date, ph, mode) {
   return html`<section class="tasks-card" data-key="tasks" aria-label="Tasks">
     <div class="block-head"><h2 class="block-title">Tasks</h2>
       <span class="block-meta tnum">${list.length ? `${list.length - open}/${list.length}` : ''}</span>
-      <button type="button" class="link-btn" data-action="nav" data-to="more/tasks">All tasks</button></div>
+      <button type="button" class="link-btn" data-action="nav" data-to="plan/tasks">All tasks</button></div>
     ${list.length ? html`<ul class="tlist">${list.map((t) => taskRow(t, { showDue: t.date !== date, ref: date }))}</ul>` : ''}
     ${isToday ? html`<div class="task-add">
       <span class="task-add-ic" aria-hidden="true">${icon('plus', { size: 18 })}</span>
@@ -372,7 +373,7 @@ function focusBlock(date, mode, ui) {
     return html`<section class="choose3" data-key="focus" aria-label="Choose your three">
       <h2 class="block-title">Choose your three</h2>
       <p class="card-lead">Pick up to three habits to train. They count in your score. Everything else keeps running on autopilot and never counts against you.</p>
-      <div class="btn-row"><button type="button" class="btn btn--primary" data-action="nav" data-to="habits/sort">Choose</button>
+      <div class="btn-row"><button type="button" class="btn btn--primary" data-action="nav" data-to="plan/habits/sort">Choose</button>
         <button type="button" class="btn btn--ghost" data-action="focus-later">Not now</button></div>
     </section>`;
   }
@@ -383,7 +384,7 @@ function focusBlock(date, mode, ui) {
   return html`<section class="${cx('focus3', due.length && doneN === due.length && 'is-complete')}" data-key="focus" aria-label="Your three">
     <div class="block-head"><h2 class="block-title">Your three</h2>
       <span class="block-meta tnum">${due.length ? `${doneN} of ${due.length}` : ''}</span>
-      <button type="button" class="link-btn" data-action="nav" data-to="habits/sort">Change</button></div>
+      <button type="button" class="link-btn" data-action="nav" data-to="plan/habits/sort">Change</button></div>
     ${tiles.length ? html`<div class="tiles">${tiles.map((h) => metricTile(h, date, mode))}</div>` : ''}
     ${rows.length || flexible.length ? html`<ul class="hlist">${[...rows, ...flexible].map((h) => habitRow(h, date, mode, ui, { focus: true }))}</ul>` : ''}
     ${counters.length ? html`<div class="counters">${counters.map((h) => counterRow(h, date, mode))}</div>` : ''}
@@ -497,6 +498,10 @@ export default {
   },
   mount(el, ctx) {
     attachTop3Drag(el, ctx);
+    if (ctx.query.you) {
+      window.history.replaceState(window.history.state, '', location.hash.split('?')[0]);
+      import('./you.js').then((m) => m.openYou());
+    }
     setTimeout(() => Promise.all([sheets(), workouts()]).catch(() => {}), 1500);
   },
   update(el, ctx) {
@@ -540,8 +545,8 @@ export default {
       const h = H.habit(data.id);
       if (h.id === 'h-training') {
         const active = F.activeWorkout();
-        if (active) return app.go(`body/workout/${active.id}`);
-        if (F.workoutsOn(date).length) return app.go('body/training');
+        if (active) return app.go(`workout/${active.id}`);
+        if (F.workoutsOn(date).length) return app.go('plan/training');
         return (await workouts()).openStartSheet(date);
       }
       if (h.source && !COUNTER_SOURCES.includes(h.source) && !h.source.startsWith('workout:')) return (await sheets()).openSource(h, date);

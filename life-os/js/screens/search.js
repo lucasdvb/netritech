@@ -20,23 +20,23 @@ function search(q) {
   };
   const groups = [];
   const add = (title, items) => { if (items.length) groups.push({ title, items: items.slice(0, 8) }); };
-  add('Habits', store.all('habits').filter((h) => hit(h.name, h.description)).map((h) => ({ ic: h.icon, title: h.name, sub: h.archived ? 'Archived' : h.description, to: `habits/${h.id}` })));
+  add('Habits', store.all('habits').filter((h) => hit(h.name, h.description)).map((h) => ({ ic: h.icon, title: h.name, sub: h.archived ? 'Archived' : h.description, to: `plan/habits/${h.id}` })));
   add('Tasks', store.all('tasks').filter((x) => hit(x.title, x.notes)).sort((a, b) => Number(a.done) - Number(b.done) || (a.date || '9999').localeCompare(b.date || '9999'))
-    .map((x) => ({ ic: x.done ? 'circle-check' : 'list-todo', title: x.title, sub: `${x.done ? 'Done' : dueLabel(x.date)}${x.repeat ? ` · ${repeatLabel(x.repeat)}` : ''}`, to: 'more/tasks' })));
-  add('Goals', store.all('goals').filter((g) => hit(g.name, g.description, ...(g.milestones || []).map((m) => m.title))).map((g) => ({ ic: 'target', title: g.name, sub: g.description, to: `more/goals/${g.id}` })));
+    .map((x) => ({ ic: x.done ? 'circle-check' : 'list-todo', title: x.title, sub: `${x.done ? 'Done' : dueLabel(x.date)}${x.repeat ? ` · ${repeatLabel(x.repeat)}` : ''}`, to: 'plan/tasks' })));
+  add('Goals', store.all('goals').filter((g) => hit(g.name, g.description, ...(g.milestones || []).map((m) => m.title))).map((g) => ({ ic: 'target', title: g.name, sub: g.description, to: `plan/goals/${g.id}` })));
   add('Journal', store.all('journalEntries').filter((j) => hit(j.text, ...Object.values(j.answers || {}))).sort((a, b) => (a.date < b.date ? 1 : -1))
-    .map((j) => ({ ic: 'notebook-pen', title: `${relativeDay(j.date)} · ${j.kind}`, sub: snippet([j.text, ...Object.values(j.answers || {})].find((x) => norm(x).includes(t))), to: `more/journal/${j.id}` })));
+    .map((j) => ({ ic: 'notebook-pen', title: `${relativeDay(j.date)} · ${j.kind}`, sub: snippet([j.text, ...Object.values(j.answers || {})].find((x) => norm(x).includes(t))), to: `reflect/journal/${j.id}` })));
   add('Workouts', store.all('workouts').filter((w) => w.status === 'done' && hit(w.title, w.notes)).sort((a, b) => (a.date < b.date ? 1 : -1))
-    .map((w) => ({ ic: 'dumbbell', title: w.title, sub: `${fmtMDY(w.date)}${w.notes ? ` · ${snippet(w.notes)}` : ''}`, to: `body/workout/${w.id}` })));
-  add('Exercises', store.all('exercises').filter((e) => hit(e.name, e.cues)).map((e) => ({ ic: 'activity', title: e.name, sub: e.cues, to: `body/exercise/${e.id}` })));
+    .map((w) => ({ ic: 'dumbbell', title: w.title, sub: `${fmtMDY(w.date)}${w.notes ? ` · ${snippet(w.notes)}` : ''}`, to: `workout/${w.id}` })));
+  add('Exercises', store.all('exercises').filter((e) => hit(e.name, e.cues)).map((e) => ({ ic: 'activity', title: e.name, sub: e.cues, to: `plan/training/exercises/${e.id}` })));
   const books = new Map();
   store.all('readingSessions').filter((r) => hit(r.book, r.notes)).forEach((r) => books.set(r.book || r.notes, r));
-  add('Books & learning', [...[...books.values()].map((r) => ({ ic: 'book-open', title: r.book || 'Reading', sub: snippet(r.notes) || relativeDay(r.date), to: 'more/mind' })),
-    ...store.all('learningSessions').filter((l) => hit(l.topic, l.notes)).map((l) => ({ ic: 'graduation-cap', title: l.topic || 'Learning', sub: `${relativeDay(l.date)} · ${snippet(l.notes)}`, to: 'more/mind' }))]);
-  add('Measurements', store.all('measurements').filter((m) => hit(m.note, fmtMDY(m.date), m.date)).map((m) => ({ ic: 'ruler', title: fmtMDY(m.date), sub: m.note || `Waist ${m.waist ?? '—'} cm`, to: 'body/measurements' })));
-  add('Reviews', [...store.all('weeklyReviews').filter((r) => hit(...Object.values(r.answers || {}))).map((r) => ({ ic: 'calendar-days', title: `Week of ${fmtMD(r.id)}`, sub: snippet(Object.values(r.answers || {}).find((x) => norm(x).includes(t))), to: `more/review/week/${r.id}` })),
-    ...store.all('monthlyReviews').filter((r) => hit(...Object.values(r.answers || {}))).map((r) => ({ ic: 'calendar', title: fmtMonth(`${r.id}-01`), sub: snippet(Object.values(r.answers || {}).find((x) => norm(x).includes(t))), to: `more/review/month/${r.id}` }))]);
-  add('Moments & wins', [...store.all('relationshipEntries').filter((r) => hit(r.note, r.kind)).map((r) => ({ ic: 'heart', title: `${r.kind} · ${relativeDay(r.date)}`, sub: r.note, to: 'more/relationships' })),
+  add('Books & learning', [...[...books.values()].map((r) => ({ ic: 'book-open', title: r.book || 'Reading', sub: snippet(r.notes) || relativeDay(r.date), to: 'progress/areas/mind' })),
+    ...store.all('learningSessions').filter((l) => hit(l.topic, l.notes)).map((l) => ({ ic: 'graduation-cap', title: l.topic || 'Learning', sub: `${relativeDay(l.date)} · ${snippet(l.notes)}`, to: 'progress/areas/mind' }))]);
+  add('Measurements', store.all('measurements').filter((m) => hit(m.note, fmtMDY(m.date), m.date)).map((m) => ({ ic: 'ruler', title: fmtMDY(m.date), sub: m.note || `Waist ${m.waist ?? '—'} cm`, to: 'progress/body/measurements' })));
+  add('Reviews', [...store.all('weeklyReviews').filter((r) => hit(...Object.values(r.answers || {}))).map((r) => ({ ic: 'calendar-days', title: `Week of ${fmtMD(r.id)}`, sub: snippet(Object.values(r.answers || {}).find((x) => norm(x).includes(t))), to: `reflect/review/week/${r.id}` })),
+    ...store.all('monthlyReviews').filter((r) => hit(...Object.values(r.answers || {}))).map((r) => ({ ic: 'calendar', title: fmtMonth(`${r.id}-01`), sub: snippet(Object.values(r.answers || {}).find((x) => norm(x).includes(t))), to: `reflect/review/month/${r.id}` }))]);
+  add('Moments & wins', [...store.all('relationshipEntries').filter((r) => hit(r.note, r.kind)).map((r) => ({ ic: 'heart', title: `${r.kind} · ${relativeDay(r.date)}`, sub: r.note, to: 'progress/areas/relationships' })),
     ...store.all('dailyReviews').filter((r) => hit(r.win)).map((r) => ({ ic: 'star', title: r.win, sub: relativeDay(r.date), to: `today/${r.date}` }))]);
   return groups;
 }

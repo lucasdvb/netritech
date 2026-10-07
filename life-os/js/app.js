@@ -1,6 +1,5 @@
 import * as store from './data/store.js';
-import { SEED_VERSION } from './data/schema.js';
-import { runMigrations, markAllApplied } from './data/migrations.js';
+import { SEED_VERSION, LATEST_MIGRATION } from './data/schema.js';
 import { patch } from './ui/patch.js';
 import * as router from './ui/router.js';
 import * as sheet from './ui/sheet.js';
@@ -8,53 +7,12 @@ import { toast } from './ui/toast.js';
 import { icon } from './ui/icons.js';
 import { html } from './ui/dom.js';
 import { app, APP_NAME } from './ui/app-api.js';
+import { swap } from './ui/transitions.js';
+import { attachPullToSearch } from './ui/gestures.js';
+import { attachShortcuts } from './ui/keys.js';
 import { today, setDayEnd } from './domain/dates.js';
 
-const TABS = [
-  { id: 'today', label: 'Today', icon: 'sun', path: 'today' },
-  { id: 'progress', label: 'Progress', icon: 'chart-spline', path: 'progress' },
-  { id: 'habits', label: 'Habits', icon: 'list-checks', path: 'habits' },
-  { id: 'body', label: 'Body', icon: 'activity', path: 'body' },
-  { id: 'more', label: 'More', icon: 'layout-grid', path: 'more' },
-];
-
-const v = (name) => () => import(`./screens/${name}.js`);
-const ROUTES = [
-  { path: 'today/:date?', tab: 'today', depth: 0, load: v('today') },
-  { path: 'progress/:seg?', tab: 'progress', depth: 0, load: v('progress') },
-  { path: 'habits/new', tab: 'habits', depth: 1, load: v('habit-edit') },
-  { path: 'habits/sort', tab: 'habits', depth: 1, load: v('habit-sort') },
-  { path: 'habits/:id/edit', tab: 'habits', depth: 2, load: v('habit-edit') },
-  { path: 'habits/:id', tab: 'habits', depth: 1, load: v('habit') },
-  { path: 'habits', tab: 'habits', depth: 0, load: v('habits') },
-  { path: 'body/weight', tab: 'body', depth: 1, load: v('weight') },
-  { path: 'body/nutrition/:date?', tab: 'body', depth: 1, load: v('nutrition') },
-  { path: 'body/training', tab: 'body', depth: 1, load: v('training') },
-  { path: 'body/workout/:id', tab: 'body', depth: 2, load: v('workout') },
-  { path: 'body/exercises', tab: 'body', depth: 2, load: v('exercises') },
-  { path: 'body/exercise/:id', tab: 'body', depth: 3, load: v('exercise') },
-  { path: 'body/measurements', tab: 'body', depth: 1, load: v('measurements') },
-  { path: 'body/photos', tab: 'body', depth: 1, load: v('photos') },
-  { path: 'body/sleep', tab: 'body', depth: 1, load: v('sleep') },
-  { path: 'body', tab: 'body', depth: 0, load: v('body') },
-  { path: 'more/tasks', tab: 'more', depth: 1, load: v('tasks') },
-  { path: 'more/plan', tab: 'more', depth: 1, load: v('plan') },
-  { path: 'more/journal/:id', tab: 'more', depth: 2, load: v('journal-entry') },
-  { path: 'more/journal', tab: 'more', depth: 1, load: v('journal') },
-  { path: 'more/mind', tab: 'more', depth: 1, load: v('mind') },
-  { path: 'more/faith', tab: 'more', depth: 1, load: v('faith') },
-  { path: 'more/relationships', tab: 'more', depth: 1, load: v('relationships') },
-  { path: 'more/work', tab: 'more', depth: 1, load: v('work') },
-  { path: 'more/goals/:id', tab: 'more', depth: 2, load: v('goal') },
-  { path: 'more/goals', tab: 'more', depth: 1, load: v('goals') },
-  { path: 'more/review/week/:date?', tab: 'more', depth: 1, load: v('review-week') },
-  { path: 'more/review/month/:month?', tab: 'more', depth: 1, load: v('review-month') },
-  { path: 'more/reviews', tab: 'more', depth: 1, load: v('reviews') },
-  { path: 'more/settings', tab: 'more', depth: 1, load: v('settings') },
-  { path: 'more/data', tab: 'more', depth: 1, load: v('data') },
-  { path: 'more/privacy', tab: 'more', depth: 1, load: v('privacy') },
-  { path: 'more', tab: 'more', depth: 0, load: v('more') },
-];
+import { PLACES, ROUTES, REDIRECTS, target } from './routes.js';
 
 const main = document.getElementById('main');
 const tabbar = document.getElementById('tabbar');
@@ -75,24 +33,68 @@ export function applyTheme(theme = store.settings()?.theme || 'system') {
 media.addEventListener?.('change', () => applyTheme());
 
 /* ---------- tab bar ---------- */
+// Phone: a floating pill, Today · Plan · + · Progress · Reflect. Tablet and desktop: a rail,
+// with + and You below the places.
 function renderTabbar() {
+  const place = (t) => html`<a class="tab" href="#/${t.path}" data-key="tab-${t.id}" ${current?.route.tab === t.id ? html`aria-current="page"` : ''}>
+      ${icon(t.icon, { size: 23, stroke: current?.route.tab === t.id ? 2 : 1.6 })}<span>${t.label}</span></a>`;
   patch(tabbar, html`
     <div class="tab-brand">${icon('orbit', { size: 20 })}<span>${APP_NAME}</span></div>
-    ${TABS.map((t) => html`<a class="tab" href="#/${t.path}" data-key="tab-${t.id}" ${current?.route.tab === t.id ? html`aria-current="page"` : ''}>
-      ${icon(t.icon, { size: 23, stroke: current?.route.tab === t.id ? 2 : 1.6 })}<span>${t.label}</span></a>`)}
+    ${PLACES.slice(0, 2).map(place)}
+    <button type="button" class="tab tab--capture" data-action="capture" data-key="tab-capture" aria-label="Log something" aria-keyshortcuts="N">${icon('plus', { size: 24, stroke: 2 })}<span>Log something</span></button>
+    ${PLACES.slice(2).map(place)}
+    <button type="button" class="tab tab--you" data-action="you" data-key="tab-you" ${current?.route.tab === 'you' ? html`aria-current="page"` : ''}>${icon('user-round', { size: 22, stroke: 1.6 })}<span>You</span></button>
     <p class="tab-foot">Everything stays on this device.</p>`);
 }
 
 /* ---------- views ---------- */
 const ctxOf = (c) => ({ params: c.params, query: c.query, ui: c.ui, route: c.route, path: c.path });
 
+// Older addresses land on their new homes, keeping any query.
+function redirect() {
+  const { parts, query } = router.parse();
+  const old = router.match(REDIRECTS, parts);
+  if (!old) return false;
+  let to = target(old.route.to, old.params);
+  const q = new URLSearchParams(query).toString();
+  if (q) to += (to.includes('?') ? '&' : '?') + q;
+  history.replaceState(history.state, '', `#/${to}`);
+  return true;
+}
+
+// On wide screens a detail (a habit, a goal, an entry) sits beside its list. The list pane
+// survives moving between details, so its scroll and state stay put.
+const wide = matchMedia('(min-width: 1024px)');
+let pane = null; // { route, path, view, ui, params, query, el }
+const ERROR_HTML = () => String(html`<div class="empty"><p class="empty-title">Something went wrong on this screen.</p><p class="empty-body">Your data is safe. Try going back to Today.</p><a class="btn btn--soft" href="#/today">Back to Today</a></div>`);
+
+function renderInto(el, c) {
+  try { el.innerHTML = String(c.view.render(ctxOf(c))); } catch (err) { console.error(err); el.innerHTML = ERROR_HTML(); }
+}
+
+function markSelected() {
+  if (!pane) return;
+  pane.el.querySelectorAll('[aria-current="page"]').forEach((a) => a.removeAttribute('aria-current'));
+  if (current && current.el !== pane.el) pane.el.querySelector(`a[href="#/${current.path}"]`)?.setAttribute('aria-current', 'page');
+}
+
+function dropPane() {
+  if (!pane) return;
+  pane.view.unmount?.(pane.el, ctxOf(pane));
+  pane = null;
+}
+
 async function navigate() {
   const token = ++navToken;
+  redirect();
+  const back = wentBack;
+  wentBack = false;
   const { parts, query, path } = router.parse();
   const found = router.match(ROUTES, parts) || router.match(ROUTES, ['today']);
-  let mod;
+  const listRoute = found.route.list && wide.matches ? ROUTES.find((r) => r.path === found.route.list) : null;
+  let mod, listMod;
   try {
-    mod = await found.route.load();
+    [mod, listMod] = await Promise.all([found.route.load(), listRoute && listRoute !== found.route ? listRoute.load() : null]);
   } catch (err) {
     console.error(err);
     toast('That screen couldn’t load. Check your connection once, then it works offline.', { tone: 'danger' });
@@ -101,10 +103,12 @@ async function navigate() {
   if (token !== navToken) return;
   const view = mod.default;
   const prev = current;
+  const keepPane = !!(listRoute && pane && pane.path === listRoute.path);
   if (prev) {
     scrollMemory.set(prev.path, window.scrollY);
-    prev.view.unmount?.(prev.el, ctxOf(prev));
+    if (!(keepPane && prev.el === pane.el)) prev.view.unmount?.(prev.el, ctxOf(prev));
   }
+  if (!keepPane) dropPane();
   sheet.closeAll();
 
   let dir = 'view--fade';
@@ -115,29 +119,75 @@ async function navigate() {
   const ui = uiMemory.get(path) || {};
   uiMemory.set(path, ui);
   current = { route: found.route, params: found.params, query, view, ui, path, el: null };
+  const isList = !!listRoute && listRoute === found.route;
 
-  const el = document.createElement('div');
-  el.className = `view ${dir === 'view--fade' ? '' : dir}${view.wide ? ' view--wide' : ''}`;
-  el.dataset.view = view.id || '';
-  try {
-    el.innerHTML = String(view.render(ctxOf(current)));
-  } catch (err) {
-    console.error(err);
-    el.innerHTML = String(html`<div class="empty"><p class="empty-title">Something went wrong on this screen.</p><p class="empty-body">Your data is safe. Try going back to Today.</p><a class="btn btn--soft" href="#/today">Back to Today</a></div>`);
+  // The list pane: kept if it's the same list, otherwise rendered fresh.
+  let freshPane = false;
+  if (listRoute && !keepPane) {
+    const lv = isList ? view : listMod.default;
+    const lui = uiMemory.get(listRoute.path) || {};
+    uiMemory.set(listRoute.path, lui);
+    pane = { route: listRoute, path: listRoute.path, view: lv, ui: lui, params: {}, query: isList ? query : {}, el: document.createElement('div') };
+    pane.el.className = 'view split-list';
+    pane.el.dataset.view = lv.id || '';
+    pane.el.dataset.pane = 'list';
+    renderInto(pane.el, pane);
+    freshPane = true;
   }
-  current.el = el;
-  main.replaceChildren(el);
-  const y = dir === 'view--pop' ? scrollMemory.get(path) || 0 : 0;
-  window.scrollTo(0, y);
-  view.mount?.(el, ctxOf(current));
-  growAll(el);
-  renderTabbar();
-  document.title = view.title ? `${typeof view.title === 'function' ? view.title(ctxOf(current)) : view.title} · ${APP_NAME}` : APP_NAME;
-  if (prev) {
-    const h1 = el.querySelector('h1');
-    if (h1) { h1.setAttribute('tabindex', '-1'); h1.focus({ preventScroll: true }); }
+
+  let el;
+  if (isList) {
+    el = pane.el;
+    current.el = el;
+    if (!freshPane) patch(el, view.render(ctxOf(current)));
+  } else {
+    el = document.createElement('div');
+    el.className = `view ${dir === 'view--fade' ? '' : dir}${view.wide ? ' view--wide' : ''}${listRoute ? ' split-detail' : ''}`;
+    el.dataset.view = view.id || '';
+    current.el = el;
+    renderInto(el, current);
   }
+  const detail = isList ? (() => {
+    const d = document.createElement('div');
+    d.className = 'view split-detail split-empty';
+    d.innerHTML = String(html`<div class="empty"><div class="empty-ic">${icon(listRoute.emptyIcon || 'list', { size: 22 })}</div><p class="empty-body">${listRoute.emptyText || 'Choose something on the left.'}</p></div>`);
+    return d;
+  })() : el;
+
+  // Everything that needs the new screen in the document runs once it's there.
+  const settle = () => {
+    if (freshPane && !isList) pane.view.mount?.(pane.el, ctxOf(pane));
+    if (!(isList && !freshPane)) view.mount?.(el, ctxOf(current));
+    markSelected();
+    growAll(main);
+    renderTabbar();
+    document.title = view.title ? `${typeof view.title === 'function' ? view.title(ctxOf(current)) : view.title} · ${APP_NAME}` : APP_NAME;
+    if (prev) {
+      const h1 = (isList ? pane.el : el).querySelector('h1');
+      if (h1) { h1.setAttribute('tabindex', '-1'); h1.focus({ preventScroll: true }); }
+    }
+  };
+  const apply = () => {
+    if (token !== navToken) return;
+    // Arriving by a View Transition: the CSS entrances would animate a second time.
+    if (document.documentElement.dataset.nav) [el, detail, freshPane ? pane.el : null].filter(Boolean).forEach((n) => n.classList.add('view--vt'));
+    if (listRoute) {
+      let split = main.querySelector(':scope > .split');
+      if (!split || !keepPane) { split = document.createElement('div'); split.className = 'split'; main.replaceChildren(split); }
+      if (pane.el.parentNode !== split) split.prepend(pane.el);
+      [...split.children].filter((c) => c !== pane.el).forEach((c) => c.remove());
+      split.append(detail);
+    } else {
+      main.replaceChildren(el);
+    }
+    // Back returns to exactly where you were; going somewhere new starts at the top.
+    const y = back || dir === 'view--pop' ? scrollMemory.get(path) || 0 : 0;
+    window.scrollTo(0, y);
+    settle();
+  };
+  if (prev) swap(apply, dir.replace('view--', '')); else apply();
 }
+wide.addEventListener?.('change', () => { if (current?.route.list) navigate(); });
 
 function refresh() {
   if (refreshQueued) return;
@@ -146,10 +196,12 @@ function refresh() {
     refreshQueued = false;
     if (!current?.el) return;
     try {
-      const restore = focusAnchor(current.el);
+      const restore = focusAnchor(main);
       patch(current.el, current.view.render(ctxOf(current)));
       current.view.update?.(current.el, ctxOf(current));
-      growAll(current.el);
+      if (pane && pane.el !== current.el) patch(pane.el, pane.view.render(ctxOf(pane)));
+      markSelected();
+      growAll(main);
       restore();
     } catch (err) {
       console.error(err);
@@ -186,18 +238,24 @@ const globalActions = {
   'go-back': ({ data }) => back(data.fallback),
   'nav': ({ data }) => app.go(data.to),
   'open-search': () => app.search(),
+  capture: async () => (await import('./screens/capture.js')).openCapture(),
+  you: async () => (await import('./screens/you.js')).openYou(),
 };
+
+/** The view that owns an element: the list pane beside a detail, or the current screen. */
+const ownerOf = (el) => (pane && pane.el !== current?.el && pane.el.contains(el) ? pane : current);
 
 function resolve(el, kind, name) {
   const s = sheetOf(el);
   const table = kind === 'action' ? 'actions' : 'inputs';
-  return (s && s[table][name]) || (current?.view[table]?.[name]) || (kind === 'action' ? globalActions[name] : null);
+  return (s && s[table][name]) || (ownerOf(el)?.view[table]?.[name]) || (kind === 'action' ? globalActions[name] : null);
 }
 
 function run(handler, el, event, extra = {}) {
   const s = sheetOf(el);
+  const owner = ownerOf(el);
   try {
-    const out = handler({ el, data: el.dataset, event, sheet: s, ui: s ? s.ui : current?.ui, params: current?.params, value: el.value, ...extra });
+    const out = handler({ el, data: el.dataset, event, sheet: s, ui: s ? s.ui : owner?.ui, params: owner?.params, value: el.value, ...extra });
     if (out instanceof Promise) out.catch((err) => { console.error(err); toast('That didn’t work. Your data is safe. Try again.', { tone: 'danger' }); });
   } catch (err) {
     console.error(err);
@@ -254,8 +312,8 @@ document.addEventListener('submit', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && sheet.top()) { sheet.close(); return; }
   if (e.key === 'Tab') sheet.trapFocus(e);
-  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); app.search(); }
 });
+attachShortcuts({ places: PLACES, go: (path) => app.go(path), capture: () => globalActions.capture(), search: () => app.search() });
 
 /* ---------- navigation helpers ---------- */
 let internalNavs = 0;
@@ -264,8 +322,9 @@ function back(fallback = 'today') {
   else router.go(fallback, { replace: true });
 }
 
+let wentBack = false;
 window.addEventListener('hashchange', () => navigate());
-window.addEventListener('popstate', () => { if (internalNavs > 0) internalNavs--; });
+window.addEventListener('popstate', () => { wentBack = true; if (internalNavs > 0) internalNavs--; });
 
 /* ---------- confirm ---------- */
 function confirmDialog({ title, body = '', confirm = 'Confirm', cancel = 'Cancel', tone = '' }) {
@@ -334,8 +393,12 @@ async function boot() {
     // The built-in habit system is only loaded on first run, or when it has an update.
     const seeded = store.get('meta', 'seed');
     const { seedIfNeeded } = !seeded || (seeded.version || 1) < SEED_VERSION ? await import('./data/seed.js') : {};
-    if (seedIfNeeded && await seedIfNeeded()) markAllApplied();
-    else await runMigrations();
+    const fresh = seedIfNeeded && await seedIfNeeded();
+    // Migrations load only on a fresh install or when an update has one waiting.
+    if (fresh || !(store.get('meta', 'migrations')?.applied || []).includes(LATEST_MIGRATION)) {
+      const m = await import('./data/migrations.js');
+      if (fresh) m.markAllApplied(); else await m.runMigrations();
+    }
     setDayEnd(store.profile()?.dayEndsAt);
   } catch (err) {
     console.error(err);
@@ -374,6 +437,7 @@ async function boot() {
   }, 15000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
 
+  attachPullToSearch({ enabled: () => current?.route.depth === 0, onSearch: () => app.search() });
   import('./domain/reminders.js').then((r) => r.start()).catch((err) => console.warn(err));
   import('./domain/snapshots.js').then((m) => m.start()).catch((err) => console.warn(err));
   import('./ui/install.js').then((m) => m.maybePrompt()).catch(() => {});

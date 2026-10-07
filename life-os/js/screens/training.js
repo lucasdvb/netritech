@@ -88,9 +88,9 @@ export default {
     const pbs = F.personalBests().filter((p) => p.reps || p.seconds || p.load).sort((a, b) => (b.repsDate || b.secondsDate || '').localeCompare(a.repsDate || a.secondsDate || '')).slice(0, 8);
     const w = F.weekStats(today());
     return html`
-      ${pageHead({ title: 'Training', back: { to: 'body', label: 'Body' },
-        actions: html`<button type="button" class="btn btn--soft btn--sm" data-action="nav" data-to="body/exercises">Exercises</button>` })}
-      ${active ? html`<button type="button" class="resume-card" data-action="nav" data-to="body/workout/${active.id}">
+      ${pageHead({ title: 'Training', back: { to: 'plan', label: 'Plan' },
+        actions: html`<button type="button" class="btn btn--soft btn--sm" data-action="nav" data-to="plan/training/exercises">Exercises</button>` })}
+      ${active ? html`<button type="button" class="resume-card" data-action="nav" data-to="workout/${active.id}">
           <span class="resume-pulse" aria-hidden="true"></span><span><span class="resume-title">${active.title}</span><span class="resume-sub">In progress · tap to resume</span></span>${icon('chevron-right', { size: 18 })}</button>`
         : html`<div class="card call-card">
           <p class="section-label">Today</p>
@@ -106,13 +106,13 @@ export default {
       </section>
       <section class="block stack">${calfCard()}${coreCard()}${postureCard()}</section>
       <section class="block"><div class="block-head"><h2 class="block-title">Personal bests</h2></div>
-        ${pbs.length ? html`<ul class="list">${pbs.map((p) => html`<li><a class="row" href="#/body/exercise/${p.exercise.id}" data-action="nav" data-to="body/exercise/${p.exercise.id}">
+        ${pbs.length ? html`<ul class="list">${pbs.map((p) => html`<li><a class="row" href="#/plan/training/exercises/${p.exercise.id}" data-action="nav" data-to="plan/training/exercises/${p.exercise.id}">
           <span class="row-main"><span class="row-title">${p.exercise.name}</span><span class="row-sub">${[p.reps ? `${p.reps} reps` : '', p.seconds ? `${p.seconds} s hold` : '', p.load ? `${num(p.load, p.load % 1 ? 1 : 0)} kg` : ''].filter(Boolean).join(' · ')}</span></span>
           <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>`)}</ul>`
           : html`<p class="muted">Bests appear quietly as you log sessions.</p>`}
       </section>
       <section class="block"><div class="block-head"><h2 class="block-title">History</h2></div>
-        ${history.length ? html`<ul class="list">${history.map((x) => html`<li><a class="row" href="#/body/workout/${x.id}" data-action="nav" data-to="body/workout/${x.id}">
+        ${history.length ? html`<ul class="list">${history.map((x) => html`<li><a class="row" href="#/workout/${x.id}" data-action="nav" data-to="workout/${x.id}">
           <span class="row-main"><span class="row-title">${x.title}</span><span class="row-sub">${relativeDay(x.date)}${x.minutes ? ` · ${x.minutes} min` : ''}${x.difficulty ? ` · ${['', 'easy', 'light', 'solid', 'hard', 'max'][x.difficulty]}` : ''}</span></span>
           ${x.progression && VERDICT[x.progression] ? html`<span class="badge badge--${VERDICT[x.progression][1]}">${VERDICT[x.progression][0]}</span>` : ''}
           <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>`)}</ul>`

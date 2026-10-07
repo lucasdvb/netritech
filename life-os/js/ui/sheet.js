@@ -96,33 +96,95 @@ export function trapFocus(e) {
   else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
 }
 
+// Sheet physics: drag the handle or header (or the content, when it's scrolled to the top) to
+// move the sheet. A flick or a pull past a third closes it; anything less springs back. Past
+// the top it resists. Sheets with detents open at medium height and pull up to full height.
+const phone = () => matchMedia('(max-width: 699px)').matches;
+
+function suppressNextClick() {
+  const stop = (e) => { e.stopPropagation(); e.preventDefault(); };
+  window.addEventListener('click', stop, { capture: true, once: true });
+  setTimeout(() => window.removeEventListener('click', stop, { capture: true }), 0);
+}
+
 function attachDrag(s) {
   const panel = s.el.querySelector('.sheet');
-  const handle = s.el.querySelector('.sheet-grab');
-  let startY = 0, dy = 0, dragging = false;
-  const down = (e) => {
+  const scrim = s.el.querySelector('.sheet-scrim');
+  let startY = 0, dy = 0, startH = 0, armed = false, dragging = false, fromContent = false, samples = [];
+  const detent = () => s.el.classList.contains('sheet--detent') && phone();
+  const large = () => s.el.classList.contains('is-large');
+  const maxH = () => innerHeight - 24;
+  s.expand = () => { if (detent()) s.el.classList.add('is-large'); };
+  panel.addEventListener('focusin', (e) => { if (e.target.matches('input, textarea, select')) s.expand(); });
+
+  const begin = (target, y, t) => {
     const content = s.el.querySelector('.sheet-content');
-    const fromHandle = handle.contains(e.target) || e.target.closest('.sheet-head');
-    if (!fromHandle && !(content && content.scrollTop <= 0 && e.target.closest('.sheet-head'))) return;
-    if (e.target.closest('button, input, textarea, select')) return;
-    dragging = true; startY = e.clientY; dy = 0;
-    panel.style.transition = 'none';
-    panel.setPointerCapture?.(e.pointerId);
+    const onHead = !!target.closest('.sheet-grab, .sheet-head');
+    const atTop = !!content?.contains(target) && content.scrollTop <= 0;
+    if (!onHead && !atTop) return;
+    if (target.closest('input, textarea, select, [contenteditable], .scale, .seg, [data-drag], [data-swipe]')) return;
+    if (onHead && target.closest('button')) return;
+    armed = true; dragging = false; fromContent = !onHead;
+    startY = y; dy = 0; samples = [[t, y]];
+    startH = panel.getBoundingClientRect().height;
   };
-  const move = (e) => {
-    if (!dragging) return;
-    dy = Math.max(0, e.clientY - startY);
-    panel.style.transform = `translateY(${dy}px)`;
+  /** Returns true while the sheet is being dragged, so the browser shouldn't scroll. */
+  const moveTo = (y, t) => {
+    if (!armed) return false;
+    const d = y - startY;
+    if (!dragging) {
+      if (Math.abs(d) < 6) return false;
+      // From the content, only a downward pull moves the sheet (an upward one scrolls),
+      // unless a medium sheet can still grow.
+      if (fromContent && d < 0 && !(detent() && !large())) { armed = false; return false; }
+      dragging = true;
+      panel.style.transition = 'none';
+      scrim.style.transition = 'none';
+    }
+    dy = d;
+    samples.push([t, y]);
+    if (samples.length > 6) samples.shift();
+    if (detent() && !large() && dy < 0) {
+      panel.style.height = `${Math.min(maxH(), startH - dy)}px`;
+      return true;
+    }
+    const ty = dy >= 0 ? dy : -Math.sqrt(-dy) * 2.5;
+    panel.style.transform = `translateY(${ty}px)`;
+    scrim.style.opacity = String(Math.max(0, 1 - Math.max(0, dy) / (startH * 1.25)));
+    return true;
   };
-  const up = () => {
+  const end = () => {
+    if (!armed) return;
+    armed = false;
     if (!dragging) return;
     dragging = false;
+    suppressNextClick();
+    const [t0, y0] = samples[0];
+    const [t1, y1] = samples[samples.length - 1];
+    const v = (y1 - y0) / Math.max(16, t1 - t0); // px per ms, positive is downward
     panel.style.transition = '';
+    scrim.style.transition = '';
+    scrim.style.opacity = '';
+    if (detent() && !large() && dy < 0) {
+      panel.style.height = '';
+      if (-dy > 56 || v < -0.4) s.el.classList.add('is-large');
+      return;
+    }
     panel.style.transform = '';
-    if (dy > 110) close(s);
+    if (dy > startH * 0.3 || v > 0.6) {
+      // A full-height sheet with detents drops to medium first, unless it was flicked hard.
+      if (detent() && large() && dy < startH * 0.55 && v < 1.4) { s.el.classList.remove('is-large'); return; }
+      close(s);
+    }
   };
-  panel.addEventListener('pointerdown', down);
-  panel.addEventListener('pointermove', move);
-  panel.addEventListener('pointerup', up);
-  panel.addEventListener('pointercancel', up);
+  // Mouse and pen through pointer events; touch through touch events, so a pull that starts
+  // in the content can stop the browser from scrolling instead.
+  panel.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'touch' && e.button === 0) begin(e.target, e.clientY, e.timeStamp); });
+  panel.addEventListener('pointermove', (e) => { if (e.pointerType !== 'touch' && moveTo(e.clientY, e.timeStamp)) panel.setPointerCapture?.(e.pointerId); });
+  panel.addEventListener('pointerup', (e) => { if (e.pointerType !== 'touch') end(); });
+  panel.addEventListener('pointercancel', (e) => { if (e.pointerType !== 'touch') end(); });
+  panel.addEventListener('touchstart', (e) => { if (e.touches.length === 1) begin(e.target, e.touches[0].clientY, e.timeStamp); }, { passive: true });
+  panel.addEventListener('touchmove', (e) => { if (e.touches.length === 1 && moveTo(e.touches[0].clientY, e.timeStamp)) e.preventDefault(); }, { passive: false });
+  panel.addEventListener('touchend', end);
+  panel.addEventListener('touchcancel', end);
 }

@@ -56,6 +56,13 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
 
 ## What's inside
 
+**Four places and a +.** The tab bar is *Today · Plan · + · Progress · Reflect*. **Plan** is what you're building (tomorrow, habits, goals, tasks, training, the playbook). **Progress** is how it's going (trends, calendar, insights, Body, and one page per area of life). **Reflect** is what you learned (today's journal, reviews, the archive). **+** logs anything from anywhere, with *Log weight* and *Start workout* pinned first. **You** (the initial on Today, or the rail on wider screens) holds settings, data and privacy. Older addresses (bookmarks, Home Screen shortcuts) land on their new homes.
+
+- **Moving around:** screens hand over with a View Transition, and the habit, goal or entry you tapped grows into the next screen's title. Back returns to exactly where you were. Pull down at the top of a place to search. Sheets follow your finger: a flick or a long pull closes them, and the habit editor opens at half height and pulls up. Reduced motion turns all of this into simple fades.
+- **Keyboard:** 1–4 switch place, J/K move through items, X or Space completes, E edits, N logs something, / or ⌘K searches, ? shows the list.
+- **Tablet and desktop:** an icon rail from 600 px, a labelled rail from 1024 px. Habits, goals and the journal show the list and the selected item side by side; the list keeps its place.
+- **Edits and deletes:** editing happens in sheets, and a habit's changes save as you go, with Undo when you close. Deleting a habit, goal, entry, photo or session happens at once with Undo; only whole-device actions (restore, erase) ask first.
+
 - **Today**: a time-aware greeting and a daily score from *your three* focus habits plus your Top 3. Tap the score to see exactly what counts. Your three sit at the top, each with a one-tap **Tiny** version; everything else runs on autopilot, grouped by time of day. One tap completes with a small animation and haptic feedback.
   - **Top 3 priorities** (drag or arrow keys to reorder), then **Tasks** for the day with quick add, plus the **next useful action** from the coach.
   - **Win of the day**, morning check-in and evening shutdown.
@@ -138,7 +145,7 @@ The look is built from the [GetLayers](https://www.getlayers.ai) library. Its de
 - **Style: Stride** from GetLayers sets the layout, the shapes and how sparingly the accent is used.
 - **Typography: Inter.** Self-hosted in `assets/fonts` (SIL OFL) in the four weights the system uses (400, 500, 600, 700), so it works offline. Every size, weight, line height and letter spacing comes from a semantic role (Display, H1–H4, Body, Caption, Footnote, Micro) defined once in `css/tokens.css`, stepping up on tablet and desktop. The owner's rules are in [`docs/typography.md`](docs/typography.md), and unit tests fail if a stray size, weight or uppercase label appears.
 - **Details from other GetLayers styles:** Aerra's sheen sweep and swapping arrow tile on the main buttons, Relay's ring that draws itself clockwise on hover and focus, and the house reveal (blocks rise out of a slight blur in a short stagger, numbers sharpen as they stop counting).
-- **Shapes:** pill buttons and chips, round icon buttons, a floating near-black tab bar on phones and a near-black sidebar on desktop.
+- **Shapes:** pill buttons and chips, round icon buttons, a floating near-black tab bar on phones (with a white + in the middle) and a near-black rail on tablet and desktop.
 - **Charts:** bars are near-black where the target was hit and grey where it wasn't; the latest bar is blue. Line charts are near-black over a soft blue fill.
 
 Every colour is a token in `css/tokens.css` (`--brand`, `--ink`, the greys, the selection colours and the pillar colours).
@@ -151,14 +158,17 @@ manifest.webmanifest   PWA manifest (standalone, icons, shortcuts)
 sw.js                  service worker: precache, cache-first, offline navigation
 css/                   tokens.css (palette, type scale, motion tokens) · base · components ·
                        views · motion (screen transitions, reduced motion)
-js/app.js              router, view lifecycle, event delegation, focus management
+js/routes.js           the map: places, every route, and redirects from older addresses
+js/app.js              navigation (transitions, list-and-detail), view lifecycle, event
+                       delegation, focus management
 js/data/               store (in-memory cache + batched optimistic writes), storage
                        adapters (IndexedDB, in-memory), schema, migrations and safety
                        copies, first-run seed (your habit system), backup, sample data
 js/domain/             habit engine, scoring, metrics, fitness, coach, goals, reviews,
                        reminders, tasks, dates (with the day boundary), day snapshots
 js/ui/                 html`` templates, keyed DOM morphing, components, charts,
-                       sheets, toasts, haptics, icons, motion (springs, FLIP)
+                       sheets (with drag physics and detents), toasts, haptics, icons, motion
+                       (springs, FLIP), transitions, gestures, keyboard shortcuts, undo
 js/screens/            one module per screen, loaded on demand
 tools/                 build-sw.mjs · check-budgets.mjs · build-icons.mjs · render-icons.mjs
 tests/                 unit/ (node --test, no browser) and Playwright browser suites
@@ -204,6 +214,8 @@ NODE_PATH=$(npm root -g) node tests/phase0.mjs http://localhost:4173/ ./test-sho
 NODE_PATH=$(npm root -g) node tests/smoke.mjs  http://localhost:4173/ ./test-shots   # Today, habits, modes
 NODE_PATH=$(npm root -g) node tests/phase1.mjs http://localhost:4173/ ./test-shots   # choose your three, tiny versions, runs,
                                                                                     # the score sheet, new habit, pause, graduation
+NODE_PATH=$(npm root -g) node tests/phase2.mjs http://localhost:4173/ ./test-shots   # every old route, 3-level reach, keyboard,
+                                                                                    # reduced motion, scroll, split view, Undo
 NODE_PATH=$(npm root -g) node tests/phase3.mjs http://localhost:4173/ ./test-shots   # weight, food, training, photos
 NODE_PATH=$(npm root -g) node tests/phase4.mjs http://localhost:4173/ ./test-shots   # progress, modules, reviews, backup
 NODE_PATH=$(npm root -g) node tests/phase5.mjs http://localhost:4173/ ./test-shots   # reminders, restore, offline,

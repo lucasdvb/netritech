@@ -46,13 +46,13 @@ export function empty({ ic = 'sparkle', title, body = '', cta, action, data = {}
   </div>`;
 }
 
-export function pageHead({ title, eyebrow, back, actions = '', sub }) {
+export function pageHead({ title, eyebrow, back, actions = '', sub, morph }) {
   return html`<header class="page-head${back ? ' page-head--child' : ''}">
     ${back ? html`<button type="button" class="back-btn" data-action="go-back" data-fallback="${back.to}">${icon('chevron-left', { size: 22 })}<span>${back.label}</span></button>` : ''}
     <div class="page-head-row">
       <div>
         ${eyebrow ? html`<p class="eyebrow">${eyebrow}</p>` : ''}
-        <h1 class="page-title">${title}</h1>
+        <h1 class="page-title"${morph ? raw(` data-morph="${morph}"`) : ''}>${title}</h1>
         ${sub ? html`<p class="page-sub">${sub}</p>` : ''}
       </div>
       <div class="page-actions">${actions}</div>

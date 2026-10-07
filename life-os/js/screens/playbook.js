@@ -52,7 +52,7 @@ function weekRows(p) {
 const steps = (h) => (h?.checklist?.length ? html`<ul class="plan-steps">${h.checklist.map((x) => html`<li>${x}</li>`)}</ul>` : '');
 
 export default {
-  id: 'plan',
+  id: 'playbook',
   title: 'Your plan',
   render() {
     const p = store.profile();
@@ -64,22 +64,22 @@ export default {
     const routines = ['h-morning-reset', 'h-mobility', 'h-evening'].map((id) => H.habit(id)).filter((h) => h && !h.archived);
     const tpls = F.templates();
     return html`
-      ${pageHead({ title: 'Your plan', back: { to: 'more', label: 'More' }, sub: 'The playbook behind the ticks. Edit any habit, template or target and this page follows.' })}
+      ${pageHead({ title: 'Your plan', back: { to: 'plan', label: 'Plan' }, sub: 'The playbook behind the ticks. Edit any habit, template or target and this page follows.' })}
       <p class="plan-motto">Consistency over intensity · Progress over perfection · Systems over motivation · Health over extreme results</p>
       <nav class="chips plan-jump" aria-label="Jump to">${PARTS.map(([id, label]) => html`<button type="button" class="chip" data-action="jump" data-id="${id}">${label}</button>`)}</nav>
 
       ${sec('day', 'Your day', html`<ol class="card plan-day">${daySchedule(p).map(([time, what, detail]) => html`<li>
-        <span class="plan-time tnum">${time}</span><span class="plan-what"><strong>${what}</strong><span>${detail}</span></span></li>`)}</ol>`, ['more/settings', 'Change times'])}
+        <span class="plan-time tnum">${time}</span><span class="plan-what"><strong>${what}</strong><span>${detail}</span></span></li>`)}</ol>`, ['you/settings', 'Change times'])}
 
       ${sec('week', 'Your week', html`<ul class="card plan-week">${weekRows(p).map((r) => html`<li>
         <span class="plan-dow">${r.name.slice(0, 3)}</span>
         <span class="plan-what"><strong>${r.session}</strong>${r.extras.length ? html`<span>${r.extras.join(' · ')}</span>` : ''}</span></li>`)}</ul>
         <p class="fine-print">At least one lower-intensity day a week: walking, mobility, light cycling, family activity. Missed a session? Do the 20-minute minimum once, then carry on. Don’t move the whole week around.</p>`,
-        ['body/training', 'Edit plan'])}
+        ['plan/training', 'Edit plan'])}
 
       ${sec('routines', 'Routines', html`${routines.map((h) => html`<div class="card plan-routine">
           <div class="plan-routine-head"><strong>${h.name}</strong>${h.time ? html`<span class="muted tnum">${h.time}</span>` : ''}
-            <button type="button" class="link-btn" data-action="nav" data-to="habits/${h.id}/edit">Edit</button></div>
+            <button type="button" class="link-btn" data-action="nav" data-to="plan/habits/${h.id}?edit=1">Edit</button></div>
           ${steps(h)}<p class="muted small">One tick for the whole routine. Consistency, not administrative gymnastics.</p></div>`)}`)}
 
       ${sec('training', 'Training', html`${tpls.map((tp) => html`<div class="card plan-routine">
@@ -91,7 +91,7 @@ export default {
           ['Calves.', 'Standing → single-leg → slow eccentric → paused. Priority muscle, 3–4 sessions a week.'],
           ['Core.', 'A strong, stable trunk, not endless ab work. 3–4 sessions a week.'],
           ['Cardio & steps.', `2–3 × 20–30 min of brisk or incline walking, cycling or an easy jog. Steps ramp ${(t.stepsRamp || []).map((s) => num(s)).join(' → ')} over the first weeks, then hold a 9–10k average.`],
-        ])}`, ['body/exercises', 'Exercises'])}
+        ])}`, ['plan/training/exercises', 'Exercises'])}
 
       ${sec('food', 'Food', html`${kv([
           ['Calories', `${num(t.kcalMin)}–${num(t.kcalMax)} kcal to start · adjusted on the 2–3 week weight trend, never below ${num(t.kcalFloor)}`],
@@ -109,7 +109,7 @@ export default {
           ['Veg.', 'Brèdes · cabbage · pumpkin · chou chou · carrots · tomatoes · salad.'],
           ['Example day.', 'Oats + whey + banana (~35 g) · chicken curry, rice, salad (~40 g) · yoghurt or 2 eggs (~20 g) · grilled chicken or beef, potatoes, veg (~45 g).'],
           ['Meal prep, Sunday.', '30–60 minutes: cook a protein, a carb base, chop veg, boil eggs, portion snacks. Make the healthy option the lazy option.'],
-        ])}`, ['body/nutrition', 'Nutrition'])}
+        ])}`, ['progress/body/nutrition', 'Nutrition'])}
 
       ${sec('rules', 'Rules', html`
         <div class="card plan-routine"><div class="plan-routine-head"><strong>Minimum day</strong><span class="muted">${mvd.length} essentials</span></div>
@@ -118,7 +118,7 @@ export default {
         <div class="card plan-routine"><div class="plan-routine-head"><strong>Sick day</strong></div>
           <p class="small">No hard training, no aggressive deficit, no forced cardio. Rest, hydration, nutrition, sleep, and medical care when needed. The day is paused and doesn’t drag your averages down. Resume training gradually.</p></div>
         <div class="card plan-routine"><div class="plan-routine-head"><strong>Daily score</strong><span class="muted">${three.length} of ${H.FOCUS_LIMIT} chosen</span>
-            <button type="button" class="link-btn" data-action="nav" data-to="habits/sort">${three.length ? 'Change' : 'Choose'}</button></div>
+            <button type="button" class="link-btn" data-action="nav" data-to="plan/habits/sort">${three.length ? 'Change' : 'Choose'}</button></div>
           <p class="small">${three.length ? `Your three: ${three.map((h) => h.name).join(' · ')}, plus today’s Top 3. Tiny versions count; autopilot habits never lower it.` : 'Choose your three habits to train. They and today’s Top 3 make the score; everything else runs on autopilot.'}</p>
           <p class="muted small">Rolling 7- and 30-day consistency, not streaks: strong ≥ ${bands.strong}% · steady ${bands.steady}–${bands.strong - 1}% · needs attention ${bands.attention}–${bands.steady - 1}% · below that, simplify. Missing three or more habits means “simplify this week”, never “add more”.</p></div>
         ${notes([

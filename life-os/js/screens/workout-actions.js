@@ -9,7 +9,7 @@ import { trainingCall } from '../domain/coach.js';
 
 export function startWorkout(templateId, date = today()) {
   const active = F.activeWorkout();
-  if (active) { app.go(`body/workout/${active.id}`); return active; }
+  if (active) { app.go(`workout/${active.id}`); return active; }
   const tpl = F.template(templateId);
   const call = trainingCall(date);
   const lighter = tpl && call.kind === 'lighter' && call.template?.id === tpl.id;
@@ -38,7 +38,7 @@ export function startWorkout(templateId, date = today()) {
     });
     store.batch(ops);
   }
-  app.go(`body/workout/${w.id}`);
+  app.go(`workout/${w.id}`);
   return w;
 }
 

@@ -1,13 +1,15 @@
+// The habit editor, as a sheet: name, when, tiny version and state up front; everything else
+// under "More options". Changes to an existing habit save as you make them, and closing the
+// sheet offers Undo. A new habit (from "More options" in the three questions) has a Create button.
 import * as store from '../data/store.js';
 import * as H from '../domain/habits.js';
 import { CATEGORIES, SECTIONS, HABIT_TYPES, SCHEDULES, catColor } from '../domain/taxonomy.js';
 import { fmtMD } from '../domain/dates.js';
 import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { pageHead, segmented, stepper, toggle, settingRow, fieldError } from '../ui/components.js';
+import { segmented, stepper, toggle, settingRow, fieldError } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
-import { takePending } from './habit-new.js';
 
 const ICONS = ['circle', 'sunrise', 'sun', 'moon', 'moon-star', 'bed', 'droplet', 'beef', 'apple', 'salad', 'egg', 'coffee', 'activity', 'dumbbell',
   'footprints', 'bike', 'person-standing', 'heart-pulse', 'scan-eye', 'eye', 'pill', 'leaf', 'flower-2', 'sprout', 'book-open', 'graduation-cap',
@@ -17,37 +19,81 @@ const DAYS = [[1, 'M'], [2, 'T'], [3, 'W'], [4, 'T'], [5, 'F'], [6, 'S'], [7, 'S
 const DAY_NAMES = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const n = (v) => (v === '' || v == null ? null : Number(v));
 const STATE_CHOICES = ['focus', 'autopilot', 'queue'].map((id) => ({ id, label: H.STATES[id].label }));
-
-function draftFor(params, ui) {
-  const handed = !params.id && takePending();
-  if (!handed && ui.draft && ui.draftFor === (params.id || 'new')) return ui.draft;
-  const base = handed || (params.id ? structuredClone(H.habit(params.id)) : H.newHabit());
-  ui.draft = { ...base, checklist: base.checklist ? [...base.checklist] : [], tiny: base.tiny ? { ...base.tiny } : H.tinyOf(base) ? { ...H.tinyOf(base) } : null, state: H.stateOf(base) };
-  ui.draftFor = params.id || 'new';
-  ui.errors = {};
-  // Arriving from the three-question sheet means you came here for the other options.
-  ui.more = !!handed;
-  return ui.draft;
-}
-
 const focusOthers = (id) => H.focusHabits().filter((h) => h.id !== id).length;
 
-export default {
-  id: 'habit-edit',
-  title: ({ params }) => (params.id ? 'Edit habit' : 'New habit'),
-  render({ params, ui }) {
-    if (params.id && !H.habit(params.id)) return html`${pageHead({ title: 'Not found', back: { to: 'habits', label: 'Habits' } })}`;
-    const d = draftFor(params, ui);
-    const numeric = H.isNumeric(d);
-    const s = d.schedule || { kind: 'daily' };
-    const goals = store.all('goals').filter((g) => g.status !== 'archived');
-    const e = ui.errors || {};
-    return html`
-      ${pageHead({ title: params.id ? 'Edit habit' : 'New habit', back: params.id ? { to: `habits/${params.id}`, label: d.name || 'Habit' } : { to: 'habits', label: 'Habits' } })}
-      <form class="editor" data-submit="save" novalidate>
+function draftOf(h) {
+  return { ...structuredClone(h), checklist: h.checklist ? [...h.checklist] : [], tiny: H.tinyOf(h) ? { ...H.tinyOf(h) } : null, state: H.stateOf(h) };
+}
+
+/** What's wrong with a draft, by field. */
+function check(d, id) {
+  const errors = {};
+  if (!d.name.trim()) errors.name = 'Give it a short name.';
+  if (H.isNumeric(d) && d.type !== 'rating' && !(Number(d.target) > 0)) errors.target = 'Set a target above zero.';
+  if (d.schedule.kind === 'weekdays' && !(d.schedule.days || []).length) errors.days = 'Pick at least one day.';
+  const was = id ? H.stateOf(H.habit(id)) : null;
+  if (d.state === 'focus' && was !== 'focus' && focusOthers(id) >= H.FOCUS_LIMIT) errors.state = 'Your three are full. Choose Later, or swap one out first.';
+  return errors;
+}
+
+/** The record a valid draft becomes. */
+function clean(d, before) {
+  const tiny = d.tiny && ((d.tiny.label || '').trim() || d.tiny.min != null) ? { label: (d.tiny.label || '').trim() || null, min: d.tiny.min ?? null } : null;
+  // The tiny version replaces the old minimum-day label and target.
+  const out = { ...d, name: d.name.trim(), anchor: (d.anchor || '').trim() || null, tiny, mvdLabel: null, mvdMin: null, checklist: d.checklist.map((x) => x.trim()).filter(Boolean) };
+  if (!out.checklist.length) out.checklist = null;
+  if (out.type === 'rating') { out.target = 10; out.unit = ''; }
+  if (out.type === 'binary' || out.type === 'check') out.target = 1;
+  if (out.min === '' || out.min == null || Number.isNaN(out.min)) out.min = null;
+  // A new state brings its own bookkeeping: when focus began, the place in the queue.
+  const was = before ? H.stateOf(before) : null;
+  if (d.state !== was && d.state !== 'paused') Object.assign(out, H.statePatch(before || { ...d, state: 'autopilot' }, d.state, { focusCount: 0 }));
+  return out;
+}
+
+/** Open the editor for a habit id, or for a new habit's draft. */
+export function openHabitEditor(target) {
+  const isNew = typeof target !== 'string';
+  const original = isNew ? null : H.habit(target);
+  if (!isNew && !original) return;
+  const draft = draftOf(isNew ? target : original);
+  const id = isNew ? null : original.id;
+  let saveTimer = null;
+  let pending = false;
+
+  // Existing habits save as you go: each valid change is written at once (typing waits a beat).
+  const commit = (sheet, { soon = false } = {}) => {
+    const u = sheet.ui;
+    u.errors = check(u.draft, id);
+    if (isNew) return;
+    clearTimeout(saveTimer);
+    const write = () => {
+      pending = false;
+      if (Object.keys(check(u.draft, id)).length) return;
+      store.put('habits', clean(u.draft, H.habit(id)));
+      u.changed = true;
+      // Later saves compare against the record as it now is.
+      u.draft.state = H.stateOf(H.habit(id));
+    };
+    if (soon) { pending = true; saveTimer = setTimeout(write, 400); } else write();
+  };
+  const changed = (sheet, opts) => { commit(sheet, opts); if (!opts?.soon) sheet.refresh(); };
+
+  const s = app.sheet({
+    title: isNew ? 'New habit' : `Edit ${original.name}`,
+    size: 'detent',
+    ui: { draft, errors: {}, more: isNew, isNew, changed: false },
+    render: (sheet) => {
+      const u = sheet.ui;
+      const d = u.draft;
+      const numeric = H.isNumeric(d);
+      const s = d.schedule || { kind: 'daily' };
+      const goals = store.all('goals').filter((g) => g.status !== 'archived');
+      const e = u.errors || {};
+      return html`<form class="editor" data-submit="save" novalidate>
         <section class="ed-group">
           <label class="field"><span class="field-label">Name</span>
-            <textarea class="input input--grow${e.name ? ' is-invalid' : ''}" rows="1" data-grow name="name" data-input="f" data-f="name" placeholder="e.g. Evening walk" maxlength="60" ${raw(params.id ? '' : 'autofocus')} aria-invalid="${!!e.name}" enterkeyhint="done">${d.name}</textarea>
+            <textarea class="input input--grow${e.name ? ' is-invalid' : ''}" rows="1" data-grow name="name" data-input="f" data-f="name" placeholder="e.g. Evening walk" maxlength="60" ${raw(u.isNew ? 'autofocus' : '')} aria-invalid="${!!e.name}" enterkeyhint="done">${d.name}</textarea>
             ${fieldError(e.name)}</label>
           <div class="field"><span class="field-label">When <small>after something you already do</small></span>
             <div class="chips" role="group" aria-label="Suggested moments">${H.anchorSuggestions().slice(0, 6).map((a) => html`<button type="button" class="${cx('chip', d.anchor === a && 'is-active')}" aria-pressed="${d.anchor === a}" data-action="anchor" data-v="${a}">${a}</button>`)}</div>
@@ -65,7 +111,7 @@ export default {
             <span class="field-hint">${d.state === 'paused' ? `Paused${d.pausedUntil ? ` until ${fmtMD(d.pausedUntil)}` : ''}. Pick a state to bring it back now.` : H.STATES[d.state]?.hint || ''}</span></div>
         </section>
 
-        <details class="disclosure ed-more" ${raw(ui.more ? 'open' : '')}>
+        <details class="disclosure ed-more" ${raw(u.more ? 'open' : '')}>
           <summary data-action="toggle-more">More options</summary>
           <div class="ed-more-body">
         <section class="ed-group">
@@ -128,98 +174,98 @@ export default {
           </div>
         </details>
 
-        <div class="ed-actions">
-          <button type="button" class="btn btn--ghost" data-action="cancel">Cancel</button>
-          <button type="submit" class="btn btn--primary">${params.id ? 'Save changes' : 'Create habit'}</button>
-        </div>
+        ${u.isNew ? html`<div class="ed-actions"><button type="submit" class="btn btn--primary btn--block">Create habit</button></div>`
+          : html`<p class="field-hint ed-autosave">${icon('check', { size: 14, cls: 'inline-ic' })} Changes save as you go.</p>`}
       </form>`;
-  },
-  actions: {
-    icon: ({ data, ui }) => { ui.draft.icon = data.v; hap.tap(); app.refresh(); },
-    day: ({ data, ui }) => {
-      const sch = ui.draft.schedule;
-      const v = Number(data.v);
-      const days = new Set(sch.days || []);
-      days.has(v) ? days.delete(v) : days.add(v);
-      sch.days = [...days].sort();
-      hap.tap();
-      app.refresh();
     },
-    count: ({ data, ui }) => { const sch = ui.draft.schedule; sch.count = Math.max(1, Math.min(sch.kind === 'perWeek' ? 7 : 31, (sch.count || 1) + Number(data.delta))); app.refresh(); },
-    every: ({ data, ui }) => { const sch = ui.draft.schedule; sch.every = Math.max(2, Math.min(90, (sch.every || 7) + Number(data.delta))); app.refresh(); },
-    state: ({ data, ui, params }) => {
-      if (data.value === 'focus' && ui.draft.state !== 'focus' && focusOthers(params.id) >= H.FOCUS_LIMIT) {
-        app.toast('Your three are full. Swap one out first.', { action: { label: 'Choose', fn: () => app.go('habits/sort') } });
-        return;
-      }
-      ui.draft.state = data.value;
-      ui.errors = { ...ui.errors, state: '' };
-      hap.tap();
-      app.refresh();
+    onClose: () => {
+      clearTimeout(saveTimer);
+      if (isNew) return;
+      const u = s.ui;
+      if (pending && !Object.keys(check(u.draft, id)).length) { store.put('habits', clean(u.draft, H.habit(id))); u.changed = true; }
+      if (!u.changed || !H.habit(id)) return;
+      app.toast('Changes saved', { action: { label: 'Undo', fn: () => store.put('habits', original) } });
     },
-    anchor: ({ data, ui }) => { ui.draft.anchor = ui.draft.anchor === data.v ? null : data.v; hap.tap(); app.refresh(); },
-    'toggle-more': ({ ui, event }) => { event.preventDefault(); ui.more = !ui.more; app.refresh(); },
-    difficulty: ({ data, ui }) => { ui.draft.difficulty = Number(data.value); app.refresh(); },
-    flag: ({ data, ui }) => {
-      const f = data.f;
-      ui.draft[f] = f === 'showOnToday' || f === 'weekly' ? ui.draft[f] === false : !ui.draft[f];
-      hap.tap();
-      app.refresh();
+    actions: {
+      icon: ({ data, sheet }) => { sheet.ui.draft.icon = data.v; hap.tap(); changed(sheet); },
+      day: ({ data, sheet }) => {
+        const sch = sheet.ui.draft.schedule;
+        const v = Number(data.v);
+        const days = new Set(sch.days || []);
+        days.has(v) ? days.delete(v) : days.add(v);
+        sch.days = [...days].sort();
+        hap.tap();
+        changed(sheet);
+      },
+      count: ({ data, sheet }) => { const sch = sheet.ui.draft.schedule; sch.count = Math.max(1, Math.min(sch.kind === 'perWeek' ? 7 : 31, (sch.count || 1) + Number(data.delta))); changed(sheet); },
+      every: ({ data, sheet }) => { const sch = sheet.ui.draft.schedule; sch.every = Math.max(2, Math.min(90, (sch.every || 7) + Number(data.delta))); changed(sheet); },
+      state: ({ data, sheet }) => {
+        if (data.value === 'focus' && sheet.ui.draft.state !== 'focus' && focusOthers(id) >= H.FOCUS_LIMIT) {
+          app.toast('Your three are full. Swap one out first.', { action: { label: 'Choose', fn: () => { app.closeSheet(sheet); app.go('plan/habits/sort'); } } });
+          return;
+        }
+        sheet.ui.draft.state = data.value;
+        hap.tap();
+        changed(sheet);
+      },
+      anchor: ({ data, sheet }) => { const d = sheet.ui.draft; d.anchor = d.anchor === data.v ? null : data.v; hap.tap(); changed(sheet); },
+      'toggle-more': ({ sheet, event }) => { event.preventDefault(); sheet.ui.more = !sheet.ui.more; if (sheet.ui.more) sheet.expand?.(); sheet.refresh(); },
+      difficulty: ({ data, sheet }) => { sheet.ui.draft.difficulty = Number(data.value); changed(sheet); },
+      flag: ({ data, sheet }) => {
+        const d = sheet.ui.draft;
+        const f = data.f;
+        d[f] = f === 'showOnToday' || f === 'weekly' ? d[f] === false : !d[f];
+        hap.tap();
+        changed(sheet);
+      },
+      'add-step': ({ sheet }) => { sheet.ui.draft.checklist.push(''); sheet.refresh(); requestAnimationFrame(() => [...sheet.el.querySelectorAll('.step-edit input')].pop()?.focus()); },
+      'del-step': ({ data, sheet }) => { sheet.ui.draft.checklist.splice(Number(data.i), 1); changed(sheet); },
+      save: ({ sheet }) => {
+        const u = sheet.ui;
+        u.errors = check(u.draft, null);
+        if (Object.keys(u.errors).length) {
+          if (u.errors.target || u.errors.days) u.more = true;
+          sheet.refresh();
+          app.toast('A couple of fields need a look.');
+          return;
+        }
+        const h = store.put('habits', clean(u.draft, null));
+        hap.success();
+        app.closeSheet(sheet);
+        app.toast(h.state === 'focus' ? `${h.name} is one of your three.` : h.state === 'queue' ? `${h.name} is waiting in Later.` : 'Habit created', {
+          icon: 'check', action: { label: 'Open', fn: () => app.go(`plan/habits/${h.id}`) },
+        });
+      },
     },
-    'add-step': ({ ui }) => { ui.draft.checklist.push(''); app.refresh(); requestAnimationFrame(() => [...document.querySelectorAll('.step-edit input')].pop()?.focus()); },
-    'del-step': ({ data, ui }) => { ui.draft.checklist.splice(Number(data.i), 1); app.refresh(); },
-    cancel: ({ params, ui }) => { ui.draft = null; app.back(params.id ? `habits/${params.id}` : 'habits'); },
-    save: ({ params, ui }) => {
-      const d = ui.draft;
-      const errors = {};
-      if (!d.name.trim()) errors.name = 'Give it a short name.';
-      if (H.isNumeric(d) && d.type !== 'rating' && !(Number(d.target) > 0)) errors.target = 'Set a target above zero.';
-      if (d.schedule.kind === 'weekdays' && !(d.schedule.days || []).length) errors.days = 'Pick at least one day.';
-      const before = params.id ? H.habit(params.id) : null;
-      const was = before ? H.stateOf(before) : null;
-      if (d.state === 'focus' && was !== 'focus' && focusOthers(params.id) >= H.FOCUS_LIMIT) errors.state = 'Your three are full. Choose Later, or swap one out first.';
-      ui.errors = errors;
-      if (Object.keys(errors).length) {
-        if (errors.target || errors.days) ui.more = true;
-        app.refresh();
-        app.toast('A couple of fields need a look.');
-        return;
-      }
-      const tiny = d.tiny && ((d.tiny.label || '').trim() || d.tiny.min != null) ? { label: (d.tiny.label || '').trim() || null, min: d.tiny.min ?? null } : null;
-      // The tiny version replaces the old minimum-day label and target.
-      const clean = { ...d, name: d.name.trim(), anchor: (d.anchor || '').trim() || null, tiny, mvdLabel: null, mvdMin: null, checklist: d.checklist.map((x) => x.trim()).filter(Boolean) };
-      // A new state brings its own bookkeeping: when focus began, the place in the queue.
-      if (d.state !== was && d.state !== 'paused') Object.assign(clean, H.statePatch(before || { ...d, state: 'autopilot' }, d.state, { focusCount: 0 }));
-      if (!clean.checklist.length) clean.checklist = null;
-      if (clean.type === 'rating') { clean.target = 10; clean.unit = ''; }
-      if (clean.type === 'binary' || clean.type === 'check') { clean.target = 1; }
-      if (clean.min === '' || clean.min == null || Number.isNaN(clean.min)) clean.min = null;
-      store.put('habits', clean);
-      hap.success();
-      ui.draft = null;
-      app.toast(params.id ? 'Habit updated' : clean.state === 'focus' ? `${clean.name} is one of your three.` : 'Habit created', { icon: 'check' });
-      app.replace(`habits/${clean.id}`);
+    inputs: {
+      f: ({ el, value, sheet }) => {
+        const d = sheet.ui.draft;
+        d[el.dataset.f] = value === '' && ['time', 'reminder', 'goalId'].includes(el.dataset.f) ? null : value;
+        changed(sheet, { soon: el.tagName !== 'SELECT' && el.type !== 'time' });
+      },
+      num: ({ el, value, sheet }) => { sheet.ui.draft[el.dataset.f] = n(value); changed(sheet, { soon: true }); },
+      tiny: ({ el, value, sheet }) => {
+        const t = { label: null, min: null, ...(sheet.ui.draft.tiny || {}) };
+        t[el.dataset.k] = el.dataset.k === 'min' ? n(value) : value;
+        sheet.ui.draft.tiny = t;
+        changed(sheet, { soon: true });
+      },
+      step: ({ el, value, sheet }) => { sheet.ui.draft.checklist[Number(el.dataset.i)] = value; changed(sheet, { soon: true }); },
+      type: ({ value, sheet }) => {
+        const d = sheet.ui.draft;
+        d.type = value;
+        if (value === 'duration' && !d.unit) d.unit = 'min';
+        if (['numeric', 'duration', 'quantity'].includes(value) && !(d.target > 1)) d.target = value === 'duration' ? 20 : 10;
+        changed(sheet);
+      },
+      kind: ({ value, sheet }) => {
+        const d = sheet.ui.draft;
+        const prev = d.schedule || {};
+        d.schedule = { kind: value, days: prev.days || [1, 2, 3, 4, 5], count: prev.count || (value === 'perMonth' ? 2 : 3), every: prev.every || 14 };
+        changed(sheet);
+      },
     },
-  },
-  inputs: {
-    f: ({ el, value, ui }) => { ui.draft[el.dataset.f] = value === '' && ['time', 'reminder', 'goalId'].includes(el.dataset.f) ? null : value; if (el.tagName === 'SELECT') app.refresh(); },
-    num: ({ el, value, ui }) => { ui.draft[el.dataset.f] = n(value); },
-    tiny: ({ el, value, ui }) => {
-      const t = { label: null, min: null, ...(ui.draft.tiny || {}) };
-      t[el.dataset.k] = el.dataset.k === 'min' ? n(value) : value;
-      ui.draft.tiny = t;
-    },
-    step: ({ el, value, ui }) => { ui.draft.checklist[Number(el.dataset.i)] = value; },
-    type: ({ value, ui }) => {
-      ui.draft.type = value;
-      if (value === 'duration' && !ui.draft.unit) ui.draft.unit = 'min';
-      if (['numeric', 'duration', 'quantity'].includes(value) && !(ui.draft.target > 1)) ui.draft.target = value === 'duration' ? 20 : 10;
-      app.refresh();
-    },
-    kind: ({ value, ui }) => {
-      const prev = ui.draft.schedule || {};
-      ui.draft.schedule = { kind: value, days: prev.days || [1, 2, 3, 4, 5], count: prev.count || (value === 'perMonth' ? 2 : 3), every: prev.every || 14 };
-      app.refresh();
-    },
-  },
-};
+  });
+  if (isNew) s.expand?.();
+  return s;
+}

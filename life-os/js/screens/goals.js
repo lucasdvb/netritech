@@ -33,7 +33,7 @@ export function goalSheet(existing = null) {
           name: form.name.trim(), description: form.description, category: form.category, type: form.type,
           start: num(form.start), target: num(form.target), unit: form.unit, deadline: form.deadline || null });
         app.closeSheet(sheet);
-        if (!existing) app.go(`more/goals/${g.id}`);
+        if (!existing) app.go(`plan/goals/${g.id}`);
       },
     },
   });
@@ -48,13 +48,13 @@ export default {
     const other = all.filter((g) => g.status !== 'active');
     const card = (g) => {
       const p = G.progress(g);
-      return html`<li><a class="goal-card" href="#/more/goals/${g.id}" data-action="nav" data-to="more/goals/${g.id}" style="--ic:${catColor(g.category)}">
+      return html`<li><a class="goal-card" href="#/plan/goals/${g.id}" data-action="nav" data-to="plan/goals/${g.id}" style="--ic:${catColor(g.category)}">
         <span class="goal-ring">${ring(p.ratio || 0, { size: 46, stroke: 4.5, color: 'var(--ic)' })}<span class="goal-ic">${icon(CATEGORIES.find((c) => c.id === g.category)?.icon || 'target', { size: 16 })}</span></span>
-        <span class="row-main"><span class="row-title">${g.name}</span><span class="row-sub">${p.label || catLabel(g.category)}</span></span>
+        <span class="row-main"><span class="row-title" data-morph="goal-${g.id}">${g.name}</span><span class="row-sub">${p.label || catLabel(g.category)}</span></span>
         <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>`;
     };
     return html`
-      ${pageHead({ title: 'Goals', back: { to: 'more', label: 'More' }, actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New goal">${icon('plus', { size: 20 })}</button>` })}
+      ${pageHead({ title: 'Goals', back: { to: 'plan', label: 'Plan' }, actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New goal">${icon('plus', { size: 20 })}</button>` })}
       <p class="lead">Numbers where they’re real, milestones where they’re not, consistency for the habits that carry each goal.</p>
       ${active.length ? html`<ul class="goal-list">${active.map(card)}</ul>` : empty({ ic: 'target', title: 'No active goals', cta: 'Add a goal', action: 'new' })}
       ${other.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Paused or done</h2></div><ul class="goal-list">${other.map(card)}</ul></section>` : ''}`;

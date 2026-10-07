@@ -26,7 +26,7 @@ export function weightCard() {
   }
   return html`<div class="card card--ink body-hero">
     <div class="body-hero-top">
-      <a class="body-hero-main" href="#/body/weight" data-action="nav" data-to="body/weight">
+      <a class="body-hero-main" href="#/progress/body/weight" data-action="nav" data-to="progress/body/weight">
         <p class="section-label">Weight · 7-day average</p>
         <p class="big-num tnum">${s.avg7 != null ? num(kgOut(s.avg7), 1) : '—'}<span>${weightUnit()}</span></p>
         <p class="hero-meta">${s.weekChange != null ? html`<span class="${cx('delta', s.weekChange < -0.05 && 'is-down', s.weekChange > 0.05 && 'is-up')}">${signed(kgOut(s.weekChange), 1)} ${weightUnit()}</span> this week` : 'Change appears after a week'}
@@ -45,7 +45,7 @@ function compositionCard() {
   const c = M.bodyComposition();
   const p = store.profile();
   const progress = c.bodyFat != null ? Math.max(0, Math.min(1, (p.startBodyFat - c.bodyFat) / (p.startBodyFat - p.goalBodyFat))) : 0;
-  return html`<a class="card card--link" href="#/body/measurements" data-action="nav" data-to="body/measurements">
+  return html`<a class="card card--link" href="#/progress/body/measurements" data-action="nav" data-to="progress/body/measurements">
     <div class="card-head"><p class="section-label">Body composition · estimate</p>${icon('chevron-right', { size: 18, cls: 'muted' })}</div>
     <div class="comp-grid">
       <div><p class="stat-label">Body fat</p><p class="comp-val tnum">~${num(c.bodyFat, 1)}%</p></div>
@@ -75,11 +75,11 @@ function trainingCard() {
     ['Cardio', w.cardio, 2, 'var(--c-health)'],
   ];
   return html`<div class="card">
-    <a class="card-head" href="#/body/training" data-action="nav" data-to="body/training"><p class="section-label">Training · this week</p>${icon('chevron-right', { size: 18, cls: 'muted' })}</a>
+    <a class="card-head" href="#/plan/training" data-action="nav" data-to="plan/training"><p class="section-label">Training · this week</p>${icon('chevron-right', { size: 18, cls: 'muted' })}</a>
     <div class="week-meters">${items.map(([label, v, t, c]) => html`<div class="meter">
       <div class="meter-top"><span>${label}</span><b class="tnum">${v}<small>/${t}</small></b></div>
       <div class="meter-track"><span style="transform:scaleX(${Math.min(1, v / t).toFixed(3)});background:${c}"></span></div></div>`)}</div>
-    ${active ? html`<button type="button" class="btn btn--primary btn--block" data-action="nav" data-to="body/workout/${active.id}">${icon('play', { size: 16 })} Resume ${active.title}</button>`
+    ${active ? html`<button type="button" class="btn btn--primary btn--block" data-action="nav" data-to="workout/${active.id}">${icon('play', { size: 16 })} Resume ${active.title}</button>`
       : html`<button type="button" class="btn btn--soft btn--block" data-action="start">${icon('play', { size: 16 })} ${call.kind === 'done' ? 'Log another session' : `Start · ${call.title}`}</button>`}
   </div>`;
 }
@@ -105,7 +105,7 @@ function sleepStepsCard() {
   const st = M.steps(today());
   const st7 = M.averageOver(addDays(today(), -1), 7, (d) => M.steps(d));
   return html`<div class="duo">
-    <a class="card card--link duo-cell" href="#/body/sleep" data-action="nav" data-to="body/sleep">
+    <a class="card card--link duo-cell" href="#/progress/body/sleep" data-action="nav" data-to="progress/body/sleep">
       <p class="section-label">${icon('bed', { size: 13 })} Sleep</p>
       <p class="duo-val tnum">${sl ? durationHM(sl.hours * 60) : '—'}</p>
       <p class="muted">${s7.n ? `7-day avg ${num(s7.value, 1)} h` : 'Log it in the check-in'}</p>
@@ -124,12 +124,12 @@ function measureCard() {
   const photos = store.all('photos').sort((a, b) => (a.date < b.date ? 1 : -1));
   const mDue = H.habit('h-measure') ? H.periodLabel(H.habit('h-measure'), today()) : '';
   return html`<div class="duo">
-    <a class="card card--link duo-cell" href="#/body/measurements" data-action="nav" data-to="body/measurements">
+    <a class="card card--link duo-cell" href="#/progress/body/measurements" data-action="nav" data-to="progress/body/measurements">
       <p class="section-label">${icon('ruler', { size: 13 })} Waist</p>
       <p class="duo-val tnum">${waist ? fl(Number(waist.waist)) : '—'}</p>
       <p class="muted">${waist && first && first.id !== waist.id ? `${signed(waist.waist - first.waist, 1)} cm since first` : mDue || 'Every two weeks'}</p>
     </a>
-    <a class="card card--link duo-cell" href="#/body/photos" data-action="nav" data-to="body/photos">
+    <a class="card card--link duo-cell" href="#/progress/body/photos" data-action="nav" data-to="progress/body/photos">
       <p class="section-label">${icon('camera', { size: 13 })} Photos</p>
       <p class="duo-val">${photos.length ? relativeDay(photos[0].date) : 'None yet'}</p>
       <p class="muted">Monthly · private to this device</p>
@@ -142,14 +142,13 @@ export default {
   title: 'Body',
   render() {
     return html`
-      ${pageHead({ title: 'Body', sub: 'Lose fat, keep the muscle, feel good doing it.',
-        actions: html`<button type="button" class="icon-btn" data-action="open-search" aria-label="Search">${icon('search', { size: 20 })}</button>` })}
+      ${pageHead({ title: 'Body', back: { to: 'progress', label: 'Progress' }, sub: 'Lose fat, keep the muscle, feel good doing it.' })}
       <div class="body-grid">
         <div class="stack">${weightCard()}${compositionCard()}${measureCard()}</div>
         <div class="stack">
           ${trainingCard()}
           <div class="card">
-            <a class="card-head" href="#/body/nutrition" data-action="nav" data-to="body/nutrition"><p class="section-label">Nutrition · today</p>${icon('chevron-right', { size: 18, cls: 'muted' })}</a>
+            <a class="card-head" href="#/progress/body/nutrition" data-action="nav" data-to="progress/body/nutrition"><p class="section-label">Nutrition · today</p>${icon('chevron-right', { size: 18, cls: 'muted' })}</a>
             ${nutritionRings()}
             <div class="quick-row">
               <button type="button" class="btn btn--soft btn--sm" data-action="food">${icon('plus', { size: 16 })} Food</button>

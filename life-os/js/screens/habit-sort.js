@@ -67,7 +67,7 @@ export default {
     for (const h of all) { const st = stateIn(map, h); if (st in counts) counts[st]++; }
     const changed = Object.entries(map).some(([id, st]) => H.habit(id) && H.stateOf(H.habit(id)) !== st);
     return html`
-      ${pageHead({ title: 'Choose your three', back: { to: 'habits', label: 'Habits' },
+      ${pageHead({ title: 'Choose your three', back: { to: 'plan/habits', label: 'Habits' },
         sub: 'Three habits get your full attention and count in your score. Everything else runs on autopilot and never counts against you.' })}
 
       <section class="sort-three" data-key="three" aria-label="Your three">

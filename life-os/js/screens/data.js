@@ -32,7 +32,7 @@ export default {
     const last = s.lastBackupAt;
     const records = ['habitLogs', 'weightEntries', 'nutritionLogs', 'workouts', 'journalEntries', 'measurements'].reduce((a, k) => a + store.count(k), 0);
     return html`
-      ${pageHead({ title: 'Data & backup', back: { to: 'more', label: 'More' } })}
+      ${pageHead({ title: 'Data & backup', back: { to: 'today', label: 'Today' } })}
       <p class="lead">Your data lives in this browser’s storage on this device. A backup file is the way to move it or keep it safe.</p>
       <section class="card">
         <p class="section-label">Backup</p>

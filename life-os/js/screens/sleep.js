@@ -20,7 +20,7 @@ export default {
     const entries = store.all('sleepEntries').sort((a, b) => (a.date < b.date ? 1 : -1));
     const t = M.targets();
     if (!entries.length) {
-      return html`${pageHead({ title: 'Sleep', back: { to: 'body', label: 'Body' } })}
+      return html`${pageHead({ title: 'Sleep', back: { to: 'progress/body', label: 'Body' } })}
         ${empty({ ic: 'bed', title: 'No nights logged yet', body: 'The morning check-in takes 30 seconds: bedtime, wake time and how you feel.', cta: 'Morning check-in', action: 'checkin' })}`;
     }
     const last14 = entries.filter((e) => e.date > lastNDays(today(), 14)[0] || e.date === lastNDays(today(), 14)[0]);
@@ -31,7 +31,7 @@ export default {
     const onTarget = last14.filter((e) => e.hours >= t.sleepMinH).length;
     const consistencyText = bedSd == null ? 'Needs a few more nights' : bedSd <= 30 ? 'Very consistent' : bedSd <= 60 ? 'Fairly consistent' : 'Bedtime varies a lot';
     return html`
-      ${pageHead({ title: 'Sleep', back: { to: 'body', label: 'Body' }, actions: html`<button type="button" class="btn btn--soft btn--sm" data-action="checkin">Log night</button>` })}
+      ${pageHead({ title: 'Sleep', back: { to: 'progress/body', label: 'Body' }, actions: html`<button type="button" class="btn btn--soft btn--sm" data-action="checkin">Log night</button>` })}
       <div class="stat-row stat-row--3">
         <div class="stat"><p class="stat-label">Last night</p><p class="stat-value tnum">${entries[0].date === today() ? durationHM(entries[0].hours * 60) : '—'}</p><p class="stat-sub">${entries[0].quality ? `quality ${entries[0].quality}/10` : ''}</p></div>
         <div class="stat"><p class="stat-label">14-day average</p><p class="stat-value tnum">${avgH ? num(avgH, 1) : '—'}<span class="stat-unit">h</span></p><p class="stat-sub">target ${t.sleepH}–8.5 h</p></div>

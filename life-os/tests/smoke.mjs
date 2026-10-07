@@ -70,32 +70,35 @@ await step('check-in sheet', async () => {
 });
 
 await step('tabs render', async () => {
-  for (const t of ['progress', 'habits', 'body', 'more', 'today']) {
+  for (const t of ['plan', 'progress', 'reflect', 'today']) {
     await page.locator(`a.tab[href="#/${t}"]`).click();
     await page.waitForSelector(`[data-view="${t}"]`);
   }
 });
 
 await step('habits list + detail', async () => {
-  await page.goto(base + '#/habits');
+  await page.goto(base + '#/plan/habits');
   await page.waitForSelector('[data-view="habits"] .list');
   await shot('10-habits');
-  await page.locator('a[href="#/habits/h-prayer"]').click();
+  await page.locator('a[href="#/plan/habits/h-prayer"]').click();
   await page.waitForSelector('[data-view="habit"] .heat');
   await shot('11-habit-detail');
 });
 
 await step('create habit', async () => {
-  await page.goto(base + '#/habits/new');
-  await page.waitForSelector('.editor');
-  await page.fill('.editor [data-f="name"]', 'Evening walk');
-  await page.locator('.ed-more > summary').click();
-  await page.waitForSelector('.ed-more[open] select[data-change="kind"]');
-  await page.selectOption('select[data-change="kind"]', 'perWeek');
-  await page.locator('[data-action="count"][data-delta="1"]').click();
-  await page.locator('.switch[data-f="streaks"]').click();
+  await page.goto(base + '#/plan/habits');
+  await page.waitForSelector('[data-view="habits"] .list');
+  await page.locator('[data-action="new"]').first().click();
+  await page.waitForSelector('.sheet .new-habit');
+  await page.fill('.new-habit [data-f="name"]', 'Evening walk');
+  await page.locator('.new-habit [data-action="more"]').click();
+  await page.waitForSelector('.sheet .editor .ed-more[open] select[data-change="kind"]');
+  await page.selectOption('.sheet select[data-change="kind"]', 'perWeek');
+  await page.locator('.sheet [data-action="count"][data-delta="1"]').click();
+  await page.locator('.sheet .switch[data-f="streaks"]').click();
   await shot('12-editor');
-  await page.locator('.editor button[type="submit"]').click();
+  await page.locator('.sheet .editor button[type="submit"]').click();
+  await page.locator('.toast-btn', { hasText: 'Open' }).click();
   await page.waitForSelector('[data-view="habit"]');
   const title = await page.textContent('.page-title');
   if (title.trim() !== 'Evening walk') throw new Error('title ' + title);
@@ -103,12 +106,13 @@ await step('create habit', async () => {
   if (!sched.includes('4× a week')) throw new Error('schedule not saved: ' + sched);
 });
 
-await step('edit + archive + restore', async () => {
+await step('edit saves as you go; archive + restore', async () => {
   await page.locator('[data-action="edit"]').click();
-  await page.waitForSelector('.editor');
-  await page.fill('.editor [data-f="name"]', 'Evening walk outside');
-  await page.locator('.editor button[type="submit"]').click();
+  await page.waitForSelector('.sheet .editor');
+  await page.fill('.sheet .editor [data-f="name"]', 'Evening walk outside');
+  await page.keyboard.press('Escape');
   await page.waitForFunction(() => document.querySelector('.page-title')?.textContent.includes('outside'));
+  await page.waitForSelector('.toast-btn:has-text("Undo")');
   await page.locator('[data-action="archive"]').click();
   await page.waitForSelector('.notice');
   await page.locator('.notice [data-action="restore"]').click();

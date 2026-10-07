@@ -1,4 +1,5 @@
 import * as store from '../data/store.js';
+import { areaBlocks } from './area.js';
 import * as H from '../domain/habits.js';
 import { today, lastNDays, startOfWeek, relativeDay, fmtDayLetter, monthKey, fmtMonth, startOfMonth } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
@@ -21,7 +22,7 @@ export default {
     const study = H.habit('h-study');
     const mr = store.get('monthlyReviews', monthKey(today()));
     return html`
-      ${pageHead({ title: 'Faith', back: { to: 'more', label: 'More' } })}
+      ${pageHead({ title: 'Faith', back: { to: 'progress', label: 'Progress' } })}
       <p class="lead">Practice, not points. This page shows what you did, nothing more.</p>
       <section class="card">
         <p class="section-label">Daily · last 7 days</p>
@@ -50,7 +51,7 @@ export default {
         <div class="card">
           <p class="reflect-q">Am I becoming more disciplined, loving, truthful, patient and useful?</p>
           ${mr?.spirit ? html`<p class="reflect-a">${mr.spirit}</p>` : html`<p class="muted small">Answered in the monthly review.</p>`}
-          <a class="link-btn" href="#/more/review/month" data-action="nav" data-to="more/review/month">Open ${fmtMonth(startOfMonth(today()))} review</a>
+          <a class="link-btn" href="#/reflect/review/month" data-action="nav" data-to="reflect/review/month">Open ${fmtMonth(startOfMonth(today()))} review</a>
         </div>
       </section>
       ${gratitude.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Gratitude</h2></div>
@@ -59,7 +60,8 @@ export default {
         ${sessions.length ? html`<ul class="list">${sessions.slice(0, 12).map((s) => html`<li><button type="button" class="row" data-action="edit" data-id="${s.id}">
           <span class="row-main"><span class="row-title">${s.kind[0].toUpperCase() + s.kind.slice(1)}${s.passage ? ` · ${s.passage}` : ''}</span><span class="row-sub">${relativeDay(s.date)}${s.minutes ? ` · ${s.minutes} min` : ''}${s.notes ? ` · ${s.notes.slice(0, 60)}` : ''}</span></span></button></li>`)}</ul>`
           : html`<p class="muted">Ticking prayer on Today is enough. Log a session here when you want to keep a note or a passage.</p>`}
-      </section>`;
+      </section>
+      ${areaBlocks('spirit')}`;
   },
   actions: {
     mark: ({ data }) => { const h = H.habit(data.id); const now = H.toggle(h, today()); now ? hap.success() : hap.tap(); },

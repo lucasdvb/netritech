@@ -45,7 +45,7 @@ export default {
       ['Son · family', `${f.son} · ${f.family}`, 'moments'],
     ];
     return html`
-      ${pageHead({ title: fmtMonth(`${month}-01`), eyebrow: 'Monthly review', back: { to: 'more/reviews', label: 'Reviews' },
+      ${pageHead({ title: fmtMonth(`${month}-01`), eyebrow: 'Monthly review', back: { to: 'reflect/reviews', label: 'Reviews' },
         actions: html`<div class="seg-mini"><button type="button" class="icon-btn icon-btn--sm" data-action="month" data-delta="-1" aria-label="Previous month">${icon('chevron-left', { size: 18 })}</button>
           <button type="button" class="icon-btn icon-btn--sm" data-action="month" data-delta="1" aria-label="Next month" ${month >= monthKey(today()) ? 'disabled' : ''}>${icon('chevron-right', { size: 18 })}</button></div>` })}
       ${r.completedAt ? html`<div class="notice">${icon('check', { size: 16 })} Completed ${relativeDay(r.completedAt.slice(0, 10)).toLowerCase()}.</div>` : ''}
@@ -75,7 +75,7 @@ export default {
       const m = params.month || monthKey(today());
       const next = monthKey(addMonths(`${m}-01`, Number(data.delta)));
       if (next > monthKey(today())) return;
-      app.replace(`more/review/month/${next}`);
+      app.replace(`reflect/review/month/${next}`);
     },
     complete: async ({ params }) => {
       const m = params.month || monthKey(today());

@@ -1,5 +1,6 @@
 // One habit, most useful first: its run and state, this week, history, statistics, details.
 import * as store from '../data/store.js';
+import { deleteWithUndo } from '../ui/undo.js';
 import * as H from '../domain/habits.js';
 import { catLabel, sectionLabel, habitColor } from '../domain/taxonomy.js';
 import { today, addDays, range, lastNDays, fmtMD, fmtDayShort, fmtDayLetter, relativeDay, startOfWeek, endOfWeek, addMonths } from '../domain/dates.js';
@@ -65,7 +66,7 @@ export default {
   title: ({ params }) => H.habit(params.id)?.name || 'Habit',
   render({ params }) {
     const h = H.habit(params.id);
-    if (!h) return html`${pageHead({ title: 'Not found', back: { to: 'habits', label: 'Habits' } })}${empty({ ic: 'circle-alert', title: 'This habit doesn’t exist anymore.' })}`;
+    if (!h) return html`${pageHead({ title: 'Not found', back: { to: 'plan/habits', label: 'Habits' } })}${empty({ ic: 'circle-alert', title: 'This habit doesn’t exist anymore.' })}`;
     const st = H.stateOf(h);
     const c7 = H.consistency(h, today(), 7);
     const c30 = H.consistency(h, today(), 30);
@@ -91,7 +92,7 @@ export default {
     ].filter(Boolean);
 
     return html`
-      ${pageHead({ title: h.name, eyebrow: `${H.STATES[st].label} · ${catLabel(h.category)}`, back: { to: 'habits', label: 'Habits' },
+      ${pageHead({ title: h.name, morph: `habit-${h.id}`, eyebrow: `${H.STATES[st].label} · ${catLabel(h.category)}`, back: { to: 'plan/habits', label: 'Habits' },
         actions: html`<button type="button" class="btn btn--soft btn--sm" data-action="edit">Edit</button>` })}
       ${h.description ? html`<p class="lead">${h.description}</p>` : ''}
       ${h.archived ? html`<div class="notice">${icon('archive', { size: 16 })} Archived. History is kept. <button type="button" class="link-btn" data-action="restore">Restore</button></div>` : ''}
@@ -156,15 +157,22 @@ export default {
         <button type="button" class="btn btn--ghost btn--danger-text" data-action="delete">${icon('trash-2', { size: 18 })} Delete</button>
       </div>`;
   },
+  mount(el, ctx) {
+    // Older "edit" addresses land here and open the editor.
+    if (ctx.query.edit && H.habit(ctx.params.id)) {
+      window.history.replaceState(window.history.state, '', location.hash.split('?')[0]);
+      import('./habit-edit.js').then((m) => m.openHabitEditor(ctx.params.id));
+    }
+  },
   actions: {
-    edit: ({ params }) => app.go(`habits/${params.id}/edit`),
+    edit: async ({ params }) => (await import('./habit-edit.js')).openHabitEditor(params.id),
     'log-today': ({ params }) => openHabit(params.id, today()),
     state: ({ data, params }) => {
       const h = H.habit(params.id);
       if (data.value === H.stateOf(h)) return;
       if (data.value === 'paused') return openPause(h);
       if (!H.setState(h, data.value)) {
-        app.toast('Your three are full. Swap one out first.', { action: { label: 'Choose', fn: () => app.go('habits/sort') } });
+        app.toast('Your three are full. Swap one out first.', { action: { label: 'Choose', fn: () => app.go('plan/habits/sort') } });
         return;
       }
       hap.tap();
@@ -184,14 +192,12 @@ export default {
       app.toast(`${h.name} archived`, { action: { label: 'Undo', fn: () => store.update('habits', h.id, { archived: false }) } });
     },
     restore: ({ params }) => { store.update('habits', params.id, { archived: false }); hap.tap(); },
-    delete: async ({ params }) => {
+    delete: ({ params }) => {
       const h = H.habit(params.id);
       const logs = store.where('habitLogs', (l) => l.habitId === h.id);
-      const ok = await app.confirm({ title: `Delete “${h.name}”?`, body: `This removes the habit and its ${logs.length} logged day${logs.length === 1 ? '' : 's'}. Archiving keeps the history instead.`, confirm: 'Delete', tone: 'danger' });
-      if (!ok) return;
-      store.batch([{ store: 'habits', delete: h.id }, ...logs.map((l) => ({ store: 'habitLogs', delete: l.id }))]);
-      app.replace('habits');
-      app.toast('Habit deleted');
+      app.replace('plan/habits');
+      deleteWithUndo([{ store: 'habits', id: h.id }, ...logs.map((l) => ({ store: 'habitLogs', id: l.id }))],
+        `${h.name} deleted, with ${logs.length} logged day${logs.length === 1 ? '' : 's'}`);
     },
   },
 };

@@ -17,7 +17,8 @@
   ],
   "shortcuts": [
     { "name": "Today", "url": "./#/today" },
-    { "name": "Log weight", "url": "./#/body/weight" },
-    { "name": "Journal", "url": "./#/more/journal" }
+    { "name": "Log weight", "url": "./#/progress/body/weight" },
+    { "name": "Plan", "url": "./#/plan" },
+    { "name": "Reflect", "url": "./#/reflect" }
   ]
 }

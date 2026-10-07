@@ -57,7 +57,7 @@ export default {
       ['Work', 'briefcase', [['Priorities', f.priorities.set ? `${f.priorities.done} of ${f.priorities.set} done` : '—'], ['Focus blocks', `${f.deepWork}`], ['Wins', f.wins.length ? f.wins.map((w) => w.text).join(' · ') : '—']]],
     ];
     return html`
-      ${pageHead({ title: 'Weekly review', eyebrow: `${fmtMD(ws)} – ${fmtMD(endOfWeek(ws))}${isCurrent ? ' · this week' : ''}`, back: { to: 'more/reviews', label: 'Reviews' },
+      ${pageHead({ title: 'Weekly review', eyebrow: `${fmtMD(ws)} – ${fmtMD(endOfWeek(ws))}${isCurrent ? ' · this week' : ''}`, back: { to: 'reflect/reviews', label: 'Reviews' },
         actions: html`<div class="seg-mini"><button type="button" class="icon-btn icon-btn--sm" data-action="week" data-delta="-7" aria-label="Previous week">${icon('chevron-left', { size: 18 })}</button>
           <button type="button" class="icon-btn icon-btn--sm" data-action="week" data-delta="7" aria-label="Next week" ${ws >= startOfWeek(today()) ? 'disabled' : ''}>${icon('chevron-right', { size: 18 })}</button></div>` })}
       ${r.completedAt ? html`<div class="notice">${icon('check', { size: 16 })} Completed ${relativeDay(r.completedAt.slice(0, 10)).toLowerCase()}. You can still edit it.</div>` : html`<p class="lead">15–30 minutes. Look at what happened, then choose one change. Only one.</p>`}
@@ -86,7 +86,7 @@ export default {
       const ws = weekOf(params);
       const next = addDays(ws, Number(data.delta));
       if (next > startOfWeek(today())) return;
-      app.replace(`more/review/week/${next}`);
+      app.replace(`reflect/review/week/${next}`);
     },
     biz: ({ data, params }) => {
       const ws = weekOf(params);
