@@ -98,7 +98,7 @@ export function lineChart({ labels, series, height = 180, fmt = (v) => v, yFmt =
   const dotsHtml = series.filter((s) => !s.noDot).map((s) => {
     const i = lastIdx(s.values);
     if (i < 0) return '';
-    return raw(`<span class="chart-dot${s.fill ? ' chart-dot--lime' : ''}" style="left:${(X(i) / 10).toFixed(2)}%;top:${(Y(s.values[i]) / 10).toFixed(2)}%;--c:${s.color}"></span>`);
+    return raw(`<span class="chart-dot${s.fill ? ' chart-dot--accent' : ''}" style="left:${(X(i) / 10).toFixed(2)}%;top:${(Y(s.values[i]) / 10).toFixed(2)}%;--c:${s.color}"></span>`);
   });
   const marks = series.filter((s) => s.marks).map((s) => s.values.map((v, i) => (v == null ? '' : raw(`<span class="chart-mark" style="left:${(X(i) / 10).toFixed(2)}%;top:${(Y(v) / 10).toFixed(2)}%;--c:${s.color}"></span>`))));
   const step = Math.max(1, Math.ceil(n / xTicks));
@@ -109,7 +109,7 @@ export function lineChart({ labels, series, height = 180, fmt = (v) => v, yFmt =
   return html`<figure class="chart" data-chart="${id}" style="height:${height}px">
     <div class="chart-plot">
       <svg viewBox="0 0 ${W} ${HGT}" preserveAspectRatio="none" aria-hidden="true">
-        <defs>${series.map((s, si) => raw(`<linearGradient id="g-${id}-${si}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${s.fill || s.color}" stop-opacity="${s.fill ? '.75' : '.18'}"/><stop offset="1" stop-color="${s.fill || s.color}" stop-opacity="0"/></linearGradient>`))}</defs>
+        <defs>${series.map((s, si) => raw(`<linearGradient id="g-${id}-${si}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${s.fill || s.color}" stop-opacity="${s.fill ? '.32' : '.18'}"/><stop offset="1" stop-color="${s.fill || s.color}" stop-opacity="0"/></linearGradient>`))}</defs>
         ${r.ticks.map((t) => raw(`<line class="chart-grid" x1="0" x2="${W}" y1="${Y(t)}" y2="${Y(t)}" vector-effect="non-scaling-stroke"/>`))}
         ${goal ? raw(`<line class="chart-goal-line" x1="0" x2="${W}" y1="${Y(goal.value)}" y2="${Y(goal.value)}" vector-effect="non-scaling-stroke"/>`) : ''}
         ${paths}
@@ -133,7 +133,7 @@ export function barChart({ labels, values, height = 150, color = 'var(--accent)'
   const vals = values.map((v) => (v == null ? null : Number(v)));
   const hi = Math.max(max ?? 0, goal?.value ?? 0, ...vals.filter((v) => v != null), 1);
   const id = `c${++seq}`;
-  remember(id, { labels: tipLabels || labels, series: [{ values: vals, color: 'var(--lime)', label: '' }], fmt, n: vals.length, bars: true });
+  remember(id, { labels: tipLabels || labels, series: [{ values: vals, color: 'var(--accent)', label: '' }], fmt, n: vals.length, bars: true });
   return html`<figure class="chart chart--bars" data-chart="${id}" style="height:${height}px">
     <div class="chart-plot">
       ${goal ? html`<span class="chart-goal-bar" style="bottom:${((goal.value / hi) * 100).toFixed(2)}%"><b>${goal.label}</b></span>` : ''}

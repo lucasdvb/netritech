@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = 'c10633aba2';
+const VERSION = '26f26393a0';
 const ASSETS = [
   "./",
   "./index.html",
@@ -35,6 +35,7 @@ const ASSETS = [
   "./js/ui/haptics.js",
   "./js/ui/icons.js",
   "./js/ui/install.js",
+  "./js/ui/meridian.js",
   "./js/ui/patch.js",
   "./js/ui/router.js",
   "./js/ui/sheet.js",
@@ -76,8 +77,8 @@ const ASSETS = [
   "./js/views/work.js",
   "./js/views/workout-actions.js",
   "./js/views/workout.js",
-  "./assets/fonts/Inter-latin-ext.woff2",
-  "./assets/fonts/Inter-latin.woff2",
+  "./assets/fonts/Manrope-latin-ext.woff2",
+  "./assets/fonts/Manrope-latin.woff2",
   "./assets/icons/apple-touch-icon.png",
   "./assets/icons/favicon-32.png",
   "./assets/icons/icon-192.png",

@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "brief": {
+    "dimensionality": ["depth", "flat"],
+    "mood": ["calm", "technical"],
+    "tone": ["light", "dark"],
+    "motionEnergy": ["subtle"],
+    "density": ["dense", "balanced"]
+  },
+  "styleId": "stride-style",
+  "tokens": {
+    "gl-bg": "#ffffff",
+    "gl-bg-alt": "#f4f4f7",
+    "gl-surface": "#f4f4f7",
+    "gl-surface-raised": "#ffffff",
+    "gl-ink": "#171717",
+    "gl-ink-muted": "#5d636f",
+    "gl-ink-subtle": "#8e95a2",
+    "gl-accent": "#1246e2",
+    "gl-accent-ink": "#ffffff",
+    "gl-line": "rgba(17, 17, 20, 0.08)",
+    "gl-glow": "#2ad4ff",
+    "gl-font-display": "'Manrope', ui-sans-serif, system-ui, sans-serif",
+    "gl-font-body": "'Manrope', ui-sans-serif, system-ui, sans-serif",
+    "gl-radius": "1rem",
+    "gl-radius-lg": "1.875rem",
+    "gl-ease": "cubic-bezier(0.16, 1, 0.3, 1)"
+  },
+  "placed": [
+    { "sectionId": "today-hero", "slot": 0, "sceneId": "meridian",
+      "sceneParams": { "bgColor": "#04060d", "colorA": "#060b22", "colorB": "#1246e2", "colorC": "#2ad4ff", "colorD": "#8fc4ff", "roll": "meridian-004", "level": -0.45, "ambient": 0.06, "bright": 1.05, "core": 0.1, "reach": 0.32 } },
+    { "sectionId": "body-weight-card", "slot": 1, "sceneId": "meridian", "sceneParams": "same as today-hero" }
+  ],
+  "notes": "Life OS is a daily-use PWA, so no immersive loader (GetLayers guidance for app shells). Font: Manrope from the GetLayers catalogue, self-hosted in assets/fonts so it works offline. Meridian runs from js/ui/meridian.js (shader and motion unchanged from the master; CONFIG only). Buttons borrow Aerra's sheen + arrow tile and Relay's clockwise ring; entrances use the house blur-rise reveal. Dark mode is true black with the same blue. Brand colour file from the owner is still pending: when it arrives, swap --brand / --glow / pillar tokens in css/tokens.css and the Meridian palette in js/ui/meridian.js."
+}

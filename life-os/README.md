@@ -123,13 +123,20 @@ Nothing in the app is a medical claim:
 
 ## Design
 
-The look follows modern finance-app references: near-black and white surfaces with a single bright lime accent (`#D3F36B`), plus soft lavender, peach and mint for the Today metric tiles.
+The look is built from the [GetLayers](https://www.getlayers.ai) library. Its decisions are recorded in `getlayers.json`:
 
-- **Shapes:** pill buttons and chips, round icon buttons, and big flat cards with 30 px corners.
-- **Navigation:** a floating black tab bar with round buttons on phones; a black sidebar on desktop.
-- **Black cards:** the Today score and the Body weight card carry the key numbers. Ticks fill lime.
-- **Charts:** bars stand on hatched tracks. They are black where the target was hit, grey where it wasn't, and the latest day is lime. Line charts are black over a lime fill.
-- **Light and dark:** both themes come from the same tokens in `css/tokens.css`. Dark cards re-scope the text colours locally, so anything placed inside them stays readable.
+- **Style: Stride.** White paper in light mode and true black in dark mode. One royal blue (`#1246E2`) is used for actions, ticks and the active tab. Its cyan glow (`#2AD4FF`) appears only as light on the dark "stage" cards. Selected tabs and chips are black, so the blue stays rationed.
+- **Font: Manrope.** It is variable and self-hosted in `assets/fonts` (SIL OFL), so it works offline.
+- **Moving background: Meridian.** One line of light runs behind the Today score card and the Body weight card. It is ported into `js/ui/meridian.js` with its shader and motion untouched; only its settings set the Stride palette and move the band away from the text. It:
+  - draws only while on screen, at about 30 fps;
+  - shows a single still frame when reduced motion is on;
+  - falls back to a CSS gradient without WebGL2;
+  - frees its GPU context when the card leaves the page.
+- **Details from other GetLayers styles:** Aerra's sheen sweep and swapping arrow tile on the main buttons, Relay's ring that draws itself clockwise on hover and focus, and the house reveal (blocks rise out of a slight blur in a short stagger, numbers sharpen as they stop counting).
+- **Shapes:** pill buttons and chips, round icon buttons, a floating black tab bar on phones and a black sidebar on desktop.
+- **Charts:** bars are black where the target was hit and grey where it wasn't; the latest bar is blue. Line charts are black over a soft blue fill.
+
+Every colour is a token in `css/tokens.css` (`--brand`, `--glow`, the pillar colours). A different brand palette swaps in there, plus the Meridian palette in `js/ui/meridian.js`.
 
 ## Architecture
 
@@ -190,4 +197,4 @@ Anything that needs a server (push notifications to a closed app, sync between d
 
 ---
 
-Icons: [Lucide](https://lucide.dev) (ISC). Font: [Inter](https://rsms.me/inter/) (OFL). Both are self-hosted.
+Icons: [Lucide](https://lucide.dev) (ISC). Font: [Manrope](https://github.com/sharanda/manrope) (OFL). Both are self-hosted. The Meridian gradient comes from the GetLayers library.

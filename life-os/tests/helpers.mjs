@@ -21,7 +21,7 @@ export async function setup({ base = 'http://localhost:4173/', out = './test-sho
     }
   };
   const shot = async (n) => {
-    await page.waitForTimeout(450);
+    await page.waitForTimeout(950); // let the entrance reveal settle
     const over = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
     if (over > 1) errors.push(`${n}: page is ${over}px wider than the screen`);
     const sheetOver = await page.evaluate(() => [...document.querySelectorAll('.sheet-content')].map((c) => c.scrollWidth - c.clientWidth).find((d) => d > 1) || 0);

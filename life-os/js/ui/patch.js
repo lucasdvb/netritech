@@ -114,16 +114,18 @@ function tween(el, from, to) {
   const final = target.textContent;
   const decimals = Number(el.getAttribute('data-tween-decimals') || 0);
   const suffix = el.getAttribute('data-tween-suffix') || '';
-  const dur = 420;
+  const dur = 620;
   const t0 = performance.now();
   const step = (t) => {
     const p = Math.min(1, (t - t0) / dur);
     const e = 1 - Math.pow(1 - p, 3);
     if (p < 1) {
       target.textContent = (from + (to - from) * e).toFixed(decimals) + suffix;
+      target.style.filter = `blur(${((1 - e) * 2.5).toFixed(2)}px)`;
       requestAnimationFrame(step);
     } else {
       target.textContent = final;
+      target.style.filter = '';
     }
   };
   requestAnimationFrame(step);

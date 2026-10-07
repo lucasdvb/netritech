@@ -68,7 +68,7 @@ export function applyTheme(theme = store.settings()?.theme || 'system') {
   document.documentElement.setAttribute('data-theme', theme);
   try { localStorage.setItem('lifeos.theme', theme); } catch { /* private mode */ }
   const dark = theme === 'dark' || (theme === 'system' && media.matches);
-  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', dark ? '#0A0A0A' : '#EFF0EB'));
+  document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', dark ? '#000000' : '#FFFFFF'));
 }
 media.addEventListener?.('change', () => applyTheme());
 
@@ -128,6 +128,7 @@ async function navigate() {
   const y = dir === 'view--pop' ? scrollMemory.get(path) || 0 : 0;
   window.scrollTo(0, y);
   view.mount?.(el, ctxOf(current));
+  enhanceStages(el);
   renderTabbar();
   document.title = view.title ? `${typeof view.title === 'function' ? view.title(ctxOf(current)) : view.title} · ${APP_NAME}` : APP_NAME;
   if (prev) {
@@ -146,6 +147,7 @@ function refresh() {
       const restore = focusAnchor(current.el);
       patch(current.el, current.view.render(ctxOf(current)));
       current.view.update?.(current.el, ctxOf(current));
+      enhanceStages(current.el);
       restore();
     } catch (err) {
       console.error(err);
@@ -170,6 +172,11 @@ function focusAnchor(root) {
     const target = [...(box || root).querySelectorAll(FOCUSABLE)].find(visible);
     target?.focus({ preventScroll: true });
   };
+}
+
+// Dark "stage" cards carry the Meridian gradient; the module loads only when one is on screen.
+function enhanceStages(root) {
+  if (root.querySelector('.meridian:not([data-meridian])')) import('./ui/meridian.js').then((m) => m.enhance(root)).catch((err) => console.warn(err));
 }
 
 /* ---------- event delegation ---------- */
