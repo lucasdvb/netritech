@@ -1,6 +1,6 @@
 # Home Lab hero: woman with headset in the galaxy slot
 
-**Status: v3 written to the Instatic draft, not yet published.** v3 adds the orb/brain point quality: evenly spaced points, the orb sprite (soft halo with a bright core), orb shimmer and colours, brain sparkles, and true device-pixel sizing. v2 (live) was sha256 `50c5c79e…`. The version before the woman is saved in `../rollback-2026-10-07/`.
+**Status: v3 live.** v3 adds the orb/brain point quality: evenly spaced points, the orb sprite (soft halo with a bright core), orb shimmer and colours, brain sparkles, and true device-pixel sizing. v2 (live) was sha256 `50c5c79e…`. The version before the woman is saved in `../rollback-2026-10-07/`.
 
 ![preview](preview.jpg)
 
