@@ -61,6 +61,7 @@ await step('upgrading a version 2 database keeps every record and takes a safety
   const s = await ev(async () => {
     const { store } = window.__lifeos;
     const { BACKUP_STORES } = await import('./js/data/schema.js');
+    await store.complete(); // the whole history, not only the weeks loaded first
     const counts = Object.fromEntries(BACKUP_STORES.map((k) => [k, store.count(k)]));
     const copies = await store.disk().getAll('localBackups');
     return { counts, dayEndsAt: store.profile().dayEndsAt, copies: copies.map((c) => ({ reason: c.reason, counts: c.counts })) };
