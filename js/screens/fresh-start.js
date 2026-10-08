@@ -1,5 +1,5 @@
 // Fresh start (H9): back after three or more days away. The days away are already marked "away"
-// (not missed, and runs carry on over them); you choose one to three habits for this week.
+// (not missed, and runs carry on over them); you choose a few habits for this week (up to your focus limit).
 import * as store from '../data/store.js';
 import * as H from '../domain/habits.js';
 import * as HS from '../domain/habit-system.js';
@@ -17,16 +17,16 @@ export function openFreshStart(away) {
   app.sheet({
     title: 'Welcome back',
     size: 'detent',
-    ui: { pick: focus.slice(0, 3) },
+    ui: { pick: focus.slice(0, H.focusLimit()) },
     render: (s) => html`<div class="form fresh">
       <p class="fresh-lead">You were away ${away.days} days (${fmtMD(away.from)}–${fmtMD(away.to)}). They’re marked as away, not missed, and your runs carry on from where they were.</p>
-      <p class="form-label">Pick one to three habits for this week</p>
+      <p class="form-label">Pick one to ${H.focusWord()} habits for this week</p>
       <div class="fresh-picks">${list.map((h) => {
         const on = s.ui.pick.includes(h.id);
         return html`<button type="button" class="${cx('chip chip--area', on && 'is-active')}" style="--ic:${habitColor(h)}" data-action="fs-pick" data-id="${h.id}" aria-pressed="${on}" data-key="fs-${h.id}">
           ${on ? icon('check', { size: 15 }) : html`<i class="chip-dot" aria-hidden="true"></i>`}${h.name}</button>`;
       })}</div>
-      <p class="field-hint">${s.ui.pick.length ? `${s.ui.pick.length} of 3. Everything else keeps running on autopilot.` : 'Choose at least one.'}</p>
+      <p class="field-hint">${s.ui.pick.length ? `${s.ui.pick.length} of ${H.focusLimit()}. Everything else keeps running on autopilot.` : 'Choose at least one.'}</p>
       <button type="button" class="btn btn--primary btn--block" data-action="fs-go"${attr(!s.ui.pick.length, 'aria-disabled', 'true')}>Start the week</button>
       <div class="fresh-foot">
         <button type="button" class="link-btn" data-action="fs-keep">Keep things as they are</button>
@@ -36,8 +36,9 @@ export function openFreshStart(away) {
     actions: {
       'fs-pick': ({ data, sheet }) => {
         const p = sheet.ui.pick;
-        sheet.ui.pick = p.includes(data.id) ? p.filter((x) => x !== data.id) : p.length >= 3 ? p : [...p, data.id];
-        if (p.length >= 3 && !p.includes(data.id)) app.toast('Three at most. Unpick one first.');
+        const max = H.focusLimit();
+        sheet.ui.pick = p.includes(data.id) ? p.filter((x) => x !== data.id) : p.length >= max ? p : [...p, data.id];
+        if (p.length >= max && !p.includes(data.id)) app.toast(`${H.focusWord()[0].toUpperCase()}${H.focusWord().slice(1)} at most. Unpick one first.`);
         hap.tap();
         sheet.refresh();
       },

@@ -1,7 +1,7 @@
 // Changing the habit system: creating habits, moving them between states, the sort, and
 // graduation. Loaded by the screens that do this, so Today starts without it.
 import * as store from '../data/store.js';
-import { habits, activeHabits, habit, stateOf, focusHabits, queue, FOCUS_LIMIT, periodsOf, runs, consistency, isFlexible } from './habits.js';
+import { habits, activeHabits, habit, stateOf, focusHabits, queue, focusLimit, periodsOf, runs, consistency, isFlexible } from './habits.js';
 import { today, addDays, diffDays } from './dates.js';
 
 export function newHabit(overrides = {}) {
@@ -11,7 +11,7 @@ export function newHabit(overrides = {}) {
     schedule: { kind: 'daily' }, time: null, reminder: null, difficulty: 2, priority: 'high',
     goalId: null, affectsScore: false, showOnToday: true, optional: false, streaks: false, weekly: true,
     source: null, ramp: null, checklist: null, mvd: false, mvdMin: null, mvdLabel: null, archived: false,
-    state: focusHabits().length < FOCUS_LIMIT ? 'focus' : 'queue', focusSince: today(), tiny: null, anchor: null,
+    state: focusHabits().length < focusLimit() ? 'focus' : 'queue', focusSince: today(), tiny: null, anchor: null,
     startDate: today(), order: habits().length, ...overrides,
   };
 }
@@ -20,7 +20,7 @@ export function newHabit(overrides = {}) {
 export function statePatch(h, state, { until = null, focusCount = focusHabits().length } = {}) {
   const now = stateOf(h);
   if (state === 'focus') {
-    if (now !== 'focus' && focusCount >= FOCUS_LIMIT) return null;
+    if (now !== 'focus' && focusCount >= focusLimit()) return null;
     return { state, focusSince: now === 'focus' ? h.focusSince : today(), pausedUntil: null };
   }
   if (state === 'queue') {
@@ -48,7 +48,7 @@ export function graduate(h) {
 /** Apply a sort ({ id: state }) in one write. Refuses to leave more than three in focus. */
 export function applyStates(map) {
   const after = activeHabits().filter((h) => (map[h.id] ?? stateOf(h)) === 'focus').length;
-  if (after > FOCUS_LIMIT) throw new Error(`At most ${FOCUS_LIMIT} habits can be in focus.`);
+  if (after > focusLimit()) throw new Error(`At most ${focusLimit()} habits can be in focus.`);
   let order = Math.max(0, ...queue().map((q) => q.queueOrder ?? 0));
   const ops = [];
   for (const [id, state] of Object.entries(map)) {
@@ -64,8 +64,8 @@ export function applyStates(map) {
 /** Graduation can be put off; it comes back two weeks later. */
 export const graduationDue = (h, date = today()) => (h.graduationSnoozed && diffDays(date, h.graduationSnoozed) < 14 ? null : graduation(h, date));
 
-/** Three habits worth training first: ones that matter, that aren't automatic yet. */
-export function suggestFocus(n = FOCUS_LIMIT, date = today()) {
+/** Habits worth training first (as many as fit in focus): ones that matter, that aren't automatic yet. */
+export function suggestFocus(n = focusLimit(), date = today()) {
   const candidates = activeHabits().filter((h) => {
     const st = stateOf(h, date);
     const s = h.schedule || { kind: 'daily' };

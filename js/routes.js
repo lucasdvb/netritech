@@ -32,6 +32,11 @@ export const ROUTES = [
   { path: 'plan/training/exercises', tab: 'plan', depth: 2, load: v('exercises') },
   { path: 'plan/training', tab: 'plan', depth: 1, load: v('training') },
   { path: 'plan/playbook', tab: 'plan', depth: 1, load: v('playbook') },
+  { path: 'plan/moodboard', tab: 'plan', depth: 1, load: v('moodboard') },
+  { path: 'plan/lists/:id', tab: 'plan', depth: 2, load: v('list'), list: 'plan/lists' },
+  { path: 'plan/lists', tab: 'plan', depth: 1, load: v('lists'), list: 'plan/lists', emptyIcon: 'list-checks', emptyText: 'Choose a list to see what’s on it.' },
+  { path: 'plan/money/:month?', tab: 'plan', depth: 1, load: v('money') },
+  { path: 'plan/dates', tab: 'plan', depth: 1, load: v('dates') },
   { path: 'plan/commitments', tab: 'plan', depth: 1, load: v('commitments') },
   { path: 'plan/rewards', tab: 'plan', depth: 1, load: v('rewards') },
 

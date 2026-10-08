@@ -49,7 +49,7 @@ export function openNewSeason() {
         <label class="field"><span class="field-label">Name</span><input class="input" data-input="sn-name" value="${s.ui.name}" placeholder="Season ${S.seasons().length + 1}" maxlength="40"></label>
         <label class="field"><span class="field-label">Intention</span><input class="input" data-input="sn-intent" value="${s.ui.intention}" placeholder="One line: who you’ll be by the end" maxlength="120"></label>
         <div class="field"><span class="field-label">Three habits <small>${s.ui.ids.length} of 3</small></span>
-          <div class="chips">${pool.slice(0, 18).map((h) => html`<button type="button" class="${cx('chip', s.ui.ids.includes(h.id) && 'is-active')}" data-action="sn-pick" data-id="${h.id}" aria-pressed="${s.ui.ids.includes(h.id)}">${h.name}</button>`)}</div>
+          <div class="chips">${pool.map((h) => html`<button type="button" class="${cx('chip', s.ui.ids.includes(h.id) && 'is-active')}" data-action="sn-pick" data-id="${h.id}" aria-pressed="${s.ui.ids.includes(h.id)}">${h.name}</button>`)}</div>
           ${moving.length ? html`<p class="field-hint">${moving.map((h) => h.name).join(', ')} move${moving.length === 1 ? 's' : ''} to autopilot.</p>` : ''}</div>
         <div class="field"><span class="field-label">Starts</span>
           <div class="seg seg--compact" role="radiogroup" aria-label="Starts">${[...new Set([start === mon ? mon : null, addDays(mon, 7)].filter(Boolean))].map((d) => html`<button type="button" role="radio" class="seg-btn" aria-checked="${s.ui.start === d}" data-action="sn-start" data-d="${d}">${d === mon ? `This Monday · ${fmtMD(d)}` : `Next Monday · ${fmtMD(d)}`}</button>`)}</div>

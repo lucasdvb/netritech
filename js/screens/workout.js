@@ -5,7 +5,7 @@ import { today, fmtMDY, dayInline } from '../domain/dates.js';
 import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty, segmented, check, scale10 } from '../ui/components.js';
-import { num } from '../ui/format.js';
+import { kgOut, kgIn, weightUnit, loadText } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 
@@ -29,19 +29,21 @@ function lastTimeLine(prev, e) {
   const name = prev.exerciseId !== e.id ? `${F.exercise(prev.exerciseId)?.name} · ` : '';
   const body = prev.metric === 'time' ? `${prev.sets} × ${Math.round(prev.totalSeconds / prev.sets)} s (best ${prev.topSeconds} s)`
     : prev.metric === 'minutes' ? `${prev.minutes} min`
-      : `${prev.sets} × ${Math.round(prev.totalReps / prev.sets)}${prev.topLoad ? ` · ${num(prev.topLoad, prev.topLoad % 1 ? 1 : 0)} kg` : ''}`;
+      : `${prev.sets} × ${Math.round(prev.totalReps / prev.sets)}${prev.topLoad ? ` · ${loadText(prev.topLoad)}` : ''}`;
   return `Last time · ${name}${body} · ${dayInline(prev.workout.date)}`;
 }
 
 function setRow(s, e, prevSets, done) {
   const p = prevSets[s.setIndex] || prevSets[prevSets.length - 1];
+  // Loads are kept in kg and shown in your unit.
+  const shown = (f, v) => (v == null ? '' : f === 'load' ? Math.round(kgOut(v) * 2) / 2 : v);
   const field = (f, label, unit, step = 1) => html`<label class="set-field"><span class="sr-only">${label}</span>
-    <input type="number" inputmode="${step % 1 ? 'decimal' : 'numeric'}" step="${step}" min="0" value="${s[f] ?? ''}" placeholder="${p?.[f] ?? '—'}" data-change="set" data-id="${s.id}" data-f="${f}" aria-label="Set ${s.setIndex + 1} ${label}"><span class="set-unit">${unit}</span></label>`;
+    <input type="number" inputmode="${step % 1 ? 'decimal' : 'numeric'}" step="${step}" min="0" value="${shown(f, s[f])}" placeholder="${p?.[f] != null ? shown(f, p[f]) : '—'}" data-change="set" data-id="${s.id}" data-f="${f}" aria-label="Set ${s.setIndex + 1} ${label}"><span class="set-unit">${unit}</span></label>`;
   return html`<li class="${cx('wset-row', s.completed && 'is-done')}" data-key="${s.id}">
     <span class="set-num tnum">${s.setIndex + 1}</span>
     <span class="set-target">${s.target || ''}</span>
     ${e.metric === 'time' ? field('seconds', 'seconds', 's') : e.metric === 'minutes' ? field('minutes', 'minutes', 'min') : field('reps', 'reps', e.unilateral ? 'reps/side' : 'reps')}
-    ${e.metric === 'reps' ? field('load', 'load', 'kg', 0.5) : html`<span></span>`}
+    ${e.metric === 'reps' ? field('load', 'load', weightUnit(), 0.5) : html`<span></span>`}
     ${check(s.completed, { action: 'complete', data: { id: s.id }, label: `Set ${s.setIndex + 1} done`, cls: 'check--sm' })}
   </li>`;
 }
@@ -169,7 +171,8 @@ export default {
     set: ({ el, value }) => {
       const s = store.get('workoutSets', el.dataset.id);
       if (!s) return;
-      store.update('workoutSets', s.id, { [el.dataset.f]: n(value) });
+      const v = n(value);
+      store.update('workoutSets', s.id, { [el.dataset.f]: el.dataset.f === 'load' && v != null ? Math.round(kgIn(v) * 100) / 100 : v });
       const w = store.get('workouts', s.workoutId);
       if (w?.status === 'done') store.update('workouts', w.id, { progression: F.workoutProgress(w).verdict });
     },

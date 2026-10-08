@@ -27,7 +27,7 @@ export function openNewHabit(prefill = {}) {
     render: (s) => {
       const u = s.ui;
       const shape = HS.guessShape(u.name, u.anchor);
-      const free = H.focusHabits().length < H.FOCUS_LIMIT;
+      const free = H.focusHabits().length < H.focusLimit();
       return html`<form class="form new-habit" data-submit="save" novalidate>
         <label class="field"><span class="field-label">What is it?</span>
           <textarea class="input input--grow${u.error ? ' is-invalid' : ''}" rows="1" data-grow data-input="f" data-f="name" placeholder="e.g. Read 10 pages" maxlength="60" autofocus aria-invalid="${!!u.error}" enterkeyhint="done">${u.name}</textarea>
@@ -39,8 +39,8 @@ export function openNewHabit(prefill = {}) {
           <textarea class="input input--grow" rows="1" data-grow data-input="f" data-f="tiny" placeholder="e.g. Read one page" maxlength="60" enterkeyhint="done">${u.tiny}</textarea>
           <span class="field-hint">The two-minute version you can do on your worst day. It always counts.</span></label>
         <p class="new-habit-where">${icon(free ? 'target' : 'clock', { size: 16 })} ${free
-          ? html`It joins <strong>your three</strong>: on Today and counted in your score.`
-          : html`Your three are full, so it waits in <strong>Later</strong> until a slot frees up.`}
+          ? html`It joins <strong>your ${H.focusWord()}</strong>: on Today and counted in your score.`
+          : html`Your ${H.focusWord()} are full, so it waits in <strong>Later</strong> until a slot frees up.`}
           <span class="muted">${catLabel(shape.category)} · ${R.routines().find((r) => r.kind === shape.section) ? `the ${sectionLabel(shape.section).toLowerCase()} routine` : sectionLabel(shape.section)} · every day</span></p>
         <div class="btn-row">
           <button type="button" class="btn btn--ghost" data-action="more">More options</button>
@@ -77,7 +77,7 @@ export function openNewHabit(prefill = {}) {
         if (r) R.append(r.id, h.id);
         hap.success();
         app.closeSheet(sheet);
-        app.toast(h.state === 'focus' ? `${h.name} is one of your three.` : `${h.name} is waiting in Later.`, {
+        app.toast(h.state === 'focus' ? `${h.name} is one of your ${H.focusWord()}.` : `${h.name} is waiting in Later.`, {
           icon: 'check', action: { label: 'Open', fn: () => app.go(`plan/habits/${h.id}`) },
         });
       },

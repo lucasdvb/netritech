@@ -5,7 +5,6 @@ import { CATEGORIES, catColor } from '../domain/taxonomy.js';
 import { today, addDays, weekday, fromISO } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { segmented } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 
@@ -28,14 +27,20 @@ export function openTask(id = null, defaults = {}) {
     area: cur?.area ?? defaults.area ?? 'life',
     date: cur ? cur.date || '' : defaults.date ?? today(),
     repeat: cur?.repeat ? cur.repeat.kind : 'none',
-    day: cur?.repeat?.kind === 'weekly' ? cur.repeat.day : null,
+    days: cur?.repeat?.kind === 'weekly' ? (cur.repeat.days?.length ? cur.repeat.days : [cur.repeat.day]) : null,
     mday: cur?.repeat?.kind === 'monthly' ? cur.repeat.day : null,
+    every: cur?.repeat?.kind === 'daily' ? cur.repeat.n || 1 : 1,
     projectId: cur ? cur.projectId || null : defaults.projectId || null,
     error: '',
   };
   const repeatOf = () => {
-    if (ui.repeat === 'weekly') return { kind: 'weekly', day: ui.day || (ui.date ? weekday(ui.date) : weekday(today())) };
+    if (ui.repeat === 'daily') return { kind: 'daily', n: ui.every || 1 };
+    if (ui.repeat === 'weekly') {
+      const days = ui.days?.length ? [...ui.days].sort() : [ui.date ? weekday(ui.date) : weekday(today())];
+      return days.length === 1 ? { kind: 'weekly', day: days[0] } : { kind: 'weekly', day: days[0], days };
+    }
     if (ui.repeat === 'monthly') return { kind: 'monthly', day: ui.mday || Math.min(28, fromISO(ui.date || today()).getDate()) };
+    if (ui.repeat === 'yearly') { const d = fromISO(ui.date || today()); return { kind: 'yearly', month: d.getMonth() + 1, day: d.getDate() }; }
     return null;
   };
   app.sheet({
@@ -54,13 +59,15 @@ export function openTask(id = null, defaults = {}) {
           <input class="input input--date" type="date" value="${u.date}" data-change="date" aria-label="Pick a date">
           ${custom ? html`<span class="field-hint">${T.dueLabel(u.date)}</span>` : ''}</div>
         <div class="field"><span class="field-label">Repeat</span>
-          ${segmented(T.REPEATS.map((r) => ({ id: r.id, label: r.id === 'none' ? 'Once' : r.id === 'weekly' ? 'Weekly' : 'Monthly' })), u.repeat, { action: 'repeat', name: 'Repeat', size: 'sm' })}
-          ${u.repeat === 'weekly' ? html`<div class="day-pick" role="group" aria-label="Day of the week">${DAYS.map(([v, l]) => {
-            const on = (repeatOf()?.day) === v;
+          <div class="chips" role="group" aria-label="Repeat">${T.REPEATS.map((r) => html`<button type="button" class="${cx('chip', u.repeat === r.id && 'is-active')}" aria-pressed="${u.repeat === r.id}" data-action="repeat" data-value="${r.id}">${r.label}</button>`)}</div>
+          ${u.repeat === 'daily' ? html`<select class="input" data-change="every" aria-label="How often">${[1, 2, 3, 4, 5, 6, 7, 10, 14, 21, 30, 60, 90].map((n) => html`<option value="${n}" ${u.every === n ? 'selected' : ''}>${n === 1 ? 'Every day' : `Every ${n} days`}</option>`)}</select>` : ''}
+          ${u.repeat === 'weekly' ? html`<div class="day-pick" role="group" aria-label="Days of the week">${DAYS.map(([v, l]) => {
+            const r = repeatOf();
+            const on = (r?.days || [r?.day]).includes(v);
             return html`<button type="button" class="${cx('day-opt', on && 'is-on')}" aria-pressed="${on}" aria-label="${DAY_NAMES[v]}" data-action="rday" data-v="${v}">${l}</button>`;
           })}</div>` : ''}
           ${u.repeat === 'monthly' ? html`<select class="input" data-change="mday" aria-label="Day of the month">${Array.from({ length: 28 }, (_, i) => i + 1).map((n) => html`<option value="${n}" ${repeatOf().day === n ? 'selected' : ''}>On day ${n}</option>`)}</select>` : ''}
-          ${u.repeat !== 'none' ? html`<span class="field-hint">${T.repeatLabel(repeatOf())}. Ticking one schedules the next, so missed ones never pile up.</span>` : ''}</div>
+          ${u.repeat !== 'none' ? html`<span class="field-hint">${T.repeatLabel(repeatOf())}${u.repeat === 'yearly' ? ', from the date above' : ''}. Ticking one schedules the next, so missed ones never pile up.</span>` : ''}</div>
         <div class="field"><span class="field-label">Area</span>
           <div class="chips">${CATEGORIES.map((c) => html`<button type="button" class="${cx('chip chip--area', u.area === c.id && 'is-active')}" style="--ic:${catColor(c.id)}" aria-pressed="${u.area === c.id}" data-action="area" data-id="${c.id}"><i class="chip-dot" aria-hidden="true"></i>${c.label}</button>`)}</div></div>
         ${P.active().length || u.projectId ? html`<div class="field"><span class="field-label">Project</span>
@@ -77,11 +84,18 @@ export function openTask(id = null, defaults = {}) {
       notes: ({ sheet, value }) => { sheet.ui.notes = value; },
       date: ({ sheet, value }) => { sheet.ui.date = value || ''; sheet.refresh(); },
       mday: ({ sheet, value }) => { sheet.ui.mday = Number(value); sheet.refresh(); },
+      every: ({ sheet, value }) => { sheet.ui.every = Number(value) || 1; sheet.refresh(); },
     },
     actions: {
       when: ({ sheet, data }) => { sheet.ui.date = data.date || ''; sheet.refresh(); },
       repeat: ({ sheet, data }) => { sheet.ui.repeat = data.value; sheet.refresh(); },
-      rday: ({ sheet, data }) => { sheet.ui.day = Number(data.v); sheet.refresh(); },
+      rday: ({ sheet, data }) => {
+        const v = Number(data.v);
+        const cur = repeatOf()?.days || [repeatOf()?.day];
+        const next = cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v];
+        sheet.ui.days = next.length ? next : cur;
+        sheet.refresh();
+      },
       area: ({ sheet, data }) => { sheet.ui.area = data.id; sheet.refresh(); },
       project: ({ sheet, data }) => { sheet.ui.projectId = data.id || null; sheet.refresh(); },
       save: ({ sheet }) => {

@@ -16,15 +16,17 @@ import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { saveReview } from '../domain/day.js';
 import { taskActions, openTask } from './task-ui.js';
-import { COUNTER_SOURCES } from './today/rows.js';
 import { nowCard } from './today/now.js';
 import { routinesBlock } from './today/routines.js';
 import { prioritiesBlock } from './today/priorities.js';
-import { threeBlock, pinnedBlock, moreBlock, minimumBlock, sickBlock, notTodayBlock, lifeMode, essentials, layoutOf, BLOCKS } from './today/blocks.js';
+import { threeBlock, pinnedBlock, moodboardBlock, moreBlock, notTodayBlock, lifeMode, essentials, layoutOf, BLOCKS } from './today/blocks.js';
 // Sheets load on first use, and are fetched in the background once Today is on screen.
 const sheets = () => import('./sheets.js');
 const workouts = () => import('./workout-actions.js');
 const pads = () => import('./pads.js');
+const opener = () => import('./today/open.js');
+/** An action that opens something from a module loaded on first use, for the day on screen. */
+const open = (load, fn, ...args) => async ({ params }) => (await load())[fn](...args, params.date || today());
 // The safety nets (catch-up, fresh start, shrink and grow, tidy-up) arrive right after the first screen.
 let nets = null;
 let netCards = null; // their cards (today/nets.js), loaded with them
@@ -73,32 +75,17 @@ function header(date, ph, mode, isToday) {
 const settleFor = (habitId, date) => { const r = R.routineOf(habitId); if (r) R.settle(r.routine, date); };
 
 /** Hold on a habit (U3): numbers open the pad, a tiny version logs in one hold, the rest show their options. */
-async function holdHabit(id, date) {
-  const h = H.habit(id);
-  if (!h) return;
-  hap.hold();
-  const P = await pads();
-  const done = () => settleFor(h.id, date);
-  if (H.isNumeric(h) && !h.source && h.type !== 'rating') return P.habitPad(h, date, { onDone: done });
-  if (h.source === 'steps') return P.stepsPad(date);
-  const tiny = H.tinyOf(h);
-  if (tiny && !H.level(h, date) && !h.source && h.type !== 'check') return P.logTiny(h, date, { onDone: done });
-  if (h.source && !COUNTER_SOURCES.includes(h.source)) return openHabitOrSource(h, date);
-  (await sheets()).openHabit(h.id, date);
-}
 
-async function openHabitOrSource(h, date) {
-  if (h.id === 'h-training' || h.source?.startsWith('workout:')) {
-    const active = F.activeWorkout();
-    if (active) return app.go(`workout/${active.id}`);
-    if (F.workoutsOn(date).length) return app.go('plan/training');
-    return (await workouts()).openStartSheet(date);
-  }
-  if (h.source === 'sleep') return (await sheets()).openCheckin(date);
-  if (h.source === 'shutdown') return (await sheets()).openShutdown(date);
-  if (h.source && !COUNTER_SOURCES.includes(h.source)) return (await sheets()).openSource(h, date);
-  (await sheets()).openHabit(h.id, date);
-}
+// Minimum and sick days have their own blocks, loaded the first time a day needs them.
+let modes = null;
+const loadModes = () => { import('./today/modes.js').then((m) => { modes = m; app.refresh(); }).catch(() => {}); return ''; };
+
+// Coming up (dates) loads after the first frame, and only when there are dates saved.
+let soon = null;
+const loadSoon = () => { if (!soon && store.all('events').length) import('./today/upcoming.js').then((m) => { soon = m; app.refresh(); }).catch(() => {}); };
+
+/** The moodboard's pictures come from the device store, after the first frame. */
+const showMoodboard = (el) => { if (el.querySelector('img[data-mb]:not([src])')) import('../domain/moodboard.js').then((m) => m.hydrate(el)).catch(() => {}); };
 
 const view = {
   id: 'today',
@@ -115,6 +102,8 @@ const view = {
       three: () => threeBlock(date, mode, ui),
       priorities: () => prioritiesBlock(date, mode),
       pinned: () => (isToday ? pinnedBlock(date) : ''),
+      moodboard: () => (isToday ? moodboardBlock() : ''),
+      upcoming: () => (isToday && soon ? soon.upcomingBlock(date) : ''),
       more: () => moreBlock(date, mode, ui),
     };
     const block = (id) => {
@@ -122,7 +111,7 @@ const view = {
       return out ? html`<div class="tblock" data-key="b-${id}" style="order:${order.indexOf(id) + 2}">${out}</div>` : '';
     };
     const col = (c) => order.filter((id) => !hidden.includes(id) && BLOCKS.find((b) => b.id === id).column === c).map(block);
-    const special = mode === 'minimum' ? minimumBlock(date, ui) : mode === 'sick' ? sickBlock(date, ui) : '';
+    const special = mode === 'minimum' || mode === 'sick' ? (modes ? (mode === 'sick' ? modes.sickBlock : modes.minimumBlock)(date, ui) : loadModes()) : '';
     const notToday = notTodayBlock(date, mode);
     const catchUp = isToday && nets ? netCards.catchUpBlock(nets.catchUp(date), ui) : '';
     const tidy = isToday && nets && [7, 1].includes(weekday(date)) ? netCards.tidyBlock(nets.tidyDue(date)) : '';
@@ -140,11 +129,21 @@ const view = {
     </div>`;
   },
   mount(el, ctx) {
-    attachDaySwipe(el, ctx);
-    import('../ui/gestures.js').then((g) => g.attachRowGestures(el, {
-      onHold: (id) => holdHabit(id, ctx.params.date || today()),
-      onSwipe: async (id) => { const h = H.habit(id); if (h) (await pads()).notToday(h, ctx.params.date || today(), { onDone: () => settleFor(id, ctx.params.date || today()) }); },
-    })).catch(() => {});
+    showMoodboard(el);
+    loadSoon();
+    import('../ui/gestures.js').then((g) => {
+      // Swipe the header to move a day back or forward (never past today).
+      g.attachHeadSwipe(el, '.today-head', (dir) => {
+        const next = addDays(ctx.params.date || today(), dir);
+        if (next > today()) return;
+        hap.tap();
+        app.replace(next === today() ? 'today' : `today/${next}`);
+      });
+      g.attachRowGestures(el, {
+        onHold: async (id) => (await opener()).holdHabit(id, ctx.params.date || today(), settleFor),
+        onSwipe: async (id) => { const h = H.habit(id); if (h) (await pads()).notToday(h, ctx.params.date || today(), { onDone: () => settleFor(id, ctx.params.date || today()) }); },
+      });
+    }).catch(() => {});
     // The Health Shortcut ends by opening #/today?paste=1.
     if (ctx.query.paste) {
       window.history.replaceState(window.history.state, '', location.hash.split('?')[0]);
@@ -175,6 +174,8 @@ const view = {
     setTimeout(() => Promise.all([sheets(), workouts()]).catch(() => {}), 1500);
   },
   update(el, ctx) {
+    showMoodboard(el);
+    loadSoon();
     const date = ctx.params.date || today();
     const s = dayScore(date);
     const key = `lifeos.celebrated.${date}`;
@@ -225,7 +226,7 @@ const view = {
       if (s.kind === 'label') { R.toggleLabel(r, s, date) ? hap.success() : hap.tap(); return; }
       const h = s.habit;
       const needsInput = H.isNumeric(h) || ['sleep', 'shutdown'].includes(h.source) || h.id === 'h-training' || h.source?.startsWith('workout:');
-      if (needsInput && !s.done) return openHabitOrSource(h, date);
+      if (needsInput && !s.done) return (await opener()).openHabitOrSource(h, date);
       const now = H.tap(h, date);
       R.settle(r, date);
       now ? hap.success() : hap.tap();
@@ -251,7 +252,7 @@ const view = {
     },
     'edit-routine': async ({ data }) => (await import('./routine-edit.js')).openRoutineEditor(data.id),
     expand: ({ data, ui }) => { ui.expanded = { ...(ui.expanded || {}), [data.id]: !ui.expanded?.[data.id] }; app.refresh(); },
-    habit: async ({ data, params }) => { const h = H.habit(data.id); if (h) await openHabitOrSource(h, params.date || today()); },
+    habit: async ({ data, params }) => { const h = H.habit(data.id); if (h) await (await opener()).openHabitOrSource(h, params.date || today()); },
     source: async ({ data, params }) => (await sheets()).openSource(H.habit(data.id), params.date || today()),
     wchip: async ({ data, params }) => {
       const date = params.date || today();
@@ -264,28 +265,30 @@ const view = {
     'more-today': ({ ui }) => { ui.moreOpen = !ui.moreOpen; app.refresh(); },
     skip: ({ data, ui }) => { ui.skipped = [...(ui.skipped || []), data.id]; hap.tap(); app.refresh(); },
     unskip: ({ ui }) => { ui.skipped = []; app.refresh(); },
-    plan: async ({ params }) => (await sheets()).openPlan(params.date || today()),
+    plan: open(sheets, 'openPlan'),
     'focus-later': () => store.setSettings({ focusPromptUntil: addDays(today(), 7) }),
     'edit-today': async () => (await import('./today/edit.js')).openEditToday(),
-    'pick-day': async ({ params }) => (await import('./today/day-picker.js')).openDayPicker(params.date || today()),
+    'pick-day': open(() => import('./today/day-picker.js'), 'openDayPicker'),
     'add-water': async ({ data, params }) => (await sheets()).addWater(params.date || today(), Number(data.ml) || 500),
-    'open-checkin': async ({ params }) => (await sheets()).openCheckin(params.date || today()),
+    'open-checkin': open(sheets, 'openCheckin'),
     ritual: async ({ data, params }) => (await import('./ritual.js')).openRitual(data.which === 'morning' ? 'morning' : 'evening', params.date || today()),
-    'open-shutdown': async ({ params }) => (await sheets()).openShutdown(params.date || today()),
-    'log-steps': async ({ params }) => (await pads()).stepsPad(params.date || today()),
-    'log-food': async ({ params }) => (await sheets()).openFood(params.date || today()),
-    'log-weight': async ({ params }) => (await pads()).weightPad(params.date || today()),
+    'open-shutdown': open(sheets, 'openShutdown'),
+    'log-steps': open(pads, 'stepsPad'),
+    'log-food': open(sheets, 'openFood'),
+    'log-weight': open(pads, 'weightPad'),
     'pin-workout': async ({ params }) => {
       const active = F.activeWorkout();
       if (active) return app.go(`workout/${active.id}`);
       (await workouts()).openStartSheet(params.date || today());
     },
     'pin-journal': async () => (await import('./journal.js')).newEntry('free'),
-    'pin-reading': async ({ params }) => (await sheets()).openSession('reading', params.date || today()),
-    'pin-meditation': async ({ params }) => (await sheets()).openSession('meditation', params.date || today()),
+    'pin-focus': open(() => import('./focus-sheet.js'), 'openFocus'),
+    'pin-money': async () => (await import('./money.js')).openExpense(),
+    'pin-reading': open(sheets, 'openSession', 'reading'),
+    'pin-meditation': open(sheets, 'openSession', 'meditation'),
     'start-workout': async ({ data, params }) => (await workouts()).startWorkout(data.template, params.date || today()),
     'set-mode': async ({ data, params }) => (await sheets()).setMode(params.date || today(), data.mode),
-    mode: async ({ params }) => (await sheets()).openMode(params.date || today()),
+    mode: open(sheets, 'openMode'),
     'go-today': () => app.replace('today'),
     'top3-check': ({ data, params }) => {
       const date = params.date || today();
@@ -307,26 +310,5 @@ const view = {
     win: ({ value, params }) => saveReview(params.date || today(), { win: value.trim() }),
   },
 };
-
-/** Swipe the header left or right to move a day back or forward (never past today). */
-function attachDaySwipe(root, ctx) {
-  let x0 = null, y0 = 0;
-  root.addEventListener('touchstart', (e) => {
-    x0 = e.target.closest('.today-head') && e.touches.length === 1 ? e.touches[0].clientX : null;
-    y0 = e.touches[0]?.clientY || 0;
-  }, { passive: true });
-  root.addEventListener('touchend', (e) => {
-    if (x0 == null) return;
-    const t = e.changedTouches[0];
-    const dx = t.clientX - x0, dy = t.clientY - y0;
-    x0 = null;
-    if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) * 0.6) return;
-    const cur = ctx.params.date || today();
-    const next = addDays(cur, dx < 0 ? 1 : -1);
-    if (next > today()) return;
-    hap.tap();
-    app.replace(next === today() ? 'today' : `today/${next}`);
-  });
-}
 
 export default view;

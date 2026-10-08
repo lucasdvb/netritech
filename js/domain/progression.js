@@ -41,7 +41,7 @@ export function moment(news) {
   if (rec) return { kind: 'record', label: rec.label, value: rec.text, text: `New record · ${rec.label}: ${rec.text}` };
   const l = news.levels.sort((a, b) => b.at - a.at)[0];
   if (l) return { kind: 'level', habitId: l.habitId, name: l.habit.name, level: l.level, levelName: l.name, at: l.at, text: `${l.habit.name} · ${l.name}, ${l.at} time${l.at === 1 ? '' : 's'}` };
-  if (news.focus) return { kind: 'focus', text: 'Your three are done' };
+  if (news.focus) return { kind: 'focus', text: `Your ${H.focusWord()} are done` };
   const s = news.seasons[0];
   if (s) return { kind: 'season', id: s.id, name: s.name, text: `${s.name} is complete. Its summary is ready.` };
   return null;

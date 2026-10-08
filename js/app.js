@@ -482,6 +482,8 @@ async function boot() {
   store.complete().then(() => import('./domain/progression.js')).then((m) => m.start((mo) => import('./ceremony/moments.js')
     .then((M) => M.show(mo, { go: (x) => import('./ceremony/finale.js').then((F) => F.finale(x.id)) })))).catch((err) => console.warn(err));
   import('./ui/install.js').then((m) => m.maybePrompt()).catch(() => {});
+  // A focus block still running (or one that finished while the app was closed).
+  if (store.settings().focus) import('./ui/focus-bar.js').then((m) => m.sync()).catch(() => {});
   if (navigator.storage?.persist) navigator.storage.persisted().then((p) => { if (!p) navigator.storage.persist(); });
   window.__lifeos = { store, app, ready: true, readyAt: performance.now(), renders: renderTimes };
 }

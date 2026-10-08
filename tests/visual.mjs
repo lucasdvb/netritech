@@ -92,7 +92,8 @@ async function check(p, name) {
 }
 
 const ROUTES = ['today', 'plan', 'plan/habits', 'plan/habits/h-prayer', 'plan/tasks', 'plan/goals', 'plan/goals/g-body', 'plan/projects', 'plan/books',
-  'plan/training', 'plan/training/exercises', 'plan/playbook', 'plan/commitments', 'plan/rewards',
+  'plan/training', 'plan/training/exercises', 'plan/training/workouts/t-upper', 'plan/playbook', 'plan/commitments', 'plan/rewards',
+  'plan/moodboard', 'plan/lists', 'plan/money', 'plan/dates',
   'progress', 'progress/trends', 'progress/calendar', 'progress/records', 'progress/season', 'progress/year', 'progress/body', 'progress/body/weight',
   'progress/body/nutrition', 'progress/body/measurements', 'progress/body/sleep', 'progress/areas/mind', 'progress/areas/spirit',
   'progress/areas/relationships', 'progress/areas/work', 'progress/areas/health',

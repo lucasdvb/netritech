@@ -31,6 +31,7 @@ export default {
         <div class="stat"><p class="stat-label">Priorities</p><p class="stat-value tnum">${priDone}<span class="stat-unit">/ ${priSet}</span></p><p class="stat-sub">this week</p></div>
         <div class="stat"><p class="stat-label">Focus blocks</p><p class="stat-value tnum">${deep}</p><p class="stat-sub">this week</p></div>
       </div>
+      <button type="button" class="btn btn--primary btn--block block-tight" data-action="focus">${icon('timer', { size: 16 })} ${store.settings().focus ? 'Focus timer' : 'Start a focus block'}</button>
       <section class="block"><div class="block-head"><h2 class="block-title">Focus blocks</h2><span class="block-meta">14 days</span></div>
         <div class="card">${barChart({ labels: days.map((d) => fmtDayShort(d).slice(0, 1)), tipLabels: days.map(fmtMD), values: days.map((d) => M.review(d)?.deepWork || null), color: 'var(--c-work)', fmt: (v) => `${v} blocks`, goal: { value: 2, label: '2' }, height: 110 })}</div>
       </section>
@@ -50,5 +51,6 @@ export default {
   },
   actions: {
     deep: ({ data }) => bumpCounter(today(), 'deepWork', Number(data.delta)),
+    focus: async () => (await import('./focus-sheet.js')).openFocus(),
   },
 };

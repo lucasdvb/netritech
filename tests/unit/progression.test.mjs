@@ -187,7 +187,8 @@ test('rewards unlock only from real counts made after they were set; no points a
 test('no points, XP, coins or currency in any screen or rule', () => {
   const dirs = ['js/screens', 'js/screens/today', 'js/domain', 'js/ui'];
   for (const dir of dirs) {
-    for (const f of readdirSync(new URL(`../../${dir}/`, import.meta.url)).filter((x) => x.endsWith('.js'))) {
+    // Money (real spending, in your own currency) is not a game currency.
+    for (const f of readdirSync(new URL(`../../${dir}/`, import.meta.url)).filter((x) => x.endsWith('.js') && x !== 'money.js')) {
       const src = readFileSync(new URL(`../../${dir}/${f}`, import.meta.url), 'utf8');
       const strings = src.match(/(['"`])(?:(?!\1)[^\\\n]|\\.)*\1/g) || [];
       for (const s of strings) assert.ok(!/\b(\d+\s*points|XP|coins?|currency|earn \d)\b/i.test(s) || /data points/i.test(s), `${dir}/${f}: ${s.slice(0, 60)}`);

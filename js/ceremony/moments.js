@@ -6,6 +6,7 @@ import { icon } from '../ui/icons.js';
 import { reducedMotion } from '../ui/motion.js';
 import * as hap from '../ui/haptics.js';
 import * as sound from '../ui/sound.js';
+import { focusWord } from '../domain/habits.js';
 
 /** Draw a fine blue line around an element, then let it fade. */
 export function outline(el, { hold = 900 } = {}) {
@@ -64,7 +65,7 @@ export function show(m, { go } = {}) {
   }
   if (m.kind === 'focus') {
     outline(document.querySelector('.now'));
-    return plate({ icon: 'check', title: 'Your three are done', sub: 'Everything else today is a bonus.' });
+    return plate({ icon: 'check', title: `Your ${focusWord()} are done`, sub: 'Everything else today is a bonus.' });
   }
   if (m.kind === 'record') return plate({ icon: 'medal', title: 'New record', sub: `${m.label}: ${m.value}` });
   if (m.kind === 'reward') return plate({ icon: 'trophy', title: `Unlocked: ${m.title}`, sub: 'Earned by what really happened.' });

@@ -18,6 +18,8 @@ body {
   overscroll-behavior-y: none;
 }
 h1, h2, h3, h4, p { margin: 0; }
+/* Emphasis inside text is Body Strong (600), never the browser's bold (docs/typography.md). */
+b, strong { font-weight: var(--weight-semibold); }
 h1, h2, h3, h4 { font-weight: var(--weight-semibold); letter-spacing: var(--tracking-h3); }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; background: none; border: 0; padding: 0; }

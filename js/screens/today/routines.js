@@ -33,7 +33,7 @@ function card(p, open, date) {
   const when = p.complete ? (p.completedAt ? `Done ${fmtTime(new Date(p.completedAt))}` : 'Done') : `${r.window?.from || ''}`;
   return html`<section class="${cx('routine', open && 'is-open', p.complete && 'is-complete')}" data-key="r-${r.id}" aria-label="${r.name} routine">
     <button type="button" class="routine-head" data-action="routine" data-id="${r.id}" aria-expanded="${open}">
-      <span class="routine-ic">${p.complete ? icon('check', { size: 16, stroke: 2.2 }) : icon(r.kind === 'evening' ? 'moon' : r.kind === 'morning' ? 'sunrise' : 'repeat', { size: 16 })}</span>
+      <span class="routine-ic">${p.complete ? icon('check', { size: 16, stroke: 2.2 }) : icon(R.iconOf(r), { size: 16 })}</span>
       <span class="routine-name">${r.name}</span>
       <span class="routine-meta tnum">${p.done}/${p.total} · ${when}</span>
       ${icon('chevron-down', { size: 18, cls: 'routine-chev' })}

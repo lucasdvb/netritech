@@ -39,6 +39,8 @@ export function openRoutineEditor(id, { isNew = false } = {}) {
           <label class="field"><span class="field-label">From</span><input class="input" type="time" value="${r.window?.from || ''}" data-change="from"></label>
           <label class="field"><span class="field-label">Until</span><input class="input" type="time" value="${r.window?.to || ''}" data-change="to"></label>
         </div>
+        <div class="field"><span class="field-label">Icon</span>
+          <div class="icon-grid" role="radiogroup" aria-label="Icon">${R.ICONS.map((ic) => html`<button type="button" role="radio" aria-checked="${R.iconOf(r) === ic}" aria-label="${ic}" class="${cx('icon-opt', R.iconOf(r) === ic && 'is-on')}" data-action="icon" data-v="${ic}">${icon(ic, { size: 18 })}</button>`)}</div></div>
         <div class="field"><span class="field-label">Days <small>${days.length ? '' : 'every day'}</small></span>
           <div class="day-pick" role="group" aria-label="Days">${DAYS.map(([v, l, name]) => html`<button type="button" class="${cx('day-opt', days.includes(v) && 'is-on')}" aria-pressed="${days.includes(v)}" aria-label="${name}" data-action="day" data-v="${v}">${l}</button>`)}</div></div>
         <div class="field"><span class="field-label">Steps, in order</span>
@@ -80,6 +82,7 @@ export function openRoutineEditor(id, { isNew = false } = {}) {
         steps.splice(to, 0, st);
         save({ steps });
       },
+      icon: ({ data }) => { save({ icon: data.v }); hap.tap(); },
       remove: ({ data }) => { save({ steps: R.routine(id).steps.filter((x) => x.id !== data.id) }); hap.tap(); },
       delete: ({ sheet }) => {
         const r = R.routine(id);

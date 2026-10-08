@@ -98,7 +98,7 @@ export function newGoal() {
         const start = weight ? kgIn(n(u.start)) : n(u.start);
         const target = weight ? kgIn(n(u.target)) : n(u.target);
         const g = store.put('goals', {
-          name: u.name.trim(), category: u.area, deadline: u.deadline || null, since: today(), status: 'active', order: 99, description: '',
+          name: u.name.trim(), category: u.area, deadline: u.deadline || null, since: today(), status: 'active', order: Math.max(0, ...G.goals().map((x) => x.order ?? 0)) + 1, description: '',
           type: measure ? 'numeric' : u.how, measure, target, start, unit: measure === 'number' ? u.unit.trim() : measure === 'bodyFat' ? '%' : '',
           direction: start != null && target != null ? (target < start ? 'down' : 'up') : null, habitId: measure === 'habitCount' ? u.habitId : null,
           history: measure === 'number' && start != null ? [{ date: today(), value: start }] : [], current: measure === 'number' ? start : null,
@@ -168,7 +168,7 @@ export function goalSheet(existing) {
 export default {
   id: 'goals',
   title: 'Goals',
-  render() {
+  render({ ui }) {
     const all = G.goals();
     const active = all.filter((g) => g.status === 'active');
     const other = all.filter((g) => g.status !== 'active');
@@ -180,10 +180,23 @@ export default {
         <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>`;
     };
     return html`
-      ${pageHead({ title: 'Goals', back: { to: 'plan', label: 'Plan' }, actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New goal">${icon('plus', { size: 20 })}</button>` })}
-      <p class="lead">Where each goal is heading, from your own data. A new goal takes three questions.</p>
-      ${active.length ? html`<ul class="goal-list">${active.map(card)}</ul>` : empty({ ic: 'target', title: 'No active goals', cta: 'Add a goal', action: 'new' })}
+      ${pageHead({ title: 'Goals', back: { to: 'plan', label: 'Plan' }, actions: html`${active.length > 1 ? html`<button type="button" class="btn btn--soft btn--sm" data-action="arrange" aria-pressed="${!!ui.arranging}">${ui.arranging ? 'Done' : 'Arrange'}</button>` : ''}
+        <button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New goal">${icon('plus', { size: 20 })}</button>` })}
+      <p class="lead">${ui.arranging ? 'Drag your goals into the order that matters to you. Plan shows them this way too.' : 'Where each goal is heading, from your own data. A new goal takes three questions.'}</p>
+      ${active.length && ui.arranging ? html`<ol class="list sort-list" data-reorder="move-goal">${active.map((g) => html`<li class="sort-row" data-key="ar-${g.id}">
+          <button type="button" class="drag-handle" data-drag aria-label="Move ${g.name}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>
+          <span class="row"><span class="row-main"><span class="row-title">${g.name}</span><span class="row-sub">${catLabel(g.category)}</span></span></span></li>`)}</ol>`
+        : active.length ? html`<ul class="goal-list">${active.map(card)}</ul>` : empty({ ic: 'target', title: 'No active goals', cta: 'Add a goal', action: 'new' })}
       ${other.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Paused or done</h2></div><ul class="goal-list">${other.map(card)}</ul></section>` : ''}`;
   },
-  actions: { new: () => newGoal() },
+  actions: {
+    new: () => newGoal(),
+    arrange: ({ ui }) => { ui.arranging = !ui.arranging; hap.tap(); app.refresh(); },
+    'move-goal': ({ from, to }) => {
+      const list = G.goals().filter((g) => g.status === 'active');
+      const [g] = list.splice(from, 1);
+      list.splice(to, 0, g);
+      store.batch(list.map((x, i) => (x.order === i ? null : { store: 'goals', value: { ...x, order: i } })).filter(Boolean));
+    },
+  },
 };

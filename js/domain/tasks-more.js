@@ -18,9 +18,11 @@ export const doneRecently = (days = 14) => {
 
 /* ---------- repeats ---------- */
 export const REPEATS = [
-  { id: 'none', label: 'Doesn’t repeat' },
-  { id: 'weekly', label: 'Every week' },
-  { id: 'monthly', label: 'Every month' },
+  { id: 'none', label: 'Once' },
+  { id: 'daily', label: 'Daily' },
+  { id: 'weekly', label: 'Weekly' },
+  { id: 'monthly', label: 'Monthly' },
+  { id: 'yearly', label: 'Yearly' },
 ];
 
 export const remove = (id) => store.remove('tasks', id);

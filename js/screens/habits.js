@@ -12,7 +12,7 @@ import { attachSwipe } from '../ui/swipe.js';
 
 const GROUPINGS = [{ id: 'state', label: 'State' }, { id: 'area', label: 'Area' }, { id: 'time', label: 'Time of day' }];
 const STATE_GROUPS = [
-  { id: 'focus', title: 'Your three' },
+  { id: 'focus', title: 'In focus' },
   { id: 'autopilot', title: 'Autopilot' },
   { id: 'queue', title: 'Later' },
   { id: 'paused', title: 'Paused' },
@@ -55,7 +55,7 @@ function routinesSection() {
     <p class="block-hint">Habits you do one after another, with a window of time. Today opens the one that’s due.</p>
     ${list.length ? html`<ol class="list sort-list" data-reorder="move-routine">${list.map((r) => html`<li class="sort-row" data-key="rt-${r.id}">
       <button type="button" class="drag-handle" data-drag aria-label="Move ${r.name}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>
-      ${row({ ic: r.kind === 'evening' ? 'moon' : r.kind === 'morning' ? 'sunrise' : 'repeat', title: r.name,
+      ${row({ ic: R.iconOf(r), title: r.name,
         sub: `${(r.steps || []).length} step${(r.steps || []).length === 1 ? '' : 's'} · ${R.windowLabel(r)}`, action: 'edit-routine', data: { id: r.id } })}</li>`)}</ol>`
       : html`<p class="card-lead">No routines yet.</p>`}
   </section>`;
@@ -71,20 +71,25 @@ export default {
     const archived = all.filter((h) => h.archived);
     const focus = H.focusHabits().length;
     return html`
-      ${pageHead({ title: 'Habits', sub: `${focus} of ${H.FOCUS_LIMIT} in focus · ${active.length} active`,
+      ${pageHead({ title: 'Habits', sub: `${focus} of ${H.focusLimit()} in focus · ${active.length} active`,
         actions: html`<button type="button" class="icon-btn" data-action="open-search" aria-label="Search">${icon('search', { size: 20 })}</button>
           <button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New habit">${icon('plus', { size: 20 })}</button>` })}
-      ${segmented(GROUPINGS, by, { action: 'by', name: 'Group habits by' })}
+      <div class="habits-bar">${segmented(GROUPINGS, by, { action: 'by', name: 'Group habits by' })}
+        ${by === 'state' && active.length > 1 ? html`<button type="button" class="btn btn--soft btn--sm" data-action="arrange" aria-pressed="${!!ui.arranging}">${ui.arranging ? 'Done' : 'Arrange'}</button>` : ''}</div>
+      ${by === 'state' && ui.arranging ? html`<p class="block-hint block-tight">Drag habits into the order you want. In Later, the first one moves into focus next.</p>` : ''}
       ${!active.length ? empty({ ic: 'list-checks', title: 'No habits yet', body: 'Start with one small thing you want to do most days. Three questions and it’s on Today.', cta: 'Add a habit', action: 'new' }) : ''}
       ${by === 'state' && active.length ? html`<button type="button" class="card card--link sort-cta" data-action="nav" data-to="plan/habits/sort" data-key="sort-cta">
-        <span class="sort-cta-text"><span class="card-title">${focus ? 'Change your three' : 'Choose your three'}</span>
+        <span class="sort-cta-text"><span class="card-title">${focus ? `Change your ${H.focusWord()}` : `Choose your ${H.focusWord()}`}</span>
           <span class="row-sub">Sort every habit into Focus, Autopilot or Later on one screen.</span></span>
         ${icon('chevron-right', { size: 18 })}</button>` : ''}
       ${by === 'state' ? routinesSection() : ''}
       ${groups(by, active).filter((g) => g.items.length).map((g) => html`<section class="block" data-key="g-${g.id}">
-        <div class="block-head"><h2 class="block-title">${g.title}</h2><span class="block-meta tnum">${g.id === 'focus' ? `${g.items.length} of ${H.FOCUS_LIMIT}` : g.items.length}</span></div>
+        <div class="block-head"><h2 class="block-title">${g.title}</h2><span class="block-meta tnum">${g.id === 'focus' ? `${g.items.length} of ${H.focusLimit()}` : g.items.length}</span></div>
         ${g.hint ? html`<p class="block-hint">${g.hint}</p>` : ''}
-        <ul class="list">${g.items.map(habitRow)}</ul>
+        ${by === 'state' && ui.arranging && g.items.length > 1 ? html`<ol class="list sort-list" data-reorder="move-habit" data-group="${g.id}">${g.items.map((h) => html`<li class="sort-row" data-key="ar-${h.id}">
+            <button type="button" class="drag-handle" data-drag aria-label="Move ${h.name}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>
+            <span class="row"><span class="row-ic" style="--ic:${habitColor(h)}">${icon(h.icon, { size: 18 })}</span><span class="row-main"><span class="row-title">${h.name}</span><span class="row-sub">${H.scheduleLabel(h)}</span></span></span></li>`)}</ol>`
+          : html`<ul class="list">${g.items.map(habitRow)}</ul>`}
       </section>`)}
       ${archived.length ? html`<details class="block disclosure archived" ${ui.showArchived ? 'open' : ''}>
         <summary>Archived · ${archived.length}</summary>
@@ -105,7 +110,19 @@ export default {
   },
   actions: {
     tidy: async () => (await import('./tidy.js')).openTidy(),
-    by: ({ data, ui }) => { ui.by = data.value; hap.tap(); app.refresh(); },
+    by: ({ data, ui }) => { ui.by = data.value; ui.arranging = false; hap.tap(); app.refresh(); },
+    arrange: ({ ui }) => { ui.arranging = !ui.arranging; hap.tap(); app.refresh(); },
+    // A new order within one group: Later keeps its own queue order; the rest share the overall order.
+    'move-habit': ({ el, from, to }) => {
+      const g = groups('state', H.activeHabits()).find((x) => x.id === el.dataset.group);
+      if (!g) return;
+      const list = [...g.items];
+      const [h] = list.splice(from, 1);
+      list.splice(to, 0, h);
+      const slots = g.id === 'queue' ? list.map((_, i) => i + 1) : g.items.map((x) => x.order ?? 0).sort((a, b) => a - b);
+      const field = g.id === 'queue' ? 'queueOrder' : 'order';
+      store.batch(list.map((x, i) => (x[field] === slots[i] ? null : { store: 'habits', value: { ...x, [field]: slots[i] } })).filter(Boolean));
+    },
     'edit-routine': async ({ data }) => (await import('./routine-edit.js')).openRoutineEditor(data.id),
     'new-routine': async () => (await import('./routine-edit.js')).newRoutine(),
     'move-routine': ({ from, to }) => {

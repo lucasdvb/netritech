@@ -5,6 +5,10 @@ import { kgOut, kgIn, weightUnit, num } from '../ui/format.js';
 import * as hap from '../ui/haptics.js';
 import { requestPermission, permissionState, stats as reminderStats } from '../domain/reminders.js';
 import * as badge from '../ui/badge.js';
+import * as M from '../domain/metrics-core.js';
+import { focusLimit, focusHabits } from '../domain/habits.js';
+import { today } from '../domain/dates.js';
+import { app } from '../ui/app-api.js';
 
 const n = (v) => (v === '' || v == null || Number.isNaN(Number(v)) ? null : Number(v));
 const DAYS = [[1, 'M'], [2, 'T'], [3, 'W'], [4, 'T'], [5, 'F'], [6, 'S'], [7, 'S']];
@@ -25,6 +29,15 @@ const targetField = (label, key, unit, step = 1) => {
     <span class="set-ctl"><input class="input input--inline input--num" type="number" inputmode="decimal" step="${step}" value="${t[key] ?? ''}" data-change="target" data-k="${key}" aria-label="${label}"><span class="muted small">${unit}</span></span></label>`;
 };
 
+/** Steps: the ramp's number until you set your own. */
+function stepsField() {
+  const h = store.get('habits', 'h-steps');
+  if (!h) return '';
+  const v = h.ramp ? M.stepsTarget(today(), h.ramp) : h.target;
+  return html`<label class="set-row"><span class="set-text"><span class="set-label">Steps</span></span>
+    <span class="set-ctl"><input class="input input--inline input--num" type="number" inputmode="numeric" step="500" min="1000" value="${v ?? ''}" data-change="steps" aria-label="Steps"><span class="muted small">/day</span></span></label>`;
+}
+
 // Each safety net shows at most once per occasion; these turn one off for good (or back on).
 const NETS = [
   ['catchUp', 'Catch up on yesterday', 'In the morning, tap what you did yesterday but didn’t log.'],
@@ -42,6 +55,7 @@ export default {
     const nt = s.notifications;
     const perm = permissionState();
     const rs = reminderStats();
+    const steps = store.get('habits', 'h-steps');
     return html`
       ${pageHead({ title: 'Settings', back: { to: 'today', label: 'Today' } })}
       <section class="block block--first"><h2 class="set-section">Profile</h2>
@@ -64,6 +78,11 @@ export default {
             ${DAY_ENDS.map(([v, l]) => html`<option value="${v}" ${(p.dayEndsAt || '00:00') === v ? 'selected' : ''}>${l}</option>`)}</select>`, { hint: 'Anything you log before then counts for the day before.' })}
           <div class="set-row"><span class="set-text"><span class="set-label">Work days</span></span><span class="set-ctl"><div class="day-pick day-pick--sm">${DAYS.map(([v, l]) => html`<button type="button" class="${cx('day-opt', (p.workDays || []).includes(v) && 'is-on')}" aria-pressed="${(p.workDays || []).includes(v)}" data-action="workday" data-v="${v}" aria-label="${['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][v]}">${l}</button>`)}</div></span></div>
         </div></section>
+      <section class="block"><h2 class="set-section">Habits</h2>
+        <div class="set-list">
+          ${settingRow('Habits in focus', segmented([2, 3, 4, 5].map((v) => ({ id: String(v), label: String(v) })), String(focusLimit()), { action: 'focus-limit', name: 'Habits in focus', size: 'sm', cls: 'seg--compact' }),
+            { hint: 'The ones you train and count in your score. Three works for most people; more means less attention for each.', key: 'focus-limit' })}
+        </div></section>
       <section class="block"><h2 class="set-section">Targets</h2>
         <div class="set-list">
           ${targetField('Protein', 'proteinG', 'g')}
@@ -72,8 +91,9 @@ export default {
           ${targetField('Water', 'waterMl', 'ml', 100)}
           ${targetField('Sleep', 'sleepH', 'h', 0.5)}
           ${targetField('Movement breaks', 'movementBreaks', '/day')}
+          ${stepsField()}
         </div>
-        <p class="fine-print">Steps adapt on their own: 7,000 → 8,000 → 9,000 over your first three weeks. Calories adapt from your weight trend in Nutrition.</p></section>
+        <p class="fine-print">${steps?.ramp ? 'Steps adapt on their own (7,000 → 8,000 → 9,000 over your first three weeks) until you set your own. ' : ''}Calories adapt from your weight trend in Nutrition.</p></section>
       <section class="block"><h2 class="set-section">Units</h2>
         <div class="set-list">
           ${settingRow('Weight', segmented([{ id: 'kg', label: 'kg' }, { id: 'lb', label: 'lb' }], s.units.weight, { action: 'unit', name: 'Weight unit', size: 'sm', cls: 'seg--compact' }), { key: 'u-w' })}
@@ -138,6 +158,13 @@ export default {
     sound: async () => { const on = store.settings().sound !== true; store.setSettings({ sound: on }); if (on) (await import('../ui/sound.js')).play('moment'); },
     ghost: ({ data }) => { store.setSettings({ ghost: data.value }); hap.tap(); },
     theme: ({ data }) => { store.setSettings({ theme: data.value }); hap.tap(); },
+    'focus-limit': ({ data }) => {
+      const n = Number(data.value);
+      store.setSettings({ focusLimit: n });
+      hap.tap();
+      const over = focusHabits().length - n;
+      if (over > 0) app.toast(`${over} more in focus than the new limit. Choose which to keep.`, { action: { label: 'Choose', fn: () => app.go('plan/habits/sort') } });
+    },
     haptics: () => { const v = store.settings().haptics === false; store.setSettings({ haptics: v }); hap.setEnabled(v); },
     'notif-master': async () => {
       const nt = store.settings().notifications;
@@ -156,6 +183,12 @@ export default {
       if (numeric && n(value) == null) return;
       if (!numeric && !value.trim()) return;
       store.setProfile({ [k]: numeric ? n(value) : value.trim() });
+    },
+    steps: ({ value }) => {
+      const v = n(value);
+      if (!v || v < 500) return;
+      const t = Math.round(v / 100) * 100;
+      store.update('habits', 'h-steps', { target: t, min: Math.round(t * 0.9 / 100) * 100, ramp: null });
     },
     'start-weight': ({ value }) => { const kg = kgIn(n(value)); if (kg) store.setProfile({ startWeightKg: Math.round(kg * 10) / 10 }); },
     target: ({ el, value }) => {

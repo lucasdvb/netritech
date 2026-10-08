@@ -34,7 +34,7 @@ const outcome = (c) => (c.status === 'kept' ? `Kept, all ${c.days} days` : c.sta
 
 export function openNewPledge(preset = {}) {
   const pool = [...H.focusHabits(), ...H.activeHabits().filter((h) => H.stateOf(h) !== 'focus' && !['paused', 'queue'].includes(H.stateOf(h)))];
-  const ui = { habitId: preset.habitId || pool[0]?.id, days: preset.days || 7, stake: preset.stake || '', tiny: !!preset.tiny };
+  const ui = { habitId: preset.habitId || pool[0]?.id, days: preset.days || 7, stake: preset.stake || '', tiny: !!preset.tiny, custom: !!preset.days && !C.LENGTHS.includes(preset.days) };
   const sheet = app.sheet({
     title: 'A pledge',
     size: 'detent',
@@ -44,7 +44,8 @@ export function openNewPledge(preset = {}) {
       return html`<div class="form pledge-new">
         <p class="sheet-note">Pick one habit and a length. The days count from your logs; the tiny version counts too.</p>
         <label class="field"><span class="field-label">Habit</span><select class="input" data-change="pg-habit" aria-label="Habit">${pool.map((x) => html`<option value="${x.id}" ${x.id === s.ui.habitId ? 'selected' : ''}>${x.name}</option>`)}</select></label>
-        <div class="field"><span class="field-label">For</span>${segmented(C.LENGTHS.map((n) => ({ id: String(n), label: `${n} days` })), String(s.ui.days), { action: 'pg-days', name: 'Length', cls: 'seg--compact' })}
+        <div class="field"><span class="field-label">For</span>${segmented([...C.LENGTHS.map((n) => ({ id: String(n), label: `${n} days` })), { id: 'custom', label: 'Other' }], s.ui.custom ? 'custom' : String(s.ui.days), { action: 'pg-days', name: 'Length', cls: 'seg--compact' })}
+          ${s.ui.custom ? html`<span class="input-unit block-tight"><input type="number" inputmode="numeric" min="3" max="90" value="${s.ui.days}" data-change="pg-n" aria-label="Number of days"><span>days</span></span>` : ''}
           <p class="field-hint">${fmtMD(today())} to ${fmtMD(addDays(today(), s.ui.days - 1))}${h ? ` · ${H.scheduleLabel(h).toLowerCase()}` : ''}</p></div>
         <label class="field"><span class="field-label">Your stake <small>optional</small></span><input class="input" data-input="pg-stake" value="${s.ui.stake}" placeholder="If I miss a day, I’ll…" maxlength="120"></label>
         <div class="ritual-seal">${holdButton({ label: 'Hold to seal', action: 'pg-seal' })}</div>
@@ -53,8 +54,16 @@ export function openNewPledge(preset = {}) {
     inputs: {
       'pg-habit': ({ value, sheet: s }) => { s.ui.habitId = value; s.refresh(); },
       'pg-stake': ({ value, sheet: s }) => { s.ui.stake = value; },
+      'pg-n': ({ value, sheet: s }) => { const n = Math.round(Number(value)); if (n >= 1) { s.ui.days = Math.max(3, Math.min(90, n)); s.refresh(); } },
     },
-    actions: { 'pg-days': ({ data, sheet: s }) => { s.ui.days = Number(data.value); hap.tap(); s.refresh(); } },
+    actions: {
+      'pg-days': ({ data, sheet: s }) => {
+        s.ui.custom = data.value === 'custom';
+        if (!s.ui.custom) s.ui.days = Number(data.value);
+        hap.tap();
+        s.refresh();
+      },
+    },
   });
   attachHold(sheet.el, (action) => {
     if (action !== 'pg-seal') return;
@@ -94,7 +103,7 @@ export default {
     const past = C.commitments().filter((c) => c.status !== 'active').slice(0, 10);
     return html`
       ${pageHead({ title: 'Commitments', back: { to: 'plan', label: 'Plan' }, actions: html`<button type="button" class="btn btn--primary btn--sm" data-action="pg-new">New pledge</button>` })}
-      <p class="lead">A pledge you choose for 7, 14 or 30 days, with a stake you set. It’s the one place Life OS counts down.</p>
+      <p class="lead">A pledge you choose for a week, two, a month or any length you like, with a stake you set. It’s the one place Life OS counts down.</p>
       ${act.length ? html`<ul class="pledge-list">${act.map(pledgeCard)}</ul>`
         : html`<div class="card"><p class="card-lead">No pledge running. Pick one habit you want to prove to yourself.</p><button type="button" class="btn btn--soft btn--sm" data-action="pg-new">New pledge</button></div>`}
       ${past.length ? html`<section class="block" data-key="past"><div class="block-head"><h2 class="block-title">Before</h2></div>

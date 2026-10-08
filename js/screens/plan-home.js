@@ -1,4 +1,5 @@
-// Plan: what you're building. Tomorrow first, then habits, goals, tasks, training and the playbook.
+// Plan: what you're building. Tomorrow first, then habits, goals, tasks, lists, training, money,
+// dates and the playbook.
 import * as store from '../data/store.js';
 import * as H from '../domain/habits-more.js';
 import * as G from '../domain/goals.js';
@@ -8,6 +9,9 @@ import * as P from '../domain/projects.js';
 import * as B from '../domain/books.js';
 import * as C from '../domain/commitments.js';
 import * as Rw from '../domain/rewards.js';
+import * as L from '../domain/lists.js';
+import * as $ from '../domain/money.js';
+import * as E from '../domain/events.js';
 import * as Q from '../domain/quests.js';
 import { projectionLine } from './goals.js';
 import { projectRow } from './projects.js';
@@ -84,12 +88,12 @@ function habitsCard() {
         const r = H.runs(h);
         return html`<li><a class="row" href="#/plan/habits/${h.id}" data-action="nav" data-to="plan/habits/${h.id}">
           <span class="row-ic" style="--ic:${catColor(h.category)}">${icon(h.icon, { size: 18 })}</span>
-          <span class="row-main"><span class="row-title" data-morph="habit-${h.id}">${h.name}</span><span class="row-sub">One of your three · ${r.current ? `${r.current}-${r.unit} run` : H.scheduleLabel(h)}</span></span>
+          <span class="row-main"><span class="row-title" data-morph="habit-${h.id}">${h.name}</span><span class="row-sub">In focus · ${r.current ? `${r.current}-${r.unit} run` : H.scheduleLabel(h)}</span></span>
           <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>`;
       })}
       <li><a class="row" href="#/plan/habits/sort" data-action="nav" data-to="plan/habits/sort">
         <span class="row-ic">${icon('target', { size: 18 })}</span>
-        <span class="row-main"><span class="row-title">${three.length ? 'Change your three' : 'Choose your three'}</span>
+        <span class="row-main"><span class="row-title">${three.length ? `Change your ${H.focusWord()}` : `Choose your ${H.focusWord()}`}</span>
           <span class="row-sub tnum">${n('autopilot')} on autopilot · ${n('queue')} later${n('paused') ? ` · ${n('paused')} paused` : ''}</span></span>
         <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
     </ul>
@@ -112,12 +116,13 @@ function goalsCard() {
 
 const questDay = (q) => { const d = T.task(q.taskId)?.date; return !d ? '' : d === today() ? ' for today' : d === addDays(today(), 1) ? ' for tomorrow' : ` for ${fmtDay(d)}`; };
 
-/** Keep going (G7–G9): this week's side quest, your pledges and the rewards you've set. */
+/** Keep going (G7–G9): this week's side quest, your pledges, the rewards you've set, your moodboard. */
 function keepGoing() {
   const q = Q.offer();
   const pledges = C.active();
   const rewards = Rw.rewards().filter((r) => r.status !== 'claimed');
   const unlocked = rewards.filter((r) => r.status === 'unlocked').length;
+  const mb = (store.settings().moodboard || []).length;
   const quest = q.status === 'declined' ? '' : html`<div class="quest" data-key="quest">
       <p class="section-label">Side quest · this week, if you like</p>
       <p class="quest-title">${q.title}</p>
@@ -130,11 +135,15 @@ function keepGoing() {
     <ul class="list">
       <li><a class="row" href="#/plan/commitments" data-action="nav" data-to="plan/commitments">
         <span class="row-ic">${icon('hand', { size: 18 })}</span>
-        <span class="row-main"><span class="row-title">Commitments</span><span class="row-sub">${pledges.length ? pledges.map((c) => `${c.title} · day ${C.state(c).day}`).join(' · ') : 'A 7, 14 or 30-day pledge, with your own stake'}</span></span>
+        <span class="row-main"><span class="row-title">Commitments</span><span class="row-sub">${pledges.length ? pledges.map((c) => `${c.title} · day ${C.state(c).day}`).join(' · ') : 'A pledge for as long as you choose, with your own stake'}</span></span>
         <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
       <li><a class="row" href="#/plan/rewards" data-action="nav" data-to="plan/rewards">
         <span class="row-ic">${icon('trophy', { size: 18 })}</span>
         <span class="row-main"><span class="row-title">Rewards</span><span class="row-sub">${unlocked ? `${unlocked} unlocked` : rewards.length ? `${rewards.length} you’re working towards` : 'Something you’ll enjoy, unlocked by something real'}</span></span>
+        <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
+      <li><a class="row" href="#/plan/moodboard" data-action="nav" data-to="plan/moodboard">
+        <span class="row-ic">${icon('image', { size: 18 })}</span>
+        <span class="row-main"><span class="row-title">Moodboard</span><span class="row-sub">${mb ? `${mb} image${mb === 1 ? '' : 's'} on Today` : 'Up to five images that remind you why'}</span></span>
         <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
     </ul>
   </section>`;
@@ -145,16 +154,31 @@ function tasksAndTraining() {
   const overdue = T.overdue();
   const week = range(startOfWeek(today()), addDays(startOfWeek(today()), 6));
   const sessions = week.map((d) => ({ d, tpl: F.plannedTemplate(d), done: F.workoutsOn(d).length > 0 }));
+  const lists = L.lists();
+  const spent = $.summary();
+  const soon = E.sorted().find((x) => x.in >= 0);
   return html`<section class="block" data-key="more">
     <ul class="list">
       <li><a class="row" href="#/plan/tasks" data-action="nav" data-to="plan/tasks">
         <span class="row-ic">${icon('list-todo', { size: 18 })}</span>
         <span class="row-main"><span class="row-title">Tasks</span><span class="row-sub tnum">${open.length} open${overdue.length ? ` · ${overdue.length} overdue` : ''}</span></span>
         <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
+      <li><a class="row" href="#/plan/lists" data-action="nav" data-to="plan/lists">
+        <span class="row-ic">${icon('list-checks', { size: 18 })}</span>
+        <span class="row-main"><span class="row-title">Lists</span><span class="row-sub">${lists.length ? lists.slice(0, 3).map((l) => l.name).join(' · ') : 'Groceries, packing, ideas'}</span></span>
+        <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
       <li><a class="row" href="#/plan/training" data-action="nav" data-to="plan/training">
         <span class="row-ic">${icon('dumbbell', { size: 18 })}</span>
         <span class="row-main"><span class="row-title">Training</span>
           <span class="row-sub plan-week-strip" aria-label="This week’s sessions">${sessions.map((s) => html`<span class="${cx('pws', s.done && 'is-done', s.d === today() && 'is-today', !s.tpl && 'is-rest')}" title="${fmtDayShort(s.d)}: ${s.tpl?.name || 'Rest'}">${fmtDayShort(s.d).slice(0, 1)}</span>`)}</span></span>
+        <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
+      <li><a class="row" href="#/plan/money" data-action="nav" data-to="plan/money">
+        <span class="row-ic">${icon('wallet', { size: 18 })}</span>
+        <span class="row-main"><span class="row-title">Money</span><span class="row-sub tnum">${spent.count ? `${$.fmt(spent.total, { cents: 0 })} this month${spent.budget ? ` · ${spent.left >= 0 ? `${$.fmt(spent.left, { cents: 0 })} left` : 'over budget'}` : ''}` : 'What you spend, against a budget if you like'}</span></span>
+        <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
+      <li><a class="row" href="#/plan/dates" data-action="nav" data-to="plan/dates">
+        <span class="row-ic">${icon('calendar-heart', { size: 18 })}</span>
+        <span class="row-main"><span class="row-title">Dates</span><span class="row-sub">${soon ? `${E.label(soon)} · ${E.inWords(soon.in).toLowerCase()}` : 'Birthdays, anniversaries, countdowns'}</span></span>
         <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
       <li><a class="row" href="#/plan/playbook" data-action="nav" data-to="plan/playbook">
         <span class="row-ic">${icon('scroll-text', { size: 18 })}</span>
@@ -178,7 +202,7 @@ export default {
       ${later('projects', projectsCard, 160)}
       ${later('books', booksCard, 160)}
       ${later('keep', keepGoing, 280)}
-      ${later('more', tasksAndTraining, 200)}`;
+      ${later('more', tasksAndTraining, 420)}`;
   },
   actions: {
     'quest-yes': () => { const undo = Q.accept(Q.offer()); hap.success(); app.toast('Added to your tasks', { icon: 'check', action: { label: 'Undo', fn: undo } }); },

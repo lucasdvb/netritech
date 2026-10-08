@@ -8,6 +8,9 @@ import { today, weekday, parseHM, fmtHM, minutesOfDay, dayEndMinutes, cmp } from
 export const runId = (routineId, date) => `${routineId}:${date}`;
 export const routines = () => store.memo('routines-sorted', ['routines'], () => store.all('routines').sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
 export const routine = (id) => store.get('routines', id);
+/** The routine's icon: the one you chose, or one from its kind. */
+export const iconOf = (r) => r.icon || (r.kind === 'evening' ? 'moon' : r.kind === 'morning' ? 'sunrise' : 'repeat');
+export const ICONS = ['sunrise', 'sun', 'moon', 'moon-star', 'coffee', 'dumbbell', 'book-open', 'briefcase', 'house', 'leaf', 'heart', 'repeat'];
 export const run = (routineId, date) => store.get('routineRuns', runId(routineId, date));
 
 /** The routine a habit belongs to, and its step. */
