@@ -307,14 +307,21 @@ function mark(ins, outcome, date = today()) { store.put('meta', { id: 'insights'
 function unmark(id) { const items = { ...record() }; delete items[id]; store.put('meta', { id: 'insights', items }); }
 
 /** Insights worth showing on a date: acted on or set aside ones stay quiet for two weeks. */
+// Writing in the journal, or anything else no rule reads, doesn't run the rules again.
+const READS = ['habits', 'habitLogs', 'routines', 'routineRuns', 'dailyReviews', 'sleepEntries', 'moodEntries', 'weightEntries', 'nutritionLogs',
+  'stepLogs', 'workouts', 'workoutSets', 'templates', 'goals', 'settings', 'profile', 'meta'];
 export function insights(date = today(), { limit = Infinity } = {}) {
+  return store.memo(`insights:${date}`, READS, () => compute(date), `${found.date === date}:${engines.length}`).slice(0, limit);
+}
+
+function compute(date) {
   const out = [];
   for (const e of engines) {
     let list = [];
     try { list = e.run(date) || []; } catch (err) { console.warn(`insight engine ${e.id} failed`, err); }
     out.push(...list.filter((i) => i?.action?.apply && i.action.label && !quiet(i.id, date)));
   }
-  return out.sort((a, b) => b.weight - a.weight).slice(0, limit);
+  return out.sort((a, b) => b.weight - a.weight);
 }
 
 /** Apply an insight's action. Returns an undo that reverses the change and brings the insight back. */

@@ -4,6 +4,7 @@ import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead } from '../ui/components.js';
 import { defaultWeek } from './review-week.js';
+import * as Y from '../domain/year-review.js';
 
 export default {
   id: 'reviews',
@@ -14,6 +15,7 @@ export default {
     const m = monthKey(today());
     const mr = store.get('monthlyReviews', m);
     const weeks = store.all('weeklyReviews').filter((r) => r.completedAt).sort((a, b) => (a.id < b.id ? 1 : -1));
+    const yr = Y.due(today()) ?? Number(today().slice(0, 4));
     const months = store.all('monthlyReviews').filter((r) => r.completedAt).sort((a, b) => (a.id < b.id ? 1 : -1));
     return html`
       ${pageHead({ title: 'Reviews', back: { to: 'reflect', label: 'Reflect' } })}
@@ -26,6 +28,10 @@ export default {
         <a class="card card--link review-cta" href="#/reflect/review/month/${m}" data-action="nav" data-to="reflect/review/month/${m}">
           <span class="row-ic" style="--ic:var(--c-life)">${icon('calendar', { size: 18 })}</span>
           <span class="row-main"><span class="row-title">Monthly review · ${fmtMonth(`${m}-01`)}</span><span class="row-sub">${mr?.completedAt ? 'Done · tap to revisit' : 'Stop · start · continue · one focus'}</span></span>
+          ${icon('chevron-right', { size: 18, cls: 'muted' })}</a>
+        <a class="card card--link review-cta" href="#/reflect/review/year/${yr}" data-action="nav" data-to="reflect/review/year/${yr}">
+          <span class="row-ic" style="--ic:var(--c-life)">${icon('sparkles', { size: 18 })}</span>
+          <span class="row-main"><span class="row-title">Yearly review · ${yr}</span><span class="row-sub">${Y.review(yr)?.completedAt ? `Done${Y.review(yr).word ? ` · ${yr + 1}: ${Y.review(yr).word}` : ''}` : 'Best from mid-December · one word for the year ahead'}</span></span>
           ${icon('chevron-right', { size: 18, cls: 'muted' })}</a>
       </div>
       ${weeks.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Past weeks</h2></div>
