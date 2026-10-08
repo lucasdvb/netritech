@@ -6,6 +6,7 @@ import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty, segmented, check, scale10 } from '../ui/components.js';
 import { kgOut, kgIn, weightUnit, loadText } from '../ui/format.js';
+import { nextStep, stepLabel } from '../domain/next-step.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 
@@ -54,6 +55,7 @@ function exerciseCard(w, g, progress) {
   const prevSets = prev ? F.setsOf(prev.workout.id).filter((s) => s.exerciseId === prev.exerciseId && s.completed) : [];
   const row = progress?.rows.find((r) => r.exerciseId === e.id);
   const family = e.family ? F.exercises().filter((x) => x.family === e.family) : [];
+  const step = w.status === 'active' ? nextStep(e.id, g.sets[0].target, { excludeWorkoutId: w.id, before: w.date, unit: weightUnit() }) : null;
   return html`<section class="ex-card" data-key="ex-${g.sets[0].id}">
     <header class="ex-head">
       <button type="button" class="drag-handle" data-drag aria-label="Move ${e.name}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>
@@ -65,6 +67,7 @@ function exerciseCard(w, g, progress) {
       <button type="button" class="icon-btn icon-btn--sm" data-action="ex-menu" data-order="${g.order}" aria-label="Options for ${e.name}">${icon('ellipsis', { size: 18 })}</button>
     </header>
     <p class="ex-last">${lastTimeLine(prev, e)}${row && row.verdict !== 'first' ? html` · <strong>${row.reason}</strong>` : ''}</p>
+    ${w.status === 'active' && !g.sets.some((x) => x.completed) && step ? html`<p class="ex-last ex-step"><strong>${stepLabel(step, loadText)}</strong> · ${step.why}</p>` : ''}
     <ol class="wset-list">
       <li class="wset-row wset-row--head" aria-hidden="true"><span>Set</span><span>Goal</span><span>${e.metric === 'time' ? 'Seconds' : e.metric === 'minutes' ? 'Minutes' : 'Reps'}</span><span>${e.metric === 'reps' ? 'Load' : ''}</span><span></span></li>
       ${g.sets.map((s) => setRow(s, e, prevSets))}

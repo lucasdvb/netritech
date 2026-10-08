@@ -153,6 +153,8 @@ export function openFood(date = today()) {
           <div class="macro"><p class="macro-label">Protein</p><p class="macro-val tnum">${num(nut.protein)}<small> / ${t.proteinG} g</small></p>${bar(nut.protein / t.proteinG, { color: 'var(--c-health)', label: 'Protein' })}</div>
           <div class="macro"><p class="macro-label">Calories</p><p class="macro-val tnum">${num(nut.kcal)}<small> / ${num(t.kcal)}</small></p>${bar(nut.kcal / t.kcal, { color: 'var(--c-body)', label: 'Calories' })}</div>
         </div>
+        ${!s.ui.q && store.onDate('nutritionLogs', addDays(date, -1)).length && !store.onDate('nutritionLogs', date).some((l) => l.repeated)
+          ? html`<button type="button" class="btn btn--soft btn--block" data-action="same">${icon('repeat', { size: 16 })} Same as yesterday</button>` : ''}
         <div class="food-tools"><div class="search-field">${icon('search', { size: 16 })}<input type="search" placeholder="Find a quick food" value="${s.ui.q}" data-input="q" aria-label="Find a quick food"></div>
           <button type="button" class="link-btn" data-action="manage" aria-pressed="${!!s.ui.manage}">${s.ui.manage ? 'Done' : 'Edit'}</button></div>
         <ul class="food-list">${foods.map((f) => html`<li data-key="${f.id}"${s.ui.manage ? raw(' class="food-row"') : ''}><button type="button" class="food-item" data-action="${s.ui.manage ? 'food-edit' : 'quick'}" data-id="${f.id}"${s.ui.manage ? raw(` aria-label="Edit ${f.name}"`) : ''}>
@@ -180,6 +182,7 @@ export function openFood(date = today()) {
     },
     inputs: { q: ({ value, sheet }) => { sheet.ui.q = value; sheet.refresh(); } },
     actions: {
+      same: ({ sheet }) => { app.closeSheet(sheet); repeatYesterday(date); },
       quick: ({ data }) => {
         const f = store.get('foods', data.id);
         store.batch([
@@ -233,6 +236,17 @@ function editFood(id) {
       },
     },
   });
+}
+
+/** Same as yesterday: the day before's food onto `date`, with Undo. */
+export async function repeatYesterday(date = today(), { onDone } = {}) {
+  const Meals = await import('../domain/meals.js');
+  const ids = Meals.repeatDayBefore(date);
+  if (!ids.length) { app.toast('Nothing logged the day before.'); return; }
+  hap.success();
+  onDone?.();
+  const sum = Meals.summary(ids.map((id) => store.get('nutritionLogs', id)).filter(Boolean));
+  app.toast(`Same as yesterday · ${sum.protein} g protein`, { icon: 'check', action: { label: 'Undo', fn: () => { store.batch(ids.map((id) => ({ store: 'nutritionLogs', delete: id }))); onDone?.(); } } });
 }
 
 export function addServing(date, kind) {

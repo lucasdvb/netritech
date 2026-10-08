@@ -11,6 +11,7 @@ import { sparkline } from '../ui/charts.js';
 import { num, weight as fw, length as fl, signed, kgOut, weightUnit } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
 import { openFood, addWater } from './sheets.js';
+import { canRepeat } from '../domain/meals.js';
 import { openStartSheet } from './workout-actions.js';
 
 export function weightCard() {
@@ -143,6 +144,7 @@ export default {
             ${nutritionRings()}
             <div class="quick-row">
               <button type="button" class="btn btn--soft btn--sm" data-action="food">${icon('plus', { size: 16 })} Food</button>
+              ${canRepeat(today()) ? html`<button type="button" class="btn btn--soft btn--sm" data-action="same">${icon('repeat', { size: 15 })} Same as yesterday</button>` : ''}
               <button type="button" class="btn btn--soft btn--sm" data-action="whey">Whey · 25.5 g</button>
               <button type="button" class="btn btn--soft btn--sm" data-action="water-500">${icon('droplet', { size: 15 })} +500 ml</button>
             </div>
@@ -159,6 +161,7 @@ export default {
     water: () => addWater(today(), 500),
     'water-500': () => addWater(today(), 500),
     steps: async () => (await import('./pads.js')).stepsPad(today()),
+    same: async () => (await import('./sheets.js')).repeatYesterday(today()),
     whey: () => {
       const f = store.get('foods', 'f-whey');
       store.batch([{ store: 'nutritionLogs', value: { date: today(), name: f.name, protein: f.protein, kcal: f.kcal, fruit: 0, veg: 0, foodId: f.id, at: new Date().toISOString() } },

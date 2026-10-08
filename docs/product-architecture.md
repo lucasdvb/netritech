@@ -1304,7 +1304,7 @@ Where it ends:
 
 The owner asked for a complete list of improvements: researched habit science and the most successful habit apps, nothing bulky. The list was mapped against the app, and the owner approved everything except the people features (an accountability buddy, keep-in-touch rhythm) and the privacy and devices group (Face ID lock, sync, AI). Each item below names the evidence it rests on.
 
-Partway through, the owner made automatic sync between devices a must, so it was brought in ahead of 13c (see **Sync** below). 13a, 13b and 13c are built.
+Partway through, the owner made automatic sync between devices a must, so it was brought in ahead of 13c (see **Sync** below). 13a to 13d are built.
 
 **13a. Fixes and the consistency core**
 1. **Apple Health lands in the right copy.**
@@ -1376,6 +1376,11 @@ Partway through, the owner made automatic sync between devices a must, so it was
 15. **Next-weight suggestion.**
     - When every set reached the top of the rep range last time, the next session suggests the next step (2.5 kg or 5 lb, one more rep, or 5 more seconds) and says why.
     - After two sessions without progress below the top of the range, it suggests holding the weight.
+
+**How 13d was built.**
+- *Same as yesterday* sits on Body, on the Nutrition page and at the top of the food sheet, once a day while yesterday has food. It copies every entry to today at the same times of day, marked as repeated, and its Undo takes all of them back.
+- The next step is worked out when a session starts, so the sets are already filled in, and it's shown with its reason above the exercise in the list and on its first set in gym mode ("Next step: 12.5 kg × 8 · Every set reached 15 reps last time."). Bodyweight exercises at the top of their range get the next harder variation when the family has one, else one more rep; holds get 5 more seconds. Weight steps are 2.5 kg, or 5 lb for someone using pounds. A lighter day (the coach's call after a hard week) skips it.
+- Found on the way: the sample data wrote food and water times without a leading zero ("T8:00:00"), which isn't a valid time, so those rows broke the Nutrition list. Fixed, and repeating a day reads times defensively.
 
 **13e. What works for you**
 16. **What helps you.**

@@ -10,7 +10,8 @@ import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { attachSwipe } from '../ui/swipe.js';
 import { nutritionRings } from './body.js';
-import { openFood, openWater, addServing, removeWithUndo } from './sheets.js';
+import { openFood, openWater, addServing, removeWithUndo, repeatYesterday } from './sheets.js';
+import { canRepeat } from '../domain/meals.js';
 
 function adaptiveCard() {
   const a = M.adaptiveCalories();
@@ -72,6 +73,7 @@ export default {
       <div class="card">${nutritionRings(date)}
         <div class="quick-row">
           <button type="button" class="btn btn--primary btn--sm" data-action="food">${icon('plus', { size: 16 })} Log food</button>
+          ${canRepeat(date) ? html`<button type="button" class="btn btn--soft btn--sm" data-action="same">${icon('repeat', { size: 15 })} Same as yesterday</button>` : ''}
           <button type="button" class="btn btn--soft btn--sm" data-action="whey">Whey</button>
           <button type="button" class="btn btn--soft btn--sm" data-action="serving" data-kind="fruit">+ Fruit</button>
           <button type="button" class="btn btn--soft btn--sm" data-action="serving" data-kind="veg">+ Veg</button>
@@ -124,6 +126,7 @@ export default {
     food: ({ params }) => openFood(params.date || today()),
     water: ({ params }) => openWater(params.date || today()),
     serving: ({ data, params }) => addServing(params.date || today(), data.kind),
+    same: ({ params }) => repeatYesterday(params.date || today()),
     whey: ({ params }) => {
       const f = store.get('foods', 'f-whey');
       store.batch([{ store: 'nutritionLogs', value: { date: params.date || today(), name: f.name, protein: f.protein, kcal: f.kcal, fruit: 0, veg: 0, foodId: f.id, at: new Date().toISOString() } },
