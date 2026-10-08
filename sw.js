@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = '67b9ab2d06';
+const VERSION = '30bed14b81';
 const ASSETS = [
   "./",
   "./index.html",
@@ -22,6 +22,7 @@ const ASSETS = [
   "./js/data/store.js",
   "./js/data/tiny-versions.js",
   "./js/domain/adapt.js",
+  "./js/domain/books.js",
   "./js/domain/capture-save.js",
   "./js/domain/capture.js",
   "./js/domain/coach.js",
@@ -34,6 +35,7 @@ const ASSETS = [
   "./js/domain/habits.js",
   "./js/domain/metrics.js",
   "./js/domain/next-action.js",
+  "./js/domain/projects.js",
   "./js/domain/reminder-rules.js",
   "./js/domain/reminders.js",
   "./js/domain/review-data.js",
@@ -47,6 +49,8 @@ const ASSETS = [
   "./js/routes.js",
   "./js/screens/area.js",
   "./js/screens/body.js",
+  "./js/screens/book.js",
+  "./js/screens/books.js",
   "./js/screens/capture.js",
   "./js/screens/data.js",
   "./js/screens/exercise.js",
@@ -71,6 +75,8 @@ const ASSETS = [
   "./js/screens/playbook.js",
   "./js/screens/privacy.js",
   "./js/screens/progress.js",
+  "./js/screens/project.js",
+  "./js/screens/projects.js",
   "./js/screens/reflect.js",
   "./js/screens/relationships.js",
   "./js/screens/review-month.js",

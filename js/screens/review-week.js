@@ -1,5 +1,6 @@
 import * as store from '../data/store.js';
 import * as H from '../domain/habits.js';
+import * as T from '../domain/tasks.js';
 import { weekFacts } from '../domain/review-data.js';
 import { weeklyInsights } from '../domain/coach.js';
 import { today, startOfWeek, endOfWeek, addDays, fmtMD, weekday, relativeDay } from '../domain/dates.js';
@@ -33,6 +34,20 @@ function saveLater(id, patch) {
 const weekOf = (params) => (params.date ? startOfWeek(params.date) : (params.date = defaultWeek()));
 
 const kg = (v) => (v == null ? '—' : `${signed(kgOut(v), 1)} ${weightUnit()}`);
+
+/** Planning the week ahead inside the review: three things, the first one onto Monday. */
+function nextWeek(ws) {
+  const nw = addDays(ws, 7);
+  const plan = store.get('weeklyReviews', nw)?.plan || [];
+  return html`<section class="block" data-key="next-week"><div class="block-head"><h2 class="block-title">Next week</h2><span class="block-meta">${fmtMD(nw)} – ${fmtMD(endOfWeek(nw))}</span></div>
+    <div class="card">
+      <p class="muted small">Three things for the week. They stay on Plan all week.</p>
+      <ol class="plan-three">${[0, 1, 2].map((i) => html`<li data-key="wk-${i}"><span class="tnum">${i + 1}</span>
+        <input class="plan-three-input" value="${plan[i] || ''}" data-change="wk-plan" data-i="${i}" placeholder="${['The one that matters most', 'Second', 'Third'][i]}" aria-label="Next week, thing ${i + 1}" maxlength="140"></li>`)}</ol>
+      <button type="button" class="btn btn--soft btn--sm" data-action="wk-monday">Make the first one Monday’s priority</button>
+    </div>
+  </section>`;
+}
 
 export default {
   id: 'review-week',
@@ -73,15 +88,32 @@ export default {
         <div class="journal-form">${QUESTIONS.map(([k, q]) => html`<label class="${cx('prompt', k === 'one' && 'prompt--key')}"><span class="prompt-q">${q}</span>
           <textarea class="prompt-a" rows="2" data-input="answer" data-k="${k}" placeholder="${k === 'one' ? 'One change. Not five.' : ''}">${r.answers?.[k] || ''}</textarea></label>`)}</div>
       </section>
+      ${nextWeek(ws)}
       <button type="button" class="btn ${r.completedAt ? 'btn--soft' : 'btn--primary'} btn--block block" data-action="complete">${r.completedAt ? 'Update review' : 'Complete review'}</button>`;
   },
   inputs: {
+    // Next week's three: kept on next week's review record, shown on Plan all week.
+    'wk-plan': ({ el, value, params }) => {
+      const nw = addDays(weekOf(params), 7);
+      const cur = store.get('weeklyReviews', nw) || { id: nw, weekStart: nw };
+      const plan = [...(cur.plan || ['', '', ''])];
+      plan[Number(el.dataset.i)] = value.trim();
+      store.put('weeklyReviews', { ...cur, id: nw, weekStart: nw, plan });
+    },
     answer: ({ el, value, params }) => {
       const ws = weekOf(params);
       saveLater(ws, (cur) => ({ answers: { ...(cur.answers || {}), [el.dataset.k]: value } }));
     },
   },
   actions: {
+    'wk-monday': ({ params }) => {
+      const nw = addDays(weekOf(params), 7);
+      const first = (store.get('weeklyReviews', nw)?.plan || []).find(Boolean);
+      if (!first) { app.toast('Write next week’s first thing above.'); return; }
+      T.setPriority(nw, 0, first);
+      hap.success();
+      app.toast(`Monday starts with: ${first}`, { icon: 'check' });
+    },
     week: ({ data, params }) => {
       const ws = weekOf(params);
       const next = addDays(ws, Number(data.delta));

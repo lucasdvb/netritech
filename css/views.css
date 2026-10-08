@@ -180,8 +180,8 @@
 .facts dd { margin: 0; font-size: var(--text-body); font-weight: var(--weight-medium); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); text-align: right; }
 .steps-card { margin-top: var(--s3); }
 .steps { padding-left: 18px; list-style: decimal; display: flex; flex-direction: column; gap: 6px; font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-2); }
-.danger-zone { display: flex; gap: var(--s2); margin-top: var(--s7); }
-.danger-zone .btn { flex: 1; }
+.danger-zone { display: flex; flex-wrap: wrap; gap: var(--s2); margin-top: var(--s7); }
+.danger-zone .btn { flex: 1 1 auto; white-space: nowrap; }
 .btn--danger-text { color: var(--danger); }
 .archived > summary { padding: 0 2px; }
 .archived .list { margin-top: var(--s2); }
@@ -884,3 +884,22 @@ button.hero-big { display: inline-flex; align-items: baseline; flex-wrap: wrap; 
 .fresh-lead { font-size: var(--text-body-lg); font-weight: var(--weight-regular); line-height: var(--leading-body-lg); letter-spacing: var(--tracking-body); color: var(--text); }
 .fresh-picks { display: flex; flex-wrap: wrap; gap: 6px; }
 .fresh-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s3); }
+
+/* ---------- Plan: projections, projects, books ---------- */
+.goal-projection { display: flex; align-items: flex-start; gap: 8px; margin-top: var(--s3); padding: var(--s3) var(--s4); border-radius: var(--r-lg); background: var(--surface);
+  font-size: var(--text-body); font-weight: var(--weight-medium); line-height: var(--leading-body); letter-spacing: var(--tracking-body); color: var(--text); }
+.goal-projection .ic { flex: none; margin-top: 3px; color: var(--accent); }
+.goal-suggest { margin-top: var(--s3); display: flex; flex-direction: column; gap: 6px; }
+.book-bar { display: block; margin-top: 6px; max-width: 220px; }
+.book-notes { min-height: 96px; }
+.plan-three { display: flex; flex-direction: column; }
+.plan-three li { display: flex; align-items: center; gap: 10px; min-height: 48px; border-top: 0.5px solid var(--border); }
+.plan-three li:first-child { border-top: 0; }
+.plan-three .tnum { color: var(--text-3); min-width: 1ch; font-size: var(--text-body); font-weight: var(--weight-semibold); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); }
+.plan-three-input { flex: 1; min-width: 0; height: 44px; border: 0; padding: 0; background: transparent; color: var(--text); outline: none;
+  font-size: var(--text-input); font-weight: var(--weight-medium); letter-spacing: var(--tracking-body); }
+.plan-three-input::placeholder { color: var(--text-3); font-weight: var(--weight-regular); }
+.week-plan { margin-bottom: var(--s3); }
+.week-plan .section-label { margin-bottom: 8px; }
+.week-days .row { gap: var(--s3); }
+.week-dow { flex: none; width: 3.2em; color: var(--text-3); font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }

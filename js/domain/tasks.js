@@ -71,12 +71,12 @@ export function firstDate(r, from = today()) {
 export const nextDate = (r, after) => firstDate(r, addDays(after, 1));
 
 /* ---------- writes ---------- */
-export function add({ title, date = null, area = 'life', repeat = null, notes = '' }) {
+export function add({ title, date = null, area = 'life', repeat = null, notes = '', projectId = null }) {
   const t = (title || '').trim();
   if (!t) return null;
   const maxOrder = all().reduce((m, x) => Math.max(m, x.order ?? 0), 0);
   return store.put('tasks', { id: store.uid(), title: t, notes, area, repeat, date: date || (repeat ? firstDate(repeat) : null),
-    done: false, doneAt: null, order: maxOrder + 1 });
+    done: false, doneAt: null, order: maxOrder + 1, ...(projectId ? { projectId } : {}) });
 }
 
 export function save(id, patch) {

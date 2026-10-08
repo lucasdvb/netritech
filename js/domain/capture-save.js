@@ -3,6 +3,7 @@
 import * as store from '../data/store.js';
 import * as H from './habits.js';
 import { describe } from './capture.js';
+import * as B from './books.js';
 
 const PEOPLE_KINDS = { fiancee: 'Conversation', date: 'Dinner', son: 'Conversation', family: 'Call' };
 const FAITH_HABIT = { prayer: 'h-prayer', scripture: 'h-scripture', gratitude: 'h-gratitude', church: 'h-church', study: 'h-study' };
@@ -37,7 +38,12 @@ function opsFor(i, get, at) {
       const prev = get('sleepEntries', d) || {};
       return [put('sleepEntries', { ...prev, id: d, date: d, ...(i.hours != null ? { hours: i.hours } : {}), ...(i.bedtime ? { bedtime: i.bedtime, wake: i.wake } : {}), ...(i.quality != null ? { quality: i.quality } : {}) })];
     }
-    case 'reading': return [put('readingSessions', { id: store.uid(), date: d, minutes: i.minutes || 0, pages: i.pages ?? null, book: i.book || '', notes: i.notes || '', finished: false })];
+    case 'reading': {
+      // "read 20 pages" moves the book you're reading on (or the one you named).
+      const b = (i.book && B.match(i.book)) || (!i.book && i.pages ? B.current() : null);
+      if (b) return B.readingOps(get('books', b.id) || b, { pages: i.pages, minutes: i.minutes, date: d, notes: i.notes || '' });
+      return [put('readingSessions', { id: store.uid(), date: d, minutes: i.minutes || 0, pages: i.pages ?? null, book: i.book || '', notes: i.notes || '', finished: false })];
+    }
     case 'learning': return [put('learningSessions', { id: store.uid(), date: d, minutes: i.minutes || 0, topic: i.topic || '', notes: '' })];
     case 'meditation': return [put('meditationSessions', { id: store.uid(), date: d, minutes: i.minutes || 0, kind: i.type || 'breath', notes: '' })];
     case 'faith': {

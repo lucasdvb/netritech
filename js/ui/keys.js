@@ -20,7 +20,8 @@ const visible = (el) => el.getClientRects().length > 0;
 const typing = (el) => !!el && (el.matches?.('input, textarea, select') || el.isContentEditable);
 
 function move(step) {
-  const items = [...document.querySelectorAll(ITEMS)].filter(visible);
+  // Only rows you can act on: a row of plain text (a day in This week) is skipped.
+  const items = [...document.querySelectorAll(ITEMS)].filter((it) => visible(it) && (it.matches(FOCUSABLE) || it.querySelector(FOCUSABLE)));
   if (!items.length) return;
   const at = items.findIndex((it) => it.contains(document.activeElement));
   const next = items[at < 0 ? (step > 0 ? 0 : items.length - 1) : Math.max(0, Math.min(items.length - 1, at + step))];

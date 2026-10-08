@@ -58,8 +58,9 @@
 .btn--sm { min-height: 38px; padding: 0 15px; font-size: var(--text-caption); border-radius: var(--r-pill); }
 .btn--block { width: 100%; min-height: 54px; }
 .btn--block.btn--sm { min-height: 40px; }
-.btn-row { display: flex; gap: var(--s2); justify-content: flex-end; }
-.btn-row .btn { flex: 1; }
+.btn-row { display: flex; flex-wrap: wrap; gap: var(--s2); justify-content: flex-end; }
+/* Buttons share the row and wrap to a new line rather than squeezing their labels onto two. */
+.btn-row .btn { flex: 1 1 auto; white-space: nowrap; }
 /* Aerra: a skewed sheen sweeps the pill on hover, and the arrow tile swaps two arrows */
 .btn--primary::after {
   content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
