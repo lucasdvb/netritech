@@ -1,4 +1,4 @@
-import { html, raw, attr, cx, esc } from './dom.js';
+import { html, raw, attr, cx, esc, dataAttrs } from './dom.js';
 import { icon } from './icons.js';
 import { ring, bar, check, toggle } from './controls.js';
 export { ring, bar, check, toggle };
@@ -13,12 +13,12 @@ export function segmented(options, value, { action, name, cls = '', size = '' } 
 }
 
 export function empty({ ic = 'sparkle', title, body = '', cta, action, data = {} }) {
-  const d = Object.entries(data).map(([k, v]) => ` data-${k}="${v}"`).join('');
+  const d = dataAttrs(data);
   return html`<div class="empty">
     <div class="empty-ic">${icon(ic, { size: 22 })}</div>
     <p class="empty-title">${title}</p>
     ${body ? html`<p class="empty-body">${body}</p>` : ''}
-    ${cta ? html`<button type="button" class="btn btn--soft" data-action="${action}"${raw(d)}>${cta}</button>` : ''}
+    ${cta ? html`<button type="button" class="btn btn--soft" data-action="${action}"${d}>${cta}</button>` : ''}
   </div>`;
 }
 
@@ -28,7 +28,7 @@ export function pageHead({ title, eyebrow, back, actions = '', sub, morph }) {
     <div class="page-head-row">
       <div>
         ${eyebrow ? html`<p class="eyebrow">${eyebrow}</p>` : ''}
-        <h1 class="page-title"${morph ? raw(` data-morph="${morph}"`) : ''}>${title}</h1>
+        <h1 class="page-title"${attr(morph, 'data-morph', morph)}>${title}</h1>
         ${sub ? html`<p class="page-sub">${sub}</p>` : ''}
       </div>
       <div class="page-actions">${actions}</div>
@@ -56,14 +56,14 @@ export function dots(list, { size = 'md' } = {}) {
 }
 
 export function chip(label, { action, data = {}, active = false, ic, cls = '' } = {}) {
-  const d = Object.entries(data).map(([k, v]) => ` data-${k}="${esc(v)}"`).join('');
-  return html`<button type="button" class="${cx('chip', active && 'is-active', cls)}" data-action="${action}"${raw(d)} aria-pressed="${!!active}">${ic ? icon(ic, { size: 16 }) : ''}<span>${label}</span></button>`;
+  const d = dataAttrs(data);
+  return html`<button type="button" class="${cx('chip', active && 'is-active', cls)}" data-action="${action}"${d} aria-pressed="${!!active}">${ic ? icon(ic, { size: 16 }) : ''}<span>${label}</span></button>`;
 }
 
 export function row({ ic, color, title, sub, right = '', action, data = {}, chevron = true, cls = '', key }) {
-  const d = Object.entries(data).map(([k, v]) => ` data-${k}="${esc(v)}"`).join('');
+  const d = dataAttrs(data);
   const tag = action ? 'button' : 'div';
-  return html`${raw(`<${tag} class="${cx('row', cls)}"${action ? ` type="button" data-action="${action}"` : ''}${d}${key ? ` data-key="${key}"` : ''}>`)}
+  return html`${raw(`<${tag} class="${cx('row', cls)}"${action ? ` type="button" data-action="${esc(action)}"` : ''}${d}${key ? ` data-key="${esc(key)}"` : ''}>`)}
     ${ic ? html`<span class="row-ic" style="${color ? `--ic:${color}` : ''}">${icon(ic, { size: 18 })}</span>` : ''}
     <span class="row-main"><span class="row-title">${title}</span>${sub ? html`<span class="row-sub">${sub}</span>` : ''}</span>
     ${right ? html`<span class="row-right">${right}</span>` : ''}
@@ -84,18 +84,18 @@ export function field(label, control, { hint = '', id, cls = '', error = '' } = 
 export const fieldError = (message) => (message ? html`<span class="field-error" role="alert">${message}</span>` : '');
 
 export function stepper(value, { action, data = {}, step = 1, unit = '', min = 0 } = {}) {
-  const d = Object.entries(data).map(([k, v]) => ` data-${k}="${v}"`).join('');
+  const d = dataAttrs(data);
   return html`<div class="stepper">
-    <button type="button" class="stepper-btn" data-action="${action}" data-delta="${-step}"${raw(d)} aria-label="Less"${value <= min ? raw(' disabled') : ''}>${icon('minus', { size: 18 })}</button>
+    <button type="button" class="stepper-btn" data-action="${action}" data-delta="${-step}"${d} aria-label="Less"${value <= min ? raw(' disabled') : ''}>${icon('minus', { size: 18 })}</button>
     <span class="stepper-val tnum">${value}${unit ? html`<small>${unit}</small>` : ''}</span>
-    <button type="button" class="stepper-btn" data-action="${action}" data-delta="${step}"${raw(d)} aria-label="More">${icon('plus', { size: 18 })}</button>
+    <button type="button" class="stepper-btn" data-action="${action}" data-delta="${step}"${d} aria-label="More">${icon('plus', { size: 18 })}</button>
   </div>`;
 }
 
 export function scale10(value, { action, data = {}, low = 'Low', high = 'High', name = '' } = {}) {
-  const d = Object.entries(data).map(([k, v]) => ` data-${k}="${v}"`).join('');
+  const d = dataAttrs(data);
   return html`<div class="scale" role="radiogroup"${attr(name, 'aria-label', name)}>
-    <div class="scale-row">${Array.from({ length: 10 }, (_, i) => i + 1).map((n) => html`<button type="button" role="radio" aria-checked="${value === n}" class="${cx('scale-btn', value === n && 'is-on', value != null && n < value && 'is-under')}" data-action="${action}" data-value="${n}"${raw(d)}>${n}</button>`)}</div>
+    <div class="scale-row">${Array.from({ length: 10 }, (_, i) => i + 1).map((n) => html`<button type="button" role="radio" aria-checked="${value === n}" class="${cx('scale-btn', value === n && 'is-on', value != null && n < value && 'is-under')}" data-action="${action}" data-value="${n}"${d}>${n}</button>`)}</div>
     <div class="scale-legend"><span>${low}</span><span>${high}</span></div>
   </div>`;
 }
@@ -104,5 +104,5 @@ export const badge = (text, tone = '') => html`<span class="${cx('badge', tone &
 
 
 export function settingRow(label, control, { hint = '', key } = {}) {
-  return html`<div class="set-row"${key ? raw(` data-key="${key}"`) : ''}><div class="set-text"><span class="set-label">${label}</span>${hint ? html`<span class="set-hint">${hint}</span>` : ''}</div><div class="set-ctl">${control}</div></div>`;
+  return html`<div class="set-row"${attr(key, 'data-key', key)}><div class="set-text"><span class="set-label">${label}</span>${hint ? html`<span class="set-hint">${hint}</span>` : ''}</div><div class="set-ctl">${control}</div></div>`;
 }

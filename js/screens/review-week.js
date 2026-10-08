@@ -8,7 +8,7 @@ import * as T from '../domain/tasks.js';
 import * as S from '../domain/story.js';
 import { weekFacts, weekHighlights } from '../domain/review-data.js';
 import { weeklyInsights } from '../domain/coach.js';
-import { today, startOfWeek, endOfWeek, addDays, fmtMD, weekday, relativeDay } from '../domain/dates.js';
+import { today, startOfWeek, endOfWeek, addDays, fmtMD, weekday, relativeDay, dayAt } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead } from '../ui/components.js';
@@ -133,7 +133,7 @@ function full(ws, r) {
     ['Work', 'briefcase', [['Priorities', f.priorities.set ? `${f.priorities.done} of ${f.priorities.set} done` : '—'], ['Focus blocks', `${f.deepWork}`], ['Wins', f.wins.length ? f.wins.map((w) => w.text).join(' · ') : '—']]],
   ];
   return html`
-    ${r.completedAt ? html`<div class="notice">${icon('check', { size: 16 })} Completed ${relativeDay(r.completedAt.slice(0, 10)).toLowerCase()}. You can still edit it.</div>` : html`<p class="lead">Everything on one page. The guided review takes about three minutes.</p>`}
+    ${r.completedAt ? html`<div class="notice">${icon('check', { size: 16 })} Completed ${relativeDay(dayAt(r.completedAt)).toLowerCase()}. You can still edit it.</div>` : html`<p class="lead">Everything on one page. The guided review takes about three minutes.</p>`}
     <div class="review-grid">${sections.map(([title, ic, rows]) => html`<section class="card review-sec">
       <p class="section-label">${icon(ic, { size: 13 })} ${title}</p>
       <dl class="facts facts--plain">${rows.map(([k, v]) => html`<div><dt>${k}</dt><dd>${v}</dd></div>`)}</dl></section>`)}</div>

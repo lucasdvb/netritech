@@ -3,7 +3,7 @@ import * as store from '../data/store.js';
 import { priorities } from './tasks.js';
 import * as M from './metrics-core.js';
 import { workoutFacts } from './fitness-core.js';
-import { today, weekday, startOfWeek, endOfWeek, startOfMonth, endOfMonth, range, addDays, diffDays, lastNDays, monthKey, cmp } from './dates.js';
+import { today, dayAt, weekday, startOfWeek, endOfWeek, startOfMonth, endOfMonth, range, addDays, diffDays, lastNDays, monthKey, cmp } from './dates.js';
 
 export const DATA_STORES = ['habits', 'habitLogs', 'waterLogs', 'nutritionLogs', 'stepLogs', 'sleepEntries', 'dailyReviews',
   'workouts', 'workoutSets', 'exercises', 'readingSessions', 'learningSessions', 'meditationSessions', 'relationshipEntries',
@@ -61,7 +61,7 @@ function periodSourceDone(h, date) {
   const weekly = h.source === 'weeklyReview';
   const rec = weekly ? store.get('weeklyReviews', startOfWeek(date)) : store.get('monthlyReviews', monthKey(date));
   if (!rec?.completedAt) return 0;
-  const doneDate = rec.completedAt.slice(0, 10);
+  const doneDate = dayAt(rec.completedAt);
   const start = weekly ? startOfWeek(date) : startOfMonth(date);
   const end = weekly ? endOfWeek(date) : endOfMonth(date);
   if (doneDate === date) return 1;
@@ -130,6 +130,20 @@ export function periodDone(h, date) {
   return n;
 }
 
+/**
+ * How many times a weekly or monthly habit is needed in the period holding `date`: its count, or
+ * its share when part of the period can't be used (it began mid-period, sick or away days).
+ */
+export function periodNeed(h, date) {
+  const s = h.schedule || {};
+  const from = s.kind === 'perMonth' ? startOfMonth(date) : startOfWeek(date);
+  return store.memo(`need:${h.id}:${from}`, ['habits', 'dailyReviews', 'profile'], () => {
+    const to = s.kind === 'perMonth' ? endOfMonth(date) : endOfWeek(date);
+    const usable = range(from, to).filter((d) => started(h, d) && !isOff(dayMode(d))).length;
+    return Math.ceil(((s.count || 1) * usable) / (diffDays(to, from) + 1));
+  });
+}
+
 export function lastDoneBefore(h, date) {
   for (let i = 1; i <= 120; i++) {
     const d = addDays(date, -i);
@@ -159,7 +173,7 @@ export function dueOn(h, date, mode = dayMode(date)) {
   const s = h.schedule || { kind: 'daily' };
   if (s.kind === 'daily' || s.kind === 'weekdays') return isScheduledDay(h, date);
   if (isDone(h, date)) return true;
-  if (s.kind === 'perWeek' || s.kind === 'perMonth') return periodDone(h, date) < (s.count || 1);
+  if (s.kind === 'perWeek' || s.kind === 'perMonth') return periodDone(h, date) < periodNeed(h, date);
   if (s.kind === 'interval') {
     const last = lastDoneBefore(h, date);
     if (!last) return diffDays(date, startOf(h)) % (s.every || 7) === 0 || diffDays(date, startOf(h)) >= (s.every || 7);
@@ -189,8 +203,8 @@ export function scheduleLabel(h) {
 
 export function periodLabel(h, date) {
   const s = h.schedule || {};
-  if (s.kind === 'perWeek') return `${periodDone(h, date)} of ${s.count} this week`;
-  if (s.kind === 'perMonth') return `${periodDone(h, date)} of ${s.count} this month`;
+  if (s.kind === 'perWeek') return `${periodDone(h, date)} of ${periodNeed(h, date)} this week`;
+  if (s.kind === 'perMonth') return `${periodDone(h, date)} of ${periodNeed(h, date)} this month`;
   if (s.kind === 'interval') {
     const last = isDone(h, date) ? date : lastDoneBefore(h, date);
     if (!last) return 'Due';
@@ -382,7 +396,7 @@ export function periodsOf(h, from, to) {
     while (p <= to) {
       const end = s.kind === 'perWeek' ? endOfWeek(p) : s.kind === 'perMonth' ? endOfMonth(p) : addDays(p, (s.every || 7) - 1);
       const days = range(p, end > to ? to : end).filter(usable);
-      const need = s.kind === 'interval' ? 1 : s.count || 1;
+      const need = s.kind === 'interval' ? 1 : periodNeed(h, p);
       const n = days.filter((d) => counts(h, d)).length;
       if (days.length) out.push({ key: p, met: n >= need ? true : end >= t ? null : false });
       p = addDays(end, 1);

@@ -2,7 +2,7 @@
 // Kept apart from delivery (reminders.js) so Today can show these notes without loading it.
 import * as store from '../data/store.js';
 import { habit, isDone, logId } from './habits.js';
-import { today, minutesOfDay, parseHM, lastNDays } from './dates.js';
+import { today, dayAt, minutesOfDay, parseHM, lastNDays } from './dates.js';
 
 export const LINKED = { morning: 'h-morning-reset', workout: 'h-training', evening: 'h-evening', weeklyReview: 'h-weekly-review' };
 
@@ -17,7 +17,7 @@ export function learned(habitId, time) {
   let early = 0;
   for (const d of days) {
     const l = store.get('habitLogs', logId(h.id, d));
-    if (l && isDone(h, d) && l.updatedAt && l.updatedAt.slice(0, 10) === d && minutesOfDay(new Date(l.updatedAt)) <= t) early++;
+    if (l && isDone(h, d) && dayAt(l.updatedAt) === d && minutesOfDay(new Date(l.updatedAt)) <= t) early++;
   }
   return early >= 5;
 }

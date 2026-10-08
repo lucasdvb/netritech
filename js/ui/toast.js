@@ -12,7 +12,7 @@ export function stick(message, options) {
   return toast(message, sticky.options);
 }
 
-const recent = []; // { at, tone, close } for the messages of the last few seconds
+const recent = []; // the last few messages: { at, tone, close }
 
 /** A save failed: messages about it that already went up ("Saved", "Undo") are taken back. */
 export function retract(ms = 3000) {

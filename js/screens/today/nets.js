@@ -1,9 +1,36 @@
 // The safety nets' cards on Today: catch-up (yesterday's unlogged plan) and the weekly tidy-up.
 // They load with the safety nets themselves, just after the first screen.
+import * as store from '../../data/store.js';
 import * as H from '../../domain/habits.js';
+import * as A from '../../domain/adapt.js';
+import { today } from '../../domain/dates.js';
 import { html, cx } from '../../ui/dom.js';
 import { check } from '../../ui/controls.js';
+import * as hap from '../../ui/haptics.js';
+import { app } from '../../ui/app-api.js';
 import { habitColor } from '../../domain/taxonomy.js';
+
+/** What the cards (and the Now card's shrink and grow suggestions) do. */
+export const actions = {
+  'cu-tick': ({ data }) => { const h = H.habit(data.id); if (!h) return; H.tap(h, data.d) ? hap.success() : hap.tap(); },
+  'cu-done': ({ data }) => { A.closeCatchUp(data.d); hap.tap(); },
+  'cu-off': ({ data }) => {
+    const before = store.settings()?.nets || {};
+    store.setSettings({ nets: { ...before, catchUp: false } });
+    A.closeCatchUp(data.d);
+    app.toast('Catch-up is off. Settings can turn it back on.', { action: { label: 'Undo', fn: () => store.setSettings({ nets: before }) } });
+  },
+  'adapt-yes': ({ data }) => {
+    const p = A.suggestions(today()).find((x) => x.habitId === data.id);
+    if (!p) return;
+    const undo = A.accept(p);
+    hap.success();
+    app.toast(p.kind === 'grow' ? 'Stepped up.' : p.kind === 'pause' ? 'Paused for two weeks.' : 'Smaller for two weeks.', { action: { label: 'Undo', fn: undo } });
+  },
+  'adapt-no': ({ data }) => { A.markSuggested(data.id); hap.tap(); },
+  tidy: async () => (await import('../tidy.js')).openTidy(),
+  'tidy-later': () => { A.markTidy(); hap.tap(); },
+};
 
 /** Catch-up (U5): yesterday's unlogged plan, once, as taps, never as a list of misses. */
 export function catchUpBlock(cu, ui) {

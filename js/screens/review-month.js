@@ -3,7 +3,7 @@
 // focus. "See it all" shows everything on one page, as does a finished review.
 import * as store from '../data/store.js';
 import { monthFacts } from '../domain/review-data.js';
-import { today, monthKey, fmtMonth, addMonths, relativeDay } from '../domain/dates.js';
+import { today, monthKey, fmtMonth, addMonths, relativeDay, dayAt } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead } from '../ui/components.js';
@@ -75,7 +75,7 @@ function guided(m, r, f, ui) {
 }
 
 function full(r, f) {
-  return html`${r.completedAt ? html`<div class="notice">${icon('check', { size: 16 })} Completed ${relativeDay(r.completedAt.slice(0, 10)).toLowerCase()}.</div>` : ''}
+  return html`${r.completedAt ? html`<div class="notice">${icon('check', { size: 16 })} Completed ${relativeDay(dayAt(r.completedAt)).toLowerCase()}.</div>` : ''}
     ${tiles(f)}
     <section class="block"><div class="block-head"><h2 class="block-title">Business</h2></div>${business(r)}</section>
     <section class="block"><div class="block-head"><h2 class="block-title">Reflect</h2></div>

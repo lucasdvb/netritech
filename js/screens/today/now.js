@@ -5,14 +5,13 @@ import { dayScore, rolling, band, pct } from '../../domain/scoring.js';
 import { nextActions, doneState } from '../../domain/next-action.js';
 import { lastNDays, fmtDayLetter, fmtDay } from '../../domain/dates.js';
 import * as H from '../../domain/habits.js';
-import { html, raw, cx } from '../../ui/dom.js';
+import { html, cx, dataAttrs } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
 import { ring } from '../../ui/controls.js';
 
 const button = (a, cls) => {
   if (!a) return '';
-  const d = Object.entries(a.data || {}).map(([k, v]) => ` data-${k}="${String(v).replace(/"/g, '&quot;')}"`).join('');
-  return html`<button type="button" class="${cls}" data-action="${a.act}"${raw(d)}>${a.label}</button>`;
+  return html`<button type="button" class="${cls}" data-action="${a.act}"${dataAttrs(a.data)}>${a.label}</button>`;
 };
 
 function scoreChip(date) {

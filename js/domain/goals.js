@@ -3,7 +3,7 @@
 import * as store from '../data/store.js';
 import * as M from './metrics.js';
 import { habit, consistency, counts } from './habits.js';
-import { today, addDays, diffDays } from './dates.js';
+import { today, dayAt, addDays, diffDays } from './dates.js';
 
 export const goals = () => store.all('goals').sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
 
@@ -59,7 +59,7 @@ export const MEASURES = [
   { id: 'number', label: 'A number you update', unit: '', kind: 'level' },
 ];
 export const measureOf = (g) => g.measure || (g.metric === 'bodyFat' ? 'bodyFat' : g.metric === 'weight' ? 'weight' : g.type === 'numeric' ? 'number' : null);
-const startOfGoal = (g) => g.since || (g.createdAt || '').slice(0, 10) || today();
+const startOfGoal = (g) => g.since || dayAt(g.createdAt) || today();
 
 /** The goal's measure over time: [{ date, value }], oldest first. */
 export function series(g, date = today()) {
@@ -67,7 +67,7 @@ export function series(g, date = today()) {
   const byDate = (list, val) => list.filter((r) => r.date <= date).sort((a, b) => (a.date < b.date ? -1 : 1)).map((r) => ({ date: r.date, value: val(r) }));
   if (m === 'weight') return byDate(store.all('weightEntries'), (r) => r.kg);
   if (m === 'bodyFat') return byDate(store.all('bodyFatEstimates'), (r) => r.percent);
-  if (m === 'number') return byDate([...(g.history || []), ...(g.current != null && !(g.history || []).length ? [{ date: (g.updatedAt || '').slice(0, 10) || date, value: g.current }] : [])], (r) => r.value);
+  if (m === 'number') return byDate([...(g.history || []), ...(g.current != null && !(g.history || []).length ? [{ date: dayAt(g.updatedAt) || date, value: g.current }] : [])], (r) => r.value);
   if (m === 'habitCount' || m === 'workouts' || m === 'pages') {
     const from = startOfGoal(g);
     const per = new Map();

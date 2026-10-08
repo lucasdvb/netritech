@@ -14,6 +14,7 @@ export function memoryAdapter(seed = {}) {
     async open() { return db; },
     async getAll(store) { return [...db[store].values()].map(clone); },
     async get(store, id) { return clone(db[store].get(id)); },
+    async getSince(store, since) { return [...db[store].values()].filter((r) => r.date >= since).map(clone); },
     async write(ops) {
       if (this.failNext) { this.failNext = false; throw new Error('Simulated write failure'); }
       this.writes++;

@@ -96,6 +96,8 @@ function record(c, outcome) {
 }
 
 async function tick() {
+  // One at a time: while a banner is up it isn't answered yet, so nothing is logged for it.
+  if (banner?.isConnected) return;
   const s = store.settings();
   if (!s?.notifications?.enabled) return;
   const now = new Date();

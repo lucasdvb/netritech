@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import { blobs } from '../../js/data/blobs.js';
 import assert from 'node:assert/strict';
 import { fresh, tick, store } from './helpers.mjs';
+import { memoryAdapter } from '../../js/data/adapter-memory.js';
 
 test('a new record gets an envelope; dated records also get a time zone', async () => {
   await fresh();
@@ -91,6 +92,57 @@ test('a failed write rolls memory back and reports a friendly error', async () =
   assert.equal(store.get('tasks', t.id), undefined, 'rolled back');
   const err = events.find((e) => e.type === 'error');
   assert.match(err.message, /Couldn’t save/);
+});
+
+/** Writes that take a moment to land (and fail the first `fails` times), as on a slow, full disk. */
+function slowDisk(disk, fails = 0) {
+  const write = disk.write.bind(disk);
+  disk.write = async (ops) => {
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    if (fails-- > 0) throw new Error('Simulated full disk');
+    return write(ops);
+  };
+}
+
+test('two quick changes to one record, the first failing: what is shown matches what is stored', async () => {
+  const origError = console.error;
+  console.error = () => {};
+  try {
+    for (const [fails, second] of [[1, 'edit'], [2, 'edit'], [1, 'delete'], [2, 'delete']]) {
+      const disk = await fresh();
+      const t = store.put('tasks', { title: 'Original' });
+      await store.flush();
+      slowDisk(disk, fails);
+      store.update('tasks', t.id, { title: 'First edit' });
+      await Promise.resolve(); // the first change is on its way to the disk
+      if (second === 'edit') store.update('tasks', t.id, { title: 'Second edit' });
+      else store.remove('tasks', t.id);
+      await store.flush();
+      const onDisk = disk.db.tasks.get(t.id);
+      const shown = store.get('tasks', t.id);
+      const label = `${second}, ${fails} failing`;
+      if (onDisk.deletedAt) assert.equal(shown, undefined, `${label}: deleted on disk, so not shown`);
+      else assert.equal(shown?.title, onDisk.title, label);
+    }
+  } finally {
+    console.error = origError;
+  }
+});
+
+test('the workout history loading in two steps keeps a set deleted meanwhile deleted', async () => {
+  const d = (n) => new Date(Date.now() - n * 864e5).toISOString().slice(0, 10);
+  const disk = memoryAdapter({ workoutSets: [{ id: 's-new', date: d(1), reps: 8 }, { id: 's-old', date: d(100), reps: 5 }] });
+  store.useAdapter(disk);
+  await store.init({ recentFirst: true });
+  assert.equal(store.get('workoutSets', 's-old'), undefined, 'only the recent weeks at first');
+  slowDisk(disk);
+  store.remove('workoutSets', 's-new');
+  await store.loadRest(); // reads the disk before the delete has landed
+  await store.complete();
+  assert.ok(store.get('workoutSets', 's-old'), 'the rest arrived');
+  assert.equal(store.get('workoutSets', 's-new'), undefined, 'the deleted set stays deleted');
+  assert.ok(store.deleted('workoutSets', 's-new'), 'and keeps its tombstone');
+  await store.flush();
 });
 
 test('change events say which days changed, ignoring derived summaries', async () => {

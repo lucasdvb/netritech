@@ -91,6 +91,7 @@ export async function runMigrations({ list = MIGRATIONS, backup = true } = {}) {
 
 export async function safetyBackup(reason) {
   await store.flush();
+  await store.complete(); // all of the workout history, not only the weeks loaded first
   const data = {};
   const counts = {};
   for (const s of BACKUP_STORES) {

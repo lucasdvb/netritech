@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = 'b4e1b35e68';
+const VERSION = '140babd64b';
 const ASSETS = [
   "./",
   "./index.html",
@@ -167,6 +167,7 @@ const ASSETS = [
   "./js/ui/toast.js",
   "./js/ui/transitions.js",
   "./js/ui/undo.js",
+  "./js/ui/updates.js",
   "./assets/fonts/Inter-latin-400.woff2",
   "./assets/fonts/Inter-latin-500.woff2",
   "./assets/fonts/Inter-latin-600.woff2",
@@ -237,7 +238,8 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil((async () => {
     const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     for (const c of all) {
-      if ('focus' in c) { c.navigate?.(target); return c.focus(); }
+      // A window this worker doesn't control can't be navigated; it is still brought forward.
+      if ('focus' in c) { c.navigate?.(target)?.catch(() => {}); return c.focus(); }
     }
     return self.clients.openWindow(target);
   })());

@@ -5,7 +5,7 @@
 import * as store from '../data/store.js';
 import { priorities } from './tasks.js';
 import { forDay as routinesFor } from './routines.js';
-import { activeHabits, counts, level, isScheduledDay, started, dayMode, trackingStart, DATA_STORES, consistency, stateOf, dueOn, periodDone, isFlexible, skipped } from './habits.js';
+import { activeHabits, counts, level, isScheduledDay, started, dayMode, trackingStart, DATA_STORES, consistency, stateOf, dueOn, periodDone, periodNeed, isFlexible, skipped } from './habits.js';
 import { today, lastNDays, endOfWeek, endOfMonth, diffDays } from './dates.js';
 import { avg } from './metrics-core.js';
 
@@ -19,7 +19,7 @@ function neededOn(h, date) {
   if (s.kind === 'interval') return dueOn(h, date, 'normal');
   const end = s.kind === 'perMonth' ? endOfMonth(date) : endOfWeek(date);
   const left = diffDays(end, date) + 1;
-  return (s.count || 1) - periodDone(h, date) >= left;
+  return periodNeed(h, date) - periodDone(h, date) >= left;
 }
 
 /** The habits in a day's plan: focus habits that are due; on a minimum day, the essentials too. */

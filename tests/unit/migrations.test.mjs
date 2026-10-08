@@ -70,6 +70,24 @@ test('a safety copy restores like a backup file', async () => {
   assert.equal(info.counts.profile, 1);
 });
 
+test('a backup without the seed marker is not seeded over at the next start', async () => {
+  await fresh(v2());
+  const { restore } = await import('../../js/data/backup.js');
+  const { seedIfNeeded } = await import('../../js/data/seed.js');
+  const file = { app: 'life-os', kind: 'backup', schema: 2, data: {
+    profile: [{ id: 'me', name: 'Restored', trackingStart: '2026-09-01' }],
+    habits: [{ id: 'mine', name: 'Mine', type: 'binary', schedule: { kind: 'daily' }, state: 'focus' }],
+    tasks: [{ id: 'task', title: 'Mine too', done: false }],
+  } };
+  await restore(file, 'replace');
+  assert.equal(store.get('meta', 'seed')?.version, 1, 'marked as seeded, at the first version');
+  assert.equal(await seedIfNeeded(), false, 'the next start updates it instead of seeding');
+  await store.flush();
+  assert.equal(store.profile().name, 'Restored');
+  assert.ok(store.get('habits', 'mine'));
+  assert.equal(store.all('tasks').length, 1);
+});
+
 test('schema names the newest migration, so start-up knows when to load them', async () => {
   const { LATEST_MIGRATION } = await import('../../js/data/schema.js');
   const { MIGRATIONS } = await import('../../js/data/migrations.js');

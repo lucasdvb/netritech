@@ -367,32 +367,6 @@ let wentBack = false;
 window.addEventListener('hashchange', () => navigate());
 window.addEventListener('popstate', () => { wentBack = true; if (internalNavs > 0) internalNavs--; });
 
-/* ---------- service worker ---------- */
-function registerSW() {
-  if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
-  const hadController = !!navigator.serviceWorker.controller;
-  navigator.serviceWorker.register('sw.js').then((reg) => {
-    reg.addEventListener('updatefound', () => {
-      const nw = reg.installing;
-      nw?.addEventListener('statechange', () => {
-        if (nw.state === 'installed' && navigator.serviceWorker.controller) {
-          toast('A new version of Life OS is ready.', {
-            duration: 0,
-            action: { label: 'Update', fn: () => nw.postMessage({ type: 'skip-waiting' }) },
-          });
-        }
-      });
-    });
-  }).catch((err) => console.warn('Service worker not registered', err));
-  let reloading = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    // The first install claims the page; only an update (user tapped Update) should reload.
-    if (reloading || !hadController) return;
-    reloading = true;
-    location.reload();
-  });
-}
-
 /* ---------- boot ---------- */
 async function boot() {
   performance.mark('lifeos:boot');
@@ -460,7 +434,7 @@ async function boot() {
 
   if (!location.hash) history.replaceState(null, '', '#/today');
   await navigate();
-  registerSW();
+  import('./ui/updates.js').then((m) => m.registerSW()).catch((err) => console.warn(err));
   // The rest of the workout history, straight after the first screen; what needs all of it waits.
   setTimeout(() => store.loadRest().catch((err) => console.error(err)));
 
