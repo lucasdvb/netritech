@@ -221,7 +221,7 @@ js/ui/                 html`` templates, keyed DOM morphing, components, charts,
                        (springs, FLIP), transitions, gestures, keyboard shortcuts, undo
 js/screens/            one module per screen, loaded on demand
 tools/                 build-sw.mjs · check-budgets.mjs · build-icons.mjs · render-icons.mjs ·
-                       unused-imports.mjs
+                       unused-imports.mjs · manual-shots.mjs
 tests/                 unit/ (node --test, no browser) and Playwright browser suites
 docs/                  the owner's brief and the architecture and build plan
 ```
@@ -312,6 +312,8 @@ NODE_PATH=$(npm root -g) node tests/hardening.mjs http://localhost:4173/ ./test-
 Every suite fails on console errors or a page wider than the screen. The accessibility suite needs `axe-core`, a development dependency only (`npm install` once); nothing of it ships.
 
 **Visual baselines.** `tests/visual/` keeps every screen, light and dark, shrunk to 64 pixels wide (about 5 KB each). The suite fails when a screen changes by more than 1.5%. After a deliberate design change, refresh them with `UPDATE=1 node tests/visual.mjs …` and commit the new copies.
+
+**The manual's pictures.** The owner's manual (a step-by-step guide per routine) shows real screens with numbered callouts. When a screen it shows changes, retake them with `node tools/manual-shots.mjs http://localhost:4173/ ./manual-shots` (or name the flows to retake, like `05-day`) and replace the images in the manual.
 
 **Performance budgets** (`tests/hardening.mjs`, with a year of data and the CPU slowed 4×, Lighthouse's mid-tier phone setting for a machine like the one the tests run on):
 
