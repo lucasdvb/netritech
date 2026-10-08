@@ -2,7 +2,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fresh, store } from './helpers.mjs';
-import { today, addDays, setDayEnd, weekday } from '../../js/domain/dates.js';
+import { today, addDays, setDayEnd } from '../../js/domain/dates.js';
 import { profileSeed, settingsSeed } from '../../js/data/seed.js';
 import * as H from '../../js/domain/habits.js';
 import * as T from '../../js/domain/tasks.js';
@@ -15,7 +15,6 @@ setDayEnd('03:00');
 const D = today();
 const at = (hm, date = D) => { const [h, m] = hm.split(':').map(Number); const d = new Date(`${date}T00:00:00`); d.setHours(h, m); return d; };
 const hb = (id, o = {}) => ({ id, name: id, type: 'binary', schedule: { kind: 'daily' }, state: 'autopilot', section: 'life', order: 0, ...o });
-const workday = weekday(D) <= 5;
 
 async function world({ habits = [], routines = [], extra = {} } = {}) {
   await fresh({ profile: [{ ...profileSeed(), trackingStart: addDays(D, -10), workDays: [1, 2, 3, 4, 5, 6, 7] }], settings: [settingsSeed()], habits, routines, templates: [], ...extra });

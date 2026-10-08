@@ -2,7 +2,7 @@
 // suggestion (advice), and nothing here diagnoses anything.
 import * as M from './metrics.js';
 import * as F from './fitness.js';
-import { activeHabits, consistency, isDone, dayMode, periodDone, isScheduledDay, started, habit, stateOf, focusHabits, runUnit, isOff } from './habits.js';
+import { activeHabits, isDone, dayMode, periodDone, isScheduledDay, started, habit, stateOf, focusHabits, runUnit, isOff } from './habits.js';
 import { graduationDue } from './habit-system.js';
 import { rolling } from './scoring.js';
 import { today, addDays, minutesOfDay, parseHM, startOfWeek, endOfWeek, diffDays, lastNDays, range } from './dates.js';

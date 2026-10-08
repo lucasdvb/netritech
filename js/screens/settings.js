@@ -1,9 +1,7 @@
 import * as store from '../data/store.js';
 import { html, raw, cx } from '../ui/dom.js';
-import { icon } from '../ui/icons.js';
 import { pageHead, toggle, settingRow, segmented } from '../ui/components.js';
 import { kgOut, kgIn, weightUnit, num } from '../ui/format.js';
-import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { requestPermission, permissionState, stats as reminderStats } from '../domain/reminders.js';
 import * as badge from '../ui/badge.js';

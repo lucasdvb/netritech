@@ -17,7 +17,7 @@ To install from Safari, a PWA has to be served over **HTTPS**. Hosting only serv
 3. Tap **Share → Add to Home Screen**.
 4. Open Life OS from the Home Screen icon. It runs full-screen and works offline.
 
-The first time you open it from the Home Screen, go to **More → Data** and make a backup habit of it. Safari can clear website storage for sites that aren't used for weeks. Installing to the Home Screen and taking regular backups avoids that.
+The first time you open it from the Home Screen, go to **You → Data** (the initial at the top of Today) and make a backup habit of it. Safari can clear website storage for sites that aren't used for weeks. Installing to the Home Screen and taking regular backups avoids that.
 
 ### Hosting options (any of these works)
 
@@ -114,9 +114,9 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
 - **Reflect** opens on today's page, ready to type: a prompt for the time of day, saved as you write, mood one optional tap, and the morning and evening questions a tap away. Below it are the reviews that are due (close the day, the week, the month), **insights** and the journal.
   - **Insights end in one tap.** Each states what your logs show and carries one change to your plan, with Undo: your weakest routine gets its least-done step made tiny for two weeks; your hardest weekday gets a Minimum day planned; short nights get a wind-down reminder; a training day that rarely happens becomes the 20-minute minimum; a habit that has become automatic moves to autopilot; a flat weight trend lowers the calorie target by 150 kcal (never below the floor); a protein or steps gap adds one step to a routine. *Not now* keeps one quiet for two weeks. An insight you can't act on is never shown. The rules sit behind an engine interface, so a smarter engine can be added later without changing the screens.
   - **The weekly review** takes about three minutes as five short screens: the week in a sentence, what went well and where it slipped (both computed from your logs), one change (pick an insight and it's applied, or write your own) and next week's three. On Sunday from 17:00 the Now card offers it. The monthly review is guided the same way. "See it all on one page" shows every number and question.
-- **More**: Tasks, Journal, Mind (reading, learning, meditation), Faith, Relationships, Work (deep work, shutdown), Your plan, Goals, and Weekly and Monthly reviews.
-  - **Your plan** is the workbook's Plan & Routines playbook: your day, your week, routines, training templates, food targets and the rules. It is built from your live habits, templates and targets, so editing them updates it.
-  - Also: Search, Settings (units, theme, targets, reminders), Data and Privacy.
+- **Areas** (*Progress › Areas*): Health, Mind (reading, learning, meditation), Spirit, Relationships and Work (deep work, shutdown), each a view over the same habits, goals and sessions.
+  - **The playbook** (*Plan › Playbook*) is the workbook's Plan & Routines playbook: your day, your week, routines, training templates, food targets and the rules. It is built from your live habits, templates and targets, so editing them updates it.
+  - **You** holds Settings (units, theme, targets, reminders, safety nets), Data and Privacy. Search is a pull down at the top of any place, or / and ⌘K.
 
 ### Preloaded on first launch
 
@@ -152,11 +152,11 @@ The **app-icon badge** shows how much of today's plan is still open and updates 
 ## Your data
 
 - **Storage:** IndexedDB in the browser (`life-os` database), on this device only. Photos are stored as blobs and are never uploaded.
-- **Backup:** More → Data → *Download backup*. You get one JSON file, with photos optional. On iPhone it opens the share sheet, so you can save it to Files or iCloud Drive yourself.
-- **Restore:** you can merge (keeps the newer version of each record) or replace everything (asks you to confirm first). An invalid file is rejected and nothing changes.
+- **Backup:** You → Data → *Back up my Life OS*. You get one JSON file, with photos optional. On iPhone it opens the share sheet, so you can save it to Files or iCloud Drive yourself.
+- **Restore:** you can merge (keeps the newer version of each record) or replace everything (asks you to confirm first). Either way, what's on the device is kept as a safety copy first, so a restore can be taken back from *Safety copies*. An invalid file is rejected and nothing changes.
 - **CSV:** export weight, measurements, habits, nutrition, water, steps, sleep, workouts and journal for spreadsheets.
 - **Sample data:** opt-in, clearly labelled and removable in one tap. Every sample record carries `demo: true` and never overwrites a real entry.
-- **Erase:** More → Data → *Erase everything* (asks twice).
+- **Erase:** You → Data → *Erase everything on this device* (asks twice).
 
 Nothing in the app is a medical claim:
 
@@ -242,9 +242,12 @@ Dates are local `YYYY-MM-DD` strings. Every record has `id`, `createdAt`, `updat
 Unit tests cover the rules and the data layer without a browser (store, migrations, day boundary, day snapshots, colour contrast, motion tokens):
 
 ```sh
+npm run lint               # ESLint core rules: undefined names, unused code, unreachable code
 npm run test:unit          # node --test tests/unit/*.test.mjs
 npm run build              # regenerate the offline file list, then check size budgets
 ```
+
+`npm test` runs the lint, the unit tests and every browser suite. The lint uses a global ESLint (`npm i -g eslint`) and only its built-in rules, so it needs no plugins; `eslint.config.mjs` lists the browser globals the app uses, which keeps a missing import from reaching a screen that only breaks when that path runs.
 
 The browser suites run in Chromium at iPhone 14 size, using Playwright from the global npm root:
 

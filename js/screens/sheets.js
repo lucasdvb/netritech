@@ -7,7 +7,7 @@ import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
-import { check, scale10, segmented, stepper, field, ring, bar, toggle } from '../ui/components.js';
+import { check, scale10, segmented, stepper, ring, bar, toggle } from '../ui/components.js';
 import * as T from '../domain/tasks-more.js';
 import { num, litres, kgIn, kgOut, weightUnit, habitValue, habitTarget, plural } from '../ui/format.js';
 import { today, relativeDay, parseHM, durationHM, addDays, fmtTime } from '../domain/dates.js';
