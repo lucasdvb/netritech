@@ -3,7 +3,7 @@
 // `list` names the list a detail belongs to, so wide screens can show them side by side.
 
 export const PLACES = [
-  { id: 'today', label: 'Today', icon: 'sun', path: 'today', key: '1' },
+  { id: 'today', label: 'Today', icon: 'calendar-check', path: 'today', key: '1' },
   { id: 'plan', label: 'Plan', icon: 'map', path: 'plan', key: '2' },
   { id: 'progress', label: 'Progress', icon: 'chart-spline', path: 'progress', key: '3' },
   { id: 'reflect', label: 'Reflect', icon: 'notebook-pen', path: 'reflect', key: '4' },

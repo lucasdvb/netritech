@@ -1,7 +1,7 @@
 // The safety nets' cards on Today: catch-up (yesterday's unlogged plan) and the weekly tidy-up.
 // They load with the safety nets themselves, just after the first screen.
 import * as H from '../../domain/habits.js';
-import { html } from '../../ui/dom.js';
+import { html, cx } from '../../ui/dom.js';
 import { check } from '../../ui/controls.js';
 import { habitColor } from '../../domain/taxonomy.js';
 
