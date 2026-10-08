@@ -43,6 +43,8 @@ function clean(d, before) {
   // The tiny version replaces the old minimum-day label and target.
   const out = { ...d, name: d.name.trim(), anchor: (d.anchor || '').trim() || null, tiny, mvdLabel: null, mvdMin: null, checklist: d.checklist.map((x) => x.trim()).filter(Boolean) };
   if (!out.checklist.length) out.checklist = null;
+  out.why = (d.why || '').trim() || null;
+  out.backup = (d.backup?.then || '').trim() ? { when: (d.backup.when || '').trim() || null, then: d.backup.then.trim() } : null;
   if (out.type === 'rating') { out.target = 10; out.unit = ''; }
   if (out.type === 'binary' || out.type === 'check') out.target = 1;
   if (out.min === '' || out.min == null || Number.isNaN(out.min)) out.min = null;
@@ -158,6 +160,17 @@ export function openHabitEditor(target) {
         </section>
 
         <section class="ed-group">
+          <h2 class="ed-title">For the days you'd skip</h2>
+          <label class="field"><span class="field-label">Your why <small>who this makes you</small></span>
+            <textarea class="input input--grow" rows="1" data-grow data-input="f" data-f="why" placeholder="I’m someone who…" maxlength="120" enterkeyhint="done">${d.why || ''}</textarea></label>
+          <div class="grid-2">
+            <label class="field"><span class="field-label">Backup plan: if…</span><input class="input" value="${d.backup?.when || ''}" data-input="backup" data-k="when" placeholder="It rains" maxlength="60"></label>
+            <label class="field"><span class="field-label">…then</span><input class="input" value="${d.backup?.then || ''}" data-input="backup" data-k="then" placeholder="20 minutes at home" maxlength="80"></label>
+          </div>
+          <p class="field-hint">Shown when you go to mark it “not today”.</p>
+        </section>
+
+        <section class="ed-group">
           <h2 class="ed-title">Effort and goal</h2>
           <div class="field"><span class="field-label">Difficulty</span>${segmented([{ id: 1, label: 'Easy' }, { id: 2, label: 'Medium' }, { id: 3, label: 'Hard' }].map((x) => ({ ...x, id: String(x.id) })), String(d.difficulty || 2), { action: 'difficulty', name: 'Difficulty' })}</div>
           <label class="field"><span class="field-label">Goal</span><select class="input" data-change="f" data-f="goalId"><option value="">None</option>${goals.map((g) => html`<option value="${g.id}" ${raw(d.goalId === g.id ? 'selected' : '')}>${g.name}</option>`)}</select></label>
@@ -252,6 +265,7 @@ export function openHabitEditor(target) {
         changed(sheet, { soon: true });
       },
       step: ({ el, value, sheet }) => { sheet.ui.draft.checklist[Number(el.dataset.i)] = value; changed(sheet, { soon: true }); },
+      backup: ({ el, value, sheet }) => { sheet.ui.draft.backup = { when: '', then: '', ...(sheet.ui.draft.backup || {}), [el.dataset.k]: value }; changed(sheet, { soon: true }); },
       type: ({ value, sheet }) => {
         const d = sheet.ui.draft;
         d.type = value;

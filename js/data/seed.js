@@ -5,7 +5,7 @@ import { today, addDays } from '../domain/dates.js';
 import { firstDate } from '../domain/tasks.js';
 
 import { SEED_VERSION } from './schema.js';
-import { TINY_VERSIONS } from './tiny-versions.js';
+import { TINY_VERSIONS, BACKUPS } from './tiny-versions.js';
 import { defaultRoutines } from '../domain/routines.js';
 export { SEED_VERSION };
 
@@ -92,6 +92,7 @@ const h = (o) => ({
   // Nothing starts in focus: you choose your first three on day one.
   state: o.priority === 'optional' ? 'queue' : 'autopilot', anchor: null,
   tiny: tinyFor(o),
+  backup: BACKUPS[o.id] || null, why: null,
   ...o,
 });
 

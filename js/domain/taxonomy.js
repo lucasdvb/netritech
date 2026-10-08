@@ -46,6 +46,8 @@ export const MODES = {
   minimum: { label: 'Minimum day', short: 'Minimum', icon: 'leaf', hint: 'Just the essentials. Never abandon the system completely.' },
   rest: { label: 'Rest day', short: 'Rest', icon: 'sofa', hint: 'Lower intensity: walking, mobility, family.' },
   sick: { label: 'Sick day', short: 'Sick', icon: 'thermometer', hint: 'Rest, fluids, food, sleep. Scoring is paused.' },
+  // Set by a fresh start after time away, never chosen by hand.
+  away: { label: 'Away', short: 'Away', icon: 'compass', hint: 'Time away. Nothing was expected, and runs skip it.', auto: true },
 };
 
 export const catLabel = (id) => CATEGORIES.find((c) => c.id === id)?.label || id;

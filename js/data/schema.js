@@ -7,7 +7,7 @@ export const DB_VERSION = 4;
 // Version of the built-in habit system (the seed); seed.js brings older installs up to date.
 export const SEED_VERSION = 2;
 /** The newest migration (data/migrations.js). Start-up loads migrations only when it isn't applied. */
-export const LATEST_MIGRATION = '2026-10-routines';
+export const LATEST_MIGRATION = '2026-10-backups';
 
 export const STORES = {
   meta: { indexes: [] },                     // schema/seed bookkeeping

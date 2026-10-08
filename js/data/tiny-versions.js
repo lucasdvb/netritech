@@ -45,3 +45,11 @@ export const TINY_VERSIONS = {
   'h-caffeine': { label: 'Nothing after 16:00' },
   'h-alcohol': { label: 'Water between drinks' },
 };
+
+// Backup plans (H6) for the habits most often knocked out by the day; your own are set per habit.
+export const BACKUPS = {
+  'h-training': { when: 'it rains or time is short', then: '20 minutes at home: mobility and bodyweight' },
+  'h-read': { when: 'you’re too tired to read', then: '10 minutes of an audiobook or a talk' },
+  'h-meditation': { when: 'you can’t sit still', then: 'Five slow breaths, eyes closed' },
+  'h-evening': { when: 'the evening runs late', then: 'Phone away and lights down. That’s it.' },
+};

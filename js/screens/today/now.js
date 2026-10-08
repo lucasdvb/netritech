@@ -38,7 +38,7 @@ function scoreLine(date) {
 function week(date) {
   return html`<div class="mini-bars" aria-label="Last 7 days">${lastNDays(date, 7).map((d) => {
     const s = dayScore(d);
-    return html`<span class="${cx('mini-bar', d === date && 'is-today', (d < H.trackingStart() || s.mode === 'sick') && 'is-off')}" title="${fmtDay(d)}: ${pct(s.ratio)}"><i style="--h:${Math.max(0.06, Math.round((s.ratio || 0) * 100) / 100)}"></i><b>${fmtDayLetter(d)}</b></span>`;
+    return html`<span class="${cx('mini-bar', d === date && 'is-today', (d < H.trackingStart() || H.isOff(s.mode)) && 'is-off')}" title="${fmtDay(d)}: ${pct(s.ratio)}"><i style="--h:${Math.max(0.06, Math.round((s.ratio || 0) * 100) / 100)}"></i><b>${fmtDayLetter(d)}</b></span>`;
   })}</div>`;
 }
 
@@ -67,6 +67,7 @@ export function nowCard(date, isToday, ui) {
       <h2 class="now-title">${a.title}</h2>
       ${a.sub ? html`<p class="now-sub">${a.sub}</p>` : ''}
     </div>
+    ${done && a.primary ? html`<div class="now-actions">${button(a.primary, 'btn btn--primary now-go')}</div>` : ''}
     ${done ? html`<label class="now-win"><span class="sr-only">Win of the day</span>${icon('star', { size: 15 })}
         <input class="now-win-input" value="${win}" placeholder="One win from today (optional)" data-change="win" maxlength="160" enterkeyhint="done"></label>
         ${skipped ? html`<button type="button" class="link-btn now-skip" data-action="unskip">Show what I skipped</button>` : ''}`

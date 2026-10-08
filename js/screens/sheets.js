@@ -310,7 +310,7 @@ export function openMode(date = today()) {
     title: 'How is today?',
     render: () => {
       const cur = H.dayMode(date);
-      return html`<div class="mode-list">${Object.entries(MODES).map(([id, m]) => html`<button type="button" class="${cx('mode-opt', cur === id && 'is-on')}" data-action="set" data-mode="${id}" aria-pressed="${cur === id}">
+      return html`<div class="mode-list">${Object.entries(MODES).filter(([, m]) => !m.auto).map(([id, m]) => html`<button type="button" class="${cx('mode-opt', cur === id && 'is-on')}" data-action="set" data-mode="${id}" aria-pressed="${cur === id}">
         <span class="mode-ic">${icon(m.icon, { size: 20 })}</span>
         <span class="mode-text"><span class="mode-name">${m.label}</span><span class="mode-hint">${m.hint || 'The full system, shown by time of day.'}</span></span>
         ${cur === id ? html`<span class="mode-check">${icon('check', { size: 18 })}</span>` : ''}</button>`)}</div>`;

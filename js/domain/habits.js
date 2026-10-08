@@ -22,6 +22,8 @@ export const trackingStart = () => store.profile()?.trackingStart || today();
 export const startOf = (h) => (h.startDate && h.startDate > trackingStart() ? h.startDate : trackingStart());
 export const started = (h, date) => date >= startOf(h);
 export const dayMode = (date) => store.get('dailyReviews', date)?.mode || 'normal';
+/** Days that don't count at all: sick days, and days marked away after time off (H9). */
+export const isOff = (mode) => mode === 'sick' || mode === 'away';
 
 /* ---------- source values ---------- */
 export function sourceValue(source, date) {
@@ -83,8 +85,12 @@ export function value(h, date) {
 }
 
 /** The number that counts as "done" for a date. On a minimum day, the tiny amount is enough. */
+/** A smaller target agreed for two weeks (H7), in force on a date. */
+const tempTarget = (h, date) => (h.temp?.target != null && date >= (h.temp.since || '') && date < h.temp.until ? h.temp.target : null);
+
 export function threshold(h, date, mode = dayMode(date)) {
   if (mode === 'minimum' && tinyOf(h)?.min != null) return tinyOf(h).min;
+  if (tempTarget(h, date) != null) return Math.min(tempTarget(h, date), h.min ?? h.target ?? Infinity);
   if (h.ramp) return M.stepsTarget(date, h.ramp);
   return h.min ?? h.target ?? 1;
 }
@@ -92,6 +98,7 @@ export function threshold(h, date, mode = dayMode(date)) {
 /** The number shown as the goal. */
 export function displayTarget(h, date, mode = dayMode(date)) {
   if (mode === 'minimum' && tinyOf(h)?.min != null) return tinyOf(h).min;
+  if (tempTarget(h, date) != null) return tempTarget(h, date);
   if (h.ramp) return M.stepsTarget(date, h.ramp);
   return h.target ?? 1;
 }
@@ -148,6 +155,7 @@ export function dueOn(h, date, mode = dayMode(date)) {
   // A minimum day keeps the essentials, and your three in their tiny form.
   if (mode === 'minimum') return !!h.mvd || (stateOf(h, date) === 'focus' && dueOn(h, date, 'normal'));
   if (mode === 'sick') return keptWhenSick(h);
+  if (mode === 'away') return false;
   const s = h.schedule || { kind: 'daily' };
   if (s.kind === 'daily' || s.kind === 'weekdays') return isScheduledDay(h, date);
   if (isDone(h, date)) return true;
@@ -204,7 +212,7 @@ function computeConsistency(h, end, days) {
   if (last === t && !counts(h, t)) last = addDays(t, -1);
   const first = [addDays(end, -(days - 1)), startOf(h)].sort().pop();
   if (last < first) return { done: 0, expected: 0, ratio: null };
-  const span = range(first, last).filter((d) => dayMode(d) !== 'sick');
+  const span = range(first, last).filter((d) => !isOff(dayMode(d)));
   const s = h.schedule || { kind: 'daily' };
   const done = span.filter((d) => counts(h, d)).length;
   let expected;
@@ -224,7 +232,7 @@ function computeConsistency(h, end, days) {
 export function dots(h, end = today(), n = 7) {
   return lastNDays(end, n).map((d) => {
     if (!started(h, d)) return { date: d, state: 'off' };
-    if (dayMode(d) === 'sick') return { date: d, state: 'rest' };
+    if (isOff(dayMode(d))) return { date: d, state: 'rest' };
     if (isDone(h, d)) return { date: d, state: 'done' };
     if (isTiny(h, d)) return { date: d, state: 'tiny' };
     if (d === today()) return { date: d, state: 'today' };
@@ -326,9 +334,12 @@ export function setTiny(h, date, on = true) {
   else if (log(h.id, date)) setLog(h, date, { tiny: false });
 }
 
-/** A tap on a habit's circle. On a minimum day a habit with a tiny version logs that version. */
+/** Two weeks of "just the tiny version" agreed after a rough patch (H7). */
+export const tinyPlan = (h, date) => !!(h.temp?.tiny && date >= (h.temp.since || '') && date < h.temp.until);
+
+/** A tap on a habit's circle. On a minimum day (or during a tiny-version fortnight) it logs the tiny version. */
 export function tap(h, date, mode = dayMode(date)) {
-  if (mode === 'minimum' && tinyOf(h) && (h.type === 'binary' || !h.type) && !h.checklist?.length && !h.source) {
+  if ((mode === 'minimum' || tinyPlan(h, date)) && tinyOf(h) && (h.type === 'binary' || !h.type) && !h.checklist?.length && !h.source) {
     const lv = level(h, date, mode);
     if (lv === 'tiny') { setTiny(h, date, false); return false; }
     if (!lv) { setTiny(h, date, true); return true; }
@@ -365,7 +376,7 @@ export function periodsOf(h, from, to) {
   const s = h.schedule || { kind: 'daily' };
   const t = today();
   const out = [];
-  const usable = (d) => started(h, d) && dayMode(d) !== 'sick';
+  const usable = (d) => started(h, d) && !isOff(dayMode(d));
   if (s.kind === 'perWeek' || s.kind === 'perMonth' || s.kind === 'interval') {
     let p = s.kind === 'perWeek' ? startOfWeek(from) : s.kind === 'perMonth' ? startOfMonth(from) : from;
     while (p <= to) {

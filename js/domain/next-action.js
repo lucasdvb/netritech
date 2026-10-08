@@ -12,6 +12,9 @@ import { phase as phaseOf, isWorkday, trainingCall } from './day-plan.js';
 // The coach's suggestions join in once coach.js has loaded (right after the first screen).
 let coachTips = null;
 export const useCoach = (guidance) => { coachTips = guidance; };
+// Shrink and grow suggestions (H7) arrive the same way, from adapt.js.
+let adapt = null;
+export const useAdapt = (m) => { adapt = m; };
 import { today, addDays, parseHM, minutesOfDay } from './dates.js';
 
 const act = (label, name, data = {}) => ({ label, act: name, data });
@@ -49,11 +52,18 @@ export function nextActions(date = today(), now = new Date()) {
     return out;
   }
 
-  // Start the day with the check-in that shapes the training call.
-  const checked = M.sleep(date) || M.mood(date);
+  // Start the day with the morning ritual: sleep, how you feel (it shapes the training call), your three.
+  const r = M.review(date);
+  const checked = M.sleep(date) || M.mood(date) || r?.ritual?.morning;
   if (!checked && (ph === 'morning' || mins < parseHM('11:00')) && ph !== 'night') {
-    add(10, { id: 'checkin', kind: 'start', eyebrow: 'Start here', title: '30-second check-in', sub: 'Sleep, energy, stress and mood shape today’s training call.',
-      primary: act('Check in', 'open-checkin') });
+    add(10, { id: 'checkin', kind: 'start', eyebrow: 'Start here', title: 'Morning check-in', sub: 'Sleep, how you feel and your three. About a minute.',
+      primary: act('Start', 'ritual', { which: 'morning' }) });
+  }
+
+  // Close the day in the evening: what's left, one win, tomorrow's first task, then seal it.
+  if (ph === 'evening' && !r?.sealedAt && !r?.ritual?.evening) {
+    add(45, { id: 'ritual-evening', kind: 'ritual', eyebrow: 'Evening', title: 'Close your day', sub: 'What’s left, one win, tomorrow’s first task. About a minute.',
+      primary: act('Start', 'ritual', { which: 'evening' }) });
   }
 
   // Close the work day in the evening.
@@ -106,6 +116,12 @@ export function nextActions(date = today(), now = new Date()) {
       primary: act('Done', 'task-check', { id: t.id }), secondary: act('Move to today', 'task-today', { id: t.id }), taskId: t.id });
   }
 
+  // One shrink-or-grow suggestion (H7), at most one per habit per fortnight.
+  const sug = night || !adapt ? null : adapt.suggestions(date)[0];
+  const words = sug && adapt.describeProposal(sug);
+  if (words) add(55, { id: `adapt-${sug.habitId}`, kind: 'suggestion', eyebrow: 'Suggestion', title: words.title, sub: words.sub,
+    primary: act(words.yes, 'adapt-yes', { id: sug.habitId }), secondary: act('Keep as is', 'adapt-no', { id: sug.habitId }), habitId: sug.habitId });
+
   // One suggestion from the coach, when nothing above needs you.
   const seen = new Set(['checkin', 'train-call', 'shutdown', 'sick', 'missed-session']);
   const tip = night || !coachTips ? null : coachTips(date, now).find((c) => !seen.has(c.id));
@@ -120,10 +136,13 @@ export function doneState(date = today(), now = new Date()) {
   const s = dayScore(date);
   const tm = addDays(date, 1);
   const first = T.priorities(tm)[0]?.title || null;
+  const sealed = M.review(date)?.sealedAt;
+  const late = ph === 'night' || ph === 'evening';
   return {
-    id: 'done', kind: 'done', eyebrow: 'Done for today',
+    id: 'done', kind: 'done', eyebrow: sealed ? 'Day sealed' : 'Done for today',
     title: ph === 'night' ? 'Time to wind down' : s.total && s.done === s.total ? 'Everything you planned is done' : 'Nothing needs you right now',
     sub: first ? `Tomorrow starts with: ${first}` : ph === 'night' ? `Lights out by ${store.profile()?.bedTime || '22:00'}.` : 'Enjoy the space.',
+    primary: late && !sealed && date === today() ? act('Close the day', 'ritual', { which: 'evening' }) : null,
   };
 }
 
