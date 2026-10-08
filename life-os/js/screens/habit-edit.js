@@ -3,7 +3,7 @@
 // sheet offers Undo. A new habit (from "More options" in the three questions) has a Create button.
 import * as store from '../data/store.js';
 import * as HS from '../domain/habit-system.js';
-import * as H from '../domain/habits.js';
+import * as H from '../domain/habits-more.js';
 import { CATEGORIES, SECTIONS, HABIT_TYPES, SCHEDULES, catColor } from '../domain/taxonomy.js';
 import { fmtMD } from '../domain/dates.js';
 import { html, raw, cx } from '../ui/dom.js';

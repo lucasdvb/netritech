@@ -106,6 +106,22 @@ await step('reloading in the middle of a big write loses nothing', async () => {
   if (n !== 400) throw new Error(`${n} of 400 records survived the reload`);
 });
 
+await step('an entry made while another write is still landing survives an immediate reload', async () => {
+  await go('#/today', '.today');
+  await page.evaluate(async () => {
+    const { store } = window.__lifeos;
+    const ops = [];
+    for (let i = 0; i < 3000; i++) ops.push({ store: 'stepLogs', value: { id: `big-${i}`, date: '2019-01-01', steps: i, note: 'x'.repeat(200) } });
+    store.batch(ops);
+    await new Promise((resolve) => setTimeout(resolve)); // the big write is on its way to the disk
+    store.put('weightEntries', { id: '2019-02-02', date: '2019-02-02', kg: 70.7 });
+    location.reload();
+  }).catch(() => {});
+  await page.waitForLoadState('load');
+  await ready();
+  if (!await ev(() => window.__lifeos.store.get('weightEntries', '2019-02-02'))) throw new Error('the entry made right before the reload was lost');
+});
+
 await step('deleting leaves a tombstone and an outbox entry on disk', async () => {
   const s = await ev(async () => {
     const { store } = window.__lifeos;

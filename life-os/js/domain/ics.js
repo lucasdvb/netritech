@@ -3,7 +3,7 @@
 // builds an iCalendar file (RFC 5545) of repeating events, each with an alert at its time and a
 // link back into Life OS. Times are "floating" (no time zone), so they follow the phone's clock.
 import * as store from '../data/store.js';
-import * as H from './habits.js';
+import * as H from './habits-more.js';
 import * as F from './fitness.js';
 import { today, addDays, weekday, parseHM, fmtHM } from './dates.js';
 

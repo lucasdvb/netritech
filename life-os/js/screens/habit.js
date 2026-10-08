@@ -3,7 +3,7 @@ import * as store from '../data/store.js';
 import * as HS from '../domain/habit-system.js';
 import * as R from '../domain/routines.js';
 import { deleteWithUndo } from '../ui/undo.js';
-import * as H from '../domain/habits.js';
+import * as H from '../domain/habits-more.js';
 import { catLabel, sectionLabel, habitColor } from '../domain/taxonomy.js';
 import { today, addDays, range, lastNDays, fmtMD, fmtDayShort, fmtDayLetter, relativeDay, startOfWeek, endOfWeek, addMonths } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';

@@ -6,7 +6,6 @@ import * as H from './habits.js';
 import * as T from './tasks.js';
 import * as R from './routines.js';
 import { planHabits } from './scoring.js';
-import { addDays } from './dates.js';
 import { reviewOf } from './day.js';
 
 /** Habits still open on a date: the day's plan and routine steps not done or set aside. */
@@ -48,5 +47,3 @@ export function seal(date) {
   return () => (before ? store.put('dailyReviews', before) : store.remove('dailyReviews', date));
 }
 
-/** Tomorrow's first task, if it's already set. */
-export const firstTomorrow = (date) => T.priorities(addDays(date, 1))[0] || null;

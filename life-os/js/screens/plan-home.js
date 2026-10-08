@@ -1,6 +1,6 @@
 // Plan: what you're building. Tomorrow first, then habits, goals, tasks, training and the playbook.
 import * as store from '../data/store.js';
-import * as H from '../domain/habits.js';
+import * as H from '../domain/habits-more.js';
 import * as G from '../domain/goals.js';
 import * as T from '../domain/tasks.js';
 import * as F from '../domain/fitness.js';

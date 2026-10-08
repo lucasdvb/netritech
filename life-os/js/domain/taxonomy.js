@@ -18,12 +18,6 @@ export const CATEGORIES = [
   { id: 'life', label: 'Life admin', icon: 'house' },
 ];
 
-export const PRIORITIES = [
-  { id: 'core', label: 'Non-negotiable', short: 'Foundation', hint: 'The small daily foundation.' },
-  { id: 'high', label: 'High value', short: 'High value', hint: 'Important, flexible, scored weekly.' },
-  { id: 'optional', label: 'Optional', short: 'Bonus', hint: 'Never counts against you.' },
-];
-
 export const HABIT_TYPES = [
   { id: 'binary', label: 'Done / not done', hint: 'One tap.' },
   { id: 'numeric', label: 'Number', hint: 'Water, protein — anything with a unit.' },

@@ -386,6 +386,10 @@ async function boot() {
   });
 
   try {
+    // Writes that hadn't landed when the app last closed go back first (data/journal.js).
+    let kept = null;
+    try { kept = localStorage.getItem('lifeos.unsaved'); } catch { /* storage blocked */ }
+    if (kept) await (await import('./data/journal.js')).replay();
     // Opening on Today itself, the long workout history loads just after the first screen.
     const onToday = !location.hash || /^#\/today(\?|$)/.test(location.hash);
     await store.init({ recentFirst: onToday });
@@ -428,13 +432,11 @@ async function boot() {
     // Background summaries rebuilding don't change what's on screen.
     if ([...ev.stores].some((s) => s !== 'daySnapshots')) refresh();
   });
-  // Anything still queued goes to disk before the app is hidden or closed.
-  addEventListener('pagehide', () => store.flush());
-  document.addEventListener('visibilitychange', () => { if (document.hidden) store.flush(); });
 
   if (!location.hash) history.replaceState(null, '', '#/today');
   await navigate();
   import('./ui/updates.js').then((m) => m.registerSW()).catch((err) => console.warn(err));
+  import('./data/journal.js').then((m) => m.watch()).catch((err) => console.warn(err));
   // The rest of the workout history, straight after the first screen.
   setTimeout(() => store.loadRest().catch((err) => console.error(err)));
 

@@ -537,7 +537,6 @@ function habitsByName(s, w, ctx, { exactOnly = false } = {}) {
 /* ---------- the pipeline ---------- */
 
 const DATA = new Set(['water', 'weight', 'bodyfat', 'steps', 'food', 'produce', 'sleep', 'reading', 'learning', 'meditation', 'faith', 'workout', 'measure', 'mood', 'counter', 'relation', 'habit', 'skip']);
-const LOGS = new Set([...DATA, 'open', 'note', 'win']);
 
 // Order matters: the most specific readings first, habits by name late, tasks and numbers last.
 const RECOGNISERS = [
@@ -650,7 +649,6 @@ function dedupe(items) {
   });
 }
 
-export const isLog = (i) => LOGS.has(i.kind);
 
 /* ---------- describing what was understood ---------- */
 

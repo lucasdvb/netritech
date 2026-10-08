@@ -27,6 +27,7 @@ let changed = new Set();
 let changedDates = new Set();
 let scheduled = false;
 let pending = [];
+const landing = new Set(); // writes handed to the database, not yet landed
 let draining = false;
 let writes = Promise.resolve();
 // Each record's writes not yet on disk, so a failed one is undone without undoing a later one.
@@ -165,18 +166,25 @@ function drain() {
   if (!pending.length) return writes;
   const group = pending;
   pending = [];
+  // Handed over at once: the database keeps writes to the same stores in order.
   const ops = group.flatMap((g) => g.ops);
-  writes = writes.then(() => adapter.write(ops)).then(() => {
+  landing.add(ops);
+  const landed = adapter.write(ops).then(() => {
+    landing.delete(ops);
     for (const g of group) g.commit();
   }, (err) => {
+    landing.delete(ops);
     for (const g of [...group].reverse()) g.rollback();
     if (!closed) fail(err, group[group.length - 1].message);
   });
+  writes = Promise.all([writes, landed]);
   return writes;
 }
 
 /** Send anything queued to disk now, and resolve once every write has landed. */
 export const flush = () => drain();
+/** What hasn't reached the disk yet (data/journal.js keeps a copy when the app closes). */
+export const unlanded = () => [...landing, ...pending.map((g) => g.ops)].flat();
 
 export const outboxEntry = (store, rec, op) => ({ store: 'outbox', value: { id: `${store}:${rec.id}`, store, recId: rec.id, op, rev: rec.rev, at: rec.updatedAt } });
 

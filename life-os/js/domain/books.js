@@ -2,7 +2,7 @@
 // the book's current page ("read 20 pages" updates the book), and the pace of the last two weeks
 // says when you'll finish.
 import * as store from '../data/store.js';
-import { today, addDays, diffDays, cmp } from './dates.js';
+import { today, addDays, cmp } from './dates.js';
 
 export const STATUS = { reading: 'Reading', want: 'Want to read', finished: 'Finished' };
 
@@ -63,4 +63,3 @@ export function readingOps(b, { pages = null, minutes = null, date = today(), no
   return [{ store: 'readingSessions', value: session }, { store: 'books', value: next }];
 }
 
-export const daysReading = (b, date = today()) => (b.startedAt ? diffDays(date, b.startedAt) + 1 : null);

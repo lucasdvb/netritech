@@ -1,6 +1,6 @@
 import * as store from '../data/store.js';
 import * as R from '../domain/routines.js';
-import * as H from '../domain/habits.js';
+import * as H from '../domain/habits-more.js';
 import { CATEGORIES, SECTIONS, habitColor } from '../domain/taxonomy.js';
 import { today, fmtMD } from '../domain/dates.js';
 import { html } from '../ui/dom.js';

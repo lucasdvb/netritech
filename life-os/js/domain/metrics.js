@@ -27,10 +27,6 @@ export function weightAvg(date, days = 7) {
   return vals.length ? avg(vals) : null;
 }
 
-export function weightSeries(from, to) {
-  return range(from, to).map((date) => ({ date, kg: weight(date), avg7: weightAvg(date, 7) }));
-}
-
 /** Least-squares slope of the 7-day average over `days`, in kg per week. */
 export function weightTrend(end = today(), days = 30) {
   const pts = [];

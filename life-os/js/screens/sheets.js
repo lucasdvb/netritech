@@ -1,7 +1,7 @@
 // Quick-log bottom sheets shared by Today, Body and the life modules.
 import * as store from '../data/store.js';
 import * as M from '../domain/metrics.js';
-import * as H from '../domain/habits.js';
+import * as H from '../domain/habits-more.js';
 import * as R from '../domain/routines.js';
 import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';

@@ -1,6 +1,6 @@
 // Area pages: one lens per area of life over the same habits and goals. Mind, Spirit,
 // Relationships and Work keep their own logging on top; every area shares these blocks.
-import * as H from '../domain/habits.js';
+import * as H from '../domain/habits-more.js';
 import * as G from '../domain/goals.js';
 import { categoryConsistency, pct } from '../domain/scoring.js';
 import { CATEGORIES, catLabel, catColor } from '../domain/taxonomy.js';
