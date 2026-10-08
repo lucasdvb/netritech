@@ -13,6 +13,7 @@ import * as hap from '../ui/haptics.js';
 import { newEntry, KIND_LABEL } from './journal.js';
 import { defaultWeek } from './review-week.js';
 import { insightCard, insightActions } from './insight-ui.js';
+import { filmMonths, monthFilm } from '../domain/film.js';
 
 const PROMPTS = {
   morning: ['What matters most today?', 'What would make today a good day?', 'What could get in the way, and what will you do about it?'],
@@ -103,6 +104,20 @@ function insights() {
 
 const preview = (j) => [j.mood ? `Mood: ${MOODS.find(([v]) => v === j.mood)?.[1]}` : '', ...Object.values(j.answers || {}), j.text || ''].map((s) => (s || '').trim()).filter(Boolean).join(' · ').slice(0, 120);
 
+/** Monthly films (G10): each month as a short story, at your request. */
+function films() {
+  const months = filmMonths(4);
+  if (!months.length) return '';
+  const cur = monthKey(today());
+  return html`<section class="block" data-key="films">
+    <div class="block-head"><h2 class="block-title">Monthly films</h2></div>
+    <ul class="list">${months.map((m) => html`<li><button type="button" class="row" data-action="film" data-m="${m}">
+      <span class="row-ic">${icon('play', { size: 16 })}</span>
+      <span class="row-main"><span class="row-title">${fmtMonth(`${m}-01`)}${m === cur ? ' · so far' : ''}</span><span class="row-sub">About ${Math.round(monthFilm(m).cards.length * 2.2)} seconds · save it as a video</span></span>
+      <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></button></li>`)}</ul>
+  </section>`;
+}
+
 function recent() {
   const t = today();
   const list = store.all('journalEntries').filter((j) => !(j.date === t && j.kind === 'free'))
@@ -126,7 +141,8 @@ export default {
       ${write()}
       ${reviewsDue()}
       ${insights()}
-      ${recent()}`;
+      ${recent()}
+      ${films()}`;
   },
   mount(el) {
     const grow = (t) => { t.style.height = 'auto'; t.style.height = `${Math.max(t.scrollHeight, 132)}px`; };
@@ -147,6 +163,7 @@ export default {
     new: ({ data }) => newEntry(data.kind),
     mood: ({ data }) => { flush(); const v = Number(data.v); save({ mood: todayEntry()?.mood === v ? null : v }); hap.tap(); },
     'close-day': async () => (await import('./ritual.js')).openRitual('evening', today()),
+    film: async ({ data }) => (await import('../ceremony/film.js')).playFilm(monthFilm(data.m)),
     ...insightActions,
   },
 };

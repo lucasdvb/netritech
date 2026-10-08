@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = '97c65c84c4';
+const VERSION = 'a6ac63787a';
 const ASSETS = [
   "./",
   "./index.html",
@@ -12,6 +12,12 @@ const ASSETS = [
   "./css/type.css",
   "./css/views.css",
   "./js/app.js",
+  "./js/ceremony/film.js",
+  "./js/ceremony/finale.js",
+  "./js/ceremony/moments.js",
+  "./js/ceremony/seal.js",
+  "./js/ceremony/stage.js",
+  "./js/ceremony/year.js",
   "./js/data/adapter-idb.js",
   "./js/data/adapter-memory.js",
   "./js/data/backup.js",
@@ -30,6 +36,7 @@ const ASSETS = [
   "./js/domain/dates.js",
   "./js/domain/day-plan.js",
   "./js/domain/day.js",
+  "./js/domain/film.js",
   "./js/domain/fitness.js",
   "./js/domain/goals.js",
   "./js/domain/habit-system.js",
@@ -127,6 +134,7 @@ const ASSETS = [
   "./js/screens/work.js",
   "./js/screens/workout-actions.js",
   "./js/screens/workout.js",
+  "./js/screens/year.js",
   "./js/screens/you.js",
   "./js/ui/app-api.js",
   "./js/ui/badge.js",
@@ -146,6 +154,7 @@ const ASSETS = [
   "./js/ui/patch.js",
   "./js/ui/router.js",
   "./js/ui/sheet.js",
+  "./js/ui/sound.js",
   "./js/ui/swipe.js",
   "./js/ui/toast.js",
   "./js/ui/transitions.js",

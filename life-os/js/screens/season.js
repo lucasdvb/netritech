@@ -126,11 +126,13 @@ export default {
       ${past.length ? html`<section class="block" data-key="past"><div class="block-head"><h2 class="block-title">Past seasons</h2></div>
         ${past.map((p) => html`<div class="card season-past" data-key="sp-${p.id}"><p class="card-title">${p.name}</p>
           <p class="row-sub">${fmtMD(p.start)} – ${fmtMD(p.end)}${p.endedEarly ? ' · ended early' : ''}${p.intention ? ` · “${p.intention}”` : ''}</p>
-          ${summaryBlock(S.summaryOf(p))}</div>`)}</section>` : ''}`;
+          ${summaryBlock(S.summaryOf(p))}
+          <button type="button" class="link-btn" data-action="sn-finale" data-id="${p.id}">Play the finale</button></div>`)}</section>` : ''}`;
   },
   inputs: { 'sn-note': ({ value, ui }) => { ui.note = value; } },
   actions: {
     'sn-new': () => openNewSeason(),
+    'sn-finale': async ({ data }) => (await import('../ceremony/finale.js')).finale(data.id),
     'sn-keep': ({ ui }) => { S.checkIn(S.current(), { note: ui.note || '', keep: true }); hap.success(); app.toast('Halfway noted. Three more weeks.', { icon: 'flag' }); },
     'sn-change': ({ ui }) => { S.checkIn(S.current(), { note: ui.note || '', keep: false }); app.go('plan/habits/sort'); },
     'sn-end': () => {

@@ -2,7 +2,7 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
-**Status.** Phases 0–9 are done (see section 15). Phases 10 and 11 are next, in order.
+**Status.** Phases 0–10 are done (see section 15). Phase 11 is next.
 
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
@@ -1181,7 +1181,10 @@ What shipped, against the acceptance criteria: records never trigger on the firs
 - **Tests:** unit for every rule with edge cases (backfilled data, edited logs, deleted logs).
 - **UX:** visible but quiet. A season header, a ghost marker, a records shelf. Nothing nags.
 
-### Phase 10: Moments and ceremonies (M)
+### Phase 10: Moments and ceremonies (M) · done
+
+What shipped, against the acceptance criteria: each ceremony follows the HyperFrames preview shared with the owner (`videos/life-os-moments/`, 37 s, rendered locally with no credits; the in-app versions were built to its timing straight after, as asked); each runs at 60 fps with the CPU slowed four times (median and 95th percentile 16.7 ms for seal, finale, film and year, measured on the real clock because Playwright's test clock fakes frame times), skips with a tap (or Escape), and has a still card under reduced motion; no runtime dependency was added (Web Animations, SVG and canvas only); the year artwork is a fixed function of the data, checked by drawing it twice and once with one day changed. Decisions made on the way: moments are inline and never block: a fine blue line drawn around the card they belong to (the habit row, or the Now card for the last of your three) and a plate at the bottom of the screen with a light passing over it, one per action in the order reward, record, level, three done, season; the Seal the day ceremony plays after the hold and folds the day's card into its tile in the week, then offers Undo; the season finale is offered when a season ends (it never starts by itself) and can be replayed from the season page; the monthly film is drawn on a canvas frame by frame from the time alone, so the same frames are recorded with MediaRecorder for *Save video* (MP4 where the browser records it, otherwise WebM) and handed to the share sheet; it lives in Reflect and is offered when a monthly review is completed; the year print is 3600 × 4500 pixels (12 × 15 in at 300 dpi), inside every phone's canvas limit; ceremonies use their own black stage in any theme (tokens `--stage-*`, from the brand palette); the optional sound palette is three synthesised sounds (a tick for completions, a chime for moments, a low chord for sealing), off by default.
+
 
 - **Objective:** the motion that makes it feel premium.
 - **Features:**

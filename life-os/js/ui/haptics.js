@@ -20,7 +20,12 @@ function iosTick() {
   document.querySelector('.haptic-switch')?.click();
 }
 
+// Something else may want to know (the optional sound palette listens here).
+let listener = null;
+export const onPlay = (fn) => { listener = fn; };
+
 export function play(name) {
+  listener?.(name);
   const m = MAP[name];
   if (!enabled || !m) return;
   if (navigator.vibrate) navigator.vibrate(m.pattern);
