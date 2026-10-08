@@ -130,7 +130,7 @@ await step('a year of data stays fast', async () => {
     await new Promise((res) => { const f = () => (document.querySelector(s) ? res() : requestAnimationFrame(f)); f(); });
     return Math.round(performance.now() - t0);
   }, [hash, sel]);
-  for (const [h, s] of [['#/today', '[data-view="today"] .now'], ['#/progress', '[data-view="progress"] .chart-line'], ['#/progress/calendar', '.cal-grid'], ['#/habits', '[data-view="habits"] .row'], ['#/body/weight', '[data-view="weight"] .chart-line'], ['#/more/review/week', '[data-view="review-week"] .review-grid']]) {
+  for (const [h, s] of [['#/today', '[data-view="today"] .now'], ['#/progress', '[data-view="progress"] .story'], ['#/progress/trends', '[data-view="trends"] .chart-line'], ['#/progress/calendar', '.cal-grid'], ['#/habits', '[data-view="habits"] .row'], ['#/body/weight', '[data-view="weight"] .chart-line'], ['#/more/review/week', '[data-view="review-week"] .guide, [data-view="review-week"] .review-grid']]) {
     await time('#/plan', '[data-view="plan"]');
     timings.push([h, await time(h, s)]);
   }
@@ -169,7 +169,7 @@ await step('desktop layout', async () => {
     await p.goto(base + '#/more/data');
     await p.waitForFunction(() => window.__lifeos?.ready);
     await p.evaluate(async () => { const D = await import('./js/data/demo.js'); await D.loadDemo(60); });
-    for (const [h, s, n] of [['#/today', '.today', 'today'], ['#/progress', '.chart-line', 'progress'], ['#/body', '[data-view="body"]', 'body'], ['#/habits', '[data-view="habits"]', 'habits']]) {
+    for (const [h, s, n] of [['#/today', '.today', 'today'], ['#/progress', '.story', 'progress'], ['#/progress/trends', '.chart-line', 'trends'], ['#/body', '[data-view="body"]', 'body'], ['#/habits', '[data-view="habits"]', 'habits']]) {
       await p.goto(base + h);
       await p.waitForSelector(s);
       await p.waitForTimeout(500);

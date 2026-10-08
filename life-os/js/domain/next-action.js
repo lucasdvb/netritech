@@ -15,7 +15,7 @@ export const useCoach = (guidance) => { coachTips = guidance; };
 // Shrink and grow suggestions (H7) arrive the same way, from adapt.js.
 let adapt = null;
 export const useAdapt = (m) => { adapt = m; };
-import { today, addDays, parseHM, minutesOfDay } from './dates.js';
+import { today, addDays, parseHM, minutesOfDay, weekday, startOfWeek } from './dates.js';
 
 const act = (label, name, data = {}) => ({ label, act: name, data });
 
@@ -64,6 +64,12 @@ export function nextActions(date = today(), now = new Date()) {
   if (ph === 'evening' && !r?.sealedAt && !r?.ritual?.evening) {
     add(45, { id: 'ritual-evening', kind: 'ritual', eyebrow: 'Evening', title: 'Close your day', sub: 'What’s left, one win, tomorrow’s first task. About a minute.',
       primary: act('Start', 'ritual', { which: 'evening' }) });
+  }
+
+  // Sunday evening: the weekly review, about three minutes (flow 11).
+  if (weekday(date) === 7 && mins >= parseHM('17:00') && !night && !store.get('weeklyReviews', startOfWeek(date))?.completedAt) {
+    add(44, { id: 'weekly-review', kind: 'ritual', eyebrow: 'Sunday', title: 'Review the week', sub: 'The week in a sentence, one change, next week’s three. About three minutes.',
+      primary: act('Start', 'nav', { to: `reflect/review/week/${startOfWeek(date)}` }) });
   }
 
   // Close the work day in the evening.

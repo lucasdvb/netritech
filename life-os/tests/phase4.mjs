@@ -14,10 +14,11 @@ await step('load sample data', async () => {
 });
 
 await step('progress trends', async () => {
-  await go('#/progress', '[data-view="progress"] .dir');
-  await page.waitForSelector('.chart-line');
+  await go('#/progress', '[data-view="progress"] .story');
   await shot('41-progress');
   await a11y('progress');
+  await go('#/progress/trends', '[data-view="trends"] .chart-line');
+  await a11y('trends');
 });
 
 await step('calendar → day → edit', async () => {
@@ -31,7 +32,7 @@ await step('calendar → day → edit', async () => {
 });
 
 await step('insights', async () => {
-  await go('#/progress/insights', '.insight-list');
+  await go('#/progress/insights', '[data-view="insights"]');
   await shot('43-insights');
 });
 
@@ -82,7 +83,8 @@ await step('goal milestone', async () => {
 });
 
 await step('weekly + monthly review', async () => {
-  await go('#/more/review/week', '[data-view="review-week"]');
+  await go('#/more/review/week', '[data-view="review-week"] .guide');
+  await page.locator('[data-action="rv-all"]').click();
   await page.locator('textarea[data-k="one"]').fill('Walk after lunch every workday');
   await page.locator('[data-action="biz"][data-k="Revenue"]').click();
   await page.locator('[data-action="complete"]').click();
@@ -93,6 +95,7 @@ await step('weekly + monthly review', async () => {
   if (kept !== 'Walk after lunch every workday') throw new Error('textarea cleared: ' + kept);
   await shot('51-review-week');
   await go('#/more/review/month', '[data-view="review-month"] .report-grid');
+  await page.locator('[data-action="rv-all"]').click();
   await page.locator('textarea[data-k="focus"]').fill('Sleep by 22:00');
   await page.locator('[data-action="complete"]').click();
   await page.waitForSelector('.notice');
@@ -114,7 +117,7 @@ await step('dark mode', async () => {
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'dark');
   await go('#/today', '.today');
   await shot('54-today-dark');
-  await go('#/progress', '.dir');
+  await go('#/progress', '.story');
   await shot('55-progress-dark');
   await go('#/more/settings', '[data-view="settings"]');
   await page.locator('[data-action="theme"][data-value="system"]').click();
