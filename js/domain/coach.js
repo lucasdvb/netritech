@@ -2,10 +2,10 @@
 // suggestion (advice), and nothing here diagnoses anything.
 import * as M from './metrics.js';
 import * as F from './fitness.js';
-import { activeHabits, isDone, dayMode, periodDone, isScheduledDay, started, habit, stateOf, focusHabits, runUnit, isOff } from './habits.js';
+import { isDone, dayMode, started, habit, focusHabits, runUnit } from './habits.js';
 import { graduationDue } from './habit-system.js';
 import { rolling } from './scoring.js';
-import { today, addDays, minutesOfDay, parseHM, startOfWeek, endOfWeek, diffDays, lastNDays, range } from './dates.js';
+import { today, addDays, minutesOfDay, parseHM, startOfWeek, endOfWeek, lastNDays, range } from './dates.js';
 import { num, litres } from '../ui/format.js';
 import { suggestions as reminderSuggestions } from './reminder-rules.js';
 
@@ -158,33 +158,6 @@ export function recoveryGuidance(date = today()) {
       body: `Averaging ${num(energy.value, 1)}/10. Treat this as a lighter week. If it keeps happening, it’s worth talking to a doctor.` }));
   }
   return out;
-}
-
-/** Gentle "Needs attention": only meaningful, recent misses. */
-export function needsAttention(date = today()) {
-  if (date !== today()) return [];
-  const mode = dayMode(date);
-  if (mode === 'sick' || mode === 'minimum') return [];
-  const out = [];
-  for (const h of activeHabits()) {
-    if (stateOf(h, date) !== 'focus' || !started(h, addDays(date, -1))) continue;
-    const s = h.schedule || {};
-    if (s.kind === 'daily' || s.kind === 'weekdays') {
-      const days = lastNDays(addDays(date, -1), 7).filter((d) => started(h, d) && isScheduledDay(h, d) && !isOff(dayMode(d)));
-      const missed = days.filter((d) => !isDone(h, d)).length;
-      if (days.length >= 3 && missed >= 2 && missed / days.length >= 0.4) {
-        const verb = h.source && ['water', 'protein', 'steps', 'sleep'].includes(h.source) ? 'below target' : 'missed';
-        out.push({ habit: h, text: `${verb} ${missed} of the last ${days.length} days`, weight: missed / days.length });
-      }
-    } else if (s.kind === 'perWeek') {
-      const elapsed = diffDays(date, startOfWeek(date)) + 1;
-      const doneN = periodDone(h, date);
-      const left = 7 - elapsed;
-      const behind = s.count - doneN - left;
-      if (behind >= 1 && elapsed >= 3) out.push({ habit: h, text: `${doneN} of ${s.count} this week`, weight: behind / s.count });
-    }
-  }
-  return out.sort((a, b) => b.weight - a.weight).slice(0, 3);
 }
 
 /* ---------- weekly insight engine (facts only) ---------- */

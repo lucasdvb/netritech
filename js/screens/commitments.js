@@ -1,7 +1,7 @@
 // Commitments (G8): a 7, 14 or 30-day pledge to one habit, with a stake you choose, sealed with a
 // press and hold. Each day shows as kept or missed from your logs. Ending early asks what got in the
 // way and offers a smaller pledge.
-import * as H from '../domain/habits.js';
+import * as H from '../domain/habits-more.js';
 import * as C from '../domain/commitments.js';
 import { today, addDays, range, fmtMD, relativeDay } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';

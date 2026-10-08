@@ -180,3 +180,29 @@ test('photo data is deleted with a tombstone too', async () => {
   assert.equal(disk.db.photoBlobs.get('p1').blob, undefined);
   assert.equal(disk.db.outbox.get('photoBlobs:p1').op, 'delete');
 });
+
+test('writes kept when the app closed go back on the next start, never over newer data', async () => {
+  const mem = new Map();
+  globalThis.localStorage = { getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => mem.set(k, String(v)), removeItem: (k) => mem.delete(k) };
+  try {
+    const { replay } = await import('../../js/data/journal.js');
+    const disk = await fresh({ tasks: [{ id: 'kept', title: 'Edited later', updatedAt: '2026-10-08T10:00:00.000Z' }] });
+    mem.set('lifeos.unsaved', JSON.stringify([
+      { store: 'tasks', value: { id: 'kept', title: 'Older', updatedAt: '2026-10-08T09:00:00.000Z' } },
+      { store: 'tasks', value: { id: 'lost', title: 'Logged just before closing', updatedAt: '2026-10-08T09:30:00.000Z' } },
+      null,
+    ]));
+    await replay();
+    assert.equal(disk.db.tasks.get('kept').title, 'Edited later', 'the newer one stays');
+    assert.equal(disk.db.tasks.get('lost')?.title, 'Logged just before closing', 'the one that never landed is back');
+    assert.equal(mem.has('lifeos.unsaved'), false, 'and the copy is dropped');
+    mem.set('lifeos.unsaved', '{not json');
+    const origError = console.error;
+    console.error = () => {};
+    await replay();
+    console.error = origError;
+    assert.equal(mem.has('lifeos.unsaved'), false, 'a damaged copy is dropped without stopping the start');
+  } finally {
+    delete globalThis.localStorage;
+  }
+});

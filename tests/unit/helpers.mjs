@@ -3,6 +3,7 @@ import * as store from '../../js/data/store.js';
 import { memoryAdapter } from '../../js/data/adapter-memory.js';
 
 export async function fresh(seed = {}) {
+  await store.flush(); // the previous test's writes land in its own storage, not the new one
   const adapter = memoryAdapter(seed);
   store.useAdapter(adapter);
   await store.init();

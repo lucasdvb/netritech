@@ -2,7 +2,7 @@
 // Nothing is saved until you tap Save; "I'll decide later" leaves everything as it was.
 import * as store from '../data/store.js';
 import * as HS from '../domain/habit-system.js';
-import * as H from '../domain/habits.js';
+import * as H from '../domain/habits-more.js';
 import { SECTIONS, habitColor } from '../domain/taxonomy.js';
 import { today, addDays, fmtMD, cmp } from '../domain/dates.js';
 import { html, cx, attr } from '../ui/dom.js';
