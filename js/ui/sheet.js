@@ -1,7 +1,7 @@
 // Bottom sheets: one render function, re-rendered on data changes, dismiss by
 // dragging the handle, tapping the scrim, pressing Escape or a close button.
 import { patch } from './patch.js';
-import { html } from './dom.js';
+import { html, esc } from './dom.js';
 import { icon } from './icons.js';
 
 const stack = [];
@@ -31,7 +31,7 @@ export function open(opts) {
   wrap.className = `sheet-wrap sheet--${s.size}`;
   wrap.dataset.sheet = s.id;
   wrap.innerHTML = `<div class="sheet-scrim" data-sheet-close></div>
-    <section class="sheet" role="dialog" aria-modal="true" tabindex="-1" aria-label="${s.title.replace(/"/g, '&quot;')}">
+    <section class="sheet" role="dialog" aria-modal="true" tabindex="-1" aria-label="${esc(s.title)}">
       <div class="sheet-grab" aria-hidden="true"><span></span></div>
       <div class="sheet-body"></div>
     </section>`;

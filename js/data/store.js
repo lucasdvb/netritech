@@ -7,7 +7,7 @@
 // Deleting leaves a tombstone on disk, and every change to your data leaves its latest
 // entry in the outbox, so a sync can be added later without changing screens or rules.
 import * as idbAdapter from './adapter-idb.js';
-import { CACHED, LOCAL_ONLY, DERIVED, DEFERRED } from './schema.js';
+import { STORES, CACHED, LOCAL_ONLY, DERIVED, DEFERRED } from './schema.js';
 
 let adapter = idbAdapter;
 /** Swap the storage backend (the unit tests use the in-memory adapter). Call before init(). */
@@ -41,7 +41,7 @@ export const now = () => new Date().toISOString();
 let closed = false;
 
 // Opening on Today, the biggest store (every workout set ever logged) loads only its recent weeks
-// first, which is all Today reads, and the rest straight after (loadRest). Anything that needs it
+// first, which is all Today reads, the day summaries not at all, and the rest straight after (loadRest). Anything that needs it
 // all, such as a backup or the records, waits for complete().
 const RECENT_DAYS = 21;
 let partial = new Set();
@@ -69,7 +69,8 @@ export async function init({ recentFirst = false } = {}) {
   memos.clear(); // the data is being replaced, so nothing derived from it still holds
   partial = new Set(recentFirst && adapter.getSince ? DEFERRED : []);
   const since = new Date(Date.now() - RECENT_DAYS * 864e5).toISOString().slice(0, 10);
-  const results = await Promise.all(CACHED.map((s) => (partial.has(s) ? adapter.getSince(s, since) : adapter.getAll(s))));
+  const first = (s) => (STORES[s].indexes.includes('date') ? adapter.getSince(s, since) : []);
+  const results = await Promise.all(CACHED.map((s) => (partial.has(s) ? first(s) : adapter.getAll(s))));
   CACHED.forEach((s, i) => fill(s, results[i]));
   rest = partial.size ? new Promise((resolve) => { restDone = resolve; }) : Promise.resolve();
 }

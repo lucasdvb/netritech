@@ -27,6 +27,8 @@ await step('a full disk: the write is rolled back and reported, and the next one
   await page.waitForSelector('.toast--danger');
   const msg = await page.locator('.toast').last().textContent();
   if (!/couldn’t save|safe/i.test(msg)) throw new Error(`message: ${msg}`);
+  await page.waitForTimeout(300);
+  if (await page.locator('.toast--danger').count() !== 1) throw new Error('the same error shown more than once');
   if (await ev(() => window.__lifeos.store.all('waterLogs').length) !== before) throw new Error('the failed entry is still shown');
   await shot('res-01-disk-full');
   await ev(() => { window.__full = false; });
@@ -90,6 +92,7 @@ await step('another window takes the data over: this one stops writing and asks 
   await page.waitForTimeout(600);
   if (await ev(() => window.__lifeos.store.all('waterLogs').length) !== water) throw new Error('a write went ahead with the data closed');
   if (await page.locator('.toast--danger:has-text("another window")').count() !== 1) throw new Error('the reload message is missing or doubled');
+  if (await page.locator('.toast:not(.toast--danger)').count()) throw new Error('a message claims something was saved');
   await shot('res-03-taken-over');
   if (errors.length > before) throw new Error(`errors after the takeover: ${errors.slice(before, before + 3).join(' | ')}`);
   await other.close();

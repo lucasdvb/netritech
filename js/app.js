@@ -3,7 +3,7 @@ import { SEED_VERSION, LATEST_MIGRATION } from './data/schema.js';
 import { patch } from './ui/patch.js';
 import * as router from './ui/router.js';
 import * as sheet from './ui/sheet.js';
-import { toast } from './ui/toast.js';
+import { toast, stick } from './ui/toast.js';
 import { icon, loadIcons } from './ui/icons.js';
 import { html } from './ui/dom.js';
 import { firstRender, fill, waitingKeys } from './ui/later.js';
@@ -438,13 +438,15 @@ async function boot() {
   }
 
   applyTheme();
-  let closeReload = null;
+  // Anything that slips through is logged and said once, gently; it never touches your data.
+  const oops = () => toast('Something didn’t work there. Your data is safe.', { tone: 'danger', icon: 'circle-alert' });
+  addEventListener('unhandledrejection', (e) => { console.error(e.reason); oops(); });
+  addEventListener('error', (e) => { if (e.error) oops(); });
   store.subscribe((ev) => {
     if (ev.type === 'error') { toast(ev.message, { tone: 'danger', icon: 'circle-alert' }); return; }
-    // Another window took the data over: nothing more is written here, and the message stays the newest.
+    // Another window took the data over: nothing more is written here, and no message claims otherwise.
     if (ev.type === 'closed') {
-      closeReload?.();
-      closeReload = toast('Life OS was updated in another window. Reload to carry on; everything saved is safe.', { tone: 'danger', icon: 'refresh-cw', duration: 0, action: { label: 'Reload', fn: () => location.reload() } });
+      stick('Life OS was updated in another window. Reload to carry on; everything saved is safe.', { tone: 'danger', icon: 'refresh-cw', action: { label: 'Reload', fn: () => location.reload() } });
       return;
     }
     if (ev.stores.has('settings')) applyTheme();

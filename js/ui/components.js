@@ -1,4 +1,4 @@
-import { html, raw, attr, cx } from './dom.js';
+import { html, raw, attr, cx, esc } from './dom.js';
 import { icon } from './icons.js';
 import { ring, bar, check, toggle } from './controls.js';
 export { ring, bar, check, toggle };
@@ -56,12 +56,12 @@ export function dots(list, { size = 'md' } = {}) {
 }
 
 export function chip(label, { action, data = {}, active = false, ic, cls = '' } = {}) {
-  const d = Object.entries(data).map(([k, v]) => ` data-${k}="${String(v).replace(/"/g, '&quot;')}"`).join('');
+  const d = Object.entries(data).map(([k, v]) => ` data-${k}="${esc(v)}"`).join('');
   return html`<button type="button" class="${cx('chip', active && 'is-active', cls)}" data-action="${action}"${raw(d)} aria-pressed="${!!active}">${ic ? icon(ic, { size: 16 }) : ''}<span>${label}</span></button>`;
 }
 
 export function row({ ic, color, title, sub, right = '', action, data = {}, chevron = true, cls = '', key }) {
-  const d = Object.entries(data).map(([k, v]) => ` data-${k}="${String(v).replace(/"/g, '&quot;')}"`).join('');
+  const d = Object.entries(data).map(([k, v]) => ` data-${k}="${esc(v)}"`).join('');
   const tag = action ? 'button' : 'div';
   return html`${raw(`<${tag} class="${cx('row', cls)}"${action ? ` type="button" data-action="${action}"` : ''}${d}${key ? ` data-key="${key}"` : ''}>`)}
     ${ic ? html`<span class="row-ic" style="${color ? `--ic:${color}` : ''}">${icon(ic, { size: 18 })}</span>` : ''}
