@@ -793,7 +793,10 @@ button.hero-big { display: inline-flex; align-items: baseline; flex-wrap: wrap; 
   transition: transform var(--dur-fast) var(--spring-snappy), background var(--dur-fast); }
 .pin:active { transform: scale(.97); }
 @media (hover: hover) { .pin:hover { background: var(--surface-2); } }
-.pin-ic { color: var(--accent-ink); margin-bottom: auto; }
+.pin-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; width: 100%; margin-bottom: auto; }
+.pin-ic { color: var(--accent-ink); }
+.pin-badge { padding: 2px 8px; border-radius: var(--r-pill); background: var(--surface-2); color: var(--text-2); white-space: nowrap;
+  font-size: var(--text-footnote); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
 .pin-label { font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-2); }
 .pin-val { font-size: var(--text-body); font-weight: var(--weight-semibold); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); }
 

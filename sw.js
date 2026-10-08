@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = '81c70fbdf2';
+const VERSION = '44761cfb97';
 const ASSETS = [
   "./",
   "./index.html",

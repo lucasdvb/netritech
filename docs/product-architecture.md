@@ -2,7 +2,7 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
-**Status.** Phases 0–2 are done (see section 15). Phases 3–11 are next, in order.
+**Status.** Phases 0–3 are done (see section 15). Phases 4–11 are next, in order.
 
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
@@ -1022,7 +1022,10 @@ What shipped, against the acceptance criteria: every older address (35 of them, 
 - **Tests:** e2e of the route map, keyboard-only pass, reduced-motion pass, focus-order check.
 - **UX:** the Body tab disappearing is the biggest change, so pinned "Log weight" and "Start workout" ship in this phase to keep body logging one tap away.
 
-### Phase 3: Today (L)
+### Phase 3: Today (L) · done
+
+What shipped, against the acceptance criteria: at most six blocks on first load at every hour tested (07:00, 13:00, 21:00, 00:30), with the next action above the fold on a phone; the six-step Morning routine finishes in one tap ("Did it all", with Undo); Today renders in about 10 ms with a year of data and three habits in focus (budget 70 ms), using the same code on the first open and the hundredth. Decisions made on the way: the day's Top 3 became tasks with a rank (DR-07), migrated from the old per-day lists; Morning and Evening routines are built from the habits you had grouped that way, and every other habit on autopilot sits under "Everything else", folded; the coach's one suggestion joins the Now card rather than having its own card; the clock left the date button, which now opens a day picker (swipe the header to move a day). First-render JavaScript fell from 257 KB to 204 KB (the rarer icons, the task sheet, the coach, habit-system changes and the redirect table load on demand); the last 4 KB to the 200 KB target is left for Phase 11. 69 unit tests and a new 12-step Today suite cover it.
+
 
 - **Objective:** opening the app answers "what now?" in one glance.
 - **Features:**

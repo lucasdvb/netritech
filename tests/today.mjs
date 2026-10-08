@@ -132,6 +132,7 @@ await step('the date opens a day picker; swiping the header changes the day', as
   if (!(await p.locator('.dpick-day[data-d="2026-10-08"][disabled]').count())) throw new Error('a future day is selectable');
   await p.locator('.dpick-day[data-d="2026-10-05"]').click();
   await p.waitForFunction(() => location.hash === '#/today/2026-10-05');
+  await p.waitForFunction(() => document.querySelector('.greet-sub .link-btn') && !document.documentElement.dataset.nav);
   await p.evaluate(() => {
     const el = document.querySelector('.today-head');
     const touch = (x) => new Touch({ identifier: 1, target: el, clientX: x, clientY: 100 });
@@ -159,14 +160,21 @@ await step('a routine can be edited from Today: add a plain step, then tick it',
 
 await step('a year of data: Today renders in under 70 ms', async () => {
   const { ctx, p } = await at('2026-10-07T13:00:00');
-  await p.evaluate(async () => { const D = await import('./js/data/demo.js'); await D.loadDemo(365); });
+  await p.evaluate(async () => {
+    const D = await import('./js/data/demo.js');
+    await D.loadDemo(365);
+    // three habits in focus, so Today also works out their runs over the whole year
+    const { store } = window.__lifeos;
+    for (const id of ['h-prayer', 'h-read', 'h-meditation']) store.update('habits', id, { state: 'focus', focusSince: '2025-10-01' });
+  });
   await p.waitForTimeout(500);
   const ms = await p.evaluate(() => {
     const { app, store } = window.__lifeos;
     const c = app.current();
     const times = [];
     for (let i = 0; i < 5; i++) {
-      store.put('meta', { id: 'bench', i }); // a write clears the cached numbers, like a real tap
+      // a real write (as a tap would make) clears every cached number Today depends on
+      store.put('waterLogs', { id: `bench-${i}`, date: '2026-10-07', ml: 1 });
       const t0 = performance.now();
       String(c.view.render({ params: c.params, query: c.query, ui: c.ui, route: c.route, path: c.path }));
       times.push(performance.now() - t0);

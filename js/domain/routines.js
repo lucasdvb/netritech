@@ -128,7 +128,9 @@ export function didItAll(r, date = today()) {
 
 /** Routines built from the habits grouped as Morning and Evening (fresh installs and the migration). */
 export function defaultRoutines(habits, profile = {}) {
-  const byTime = (a, b) => (a.time || '99').localeCompare(b.time || '99') || (a.order ?? 0) - (b.order ?? 0);
+  // Sleep comes from the morning check-in, so it opens the morning; the rest follow their times.
+  const when = (h) => (h.source === 'sleep' ? '00:00' : h.time || '99');
+  const byTime = (a, b) => when(a).localeCompare(when(b)) || (a.order ?? 0) - (b.order ?? 0);
   const pick = (section) => habits.filter((h) => !h.archived && h.section === section).sort(byTime).map((h, i) => ({ id: `s-${h.id}`, habitId: h.id, order: i }));
   const wake = parseHM(profile.wakeTime || '06:00');
   const bed = parseHM(profile.bedTime || '22:00');
