@@ -53,8 +53,8 @@ await step('every screen is three levels or fewer from a place', async () => {
     }
     frontier = [...new Set(next)];
   }
-  // A workout page is opened by starting or reviewing a session, not by browsing.
-  const missing = ROUTES.filter((r) => !seen.has(r.path) && r.path !== 'workout/:id').map((r) => r.path);
+  // A workout page (and its gym mode) is opened by starting or reviewing a session, not by browsing.
+  const missing = ROUTES.filter((r) => !seen.has(r.path) && !r.path.startsWith('workout/:id')).map((r) => r.path);
   if (missing.length) throw new Error('not reachable in 3 levels: ' + missing.join(', '));
 });
 

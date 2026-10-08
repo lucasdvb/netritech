@@ -145,6 +145,11 @@ export default {
       onHold: (id) => holdHabit(id, ctx.params.date || today()),
       onSwipe: async (id) => { const h = H.habit(id); if (h) (await pads()).notToday(h, ctx.params.date || today(), { onDone: () => settleFor(id, ctx.params.date || today()) }); },
     })).catch(() => {});
+    // The Health Shortcut ends by opening #/today?paste=1.
+    if (ctx.query.paste) {
+      window.history.replaceState(window.history.state, '', location.hash.split('?')[0]);
+      import('./health.js').then((m) => m.openHealthPaste({ auto: true }));
+    }
     if (ctx.query.you) {
       window.history.replaceState(window.history.state, '', location.hash.split('?')[0]);
       import('./you.js').then((m) => m.openYou());

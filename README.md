@@ -84,10 +84,12 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
   - **Tiny versions** that always count, **runs** that survive one miss ("don't miss twice"), comebacks, and a suggestion to move a habit to autopilot after six steady weeks.
   - A new habit takes three questions (what, when, the tiny version); everything else is under *More options*. Per-habit reminders.
   - Values can come from your logs automatically (water, protein, steps, sleep, workouts, reviews).
-- **Body**: weight with 7/14/30-day trends; nutrition with quick foods, protein and adaptive calories; water and steps.
-  - Measurements every two weeks; private progress photos with a compare slider; body-composition estimates; sleep.
+- **Body**: weight with 7/14/30-day trends (logged on the number pad from your last value); nutrition with quick foods, protein and adaptive calories; water and steps.
+  - Measurements every two weeks; private progress photos with a compare slider; sleep. Body-composition estimates sit one level down, behind one line.
+  - **From Apple Health:** a web app can't read Health, so a Shortcut (the recipe is in the app) copies today's steps, sleep and weight and opens Life OS. One tap on *Paste* shows all three, one *Save all* keeps them, with Undo. Pasting by hand works too.
 - **Training**: today's planned session with a smart call ("train as planned", "go lighter", "walk instead") based on sleep, energy and stress.
   - Workout logger prefilled from last time, with progressive-overload comparison.
+  - **Gym mode:** one set at a time with large controls for one hand (every target at least 56 px, black for gym lighting), the screen kept awake (or a plain warning where the browser can't), and a rest timer that starts when you log a set and stays right to the second across app switches and reloads. The next set is prefilled from the one you just did; the full list is one tap away.
   - Exercise library with history; dedicated calf, core and posture tracking.
 - **Tasks**: one-off jobs and weekly or monthly chores, grouped into Overdue, Today, the next six days, Later and Anytime.
   - Ticking a repeating task schedules the next one, so a missed week never piles up.
@@ -241,6 +243,8 @@ NODE_PATH=$(npm root -g) node tests/rituals.mjs http://localhost:4173/ ./test-sh
                                                                                     # catch-up, backup plans, shrink and grow, tidy-up
 NODE_PATH=$(npm root -g) node tests/plan.mjs http://localhost:4173/ ./test-shots     # tomorrow and this week, a goal in three
                                                                                     # questions with its projection, projects, books
+NODE_PATH=$(npm root -g) node tests/body.mjs http://localhost:4173/ ./test-shots     # gym mode under clock control, rest across
+                                                                                    # an app switch and a reload, Health paste
 NODE_PATH=$(npm root -g) node tests/phase3.mjs http://localhost:4173/ ./test-shots   # weight, food, training, photos
 NODE_PATH=$(npm root -g) node tests/phase4.mjs http://localhost:4173/ ./test-shots   # progress, modules, reviews, backup
 NODE_PATH=$(npm root -g) node tests/phase5.mjs http://localhost:4173/ ./test-shots   # reminders, restore, offline,

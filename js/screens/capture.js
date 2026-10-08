@@ -24,6 +24,7 @@ const ACTIONS = [
   { id: 'journal', ic: 'notebook-pen', label: 'Journal', run: async () => (await import('./journal.js')).newEntry('free') },
   { id: 'reading', ic: 'book-open', label: 'Reading', run: async () => (await sheets()).openSession('reading', today()) },
   { id: 'measure', ic: 'ruler', label: 'Measurements', run: () => app.go('progress/body/measurements') },
+  { id: 'health', ic: 'heart-pulse', label: 'From Health', run: async () => (await import('./health.js')).openHealthPaste() },
 ];
 
 const HISTORY = 'captureHistory';

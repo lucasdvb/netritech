@@ -11,8 +11,10 @@ await step('weight: seed history and log today', async () => {
     for (let i = 20; i >= 1; i--) store.put('weightEntries', { id: d(i), date: d(i), kg: +(76.4 - i * -0.04 - (20 - i) * 0.07).toFixed(1) });
   });
   await page.locator('[data-action="log-weight"]').first().click();
-  await page.fill('.sheet input[name="w"]', '75.1');
-  await page.locator('.sheet button[type="submit"]').click();
+  // the number pad (Phase 7): typing replaces the prefilled value, Enter saves
+  await page.waitForSelector('.numpad');
+  await page.keyboard.type('75.1');
+  await page.keyboard.press('Enter');
   await page.waitForSelector('.sheet-wrap', { state: 'detached' });
   await shot('30-body');
   await go('#/body/weight', '[data-view="weight"] .chart');

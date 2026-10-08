@@ -94,7 +94,8 @@ export default {
     const tpl = w.templateId ? F.template(w.templateId) : null;
     return html`
       ${pageHead({ title: w.title, eyebrow: `${fmtMDY(w.date)}${active ? ' · in progress' : ''}`, back: { to: 'plan/training', label: 'Training' },
-        actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="menu" aria-label="Session options">${icon('ellipsis', { size: 20 })}</button>` })}
+        actions: html`${active && gs.length ? html`<button type="button" class="btn btn--primary btn--sm" data-action="gym">${icon('dumbbell', { size: 16 })} Gym mode</button>` : ''}
+          <button type="button" class="icon-btn icon-btn--filled" data-action="menu" aria-label="Session options">${icon('ellipsis', { size: 20 })}</button>` })}
       <div class="wo-bar">
         <span class="wo-stat"><span class="muted">Time</span> <b class="tnum" id="wo-timer">${elapsed(w)}</b></span>
         <span class="wo-stat"><span class="muted">Sets</span> <b class="tnum">${doneSets}/${total}</b></span>
@@ -149,6 +150,7 @@ export default {
     'ex-menu': ({ data, params }) => exerciseMenu(params.id, Number(data.order)),
     'add-ex': ({ params }) => openPicker(params.id),
     menu: ({ params }) => sessionMenu(params.id),
+    gym: ({ params }) => app.replace(`workout/${params.id}/gym`),
     finish: ({ params, el }) => {
       if (el.getAttribute('aria-disabled') === 'true') { app.toast('Tick at least one set first.'); return; }
       finishSheet(params.id, true);
@@ -267,7 +269,7 @@ function sessionMenu(workoutId) {
   });
 }
 
-function finishSheet(workoutId, finishing) {
+export function finishSheet(workoutId, finishing) {
   const w = store.get('workouts', workoutId);
   const ui = { difficulty: w.difficulty ?? 3, rpe: w.rpe ?? null, notes: w.notes || '' };
   const LEVELS = [{ id: '1', label: 'Easy' }, { id: '2', label: 'Light' }, { id: '3', label: 'Solid' }, { id: '4', label: 'Hard' }, { id: '5', label: 'Max' }];

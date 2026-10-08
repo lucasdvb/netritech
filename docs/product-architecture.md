@@ -2,7 +2,7 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
-**Status.** Phases 0–6 are done (see section 15). Phases 7–11 are next, in order.
+**Status.** Phases 0–7 are done (see section 15). Phases 8–11 are next, in order.
 
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
@@ -1115,7 +1115,9 @@ What shipped, against the acceptance criteria: a new goal takes exactly three qu
 - **Tests:** unit (projections), e2e (goal, project and book flows).
 - **UX:** Plan must never become a dashboard. It is lists you act on.
 
-### Phase 7: Body (M)
+### Phase 7: Body (M) · done
+
+What shipped, against the acceptance criteria: a full session can be logged in gym mode with the screen kept awake through the Wake Lock API, and where the browser doesn't offer it a plain warning says so and suggests Auto-Lock › Never; the rest timer is a timestamp on the workout, so it stays right to the second across app switches and reloads (tested under clock control); one Paste fills steps, sleep and weight and one *Save all* keeps them, with Undo. Decisions made on the way: gym mode is its own route (`workout/:id/gym`), black with white text for gym lighting, every control at least 56 px; rest depends on the kind of exercise (90 s by default, core 45, calves 60, mobility and posture 30, none for cardio) and has +30 s and Skip; the next set is prefilled from the set just done, then last time's numbers, then the goal; the Health paste reads `key: value` lines, JSON and units (lb, minutes, `7h 30m`, seconds) and leaves out anything it can't place rather than guess; the Shortcut opens `#/today?paste=1`, which offers the paste straight away; weight and steps on Body open the number pad from the last value; body composition moved one level down. **Still to check on the owner's iPhone:** that the screen stays on in gym mode from the Home Screen app, and that the paste prompt appears and reads the Shortcut's text.
 
 - **Objective:** training and body logging that fit real life.
 - **Features:**

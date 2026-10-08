@@ -127,6 +127,11 @@
   --ink-2: #2C2C2E;
   --ink-3: #434344;
   --on-ink: #FFFFFF;
+  /* gym mode: the same dark, high-contrast screen in any theme, for bright or dim gym light */
+  --gym-bg: #000000;
+  --gym-surface: #1D1D1F;
+  --gym-text: #FFFFFF;
+  --gym-dim: #F5F5F7;
   --sel: var(--ink);    /* a selected option: near-black in light mode, off-white in dark */
   --on-sel: #FFFFFF;
   --ink-sel: var(--ink); /* a selected card that keeps white text: near-black, dark grey in dark mode */

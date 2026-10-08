@@ -10,7 +10,7 @@ import { pageHead, ring } from '../ui/components.js';
 import { sparkline } from '../ui/charts.js';
 import { num, weight as fw, length as fl, signed, litres, kgOut, weightUnit, pct } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
-import { openWeight, openFood, addWater, openSteps } from './sheets.js';
+import { openFood, addWater } from './sheets.js';
 import { openStartSheet } from './workout-actions.js';
 
 export function weightCard() {
@@ -41,23 +41,13 @@ export function weightCard() {
   </div>`;
 }
 
-function compositionCard() {
+/** Composition is an estimate, so it sits one level down: a line here, the detail with measurements. */
+function compositionLink() {
   const c = M.bodyComposition();
-  const p = store.profile();
-  const progress = c.bodyFat != null ? Math.max(0, Math.min(1, (p.startBodyFat - c.bodyFat) / (p.startBodyFat - p.goalBodyFat))) : 0;
-  return html`<a class="card card--link" href="#/progress/body/measurements" data-action="nav" data-to="progress/body/measurements">
-    <div class="card-head"><p class="section-label">Body composition · estimate</p>${icon('chevron-right', { size: 18, cls: 'muted' })}</div>
-    <div class="comp-grid">
-      <div><p class="stat-label">Body fat</p><p class="comp-val tnum">~${num(c.bodyFat, 1)}%</p></div>
-      <div><p class="stat-label">Lean mass</p><p class="comp-val tnum">~${num(kgOut(c.leanMass), 1)}<small> ${weightUnit()}</small></p></div>
-      <div><p class="stat-label">Fat mass</p><p class="comp-val tnum">~${num(kgOut(c.fatMass), 1)}<small> ${weightUnit()}</small></p></div>
-    </div>
-    <div class="comp-goal">
-      <div class="comp-track"><span style="transform:scaleX(${progress.toFixed(3)})"></span></div>
-      <p class="muted">${num(p.startBodyFat)}% → goal ~${num(p.goalBodyFat)}% · goal weight about ${fw(c.goalWeight)} if muscle is kept</p>
-    </div>
-    <p class="fine-print">${c.source}${c.sourceDate ? ` · ${fmtMD(c.sourceDate)}` : ''}. Estimates, not medical measurements.</p>
-  </a>`;
+  return html`<a class="card card--link comp-link" href="#/progress/body/measurements" data-action="nav" data-to="progress/body/measurements">
+    <span class="row-main"><span class="section-label">Body composition · estimate</span>
+      <span class="comp-line tnum">${c.bodyFat != null ? `~${num(c.bodyFat, 1)}% body fat · ~${num(kgOut(c.leanMass), 1)} ${weightUnit()} lean` : 'Measure to estimate it'}</span></span>
+    ${icon('chevron-right', { size: 18, cls: 'muted' })}</a>`;
 }
 
 function trainingCard() {
@@ -115,7 +105,8 @@ function sleepStepsCard() {
       <p class="duo-val tnum">${st != null ? num(st) : '—'}</p>
       <p class="muted">${st7.n ? `7-day avg ${num(st7.value)}` : `Target ${num(M.stepsTarget(today()))}`}</p>
     </button>
-  </div>`;
+  </div>
+  <button type="button" class="btn btn--soft btn--block health-btn" data-action="health">${icon('heart-pulse', { size: 16 })} Paste steps, sleep and weight from Health</button>`;
 }
 
 function measureCard() {
@@ -144,7 +135,7 @@ export default {
     return html`
       ${pageHead({ title: 'Body', back: { to: 'progress', label: 'Progress' }, sub: 'Lose fat, keep the muscle, feel good doing it.' })}
       <div class="body-grid">
-        <div class="stack">${weightCard()}${compositionCard()}${measureCard()}</div>
+        <div class="stack">${weightCard()}${compositionLink()}${measureCard()}</div>
         <div class="stack">
           ${trainingCard()}
           <div class="card">
@@ -161,12 +152,13 @@ export default {
       </div>`;
   },
   actions: {
-    'log-weight': () => openWeight(today()),
+    'log-weight': async () => (await import('./pads.js')).weightPad(today()),
+    health: async () => (await import('./health.js')).openHealthPaste(),
     start: () => openStartSheet(today()),
     food: () => openFood(today()),
     water: () => addWater(today(), 500),
     'water-500': () => addWater(today(), 500),
-    steps: () => openSteps(today()),
+    steps: async () => (await import('./pads.js')).stepsPad(today()),
     whey: () => {
       const f = store.get('foods', 'f-whey');
       store.batch([{ store: 'nutritionLogs', value: { date: today(), name: f.name, protein: f.protein, kcal: f.kcal, fruit: 0, veg: 0, foodId: f.id, at: new Date().toISOString() } },

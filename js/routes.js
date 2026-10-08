@@ -13,6 +13,7 @@ const v = (name) => () => import(`./screens/${name}.js`);
 
 export const ROUTES = [
   { path: 'today/:date?', tab: 'today', depth: 0, load: v('today') },
+  { path: 'workout/:id/gym', tab: 'today', depth: 2, load: v('gym') },
   { path: 'workout/:id', tab: 'today', depth: 1, load: v('workout') },
 
   { path: 'plan', tab: 'plan', depth: 0, load: v('plan-home') },
