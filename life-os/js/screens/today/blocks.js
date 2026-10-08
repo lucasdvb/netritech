@@ -45,7 +45,7 @@ export function threeBlock(date, mode, ui) {
 
 /* ---------- pinned actions (up to three, from Edit Today) ---------- */
 export const PINS = {
-  water: { ic: 'droplet', label: 'Water · +500 ml', act: 'add-water', data: { ml: 500 }, value: (d) => litres(M.waterMl(d)) },
+  water: { ic: 'droplet', label: 'Water', badge: '+500 ml', act: 'add-water', data: { ml: 500 }, value: (d) => litres(M.waterMl(d)) },
   food: { ic: 'utensils', label: 'Food', act: 'log-food', value: (d) => `${num(M.nutrition(d).protein)} g protein` },
   steps: { ic: 'footprints', label: 'Steps', act: 'log-steps', value: (d) => (M.steps(d) != null ? num(M.steps(d)) : 'Add') },
   weight: { ic: 'scale', label: 'Weight', act: 'log-weight', value: (d) => (M.weight(d) != null ? `${num(M.weight(d), 1)} kg` : 'Log') },
@@ -66,7 +66,7 @@ export function pinnedBlock(date) {
     const p = PINS[k];
     const d = Object.entries(p.data || {}).map(([a, b]) => ` data-${a}="${b}"`).join('');
     return html`<button type="button" class="pin" data-action="${p.act}"${raw(d)} data-key="pin-${k}">
-      <span class="pin-ic">${icon(p.ic, { size: 18 })}</span><span class="pin-label">${p.label}</span><span class="pin-val tnum">${p.value(date)}</span></button>`;
+      <span class="pin-top"><span class="pin-ic">${icon(p.ic, { size: 18 })}</span>${p.badge ? html`<span class="pin-badge">${p.badge}</span>` : ''}</span><span class="pin-label">${p.label}</span><span class="pin-val tnum">${p.value(date)}</span></button>`;
   })}</section>`;
 }
 
