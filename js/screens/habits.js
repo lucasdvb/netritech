@@ -1,10 +1,11 @@
 import * as store from '../data/store.js';
+import * as R from '../domain/routines.js';
 import * as H from '../domain/habits.js';
 import { CATEGORIES, SECTIONS, habitColor } from '../domain/taxonomy.js';
 import { today, fmtMD } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { pageHead, segmented, dots, empty } from '../ui/components.js';
+import { pageHead, segmented, dots, empty, row } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { attachSwipe } from '../ui/swipe.js';
@@ -46,6 +47,18 @@ function habitRow(h) {
   </li>`;
 }
 
+/** Routines: habits linked into a sequence, each opened from here to edit. */
+function routinesSection() {
+  const list = R.routines();
+  return html`<section class="block" data-key="g-routines">
+    <div class="block-head"><h2 class="block-title">Routines</h2><button type="button" class="link-btn" data-action="new-routine">${icon('plus', { size: 16 })} New routine</button></div>
+    <p class="block-hint">Habits you do one after another, with a window of time. Today opens the one that’s due.</p>
+    ${list.length ? html`<ul class="list">${list.map((r) => html`<li>${row({ ic: r.kind === 'evening' ? 'moon' : r.kind === 'morning' ? 'sunrise' : 'repeat', title: r.name,
+      sub: `${(r.steps || []).length} step${(r.steps || []).length === 1 ? '' : 's'} · ${R.windowLabel(r)}`, action: 'edit-routine', data: { id: r.id }, key: `rt-${r.id}` })}</li>`)}</ul>`
+      : html`<p class="card-lead">No routines yet.</p>`}
+  </section>`;
+}
+
 export default {
   id: 'habits',
   title: 'Habits',
@@ -65,6 +78,7 @@ export default {
         <span class="sort-cta-text"><span class="card-title">${focus ? 'Change your three' : 'Choose your three'}</span>
           <span class="row-sub">Sort every habit into Focus, Autopilot or Later on one screen.</span></span>
         ${icon('chevron-right', { size: 18 })}</button>` : ''}
+      ${by === 'state' ? routinesSection() : ''}
       ${groups(by, active).filter((g) => g.items.length).map((g) => html`<section class="block" data-key="g-${g.id}">
         <div class="block-head"><h2 class="block-title">${g.title}</h2><span class="block-meta tnum">${g.id === 'focus' ? `${g.items.length} of ${H.FOCUS_LIMIT}` : g.items.length}</span></div>
         ${g.hint ? html`<p class="block-hint">${g.hint}</p>` : ''}
@@ -88,6 +102,8 @@ export default {
   },
   actions: {
     by: ({ data, ui }) => { ui.by = data.value; hap.tap(); app.refresh(); },
+    'edit-routine': async ({ data }) => (await import('./routine-edit.js')).openRoutineEditor(data.id),
+    'new-routine': async () => (await import('./routine-edit.js')).newRoutine(),
     new: async () => (await import('./habit-new.js')).openNewHabit(),
     archive: ({ data }) => {
       const h = H.habit(data.id);

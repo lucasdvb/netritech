@@ -1,4 +1,5 @@
 import * as store from '../data/store.js';
+import { priorities } from '../domain/tasks.js';
 import { areaBlocks } from './area.js';
 import * as M from '../domain/metrics.js';
 import { isWorkday } from '../domain/coach.js';
@@ -17,8 +18,9 @@ export default {
     const days = lastNDays(today(), 14);
     const shutdowns = store.all('dailyReviews').filter((x) => x.shutdown?.done).sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 7);
     const weekDays = range(startOfWeek(today()), today()).filter(isWorkday);
-    const priDone = weekDays.reduce((a, d) => a + (M.review(d)?.top3 || []).filter((p) => p.done && p.text).length, 0);
-    const priSet = weekDays.reduce((a, d) => a + (M.review(d)?.top3 || []).filter((p) => p.text).length, 0);
+    const pri = weekDays.flatMap((d) => priorities(d));
+    const priDone = pri.filter((t) => t.done).length;
+    const priSet = pri.length;
     const deep = weekDays.reduce((a, d) => a + (M.review(d)?.deepWork || 0), 0);
     return html`
       ${pageHead({ title: 'Work', back: { to: 'progress', label: 'Progress' } })}

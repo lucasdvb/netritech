@@ -1,6 +1,7 @@
 // Choose your three: one screen to sort every habit into Focus, Autopilot or Later.
 // Nothing is saved until you tap Save; "I'll decide later" leaves everything as it was.
 import * as store from '../data/store.js';
+import * as HS from '../domain/habit-system.js';
 import * as H from '../domain/habits.js';
 import { SECTIONS, habitColor } from '../domain/taxonomy.js';
 import { today, addDays, fmtMD } from '../domain/dates.js';
@@ -21,7 +22,7 @@ function draft(ui) {
     ui.sort = {};
     ui.suggested = false;
     if (!H.focusHabits().length) {
-      for (const h of H.suggestFocus()) ui.sort[h.id] = 'focus';
+      for (const h of HS.suggestFocus()) ui.sort[h.id] = 'focus';
       ui.suggested = Object.keys(ui.sort).length > 0;
     }
   }
@@ -108,7 +109,7 @@ export default {
     },
     save: ({ ui }) => {
       try {
-        const n = H.applyStates(ui.sort || {});
+        const n = HS.applyStates(ui.sort || {});
         ui.sort = null;
         const three = H.focusHabits().length;
         hap.success();

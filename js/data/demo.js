@@ -4,7 +4,7 @@ import * as store from './store.js';
 import { today, addDays, weekday, range } from '../domain/dates.js';
 import { habitsSeed } from './seed.js';
 
-const DEMO_STORES = ['habitLogs', 'weightEntries', 'sleepEntries', 'moodEntries', 'nutritionLogs', 'waterLogs', 'stepLogs', 'dailyReviews',
+const DEMO_STORES = ['tasks', 'habitLogs', 'weightEntries', 'sleepEntries', 'moodEntries', 'nutritionLogs', 'waterLogs', 'stepLogs', 'dailyReviews',
   'workouts', 'workoutSets', 'measurements', 'readingSessions', 'learningSessions', 'meditationSessions', 'spiritualSessions',
   'relationshipEntries', 'journalEntries', 'bodyFatEstimates'];
 
@@ -40,9 +40,12 @@ export async function loadDemo(days = 42) {
     for (let i = 0; i < 4 + Math.floor(rnd() * 3); i++) put('waterLogs', { date: d, ml: 500, at: `${d}T${7 + i * 2}:30:00` });
     if (wd <= 5) {
       put('dailyReviews', { id: d, date: d, deepWork: 1 + Math.floor(rnd() * 3), breaks: 3 + Math.floor(rnd() * 6), eyeBreaks: Math.floor(rnd() * 6),
-        top3: ['Client proposal', 'Pipeline follow-ups', 'Design review'].map((text) => ({ id: store.uid(), text, done: pick(0.7) })),
         shutdown: pick(0.75) ? { done: true, at: `${d}T20:0${Math.floor(rnd() * 9)}:00`, completed: 'Proposal sent', remains: 'Invoices', first: 'Follow up with client' } : null,
         win: pick(0.3) ? ['Trained despite low motivation', 'Hit protein', 'Present at dinner', 'Closed a client deal'][Math.floor(rnd() * 4)] : '' });
+      ['Client proposal', 'Pipeline follow-ups', 'Design review'].forEach((title, i) => {
+        const done = pick(0.7);
+        put('tasks', { id: `demo-t3-${d}-${i + 1}`, title, notes: '', area: 'work', repeat: null, date: d, rank: i + 1, done, doneAt: done ? `${d}T${11 + i * 2}:00:00` : null, order: 1000 + i });
+      });
     }
     for (const h of habits) {
       const p = P[h.id];

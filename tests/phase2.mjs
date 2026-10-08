@@ -3,7 +3,8 @@
 // focus and scroll survive navigation, wide screens show list and detail, deletes offer Undo.
 import { createRequire } from 'node:module';
 import { setup } from './helpers.mjs';
-import { ROUTES, REDIRECTS, PLACES, target } from '../js/routes.js';
+import { ROUTES, PLACES } from '../js/routes.js';
+import { REDIRECTS, target, LEGACY } from '../js/redirects.js';
 import { match } from '../js/ui/router.js';
 const { devices } = createRequire(import.meta.url)('playwright');
 const t = await setup({ base: process.argv[2], out: process.argv[3] });

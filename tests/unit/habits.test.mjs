@@ -1,5 +1,6 @@
 // The habit system: states and focus on three, tiny versions, runs with grace, the score.
 import { test } from 'node:test';
+import * as HS from '../../js/domain/habit-system.js';
 import assert from 'node:assert/strict';
 import { fresh, store } from './helpers.mjs';
 import { today, addDays, setDayEnd, startOfWeek } from '../../js/domain/dates.js';
@@ -67,16 +68,16 @@ test('weekly habits keep runs by the week', async () => {
 
 test('only three habits can be in focus', async () => {
   await world(['a', 'b', 'c', 'x'].map((id) => simple(id, { state: id === 'x' ? 'autopilot' : 'focus' })));
-  assert.equal(H.setState(H.habit('x'), 'focus'), null);
+  assert.equal(HS.setState(H.habit('x'), 'focus'), null);
   assert.equal(H.stateOf(H.habit('x')), 'autopilot');
-  H.setState(H.habit('a'), 'autopilot');
-  assert.ok(H.setState(H.habit('x'), 'focus'));
+  HS.setState(H.habit('a'), 'autopilot');
+  assert.ok(HS.setState(H.habit('x'), 'focus'));
   assert.equal(H.focusHabits().length, 3);
 });
 
 test('a pause ends by itself on its date', async () => {
   await world([simple('a', { state: 'autopilot' })]);
-  H.setState(H.habit('a'), 'paused', { until: d(3) });
+  HS.setState(H.habit('a'), 'paused', { until: d(3) });
   assert.equal(H.stateOf(H.habit('a'), d(1)), 'paused');
   assert.equal(H.stateOf(H.habit('a'), d(3)), 'autopilot');
   assert.equal(H.dueOn(H.habit('a'), T), false);
@@ -84,7 +85,8 @@ test('a pause ends by itself on its date', async () => {
 
 test('the score counts focus habits and Top 3, never autopilot', async () => {
   await world([simple('f1'), simple('f2'), simple('auto', { state: 'autopilot' })]);
-  store.put('dailyReviews', { id: T, date: T, top3: [{ text: 'Ship it', done: true }, { text: 'Call mum', done: false }, { text: '' }] });
+  store.put('tasks', { id: 't1', title: 'Ship it', date: T, rank: 1, done: true });
+  store.put('tasks', { id: 't2', title: 'Call mum', date: T, rank: 2, done: false });
   done('f1', 0);
   const s = dayScore(T);
   assert.equal(s.total, 4);
@@ -102,9 +104,9 @@ test('a weekly focus habit joins the plan only on the days it is needed', async 
 test('six weeks at 85% or better makes a focus habit ready for autopilot', async () => {
   await world([simple('a'), simple('later', { state: 'queue', queueOrder: 1 })], d(-80));
   for (let n = -70; n <= -1; n++) if (n % 9 !== 0) done('a', n);
-  const g = H.graduation(H.habit('a'));
+  const g = HS.graduation(H.habit('a'));
   assert.ok(g && g.ratio >= 0.85, JSON.stringify(g));
-  const next = H.graduate(H.habit('a'));
+  const next = HS.graduate(H.habit('a'));
   assert.equal(H.stateOf(H.habit('a')), 'autopilot');
   assert.equal(next.id, 'later');
   assert.equal(H.stateOf(H.habit('later')), 'focus');
@@ -112,7 +114,7 @@ test('six weeks at 85% or better makes a focus habit ready for autopilot', async
 
 test('suggested focus habits are ones that matter and are not yet automatic', async () => {
   await world(habitsSeed());
-  const picks = H.suggestFocus();
+  const picks = HS.suggestFocus();
   assert.equal(picks.length, 3);
   assert.ok(picks.every((h) => h.affectsScore || h.priority === 'core'));
 });
@@ -132,13 +134,13 @@ test('the migration turns priorities into states and adds tiny versions', async 
 
 test('a sort is saved in one write and never leaves more than three in focus', async () => {
   await world(['a', 'b', 'c', 'd', 'e'].map((id, i) => simple(id, { state: 'autopilot', order: i })));
-  assert.equal(H.applyStates({ a: 'focus', b: 'focus', c: 'focus', d: 'queue', e: 'queue' }), 5);
+  assert.equal(HS.applyStates({ a: 'focus', b: 'focus', c: 'focus', d: 'queue', e: 'queue' }), 5);
   assert.deepEqual(H.focusHabits().map((h) => h.id).sort(), ['a', 'b', 'c']);
   assert.deepEqual(H.queue().map((h) => h.id), ['d', 'e']);
-  assert.throws(() => H.applyStates({ d: 'focus' }), /At most 3/);
-  assert.equal(H.applyStates({ a: 'autopilot', d: 'focus' }), 2);
+  assert.throws(() => HS.applyStates({ d: 'focus' }), /At most 3/);
+  assert.equal(HS.applyStates({ a: 'autopilot', d: 'focus' }), 2);
   assert.equal(H.habit('d').focusSince, T);
-  assert.equal(H.applyStates({ d: 'focus' }), 0, 'unchanged habits are not rewritten');
+  assert.equal(HS.applyStates({ d: 'focus' }), 0, 'unchanged habits are not rewritten');
 });
 
 test('on a minimum day a tap logs the tiny version, and your three stay in the plan', async () => {
@@ -156,9 +158,9 @@ test('on a minimum day a tap logs the tiny version, and your three stay in the p
 test('“not yet” puts graduation off for two weeks', async () => {
   await world([simple('a')], d(-60));
   for (let n = -50; n <= -1; n++) done('a', n);
-  assert.ok(H.graduationDue(H.habit('a')));
+  assert.ok(HS.graduationDue(H.habit('a')));
   store.update('habits', 'a', { graduationSnoozed: d(-3) });
-  assert.equal(H.graduationDue(H.habit('a')), null);
+  assert.equal(HS.graduationDue(H.habit('a')), null);
   store.update('habits', 'a', { graduationSnoozed: d(-14) });
-  assert.ok(H.graduationDue(H.habit('a')));
+  assert.ok(HS.graduationDue(H.habit('a')));
 });

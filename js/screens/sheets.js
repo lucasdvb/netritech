@@ -267,7 +267,7 @@ export function openWeight(date = today()) {
 /* ---------- work shutdown ---------- */
 export function openShutdown(date = today()) {
   const r = reviewOf(date);
-  const top3 = (r.top3 || []).filter((p) => (p.text || '').trim());
+  const top3 = T.priorities(date).map((t) => ({ text: t.title, done: t.done }));
   const unfinished = () => T.open().filter((t) => t.date && t.date <= date);
   app.sheet({
     title: 'Close the work day',
@@ -290,14 +290,8 @@ export function openShutdown(date = today()) {
         if (sheet.ui.move) T.moveUnfinished(date, addDays(date, 1));
         const first = (sheet.ui.first || '').trim();
         const ops = [{ store: 'dailyReviews', value: { ...reviewOf(date), id: date, date, shutdown: { done: true, at: new Date().toISOString(), completed: sheet.ui.completed, remains: sheet.ui.remains, first } } }];
-        if (first) {
-          const tm = addDays(date, 1);
-          const tr = reviewOf(tm);
-          const list = [...(tr.top3 || [])];
-          if (!list.some((p) => p.text === first)) list.unshift({ id: store.uid(), text: first, done: false });
-          ops.push({ store: 'dailyReviews', value: { ...tr, id: tm, date: tm, top3: list.slice(0, 3) } });
-        }
         store.batch(ops);
+        if (first) T.addFirstPriority(addDays(date, 1), first);
         hap.success();
         app.closeSheet(sheet);
         document.documentElement.classList.add('life-shift');
@@ -346,18 +340,19 @@ export function openPlan(date = today()) {
         sick: 'Sick day: the score is paused. Rest is the plan.',
       }[s.mode];
       return html`<div class="form">
-        <p class="sheet-note">Your score is the share of today’s plan that’s done. Tiny versions count. Habits on autopilot never lower it.</p>
+        <p class="sheet-note">Your score is the share of today’s plan that’s done: each routine (part-way counts), your three and your Top 3. Tiny versions count. Habits on autopilot outside a routine never lower it.</p>
         ${note ? html`<p class="notice">${icon(MODES[s.mode].icon, { size: 16 })} ${note}</p>` : ''}
         ${s.items.length ? html`<ul class="counts-list">${s.items.map((it) => {
-          const name = it.kind === 'top3' ? it.text : it.habit.name;
-          const kind = it.kind === 'top3' ? KIND.top3 : H.stateOf(it.habit, date) === 'focus' ? KIND.focus : KIND.essential;
-          const st = it.level === 'tiny' ? 'tiny' : it.done ? 'done' : 'open';
-          return html`<li class="counts-item" data-key="${it.kind}-${it.kind === 'top3' ? it.index : it.habit.id}">
-            <span class="${cx('counts-state', `counts-state--${st}`)}">${st === 'done' ? icon('check', { size: 14, stroke: 2.4 }) : ''}</span>
-            <span class="counts-main"><span class="counts-name">${name}</span><span class="counts-kind">${kind}${st === 'tiny' ? ' · tiny version' : st === 'done' ? ' · done' : ''}</span></span>
+          const name = it.kind === 'top3' ? it.text : it.kind === 'routine' ? it.routine.name : it.habit.name;
+          const kind = it.kind === 'top3' ? KIND.top3 : it.kind === 'routine' ? `Routine · ${it.stepsDone} of ${it.steps} steps`
+            : H.stateOf(it.habit, date) === 'focus' ? KIND.focus : KIND.essential;
+          const st = it.level === 'tiny' ? 'tiny' : it.done ? 'done' : it.kind === 'routine' && it.stepsDone ? 'part' : 'open';
+          return html`<li class="counts-item" data-key="${it.kind}-${it.kind === 'top3' ? it.index : it.kind === 'routine' ? it.routine.id : it.habit.id}">
+            <span class="${cx('counts-state', `counts-state--${st}`)}" ${st === 'part' ? raw(`style="--part:${Math.round(it.credit * 100)}%"`) : ''}>${st === 'done' ? icon('check', { size: 14, stroke: 2.4 }) : ''}</span>
+            <span class="counts-main"><span class="counts-name">${name}</span><span class="counts-kind">${kind}${st === 'tiny' ? ' · tiny version' : st === 'done' && it.kind !== 'routine' ? ' · done' : ''}</span></span>
           </li>`;
         })}</ul>
-        <p class="counts-total tnum">${s.done} of ${s.total} done${s.tiny ? ` · ${s.tiny} tiny` : ''} = ${s.ratio == null ? '—' : `${Math.round(s.ratio * 100)}%`}</p>`
+        <p class="counts-total tnum">${s.done} of ${s.total} done${s.tiny ? ` · ${s.tiny} tiny` : ''} · ${s.ratio == null ? '—' : `${Math.round(s.ratio * 100)}%`}</p>`
           : html`<p class="empty-body">${s.mode === 'sick' ? 'Nothing is counted today.' : 'Nothing is planned yet. Choose your three, or write today’s Top 3.'}</p>`}
         <button type="button" class="btn btn--soft btn--block" data-action="sort">${H.focusHabits(date).length ? 'Change your three' : 'Choose your three'}</button>
       </div>`;

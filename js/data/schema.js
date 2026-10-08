@@ -3,11 +3,11 @@
 // future sync can learn about deletions. Date-keyed records also carry `date` ('YYYY-MM-DD',
 // indexed) and `tz`, the time zone they were first written in.
 export const DB_NAME = 'life-os';
-export const DB_VERSION = 3;
+export const DB_VERSION = 4;
 // Version of the built-in habit system (the seed); seed.js brings older installs up to date.
 export const SEED_VERSION = 2;
 /** The newest migration (data/migrations.js). Start-up loads migrations only when it isn't applied. */
-export const LATEST_MIGRATION = '2026-10-habit-states';
+export const LATEST_MIGRATION = '2026-10-routines';
 
 export const STORES = {
   meta: { indexes: [] },                     // schema/seed bookkeeping
@@ -41,7 +41,9 @@ export const STORES = {
   weeklyReviews: { indexes: [] },
   monthlyReviews: { indexes: [] },
   reminderLog: { indexes: ['date'] },
-  tasks: { indexes: ['date'] },              // one-off and repeating to-dos (Week Plan tasks)
+  tasks: { indexes: ['date'] },              // one-off and repeating to-dos; the day's Top 3 carry a rank
+  routines: { indexes: [] },                 // habits linked into a sequence with a window of time
+  routineRuns: { indexes: ['date'] },        // per routine per day: plain steps done, when it was finished
   daySnapshots: { indexes: [] },             // derived per-day summary (id = date), rebuilt from the logs
   outbox: { indexes: [] },                   // latest change per record ('store:id'), for a future sync
   localBackups: { indexes: [] },             // automatic copies taken before data migrations (last three)

@@ -63,10 +63,11 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
 - **Tablet and desktop:** an icon rail from 600 px, a labelled rail from 1024 px. Habits, goals and the journal show the list and the selected item side by side; the list keeps its place.
 - **Edits and deletes:** editing happens in sheets, and a habit's changes save as you go, with Undo when you close. Deleting a habit, goal, entry, photo or session happens at once with Undo; only whole-device actions (restore, erase) ask first.
 
-- **Today**: a time-aware greeting and a daily score from *your three* focus habits plus your Top 3. Tap the score to see exactly what counts. Your three sit at the top, each with a one-tap **Tiny** version; everything else runs on autopilot, grouped by time of day. One tap completes with a small animation and haptic feedback.
-  - **Top 3 priorities** (drag or arrow keys to reorder), then **Tasks** for the day with quick add, plus the **next useful action** from the coach.
-  - **Win of the day**, morning check-in and evening shutdown.
-  - **Normal / Minimum / Sick** day modes.
+- **Today** answers "what now?". The **Now card** holds today's score (tap it to see exactly what counts) and one next action, picked from the time of day: the check-in in the morning, the next step of the routine that's open, your priorities during work, your three, anything overdue, closing the work day in the evening, and at most one coach suggestion. *Not now* moves to the next one; when nothing is left it says you're done for today, with a line for your win.
+  - **Routines** are habits linked into a sequence with a window of time (Morning and Evening to start). The one that's open shows its steps in order with the next one marked; tick a step, or **Did it all** for the whole routine in one tap (with Undo). The others are one line each.
+  - **Your three** (when they aren't steps of a routine), **Priorities and tasks** in one card (the day's Top 3 are tasks with a rank, so there is one list), up to three **pinned actions**, and **Everything else** on autopilot, folded.
+  - **Edit Today** reorders and hides blocks and chooses the pinned actions. The date opens a day picker; swiping the header moves a day.
+  - **Normal / Minimum / Rest / Sick** day modes change the plan and the Now card.
 - **Habits**: every type: yes/no, numeric, duration, quantity, rating and checklist.
   - Schedules: daily, chosen weekdays, X per week, X per month, every N days.
   - **Focus on three:** each habit is in Focus (at most three), Autopilot, Later or Paused (until a date). *Choose your three* sorts every habit on one screen, with suggestions.
@@ -183,12 +184,14 @@ docs/                  the owner's brief and the architecture and build plan
 - **Day snapshots** (`js/domain/snapshots.js`): one compact summary per finished day (score, sleep, weight, steps, protein, workouts, mood, tasks done), rebuilt in the background in small slices whenever that day's data changes. Later features (Progress, insights, the year view) read these.
 - **Text size:** all type is in `rem` on a 17px base, so it follows the phone's text-size setting (Dynamic Type on iPhone); a test renders every screen at 85% and 200% and fails if text is cut off.
 - **Habit engine** (`js/domain/habits.js`): each habit has a type, schedule, thresholds (`min` / `target` / ramp), a `tiny` version (`{ label, min }`), a `state` (focus, autopilot, queue, paused) and an optional *source*, so its value comes from your logs instead of a second tap. Runs are judged per scheduled day (or per week / month for flexible habits), and only two misses in a row end one.
-- **Score** (`js/domain/scoring.js`): today's score is the share of today's plan that is done: your focus habits that are due, plus your Top 3. Tiny versions count; autopilot never lowers it. Minimum days plan the tiny versions of your three plus the essentials; rest days drop training; sick days pause scoring. Rolling consistency excludes days before tracking started.
+- **Routines** (`js/domain/routines.js`): steps are habits or plain lines; each day's plain steps and finish time live in `routineRuns`. A routine opens in its window, where the hours before the day ends (03:00) still count as the evening.
+- **Next action** (`js/domain/next-action.js`): plain rules that rank candidates (check-in, routine step, training, your three, priorities, overdue, shutdown, one coach suggestion) and fall back to a done-for-today state.
+- **Score** (`js/domain/scoring.js`): today's score is the share of today's plan that is done: each routine (part-way counts), your focus habits that are due, plus your Top 3. Tiny versions count; autopilot never lowers it. Minimum days plan the tiny versions of your three plus the essentials; rest days drop training; sick days pause scoring. Rolling consistency excludes days before tracking started.
 - **Coach** (`js/domain/coach.js`): plain rules that separate *facts from your data* from *suggestions*. Nothing is generated or sent anywhere.
 
 ### Data model (IndexedDB stores)
 
-`profile` (including `dayEndsAt`), `settings`, `habits`, `habitLogs` (`habitId:date`), `goals`, `exercises`, `templates`, `workouts`, `workoutSets`, `foods`, `nutritionLogs`, `waterLogs`, `stepLogs`, `weightEntries` (one per date), `measurements`, `bodyFatEstimates`, `photos` + `photoBlobs`, `sleepEntries`, `moodEntries`, `journalEntries`, `readingSessions`, `learningSessions`, `meditationSessions`, `spiritualSessions`, `relationshipEntries`, `dailyReviews` (check-in, Top 3, shutdown, counters), `weeklyReviews`, `monthlyReviews`, `reminderLog`, `tasks` (one-off and repeating; a repeating task is a chain of instances), `meta` (seed version, applied migrations).
+`profile` (including `dayEndsAt`), `settings`, `habits`, `habitLogs` (`habitId:date`), `goals`, `exercises`, `templates`, `workouts`, `workoutSets`, `foods`, `nutritionLogs`, `waterLogs`, `stepLogs`, `weightEntries` (one per date), `measurements`, `bodyFatEstimates`, `photos` + `photoBlobs`, `sleepEntries`, `moodEntries`, `journalEntries`, `readingSessions`, `learningSessions`, `meditationSessions`, `spiritualSessions`, `relationshipEntries`, `dailyReviews` (mode, shutdown, win, counters), `weeklyReviews`, `monthlyReviews`, `reminderLog`, `tasks` (one-off and repeating; a repeating task is a chain of instances; the day's Top 3 carry a `rank`), `routines` and `routineRuns`, `meta` (seed version, applied migrations).
 
 Device-only stores, never in backups or a future sync: `daySnapshots` (derived), `outbox` (latest change per record), `localBackups` (safety copies).
 
@@ -216,6 +219,8 @@ NODE_PATH=$(npm root -g) node tests/phase1.mjs http://localhost:4173/ ./test-sho
                                                                                     # the score sheet, new habit, pause, graduation
 NODE_PATH=$(npm root -g) node tests/phase2.mjs http://localhost:4173/ ./test-shots   # every old route, 3-level reach, keyboard,
                                                                                     # reduced motion, scroll, split view, Undo
+NODE_PATH=$(npm root -g) node tests/today.mjs  http://localhost:4173/ ./test-shots   # Today at 07:00, 13:00, 21:00 and 00:30,
+                                                                                    # routines, Edit Today, a year of data
 NODE_PATH=$(npm root -g) node tests/phase3.mjs http://localhost:4173/ ./test-shots   # weight, food, training, photos
 NODE_PATH=$(npm root -g) node tests/phase4.mjs http://localhost:4173/ ./test-shots   # progress, modules, reviews, backup
 NODE_PATH=$(npm root -g) node tests/phase5.mjs http://localhost:4173/ ./test-shots   # reminders, restore, offline,

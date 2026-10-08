@@ -51,7 +51,7 @@ await step('training: start, log, finish', async () => {
   await page.locator('.sheet [data-action="done"]').click();
   await page.waitForSelector('.sheet-wrap', { state: 'detached' });
   await page.waitForSelector('.wo-actions [data-action="finish-edit"]');
-  const facts = await page.evaluate(async () => (await import('./js/domain/fitness.js')).workoutFacts(new Date().toISOString().slice(0, 10)));
+  const facts = await page.evaluate(async () => (await import('./js/domain/fitness.js')).workoutFacts((await import('./js/domain/dates.js')).today()));
   if (!facts.strength || !facts.calves || !facts.core) throw new Error('facts ' + JSON.stringify(facts));
   await shot('35-workout-done');
   await a11y('workout');

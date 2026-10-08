@@ -1,5 +1,7 @@
 // One habit, most useful first: its run and state, this week, history, statistics, details.
 import * as store from '../data/store.js';
+import * as HS from '../domain/habit-system.js';
+import * as R from '../domain/routines.js';
 import { deleteWithUndo } from '../ui/undo.js';
 import * as H from '../domain/habits.js';
 import { catLabel, sectionLabel, habitColor } from '../domain/taxonomy.js';
@@ -40,7 +42,7 @@ function runNote(r) {
 }
 
 function graduationCard(h) {
-  const g = H.graduationDue(h);
+  const g = HS.graduationDue(h);
   if (!g || h.archived) return '';
   const next = H.queue().find((q) => q.id !== h.id);
   return html`<section class="grad" data-key="grad" aria-label="Ready for autopilot">
@@ -73,6 +75,7 @@ export default {
     const c90 = H.consistency(h, today(), 90);
     const r = H.runs(h);
     const tiny = H.tinyOf(h);
+    const inRoutine = R.routineOf(h.id);
     const numeric = H.isNumeric(h);
     const days30 = lastNDays(today(), 30);
     const notes = store.where('habitLogs', (l) => l.habitId === h.id && (l.note || '').trim()).sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 8);
@@ -81,6 +84,7 @@ export default {
       ['Schedule', H.scheduleLabel(h)],
       h.anchor ? ['When', h.anchor] : null,
       tiny ? ['Tiny version', tiny.label || habitTarget(h, tiny.min)] : null,
+      inRoutine ? ['Routine', `${inRoutine.routine.name} · step ${inRoutine.routine.steps.indexOf(inRoutine.step) + 1}`] : null,
       ['Area', `${catLabel(h.category)} · ${sectionLabel(h.section)}`],
       numeric ? ['Target', `${habitTarget(h, H.displayTarget(h, today()))}${h.min != null && h.min !== h.target ? ` · counts from ${habitTarget(h, H.threshold(h, today()))}` : ''}`] : null,
       h.ramp ? ['Adaptive target', h.ramp.map((x) => num(x)).join(' → ')] : null,
@@ -171,7 +175,7 @@ export default {
       const h = H.habit(params.id);
       if (data.value === H.stateOf(h)) return;
       if (data.value === 'paused') return openPause(h);
-      if (!H.setState(h, data.value)) {
+      if (!HS.setState(h, data.value)) {
         app.toast('Your three are full. Swap one out first.', { action: { label: 'Choose', fn: () => app.go('plan/habits/sort') } });
         return;
       }
@@ -180,7 +184,7 @@ export default {
     },
     graduate: ({ params }) => {
       const h = H.habit(params.id);
-      const next = H.graduate(h);
+      const next = HS.graduate(h);
       hap.success();
       app.toast(`${h.name} is on autopilot.${next ? ` ${next.name} takes its place.` : ''}`, { icon: 'sparkles' });
     },
@@ -218,7 +222,7 @@ function openPause(h) {
     actions: {
       pick: ({ data, sheet }) => { sheet.ui.until = data.d; sheet.refresh(); },
       pause: ({ sheet }) => {
-        H.setState(H.habit(h.id), 'paused', { until: sheet.ui.until });
+        HS.setState(H.habit(h.id), 'paused', { until: sheet.ui.until });
         hap.tap();
         app.closeSheet(sheet);
         app.toast(`${h.name} paused until ${fmtMD(sheet.ui.until)}.`, { action: { label: 'Undo', fn: () => store.update('habits', h.id, { state: h.state, pausedUntil: h.pausedUntil ?? null }) } });
