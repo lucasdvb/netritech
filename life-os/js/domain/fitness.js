@@ -1,6 +1,6 @@
 // Workouts, sets, progression and personal bests.
 import * as store from '../data/store.js';
-import { exercise, template, workoutsOn, setsOf, allWorkouts } from './fitness-core.js';
+import { exercise, setsOf, allWorkouts } from './fitness-core.js';
 export * from './fitness-core.js';
 import { addDays, startOfWeek, endOfWeek, today } from './dates.js';
 
@@ -95,6 +95,10 @@ export function workoutProgress(workout) {
 
 /* ---------- weekly views ---------- */
 export function weekStats(date = today()) {
+  return store.memo(`week-stats:${startOfWeek(date)}`, ['workouts', 'workoutSets', 'exercises'], () => computeWeekStats(date));
+}
+
+function computeWeekStats(date) {
   const from = startOfWeek(date), to = endOfWeek(date);
   const ws = store.all('workouts').filter((w) => w.status === 'done' && w.date >= from && w.date <= to);
   let calfSessions = 0, coreSessions = 0, calfReps = 0, calfVolume = 0, minutes = 0;

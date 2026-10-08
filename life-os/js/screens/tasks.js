@@ -1,5 +1,5 @@
 import * as store from '../data/store.js';
-import * as T from '../domain/tasks.js';
+import * as T from '../domain/tasks-more.js';
 import { today, addDays, fmtDay, fmtMD } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';

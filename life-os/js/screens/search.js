@@ -1,6 +1,6 @@
 // Global search across habits, tasks, journal, workouts, measurements, goals, books and reviews.
 import * as store from '../data/store.js';
-import { relativeDay, fmtMDY, fmtMD, endOfWeek, fmtMonth } from '../domain/dates.js';
+import { relativeDay, fmtMDY, fmtMD, fmtMonth } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { app } from '../ui/app-api.js';

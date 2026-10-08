@@ -1,8 +1,9 @@
 // Progress photos: stored as blobs in IndexedDB on this device only.
 import * as store from '../data/store.js';
+import { blobs } from '../data/blobs.js';
 import { deleteWithUndo } from '../ui/undo.js';
 import { today, fmtMDY, fmtMonth, monthKey } from '../domain/dates.js';
-import { html, cx } from '../ui/dom.js';
+import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty, segmented } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
@@ -13,7 +14,7 @@ const urls = new Map();
 
 async function urlFor(id) {
   if (urls.has(id)) return urls.get(id);
-  const rec = await store.blobs.get(id);
+  const rec = await blobs.get(id);
   if (!rec?.blob) return null;
   const u = URL.createObjectURL(rec.blob);
   urls.set(id, u);
@@ -101,7 +102,7 @@ export default {
       deleteWithUndo([{ store: 'photos', id: data.id }], 'Photo deleted', {
         onGone: async () => {
           if (store.get('photos', data.id)) return;
-          await store.blobs.del(data.id);
+          await blobs.del(data.id);
           const u = urls.get(data.id);
           if (u) { URL.revokeObjectURL(u); urls.delete(data.id); }
         },
@@ -115,7 +116,7 @@ export default {
       try {
         const { blob, w, h } = await shrink(file);
         const id = store.uid();
-        await store.blobs.put(id, blob);
+        await blobs.put(id, blob);
         store.put('photos', { id, date: today(), pose: el.dataset.pose, w, h, size: blob.size, type: blob.type });
         hap.success();
         app.toast('Photo saved on this device', { icon: 'lock' });

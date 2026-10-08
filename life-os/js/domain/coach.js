@@ -1,11 +1,10 @@
 // Rule-based guidance. Every item separates the observed fact (data) from the
 // suggestion (advice), and nothing here diagnoses anything.
-import * as store from '../data/store.js';
 import * as M from './metrics.js';
 import * as F from './fitness.js';
-import { activeHabits, consistency, isDone, dueOn, dayMode, periodDone, isScheduledDay, started, habit, stateOf, focusHabits, runUnit, isOff } from './habits.js';
+import { activeHabits, consistency, isDone, dayMode, periodDone, isScheduledDay, started, habit, stateOf, focusHabits, runUnit, isOff } from './habits.js';
 import { graduationDue } from './habit-system.js';
-import { rolling, dayScore } from './scoring.js';
+import { rolling } from './scoring.js';
 import { today, addDays, minutesOfDay, parseHM, startOfWeek, endOfWeek, diffDays, lastNDays, range } from './dates.js';
 import { num, litres } from '../ui/format.js';
 import { suggestions as reminderSuggestions } from './reminder-rules.js';

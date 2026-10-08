@@ -1,4 +1,5 @@
 import { test } from 'node:test';
+import { blobs } from '../../js/data/blobs.js';
 import assert from 'node:assert/strict';
 import { fresh, tick, store } from './helpers.mjs';
 
@@ -119,11 +120,11 @@ test('reloading from disk keeps data and hides tombstones', async () => {
 
 test('photo data is deleted with a tombstone too', async () => {
   const disk = await fresh();
-  await store.blobs.put('p1', 'BLOB');
-  assert.equal((await store.blobs.get('p1')).blob, 'BLOB');
-  await store.blobs.del('p1');
-  assert.equal(await store.blobs.get('p1'), null);
-  assert.equal((await store.blobs.all()).length, 0);
+  await blobs.put('p1', 'BLOB');
+  assert.equal((await blobs.get('p1')).blob, 'BLOB');
+  await blobs.del('p1');
+  assert.equal(await blobs.get('p1'), null);
+  assert.equal((await blobs.all()).length, 0);
   assert.equal(disk.db.photoBlobs.get('p1').blob, undefined);
   assert.equal(disk.db.outbox.get('photoBlobs:p1').op, 'delete');
 });

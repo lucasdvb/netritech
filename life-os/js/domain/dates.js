@@ -65,14 +65,22 @@ const fmt = (opts) => {
 };
 
 export const fmtLong = (iso) => fmt({ weekday: 'long', month: 'long', day: 'numeric' }).format(fromISO(iso));
-export const fmtShortDate = (iso) => fmt({ weekday: 'short', month: 'short', day: 'numeric' }).format(fromISO(iso));
-export const fmtDay = (iso) => fmt({ weekday: 'long' }).format(fromISO(iso));
-export const fmtDayShort = (iso) => fmt({ weekday: 'short' }).format(fromISO(iso));
-export const fmtDayLetter = (iso) => fmt({ weekday: 'narrow' }).format(fromISO(iso));
-export const fmtMD = (iso) => fmt({ month: 'short', day: 'numeric' }).format(fromISO(iso));
-export const fmtMDY = (iso) => fmt({ month: 'short', day: 'numeric', year: 'numeric' }).format(fromISO(iso));
-export const fmtMonth = (iso) => fmt({ month: 'long', year: 'numeric' }).format(fromISO(iso));
-export const fmtMonthShort = (iso) => fmt({ month: 'short' }).format(fromISO(iso));
+// A date's label never changes, so each is formatted once (charts label hundreds of days).
+const byDate = (opts) => {
+  const seen = new Map();
+  return (iso) => {
+    let s = seen.get(iso);
+    if (s === undefined) { s = fmt(opts).format(fromISO(iso)); if (seen.size > 4000) seen.clear(); seen.set(iso, s); }
+    return s;
+  };
+};
+export const fmtShortDate = byDate({ weekday: 'short', month: 'short', day: 'numeric' });
+export const fmtDay = byDate({ weekday: 'long' });
+export const fmtDayShort = byDate({ weekday: 'short' });
+export const fmtDayLetter = byDate({ weekday: 'narrow' });
+export const fmtMD = byDate({ month: 'short', day: 'numeric' });
+export const fmtMDY = byDate({ month: 'short', day: 'numeric', year: 'numeric' });
+export const fmtMonth = byDate({ month: 'long', year: 'numeric' });
 export const fmtTime = (date = new Date()) => fmt({ hour: '2-digit', minute: '2-digit', hour12: false }).format(date);
 
 export function relativeDay(iso, ref = today()) {

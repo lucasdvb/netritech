@@ -1,11 +1,10 @@
 import * as store from '../data/store.js';
 import { areaBlocks } from './area.js';
 import * as H from '../domain/habits.js';
-import { today, lastNDays, startOfWeek, relativeDay, fmtDayLetter, monthKey, fmtMonth, startOfMonth } from '../domain/dates.js';
+import { today, lastNDays, relativeDay, fmtDayLetter, monthKey, fmtMonth, startOfMonth } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead } from '../ui/components.js';
-import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { openSession } from './sheets.js';
 

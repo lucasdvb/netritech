@@ -5,7 +5,7 @@ import * as H from '../domain/habits.js';
 import * as HS from '../domain/habit-system.js';
 import { fmtMD } from '../domain/dates.js';
 import { habitColor } from '../domain/taxonomy.js';
-import { html, cx } from '../ui/dom.js';
+import { html, cx, attr } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
@@ -27,7 +27,7 @@ export function openFreshStart(away) {
           ${on ? icon('check', { size: 15 }) : html`<i class="chip-dot" aria-hidden="true"></i>`}${h.name}</button>`;
       })}</div>
       <p class="field-hint">${s.ui.pick.length ? `${s.ui.pick.length} of 3. Everything else keeps running on autopilot.` : 'Choose at least one.'}</p>
-      <button type="button" class="btn btn--primary btn--block" data-action="fs-go"${s.ui.pick.length ? '' : ' aria-disabled="true"'}>Start the week</button>
+      <button type="button" class="btn btn--primary btn--block" data-action="fs-go"${attr(!s.ui.pick.length, 'aria-disabled', 'true')}>Start the week</button>
       <div class="fresh-foot">
         <button type="button" class="link-btn" data-action="fs-keep">Keep things as they are</button>
         <button type="button" class="link-btn" data-action="fs-off">Don’t offer this again</button>

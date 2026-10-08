@@ -136,7 +136,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .tab:not([aria-current='page']):hover { background: var(--ink-2); color: #fff; }
   .tab--capture { background: #FFFFFF; color: #000000; font-weight: var(--weight-semibold); }
   .tab--capture:hover, .tab--capture:not([aria-current='page']):hover { background: #F5F5F7; color: #000000; }
-  .tab-foot { display: block; padding: 12px; font-size: var(--text-footnote); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: rgba(255, 255, 255, .45); }
+  .tab-foot { display: block; padding: 12px; font-size: var(--text-footnote); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: rgba(255, 255, 255, .55); }
 }
 
 /* ---------- list and detail, side by side on a desktop ---------- */
@@ -148,6 +148,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .split-detail .back-btn { display: none; }
   .split-detail .page-head--child { padding-top: calc(var(--s5) + 4px); }
   .split-empty { min-height: 70vh; display: grid; place-items: center; }
-  .split-list a[aria-current='page'] { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--accent); }
+  .split-list a[aria-current='page'] { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--accent); --text-3: var(--text-2); }
   .split-list .foot-note { display: none; }
 }

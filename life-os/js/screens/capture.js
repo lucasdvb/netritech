@@ -7,7 +7,7 @@ import * as F from '../domain/fitness.js';
 import { today } from '../domain/dates.js';
 import { trainingCall } from '../domain/day-plan.js';
 import { parse, describe, dayWord, suggest } from '../domain/capture.js';
-import { html, cx } from '../ui/dom.js';
+import { html } from '../ui/dom.js';
 import { icon, hasIcon } from '../ui/icons.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';

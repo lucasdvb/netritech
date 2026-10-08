@@ -85,7 +85,8 @@ function charts(ui) {
   };
 }
 
-function bests() {
+/** The bests worth a line, worked out once until your data changes. */
+const bestFacts = () => store.memo(`trend-bests:${today()}`, H.DATA_STORES, () => {
   const wins = store.all('dailyReviews').filter((r) => (r.win || '').trim()).sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 8);
   const pbs = F.personalBests().filter((p) => p.reps || p.seconds).slice(0, 6);
   let best7 = null;
@@ -98,6 +99,11 @@ function bests() {
   let readDays = 0, cur = 0;
   for (const d of range(H.trackingStart(), today())) { if (M.mindMinutes(d) > 0) { cur++; readDays = Math.max(readDays, cur); } else cur = 0; }
   const medLongest = Math.max(0, ...store.all('meditationSessions').map((m) => m.minutes || 0));
+  return { wins, pbs, best7, readDays, medLongest };
+});
+
+function bests() {
+  const { wins, pbs, best7, readDays, medLongest } = bestFacts();
   return html`<section class="block" data-key="pb"><div class="block-head"><h2 class="block-title">Personal bests</h2></div>
       <dl class="facts">
         ${pbs.map((p) => html`<div><dt>${p.exercise.name}</dt><dd>${p.exercise.metric === 'time' ? `${p.seconds} s` : `${p.reps} reps`}${p.load ? ` · ${num(p.load, 1)} kg` : ''}</dd></div>`)}
@@ -118,9 +124,12 @@ export default {
     const focus = FOCUS[params.metric];
     const all = charts(ui);
     const keys = focus ? focus.keys : Object.keys(all);
+    // A chart is redrawn only when your data or its range changes, not on every redraw of the page
+    // (background work such as records and levels redraws the screen it is on).
+    const chart = (k) => () => raw(store.memo(`trends:${k}:${ui.range || 30}:${ui.ex || ''}`, H.DATA_STORES, () => String(all[k]())));
     return html`
       ${pageHead({ title: focus ? focus.title : 'All trends', morph: focus ? `metric-${params.metric}` : null, back: { to: 'progress', label: 'Progress' } })}
-      ${keys.map((k, i) => (focus || i < 2 ? all[k]() : later(k, all[k])))}
+      ${keys.map((k, i) => (focus || i < 2 ? chart(k)() : later(k, chart(k))))}
       ${focus ? html`<a class="btn btn--soft btn--block block" href="#/progress/trends" data-action="nav" data-to="progress/trends">All trends</a>` : later('pb', bests, 560)}`;
   },
   actions: { range: ({ data, ui }) => { ui.range = data.value; app.refresh(); } },

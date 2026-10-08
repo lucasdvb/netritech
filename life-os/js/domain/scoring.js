@@ -5,7 +5,7 @@
 import * as store from '../data/store.js';
 import { priorities } from './tasks.js';
 import { forDay as routinesFor } from './routines.js';
-import { activeHabits, counts, level, isScheduledDay, started, dayMode, trackingStart, DATA_STORES, consistency, stateOf, dueOn, periodDone, lastDoneBefore, isFlexible, skipped } from './habits.js';
+import { activeHabits, counts, level, isScheduledDay, started, dayMode, trackingStart, DATA_STORES, consistency, stateOf, dueOn, periodDone, isFlexible, skipped } from './habits.js';
 import { today, lastNDays, endOfWeek, endOfMonth, diffDays } from './dates.js';
 import { avg } from './metrics-core.js';
 
@@ -31,7 +31,6 @@ export function planHabits(date, mode = dayMode(date)) {
   const essentials = live.filter((h) => h.mvd && !['paused', 'queue'].includes(stateOf(h, date)) && dueOn(h, date, 'minimum'));
   return [...new Set([...focus, ...essentials])];
 }
-export const scoreHabits = planHabits;
 
 /** The day's priorities (ranked tasks, DR-07). */
 export const top3Items = (date) => priorities(date).map((t) => ({ kind: 'top3', index: t.rank - 1, id: t.id, text: t.title, done: !!t.done }));
@@ -90,13 +89,6 @@ export function band(ratio) {
   if (pct >= b.steady) return { key: 'steady', label: 'Steady' };
   if (pct >= b.attention) return { key: 'attention', label: 'Needs attention' };
   return { key: 'simplify', label: 'Time to simplify' };
-}
-
-/** Consistency of the habits in one state (focus by default), against their own schedules. */
-export function stateConsistency(state = 'focus', end = today(), days = 7) {
-  const hs = activeHabits().filter((h) => stateOf(h, end) === state && h.weekly !== false && started(h, end));
-  const vals = hs.map((h) => consistency(h, end, days).ratio).filter((r) => r != null);
-  return { ratio: avg(vals), habits: hs.length };
 }
 
 export function categoryConsistency(category, end = today(), days = 30) {

@@ -277,9 +277,33 @@ NODE_PATH=$(npm root -g) node tests/phase4.mjs http://localhost:4173/ ./test-sho
 NODE_PATH=$(npm root -g) node tests/phase5.mjs http://localhost:4173/ ./test-shots   # reminders, restore, offline,
                                                                                     # keyboard, 1-year dataset, desktop
 NODE_PATH=$(npm root -g) node tests/phase6.mjs http://localhost:4173/ ./test-shots   # preloaded setup, tasks, plan, migration
+NODE_PATH=$(npm root -g) node tests/resilience.mjs http://localhost:4173/ ./test-shots # a full disk, a backup of every store,
+                                                                                    # another window taking over, a v5 upgrade,
+                                                                                    # damaged records, storage blocked
+NODE_PATH=$(npm root -g) node tests/a11y.mjs http://localhost:4173/ ./test-shots     # axe (WCAG 2.2 AA) on every screen, sheet and
+                                                                                    # state, light and dark; a keyboard-only morning
+NODE_PATH=$(npm root -g) node tests/visual.mjs http://localhost:4173/ ./test-shots   # every screen against its baseline in tests/visual
+NODE_PATH=$(npm root -g) node tests/hardening.mjs http://localhost:4173/ ./test-shots # the performance budgets (run it on its own)
 ```
 
-Every suite fails on console errors or a page wider than the screen. The smoke and progress suites also flag buttons without an accessible label.
+Every suite fails on console errors or a page wider than the screen. The accessibility suite needs `axe-core`, a development dependency only (`npm install` once); nothing of it ships.
+
+**Visual baselines.** `tests/visual/` keeps every screen, light and dark, shrunk to 64 pixels wide (about 5 KB each). The suite fails when a screen changes by more than 1.5%. After a deliberate design change, refresh them with `UPDATE=1 node tests/visual.mjs …` and commit the new copies.
+
+**Performance budgets** (`tests/hardening.mjs`, with a year of data and the CPU slowed 4×, Lighthouse's mid-tier phone setting for a machine like the one the tests run on):
+
+| Measure | Budget | Measured |
+|---|---|---|
+| Today usable from a cold start | under 600 ms | about 470 ms |
+| Any screen's render, first time and after a change (median of three visits) | under 70 ms | 35 ms at most; no single render over 120 ms |
+| A tap's visual response (input to next paint, median of three) | under 50 ms | 16 to 40 ms |
+| Long tasks while using a screen (taps, typing, background work) | none over 50 ms | none |
+| JavaScript for the first screen | under 200 KB | 199 KB |
+| Offline precache | under 1.5 MB | 1.4 MB |
+
+Opening a screen is one task of render plus the browser's own layout; on the slowed profile that is 60 to 120 ms for the longest screens, so their lower sections fill in just after the screen appears (`js/ui/later.js`). Opening on Today, the workout history (the biggest store) loads its last three weeks first, which is all Today reads, and the rest straight after; backups, exports, records and the day summaries wait for all of it.
+
+**By hand before a release:** [`docs/voiceover-script.md`](docs/voiceover-script.md), a walk through the app with VoiceOver on an iPhone.
 
 ---
 

@@ -8,9 +8,9 @@ import { icon } from '../ui/icons.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { check, scale10, segmented, stepper, field, ring, bar, toggle } from '../ui/components.js';
-import * as T from '../domain/tasks.js';
+import * as T from '../domain/tasks-more.js';
 import { num, litres, kgIn, kgOut, weightUnit, habitValue, habitTarget, plural } from '../ui/format.js';
-import { today, fmtLong, relativeDay, parseHM, fmtHM, durationHM, addDays, fmtTime } from '../domain/dates.js';
+import { today, relativeDay, parseHM, durationHM, addDays, fmtTime } from '../domain/dates.js';
 import { MODES, habitColor } from '../domain/taxonomy.js';
 import { dayScore } from '../domain/scoring.js';
 
@@ -150,8 +150,8 @@ export function openFood(date = today()) {
         .filter((f) => !s.ui.q || f.name.toLowerCase().includes(s.ui.q.toLowerCase()));
       return html`<div class="form">
         <div class="macro-row">
-          <div class="macro"><p class="macro-label">Protein</p><p class="macro-val tnum">${num(nut.protein)}<small> / ${t.proteinG} g</small></p>${bar(nut.protein / t.proteinG, { color: 'var(--c-health)' })}</div>
-          <div class="macro"><p class="macro-label">Calories</p><p class="macro-val tnum">${num(nut.kcal)}<small> / ${num(t.kcal)}</small></p>${bar(nut.kcal / t.kcal, { color: 'var(--c-body)' })}</div>
+          <div class="macro"><p class="macro-label">Protein</p><p class="macro-val tnum">${num(nut.protein)}<small> / ${t.proteinG} g</small></p>${bar(nut.protein / t.proteinG, { color: 'var(--c-health)', label: 'Protein' })}</div>
+          <div class="macro"><p class="macro-label">Calories</p><p class="macro-val tnum">${num(nut.kcal)}<small> / ${num(t.kcal)}</small></p>${bar(nut.kcal / t.kcal, { color: 'var(--c-body)', label: 'Calories' })}</div>
         </div>
         <div class="search-field">${icon('search', { size: 16 })}<input type="search" placeholder="Find a quick food" value="${s.ui.q}" data-input="q" aria-label="Find a quick food"></div>
         <ul class="food-list">${foods.map((f) => html`<li data-key="${f.id}"><button type="button" class="food-item" data-action="quick" data-id="${f.id}">

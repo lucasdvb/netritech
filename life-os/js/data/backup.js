@@ -1,5 +1,6 @@
 // Export, import and backup. Nothing leaves the device unless you save or share the file.
 import * as store from './store.js';
+import { blobs } from './blobs.js';
 import { STORES, DB_VERSION, BACKUP_STORES } from './schema.js';
 
 export const APP_ID = 'life-os';
@@ -14,12 +15,13 @@ const blobToDataURL = (blob) => new Promise((resolve, reject) => {
 const dataURLToBlob = async (url) => (await fetch(url)).blob();
 
 export async function buildBackup({ includePhotos = false } = {}) {
+  await store.complete(); // every record, the whole workout history included
   await store.flush();
   const data = {};
   for (const s of DATA_STORES) data[s] = store.all(s);
   if (includePhotos) {
-    const blobs = await store.blobs.all();
-    data.photoBlobs = await Promise.all(blobs.map(async (b) => ({ id: b.id, dataUrl: await blobToDataURL(b.blob) })));
+    const photos = await blobs.all();
+    data.photoBlobs = await Promise.all(photos.map(async (b) => ({ id: b.id, dataUrl: await blobToDataURL(b.blob) })));
   }
   const counts = Object.fromEntries(Object.entries(data).map(([k, v]) => [k, v.length]));
   return { app: APP_ID, kind: 'backup', schema: DB_VERSION, exportedAt: new Date().toISOString(), includesPhotos: includePhotos, counts, data };
@@ -45,6 +47,8 @@ export async function restore(json, mode = 'replace') {
   await store.flush();
   const incoming = {};
   for (const s of DATA_STORES) incoming[s] = Array.isArray(json.data[s]) ? json.data[s] : [];
+  // A backup without your profile or settings keeps the ones you have.
+  for (const s of ['profile', 'settings']) if (!incoming[s]?.length) incoming[s] = store.all(s);
   let photoBlobs = null;
   if (Array.isArray(json.data.photoBlobs)) {
     photoBlobs = await Promise.all(json.data.photoBlobs.map(async (p) => ({ id: p.id, blob: await dataURLToBlob(p.dataUrl), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() })));

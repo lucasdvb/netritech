@@ -1,10 +1,9 @@
 import * as store from '../data/store.js';
 import { deleteWithUndo } from '../ui/undo.js';
 import * as G from '../domain/goals.js';
-import * as M from '../domain/metrics.js';
 import { catLabel, catColor, habitColor } from '../domain/taxonomy.js';
 import { fmtMDY, today, diffDays, fmtMD } from '../domain/dates.js';
-import { html, raw, cx } from '../ui/dom.js';
+import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty, check, ring } from '../ui/components.js';
 import { lineChart } from '../ui/charts.js';

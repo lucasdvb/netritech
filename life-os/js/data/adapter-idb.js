@@ -4,6 +4,9 @@
 import { DB_NAME, DB_VERSION, STORES } from './schema.js';
 
 let dbp = null;
+const closers = new Set();
+/** Runs once if another window upgrades or deletes the database: this one can't write after that. */
+export const onClosed = (fn) => { closers.add(fn); };
 
 const req = (r) => new Promise((resolve, reject) => {
   r.onsuccess = () => resolve(r.result);
@@ -42,7 +45,7 @@ export function open() {
     };
     r.onsuccess = () => {
       const db = r.result;
-      db.onversionchange = () => db.close();
+      db.onversionchange = () => { db.close(); closers.forEach((fn) => fn()); };
       resolve(db);
     };
     r.onerror = () => reject(r.error);
@@ -54,6 +57,12 @@ export function open() {
 export async function getAll(store) {
   const db = await open();
   return req(db.transaction(store).objectStore(store).getAll());
+}
+
+/** Records dated `since` or later, through the store's date index. */
+export async function getSince(store, since) {
+  const db = await open();
+  return req(db.transaction(store).objectStore(store).index('date').getAll(IDBKeyRange.lowerBound(since)));
 }
 
 export async function get(store, id) {

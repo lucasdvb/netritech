@@ -54,14 +54,14 @@ const PAIRS = [
   ['text-2', 'bg', 4.5], ['text-2', 'surface', 4.5], ['text-2', 'surface-2', 4.5],
   ['text-3', 'bg', 4.5], ['text-3', 'surface', 4.5],
   ['accent-ink', 'bg', 4.5], ['accent-ink', 'surface', 4.5],
-  ['on-accent', 'accent', 4.5], ['on-ink', 'ink', 4.5], ['danger', 'bg', 4.5],
+  ['on-accent', 'accent', 4.5], ['on-ink', 'ink', 4.5], ['danger', 'bg', 4.5], ['#FFFFFF', 'danger-fill', 4.5],
 ];
 
 for (const [name, theme] of [['light', light], ['dark', dark]]) {
   test(`${name} theme: text meets contrast minimums`, () => {
     const fails = [];
     for (const [fg, bg, min] of PAIRS) {
-      const a = resolve(theme, theme[fg]);
+      const a = resolve(theme, fg.startsWith('#') ? fg : theme[fg]);
       const b = resolve(theme, theme[bg]);
       const r = ratio(a, b);
       if (r < min) fails.push(`${fg} ${a} on ${bg} ${b}: ${r.toFixed(2)} < ${min}`);

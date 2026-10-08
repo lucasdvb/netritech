@@ -6,7 +6,6 @@ import * as F from '../domain/fitness.js';
 import * as T from '../domain/tasks.js';
 import { parseHM, fmtHM } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
-import { icon } from '../ui/icons.js';
 import { pageHead } from '../ui/components.js';
 import { num } from '../ui/format.js';
 

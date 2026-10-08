@@ -68,6 +68,8 @@ export const LOCAL_ONLY = new Set(['meta', 'daySnapshots', 'reminderLog', 'outbo
 
 // Derived stores: rebuilt from other data, so their writes don't count as changes to your day.
 export const DERIVED = new Set(['daySnapshots']);
+// Loaded in two steps when the app opens on Today: the recent weeks first, the rest just after.
+export const DEFERRED = new Set(['workoutSets']);
 
 // What a backup file holds: everything you entered (photo data is optional and handled apart).
 export const BACKUP_STORES = Object.keys(STORES).filter((s) => s !== 'photoBlobs' && (!LOCAL_ONLY.has(s) || s === 'meta'));

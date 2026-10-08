@@ -1,9 +1,9 @@
 import * as store from '../data/store.js';
 import * as M from '../domain/metrics.js';
-import { today, fmtMD, fmtMDY, relativeDay, addDays, diffDays } from '../domain/dates.js';
+import { today, fmtMD, fmtMDY, diffDays } from '../domain/dates.js';
 import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { pageHead, empty, segmented } from '../ui/components.js';
+import { pageHead, empty } from '../ui/components.js';
 import { lineChart } from '../ui/charts.js';
 import { num, signed, cmOut, cmIn, lengthUnit, weight as fw, kgOut, weightUnit } from '../ui/format.js';
 import { app } from '../ui/app-api.js';

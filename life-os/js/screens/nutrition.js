@@ -1,7 +1,7 @@
 import * as store from '../data/store.js';
 import * as M from '../domain/metrics.js';
 import { today, lastNDays, fmtMD, fmtDayShort, relativeDay, addDays, fmtTime } from '../domain/dates.js';
-import { html, cx } from '../ui/dom.js';
+import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty } from '../ui/components.js';
 import { barChart } from '../ui/charts.js';

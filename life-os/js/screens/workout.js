@@ -1,7 +1,7 @@
 import * as store from '../data/store.js';
 import { deleteWithUndo } from '../ui/undo.js';
 import * as F from '../domain/fitness.js';
-import { today, fmtMDY, relativeDay, fmtMD } from '../domain/dates.js';
+import { today, fmtMDY, relativeDay } from '../domain/dates.js';
 import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty, segmented, check, scale10 } from '../ui/components.js';

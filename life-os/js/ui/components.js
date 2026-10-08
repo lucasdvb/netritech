@@ -24,7 +24,7 @@ export function empty({ ic = 'sparkle', title, body = '', cta, action, data = {}
 
 export function pageHead({ title, eyebrow, back, actions = '', sub, morph }) {
   return html`<header class="page-head${back ? ' page-head--child' : ''}">
-    ${back ? html`<button type="button" class="back-btn" data-action="go-back" data-fallback="${back.to}">${icon('chevron-left', { size: 22 })}<span>${back.label}</span></button>` : ''}
+    ${back ? html`<button type="button" class="back-btn" data-action="go-back" data-fallback="${back.to}" aria-label="Back to ${back.label}">${icon('chevron-left', { size: 22 })}<span>${back.label}</span></button>` : ''}
     <div class="page-head-row">
       <div>
         ${eyebrow ? html`<p class="eyebrow">${eyebrow}</p>` : ''}

@@ -1,6 +1,6 @@
 // Press and hold (G5, and commitments later): a ring fills while you hold; letting go early
 // springs it back, so nothing this final happens by accident. Space or Enter held down works the
-// same from a keyboard, and the label says what holding does.
+// same from a keyboard, a screen reader's activate holds for you, and the label says what holding does.
 import { html } from './dom.js';
 import * as hap from './haptics.js';
 
@@ -44,9 +44,11 @@ export function attachHold(root, onDone) {
     };
     cur.raf = requestAnimationFrame(tick);
   };
+  let pressed = 0; // when a finger, mouse or key last went down on a hold button
   root.addEventListener('pointerdown', (e) => {
     const el = e.target.closest('[data-hold]');
     if (!el || e.button > 0) return;
+    pressed = performance.now();
     e.preventDefault();
     el.setPointerCapture?.(e.pointerId);
     start(el);
@@ -58,7 +60,14 @@ export function attachHold(root, onDone) {
     const el = e.target.closest?.('[data-hold]');
     if (!el || (e.key !== ' ' && e.key !== 'Enter')) return;
     e.preventDefault();
+    pressed = performance.now();
     if (!e.repeat) start(el);
   });
   root.addEventListener('keyup', (e) => { if ((e.key === ' ' || e.key === 'Enter') && e.target.closest?.('[data-hold]')) stop(); });
+  // A screen reader's activate arrives as a click with no press before it: it holds for you, and
+  // the ring still fills, so the moment is the same.
+  root.addEventListener('click', (e) => {
+    const el = e.target.closest?.('[data-hold]');
+    if (el && performance.now() - pressed > 1000) start(el);
+  });
 }

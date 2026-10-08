@@ -2,7 +2,7 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
-**Status.** Phases 0–10 are done (see section 15). Phase 11 is next.
+**Status.** Phases 0–11 are done (see section 15). The final pass (bugs, cleanup, optimisation) is next, then the owner's sign-off on the phone.
 
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
@@ -1200,7 +1200,13 @@ What shipped, against the acceptance criteria: each ceremony follows the HyperFr
 - **Tests:** frame-time measurement during each ceremony, reduced-motion e2e, export file validity.
 - **UX:** "felt more than noticed". If a moment draws attention to itself on the 100th time, it gets shorter.
 
-### Phase 11: Hardening (M)
+### Phase 11: Hardening (M) · done
+
+What shipped, against the acceptance criteria: every budget is met and proven by `tests/hardening.mjs`, with a year of data and the CPU slowed four times (Lighthouse's mid-tier phone setting for a machine like the test one, so a recent iPhone has headroom): Today is usable from a cold start in about 470 ms (budget 600), every screen renders in under 70 ms the first time and after a change (35 ms at most, as the median of three visits), a tap's visual response is 16 to 40 ms (budget 50), using a screen (taps, typing, and the background work they set off) never blocks the main thread for more than 50 ms, first-screen JavaScript is 199 KB and the precache 1.4 MB. There are zero automated accessibility violations: axe-core's WCAG 2.2 A/AA rules and best practices pass on every screen, sheet, moment and ceremony, in light and dark, with data and on a fresh install, on a phone and in the wide two-pane layout (`tests/a11y.mjs`); a whole morning works from the keyboard alone with focus always visible; the VoiceOver script is [`docs/voiceover-script.md`](voiceover-script.md). Every screen has a visual baseline, light and dark (`tests/visual/`, 64 pixels wide, about 5 KB each). The resilience suite covers a full disk, a backup of every store (the progression ones too) restored exactly, another window taking the data over, an upgrade from version 5 with a year in it, damaged records and blocked storage. All 20 browser suites and 129 unit tests pass.
+
+What the measuring found and fixed: Today listed every overdue task from the year (189 KB of markup with a year of data), so it now shows the three most recent with a link to the rest, and Tasks shows ten with *Show all* and can move them all to *Anytime* (with Undo); records and mastery levels were worked out in one 370 ms block after every change, now a habit at a time in 8 ms slices; the shrink-and-grow check walked every habit's whole history on each redraw, now cached against past data and bounded to what it needs (proved equal to the full count by a unit test); the redraw after a tap waits for the tap's own paint, and checks and switches flip at once; the DOM morph skips unchanged parts natively; the lower sections of All trends and Plan fill in just after the screen appears; opening on Today, the workout history loads its last three weeks first and the rest straight after (backups, exports, records and day summaries wait for all of it); a year of workout sets is no longer walked to answer "did I train today?"; 34 unused imports and a handful of dead exports are gone (`tools/unused-imports.mjs` finds any new ones). Bugs found on the way: when another window upgraded the database, this one kept failing to save in a loop (it now stops writing and asks once to reload); three *Save* and *Start* buttons were never really disabled (an escaped attribute); moving unfinished tasks could give a day two priorities of the same rank; a task with a malformed date broke the Tasks screen; a backup without settings broke Today; a screen reader could not seal the day, since a hold needs a long press (an assistive activate now holds for you, the ring still filling); muted grey text fell below 4.5:1 on the grey selected surfaces, the training week, the sidebar footer and the dark danger button.
+
+Still to do by the owner: the sign-off on the phone, with the VoiceOver script.
 
 - **Objective:** make it robust and fast, and prove both.
 - **Features:**

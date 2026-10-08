@@ -53,6 +53,4 @@ export const MODES = {
 export const catLabel = (id) => CATEGORIES.find((c) => c.id === id)?.label || id;
 export const catColor = (id) => `var(--c-${id || 'life'})`;
 export const habitColor = (h) => catColor(h?.color || h?.category);
-export const COLORS = ['body', 'health', 'posture', 'mind', 'spirit', 'work', 'relationships', 'life'];
 export const sectionLabel = (id) => SECTIONS.find((s) => s.id === id)?.label || id;
-export const priorityLabel = (id) => PRIORITIES.find((p) => p.id === id)?.label || id;

@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { fresh, store } from './helpers.mjs';
 import { today, addDays, setDayEnd } from '../../js/domain/dates.js';
-import * as T from '../../js/domain/tasks.js';
+import * as T from '../../js/domain/tasks-more.js';
 import { MIGRATIONS } from '../../js/data/migrations.js';
 import { dayScore } from '../../js/domain/scoring.js';
 import { profileSeed, settingsSeed } from '../../js/data/seed.js';
