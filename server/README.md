@@ -37,3 +37,13 @@ npx wrangler deploy
 | `items` | one row per record: an opaque name, its last-changed time, which device wrote it, and the ciphertext |
 
 Deleting the database deletes everything on the server; your devices keep their own copies.
+
+## Or let Claude deploy it
+
+With an API token in the environment as `CLOUDFLARE_API_TOKEN` (the "Edit Cloudflare Workers"
+template plus Account › D1 › Edit), and `api.cloudflare.com` and `workers.dev` allowed on the
+network, one command does all of the above and prints the address:
+
+```sh
+node server/deploy.mjs              # add --subdomain <name> the first time, if asked
+```
