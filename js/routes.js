@@ -43,7 +43,9 @@ export const ROUTES = [
   { path: 'progress/areas/relationships', tab: 'progress', depth: 1, load: v('relationships') },
   { path: 'progress/areas/work', tab: 'progress', depth: 1, load: v('work') },
   { path: 'progress/areas/:id', tab: 'progress', depth: 1, load: v('area') },
-  { path: 'progress/:seg?', tab: 'progress', depth: 0, load: v('progress') },
+  { path: 'progress/trends/:metric?', tab: 'progress', depth: 1, load: v('trends') },
+  { path: 'progress/calendar', tab: 'progress', depth: 1, load: v('calendar') },
+  { path: 'progress', tab: 'progress', depth: 0, load: v('progress') },
 
   { path: 'reflect', tab: 'reflect', depth: 0, load: v('reflect') },
   { path: 'reflect/journal/:id', tab: 'reflect', depth: 2, load: v('journal-entry'), list: 'reflect/journal' },
@@ -51,6 +53,7 @@ export const ROUTES = [
   { path: 'reflect/review/week/:date?', tab: 'reflect', depth: 1, load: v('review-week') },
   { path: 'reflect/review/month/:month?', tab: 'reflect', depth: 1, load: v('review-month') },
   { path: 'reflect/reviews', tab: 'reflect', depth: 1, load: v('reviews') },
+  { path: 'reflect/insights', tab: 'reflect', depth: 1, load: v('insights') },
 
   { path: 'you/settings', tab: 'you', depth: 1, load: v('settings') },
   { path: 'you/data', tab: 'you', depth: 1, load: v('data') },

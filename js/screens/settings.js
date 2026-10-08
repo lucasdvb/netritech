@@ -6,6 +6,7 @@ import { kgOut, kgIn, weightUnit, num } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { requestPermission, permissionState, stats as reminderStats } from '../domain/reminders.js';
+import * as badge from '../ui/badge.js';
 
 const n = (v) => (v === '' || v == null || Number.isNaN(Number(v)) ? null : Number(v));
 const DAYS = [[1, 'M'], [2, 'T'], [3, 'W'], [4, 'T'], [5, 'F'], [6, 'S'], [7, 'S']];
@@ -91,10 +92,16 @@ export default {
           ${NETS.map(([k, label, hint]) => settingRow(label, toggle(s.nets?.[k] !== false, { action: 'net', data: { k }, label }), { hint, key: `net-${k}` }))}
         </div></section>
       <section class="block"><h2 class="set-section">Reminders</h2>
-        <div class="card">
+        <div class="set-list">
+          ${settingRow('In your calendar', html`<button type="button" class="btn btn--soft btn--sm" data-action="calendar-file">${s.calendarAddedAt ? 'Add again' : 'Set up'}</button>`,
+            { hint: 'The way that always works on iPhone: your calendar alerts you, even when Life OS is closed, and nothing is sent anywhere.', key: 'n-cal' })}
+          ${badge.supported() ? settingRow('Badge on the app icon', toggle(s.badge !== false, { action: 'badge', label: 'Badge on the app icon' }),
+            { hint: perm === 'granted' ? 'How much of today’s plan is still open.' : 'How much of today’s plan is still open. On iPhone it needs notifications allowed for Life OS.', key: 'n-badge' }) : ''}
+        </div>
+        <div class="card block-tight">
           <p class="card-lead" style="margin-top:0">Quiet and adaptive: if you already do something without the nudge, Life OS stops nudging. If you keep dismissing one, it asks whether a different time would suit you better.</p>
           <p class="fine-print">${perm === 'unsupported' ? 'This browser doesn’t support notifications. Reminders show inside the app while it’s open.'
-            : 'Reminders arrive while Life OS is open or recently used. Reliable background notifications on iPhone need a push server, which this private, local-only version doesn’t use.'}</p>
+            : 'In-app reminders arrive while Life OS is open or recently used. Background notifications on iPhone would need a push server, which this private, local-only version doesn’t use; your calendar covers that.'}</p>
         </div>
         <div class="set-list block-tight">
           ${settingRow('Reminders', toggle(nt.enabled, { action: 'notif-master', label: 'Reminders' }), { hint: perm === 'granted' ? 'System notifications allowed' : perm === 'denied' ? 'Notifications are blocked in system settings — in-app only' : 'In-app, plus system notifications if you allow them' })}
@@ -111,6 +118,14 @@ export default {
         </dl></section>`;
   },
   actions: {
+    'calendar-file': async () => (await import('./calendar-file.js')).openCalendarFile(),
+    badge: async () => {
+      const on = store.settings().badge === false;
+      if (on) await requestPermission();
+      store.setSettings({ badge: on });
+      badge.update();
+      hap.tap();
+    },
     net: ({ data }) => { const n = store.settings().nets || {}; store.setSettings({ nets: { ...n, [data.k]: n[data.k] === false } }); hap.tap(); },
     workday: ({ data }) => {
       const v = Number(data.v);

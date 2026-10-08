@@ -135,6 +135,8 @@ await step('books: add one, log pages on the pad, "read 20 pages" moves it, fini
 
 await step('the weekly review plans next week; Plan shows it all week', async () => {
   const { ctx, p } = await at('2026-10-11T18:00:00', { hash: '#/reflect/review/week' });
+  await p.waitForSelector('.guide');
+  await p.locator('[data-action="rv-all"]').click();
   await p.waitForSelector('[data-key="next-week"] .plan-three-input');
   const items = ['Ship the website', 'Three workouts', 'Call the bank'];
   for (let i = 0; i < 3; i++) { await p.locator(`[data-key="next-week"] [data-i="${i}"]`).fill(items[i]); await p.locator(`[data-key="next-week"] [data-i="${i}"]`).press('Tab'); }

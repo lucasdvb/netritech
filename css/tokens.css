@@ -60,6 +60,7 @@
   --text-button-lg: 0.9412rem;   /* 16 */
   --text-input: max(16px, 0.9412rem); /* 16 or more: phones zoom into smaller fields */
   --text-journal: 1rem;          /* 17 */
+  --text-journal-input: max(16px, var(--text-journal)); /* the writing surface: never small enough for phones to zoom */
 
   --leading-display-xl: 1.05;
   --leading-display-lg: 1.08;

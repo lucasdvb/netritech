@@ -2,7 +2,7 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
-**Status.** Phases 0–7 are done (see section 15). Phases 8–11 are next, in order.
+**Status.** Phases 0–8 are done (see section 15). Phases 9–11 are next, in order.
 
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
@@ -1134,7 +1134,9 @@ What shipped, against the acceptance criteria: a full session can be logged in g
 - **Tests:** e2e (gym session with clock control, clipboard paste); **on-device check by the owner** (wake lock, paste prompt).
 - **UX:** large targets (at least 56 px) and high contrast for gym lighting.
 
-### Phase 8: Progress and Reflect (L)
+### Phase 8: Progress and Reflect (L) · done
+
+What shipped, against the acceptance criteria: every visible metric on Progress has a decision line (a measure without data isn't shown at all, and the e2e suite checks each one); every insight carries one action that changes the plan, applied in one tap with Undo, and the engine drops any candidate without one; the calendar file is valid iCalendar (CRLF lines folded at 75 octets, escaped text, a VALARM on every event, checked in the unit tests and on the downloaded file); the weekly review is five short screens. Decisions made on the way: Progress home is the week's sentence, the score against the same point last week (the ghost Phase 9 races) with a strip of the week's days, *What's moving* (the up-to-three biggest changes on last week, each with what to do) and six measures (consistency, weight, sleep, protein, steps, training); every chart moved one level down to *All trends* (`progress/trends/:metric?`, which opens on the measure you tapped), and the calendar to `progress/calendar`; insights live in Reflect (`reflect/insights`) and old `progress/insights` addresses redirect there. The rules engine has eight rules, each tied to an action that already has Undo: weakest routine (its least-done step made tiny for two weeks), hardest weekday (next one planned as a Minimum day), short nights (a wind-down reminder 30 minutes before lights out), a training day that rarely happens (it becomes the 20-minute minimum; only for someone who logs training), graduation to autopilot, a flat weight trend (calorie target down 150 kcal, never below the floor), protein and steps gaps (one step added to the Morning or Evening routine). Applied or set-aside insights stay quiet for two weeks and are listed under *Lately*. Reflect opens on today's page with a prompt for the time of day; the page is made with your first words, saved as you type (and on leaving), and removed if you wipe it; mood is five words, one tap. The weekly review runs as the week in a sentence (plus the optional business check), what went well and where it slipped (computed), one change (an insight, applied there and then, or your own words) and next week's three; finishing it also ticks the Weekly review habit. On Sunday from 17:00 the Now card offers it before closing the day. The monthly review is guided the same way in six screens. Reminders that always arrive come from your own calendar (U6): *You › Reminders in your calendar* builds the file from your routines, training days, reviews and habit reminder times; events use floating local times, so they follow the phone's clock. The app-icon badge counts what's left of today's plan and follows every change. **Still to check on the owner's iPhone:** that the file imports into Apple Calendar with its alerts, and that the badge appears once notifications are allowed.
 
 - **Objective:** a feedback system, not a dashboard.
 - **Features:**

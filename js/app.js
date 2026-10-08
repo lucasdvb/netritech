@@ -49,7 +49,7 @@ function renderTabbar() {
 const ctxOf = (c) => ({ params: c.params, query: c.query, ui: c.ui, route: c.route, path: c.path });
 
 // Older addresses land on their new homes, keeping any query. The table loads only when needed.
-const LEGACY = /^(habits|body|more)(\/|$)|^you$|^progress\/areas$|^plan\/habits\/[^/]+\/edit$/;
+const LEGACY = /^(habits|body|more)(\/|$)|^you$|^progress\/(areas|overview|insights)$|^plan\/habits\/[^/]+\/edit$/;
 async function redirect() {
   const { parts, query, path } = router.parse();
   if (!LEGACY.test(path)) return false;
@@ -445,6 +445,7 @@ async function boot() {
   import('./ui/gestures.js').then((m) => m.attachPullToSearch({ enabled: () => current?.route.depth === 0, onSearch: () => app.search() })).catch(() => {});
   import('./domain/reminders.js').then((r) => r.start()).catch((err) => console.warn(err));
   import('./domain/snapshots.js').then((m) => m.start()).catch((err) => console.warn(err));
+  import('./ui/badge.js').then((m) => m.start()).catch(() => {});
   import('./ui/install.js').then((m) => m.maybePrompt()).catch(() => {});
   if (navigator.storage?.persist) navigator.storage.persisted().then((p) => { if (!p) navigator.storage.persist(); });
   window.__lifeos = { store, app, ready: true };

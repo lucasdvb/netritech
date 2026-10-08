@@ -94,7 +94,10 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
 - **Tasks**: one-off jobs and weekly or monthly chores, grouped into Overdue, Today, the next six days, Later and Anytime.
   - Ticking a repeating task schedules the next one, so a missed week never piles up.
   - The evening shutdown can move unfinished tasks to tomorrow.
-- **Progress**: trends, consistency by area, a calendar of every day, weekly insights, personal bests and "needs attention".
+- **Progress** is a story, not a dashboard: this week in one sentence ("Ahead of last week: 82% of your plan done, 3 training sessions and weight down 0.3 kg."), the score against the same point last week, a strip of the week's days (sealed ones marked), **what's moving** (the biggest changes on last week, each with what to do) and **measures** (consistency, weight, sleep, protein, steps and training, each with a decision line; a measure with no data isn't shown). Body and the areas follow; every chart, personal bests, wins and the calendar of every day are one level down.
+- **Reflect** opens on today's page, ready to type: a prompt for the time of day, saved as you write, mood one optional tap, and the morning and evening questions a tap away. Below it are the reviews that are due (close the day, the week, the month), **insights** and the journal.
+  - **Insights end in one tap.** Each states what your logs show and carries one change to your plan, with Undo: your weakest routine gets its least-done step made tiny for two weeks; your hardest weekday gets a Minimum day planned; short nights get a wind-down reminder; a training day that rarely happens becomes the 20-minute minimum; a habit that has become automatic moves to autopilot; a flat weight trend lowers the calorie target by 150 kcal (never below the floor); a protein or steps gap adds one step to a routine. *Not now* keeps one quiet for two weeks. An insight you can't act on is never shown. The rules sit behind an engine interface, so a smarter engine can be added later without changing the screens.
+  - **The weekly review** takes about three minutes as five short screens: the week in a sentence, what went well and where it slipped (both computed from your logs), one change (pick an insight and it's applied, or write your own) and next week's three. On Sunday from 17:00 the Now card offers it. The monthly review is guided the same way. "See it all on one page" shows every number and question.
 - **More**: Tasks, Journal, Mind (reading, learning, meditation), Faith, Relationships, Work (deep work, shutdown), Your plan, Goals, and Weekly and Monthly reviews.
   - **Your plan** is the workbook's Plan & Routines playbook: your day, your week, routines, training templates, food targets and the rules. It is built from your live habits, templates and targets, so editing them updates it.
   - Also: Search, Settings (units, theme, targets, reminders), Data and Privacy.
@@ -124,7 +127,9 @@ Reminders show as a banner while Life OS is open. If you allow notifications, th
 - a reminder ignored three times in a row pauses and suggests a different time;
 - changing a reminder's time, or switching it off and on, gives it a fresh start.
 
-iOS only delivers notifications to a fully closed web app through a push server. This private, server-free version deliberately doesn't use one, and the Settings screen says so.
+iOS only delivers notifications to a fully closed web app through a push server. This private, server-free version deliberately doesn't use one, so **your calendar does the reminding**: *You › Reminders in your calendar* builds one calendar file (morning check-in, each training day, close the day, the weekly and monthly reviews, and every habit with a reminder time), each event with an alert at its time and a link back to the right page. On iPhone, tap *Add All* when Calendar opens. The file is made on the phone and handed straight to Calendar; nothing is sent anywhere.
+
+The **app-icon badge** shows how much of today's plan is still open and updates as you log (Settings › Reminders). On iPhone it needs notifications allowed for Life OS.
 
 ---
 
@@ -245,6 +250,8 @@ NODE_PATH=$(npm root -g) node tests/plan.mjs http://localhost:4173/ ./test-shots
                                                                                     # questions with its projection, projects, books
 NODE_PATH=$(npm root -g) node tests/body.mjs http://localhost:4173/ ./test-shots     # gym mode under clock control, rest across
                                                                                     # an app switch and a reload, Health paste
+NODE_PATH=$(npm root -g) node tests/reflect.mjs http://localhost:4173/ ./test-shots  # Progress as a story, Reflect ready to write,
+                                                                                    # insights applied, guided reviews, calendar file, badge
 NODE_PATH=$(npm root -g) node tests/phase3.mjs http://localhost:4173/ ./test-shots   # weight, food, training, photos
 NODE_PATH=$(npm root -g) node tests/phase4.mjs http://localhost:4173/ ./test-shots   # progress, modules, reviews, backup
 NODE_PATH=$(npm root -g) node tests/phase5.mjs http://localhost:4173/ ./test-shots   # reminders, restore, offline,

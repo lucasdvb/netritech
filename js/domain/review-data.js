@@ -3,7 +3,7 @@ import * as store from '../data/store.js';
 import { priorities } from './tasks.js';
 import * as M from './metrics.js';
 import * as F from './fitness.js';
-import { habit, isDone, started } from './habits.js';
+import { habit, isDone, started, activeHabits, stateOf, consistency } from './habits.js';
 import { dayScore, rolling } from './scoring.js';
 import { range, today, addDays, endOfWeek, startOfMonth, endOfMonth } from './dates.js';
 
@@ -55,3 +55,35 @@ export function periodFacts(from, to) {
 
 export const weekFacts = (weekStart) => periodFacts(weekStart, endOfWeek(weekStart));
 export const monthFacts = (month) => periodFacts(startOfMonth(`${month}-01`), endOfMonth(`${month}-01`));
+
+/**
+ * What went well and where it slipped in a week, computed from the logs: short lines of fact,
+ * at most five of each. The weekly review shows these before asking anything.
+ */
+export function weekHighlights(weekStart) {
+  const f = weekFacts(weekStart);
+  const well = [], slip = [];
+  if (!f.days) return { well, slip };
+  const t = M.targets();
+  const end = f.to;
+  const hs = activeHabits().filter((h) => ['focus', 'autopilot'].includes(stateOf(h, end)) && h.weekly !== false && started(h, end));
+  const rows = hs.map((h) => ({ h, c: consistency(h, end, f.days) })).filter((x) => x.c.ratio != null && x.c.expected >= 1);
+  const said = (h, c) => (['daily', 'weekdays'].includes(h.schedule?.kind || 'daily') ? `${c.done} of ${Math.round(c.expected)} days` : `${c.done} this week`);
+  for (const { h, c } of rows.filter((x) => x.c.ratio >= 0.85).sort((a, b) => b.c.ratio - a.c.ratio || (stateOf(a.h, end) === 'focus' ? -1 : 1)).slice(0, 3)) well.push({ ic: h.icon || 'check', text: `${h.name}: ${said(h, c)}` });
+  for (const { h, c } of rows.filter((x) => x.c.ratio < 0.6 && stateOf(x.h, end) === 'focus').slice(0, 2)) slip.push({ ic: h.icon || 'circle', text: `${h.name}: ${said(h, c)}` });
+  const planned = range(f.from, end).filter((d) => F.plannedTemplate(d)?.kind === 'strength').length;
+  if (planned) (f.training.sessions >= planned ? well : slip).push({ ic: 'dumbbell', text: `${f.training.sessions} of ${planned} training sessions${f.training.improved ? `, ${f.training.improved} with progression` : ''}` });
+  for (const p of F.personalBests()) {
+    const d = [p.repsDate, p.loadDate, p.secondsDate].find((x) => x && x >= f.from && x <= end);
+    if (d && well.length < 5) well.push({ ic: 'trophy', text: `New best: ${p.exercise.name}, ${p.exercise.metric === 'time' ? `${p.seconds} s` : `${p.reps} reps`}` });
+  }
+  if (f.sleep.avg != null) {
+    if (f.sleep.short >= 3) slip.push({ ic: 'bed', text: `${f.sleep.short} nights under ${t.sleepMinH ?? 7} h` });
+    else if (f.sleep.avg >= (t.sleepMinH ?? 7)) well.push({ ic: 'bed', text: `Sleep averaged ${Math.floor(f.sleep.avg)}h ${String(Math.round((f.sleep.avg % 1) * 60)).padStart(2, '0')}m` });
+  }
+  if (f.protein.logged >= 3) (f.protein.hitDays / f.protein.logged >= 0.7 ? well : slip).push({ ic: 'beef', text: `Protein on target ${f.protein.hitDays} of ${f.protein.logged} logged days` });
+  if (f.weight.change != null && Math.abs(f.weight.change) >= 0.1) (f.weight.change < 0 ? well : slip).push({ ic: 'scale', text: `Weight ${f.weight.change < 0 ? 'down' : 'up'} ${Math.abs(f.weight.change).toFixed(1)} kg (7-day average)` });
+  if (f.priorities.set >= 3) (f.priorities.done / f.priorities.set >= 0.7 ? well : slip).push({ ic: 'list-checks', text: `${f.priorities.done} of ${f.priorities.set} priorities done` });
+  if (f.wins.length) well.push({ ic: 'star', text: `Your wins: ${f.wins.slice(0, 3).map((w) => w.text).join(' · ')}` });
+  return { well: well.slice(0, 5), slip: slip.slice(0, 5) };
+}

@@ -21,6 +21,7 @@ export function openYou() {
         ${demo ? html`<p class="notice notice--warn">${icon('info', { size: 16 })} Sample data is loaded. <button type="button" class="link-btn" data-action="data">Remove it</button></p>` : ''}
         <ul class="list">
           <li>${row({ ic: 'settings', title: 'Settings', sub: 'Profile, targets, reminders, appearance', action: 'settings' })}</li>
+          <li>${row({ ic: 'calendar-check', title: 'Reminders in your calendar', sub: 'Alerts that arrive even when Life OS is closed', action: 'calendar' })}</li>
           <li>${row({ ic: 'database', title: 'Data & backup', sub: 'Export, import, safety copies', action: 'data' })}</li>
           <li>${row({ ic: 'shield-check', title: 'Privacy', sub: 'What is stored, and where', action: 'privacy' })}</li>
           ${!isInstalled() ? html`<li>${row({ ic: 'smartphone', title: 'Add to Home Screen', sub: 'Full screen, works offline', action: 'install' })}</li>` : ''}
@@ -32,6 +33,7 @@ export function openYou() {
       settings: go('you/settings'),
       data: go('you/data'),
       privacy: go('you/privacy'),
+      calendar: async ({ sheet }) => { app.closeSheet(sheet); (await import('./calendar-file.js')).openCalendarFile(); },
       install: async ({ sheet }) => {
         const m = await import('../ui/install.js');
         if (m.canPromptNative()) { await m.promptNative(); return; }

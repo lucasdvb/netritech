@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = '38e3139d90';
+const VERSION = '756326a8a0';
 const ASSETS = [
   "./",
   "./index.html",
@@ -34,6 +34,8 @@ const ASSETS = [
   "./js/domain/habit-system.js",
   "./js/domain/habits.js",
   "./js/domain/health-paste.js",
+  "./js/domain/ics.js",
+  "./js/domain/insights.js",
   "./js/domain/metrics.js",
   "./js/domain/next-action.js",
   "./js/domain/projects.js",
@@ -44,6 +46,7 @@ const ASSETS = [
   "./js/domain/routines.js",
   "./js/domain/scoring.js",
   "./js/domain/snapshots.js",
+  "./js/domain/story.js",
   "./js/domain/tasks.js",
   "./js/domain/taxonomy.js",
   "./js/redirects.js",
@@ -52,6 +55,8 @@ const ASSETS = [
   "./js/screens/body.js",
   "./js/screens/book.js",
   "./js/screens/books.js",
+  "./js/screens/calendar-file.js",
+  "./js/screens/calendar.js",
   "./js/screens/capture.js",
   "./js/screens/data.js",
   "./js/screens/exercise.js",
@@ -67,6 +72,8 @@ const ASSETS = [
   "./js/screens/habit.js",
   "./js/screens/habits.js",
   "./js/screens/health.js",
+  "./js/screens/insight-ui.js",
+  "./js/screens/insights.js",
   "./js/screens/journal-entry.js",
   "./js/screens/journal.js",
   "./js/screens/measurements.js",
@@ -104,12 +111,14 @@ const ASSETS = [
   "./js/screens/today/rows.js",
   "./js/screens/today.js",
   "./js/screens/training.js",
+  "./js/screens/trends.js",
   "./js/screens/weight.js",
   "./js/screens/work.js",
   "./js/screens/workout-actions.js",
   "./js/screens/workout.js",
   "./js/screens/you.js",
   "./js/ui/app-api.js",
+  "./js/ui/badge.js",
   "./js/ui/charts.js",
   "./js/ui/components.js",
   "./js/ui/dom.js",
