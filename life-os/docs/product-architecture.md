@@ -2,7 +2,7 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
-**Status.** Phases 0–11 are done (see section 15). The final pass (bugs, cleanup, optimisation) is next, then the owner's sign-off on the phone.
+**Status.** Phases 0–11 and the final pass (bugs, cleanup, optimisation) are done (see section 15). What's left is the owner's sign-off on the phone.
 
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
@@ -1219,6 +1219,20 @@ Still to do by the owner: the sign-off on the phone, with the VoiceOver script.
   - README and docs.
 - **Depends on:** all phases.
 - **Acceptance:** all budgets met, zero automated accessibility violations, all suites green, and the owner signs off on the phone.
+
+### Final pass: bugs, cleanup and optimisation · done
+
+What it covered: a lint for mistakes (ESLint's built-in rules, `npm run lint`, now part of `npm test`), a line-by-line review of the data layer, dates, habits, tasks and reminders, and a sweep for code and styles nothing uses. Every bug below has a test that failed before the fix.
+
+- **Saving:** two quick changes to the same record, the first one failing (a full disk), left the screen out of step with what was stored. Each unsaved write is now tracked per record, so a failure goes back to what is really on disk without undoing a later change still on its way.
+- **Opening on Today:** a workout set deleted in the first moment, before the rest of the history had loaded, came back until the next reload; it now stays deleted. If the rest ever fails to load, a backup fails with it instead of quietly saving part.
+- **Weekly and monthly habits:** a week only partly usable (a habit started on a Sunday, sick or away days) still needed the full count, so a new "3 times a week" habit began with a miss. The target is now that week's share of the count, in runs, in "2 of 3 this week" and in when Today plans it.
+- **Time zones:** days taken from stored times used the UTC date, a day out east of UTC early in the morning (in Mauritius, before 4:00): whether the weekly review counted, reminders learning when you already do a habit, the last day you were active, goal start dates, milestone and review dates, and the tasks CSV. They now use your local day, with the day boundary.
+- **Reminders:** a banner left alone was shown a second time and counted as ignored twice, so a reminder could switch itself off after two days instead of three.
+- **Restore:** a backup without the first-run marker would have been overwritten with the starter habits on the next start. And every restore, from a file or a safety copy, now saves a safety copy of what's on the device first, so a restore can be taken back (*You › Data › Safety copies*).
+- **Escaping:** text from your data inside labels (habit names on rings and icons, record keys, colours) is escaped everywhere; one `dataAttrs()` helper replaces seven copies.
+- **Notifications:** tapping one while a window the app doesn't control is open no longer fails in the background.
+- **Cleanup:** 21 unused CSS classes, unused imports and values, and stale README paths are gone. The service worker setup and the safety nets' actions load after the first screen, so first-screen JavaScript stays within 200 KB despite the safer saving.
 
 ---
 
