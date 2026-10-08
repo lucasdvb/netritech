@@ -29,16 +29,6 @@ export const setsOf = (workoutId) => setIndex().get(workoutId) || [];
 export const allWorkouts = () => store.memo('all-workouts', ['workouts'], () => store.all('workouts').filter((w) => w.status === 'done').sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : cmp(b.startedAt || '', a.startedAt || ''))));
 export const activeWorkout = () => store.all('workouts').find((w) => w.status === 'active') || null;
 
-export function categoriesIn(workout) {
-  const cats = new Set();
-  for (const s of setsOf(workout.id)) {
-    if (!s.completed) continue;
-    const e = exercise(s.exerciseId);
-    if (e) cats.add(e.category);
-  }
-  return cats;
-}
-
 /** Facts a habit source can ask about a date. */
 export function workoutFacts(date) {
   return store.memo(`facts:${date}`, ['workouts', 'workoutSets', 'exercises'], () => computeFacts(date));

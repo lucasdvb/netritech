@@ -28,7 +28,8 @@ export function play(name) {
   listener?.(name);
   const m = MAP[name];
   if (!enabled || !m) return;
-  if (navigator.vibrate) navigator.vibrate(m.pattern);
+  // Only once you've touched the app: before that the browser refuses (a moment can arrive on its own).
+  if (navigator.vibrate && navigator.userActivation?.hasBeenActive !== false) navigator.vibrate(m.pattern);
   else if (ios) for (let i = 0; i < m.ticks; i++) setTimeout(iosTick, i * 90);
 }
 

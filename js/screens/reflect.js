@@ -8,7 +8,6 @@ import { today, relativeDay, fmtMD, fmtLong, endOfWeek, monthKey, fmtMonth, week
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead } from '../ui/components.js';
-import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { newEntry, KIND_LABEL } from './journal.js';
 import { defaultWeek } from './review-week.js';

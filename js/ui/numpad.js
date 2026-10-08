@@ -1,6 +1,6 @@
 // Number pad sheet: big keys, the last value already there, ± steppers for small changes.
 // The first key you press replaces the prefilled value, like a calculator. A keyboard works too.
-import { html, cx } from './dom.js';
+import { html, cx, attr } from './dom.js';
 import { icon } from './icons.js';
 import { app } from './app-api.js';
 import * as hap from './haptics.js';
@@ -74,7 +74,7 @@ export function openNumpad(o) {
           : html`<button type="button" class="numpad-key" data-action="np-key" data-k="${k}" aria-label="${k === 'del' ? 'Delete' : k === '.' ? 'Decimal point' : k}">${k === 'del' ? icon('chevron-left', { size: 22 }) : k}</button>`)}</div>
         <div class="numpad-foot">
           ${o.more ? html`<button type="button" class="link-btn" data-action="np-more">${o.more.label}</button>` : html`<span></span>`}
-          <button type="button" class="btn btn--primary" data-action="np-save"${valid(v) ? '' : ' aria-disabled="true"'}>Save</button>
+          <button type="button" class="btn btn--primary" data-action="np-save"${attr(!valid(v), 'aria-disabled', 'true')}>Save</button>
         </div>
       </div>`;
     },

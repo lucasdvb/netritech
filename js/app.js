@@ -6,7 +6,7 @@ import * as sheet from './ui/sheet.js';
 import { toast } from './ui/toast.js';
 import { icon, loadIcons } from './ui/icons.js';
 import { html } from './ui/dom.js';
-import { firstRender, fill } from './ui/later.js';
+import { firstRender, fill, waitingKeys } from './ui/later.js';
 import { app, APP_NAME } from './ui/app-api.js';
 import { today, setDayEnd } from './domain/dates.js';
 
@@ -208,7 +208,8 @@ async function navigate() {
     window.scrollTo(0, y);
     settle();
     // The sections that waited fill in after, once the screen is on its way.
-    if (waiting.length) { fill(main, waiting); waiting = []; }
+    fill(main, waiting); // (an empty list also stops a previous screen's fill)
+    waiting = [];
   };
   if (prev) swap(apply, dir.replace('view--', '')); else apply();
 }
@@ -224,7 +225,13 @@ function refresh() {
     if (!current?.el) return;
     try {
       const restore = focusAnchor(main);
-      timed(current, () => patch(current.el, current.view.render(ctxOf(current))));
+      // Sections still filling in stay deferred, so a change mid-fill doesn't work them all out at once.
+      const keys = waitingKeys();
+      timed(current, () => {
+        const r = keys ? firstRender(() => current.view.render(ctxOf(current)), keys) : { markup: current.view.render(ctxOf(current)), waiting: [] };
+        patch(current.el, r.markup);
+        if (keys) fill(main, r.waiting);
+      });
       current.view.update?.(current.el, ctxOf(current));
       if (pane && pane.el !== current.el) patch(pane.el, pane.view.render(ctxOf(pane)));
       markSelected();
@@ -405,7 +412,9 @@ async function boot() {
   });
 
   try {
-    await store.init();
+    // Opening on Today itself, the long workout history loads just after the first screen.
+    const onToday = !location.hash || /^#\/today(\?|$)/.test(location.hash);
+    await store.init({ recentFirst: onToday });
     performance.mark('lifeos:data');
     // The built-in habit system is only loaded on first run, or when it has an update.
     const seeded = store.get('meta', 'seed');
@@ -413,6 +422,7 @@ async function boot() {
     const fresh = seedIfNeeded && await seedIfNeeded();
     // Migrations load only on a fresh install or when an update has one waiting.
     if (fresh || !(store.get('meta', 'migrations')?.applied || []).includes(LATEST_MIGRATION)) {
+      await store.loadRest(); // migrations see all of your data
       const m = await import('./data/migrations.js');
       if (fresh) m.markAllApplied(); else await m.runMigrations();
     }
@@ -428,8 +438,15 @@ async function boot() {
   }
 
   applyTheme();
+  let closeReload = null;
   store.subscribe((ev) => {
     if (ev.type === 'error') { toast(ev.message, { tone: 'danger', icon: 'circle-alert' }); return; }
+    // Another window took the data over: nothing more is written here, and the message stays the newest.
+    if (ev.type === 'closed') {
+      closeReload?.();
+      closeReload = toast('Life OS was updated in another window. Reload to carry on; everything saved is safe.', { tone: 'danger', icon: 'refresh-cw', duration: 0, action: { label: 'Reload', fn: () => location.reload() } });
+      return;
+    }
     if (ev.stores.has('settings')) applyTheme();
     if (ev.stores.has('profile')) setDayEnd(store.profile()?.dayEndsAt);
     // Background summaries rebuilding don't change what's on screen.
@@ -442,6 +459,8 @@ async function boot() {
   if (!location.hash) history.replaceState(null, '', '#/today');
   await navigate();
   registerSW();
+  // The rest of the workout history, straight after the first screen; what needs all of it waits.
+  setTimeout(() => store.loadRest().catch((err) => console.error(err)));
 
   let lastMinute = new Date().getMinutes();
   let lastDay = today();
@@ -460,12 +479,12 @@ async function boot() {
   import('./ui/keys.js').then((m) => m.attachShortcuts({ places: PLACES, go: (path) => app.go(path), capture: () => globalActions.capture(), search: () => app.search() })).catch(() => {});
   import('./ui/gestures.js').then((m) => m.attachPullToSearch({ enabled: () => current?.route.depth === 0, onSearch: () => app.search() })).catch(() => {});
   import('./domain/reminders.js').then((r) => r.start()).catch((err) => console.warn(err));
-  import('./domain/snapshots.js').then((m) => m.start()).catch((err) => console.warn(err));
+  store.complete().then(() => import('./domain/snapshots.js')).then((m) => m.start()).catch((err) => console.warn(err));
   import('./ui/badge.js').then((m) => m.start()).catch(() => {});
   // The optional sound palette: a soft tick for completions (off unless chosen in Settings).
   Promise.all([import('./ui/sound.js'), import('./ui/haptics.js')]).then(([m, h]) => h.onPlay((n) => { if (n === 'success' || n === 'commit') m.play('tick'); })).catch(() => {});
   // Real progress is marked once, as a moment; a finished season offers its finale.
-  import('./domain/progression.js').then((m) => m.start((mo) => import('./ceremony/moments.js')
+  store.complete().then(() => import('./domain/progression.js')).then((m) => m.start((mo) => import('./ceremony/moments.js')
     .then((M) => M.show(mo, { go: (x) => import('./ceremony/finale.js').then((F) => F.finale(x.id)) })))).catch((err) => console.warn(err));
   import('./ui/install.js').then((m) => m.maybePrompt()).catch(() => {});
   if (navigator.storage?.persist) navigator.storage.persisted().then((p) => { if (!p) navigator.storage.persist(); });

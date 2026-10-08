@@ -5,7 +5,7 @@ import * as HS from '../domain/habit-system.js';
 import * as H from '../domain/habits.js';
 import { SECTIONS, habitColor } from '../domain/taxonomy.js';
 import { today, addDays, fmtMD, cmp } from '../domain/dates.js';
-import { html, cx } from '../ui/dom.js';
+import { html, cx, attr } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
@@ -89,7 +89,7 @@ export default {
       <p class="foot-note">${counts.autopilot} on autopilot · ${counts.queue} for later${counts.paused ? ` · ${counts.paused} paused` : ''}. Autopilot habits stay in their group on Today. Later ones wait off Today until you bring them in.</p>
       <div class="sort-bar">
         <button type="button" class="btn btn--ghost" data-action="later">I’ll decide later</button>
-        <button type="button" class="btn btn--primary" data-action="save"${changed ? '' : ' aria-disabled="true"'}>Save</button>
+        <button type="button" class="btn btn--primary" data-action="save"${attr(!changed, 'aria-disabled', 'true')}>Save</button>
       </div>`;
   },
   actions: {

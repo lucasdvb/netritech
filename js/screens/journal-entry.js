@@ -1,6 +1,6 @@
 import * as store from '../data/store.js';
 import { deleteWithUndo } from '../ui/undo.js';
-import { today, fmtLong, fmtTime } from '../domain/dates.js';
+import { fmtLong, fmtTime } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty } from '../ui/components.js';

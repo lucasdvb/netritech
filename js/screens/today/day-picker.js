@@ -22,7 +22,7 @@ export function openDayPicker(current) {
           <p class="dpick-month">${fmtMonth(m)}</p>
           <button type="button" class="icon-btn icon-btn--sm" data-action="month" data-delta="1" aria-label="Next month"${m >= startOfMonth(t) ? ' disabled' : ''}>${icon('chevron-right', { size: 18 })}</button>
         </div>
-        <div class="dpick-grid" role="grid" aria-label="${fmtMonth(m)}">
+        <div class="dpick-grid" role="group" aria-label="${fmtMonth(m)}">
           ${DOW.map((d) => html`<span class="dpick-dow" aria-hidden="true">${d}</span>`)}
           ${Array.from({ length: lead }, () => html`<span></span>`)}
           ${days.map((d) => {

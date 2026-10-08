@@ -7,7 +7,7 @@
 // Deleting leaves a tombstone on disk, and every change to your data leaves its latest
 // entry in the outbox, so a sync can be added later without changing screens or rules.
 import * as idbAdapter from './adapter-idb.js';
-import { CACHED, LOCAL_ONLY, DERIVED } from './schema.js';
+import { CACHED, LOCAL_ONLY, DERIVED, DEFERRED } from './schema.js';
 
 let adapter = idbAdapter;
 /** Swap the storage backend (the unit tests use the in-memory adapter). Call before init(). */
@@ -36,21 +36,64 @@ const TZ = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZon
 export const uid = () => (crypto.randomUUID ? crypto.randomUUID() : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`);
 export const now = () => new Date().toISOString();
 
-export async function init() {
-  await adapter.open();
-  memos.clear(); // the data is being replaced, so nothing derived from it still holds
-  const results = await Promise.all(CACHED.map((s) => adapter.getAll(s)));
-  CACHED.forEach((s, i) => {
-    const live = new Map();
-    const dead = new Map();
-    for (const r of results[i]) (r.deletedAt ? dead : live).set(r.id, r);
-    cache[s] = live;
-    tombs[s] = dead;
-    delete dateIndex[s];
-  });
+// Set when another window took the database over (an update opened there): from then on this
+// window writes nothing, so nothing half-saves, and it asks once to be reloaded.
+let closed = false;
+
+// Opening on Today, the biggest store (every workout set ever logged) loads only its recent weeks
+// first, which is all Today reads, and the rest straight after (loadRest). Anything that needs it
+// all, such as a backup or the records, waits for complete().
+const RECENT_DAYS = 21;
+let partial = new Set();
+let rest = Promise.resolve();
+let restDone = null;
+export const complete = () => rest;
+
+function fill(s, rows) {
+  const live = new Map();
+  const dead = new Map();
+  for (const r of rows) (r.deletedAt ? dead : live).set(r.id, r);
+  cache[s] = live;
+  tombs[s] = dead;
+  delete dateIndex[s];
 }
 
-/** Listeners get {type: 'change', stores, dates} (dates your data changed on) or {type: 'error', message}. */
+/** Load everything into memory. With { recentFirst }, the deferred stores load only their recent days for now. */
+export async function init({ recentFirst = false } = {}) {
+  adapter.onClosed?.(() => {
+    if (closed) return;
+    closed = true;
+    for (const fn of listeners) fn({ type: 'closed' });
+  });
+  await adapter.open();
+  memos.clear(); // the data is being replaced, so nothing derived from it still holds
+  partial = new Set(recentFirst && adapter.getSince ? DEFERRED : []);
+  const since = new Date(Date.now() - RECENT_DAYS * 864e5).toISOString().slice(0, 10);
+  const results = await Promise.all(CACHED.map((s) => (partial.has(s) ? adapter.getSince(s, since) : adapter.getAll(s))));
+  CACHED.forEach((s, i) => fill(s, results[i]));
+  rest = partial.size ? new Promise((resolve) => { restDone = resolve; }) : Promise.resolve();
+}
+
+/** Load the rest of the deferred stores (after the first screen). Anything written meanwhile is kept. */
+export async function loadRest() {
+  if (!partial.size) return;
+  const names = [...partial];
+  const rows = await Promise.all(names.map((s) => adapter.getAll(s)));
+  names.forEach((s, i) => {
+    const mine = cache[s];
+    fill(s, rows[i]);
+    for (const [id, r] of mine) if (!cache[s].has(id) || (r.updatedAt || '') > (cache[s].get(id).updatedAt || '')) cache[s].set(id, r);
+  });
+  partial = new Set();
+  names.forEach((s) => emit(s));
+  restDone?.();
+  restDone = null;
+}
+
+/**
+ * Listeners get {type: 'change', stores, dates} (dates your data changed on), {type: 'error',
+ * message}, or {type: 'closed'} when another window has taken the database over.
+ */
 export function subscribe(fn) {
   listeners.add(fn);
   return () => listeners.delete(fn);
@@ -100,7 +143,7 @@ function drain() {
   const ops = group.flatMap((g) => g.ops);
   writes = writes.then(() => adapter.write(ops)).catch((err) => {
     for (const g of [...group].reverse()) g.rollback();
-    fail(err, group[group.length - 1].message);
+    if (!closed) fail(err, group[group.length - 1].message);
   });
   return writes;
 }
@@ -108,7 +151,7 @@ function drain() {
 /** Send anything queued to disk now, and resolve once every write has landed. */
 export const flush = () => drain();
 
-const outboxEntry = (store, rec, op) => ({ store: 'outbox', value: { id: `${store}:${rec.id}`, store, recId: rec.id, op, rev: rec.rev, at: rec.updatedAt } });
+export const outboxEntry = (store, rec, op) => ({ store: 'outbox', value: { id: `${store}:${rec.id}`, store, recId: rec.id, op, rev: rec.rev, at: rec.updatedAt } });
 
 /** A record with its envelope filled in, ready to write. */
 function stamp(store, record, ts) {
@@ -124,7 +167,7 @@ function stamp(store, record, ts) {
   return rec;
 }
 
-function tombstoneOf(prev, ts) {
+export function tombstoneOf(prev, ts) {
   const t = { id: prev.id, createdAt: prev.createdAt, updatedAt: ts, deletedAt: ts, rev: (prev.rev || 0) + 1 };
   if (prev.date) t.date = prev.date;
   return t;
@@ -159,7 +202,7 @@ function apply(store, op, ts) {
 }
 
 export function put(store, record) {
-  return batch([{ store, value: record }])[0];
+  return batch([{ store, value: record }])[0] ?? (closed ? record : undefined);
 }
 
 export function update(store, id, patch) {
@@ -178,6 +221,10 @@ export function remove(store, id) {
 
 /** Several writes that must land together. ops: [{store, value}] | [{store, delete: id}] */
 export function batch(ops, message = SAVE_FAILED) {
+  if (closed) {
+    for (const fn of listeners) fn({ type: 'closed' });
+    return [];
+  }
   const ts = now();
   const applied = [];
   for (const op of ops) {
@@ -252,6 +299,7 @@ export function where(store, fn) {
 /** Reload memory from disk after bulk operations such as restore. */
 export async function reload() {
   await flush();
+  await rest;
   await init();
   CACHED.forEach((s) => emit(s));
 }
@@ -259,28 +307,8 @@ export async function reload() {
 /** Direct access to the storage adapter, for bulk operations (restore, erase, safety backups). */
 export const disk = () => adapter;
 
-// Photo data lives outside the memory cache and is read on demand.
-export const blobs = {
-  async get(id) {
-    const r = await adapter.get('photoBlobs', id);
-    return r && !r.deletedAt ? r : null;
-  },
-  async put(id, blob) {
-    const ts = now();
-    const prev = await adapter.get('photoBlobs', id);
-    const rec = { id, blob, createdAt: (!prev?.deletedAt && prev?.createdAt) || ts, updatedAt: ts, rev: (prev?.rev || 0) + 1 };
-    await adapter.write([{ store: 'photoBlobs', value: rec }, outboxEntry('photoBlobs', rec, 'put')]);
-  },
-  async del(id) {
-    const prev = await adapter.get('photoBlobs', id);
-    if (!prev || prev.deletedAt) return;
-    const t = tombstoneOf(prev, now());
-    await adapter.write([{ store: 'photoBlobs', value: t }, outboxEntry('photoBlobs', t, 'delete')]);
-  },
-  all: async () => (await adapter.getAll('photoBlobs')).filter((b) => !b.deletedAt),
-};
-
-export const settings = () => cache.settings.get('app');
-export const profile = () => cache.profile.get('me');
+// Never missing: an empty record stands in until there is one (a restore without them, say).
+export const settings = () => cache.settings.get('app') || { id: 'app' };
+export const profile = () => cache.profile.get('me') || { id: 'me' };
 export const setSettings = (patch) => put('settings', { ...settings(), ...patch });
 export const setProfile = (patch) => put('profile', { ...profile(), ...patch });

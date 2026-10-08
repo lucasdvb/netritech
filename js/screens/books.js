@@ -45,7 +45,7 @@ export function bookRow(b) {
     <span class="row-ic">${icon(b.status === 'finished' ? 'check' : 'book-open', { size: 18 })}</span>
     <span class="row-main"><span class="row-title" data-morph="book-${b.id}">${b.title}</span>
       <span class="row-sub">${b.status === 'finished' ? `Finished${b.finishedAt ? ` ${fmtMD(b.finishedAt)}` : ''}` : p.pages ? `Page ${p.page} of ${p.pages}` : p.page ? `Page ${p.page}` : b.author || B.STATUS[b.status]}</span>
-      ${b.status === 'reading' && p.ratio != null ? html`<span class="book-bar">${bar(p.ratio)}</span>` : ''}</span>
+      ${b.status === 'reading' && p.ratio != null ? html`<span class="book-bar">${bar(p.ratio, { label: `${b.title}: how far through` })}</span>` : ''}</span>
     <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>`;
 }
 

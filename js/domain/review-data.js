@@ -4,7 +4,7 @@ import { priorities } from './tasks.js';
 import * as M from './metrics.js';
 import * as F from './fitness.js';
 import { habit, isDone, started, activeHabits, stateOf, consistency } from './habits.js';
-import { dayScore, rolling } from './scoring.js';
+import { dayScore } from './scoring.js';
 import { range, today, addDays, endOfWeek, startOfMonth, endOfMonth } from './dates.js';
 
 const avgOf = (vals) => { const v = vals.filter((x) => x != null && x > 0); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };

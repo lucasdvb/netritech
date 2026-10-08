@@ -1,5 +1,5 @@
 // The add/edit task sheet, loaded the first time you open a task.
-import * as T from '../domain/tasks.js';
+import * as T from '../domain/tasks-more.js';
 import * as P from '../domain/projects.js';
 import { CATEGORIES, catColor } from '../domain/taxonomy.js';
 import { today, addDays, weekday, fromISO } from '../domain/dates.js';

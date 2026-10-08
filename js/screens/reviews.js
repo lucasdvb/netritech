@@ -1,5 +1,5 @@
 import * as store from '../data/store.js';
-import { today, startOfWeek, endOfWeek, fmtMD, fmtMonth, monthKey, weekday } from '../domain/dates.js';
+import { today, endOfWeek, fmtMD, fmtMonth, monthKey, weekday } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead } from '../ui/components.js';

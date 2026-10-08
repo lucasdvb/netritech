@@ -1,5 +1,5 @@
 import * as store from '../data/store.js';
-import { today, relativeDay, fmtMDY, fmtTime, cmp } from '../domain/dates.js';
+import { today, relativeDay, cmp } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, segmented, empty } from '../ui/components.js';

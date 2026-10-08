@@ -63,7 +63,7 @@ export default {
           <h2 class="block-title">${fmtMonth(first)}</h2>
           <button type="button" class="icon-btn" data-action="month" data-delta="1" aria-label="Next month" ${first >= startOfMonth(today()) ? 'disabled' : ''}>${icon('chevron-right', { size: 20 })}</button>
         </div>
-        <div class="cal-grid" role="grid" aria-label="${fmtMonth(first)}">
+        <div class="cal-grid" role="group" aria-label="${fmtMonth(first)}">
           ${['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d) => html`<span class="cal-dow" aria-hidden="true">${d}</span>`)}
           ${cells.map((d) => {
             if (!d) return html`<span class="cal-empty"></span>`;
@@ -71,7 +71,7 @@ export default {
             const hasWorkout = F.workoutsOn(d).length > 0;
             const hasJournal = store.onDate('journalEntries', d).length > 0;
             return html`<button type="button" class="${cx('cal-day', d === today() && 'is-today', d > today() && 'is-future', H.isOff(s?.mode) && 'is-sick')}" data-action="day" data-date="${d}" ${d > today() ? 'disabled' : ''}
-              aria-label="${fmtLong(d)}${s?.ratio != null ? `, ${pct(s.ratio)}` : ''}${hasWorkout ? ', workout' : ''}">
+              aria-label="${fmtLong(d)}${s?.ratio != null ? `, ${pct(s.ratio)}` : ''}${hasWorkout ? ', workout' : ''}${hasJournal ? ', journal' : ''}">
               <span class="cal-num tnum">${Number(d.slice(8))}</span>
               <span class="cal-fill" style="opacity:${s?.ratio != null ? 0.12 + s.ratio * 0.88 : 0}"></span>
               <span class="cal-marks">${hasWorkout ? html`<i class="m-w"></i>` : ''}${hasJournal ? html`<i class="m-j"></i>` : ''}</span>

@@ -96,6 +96,7 @@ export default {
     },
     csv: async ({ data }) => {
       const set = CSV_SETS[data.k];
+      await store.complete();
       await saveFile(`life-os-${data.k}-${today()}.csv`, set.make(), 'text/csv');
     },
     'demo-on': async () => { await loadDemo(); hap.success(); app.toast('Sample data loaded. Remove it here any time.'); },

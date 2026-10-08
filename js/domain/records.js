@@ -95,9 +95,16 @@ function habitRuns(h, end) {
   return points.length ? [{ id: `run:${h.id}`, label: `${h.name}: longest run`, fmt: (v) => `${num(v)} ${unit}`, points }] : [];
 }
 
-// Each part is cached on its own, so the background watcher can work them out one at a time.
-const PARTS = { lifts, protein: proteinWeeks, focus: focusWeeks, wake: wakeWeeks, steps: stepDays };
-const part = (name, end) => store.memo(`record-part:${name}:${end}`, H.DATA_STORES, () => PARTS[name](end));
+// Each part is cached on its own, against only the data it reads, so the background watcher works
+// out one at a time and only what a change can affect (logging water never redoes the lifts).
+const PARTS = {
+  lifts: [lifts, ['workouts', 'workoutSets', 'exercises']],
+  protein: [proteinWeeks, ['nutritionLogs']],
+  focus: [focusWeeks, ['dailyReviews']],
+  wake: [wakeWeeks, ['sleepEntries']],
+  steps: [stepDays, ['stepLogs']],
+};
+const part = (name, end) => store.memo(`record-part:${name}:${end}`, PARTS[name][1], () => PARTS[name][0](end));
 const runOf = (h, end) => store.memo(`record-run:${h.id}:${end}`, H.DATA_STORES, () => habitRuns(h, end));
 const runHabits = () => H.activeHabits().filter((h) => !h.optional && h.weekly !== false);
 

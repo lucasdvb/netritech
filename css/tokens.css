@@ -165,6 +165,7 @@
   --warn: #1D1D1F;      /* "needs attention" is the strongest grey, not a new colour */
   --warn-soft: rgba(110, 110, 115, .2);
   --danger: #C2362B;
+  --danger-fill: #C2362B; /* behind white text (buttons): 5.6:1 in both themes */
   --danger-soft: rgba(194, 54, 43, .1);
   --track: rgba(29, 29, 31, .07);
   --hatch: rgba(29, 29, 31, .07);
