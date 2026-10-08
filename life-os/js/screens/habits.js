@@ -91,6 +91,7 @@ export default {
           <span class="row-main"><span class="row-title">${h.name}</span><span class="row-sub">History kept</span></span>
           <button type="button" class="btn btn--soft btn--sm" data-action="restore" data-id="${h.id}">Restore</button></li>`)}</ul>
       </details>` : ''}
+      ${active.length ? html`<button type="button" class="link-btn tidy-link" data-action="tidy" data-key="tidy-link">${icon('sparkles', { size: 16 })} Tidy up: keep, shrink, pause or archive what you haven’t touched</button>` : ''}
       <p class="foot-note">Swipe left on a habit to archive it. Archived habits keep their history.</p>`;
   },
   mount(el, ctx) {
@@ -101,6 +102,7 @@ export default {
     }
   },
   actions: {
+    tidy: async () => (await import('./tidy.js')).openTidy(),
     by: ({ data, ui }) => { ui.by = data.value; hap.tap(); app.refresh(); },
     'edit-routine': async ({ data }) => (await import('./routine-edit.js')).openRoutineEditor(data.id),
     'new-routine': async () => (await import('./routine-edit.js')).newRoutine(),

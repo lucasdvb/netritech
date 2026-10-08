@@ -3,7 +3,7 @@
 import * as store from '../data/store.js';
 import * as M from './metrics.js';
 import * as F from './fitness.js';
-import { activeHabits, consistency, isDone, dueOn, dayMode, periodDone, isScheduledDay, started, habit, stateOf, focusHabits, runUnit } from './habits.js';
+import { activeHabits, consistency, isDone, dueOn, dayMode, periodDone, isScheduledDay, started, habit, stateOf, focusHabits, runUnit, isOff } from './habits.js';
 import { graduationDue } from './habit-system.js';
 import { rolling, dayScore } from './scoring.js';
 import { today, addDays, minutesOfDay, parseHM, startOfWeek, endOfWeek, diffDays, lastNDays, range } from './dates.js';
@@ -171,7 +171,7 @@ export function needsAttention(date = today()) {
     if (stateOf(h, date) !== 'focus' || !started(h, addDays(date, -1))) continue;
     const s = h.schedule || {};
     if (s.kind === 'daily' || s.kind === 'weekdays') {
-      const days = lastNDays(addDays(date, -1), 7).filter((d) => started(h, d) && isScheduledDay(h, d) && dayMode(d) !== 'sick');
+      const days = lastNDays(addDays(date, -1), 7).filter((d) => started(h, d) && isScheduledDay(h, d) && !isOff(dayMode(d)));
       const missed = days.filter((d) => !isDone(h, d)).length;
       if (days.length >= 3 && missed >= 2 && missed / days.length >= 0.4) {
         const verb = h.source && ['water', 'protein', 'steps', 'sleep'].includes(h.source) ? 'below target' : 'missed';

@@ -9,7 +9,7 @@ import * as T from '../domain/tasks.js';
 import { dayScore } from '../domain/scoring.js';
 import { phase as phaseOf, trainingCall, isWorkday } from '../domain/day-plan.js';
 import { MODES } from '../domain/taxonomy.js';
-import { today, fmtLong, fmtShortDate, addDays, relativeDay } from '../domain/dates.js';
+import { today, fmtLong, fmtShortDate, addDays, relativeDay, weekday } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { app } from '../ui/app-api.js';
@@ -20,11 +20,13 @@ import { COUNTER_SOURCES } from './today/rows.js';
 import { nowCard } from './today/now.js';
 import { routinesBlock } from './today/routines.js';
 import { prioritiesBlock, attachPriorityDrag } from './today/priorities.js';
-import { threeBlock, pinnedBlock, moreBlock, minimumBlock, sickBlock, notTodayBlock, lifeMode, essentials, layoutOf, BLOCKS } from './today/blocks.js';
+import { threeBlock, pinnedBlock, moreBlock, minimumBlock, sickBlock, notTodayBlock, catchUpBlock, tidyBlock, lifeMode, essentials, layoutOf, BLOCKS } from './today/blocks.js';
 // Sheets load on first use, and are fetched in the background once Today is on screen.
 const sheets = () => import('./sheets.js');
 const workouts = () => import('./workout-actions.js');
 const pads = () => import('./pads.js');
+// The safety nets (catch-up, fresh start, shrink and grow, tidy-up) arrive right after the first screen.
+let nets = null;
 
 function greeting(now = new Date()) {
   const h = now.getHours();
@@ -121,15 +123,18 @@ export default {
     const col = (c) => order.filter((id) => !hidden.includes(id) && BLOCKS.find((b) => b.id === id).column === c).map(block);
     const special = mode === 'minimum' ? minimumBlock(date, ui) : mode === 'sick' ? sickBlock(date, ui) : '';
     const notToday = notTodayBlock(date, mode);
+    const catchUp = isToday && nets ? catchUpBlock(nets.catchUp(date), ui) : '';
+    const tidy = isToday && nets && [7, 1].includes(weekday(date)) ? tidyBlock(nets.tidyDue(date)) : '';
     return html`<div class="today" data-phase="${ph}" data-mode="${mode}">
       ${header(date, ph, mode, isToday)}
       <div class="today-grid">
         <div class="today-col today-col--now">
           <div class="tblock" data-key="b-now" style="order:0">${nowCard(date, isToday, ui)}</div>
+          ${catchUp ? html`<div class="tblock" data-key="b-catchup" style="order:1">${catchUp}</div>` : ''}
           ${special ? html`<div class="tblock" data-key="b-special" style="order:1">${special}</div>` : ''}
           ${col('now')}
         </div>
-        <div class="today-col today-col--day">${col('day')}${notToday ? html`<div class="tblock" data-key="b-nottoday" style="order:99">${notToday}</div>` : ''}</div>
+        <div class="today-col today-col--day">${col('day')}${notToday ? html`<div class="tblock" data-key="b-nottoday" style="order:98">${notToday}</div>` : ''}${tidy ? html`<div class="tblock" data-key="b-tidy" style="order:99">${tidy}</div>` : ''}</div>
       </div>
     </div>`;
   },
@@ -144,8 +149,20 @@ export default {
       window.history.replaceState(window.history.state, '', location.hash.split('?')[0]);
       import('./you.js').then((m) => m.openYou());
     }
-    // The coach's suggestions arrive a moment after the first screen.
-    Promise.all([import('../domain/coach.js'), import('../domain/next-action.js')]).then(([c, n]) => { n.useCoach(c.guidance); app.refresh(); }).catch(() => {});
+    // The coach's suggestions and the safety nets arrive a moment after the first screen.
+    Promise.all([import('../domain/coach.js'), import('../domain/next-action.js'), import('../domain/adapt.js')]).then(([c, n, a]) => {
+      n.useCoach(c.guidance);
+      n.useAdapt(a);
+      nets = a;
+      // Back after three or more days away: those days read as "away", and a fresh start is offered once.
+      const away = !ctx.params.date && a.freshStartDue();
+      if (away) {
+        a.markAway(away);
+        a.markFreshStart();
+        import('./fresh-start.js').then((m) => m.openFreshStart(away));
+      }
+      app.refresh();
+    }).catch(() => {});
     setTimeout(() => Promise.all([sheets(), workouts()]).catch(() => {}), 1500);
   },
   update(el, ctx) {
@@ -180,6 +197,24 @@ export default {
       const h = H.habit(data.id);
       if (h) (await pads()).logTiny(h, date, { onDone: () => settleFor(h.id, date) });
     },
+    'cu-tick': ({ data }) => { const h = H.habit(data.id); if (!h) return; H.tap(h, data.d) ? hap.success() : hap.tap(); },
+    'cu-done': ({ data }) => { nets?.closeCatchUp(data.d); hap.tap(); },
+    'cu-off': ({ data }) => {
+      const before = store.settings()?.nets || {};
+      store.setSettings({ nets: { ...before, catchUp: false } });
+      nets?.closeCatchUp(data.d);
+      app.toast('Catch-up is off. Settings can turn it back on.', { action: { label: 'Undo', fn: () => store.setSettings({ nets: before }) } });
+    },
+    'adapt-yes': ({ data }) => {
+      const p = nets?.suggestions(today()).find((x) => x.habitId === data.id);
+      if (!p) return;
+      const undo = nets.accept(p);
+      hap.success();
+      app.toast(p.kind === 'grow' ? 'Stepped up.' : p.kind === 'pause' ? 'Paused for two weeks.' : 'Smaller for two weeks.', { action: { label: 'Undo', fn: undo } });
+    },
+    'adapt-no': ({ data }) => { nets?.markSuggested(data.id); hap.tap(); },
+    tidy: async () => (await import('./tidy.js')).openTidy(),
+    'tidy-later': () => { nets?.markTidy(); hap.tap(); },
     'unskip-habit': ({ data, params }) => {
       const date = params.date || today();
       const h = H.habit(data.id);
@@ -242,6 +277,7 @@ export default {
     'pick-day': async ({ params }) => (await import('./today/day-picker.js')).openDayPicker(params.date || today()),
     'add-water': async ({ data, params }) => (await sheets()).addWater(params.date || today(), Number(data.ml) || 500),
     'open-checkin': async ({ params }) => (await sheets()).openCheckin(params.date || today()),
+    ritual: async ({ data, params }) => (await import('./ritual.js')).openRitual(data.which === 'morning' ? 'morning' : 'evening', params.date || today()),
     'open-shutdown': async ({ params }) => (await sheets()).openShutdown(params.date || today()),
     'log-steps': async ({ params }) => (await pads()).stepsPad(params.date || today()),
     'log-food': async ({ params }) => (await sheets()).openFood(params.date || today()),

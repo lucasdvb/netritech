@@ -867,3 +867,20 @@ button.hero-big { display: inline-flex; align-items: baseline; flex-wrap: wrap; 
 .re-step { display: grid; grid-template-columns: 1.4em minmax(0, 1fr) auto auto auto; align-items: center; gap: 4px; min-height: 48px; }
 .re-name { display: flex; flex-direction: column; font-size: var(--text-body); font-weight: var(--weight-medium); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); }
 .re-name small { font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-3); }
+
+/* ---------- safety nets on Today: catch-up and the weekly tidy-up ---------- */
+.catchup { display: flex; flex-direction: column; gap: 4px; padding: var(--s5); border-radius: var(--r-xl); background: var(--surface); }
+.catchup-eyebrow { font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-3); }
+.catchup-title { font-size: var(--text-h3); font-weight: var(--weight-semibold); line-height: var(--leading-h3); letter-spacing: var(--tracking-h3); }
+.catchup-sub { font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-2); margin-bottom: var(--s2); }
+.catchup-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-top: var(--s3); }
+.tidy-card { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s3); padding: var(--s4) var(--s5); border-radius: var(--r-xl); background: var(--surface); }
+.tidy-title { font-size: var(--text-body); font-weight: var(--weight-semibold); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); }
+.tidy-sub { font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-2); }
+.tidy-actions { display: flex; align-items: center; gap: var(--s3); }
+.tidy-list { display: flex; flex-direction: column; gap: var(--s4); }
+.tidy-item { display: flex; flex-direction: column; gap: 8px; }
+.tidy-name { display: flex; align-items: center; gap: 10px; font-size: var(--text-body); font-weight: var(--weight-semibold); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); }
+.fresh-lead { font-size: var(--text-body-lg); font-weight: var(--weight-regular); line-height: var(--leading-body-lg); letter-spacing: var(--tracking-body); color: var(--text); }
+.fresh-picks { display: flex; flex-wrap: wrap; gap: 6px; }
+.fresh-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s3); }

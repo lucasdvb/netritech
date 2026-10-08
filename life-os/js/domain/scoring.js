@@ -24,7 +24,7 @@ function neededOn(h, date) {
 
 /** The habits in a day's plan: focus habits that are due; on a minimum day, the essentials too. */
 export function planHabits(date, mode = dayMode(date)) {
-  if (mode === 'sick') return [];
+  if (mode === 'sick' || mode === 'away') return [];
   const live = activeHabits().filter((h) => started(h, date) && h.showOnToday !== false);
   const focus = live.filter((h) => stateOf(h, date) === 'focus' && neededOn(h, date) && !(mode === 'rest' && isTraining(h)) && !skipped(h, date, mode));
   if (mode !== 'minimum') return focus;

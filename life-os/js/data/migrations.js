@@ -4,7 +4,7 @@
 // update can always be undone from Settings › Data.
 import * as store from './store.js';
 import { BACKUP_STORES, DB_VERSION } from './schema.js';
-import { TINY_VERSIONS } from './tiny-versions.js';
+import { TINY_VERSIONS, BACKUPS } from './tiny-versions.js';
 import { defaultRoutines } from '../domain/routines.js';
 
 /** Each run() returns store.batch ops; it must leave already-migrated data unchanged. */
@@ -51,6 +51,11 @@ export const MIGRATIONS = [
     id: '2026-10-routines',
     about: 'your morning and evening habits become routines you can do in one go',
     run: () => (store.all('routines').length ? [] : defaultRoutines(store.all('habits'), store.profile() || {}).map((value) => ({ store: 'routines', value }))),
+  },
+  {
+    id: '2026-10-backups',
+    about: 'backup plans for training, reading, meditation and the evening routine',
+    run: () => store.all('habits').filter((h) => BACKUPS[h.id] && !h.backup).map((h) => ({ store: 'habits', value: { ...h, backup: BACKUPS[h.id] } })),
   },
 ];
 

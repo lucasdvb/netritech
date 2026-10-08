@@ -26,6 +26,14 @@ const targetField = (label, key, unit, step = 1) => {
     <span class="set-ctl"><input class="input input--inline input--num" type="number" inputmode="decimal" step="${step}" value="${t[key] ?? ''}" data-change="target" data-k="${key}" aria-label="${label}"><span class="muted small">${unit}</span></span></label>`;
 };
 
+// Each safety net shows at most once per occasion; these turn one off for good (or back on).
+const NETS = [
+  ['catchUp', 'Catch up on yesterday', 'In the morning, tap what you did yesterday but didn’t log.'],
+  ['freshStart', 'Fresh start after time away', 'After three days or more away, start again without a list of misses.'],
+  ['adapt', 'Shrink and grow suggestions', 'A smaller target after a rough week, a step up after two steady ones.'],
+  ['tidy', 'Weekly tidy-up', 'Habits untouched for two weeks, once a week.'],
+];
+
 export default {
   id: 'settings',
   title: 'Settings',
@@ -78,6 +86,10 @@ export default {
           ${settingRow('Haptics', toggle(s.haptics !== false, { action: 'haptics', label: 'Haptics' }), { hint: 'Subtle taps where the device supports them.' })}
           ${settingRow('Show every section on Today', toggle(s.showAllSections, { action: 'all-sections', label: 'Show every section' }), { hint: 'Off: Today shows what fits the time of day.' })}
         </div></section>
+      <section class="block"><h2 class="set-section">Safety nets</h2>
+        <div class="set-list">
+          ${NETS.map(([k, label, hint]) => settingRow(label, toggle(s.nets?.[k] !== false, { action: 'net', data: { k }, label }), { hint, key: `net-${k}` }))}
+        </div></section>
       <section class="block"><h2 class="set-section">Reminders</h2>
         <div class="card">
           <p class="card-lead" style="margin-top:0">Quiet and adaptive: if you already do something without the nudge, Life OS stops nudging. If you keep dismissing one, it asks whether a different time would suit you better.</p>
@@ -99,6 +111,7 @@ export default {
         </dl></section>`;
   },
   actions: {
+    net: ({ data }) => { const n = store.settings().nets || {}; store.setSettings({ nets: { ...n, [data.k]: n[data.k] === false } }); hap.tap(); },
     workday: ({ data }) => {
       const v = Number(data.v);
       const set = new Set(store.profile().workDays || []);

@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = '03cde2844e';
+const VERSION = '4a7cd6b096';
 const ASSETS = [
   "./",
   "./index.html",
@@ -21,6 +21,7 @@ const ASSETS = [
   "./js/data/seed.js",
   "./js/data/store.js",
   "./js/data/tiny-versions.js",
+  "./js/domain/adapt.js",
   "./js/domain/capture-save.js",
   "./js/domain/capture.js",
   "./js/domain/coach.js",
@@ -36,6 +37,7 @@ const ASSETS = [
   "./js/domain/reminder-rules.js",
   "./js/domain/reminders.js",
   "./js/domain/review-data.js",
+  "./js/domain/rituals.js",
   "./js/domain/routines.js",
   "./js/domain/scoring.js",
   "./js/domain/snapshots.js",
@@ -50,6 +52,7 @@ const ASSETS = [
   "./js/screens/exercise.js",
   "./js/screens/exercises.js",
   "./js/screens/faith.js",
+  "./js/screens/fresh-start.js",
   "./js/screens/goal.js",
   "./js/screens/goals.js",
   "./js/screens/habit-edit.js",
@@ -73,6 +76,7 @@ const ASSETS = [
   "./js/screens/review-month.js",
   "./js/screens/review-week.js",
   "./js/screens/reviews.js",
+  "./js/screens/ritual.js",
   "./js/screens/routine-edit.js",
   "./js/screens/search.js",
   "./js/screens/settings.js",
@@ -81,6 +85,7 @@ const ASSETS = [
   "./js/screens/task-sheet.js",
   "./js/screens/task-ui.js",
   "./js/screens/tasks.js",
+  "./js/screens/tidy.js",
   "./js/screens/today/blocks.js",
   "./js/screens/today/day-picker.js",
   "./js/screens/today/edit.js",
@@ -102,6 +107,7 @@ const ASSETS = [
   "./js/ui/format.js",
   "./js/ui/gestures.js",
   "./js/ui/haptics.js",
+  "./js/ui/hold.js",
   "./js/ui/icons-more.js",
   "./js/ui/icons.js",
   "./js/ui/install.js",

@@ -4,6 +4,7 @@ import * as store from '../data/store.js';
 import * as H from '../domain/habits.js';
 import { today, addDays } from '../domain/dates.js';
 import { app } from '../ui/app-api.js';
+import { html } from '../ui/dom.js';
 import * as hap from '../ui/haptics.js';
 import { openNumpad } from '../ui/numpad.js';
 import { num, kgIn, kgOut, weightUnit } from '../ui/format.js';
@@ -77,13 +78,52 @@ export function habitPad(h, date = today(), { onDone } = {}) {
   });
 }
 
-/** "Not today", with Undo that puts the day's log back exactly. */
-export function notToday(h, date = today(), { onDone } = {}) {
+/**
+ * "Not today", with Undo that puts the day's log back exactly. A habit with a why or a backup plan
+ * (H10, H6) shows them first: the moment you'd skip is the moment they're for.
+ */
+export function notToday(h, date = today(), { onDone, direct = false } = {}) {
+  if (!direct && (h.why || h.backup?.then)) return beforeSkip(h, date, { onDone });
   const before = [snap('habitLogs', H.logId(h.id, date))];
   H.setSkip(h, date, true);
   onDone?.();
   hap.commit();
   app.toast(`${h.name}: not today`, { action: { label: 'Undo', fn: () => { restore(before); onDone?.(); } } });
+}
+
+/** Times a habit counted this month, up to a date ("you showed up as that person 9 times"). */
+function shownUp(h, date) {
+  let n = 0;
+  for (let d = `${date.slice(0, 7)}-01`; d <= date; d = addDays(d, 1)) if (H.counts(h, d)) n++;
+  return n;
+}
+
+function beforeSkip(h, date, { onDone } = {}) {
+  const n = shownUp(h, date);
+  app.sheet({
+    title: h.name,
+    render: () => html`<div class="form skip-sheet">
+      ${h.why ? html`<blockquote class="why-line">${h.why}</blockquote>
+        <p class="why-count">${n ? `You showed up as that person ${n} time${n === 1 ? '' : 's'} this month.` : 'Today could be the first time this month.'}</p>` : ''}
+      ${h.backup?.then ? html`<div class="backup-card">
+        <p class="backup-if">${h.backup.when ? `If ${h.backup.when.replace(/^if\s+/i, '')}` : 'Backup plan'}</p>
+        <p class="backup-then">${h.backup.then}</p>
+        <button type="button" class="btn btn--primary btn--block" data-action="do-backup">Do the backup</button>
+      </div>` : ''}
+      <button type="button" class="btn btn--ghost btn--block" data-action="skip-anyway">Not today</button>
+    </div>`,
+    actions: {
+      'do-backup': ({ sheet }) => {
+        const before = [snap('habitLogs', H.logId(h.id, date))];
+        H.setLog(h, date, H.isNumeric(h) ? { completed: true, backup: true, note: h.backup.then } : { value: 1, backup: true, note: h.backup.then });
+        onDone?.();
+        app.closeSheet(sheet);
+        hap.success();
+        app.toast(`${h.name}: backup done. It counts.`, { icon: 'check', action: { label: 'Undo', fn: () => { restore(before); onDone?.(); } } });
+      },
+      'skip-anyway': ({ sheet }) => { app.closeSheet(sheet); notToday(h, date, { onDone, direct: true }); },
+    },
+  });
 }
 
 /** The tiny version in one hold, with Undo. */

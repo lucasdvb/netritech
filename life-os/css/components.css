@@ -573,3 +573,52 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 @media (hover: hover) { .numpad-key:hover { background: var(--surface-3); } }
 .numpad-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); }
 .numpad-foot .btn { min-width: 140px; }
+
+/* ---------- hold button (seal the day, commitments) ---------- */
+.hold-btn { --hold: 0; display: flex; flex-direction: column; align-items: center; gap: var(--s3); padding: var(--s3); border-radius: var(--r-lg); color: var(--text);
+  touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.hold-ring { width: 112px; height: 112px; display: grid; place-items: center; border-radius: 50%; background: var(--surface-2);
+  transition: transform var(--dur-med) var(--spring-snappy); }
+.hold-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.hold-track { fill: none; stroke: var(--border); stroke-width: 4; }
+.hold-fill { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: calc(100 - var(--hold) * 100); }
+.hold-btn:not(.is-holding) .hold-fill { transition: stroke-dashoffset var(--dur-med) var(--ease-standard); }
+.hold-btn.is-holding .hold-ring { transform: scale(.96); }
+.hold-btn.is-done .hold-ring { background: var(--accent); }
+.hold-btn.is-done .hold-track { stroke: transparent; }
+.hold-btn.is-done .hold-fill { stroke: var(--on-accent); }
+.hold-text { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.hold-label { font-size: var(--text-h4); font-weight: var(--weight-semibold); line-height: var(--leading-h4); letter-spacing: var(--tracking-h4); }
+.hold-hint { font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-3); transition: color var(--dur-fast); }
+.hold-btn.is-hinting .hold-hint { color: var(--text); }
+.hold-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* ---------- rituals: one question per screen ---------- */
+.ritual { display: flex; flex-direction: column; gap: var(--s5); min-height: 100%; }
+.ritual-progress { display: flex; gap: 4px; }
+.ritual-progress span { flex: 1; height: 4px; border-radius: 2px; background: var(--surface-2); transition: background var(--dur-med); }
+.ritual-progress .is-done { background: var(--text-3); }
+.ritual-progress .is-now { background: var(--accent); }
+.ritual-q { font-size: var(--text-h2); font-weight: var(--weight-semibold); line-height: var(--leading-h2); letter-spacing: var(--tracking-h2); outline: none; }
+.ritual-body { display: flex; flex-direction: column; gap: var(--s4); flex: 1; }
+.ritual-note { font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); color: var(--text-2); }
+.ritual-big { font-size: var(--text-display-md); font-weight: var(--weight-semibold); line-height: var(--leading-display-md); letter-spacing: var(--tracking-display-md); }
+.ritual-weight { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s3); }
+.ritual-three { display: flex; flex-direction: column; gap: 8px; }
+.ritual-three li { display: grid; grid-template-columns: 28px 1fr; align-items: center; gap: 8px; }
+.ritual-n { color: var(--text-3); font-size: var(--text-body); font-weight: var(--weight-semibold); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); text-align: center; }
+.ritual-habits .hrow { grid-template-columns: auto 1fr auto; }
+.ritual-tasks { display: flex; flex-direction: column; }
+.ritual-tasks li { display: flex; align-items: center; gap: 10px; min-height: 52px; border-top: 0.5px solid var(--border);
+  font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+.ritual-seal { display: grid; place-items: center; padding: var(--s4) 0; }
+.ritual-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); position: sticky; bottom: 0; padding: var(--s3) 0 var(--s1); background: var(--bg-elevated); }
+.ritual-go { display: flex; gap: 8px; }
+
+/* ---------- before you skip: your why and a backup plan (H10, H6) ---------- */
+.skip-sheet { gap: var(--s4); }
+.why-line { font-size: var(--text-h3); font-weight: var(--weight-semibold); line-height: var(--leading-h3); letter-spacing: var(--tracking-h3); color: var(--text); }
+.why-count { font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); color: var(--text-2); }
+.backup-card { display: flex; flex-direction: column; gap: 6px; padding: var(--s4); border-radius: var(--r-lg); background: var(--surface-2); }
+.backup-if { font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-3); }
+.backup-then { font-size: var(--text-h4); font-weight: var(--weight-semibold); line-height: var(--leading-h4); letter-spacing: var(--tracking-h4); margin-bottom: var(--s2); }

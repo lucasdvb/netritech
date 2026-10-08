@@ -60,7 +60,7 @@ export const windowLabel = (r) => `${r.window?.from || ''}–${r.window?.to || '
 
 /** Today's routines with their progress, in order. */
 export function forDay(date = today(), mode = H.dayMode(date)) {
-  if (mode === 'sick') return [];
+  if (H.isOff(mode)) return [];
   return routines().filter((r) => activeOn(r, date)).map((r) => progress(r, date, mode)).filter((p) => p.total > 0);
 }
 

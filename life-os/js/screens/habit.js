@@ -25,7 +25,7 @@ function history(h) {
   return range(start, addDays(startOfWeek(end), 6)).map((d) => {
     if (d > end) return { date: d, state: 'future' };
     if (!H.started(h, d)) return { date: d, state: 'off' };
-    if (H.dayMode(d) === 'sick') return { date: d, state: 'rest' };
+    if (H.isOff(H.dayMode(d))) return { date: d, state: 'rest' };
     if (H.isDone(h, d)) return { date: d, state: 'done' };
     if (H.isTiny(h, d)) return { date: d, state: 'tiny' };
     const s = h.schedule || {};
@@ -84,6 +84,9 @@ export default {
       ['Schedule', H.scheduleLabel(h)],
       h.anchor ? ['When', h.anchor] : null,
       tiny ? ['Tiny version', tiny.label || habitTarget(h, tiny.min)] : null,
+      h.why ? ['Your why', h.why] : null,
+      h.backup?.then ? ['Backup plan', h.backup.when ? `If ${h.backup.when.replace(/^if\s+/i, '')} → ${h.backup.then}` : h.backup.then] : null,
+      h.temp && today() < h.temp.until ? ['For now', h.temp.target != null ? `${habitTarget(h, h.temp.target)} until ${h.temp.until}` : `The tiny version until ${h.temp.until}`] : null,
       inRoutine ? ['Routine', `${inRoutine.routine.name} · step ${inRoutine.routine.steps.indexOf(inRoutine.step) + 1}`] : null,
       ['Area', `${catLabel(h.category)} · ${sectionLabel(h.section)}`],
       numeric ? ['Target', `${habitTarget(h, H.displayTarget(h, today()))}${h.min != null && h.min !== h.target ? ` · counts from ${habitTarget(h, H.threshold(h, today()))}` : ''}`] : null,

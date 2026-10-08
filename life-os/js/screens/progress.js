@@ -154,7 +154,7 @@ function calendar(ui) {
         const hasWorkout = F.workoutsOn(d).length > 0;
         const hasJournal = store.onDate('journalEntries', d).length > 0;
         const fill = s?.ratio ?? 0;
-        return html`<button type="button" class="${cx('cal-day', d === today() && 'is-today', d > today() && 'is-future', s?.mode === 'sick' && 'is-sick')}" data-action="day" data-date="${d}" ${d > today() ? 'disabled' : ''}
+        return html`<button type="button" class="${cx('cal-day', d === today() && 'is-today', d > today() && 'is-future', H.isOff(s?.mode) && 'is-sick')}" data-action="day" data-date="${d}" ${d > today() ? 'disabled' : ''}
           aria-label="${fmtLong(d)}${s?.ratio != null ? `, ${pct(s.ratio)}` : ''}${hasWorkout ? ', workout' : ''}">
           <span class="cal-num tnum">${Number(d.slice(8))}</span>
           <span class="cal-fill" style="opacity:${s?.ratio != null ? 0.12 + fill * 0.88 : 0}"></span>
@@ -179,7 +179,7 @@ export function openDay(date) {
       const j = store.onDate('journalEntries', date);
       const r = M.review(date);
       const facts = [
-        ['Score', s.ratio != null ? `${pct(s.ratio)} · ${s.done} of ${s.total}` : s.mode === 'sick' ? 'Sick day' : '—'],
+        ['Score', s.ratio != null ? `${pct(s.ratio)} · ${s.done} of ${s.total}` : s.mode === 'sick' ? 'Sick day' : s.mode === 'away' ? 'Away' : '—'],
         ['Weight', M.weight(date) != null ? `${num(kgOut(M.weight(date)), 1)} ${weightUnit()}` : '—'],
         ['Workout', ws.length ? ws.map((w) => w.title).join(', ') : '—'],
         ['Nutrition', n.count ? `${num(n.protein)} g protein · ${num(n.kcal)} kcal` : '—'],

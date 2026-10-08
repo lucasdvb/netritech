@@ -48,7 +48,7 @@ export function habitRow(h, date, mode, ui, { focus = false } = {}) {
   const lv = H.level(h, date, mode);
   const l = H.log(h.id, date);
   const tiny = H.tinyOf(h);
-  const name = mode === 'minimum' && tiny?.label && !h.source ? tiny.label : h.name;
+  const name = (mode === 'minimum' || H.tinyPlan(h, date)) && tiny?.label && !h.source ? tiny.label : h.name;
   let sub = '';
   if (h.id === 'h-training') {
     const call = trainingCall(date);
