@@ -408,6 +408,7 @@ export function openHabit(id, date = today()) {
       const done = H.isDone(hb, date, mode);
       const lv = H.level(hb, date, mode);
       const tiny = H.tinyOf(hb);
+      const stretch = H.stretchOf(hb);
       const v = H.value(hb, date);
       const l = H.log(hb.id, date);
       const r = H.runs(hb, date);
@@ -435,6 +436,10 @@ export function openHabit(id, date = today()) {
           ? html`<p class="tiny-line">${icon('check', { size: 15, stroke: 2.2 })} Tiny version logged${tiny.label ? html` · ${tiny.label}` : ''}. It counts. <button type="button" class="link-btn" data-action="tiny-off">Undo</button></p>`
           : lv === 'tiny' ? html`<p class="tiny-line">${icon('check', { size: 15, stroke: 2.2 })} Past the tiny amount${tiny.label ? html` · ${tiny.label}` : ''}. It counts.</p>`
             : html`<button type="button" class="btn btn--soft btn--block" data-action="tiny-on">Did the tiny version${tiny.label ? html`<span class="btn-sub">${tiny.label}</span>` : ''}</button>`) : ''}
+        ${stretch && lv === 'stretch' ? html`<p class="tiny-line">${icon('check', { size: 15, stroke: 2.2 })} Stretch version${stretch.label ? html` · ${stretch.label}` : ''}. A great day.${l?.stretch ? html` <button type="button" class="link-btn" data-action="stretch-off">Undo</button>` : ''}</p>`
+          : stretch && !hb.source && hb.type !== 'check' && hb.type !== 'rating' && (!H.isNumeric(hb) || stretch.min == null)
+            ? html`<button type="button" class="btn btn--soft btn--block" data-action="stretch-on">Did the stretch version${stretch.label ? html`<span class="btn-sub">${stretch.label}</span>` : ''}</button>`
+            : stretch?.min != null && H.isNumeric(hb) ? html`<p class="field-hint">Stretch at ${habitTarget(hb, stretch.min)}${stretch.label ? ` · ${stretch.label}` : ''}.</p>` : ''}
         ${!lv && hb.type !== 'check' ? (H.skipped(hb, date, mode)
           ? html`<p class="tiny-line">Set aside for ${dayLabel(date)}. <button type="button" class="link-btn" data-action="unskip">Bring it back</button></p>`
           : html`<button type="button" class="btn btn--ghost btn--block" data-action="skip">Not today</button>`) : ''}
@@ -451,6 +456,8 @@ export function openHabit(id, date = today()) {
       toggle: () => { const now = H.toggle(H.habit(id), date); if (now) hap.success(); else hap.tap(); },
       'tiny-on': () => { H.setTiny(H.habit(id), date, true); hap.success(); },
       'tiny-off': () => { H.setTiny(H.habit(id), date, false); hap.tap(); },
+      'stretch-on': () => { H.setStretch(H.habit(id), date, true); settleRoutine(id, date); hap.success(); },
+      'stretch-off': () => { H.setStretch(H.habit(id), date, false); hap.tap(); },
       skip: async ({ sheet }) => { app.closeSheet(sheet); (await import('./pads.js')).notToday(H.habit(id), date, { onDone: () => settleRoutine(id, date) }); },
       unskip: () => { H.setSkip(H.habit(id), date, false); settleRoutine(id, date); hap.tap(); },
       cl: ({ data }) => { H.toggleChecklistItem(H.habit(id), date, Number(data.i)); hap.tap(); },

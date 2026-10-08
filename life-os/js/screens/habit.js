@@ -4,6 +4,7 @@ import * as HS from '../domain/habit-system.js';
 import * as R from '../domain/routines.js';
 import { deleteWithUndo } from '../ui/undo.js';
 import * as H from '../domain/habits-more.js';
+import * as U from '../domain/urges.js';
 import { catLabel, sectionLabel, habitColor } from '../domain/taxonomy.js';
 import { today, addDays, range, lastNDays, fmtMD, fmtDayShort, fmtDayLetter, relativeDay, startOfWeek, endOfWeek, addMonths } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
@@ -27,13 +28,35 @@ function history(h) {
   return range(start, addDays(startOfWeek(end), 6)).map((d) => {
     if (d > end) return { date: d, state: 'future' };
     if (!H.started(h, d)) return { date: d, state: 'off' };
-    if (H.isOff(H.dayMode(d))) return { date: d, state: 'rest' };
+    if (H.isOff(H.dayMode(d)) || H.isReserve(h, d)) return { date: d, state: 'rest' };
+    if (H.isStretch(h, d)) return { date: d, state: 'stretch' };
     if (H.isDone(h, d)) return { date: d, state: 'done' };
     if (H.isTiny(h, d)) return { date: d, state: 'tiny' };
     const s = h.schedule || {};
     if ((s.kind === 'daily' || s.kind === 'weekdays') && H.isScheduledDay(h, d) && d !== end) return { date: d, state: 'miss' };
     return { date: d, state: 'idle' };
   });
+}
+
+/** The week's reserve, in a few words ("" when the habit has none). */
+function reserveNote(h) {
+  if (!H.reserveAllowance(h) || h.archived) return '';
+  const left = H.reservesLeft(h, today());
+  return left ? ` ${left === 1 ? 'One reserve day' : `${left} reserve days`} left this week.` : ' This week’s reserve is used.';
+}
+
+/** For a habit you're cutting down or quitting: how the urges went, and what they have in common. */
+function urgesBlock(h) {
+  const p = U.pattern(h.id);
+  const common = [p.when?.label, p.where && `at ${p.where.label === 'in bed' ? 'bed' : p.where.label}`, p.feeling && `when ${p.feeling.label}`].filter(Boolean);
+  return html`<section class="block" data-key="urges"><div class="block-head"><h2 class="block-title">Urges</h2><span class="block-meta">Last 60 days</span></div>
+    <div class="card urge-card">
+      ${p.total ? html`<p class="urge-counts"><b class="tnum">${p.resisted}</b> ridden out · <b class="tnum">${p.slipped}</b> ${p.slipped === 1 ? 'slip' : 'slips'}</p>
+        ${common.length ? html`<p class="card-lead">Most often ${common.join(', ')}. That’s the moment to plan for.</p>` : html`<p class="card-lead">No clear pattern yet. Where and how you felt, when you log them, will show one.</p>`}`
+        : html`<p class="card-lead">Tap it on Today when an urge comes, whether you ride it out or not. A pattern shows after a few.</p>`}
+      ${h.instead ? html`<div class="backup-card"><p class="backup-if">Instead, I will</p><p class="backup-then">${h.instead}</p></div>`
+        : html`<button type="button" class="link-btn" data-action="edit">Add an “instead, I will…”</button>`}
+    </div></section>`;
 }
 
 function runNote(r) {
@@ -77,6 +100,8 @@ export default {
     const c90 = H.consistency(h, today(), 90);
     const r = H.runs(h);
     const tiny = H.tinyOf(h);
+    const stretch = H.stretchOf(h);
+    const strength = Math.round(r.strength * 100);
     const inRoutine = R.routineOf(h.id);
     const numeric = H.isNumeric(h);
     const days30 = lastNDays(today(), 30);
@@ -84,9 +109,12 @@ export default {
     const goal = h.goalId ? store.get('goals', h.goalId) : null;
     const pledge = C.forHabit(h.id);
     const facts = [
-      ['Schedule', H.scheduleLabel(h)],
+      H.isLimit(h) ? ['Limit', H.limitOf(h) === 0 ? 'None at all: quitting it' : `At most ${H.limitOf(h)}${h.unit ? ` ${h.unit}` : ''} a day`] : ['Schedule', H.scheduleLabel(h)],
+      h.instead ? ['Instead, I will', h.instead] : null,
       h.anchor ? ['When', h.anchor] : null,
       tiny ? ['Tiny version', tiny.label || habitTarget(h, tiny.min)] : null,
+      stretch ? ['Stretch version', stretch.label || habitTarget(h, stretch.min)] : null,
+      H.reserveAllowance(h) ? ['Reserve days', `${H.reserveAllowance(h)} a week`] : null,
       h.why ? ['Your why', h.why] : null,
       h.backup?.then ? ['Backup plan', h.backup.when ? `If ${h.backup.when.replace(/^if\s+/i, '')} → ${h.backup.then}` : h.backup.then] : null,
       h.temp && today() < h.temp.until ? ['For now', h.temp.target != null ? `${habitTarget(h, h.temp.target)} until ${h.temp.until}` : `The tiny version until ${h.temp.until}`] : null,
@@ -97,6 +125,7 @@ export default {
       h.time ? ['Time', h.time] : null,
       h.reminder ? ['Reminder', h.reminder] : null,
       h.mvd ? ['Minimum day', 'Essential'] : null,
+      H.autoScore(h) != null ? ['Feels automatic', `${H.autoScore(h)} of 5${H.feelsAutomatic(h) ? ' · reminders fade' : ''}`] : null,
       h.source ? ['Tracked from', sourceName(h.source)] : null,
       goal ? ['Goal', goal.name] : null,
     ].filter(Boolean);
@@ -114,12 +143,15 @@ export default {
           <p class="run-label">Current run</p>
         </div>
         <dl class="run-facts">
+          <div><dt>Strength</dt><dd class="tnum">${strength}%</dd></div>
           <div><dt>Best</dt><dd class="tnum">${r.best}</dd></div>
           <div><dt>Comebacks</dt><dd class="tnum">${r.comebacks}</dd></div>
-          <div><dt>Done</dt><dd class="tnum">${r.total}</dd></div>
         </dl>
-        <p class="run-note">${runNote(r)}${r.comebacks ? ` ${plural(r.comebacks, 'comeback')} in the last 30 days.` : ''}</p>
+        <p class="run-note">${runNote(r)}${r.comebacks ? ` ${plural(r.comebacks, 'comeback')} in the last 30 days.` : ''}${reserveNote(h)}</p>
+        <p class="run-note run-note--quiet">Strength builds each time it counts. A miss dips it a little and never resets it.${!h.archived && !H.isLimit(h) ? html` <button type="button" class="link-btn" data-action="auto-check">Does it feel automatic?</button>` : ''}</p>
       </section>
+
+      ${H.isLimit(h) ? urgesBlock(h) : ''}
 
       ${plateCard(h) ? html`<section class="block" data-key="mastery-block"><div class="block-head"><h2 class="block-title">Mastery</h2><a class="link-btn" href="#/progress/records" data-action="nav" data-to="progress/records">All plates</a></div>
         <div class="list">${plateCard(h)}</div>
@@ -138,8 +170,8 @@ export default {
 
       <section class="block" data-key="history">
         <div class="block-head"><h2 class="block-title">Last 13 weeks</h2></div>
-        <div class="card">${heatmap(history(h), { label: (d) => `${fmtMD(d.date)}: ${{ done: 'done', tiny: 'tiny version', miss: 'missed' }[d.state] || '—'}` })}
-          <div class="heat-legend"><span><i class="heat-cell heat--done"></i>Done</span><span><i class="heat-cell heat--tiny"></i>Tiny</span><span><i class="heat-cell heat--miss"></i>Missed</span><span><i class="heat-cell heat--rest"></i>Sick</span></div></div>
+        <div class="card">${heatmap(history(h), { label: (d) => `${fmtMD(d.date)}: ${{ done: 'done', stretch: 'stretch version', tiny: 'tiny version', miss: 'missed', rest: 'off or reserve' }[d.state] || '—'}` })}
+          <div class="heat-legend"><span><i class="heat-cell heat--done"></i>Done</span>${stretch ? html`<span><i class="heat-cell heat--stretch"></i>Stretch</span>` : ''}<span><i class="heat-cell heat--tiny"></i>Tiny</span><span><i class="heat-cell heat--miss"></i>Missed</span><span><i class="heat-cell heat--rest"></i>Off</span></div></div>
       </section>
 
       <section class="block" data-key="stats">
@@ -192,6 +224,7 @@ export default {
       hap.tap();
       app.toast(data.value === 'focus' ? `${h.name} is one of your three.` : data.value === 'queue' ? `${h.name} waits for a free slot.` : `${h.name} is on autopilot.`);
     },
+    'auto-check': async ({ params }) => { const h = H.habit(params.id); if (h) (await import('./auto-check.js')).openAutoCheck(h); },
     graduate: ({ params }) => {
       const h = H.habit(params.id);
       const next = HS.graduate(h);

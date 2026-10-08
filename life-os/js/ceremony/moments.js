@@ -63,6 +63,10 @@ export function show(m, { go } = {}) {
     outline(document.querySelector(`[data-habit="${m.habitId}"]`));
     return plate({ icon: m.level === 'mastered' ? 'medal' : 'star', title: `${m.name} · ${m.levelName}`, sub: `${m.at} time${m.at === 1 ? '' : 's'}, engraved today` });
   }
+  if (m.kind === 'comeback') {
+    outline(document.querySelector(`[data-habit="${m.habitId}"]`));
+    return plate({ icon: 'rotate-ccw', title: `Back to ${m.name}`, sub: m.count > 1 ? `Coming back is the habit. ${m.count} this month.` : 'Coming back is the habit.' });
+  }
   if (m.kind === 'focus') {
     outline(document.querySelector('.now'));
     return plate({ icon: 'check', title: `Your ${focusWord()} are done`, sub: 'Everything else today is a bonus.' });

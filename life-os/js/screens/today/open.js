@@ -9,6 +9,7 @@ import { COUNTER_SOURCES } from './rows.js';
 const sheets = () => import('../sheets.js');
 
 export async function openHabitOrSource(h, date) {
+  if (H.isLimit(h)) return (await import('../less.js')).openLess(h, date);
   if (h.id === 'h-training' || h.source?.startsWith('workout:')) {
     const active = F.activeWorkout();
     if (active) return app.go(`workout/${active.id}`);
@@ -26,6 +27,7 @@ export async function holdHabit(id, date, settle) {
   const h = H.habit(id);
   if (!h) return;
   hap.hold();
+  if (H.isLimit(h)) return (await import('../less.js')).openLess(h, date);
   const P = await import('../pads.js');
   const done = () => settle(h.id, date);
   if (H.isNumeric(h) && !h.source && h.type !== 'rating') return P.habitPad(h, date, { onDone: done });

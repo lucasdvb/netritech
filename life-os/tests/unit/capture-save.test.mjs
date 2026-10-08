@@ -86,8 +86,9 @@ test('not today: the habit leaves the plan and the score, and logging it takes i
   assert.ok(H.isDone(H.habit('h-prayer'), T));
 });
 
-test('not today counts as a miss for the run, so two in a row end it', async () => {
+test('with no reserve left, not today counts as a miss for the run, so two in a row end it', async () => {
   await world();
+  store.put('habits', { ...H.habit('h-prayer'), reserves: 0 });
   const h = H.habit('h-prayer');
   for (let i = 1; i <= 5; i++) H.setLog(h, addDays(T, -i - 2), { value: 1 });
   H.setSkip(h, addDays(T, -2));

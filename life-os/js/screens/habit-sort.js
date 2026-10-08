@@ -38,7 +38,7 @@ function slot(h, i) {
   }
   return html`<li class="sort-slot" data-key="slot-${i}" style="--ic:${habitColor(h)}">
     <span class="row-ic">${icon(h.icon, { size: 18 })}</span>
-    <span class="sort-slot-text"><span class="row-title">${h.name}</span><span class="row-sub">${H.scheduleLabel(h)}${H.tinyOf(h)?.label ? ` · tiny: ${H.tinyOf(h).label}` : ''}</span></span>
+    <span class="sort-slot-text"><span class="row-title">${h.name}</span><span class="row-sub">${H.scheduleLabel(h)} · strength ${H.strength(h)}%</span></span>
     <button type="button" class="icon-btn icon-btn--sm" data-action="set" data-id="${h.id}" data-state="autopilot" aria-label="Take ${h.name} out of your ${H.focusWord()}">${icon('x', { size: 16 })}</button>
   </li>`;
 }

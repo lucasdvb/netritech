@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = '3065083c2b';
+const VERSION = '15f0cff0e7';
 const ASSETS = [
   "./",
   "./index.html",
@@ -76,9 +76,11 @@ const ASSETS = [
   "./js/domain/tasks.js",
   "./js/domain/taxonomy.js",
   "./js/domain/templates.js",
+  "./js/domain/urges.js",
   "./js/redirects.js",
   "./js/routes.js",
   "./js/screens/area.js",
+  "./js/screens/auto-check.js",
   "./js/screens/body.js",
   "./js/screens/book.js",
   "./js/screens/books.js",
@@ -107,6 +109,7 @@ const ASSETS = [
   "./js/screens/insights.js",
   "./js/screens/journal-entry.js",
   "./js/screens/journal.js",
+  "./js/screens/less.js",
   "./js/screens/list.js",
   "./js/screens/lists.js",
   "./js/screens/measurements.js",
@@ -136,6 +139,7 @@ const ASSETS = [
   "./js/screens/settings.js",
   "./js/screens/sheets.js",
   "./js/screens/sleep.js",
+  "./js/screens/sync.js",
   "./js/screens/task-sheet.js",
   "./js/screens/task-ui.js",
   "./js/screens/tasks.js",
@@ -144,6 +148,7 @@ const ASSETS = [
   "./js/screens/today/blocks.js",
   "./js/screens/today/day-picker.js",
   "./js/screens/today/edit.js",
+  "./js/screens/today/limit-row.js",
   "./js/screens/today/modes.js",
   "./js/screens/today/nets.js",
   "./js/screens/today/now.js",
@@ -161,6 +166,8 @@ const ASSETS = [
   "./js/screens/workout.js",
   "./js/screens/year.js",
   "./js/screens/you.js",
+  "./js/sync/crypto.js",
+  "./js/sync/engine.js",
   "./js/ui/app-api.js",
   "./js/ui/badge.js",
   "./js/ui/charts.js",

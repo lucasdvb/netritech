@@ -38,7 +38,7 @@ export function maybePrompt() {
       <div class="install-text">
         <p class="install-title">Add Life OS to your Home Screen</p>
         <p class="install-body">${ios()
-          ? html`Tap ${icon('share', { size: 15, cls: 'inline-ic' })} Share, then “Add to Home Screen”. It opens full screen and works offline.`
+          ? html`Tap ${icon('share', { size: 15, cls: 'inline-ic' })} Share, then “Add to Home Screen”. It opens full screen and works offline. Already added? Open it from the Home Screen: Safari keeps a separate copy, with separate data.`
           : 'Install it for a full-screen app that works offline.'}</p>
       </div>
       ${!ios() ? html`<button type="button" class="btn btn--primary btn--sm" data-install>Install</button>` : ''}

@@ -38,7 +38,7 @@ await step('every screen is three levels or fewer from a place', async () => {
   // A project, a book and a list too, for the same reason.
   await ev(() => { const { store } = window.__lifeos; store.put('projects', { id: 'p-test', name: 'Test project', outcome: '', area: 'work', status: 'active', order: 1 }); store.put('books', { id: 'b-test', title: 'Test book', pages: 100, currentPage: 0, status: 'reading', order: 1 }); store.put('lists', { id: 'l-test', name: 'Test list', order: 0, items: [] }); });
   const seen = new Map(); // route path -> depth
-  let frontier = PLACES.map((p) => p.path).concat(['you/settings', 'you/data', 'you/privacy']); // You is one tap from every place
+  let frontier = PLACES.map((p) => p.path).concat(['you/settings', 'you/data', 'you/privacy', 'you/sync']); // You is one tap from every place
   for (let depth = 0; depth <= 3 && frontier.length; depth++) {
     const next = [];
     for (const path of frontier) {

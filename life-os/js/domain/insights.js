@@ -194,9 +194,33 @@ function stepsGap(date) {
     action: { label: `Add a 20-minute walk to ${step.routine.name}`, done: `${step.routine.name} now includes a 20-minute walk.`, apply: step.apply } }];
 }
 
+/**
+ * A habit mostly set aside because you forgot (13a): forgetting is a weak cue, so tie it to a routine
+ * you already run (habit stacking), at the end of the one that fits its time of day.
+ */
+function forgotten(date) {
+  const since = addDays(date, -27);
+  const out = [];
+  for (const h of H.activeHabits()) {
+    if (R.inRoutine(h.id) || H.stateOf(h, date) === 'paused') continue;
+    const logs = store.where('habitLogs', (l) => l.habitId === h.id && l.skip && l.reason && l.date >= since && l.date <= date);
+    const forgot = logs.filter((l) => l.reason === 'forgot').length;
+    if (forgot < 3 || forgot * 2 < logs.length) continue;
+    const evening = (h.time && parseHM(h.time) >= parseHM('15:00')) || h.section === 'evening';
+    const r = R.routines().find((x) => x.kind === (evening ? 'evening' : 'morning') && !x.archived);
+    if (!r) continue;
+    out.push({ id: `forgot-${h.id}`, area: 'Habits', weight: 0.9,
+      title: `${h.name} slips because it’s forgotten`,
+      detail: `You set it aside ${forgot} times in four weeks because you forgot. A cue you can’t miss beats trying harder: as a step of ${r.name}, it comes up right after something you already do.`,
+      action: { label: `Add it to ${r.name}`, done: `${h.name} is now a step of ${r.name}.`,
+        apply: () => { const before = { ...R.routine(r.id) }; R.append(r.id, h.id); return () => store.put('routines', before); } } });
+  }
+  return out.slice(0, 1);
+}
+
 export const rules = {
   id: 'rules',
-  run: (date) => [weakRoutine, weakDay, sleepLink, trainingDays, autopilot, weightStall, proteinGap, stepsGap].flatMap((f) => f(date)),
+  run: (date) => [weakRoutine, weakDay, sleepLink, trainingDays, autopilot, weightStall, proteinGap, stepsGap, forgotten].flatMap((f) => f(date)),
 };
 
 /* ---------- the engine interface ---------- */

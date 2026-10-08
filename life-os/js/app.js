@@ -485,6 +485,8 @@ async function boot() {
   // A focus block still running (or one that finished while the app was closed).
   if (store.settings().focus) import('./ui/focus-bar.js').then((m) => m.sync()).catch(() => {});
   if (navigator.storage?.persist) navigator.storage.persisted().then((p) => { if (!p) navigator.storage.persist(); });
+  // Sync, when it's set up on this device (You › Sync): loads after the first screen.
+  try { if (localStorage.getItem('lifeos.sync')) import('./sync/engine.js').then((m) => m.start()).catch((err) => console.warn(err)); } catch { /* storage blocked */ }
   window.__lifeos = { store, app, ready: true, readyAt: performance.now(), renders: renderTimes };
 }
 

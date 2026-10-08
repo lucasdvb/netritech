@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Life OS: the comeback moment (preview)</title>
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Inter"; src: url("assets/Inter-latin-400.woff2") format("woff2"); font-weight: 400; }
+      @font-face { font-family: "Inter"; src: url("assets/Inter-latin-500.woff2") format("woff2"); font-weight: 500; }
+      @font-face { font-family: "Inter"; src: url("assets/Inter-latin-600.woff2") format("woff2"); font-weight: 600; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: #ffffff; }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; font-family: "Inter", sans-serif; }
+      .clip { position: absolute; inset: 0; }
+      .light { background: #ffffff; color: #1d1d1f; }
+      .dark { background: #000000; color: #ffffff; }
+      .label { position: absolute; left: 72px; top: 150px; font-size: 39px; font-weight: 500; color: #6e6e73; }
+      .dark .label { color: #a1a1a6; }
+      .center { position: absolute; left: 60px; right: 60px; }
+      .card { top: 640px; height: 240px; border-radius: 72px; display: flex; align-items: center; gap: 42px; padding: 0 60px; }
+      .light .card { background: #f5f5f7; }
+      .dark .card { background: #1d1d1f; }
+      .check { width: 108px; height: 108px; flex: none; }
+      .txt { flex: 1; min-width: 0; }
+      .name { font-size: 54px; font-weight: 600; letter-spacing: -0.5px; }
+      .sub { position: relative; height: 50px; margin-top: 6px; }
+      .sub span { position: absolute; left: 0; top: 0; white-space: nowrap; font-size: 39px; font-weight: 400; }
+      .light .sub span { color: #6e6e73; }
+      .dark .sub span { color: #a1a1a6; }
+      .outline { position: absolute; overflow: visible; pointer-events: none; }
+      .plate { position: absolute; top: 960px; left: 60px; max-width: 960px; height: 156px; border-radius: 78px; display: flex; align-items: center; gap: 27px; padding: 0 54px 0 48px; overflow: hidden; }
+      .light .plate { background: #e6f0fc; color: #0062c4; }
+      .dark .plate { background: #0b2a4a; color: #2997ff; }
+      .plate b { display: block; font-size: 45px; font-weight: 600; white-space: nowrap; }
+      .plate i { display: block; font-style: normal; font-size: 34px; font-weight: 400; white-space: nowrap; margin-top: 4px; }
+      .light .plate i { color: #0062c4; }
+      .dark .plate i { color: #9ccaff; }
+      .sweep { position: absolute; top: 0; bottom: 0; width: 160px; }
+      .light .sweep { background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.85), rgba(255,255,255,0)); }
+      .dark .sweep { background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.22), rgba(255,255,255,0)); }
+      .note { top: 1170px; font-size: 39px; }
+      .light .note { color: #6e6e73; }
+      .dark .note { color: #a1a1a6; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="7" data-width="1080" data-height="1920">
+
+      <section id="s1" class="clip light" data-start="0" data-duration="3.5" data-track-index="0">
+        <p class="label">The comeback · light</p>
+        <div id="l-card" class="card center">
+          <svg class="check" viewBox="0 0 108 108"><circle cx="54" cy="54" r="48" fill="none" stroke="#c7c7cc" stroke-width="5" /><circle id="l-fill" cx="54" cy="54" r="51" fill="#0071e3" /><path id="l-tick" d="M32 55 L48 70 L77 39" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" /></svg>
+          <div class="txt"><p class="name">Reading</p><p class="sub"><span id="l-was">Missed yesterday · don’t miss twice</span><span id="l-now">Done · back on track</span></p></div>
+        </div>
+        <svg class="outline" style="left: 52px; top: 632px" width="976" height="256"><rect id="l-outline" x="4" y="4" width="968" height="248" rx="74" fill="none" stroke="#0071e3" stroke-width="5" pathLength="1" stroke-dasharray="1" /></svg>
+        <div id="l-plate" class="plate"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><span><b>Back to Reading</b><i>Coming back is the habit. 3 this month.</i></span><div id="l-sweep" class="sweep" data-layout-allow-overflow></div></div>
+        <p id="l-note" class="note center">Once a day for each habit, and only after a miss.</p>
+      </section>
+
+      <section id="s2" class="clip dark" data-start="3.5" data-duration="3.5" data-track-index="0">
+        <p class="label">The comeback · dark</p>
+        <div id="d-card" class="card center">
+          <svg class="check" viewBox="0 0 108 108"><circle cx="54" cy="54" r="48" fill="none" stroke="#48484a" stroke-width="5" /><circle id="d-fill" cx="54" cy="54" r="51" fill="#0071e3" /><path id="d-tick" d="M32 55 L48 70 L77 39" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" /></svg>
+          <div class="txt"><p class="name">Reading</p><p class="sub"><span id="d-was">Missed yesterday · don’t miss twice</span><span id="d-now">Done · back on track</span></p></div>
+        </div>
+        <svg class="outline" style="left: 52px; top: 632px" width="976" height="256"><rect id="d-outline" x="4" y="4" width="968" height="248" rx="74" fill="none" stroke="#2997ff" stroke-width="5" pathLength="1" stroke-dasharray="1" /></svg>
+        <div id="d-plate" class="plate"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg><span><b>Back to Reading</b><i>Coming back is the habit. 3 this month.</i></span><div id="d-sweep" class="sweep" data-layout-allow-overflow></div></div>
+        <p id="d-note" class="note center">Once a day for each habit, and only after a miss.</p>
+      </section>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      // The same moment in each theme: the tick, the line around the row, then the plate engraving.
+      const scene = (p, t0) => {
+        tl.fromTo(`#${p}-card`, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, t0 + 0.1);
+        tl.set(`#${p}-now`, { opacity: 0 }, t0);
+        tl.fromTo(`#${p}-fill`, { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.28, ease: "back.out(2)" }, t0 + 0.75);
+        tl.fromTo(`#${p}-tick`, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.28, ease: "power2.out" }, t0 + 0.9);
+        tl.to(`#${p}-was`, { opacity: 0, duration: 0.25 }, t0 + 0.95);
+        tl.to(`#${p}-now`, { opacity: 1, duration: 0.3 }, t0 + 1.1);
+        tl.fromTo(`#${p}-outline`, { strokeDashoffset: 1, opacity: 1 }, { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut" }, t0 + 1.2);
+        tl.to(`#${p}-outline`, { opacity: 0, duration: 0.4 }, t0 + 2.9);
+        tl.fromTo(`#${p}-plate`, { clipPath: "inset(0 100% 0 0 round 78px)" }, { clipPath: "inset(0 0% 0 0 round 78px)", duration: 0.65, ease: "power2.out" }, t0 + 1.6);
+        tl.fromTo(`#${p}-sweep`, { x: -200 }, { x: 1000, duration: 0.9, ease: "power1.inOut" }, t0 + 2.1);
+        tl.fromTo(`#${p}-note`, { opacity: 0 }, { opacity: 1, duration: 0.5 }, t0 + 2.4);
+      };
+      scene("l", 0);
+      scene("d", 3.5);
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

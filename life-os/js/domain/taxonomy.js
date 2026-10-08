@@ -25,6 +25,7 @@ export const HABIT_TYPES = [
   { id: 'quantity', label: 'Count', hint: 'Reps, steps, breaks.' },
   { id: 'rating', label: 'Rating 1–10', hint: 'Energy, mood, quality.' },
   { id: 'check', label: 'Yes / no check', hint: 'A health or lifestyle check.' },
+  { id: 'limit', label: 'Less', hint: 'Cut down or quit: at most so many a day.' },
 ];
 
 export const SCHEDULES = [

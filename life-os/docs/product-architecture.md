@@ -2,7 +2,7 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
-**Status.** Phases 0–11, the final pass (bugs, cleanup, optimisation) and Phase 12 (the owner's requests after testing on the phone) are done (see section 15).
+**Status.** Phases 0–11, the final pass (bugs, cleanup, optimisation) and Phase 12 (the owner’s requests after testing on the phone) are done. Phase 13 (what the research says is missing) is being built (see section 15).
 
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
@@ -1300,6 +1300,110 @@ Where it ends:
   - The saved video still draws every frame.
   - p95 is now 16.8 ms, the same as seal, finale and year.
 
+### Phase 13: what the research says is missing · in progress
+
+The owner asked for a complete list of improvements: researched habit science and the most successful habit apps, nothing bulky. The list was mapped against the app, and the owner approved everything except the people features (an accountability buddy, keep-in-touch rhythm) and the privacy and devices group (Face ID lock, sync, AI). Each item below names the evidence it rests on.
+
+Partway through, the owner made automatic sync between devices a must, so it was brought in ahead of 13c (see **Sync** below). 13a and 13b are built.
+
+**13a. Fixes and the consistency core**
+1. **Apple Health lands in the right copy.**
+   - The problem: a Shortcut's *Open URLs* opens Safari, and Safari's storage is separate from the Home Screen app, so the old recipe could paste into an empty copy.
+   - The fix: the recipe now ends at *Copy to Clipboard* (with an optional notification), and Life OS offers *Paste from Health* where you need it: the morning check-in and Body.
+   - Opened in Safari on an iPhone, Life OS now says once that this copy's data is separate from the Home Screen app.
+2. **A backup reminder in the weekly review.** When the last backup is over 14 days old (or there is none), the review ends with one *Save a backup* button.
+3. **Habit strength.**
+   - A 0–100% score per habit, as in Loop: each counted period moves it up and each miss moves it down a little.
+   - The half-life scales with how often the habit is due, so a weekly habit isn't judged like a daily one. Away, sick and reserve days leave it unchanged.
+   - Shown on the habit page and in *Choose your three*.
+   - Why: one miss doesn't slow habit formation (Lally 2010), but a broken streak on display makes people disengage (Silverman & Barasch 2023).
+4. **A comeback moment.**
+   - The first time a habit counts after a miss gets its own moment (once per habit a day), and the habit page counts comebacks this month.
+   - Why: rewarding the return after a miss was the best of 54 arms in the gym megastudy (Milkman 2021, +27%).
+   - Previewed in HyperFrames first, like every moment.
+5. **Reserve days.**
+   - A daily or weekday habit gets one planned skip a week by default (0–3 in its options). *Not today* spends it first, and a reserve day leaves the run and the strength untouched. Only when none is left does *Not today* count as the run's one miss.
+   - Flexible habits (so many a week or month) already have slack, so they get none.
+   - Why: a goal with emergency reserves beat both the easy and the hard goal (Sharif & Shu 2017, 2021); this is also why Duolingo has streak freezes.
+6. **A stretch version.**
+   - Next to the tiny version, an optional stretch version: a bigger amount, or "did the stretch version" from the hold menu.
+   - It counts as done, is marked in blue on the habit's calendar, and stretch days are counted.
+   - Why: range goals keep people going better than a single number (Scott & Nowlis 2013).
+7. **Bad night, lighter day.** If last night's sleep was under 6 hours, or the check-in says you feel low, the Now card offers today as a Minimum day, once (sleep and self-control: Guarana 2021).
+8. **Why it slipped.**
+   - *Not today* takes one optional tap: Sick, Travel, Busy, Forgot or Not feeling it. Each brings its matching help:
+     - Sick: a sick day.
+     - Travel: the backup plan.
+     - Busy: the tiny version, now.
+     - Forgot: a stronger cue.
+     - Not feeling it: your why and the tiny version.
+   - The reasons feed one insight (a habit mostly missed because you forgot gets a new anchor).
+   - Why: explaining a lapse by a fixable outside cause keeps people going; blaming yourself doesn't (Marlatt's abstinence violation effect).
+
+**13b. Automatic, and less of what derails you**
+9. **"Does it feel automatic yet?"**
+   - The monthly review asks four quick questions (SRBAI, Gardner 2012) for each focus habit that is strong enough. It can also be asked from the habit page.
+   - When the answers say it's automatic, the review offers autopilot to free the focus slot, and the habit's reminders fade.
+   - Why: reminders keep you repeating a habit but slow it becoming automatic (Stawarz 2015).
+10. **Habits to cut down or quit.**
+    - A new habit kind, *Less*: at most so many a day (0 means quit). A tap adds one, and a day within the limit counts as kept.
+    - An urge log, one tap: resisted or slipped, with optional where and feeling.
+    - The habit page shows your common triggers and your "instead, I will…".
+    - New `urges` store (database version 8, which also adds `experiments` and `yearlyReviews`).
+
+**13c. Cues at the right moment**
+11. **Cues from your iPhone.**
+    - The Shortcuts app can fire on real events: alarm stopped, arriving at the gym, leaving work, plugging in at night, an NFC sticker.
+    - Life OS writes a ready-made automation for each focus habit and routine from its anchor, with the notification text to paste. It works with the app closed and needs no server.
+    - Why: event cues build automaticity; timed reminders build dependency (Stawarz 2015; Wood & Neal 2007).
+12. **Put it in your calendar.**
+    - Any task or priority can become a calendar event with an alert, at a time and length you choose. It is made on the phone, like the reminders file.
+    - Why: a plan with a date *and* a time lifted follow-through 4× more than a date alone (Milkman 2011).
+13. **Reminders when the app is closed (opt-in).**
+    - iPhone delivers these to a Home Screen web app only through a sender. So there is a tiny sender in `push/` that you deploy to your own Cloudflare account, if you want it.
+    - What it holds: the times and words of your reminders, and a "done today" mark so a habit you've done isn't reminded. No history and no other data.
+    - It is off unless you set it up, and the app shows exactly what is sent.
+
+**13d. Less effort to log**
+14. **Same as yesterday.** One tap repeats yesterday's food, with Undo.
+15. **Next-weight suggestion.**
+    - When every set reached the top of the rep range last time, the next session suggests the next step (2.5 kg or 5 lb, one more rep, or 5 more seconds) and says why.
+    - After two sessions without progress below the top of the range, it suggests holding the weight.
+
+**13e. What works for you**
+16. **What helps you.**
+    - Days with and without a habit are compared on how much of the plan you finished, your mood and your energy. It looks at the last 60 days, needs at least 5 days each way, and needs a clear difference.
+    - Patterns are shown as patterns ("On days you…"), never as causes. Each ends in one tap, as every insight does: protect the habit by making it a Minimum-day essential.
+    - This answers the brief's "What habits are correlated with better weeks?"
+17. **Experiments.**
+    - "Try it for 7, 14 or 21 days": a habit, and up to two things to watch (sleep, mood, energy, plan done, weight, steps).
+    - At the end, the same number of days before and during are compared, and you keep it or drop it.
+18. **On this day.** Reflect shows your entry or win from a year ago, or else a month ago, when there is one.
+
+**13f. Direction**
+19. **Plan for the obstacle.**
+    - A goal takes two optional questions: what's most likely to get in the way, and what you'll do then. The weekly review's three gets the same pair.
+    - Why: WOOP, mental contrasting with implementation intentions (Oettingen; Gollwitzer & Sheeran 2006).
+20. **The yearly review.**
+    - Offered from mid-December to the end of January: the year in numbers, your year's picture, three questions, and one word for next year, which sits at the top of Plan.
+    - Why: new-year starts are when change is easiest to begin (the fresh start effect, Dai, Milkman & Riis 2014).
+
+**Sync (the owner's must)**
+- **What:** every device keeps its full copy and works offline. Whenever it's online it sends what changed (from the outbox the store has kept since Phase 0) and takes what changed elsewhere: on every change, on coming back online or to the screen, and once a minute.
+- **The server is the owner's:** a Cloudflare Worker with one D1 database (`server/worker.js`), set up once from the dashboard with the guide in *You › Sync*.
+- **Privacy:**
+  - Everything is encrypted on the device: AES-GCM, with keys stretched from a 20-character sync key by PBKDF2 and split by HKDF.
+  - Each record is named by a keyed hash, so the server holds only opaque names, timestamps and ciphertext.
+  - The first key to use the server owns it.
+- **Conflicts:** the newest version of a record wins. Settings and the profile sync field by field, so two devices changing different settings never undo each other. Theme, notifications and the backup date stay with each device.
+- **Turning it on:**
+  - The first device uploads everything.
+  - Another device joining with the key takes the synced data, after a safety copy of its own.
+  - Pictures sync too. Deletions travel as the tombstones the store already keeps.
+- **Tested:** the server's real SQL runs over SQLite in the tests (`tests/support/`). `tests/sync.mjs` runs two browsers, a phone and a computer, through it: start, join, changes and deletions both ways, device settings kept, a stranger's key refused, nothing echoed.
+
+**Left out on purpose:** points and pets, money stakes, "21 days" countdowns, willpower budgets, more default notifications, a barcode food database, a timeline planner. Each is either unsupported by the evidence or adds weight without value.
+
 ---
 
 ## 16. Testing, performance and scalability
@@ -1326,9 +1430,11 @@ Where it ends:
 | Any view render with a year of data | under 70 ms (as today) |
 | Long tasks during flows | none over 50 ms |
 | Motion | 60 fps; any animation that drops frames is simplified |
-| Precache total | under 1.5 MB |
+| Precache total | under 1.75 MB, never over 2 MB (was 1.5 MB until Phase 13) |
 | JavaScript needed for first render | under 200 KB (screens stay lazy-loaded) |
 | Runtime dependencies | none |
+
+The precache budget was raised in Phase 13. The 1.5 MB figure was set when the app had about half its features. The precache is only the app's code and fonts, never your data; it downloads compressed (about a quarter of its size) once per version; and "everything works offline" means every screen has to be in it. Speed is held by the budgets that measure it: first-screen JavaScript, cold start, render and tap times.
 
 **Techniques**
 - Optimistic rendering.

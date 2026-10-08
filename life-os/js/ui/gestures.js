@@ -53,10 +53,13 @@ const HOLD_MS = 450;
 const SLOP = 8;
 const COMMIT = 96;
 
+/** Swallow the click a gesture's release may produce. Returns a function that stops waiting for it. */
 function swallowClick() {
   const stop = (e) => { e.stopPropagation(); e.preventDefault(); };
+  const done = () => window.removeEventListener('click', stop, { capture: true });
   window.addEventListener('click', stop, { capture: true, once: true });
-  setTimeout(() => window.removeEventListener('click', stop, { capture: true }), 350);
+  setTimeout(done, 350);
+  return done;
 }
 
 /**
@@ -116,13 +119,14 @@ export function attachRowGestures(root, { onHold, onSwipe }) {
     if (!g || e.pointerId !== g.pointer) return;
     clearTimeout(g.timer);
     if (g.axis !== 'x') { g = null; return; }
-    swallowClick();
+    const unswallow = swallowClick();
     const { row, id, past } = g;
     g = null;
     if (!past) { row.classList.add('is-returning'); reset(row); setTimeout(() => row.classList.remove('is-returning'), 260); return; }
     row.classList.add('is-leaving');
     row.style.setProperty('--swipe', '-100%');
-    setTimeout(() => { row.classList.remove('is-leaving'); reset(row); onSwipe(id, row); }, 180);
+    // By now any click from the release has come and gone: the first tap on what opens next is yours.
+    setTimeout(() => { unswallow(); row.classList.remove('is-leaving'); reset(row); onSwipe(id, row); }, 180);
   });
   root.addEventListener('pointercancel', cancel);
   // A mouse or a trackpad: right-click is the hold. A long touch can raise it too, so ignore

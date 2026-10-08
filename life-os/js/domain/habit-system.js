@@ -45,6 +45,25 @@ export function graduate(h) {
   return next;
 }
 
+/**
+ * Due for the "does it feel automatic?" check (13b): in focus for three weeks or more, strong
+ * enough to be close (strength 50% or more), and not asked in the last four weeks.
+ */
+export function autoDue(h, date = today()) {
+  if (stateOf(h, date) !== 'focus' || h.type === 'limit') return false;
+  if (h.focusSince && diffDays(date, h.focusSince) < 21) return false;
+  const last = h.auto?.at(-1)?.date;
+  if (last && diffDays(date, last) < 28) return false;
+  return runs(h, date).strength >= 0.5;
+}
+
+/** Save the four answers (1–5 each); keeps the last six. Returns the score, their average. */
+export function recordAuto(h, answers, date = today()) {
+  const score = Math.round((answers.reduce((a, b) => a + b, 0) / answers.length) * 10) / 10;
+  store.update('habits', h.id, { auto: [...(h.auto || []), { date, score, answers }].slice(-6) });
+  return score;
+}
+
 /** Apply a sort ({ id: state }) in one write. Refuses to leave more than three in focus. */
 export function applyStates(map) {
   const after = activeHabits().filter((h) => (map[h.id] ?? stateOf(h)) === 'focus').length;

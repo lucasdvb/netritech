@@ -306,6 +306,22 @@ export function batch(ops, message = SAVE_FAILED) {
   return applied.filter((a) => a.value).map((a) => a.value);
 }
 
+/** Records from your other devices (sync): each kept only if newer than ours, with no outbox entry. */
+export function adopt(list) {
+  const disk = [];
+  for (const { store: s, value: r } of list) {
+    const cur = cache[s].get(r.id) || tombs[s].get(r.id);
+    if (cur && (cur.updatedAt || '') >= (r.updatedAt || '')) continue;
+    cache[s].delete(r.id);
+    tombs[s].delete(r.id);
+    (r.deletedAt ? tombs : cache)[s].set(r.id, r);
+    disk.push({ store: s, value: r });
+    emit(s, [r, cur]);
+  }
+  if (disk.length) enqueue(disk, () => {}, SAVE_FAILED, () => {});
+  return disk.length;
+}
+
 /* ---------- reading ---------- */
 
 const stampOf = (stores) => stores.map((s) => versions[s] || 0).join('.');
