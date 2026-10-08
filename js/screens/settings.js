@@ -10,8 +10,8 @@ const n = (v) => (v === '' || v == null || Number.isNaN(Number(v)) ? null : Numb
 const DAYS = [[1, 'M'], [2, 'T'], [3, 'W'], [4, 'T'], [5, 'F'], [6, 'S'], [7, 'S']];
 const DAY_ENDS = [['00:00', 'Midnight'], ['01:00', '01:00'], ['02:00', '02:00'], ['03:00', '03:00'], ['04:00', '04:00'], ['05:00', '05:00']];
 const NOTIFS = [
-  ['morning', 'Morning routine', 'time'], ['workout', 'Workout', 'time'], ['water', 'Water', 'every'], ['movement', 'Movement breaks (work hours)', 'every'],
-  ['eyes', 'Visual breaks (work hours)', 'every'], ['evening', 'Evening routine', 'time'], ['weeklyReview', 'Weekly review (Sunday)', 'time'], ['habits', 'Habit reminders (per habit)', null],
+  ['morning', 'Morning check-in', 'time'], ['workout', 'Workout', 'time'], ['water', 'Water', 'every'], ['movement', 'Movement breaks (work hours)', 'every'],
+  ['eyes', 'Visual breaks (work hours)', 'every'], ['evening', 'Close the day', 'time'], ['weeklyReview', 'Weekly review (Sunday)', 'time'], ['habits', 'Habit reminders (per habit)', null],
 ];
 
 const profileField = (label, key, type = 'text', opts = {}) => {
@@ -85,7 +85,6 @@ export default {
           ${settingRow('Haptics', toggle(s.haptics !== false, { action: 'haptics', label: 'Haptics' }), { hint: 'Subtle taps where the device supports them.' })}
           ${settingRow('Sound', toggle(s.sound === true, { action: 'sound', label: 'Sound' }), { hint: 'Soft sounds made on the phone for completions, moments and sealing the day. Off by default.', key: 'sound' })}
           ${settingRow('Race against', segmented([{ id: 'four', label: 'A month ago' }, { id: 'best', label: 'Best week' }, { id: 'last', label: 'Last week' }], s.ghost || 'four', { action: 'ghost', name: 'Race against', cls: 'seg--compact' }), { hint: 'Your past self at the same point of the week, on Progress. A quiet marker, never an alarm.', key: 'ghost' })}
-          ${settingRow('Show every section on Today', toggle(s.showAllSections, { action: 'all-sections', label: 'Show every section' }), { hint: 'Off: Today shows what fits the time of day.' })}
         </div></section>
       <section class="block"><h2 class="set-section">Safety nets</h2>
         <div class="set-list">
@@ -140,7 +139,6 @@ export default {
     ghost: ({ data }) => { store.setSettings({ ghost: data.value }); hap.tap(); },
     theme: ({ data }) => { store.setSettings({ theme: data.value }); hap.tap(); },
     haptics: () => { const v = store.settings().haptics === false; store.setSettings({ haptics: v }); hap.setEnabled(v); },
-    'all-sections': () => store.setSettings({ showAllSections: !store.settings().showAllSections }),
     'notif-master': async () => {
       const nt = store.settings().notifications;
       if (!nt.enabled) await requestPermission();
