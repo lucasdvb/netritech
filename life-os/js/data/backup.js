@@ -20,10 +20,9 @@ export async function buildBackup({ includePhotos = false } = {}) {
   await store.flush();
   const data = {};
   for (const s of DATA_STORES) data[s] = store.all(s);
-  if (includePhotos) {
-    const photos = await blobs.all();
-    data.photoBlobs = await Promise.all(photos.map(async (b) => ({ id: b.id, dataUrl: await blobToDataURL(b.blob) })));
-  }
+  // Moodboard pictures always travel with a backup; progress photos only when you choose.
+  const photos = (await blobs.all()).filter((b) => includePhotos || b.id.startsWith('mb-'));
+  if (photos.length) data.photoBlobs = await Promise.all(photos.map(async (b) => ({ id: b.id, dataUrl: await blobToDataURL(b.blob) })));
   const counts = Object.fromEntries(Object.entries(data).map(([k, v]) => [k, v.length]));
   return { app: APP_ID, kind: 'backup', schema: DB_VERSION, exportedAt: new Date().toISOString(), includesPhotos: includePhotos, counts, data };
 }
@@ -60,6 +59,8 @@ export async function restore(json, mode = 'replace') {
   if (mode === 'replace') {
     // Day summaries are rebuilt from the restored logs, so the old ones are cleared too.
     const payload = { ...incoming, daySnapshots: [] };
+    // A backup without progress photos keeps the ones on this device.
+    if (photoBlobs && !json.includesPhotos) photoBlobs.push(...(await blobs.all()).filter((b) => !b.id.startsWith('mb-')));
     if (photoBlobs) payload.photoBlobs = photoBlobs;
     await store.disk().replaceAll(payload);
   } else {

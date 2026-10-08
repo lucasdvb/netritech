@@ -35,7 +35,7 @@ export function nextStart(date = today()) {
  * autopilot. Returns an undo that puts everything back.
  */
 export function create({ name, intention = '', habitIds = [], start = nextStart() }) {
-  const ids = habitIds.slice(0, H.FOCUS_LIMIT);
+  const ids = habitIds.slice(0, H.focusLimit());
   const s = { id: store.uid(), name: name.trim() || `Season ${seasons().length + 1}`, intention: intention.trim(), habitIds: ids, start, end: addDays(start, WEEKS * 7 - 1), createdAt: new Date().toISOString() };
   const before = [];
   const ops = [{ store: 'seasons', value: s }];

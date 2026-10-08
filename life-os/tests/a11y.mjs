@@ -46,7 +46,7 @@ async function audit(p, label) {
 
 const ROUTES = (ids) => ['today', 'plan', 'plan/habits', `plan/habits/${ids.habit}`, 'plan/habits/sort', 'plan/tasks', 'plan/goals', `plan/goals/${ids.goal}`,
   'plan/projects', 'plan/books', 'plan/training', 'plan/training/exercises', `plan/training/exercises/${ids.exercise}`, 'plan/playbook', 'plan/commitments',
-  'plan/rewards', 'progress', 'progress/trends', 'progress/trends/consistency', 'progress/calendar', 'progress/records', 'progress/season', 'progress/year',
+  'plan/rewards', 'plan/training/workouts/t-upper', 'plan/moodboard', 'plan/lists', 'plan/money', 'plan/dates', 'progress', 'progress/trends', 'progress/trends/consistency', 'progress/calendar', 'progress/records', 'progress/season', 'progress/year',
   'progress/body', 'progress/body/weight', 'progress/body/nutrition', 'progress/body/measurements', 'progress/body/photos', 'progress/body/sleep',
   'progress/areas/mind', 'progress/areas/spirit', 'progress/areas/relationships', 'progress/areas/work', 'progress/areas/health',
   'reflect', 'reflect/journal', `reflect/journal/${ids.journal}`, 'reflect/insights', 'reflect/reviews', 'reflect/review/week', 'reflect/review/month',

@@ -107,14 +107,14 @@ await step('minimum and sick days change the plan and the Now card', async () =>
   await ctx.close();
 });
 
-await step('Edit Today: hide a block, move one up with the keyboard, pin a fourth action', async () => {
+await step('Edit Today: hide a block, move one to the top with the keyboard, pin a fourth action', async () => {
   const { ctx, p } = await at('2026-10-07T13:00:00');
   await p.locator('[data-action="edit-today"]').click();
   await p.waitForSelector('.sheet .edit-today');
   await p.locator('.sheet [data-action="et-show"][data-id="more"]').click();
   await p.locator('.sheet [data-key="et-priorities"] [data-drag]').focus();
-  await p.keyboard.press('ArrowUp');
-  await p.waitForFunction(() => document.activeElement?.closest('[data-key="et-priorities"]'));
+  await p.keyboard.press('Home');
+  await p.waitForFunction(() => document.activeElement?.closest('[data-key="et-priorities"]') && document.querySelector('.sheet .et-list > :first-child')?.dataset.key === 'et-priorities');
   await p.locator('.sheet [data-action="et-pin"][data-k="weight"]').click();
   await p.screenshot({ path: `${OUT}/t3-edit-today.png` });
   await p.keyboard.press('Escape');

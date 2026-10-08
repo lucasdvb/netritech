@@ -153,10 +153,12 @@ export function openFood(date = today()) {
           <div class="macro"><p class="macro-label">Protein</p><p class="macro-val tnum">${num(nut.protein)}<small> / ${t.proteinG} g</small></p>${bar(nut.protein / t.proteinG, { color: 'var(--c-health)', label: 'Protein' })}</div>
           <div class="macro"><p class="macro-label">Calories</p><p class="macro-val tnum">${num(nut.kcal)}<small> / ${num(t.kcal)}</small></p>${bar(nut.kcal / t.kcal, { color: 'var(--c-body)', label: 'Calories' })}</div>
         </div>
-        <div class="search-field">${icon('search', { size: 16 })}<input type="search" placeholder="Find a quick food" value="${s.ui.q}" data-input="q" aria-label="Find a quick food"></div>
-        <ul class="food-list">${foods.map((f) => html`<li data-key="${f.id}"><button type="button" class="food-item" data-action="quick" data-id="${f.id}">
+        <div class="food-tools"><div class="search-field">${icon('search', { size: 16 })}<input type="search" placeholder="Find a quick food" value="${s.ui.q}" data-input="q" aria-label="Find a quick food"></div>
+          <button type="button" class="link-btn" data-action="manage" aria-pressed="${!!s.ui.manage}">${s.ui.manage ? 'Done' : 'Edit'}</button></div>
+        <ul class="food-list">${foods.map((f) => html`<li data-key="${f.id}"${s.ui.manage ? raw(' class="food-row"') : ''}><button type="button" class="food-item" data-action="${s.ui.manage ? 'food-edit' : 'quick'}" data-id="${f.id}"${s.ui.manage ? raw(` aria-label="Edit ${f.name}"`) : ''}>
           <span class="food-name">${f.name}</span><span class="food-meta tnum">${num(f.protein, f.protein % 1 ? 1 : 0)} g · ${num(f.kcal)} kcal${f.approx ? ' · approx.' : ''}</span>
-          <span class="food-add">${icon('plus', { size: 18 })}</span></button></li>`)}</ul>
+          <span class="food-add">${icon(s.ui.manage ? 'pencil' : 'plus', { size: 18 })}</span></button>
+          ${s.ui.manage ? html`<button type="button" class="icon-btn icon-btn--sm" data-action="food-del" data-id="${f.id}" aria-label="Delete ${f.name}">${icon('trash-2', { size: 16 })}</button>` : ''}</li>`)}</ul>
         <details class="disclosure" ${s.ui.open ? raw('open') : ''}>
           <summary>Custom entry</summary>
           <form class="form" data-submit="custom">
@@ -198,6 +200,37 @@ export function openFood(date = today()) {
         el.reset();
       },
       del: ({ data }) => removeWithUndo('nutritionLogs', data.id, 'Entry removed'),
+      manage: ({ sheet }) => { sheet.ui.manage = !sheet.ui.manage; hap.tap(); sheet.refresh(); },
+      'food-edit': ({ data }) => editFood(data.id),
+      'food-del': ({ data }) => removeWithUndo('foods', data.id, 'Quick food deleted. Past entries stay.'),
+    },
+  });
+}
+
+/** Change a quick food's name or numbers. Entries already logged keep what they were. */
+function editFood(id) {
+  const f = store.get('foods', id);
+  if (!f) return;
+  app.sheet({
+    title: 'Quick food',
+    render: () => html`<form class="form" data-submit="save">
+      <label class="field"><span class="field-label">Name</span><input class="input" name="name" value="${f.name}" maxlength="60" required></label>
+      <div class="grid-2">
+        <label class="field"><span class="field-label">Protein</span><span class="input-unit"><input name="protein" type="number" inputmode="decimal" step="0.5" min="0" value="${f.protein ?? 0}"><span>g</span></span></label>
+        <label class="field"><span class="field-label">Calories</span><span class="input-unit"><input name="kcal" type="number" inputmode="numeric" min="0" value="${f.kcal ?? 0}"><span>kcal</span></span></label>
+        <label class="field"><span class="field-label">Fruit</span><span class="input-unit"><input name="fruit" type="number" inputmode="numeric" min="0" max="10" value="${f.fruit || 0}"><span>serv.</span></span></label>
+        <label class="field"><span class="field-label">Veg</span><span class="input-unit"><input name="veg" type="number" inputmode="numeric" min="0" max="10" value="${f.veg || 0}"><span>serv.</span></span></label>
+      </div>
+      <button class="btn btn--primary btn--block" type="submit">Save</button>
+    </form>`,
+    actions: {
+      save: ({ form, sheet }) => {
+        const name = (form.name || '').trim();
+        if (!name) return;
+        store.put('foods', { ...f, name, protein: n(form.protein) || 0, kcal: n(form.kcal) || 0, fruit: n(form.fruit) || 0, veg: n(form.veg) || 0, approx: false });
+        hap.tap();
+        app.closeSheet(sheet);
+      },
     },
   });
 }

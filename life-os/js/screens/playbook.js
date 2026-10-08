@@ -116,7 +116,7 @@ export default {
           <p class="muted small">When work explodes, you’re tired or travelling. Switch the day to Minimum from the Today header. That’s it. No guilt.</p></div>
         <div class="card plan-routine"><div class="plan-routine-head"><strong>Sick day</strong></div>
           <p class="small">No hard training, no aggressive deficit, no forced cardio. Rest, hydration, nutrition, sleep, and medical care when needed. The day is paused and doesn’t drag your averages down. Resume training gradually.</p></div>
-        <div class="card plan-routine"><div class="plan-routine-head"><strong>Daily score</strong><span class="muted">${three.length} of ${H.FOCUS_LIMIT} chosen</span>
+        <div class="card plan-routine"><div class="plan-routine-head"><strong>Daily score</strong><span class="muted">${three.length} of ${H.focusLimit()} chosen</span>
             <button type="button" class="link-btn" data-action="nav" data-to="plan/habits/sort">${three.length ? 'Change' : 'Choose'}</button></div>
           <p class="small">${three.length ? `Your three: ${three.map((h) => h.name).join(' · ')}, plus today’s Top 3. Tiny versions count; autopilot habits never lower it.` : 'Choose your three habits to train. They and today’s Top 3 make the score; everything else runs on autopilot.'}</p>
           <p class="muted small">Rolling 7- and 30-day consistency, not streaks: strong ≥ ${bands.strong}% · steady ${bands.steady}–${bands.strong - 1}% · needs attention ${bands.attention}–${bands.steady - 1}% · below that, simplify. Missing three or more habits means “simplify this week”, never “add more”.</p></div>

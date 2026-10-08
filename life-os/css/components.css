@@ -625,3 +625,24 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 .sort-row > .row { flex: 1; min-width: 0; padding-left: 4px; }
 .list > .sort-row + .sort-row > .row::before { left: 4px; }
 .sort-list > .is-lifted { border-radius: var(--r-lg); }
+.food-tools { display: flex; align-items: center; gap: var(--s2); }
+.food-tools .search-field { flex: 1; min-width: 0; }
+.food-row { display: flex; align-items: center; gap: 4px; }
+.food-row .food-item { flex: 1; min-width: 0; }
+
+/* the focus timer: a pill above the tab bar while a block runs, and its sheet */
+.focus-bar { position: fixed; z-index: 55; left: 50%; transform: translateX(-50%); bottom: calc(var(--tabbar-h) + var(--tabbar-gap) + var(--safe-bottom) + 12px);
+  display: flex; align-items: center; gap: 2px; padding: 4px; border-radius: var(--r-pill); background: var(--ink); color: var(--on-ink); box-shadow: var(--shadow-lg);
+  animation: sec-in 260ms var(--ease-standard) both; }
+.focus-bar-main { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 12px 0 10px; border-radius: var(--r-pill); color: inherit; }
+.focus-bar-time { font-size: var(--text-body); font-weight: var(--weight-semibold); line-height: 1; letter-spacing: var(--tracking-body); }
+.focus-bar-label { max-width: 9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); opacity: .72; }
+.focus-bar-btn { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: rgba(255, 255, 255, .12); color: inherit; }
+.has-focus-bar .toast-layer { bottom: calc(var(--tabbar-h) + var(--tabbar-gap) + var(--safe-bottom) + 68px); }
+.has-focus-bar .main { padding-bottom: calc(var(--tabbar-h) + var(--tabbar-gap) + var(--safe-bottom) + 84px); }
+.has-sheet .focus-bar { display: none; }
+@media (min-width: 600px) { .focus-bar { bottom: 24px; left: calc(50% + var(--rail-w) / 2); } .has-focus-bar .toast-layer { bottom: 84px; } .has-focus-bar .main { padding-bottom: 104px; } }
+.focus-clock { margin-top: var(--s2); text-align: center; font-size: var(--text-display-xl); font-weight: var(--weight-semibold); line-height: var(--leading-display-xl); letter-spacing: var(--tracking-display-xl); }
+.focus-for { text-align: center; color: var(--text-2); font-size: var(--text-body); font-weight: var(--weight-medium); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+.focus-own { width: 7.5em; height: 40px; }
+.focus-own input { height: 40px; }

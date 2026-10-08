@@ -3,7 +3,7 @@
 // future sync can learn about deletions. Date-keyed records also carry `date` ('YYYY-MM-DD',
 // indexed) and `tz`, the time zone they were first written in.
 export const DB_NAME = 'life-os';
-export const DB_VERSION = 6;
+export const DB_VERSION = 7;
 // Version of the built-in habit system (the seed); seed.js brings older installs up to date.
 export const SEED_VERSION = 2;
 /** The newest migration (data/migrations.js). Start-up loads migrations only when it isn't applied. */
@@ -50,8 +50,11 @@ export const STORES = {
   records: { indexes: [] },                  // personal records already marked (each one once), derived from real data
   levelEvents: { indexes: [] },              // the day each habit reached each mastery level, engraved once
   rewards: { indexes: ['status'] },          // rewards you set, unlocked only by real counts
-  commitments: { indexes: ['status'] },      // 7, 14 or 30-day pledges with your own stake
+  commitments: { indexes: ['status'] },      // pledges (7, 14, 30 days or your own length) with your own stake
   quests: { indexes: [] },                   // one optional side quest a week (id = the week's Monday)
+  lists: { indexes: [] },                    // simple checklists (groceries, packing): a name and its items
+  expenses: { indexes: ['date'] },           // money spent: amount, category, note
+  events: { indexes: [] },                   // dates that matter: birthdays, anniversaries, countdowns
   daySnapshots: { indexes: [] },             // derived per-day summary (id = date), rebuilt from the logs
   outbox: { indexes: [] },                   // latest change per record ('store:id'), for a future sync
   localBackups: { indexes: [] },             // automatic copies taken before data migrations (last three)

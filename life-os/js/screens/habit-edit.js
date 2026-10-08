@@ -15,7 +15,8 @@ import * as hap from '../ui/haptics.js';
 const ICONS = ['circle', 'sunrise', 'sun', 'moon', 'moon-star', 'bed', 'droplet', 'beef', 'apple', 'salad', 'egg', 'coffee', 'activity', 'dumbbell',
   'footprints', 'bike', 'person-standing', 'heart-pulse', 'scan-eye', 'eye', 'pill', 'leaf', 'flower-2', 'sprout', 'book-open', 'graduation-cap',
   'notebook-pen', 'lightbulb', 'brain', 'hand-heart', 'book-heart', 'church', 'sparkle', 'heart', 'user-round', 'users', 'message-circle', 'house',
-  'chef-hat', 'wallet', 'briefcase', 'focus', 'list-checks', 'target', 'power', 'monitor', 'smartphone', 'timer', 'flag', 'star'];
+  'chef-hat', 'wallet', 'piggy-bank', 'receipt', 'briefcase', 'focus', 'list-checks', 'target', 'power', 'monitor', 'smartphone', 'timer', 'flag', 'star',
+  'glass-water', 'trending-up', 'circle-dot', 'ruler', 'camera', 'image', 'scroll-text', 'calendar', 'calendar-days', 'cake', 'calendar-heart'];
 const DAYS = [[1, 'M'], [2, 'T'], [3, 'W'], [4, 'T'], [5, 'F'], [6, 'S'], [7, 'S']];
 const DAY_NAMES = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const n = (v) => (v === '' || v == null ? null : Number(v));
@@ -33,7 +34,7 @@ function check(d, id) {
   if (H.isNumeric(d) && d.type !== 'rating' && !(Number(d.target) > 0)) errors.target = 'Set a target above zero.';
   if (d.schedule.kind === 'weekdays' && !(d.schedule.days || []).length) errors.days = 'Pick at least one day.';
   const was = id ? H.stateOf(H.habit(id)) : null;
-  if (d.state === 'focus' && was !== 'focus' && focusOthers(id) >= H.FOCUS_LIMIT) errors.state = 'Your three are full. Choose Later, or swap one out first.';
+  if (d.state === 'focus' && was !== 'focus' && focusOthers(id) >= H.focusLimit()) errors.state = `Your ${H.focusWord()} are full. Choose Later, or swap one out first.`;
   return errors;
 }
 
@@ -48,6 +49,8 @@ function clean(d, before) {
   if (out.type === 'rating') { out.target = 10; out.unit = ''; }
   if (out.type === 'binary' || out.type === 'check') out.target = 1;
   if (out.min === '' || out.min == null || Number.isNaN(out.min)) out.min = null;
+  // A target you set yourself replaces the automatic ramp (steps start at 7,000 and step up).
+  if (before?.ramp && Number(d.target) !== Number(before.target)) out.ramp = null;
   // A new state brings its own bookkeeping: when focus began, the place in the queue.
   const was = before ? H.stateOf(before) : null;
   if (d.state !== was && d.state !== 'paused') Object.assign(out, HS.statePatch(before || { ...d, state: 'autopilot' }, d.state, { focusCount: 0 }));
@@ -121,7 +124,7 @@ export function openHabitEditor(target) {
           <label class="field"><span class="field-label">Description <small>optional</small></span>
             <textarea class="input" rows="2" data-input="f" data-f="description" placeholder="What counts? Keep it simple.">${d.description || ''}</textarea></label>
           <div class="field"><span class="field-label">Icon</span>
-            <div class="icon-grid" role="radiogroup" aria-label="Icon">${ICONS.map((ic) => html`<button type="button" role="radio" aria-checked="${d.icon === ic}" aria-label="${ic}" class="${cx('icon-opt', d.icon === ic && 'is-on')}" data-action="icon" data-v="${ic}" style="--ic:${catColor(d.color || d.category)}">${icon(ic, { size: 18 })}</button>`)}</div></div>
+            <div class="icon-grid" role="radiogroup" aria-label="Icon">${(ICONS.includes(d.icon) || !d.icon ? ICONS : [d.icon, ...ICONS]).map((ic) => html`<button type="button" role="radio" aria-checked="${d.icon === ic}" aria-label="${ic}" class="${cx('icon-opt', d.icon === ic && 'is-on')}" data-action="icon" data-v="${ic}" style="--ic:${catColor(d.color || d.category)}">${icon(ic, { size: 18 })}</button>`)}</div></div>
           <div class="grid-2">
             <label class="field"><span class="field-label">Area</span><select class="input" data-change="f" data-f="category">${CATEGORIES.map((c) => html`<option value="${c.id}" ${raw(d.category === c.id ? 'selected' : '')}>${c.label}</option>`)}</select></label>
             <label class="field"><span class="field-label">Today group</span><select class="input" data-change="f" data-f="section">${SECTIONS.map((c) => html`<option value="${c.id}" ${raw(d.section === c.id ? 'selected' : '')}>${c.label}</option>`)}</select></label>
@@ -214,8 +217,8 @@ export function openHabitEditor(target) {
       count: ({ data, sheet }) => { const sch = sheet.ui.draft.schedule; sch.count = Math.max(1, Math.min(sch.kind === 'perWeek' ? 7 : 31, (sch.count || 1) + Number(data.delta))); changed(sheet); },
       every: ({ data, sheet }) => { const sch = sheet.ui.draft.schedule; sch.every = Math.max(2, Math.min(90, (sch.every || 7) + Number(data.delta))); changed(sheet); },
       state: ({ data, sheet }) => {
-        if (data.value === 'focus' && sheet.ui.draft.state !== 'focus' && focusOthers(id) >= H.FOCUS_LIMIT) {
-          app.toast('Your three are full. Swap one out first.', { action: { label: 'Choose', fn: () => { app.closeSheet(sheet); app.go('plan/habits/sort'); } } });
+        if (data.value === 'focus' && sheet.ui.draft.state !== 'focus' && focusOthers(id) >= H.focusLimit()) {
+          app.toast(`Your ${H.focusWord()} are full. Swap one out first.`, { action: { label: 'Choose', fn: () => { app.closeSheet(sheet); app.go('plan/habits/sort'); } } });
           return;
         }
         sheet.ui.draft.state = data.value;
@@ -246,7 +249,7 @@ export function openHabitEditor(target) {
         const h = store.put('habits', clean(u.draft, null));
         hap.success();
         app.closeSheet(sheet);
-        app.toast(h.state === 'focus' ? `${h.name} is one of your three.` : h.state === 'queue' ? `${h.name} is waiting in Later.` : 'Habit created', {
+        app.toast(h.state === 'focus' ? `${h.name} is one of your ${H.focusWord()}.` : h.state === 'queue' ? `${h.name} is waiting in Later.` : 'Habit created', {
           icon: 'check', action: { label: 'Open', fn: () => app.go(`plan/habits/${h.id}`) },
         });
       },

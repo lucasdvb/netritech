@@ -2,7 +2,7 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
-**Status.** Phases 0–11 and the final pass (bugs, cleanup, optimisation) are done (see section 15). What's left is the owner's sign-off on the phone.
+**Status.** Phases 0–11, the final pass (bugs, cleanup, optimisation) and Phase 12 (the owner's requests after testing on the phone) are done (see section 15).
 
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
@@ -1238,6 +1238,63 @@ What it covered: a lint for mistakes (ESLint's built-in rules, `npm run lint`, n
 - **Cleanup:** 21 unused CSS classes, unused imports and values, and stale README paths are gone. The service worker setup, the safety nets' actions and the habit labels only later screens use (`habits-more.js`) load after the first screen, so first-screen JavaScript stays within 200 KB despite the safer saving.
 
 Where it ends: the lint is clean, 137 unit tests and all 20 browser suites (176 steps) pass, and every budget holds with a year of data and the CPU four times slower: Today is ready in about 490 ms (budget 600), no screen takes more than 70 ms to render, the slowest tap is answered in 48 ms (budget 50), nothing blocks for more than 50 ms, first-screen JavaScript is 199 KB and the offline copy 1.4 MB. Screenshots, light and dark: [`final-pass-screens.png`](final-pass-screens.png).
+
+
+### Phase 12: what the owner asked for after testing · done
+
+The owner tested the app on the phone and asked for six things. Each is below with the decision taken.
+
+1. **Text that fits.** An audit of every screen at 360, 375 and 390 px (and with larger text) found the crowded places, and each was fixed with layout and shorter words, never smaller tokens:
+   - Today's score line is now two calm lines ("0 of 2 done" over "78% over 7 days · Steady").
+   - The quick tiles say *Protein 0 g* instead of a wrapped "0 g protein", and water's add mark is a small + instead of a badge.
+   - *Everything else* became **Other habits** ("0 of 16").
+   - Three-up stat tiles (Work, Mind, Sleep) use one-word labels with "this week" underneath.
+   - Section headings let their note drop to a second line instead of squeezing the title.
+   - Body, Reflect and Training lines were split or shortened.
+   - "vs tuesday" and "Finished oct 27" are capitalised properly (`dayInline`).
+   - Emphasis inside text is 600, as the typography rules say, never the browser's bold.
+2. **Workout plans you create.** *Training › Your workouts*:
+   - Create, rename, duplicate and delete (with Undo, which also puts back the weekly plan days that used it).
+   - Each exercise has sets, a target, a start load and rest between sets.
+   - A session can be saved as a workout.
+   - The weekly targets on Training come from your plan instead of a fixed 4 strength and 2 cardio.
+   - Routines gained their own icon, can be dragged into order, and windows can run past midnight.
+3. **Drag and drop.** One component (`js/ui/reorder.js`) for touch, mouse, keyboard and screen readers, loaded the first time a grip is touched. It is used for:
+   - Top 3, Edit Today's blocks and pins, and routine steps and routines.
+   - Habits and goals (*Arrange*; in Later, order decides what moves into focus next).
+   - Workouts and their exercises, and exercises mid-session.
+   - List items, money categories and moodboard pictures.
+
+   It moves the neighbours rather than the item, so keyboard focus stays on the grip.
+4. **Moodboard.** *Plan › Moodboard*:
+   - Up to five pictures, each shrunk on the phone to 1600 px.
+   - They appear on Today as one collage, the first picture large. The collage is a block you can move or hide in Edit Today.
+   - The pictures are kept with the progress photos but always travel in a backup. A restore that doesn't include progress photos keeps the ones already on the device.
+5. **Fewer limits.** Settings and editors now allow:
+   - Two to five habits in focus (three stays the default, and every "your three" follows the choice).
+   - Your own steps target (it used to be stuck on the automatic ramp).
+   - Up to six pinned actions, in your order.
+   - Pledges of any length from 3 to 90 days.
+   - Task repeats every day or every few days, on chosen weekdays, and yearly.
+   - Lifting loads in lb when that's your unit.
+   - Quick foods you can edit and delete.
+   - Every habit in the season picker.
+   - The icons the starter habits use, back in the icon picker.
+6. **What else would help, kept minimal.** Each sits in Plan with one row and stays off Today unless it has something to say:
+   - **Focus timer:** 25, 50 or 90 minutes or your own. A pill follows you while it runs, and a finished block counts as a focus block, even if the app was closed.
+   - **Lists:** checklists that aren't tasks: groceries, packing, ideas.
+   - **Money:** spending against an optional monthly budget, in your currency, linked to no bank.
+   - **Dates:** birthdays and anniversaries every year, and events with a countdown. The next two weeks show on Today under *Coming up*.
+
+   Three new stores (`lists`, `expenses`, `events`) bring the database to version 7, created on first open with no migration. The capture + sheet has *Focus* and *Spent*, and Today's tiles can hold either.
+
+Where it ends:
+- The lint is clean, and 147 unit tests and all 21 browser suites pass, including the new `phase12` suite (8 flows).
+- Every screen's visual baseline was refreshed after the deliberate changes.
+- First-screen JavaScript is back to 200 KB. To get there:
+  - Minimum and sick days, opening a habit from a hold, and the day swipe now load when first needed.
+  - Coming up loads only when dates exist.
+- The offline copy is 1.50 MB. The unused bold font is no longer cached.
 
 ---
 

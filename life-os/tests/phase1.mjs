@@ -20,7 +20,7 @@ await step('a fresh start asks you to choose your three, and nothing is counted 
   await go('#/today', '.today');
   await page.waitForSelector('.choose3');
   const hero = await page.textContent('.now-meta--btn');
-  if (!/planned/.test(hero)) throw new Error('score line: ' + hero);
+  if (!/of \d+ done|Nothing planned/.test(hero)) throw new Error('score line: ' + hero);
   if ((await state()).focus.length) throw new Error('habits in focus before choosing');
   await shot('p1-01-today-choose');
 });

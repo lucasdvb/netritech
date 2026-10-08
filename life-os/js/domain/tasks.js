@@ -32,10 +32,23 @@ export function forToday(date = today()) {
   });
 }
 
+const SHORT_DAYS = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+/** The weekdays of a weekly repeat (older ones hold a single day). */
+const daysOf = (r) => (r.days?.length ? [...r.days].sort() : [r.day]);
+
 export function repeatLabel(r) {
   if (!r) return '';
-  if (r.kind === 'weekly') return `Every ${DAY_NAMES[r.day]}`;
+  if (r.kind === 'daily') return (r.n || 1) > 1 ? `Every ${r.n} days` : 'Every day';
+  if (r.kind === 'weekly') {
+    const d = daysOf(r);
+    if (d.length === 1) return `Every ${DAY_NAMES[d[0]]}`;
+    if (d.join() === '1,2,3,4,5') return 'Every weekday';
+    if (d.join() === '6,7') return 'Every weekend';
+    return `Every ${d.map((x) => SHORT_DAYS[x]).join(', ')}`;
+  }
   if (r.kind === 'monthly') return `Monthly on the ${ordinal(r.day)}`;
+  if (r.kind === 'yearly') return `Every year on ${MONTHS[r.month - 1]} ${r.day}`;
   return '';
 }
 
@@ -44,17 +57,23 @@ const monthDay = (y, m, d) => toISO(new Date(y, m, Math.min(d, new Date(y, m + 1
 /** First occurrence on or after `from`. */
 export function firstDate(r, from = today()) {
   if (!r) return null;
-  if (r.kind === 'weekly') return addDays(from, (r.day - weekday(from) + 7) % 7);
+  if (r.kind === 'daily') return from;
+  if (r.kind === 'weekly') return daysOf(r).map((d) => addDays(from, (d - weekday(from) + 7) % 7)).sort()[0];
   if (r.kind === 'monthly') {
     const f = fromISO(from);
     const cand = monthDay(f.getFullYear(), f.getMonth(), r.day);
     return cand >= from ? cand : monthDay(f.getFullYear(), f.getMonth() + 1, r.day);
   }
+  if (r.kind === 'yearly') {
+    const y = fromISO(from).getFullYear();
+    const cand = monthDay(y, r.month - 1, r.day);
+    return cand >= from ? cand : monthDay(y + 1, r.month - 1, r.day);
+  }
   return null;
 }
 
-/** Next occurrence strictly after `after`. */
-export const nextDate = (r, after) => firstDate(r, addDays(after, 1));
+/** Next occurrence strictly after `after` (every n days counts from the one just done). */
+export const nextDate = (r, after) => (r?.kind === 'daily' ? addDays(after, Math.max(1, r.n || 1)) : firstDate(r, addDays(after, 1)));
 
 /* ---------- writes ---------- */
 export function add({ title, date = null, area = 'life', repeat = null, notes = '', projectId = null }) {

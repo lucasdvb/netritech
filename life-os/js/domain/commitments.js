@@ -1,4 +1,4 @@
-// Commitments (G8): a 7, 14 or 30-day pledge to a habit, with a stake you choose, sealed with a hold.
+// Commitments (G8): a pledge to a habit for 7, 14 or 30 days (or any length from 3 to 90), with a stake you choose, sealed with a hold.
 // The days count from your logs (the tiny version counts). Ending one early asks what got in the
 // way and offers a smaller pledge; nothing is ever called failed.
 import * as store from '../data/store.js';

@@ -6,6 +6,7 @@ import { icon } from '../ui/icons.js';
 import { segmented } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
+import { loadText } from '../ui/format.js';
 
 export function pickExercise({ title = 'Add exercise', multi = false, onPick }) {
   return app.sheet({
@@ -22,7 +23,7 @@ export function pickExercise({ title = 'Add exercise', multi = false, onPick }) 
         <ul class="food-list food-list--tall">${list.map((e) => {
           const n = s.ui.added.filter((id) => id === e.id).length;
           return html`<li data-key="${e.id}"><button type="button" class="${cx('food-item', n && 'is-added')}" data-action="pick" data-id="${e.id}" aria-label="Add ${e.name}${n ? `, added ${n === 1 ? 'once' : `${n} times`}` : ''}">
-            <span class="food-name">${e.name}</span><span class="food-meta">${F.categoryLabel(e.category)}${e.defaultLoad ? ` · ${e.defaultLoad} kg` : ''}</span><span class="food-add">${icon(n ? 'check' : 'plus', { size: 18 })}</span></button></li>`;
+            <span class="food-name">${e.name}</span><span class="food-meta">${F.categoryLabel(e.category)}${e.defaultLoad ? ` · ${loadText(e.defaultLoad)}` : ''}</span><span class="food-add">${icon(n ? 'check' : 'plus', { size: 18 })}</span></button></li>`;
         })}</ul>
         ${!list.length ? html`<p class="muted center">No match. Add it in the exercise library.</p>` : ''}
         ${multi ? html`<button type="button" class="btn btn--primary btn--block" data-action="done">${s.ui.added.length ? `Done · ${s.ui.added.length} added` : 'Done'}</button>` : ''}

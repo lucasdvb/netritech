@@ -103,7 +103,7 @@ export function nextActions(date = today(), now = new Date()) {
   for (const h of plan) {
     if (cur?.next?.habitId === h.id) continue;
     const late = h.time && mins >= parseHM(h.time);
-    add(late ? 22 : 32, { id: `habit-${h.id}`, kind: 'focus', eyebrow: mode === 'minimum' ? 'Minimum day' : 'Your three',
+    add(late ? 22 : 32, { id: `habit-${h.id}`, kind: 'focus', eyebrow: mode === 'minimum' ? 'Minimum day' : `Your ${H.focusWord()}`,
       title: mode === 'minimum' && H.tinyOf(h)?.label && !h.source ? H.tinyOf(h).label : h.name, sub: mode === 'minimum' ? '' : tinySub(h),
       primary: habitAction(h, date), secondary: mode !== 'minimum' && H.tinyOf(h) && !h.source && h.type !== 'check' ? act('Tiny', 'tiny', { id: h.id }) : null, habitId: h.id });
   }

@@ -7,13 +7,14 @@ import { restDefault } from '../domain/templates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { empty } from '../ui/components.js';
-import { num } from '../ui/format.js';
+import { kgOut, kgIn, weightUnit, loadText } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 
 // Rest between sets by kind of exercise, in seconds.
 // Rest: what the workout sets for this exercise, or a default by category.
 const restFor = (e, s) => s?.rest ?? restDefault(e);
+const loadStep = (e) => (weightUnit() === 'lb' ? 2.5 : e?.loadStep || 1);
 
 let tick = 0;
 let lock = null;
@@ -100,11 +101,11 @@ export default {
                 <button type="button" class="gym-ghost" data-action="g-rest" data-d="30">+30 s</button>
                 <button type="button" class="gym-ghost" data-action="g-rest-skip">Skip rest</button>
               </div>
-              <p class="gym-next">Next: ${cur.s.completed ? 'all done' : `set ${cur.s.setIndex + 1}${v.reps != null ? ` · ${v.reps} reps` : ''}${v.load ? ` · ${num(v.load, v.load % 1 ? 1 : 0)} kg` : ''}`}</p>
+              <p class="gym-next">Next: ${cur.s.completed ? 'all done' : `set ${cur.s.setIndex + 1}${v.reps != null ? ` · ${v.reps} reps` : ''}${v.load ? ` · ${loadText(v.load)}` : ''}`}</p>
             </div>`
           : html`<div class="gym-ctls">
               ${cur.e?.metric === 'time' ? control('Seconds', 'seconds', v.seconds, 5, 's') : cur.e?.metric === 'minutes' ? control('Minutes', 'minutes', v.minutes, 1, 'min') : control('Reps', 'reps', v.reps, 1, cur.e?.unilateral ? 'reps / side' : 'reps')}
-              ${cur.e?.metric === 'reps' ? control('Load', 'load', v.load ?? 0, cur.e?.loadStep || 1, cur.e?.defaultLoad ? 'kg' : 'kg added') : ''}
+              ${cur.e?.metric === 'reps' ? control('Load', 'load', Math.round(kgOut(v.load ?? 0) * 2) / 2, loadStep(cur.e), cur.e?.defaultLoad ? weightUnit() : `${weightUnit()} added`) : ''}
             </div>
             <button type="button" class="gym-go" data-action="g-done" data-id="${cur.s.id}">${cur.s.completed ? 'Log it again' : `Done · set ${cur.s.setIndex + 1}`}</button>`}
         </div>`}
@@ -147,7 +148,9 @@ export default {
       if (!target) return;
       const v = suggested(w, target.s, target.e);
       const f = data.f;
-      const next = Math.max(0, Math.round(((Number(v[f]) || 0) + Number(data.d)) * 10) / 10);
+      // Loads step in your unit (1 kg or 2.5 lb) and are kept in kg.
+      const next = f === 'load' ? Math.max(0, Math.round(kgIn(Math.round(kgOut(Number(v.load) || 0) * 2) / 2 + Number(data.d)) * 100) / 100)
+        : Math.max(0, Math.round(((Number(v[f]) || 0) + Number(data.d)) * 10) / 10);
       store.update('workoutSets', target.s.id, { [f]: next });
       hap.tap();
     },

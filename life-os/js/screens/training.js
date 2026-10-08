@@ -8,7 +8,7 @@ import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty } from '../ui/components.js';
 import { barChart } from '../ui/charts.js';
-import { num } from '../ui/format.js';
+import { num, kgOut, weightUnit, loadText } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
 import { startWorkout, openStartSheet } from './workout-actions.js';
 import * as TP from '../domain/templates.js';
@@ -41,7 +41,7 @@ function calfCard() {
     <div class="comp-grid">
       <div><p class="stat-label">Sessions</p><p class="comp-val tnum">${w.calfSessions}</p></div>
       <div><p class="stat-label">Total reps</p><p class="comp-val tnum">${num(w.calfReps)}</p></div>
-      <div><p class="stat-label">Volume</p><p class="comp-val tnum">${num(w.calfVolume)}<small> kg</small></p></div>
+      <div><p class="stat-label">Volume</p><p class="comp-val tnum">${num(kgOut(w.calfVolume || 0))}<small> ${weightUnit()}</small></p></div>
     </div>
     ${weeks.some((x) => x.calfReps) ? barChart({ labels: weeks.map((x) => fmtMD(x.date).split(' ')[1] || fmtMD(x.date)), tipLabels: weeks.map((x) => `Week of ${fmtMD(x.date)}`), values: weeks.map((x) => x.calfReps || null), color: 'var(--c-body)', fmt: (v) => `${num(v)} reps`, height: 110 }) : html`<p class="muted small">Calf reps per week will chart here.</p>`}
     <p class="fine-print">Progression: standing → single-leg → slow eccentric → paused, then add the 10 kg dumbbell.</p>
@@ -109,7 +109,7 @@ export default {
       <section class="block stack">${calfCard()}${coreCard()}${postureCard()}</section>
       <section class="block"><div class="block-head"><h2 class="block-title">Personal bests</h2></div>
         ${pbs.length ? html`<ul class="list">${pbs.map((p) => html`<li><a class="row" href="#/plan/training/exercises/${p.exercise.id}" data-action="nav" data-to="plan/training/exercises/${p.exercise.id}">
-          <span class="row-main"><span class="row-title">${p.exercise.name}</span><span class="row-sub">${[p.reps ? `${p.reps} reps` : '', p.seconds ? `${p.seconds} s hold` : '', p.load ? `${num(p.load, p.load % 1 ? 1 : 0)} kg` : ''].filter(Boolean).join(' · ')}</span></span>
+          <span class="row-main"><span class="row-title">${p.exercise.name}</span><span class="row-sub">${[p.reps ? `${p.reps} reps` : '', p.seconds ? `${p.seconds} s hold` : '', p.load ? loadText(p.load) : ''].filter(Boolean).join(' · ')}</span></span>
           <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>`)}</ul>`
           : html`<p class="muted">Bests appear quietly as you log sessions.</p>`}
       </section>

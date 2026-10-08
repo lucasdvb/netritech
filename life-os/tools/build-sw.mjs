@@ -9,7 +9,8 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const include = ['index.html', 'manifest.webmanifest', 'css', 'js', 'assets'];
 // Inter's latin-ext files load only for characters beyond basic Latin (unicode-range), so they
 // stay out of the precache and are cached the first time a page needs them.
-const skip = /(\.txt|\.md|LICENSE.*|Inter-latin-ext-\d+\.woff2)$/;
+// Extended-Latin fonts load on demand; Bold (700) is declared for rare emphasis but not used, so it isn't cached up front.
+const skip = /(\.txt|\.md|LICENSE.*|Inter-latin-ext-\d+\.woff2|Inter-latin-700\.woff2)$/;
 
 const files = [];
 const walk = (p) => {

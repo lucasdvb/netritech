@@ -4,9 +4,10 @@ import { html, raw } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, segmented } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
+import { kgOut, kgIn, weightUnit, loadText } from '../ui/format.js';
 
 export function exerciseSheet(existing = null) {
-  const ui = { name: existing?.name || '', category: existing?.category || 'chest', metric: existing?.metric || 'reps', unilateral: !!existing?.unilateral, load: existing?.defaultLoad ?? '', cues: existing?.cues || '' };
+  const ui = { name: existing?.name || '', category: existing?.category || 'chest', metric: existing?.metric || 'reps', unilateral: !!existing?.unilateral, load: existing?.defaultLoad ? Math.round(kgOut(existing.defaultLoad) * 2) / 2 : '', cues: existing?.cues || '' };
   app.sheet({
     title: existing ? 'Edit exercise' : 'New exercise',
     ui,
@@ -18,7 +19,7 @@ export function exerciseSheet(existing = null) {
         <option value="time" ${raw(s.ui.metric === 'time' ? 'selected' : '')}>Seconds (holds)</option>
         <option value="minutes" ${raw(s.ui.metric === 'minutes' ? 'selected' : '')}>Minutes (cardio)</option></select></label>
       <div class="grid-2">
-        <label class="field"><span class="field-label">Default load</span><span class="input-unit"><input name="load" type="number" inputmode="decimal" step="0.5" min="0" value="${s.ui.load}"><span>kg</span></span></label>
+        <label class="field"><span class="field-label">Default load</span><span class="input-unit"><input name="load" type="number" inputmode="decimal" step="0.5" min="0" value="${s.ui.load}"><span>${weightUnit()}</span></span></label>
         <label class="check-line"><input type="checkbox" name="unilateral" ${raw(s.ui.unilateral ? 'checked' : '')}> Per side</label>
       </div>
       <label class="field"><span class="field-label">Cues <small>optional</small></span><input class="input" name="cues" value="${s.ui.cues}" placeholder="What good form feels like"></label>
@@ -31,7 +32,7 @@ export function exerciseSheet(existing = null) {
       save: ({ form, sheet }) => {
         if (!form.name?.trim()) { app.toast('Give the exercise a name.'); return; }
         store.put('exercises', { ...(existing || { family: null, level: 0, archived: false }), name: form.name.trim(), category: form.category, metric: form.metric,
-          unilateral: !!form.unilateral, defaultLoad: form.load === '' ? 0 : Number(form.load), cues: form.cues || '' });
+          unilateral: !!form.unilateral, defaultLoad: form.load === '' ? 0 : Math.round(kgIn(Number(form.load)) * 100) / 100, cues: form.cues || '' });
         app.closeSheet(sheet);
       },
       archive: ({ sheet }) => {
@@ -58,7 +59,7 @@ export default {
       <div class="block-tight">${segmented([{ id: 'all', label: 'All' }, ...F.CATEGORIES], cat, { action: 'cat', name: 'Category' })}</div>
       ${groups.map((g) => html`<section class="block" data-key="g-${g.id}"><div class="block-head"><h2 class="block-title">${g.label}</h2><span class="block-meta">${g.items.length}</span></div>
         <ul class="list">${g.items.map((e) => html`<li><a class="row" href="#/plan/training/exercises/${e.id}" data-action="nav" data-to="plan/training/exercises/${e.id}">
-          <span class="row-main"><span class="row-title">${e.name}</span><span class="row-sub">${[e.metric === 'time' ? 'Seconds' : e.metric === 'minutes' ? 'Minutes' : 'Reps', e.unilateral ? 'per side' : '', e.defaultLoad ? `${e.defaultLoad} kg` : '', e.family ? `level ${e.level}` : ''].filter(Boolean).join(' · ')}</span></span>
+          <span class="row-main"><span class="row-title">${e.name}</span><span class="row-sub">${[e.metric === 'time' ? 'Seconds' : e.metric === 'minutes' ? 'Minutes' : 'Reps', e.unilateral ? 'per side' : '', e.defaultLoad ? loadText(e.defaultLoad) : '', e.family ? `level ${e.level}` : ''].filter(Boolean).join(' · ')}</span></span>
           <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>`)}</ul></section>`)}
       ${!groups.length ? html`<p class="muted center block">No exercises match.</p>` : ''}`;
   },

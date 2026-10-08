@@ -8,38 +8,10 @@ import { icon } from '../ui/icons.js';
 import { pageHead, empty, segmented } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
+import { shrink, hydrate, forget } from '../ui/images.js';
 
 const POSES = [{ id: 'front', label: 'Front' }, { id: 'side', label: 'Side' }, { id: 'back', label: 'Back' }];
-const urls = new Map();
-
-async function urlFor(id) {
-  if (urls.has(id)) return urls.get(id);
-  const rec = await blobs.get(id);
-  if (!rec?.blob) return null;
-  const u = URL.createObjectURL(rec.blob);
-  urls.set(id, u);
-  return u;
-}
-
-async function hydrate(root) {
-  for (const img of root.querySelectorAll('img[data-photo]:not([src])')) {
-    const u = await urlFor(img.dataset.photo);
-    if (u) img.src = u;
-    else img.closest('.photo')?.classList.add('is-missing');
-  }
-}
-
-async function shrink(file, max = 1600) {
-  const bmp = await createImageBitmap(file).catch(() => null);
-  if (!bmp) return { blob: file, w: null, h: null };
-  const scale = Math.min(1, max / Math.max(bmp.width, bmp.height));
-  const w = Math.round(bmp.width * scale), h = Math.round(bmp.height * scale);
-  const canvas = document.createElement('canvas');
-  canvas.width = w; canvas.height = h;
-  canvas.getContext('2d').drawImage(bmp, 0, 0, w, h);
-  const blob = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', 0.85));
-  return { blob: blob || file, w, h };
-}
+const hydratePhotos = (root) => hydrate(root, { attr: 'photo', host: '.photo' });
 
 const byPose = (pose) => store.all('photos').filter((p) => p.pose === pose).sort((a, b) => (a.date < b.date ? -1 : 1));
 
@@ -87,13 +59,13 @@ export default {
           </figure>`)}</div></section>`)}`}`;
   },
   mount(el) {
-    hydrate(el);
+    hydratePhotos(el);
     el.addEventListener('input', (e) => {
       if (!e.target.matches('.compare-range')) return;
       e.target.closest('.compare').style.setProperty('--pos', `${e.target.value}%`);
     });
   },
-  update(el) { hydrate(el); },
+  update(el) { hydratePhotos(el); },
   actions: {
     pose: ({ data, ui }) => { ui.pose = data.value; app.refresh(); },
     mode: ({ data, ui }) => { ui.mode = data.value; app.refresh(); },
@@ -103,8 +75,7 @@ export default {
         onGone: async () => {
           if (store.get('photos', data.id)) return;
           await blobs.del(data.id);
-          const u = urls.get(data.id);
-          if (u) { URL.revokeObjectURL(u); urls.delete(data.id); }
+          forget(data.id);
         },
       });
     },

@@ -23,6 +23,8 @@ export const kgIn = (v) => (v == null || v === '' ? null : weightUnit() === 'lb'
 export const cmOut = (cm) => (cm == null ? null : lengthUnit() === 'in' ? cm / 2.54 : cm);
 export const cmIn = (v) => (v == null || v === '' ? null : lengthUnit() === 'in' ? Number(v) * 2.54 : Number(v));
 
+/** A lifting load in your unit ("22.5 kg", "50 lb"); empty for none. */
+export const loadText = (kg) => { if (!kg) return ''; const v = kgOut(kg); return `${num(v, Math.abs(v - Math.round(v)) > 0.05 ? 1 : 0)} ${weightUnit()}`; };
 export const weight = (kg, d = 1) => (kg == null ? '—' : `${num(kgOut(kg), d)} ${weightUnit()}`);
 export const length = (cm, d = 1) => (cm == null ? '—' : `${num(cmOut(cm), d)} ${lengthUnit()}`);
 export const litres = (ml, d = 1) => (ml == null ? '—' : `${num(ml / 1000, d)} L`);

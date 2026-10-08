@@ -6,7 +6,7 @@ import { habitsSeed } from './seed.js';
 
 const DEMO_STORES = ['tasks', 'habitLogs', 'weightEntries', 'sleepEntries', 'moodEntries', 'nutritionLogs', 'waterLogs', 'stepLogs', 'dailyReviews',
   'workouts', 'workoutSets', 'measurements', 'readingSessions', 'learningSessions', 'meditationSessions', 'spiritualSessions',
-  'relationshipEntries', 'journalEntries', 'bodyFatEstimates'];
+  'relationshipEntries', 'journalEntries', 'bodyFatEstimates', 'lists', 'expenses', 'events'];
 
 export const hasDemo = () => !!store.settings()?.demo;
 
@@ -78,6 +78,20 @@ export async function loadDemo(days = 42) {
     if (n % 14 === 0) put('measurements', { date: d, waist: +(91.5 - n * 0.05).toFixed(1), chest: 99, arms: 32.5, thighs: 56, calves: +(36.2 + n * 0.01).toFixed(1), neck: 38 });
     if (n % 3 === 0) put('journalEntries', { date: d, kind: 'evening', answers: { 0: 'Shipped the proposal', 1: 'Skipped the walk', 2: 'Walk after lunch' }, text: '' });
   }
+  // A few lists, this month's spending and some dates, to show those pages working.
+  const item = (text, done = false) => ({ id: store.uid(), text, done });
+  put('lists', { id: 'demo-groceries', name: 'Groceries', order: 0, items: [item('Eggs'), item('Chicken breast'), item('Greek yoghurt'), item('Spinach'), item('Oats', true), item('Bananas', true)] });
+  put('lists', { id: 'demo-packing', name: 'Packing', order: 1, items: [item('Passport'), item('Charger'), item('Gym shoes'), item('Resistance band')] });
+  const CATS = ['food', 'groceries', 'transport', 'home', 'fun', 'groceries', 'food'];
+  for (let n = 0; n < 24; n++) {
+    const d = addDays(t, -Math.floor(n * 1.2));
+    if (d.slice(0, 7) !== t.slice(0, 7)) break;
+    put('expenses', { date: d, amount: Math.round(150 + rnd() * 1650), category: CATS[n % CATS.length], note: ['Lunch', 'Weekly shop', 'Fuel', 'Electricity', 'Cinema', 'Market', 'Coffee'][n % 7] });
+  }
+  const md = (offset) => { const x = addDays(t, offset); return `1965-${x.slice(5)}`; };
+  put('events', { id: 'demo-mum', title: 'Mum', kind: 'birthday', date: md(5), countdown: false, noYear: false });
+  put('events', { id: 'demo-wedding', title: 'Our wedding', kind: 'event', date: addDays(t, 87), countdown: true, noYear: false });
+  put('events', { id: 'demo-son', title: 'Noah', kind: 'birthday', date: `2016-${addDays(t, 40).slice(5)}`, countdown: false, noYear: false });
   const p = store.profile();
   ops.push({ store: 'profile', value: { ...p, demoPrevStart: p.trackingStart, trackingStart: from < p.trackingStart ? from : p.trackingStart } });
   ops.push({ store: 'settings', value: { ...store.settings(), demo: true } });

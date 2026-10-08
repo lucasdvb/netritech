@@ -136,3 +136,20 @@ export function attachRowGestures(root, { onHold, onSwipe }) {
     onHold(row.dataset.habit, row);
   });
 }
+
+/** A horizontal swipe that starts on `selector`: onSwipe(+1) for left, onSwipe(-1) for right. */
+export function attachHeadSwipe(root, selector, onSwipe) {
+  let x0 = null, y0 = 0;
+  root.addEventListener('touchstart', (e) => {
+    x0 = e.target.closest(selector) && e.touches.length === 1 ? e.touches[0].clientX : null;
+    y0 = e.touches[0]?.clientY || 0;
+  }, { passive: true });
+  root.addEventListener('touchend', (e) => {
+    if (x0 == null) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - x0, dy = t.clientY - y0;
+    x0 = null;
+    if (Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) * 0.6) return;
+    onSwipe(dx < 0 ? 1 : -1);
+  });
+}

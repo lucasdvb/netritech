@@ -3,7 +3,7 @@ import * as store from '../data/store.js';
 import { priorities } from './tasks.js';
 import * as M from './metrics-core.js';
 import { workoutFacts } from './fitness-core.js';
-import { today, dayAt, weekday, startOfWeek, endOfWeek, startOfMonth, endOfMonth, range, addDays, diffDays, lastNDays, monthKey, cmp } from './dates.js';
+import { today, dayAt, weekday, startOfWeek, endOfWeek, startOfMonth, endOfMonth, range, addDays, diffDays, lastNDays, monthKey } from './dates.js';
 
 export const DATA_STORES = ['habits', 'habitLogs', 'waterLogs', 'nutritionLogs', 'stepLogs', 'sleepEntries', 'dailyReviews',
   'workouts', 'workoutSets', 'exercises', 'readingSessions', 'learningSessions', 'meditationSessions', 'relationshipEntries',
@@ -334,9 +334,13 @@ export function tap(h, date, mode = dayMode(date)) {
   return toggle(h, date);
 }
 
-/* ---------- states: focus on three (H1) ---------- */
+/* ---------- states: focus on three (H1), or two to five if you choose ---------- */
 
-export const FOCUS_LIMIT = 3;
+const WORDS = ['none', 'one', 'two', 'three', 'four', 'five'];
+/** How many habits can be in focus at once (Settings; three unless you change it). */
+export const focusLimit = () => { const n = Number(store.settings().focusLimit); return n >= 2 && n <= 5 ? n : 3; };
+/** "three": the focus count as a word, for "Your three" and "Choose your three". */
+export const focusWord = () => WORDS[focusLimit()];
 
 /** A habit's state on a date. A pause ends by itself on its end date. */
 export function stateOf(h, date = today()) {
@@ -345,8 +349,8 @@ export function stateOf(h, date = today()) {
   return s;
 }
 export const inState = (state, date = today()) => activeHabits().filter((h) => stateOf(h, date) === state);
-export const focusHabits = (date = today()) => inState('focus', date)
-  .sort((a, b) => cmp(a.focusSince || '', b.focusSince || '') || (a.order ?? 0) - (b.order ?? 0));
+// In your order (Habits › Arrange); inState keeps the overall habit order.
+export const focusHabits = (date = today()) => inState('focus', date);
 export const queue = () => inState('queue').sort((a, b) => (a.queueOrder ?? a.order ?? 0) - (b.queueOrder ?? b.order ?? 0));
 
 /* ---------- runs with grace (H4) ---------- */
