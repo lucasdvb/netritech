@@ -15,6 +15,7 @@ import { defaultWeek } from './review-week.js';
 import { insightCard, insightActions } from './insight-ui.js';
 import { filmMonths, monthFilm } from '../domain/film.js';
 import { memoryCard, experimentBlock, experimentActions } from './experiment-ui.js';
+import { due as dueYear, review as yearReview } from '../domain/year-review.js';
 
 const PROMPTS = {
   morning: ['What matters most today?', 'What would make today a good day?', 'What could get in the way, and what will you do about it?'],
@@ -86,6 +87,13 @@ function reviewsDue() {
     { to: `reflect/review/month/${mId}`, ic: 'calendar', title: `Monthly review · ${fmtMonth(`${mId}-01`)}`, done: !!mr?.completedAt,
       sub: mr?.completedAt ? 'Done · tap to revisit' : 'Stop · start · continue · one focus' },
   ];
+  // The yearly review, from mid-December to the end of January (13f).
+  const yr = dueYear(t);
+  if (yr) {
+    const rv = yearReview(yr);
+    items.push({ to: `reflect/review/year/${yr}`, ic: 'sparkles', title: `Your ${yr}`, done: !!rv?.completedAt,
+      sub: rv?.completedAt ? (rv.word ? `Done · ${yr + 1}: ${rv.word}` : 'Done') : `The year in numbers, three questions, one word for ${yr + 1}` });
+  }
   const rowBody = (it) => html`<span class="${cx('row-ic', it.done && 'row-ic--done')}">${icon(it.done ? 'check' : it.ic, { size: 18 })}</span>
     <span class="row-main"><span class="row-title">${it.title}</span><span class="row-sub">${it.sub}</span></span>
     <span class="row-chev">${icon('chevron-right', { size: 18 })}</span>`;

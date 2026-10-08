@@ -34,7 +34,7 @@ await step('Plan home: tomorrow’s three are written here; this week shows seve
   await ctx.close();
 });
 
-await step('a goal in three questions, then a projection from your weigh-ins', async () => {
+await step('a goal in four questions (the last, what could get in the way), then a projection from your weigh-ins', async () => {
   const { ctx, p } = await at('2026-10-07T09:00:00', { hash: '#/plan/goals' });
   await p.waitForSelector('[data-action="new"]');
   await p.locator('.page-head [data-action="new"], [data-action="new"]').first().click();
@@ -51,9 +51,17 @@ await step('a goal in three questions, then a projection from your weigh-ins', a
   await p.locator('.goal-new [data-f="start"]').fill('76.2');
   await p.locator('.goal-new [data-f="target"]').fill('74');
   await p.screenshot({ path: `${OUT}/p6-goal-new.png` });
+  await p.locator('[data-action="gn-next"]').click();
+  // Plan for the obstacle (13f): optional, two fields.
+  questions.push(await p.textContent('.goal-new .ritual-q'));
+  await p.locator('.goal-new [data-f="obstacle"]').fill('Late client dinners');
+  await p.locator('.goal-new [data-f="ifThen"]').fill('Order the protein and skip dessert');
+  await p.screenshot({ path: `${OUT}/p13f-goal-obstacle.png` });
   await p.locator('[data-action="gn-save"]').click();
-  if (questions.join(' | ') !== 'What outcome? | By when? | How will you know?') throw new Error('questions ' + questions);
+  if (questions.join(' | ') !== 'What outcome? | By when? | How will you know? | What could get in the way?') throw new Error('questions ' + questions);
   await p.waitForSelector('.goal-projection');
+  const ob = await p.textContent('[data-key="obstacle"]');
+  if (!/If Late client dinners/.test(ob) || !/Order the protein/.test(ob)) throw new Error('obstacle: ' + ob);
   const needs = await p.textContent('.goal-projection');
   if (!/3 times over a week/.test(needs)) throw new Error('needs: ' + needs);
   // two weeks of weigh-ins going down 0.05 kg a day

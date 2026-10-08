@@ -51,13 +51,20 @@ const facts = (list, empty) => (list.length ? html`<ul class="review-facts">${li
 /** Planning the week ahead: three things, the first one onto Monday. */
 function nextWeek(ws) {
   const nw = addDays(ws, 7);
-  const plan = store.get('weeklyReviews', nw)?.plan || [];
+  const next = store.get('weeklyReviews', nw) || {};
+  const plan = next.plan || [];
   return html`<section class="block" data-key="next-week"><div class="block-head"><h2 class="block-title">Next week</h2><span class="block-meta">${fmtMD(nw)} – ${fmtMD(endOfWeek(nw))}</span></div>
     <div class="card">
       <p class="muted small">Three things for the week. They stay on Plan all week.</p>
       <ol class="plan-three">${[0, 1, 2].map((i) => html`<li data-key="wk-${i}"><span class="tnum">${i + 1}</span>
         <input class="plan-three-input" value="${plan[i] || ''}" data-change="wk-plan" data-i="${i}" placeholder="${['The one that matters most', 'Second', 'Third'][i]}" aria-label="Next week, thing ${i + 1}" maxlength="140"></li>`)}</ol>
       <button type="button" class="btn btn--soft btn--sm" data-action="wk-monday">Make the first one Monday’s priority</button>
+      <div class="wk-obstacle">
+        <label class="field"><span class="field-label">What’s most likely to get in the way? <small>optional</small></span>
+          <input class="input" value="${next.obstacle || ''}" data-change="wk-ob" data-f="obstacle" placeholder="e.g. A heavy week of client work" maxlength="100"></label>
+        <label class="field"><span class="field-label">When it does, I will…</span>
+          <input class="input" value="${next.ifThen || ''}" data-change="wk-ob" data-f="ifThen" placeholder="e.g. Do the first one before email" maxlength="100"></label>
+      </div>
     </div>
   </section>`;
 }
@@ -210,6 +217,12 @@ export default {
       const plan = [...(cur.plan || ['', '', ''])];
       plan[Number(el.dataset.i)] = value.trim();
       store.put('weeklyReviews', { ...cur, id: nw, weekStart: nw, plan });
+    },
+    // ...and the obstacle to plan for (13f), on the same record.
+    'wk-ob': ({ el, value, params }) => {
+      const nw = addDays(weekOf(params), 7);
+      const cur = store.get('weeklyReviews', nw) || { id: nw, weekStart: nw };
+      store.put('weeklyReviews', { ...cur, id: nw, weekStart: nw, [el.dataset.f]: value.trim() || null });
     },
     answer: ({ el, value, params }) => {
       const ws = weekOf(params);

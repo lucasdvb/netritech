@@ -63,6 +63,7 @@ export const ROUTES = [
   { path: 'reflect/journal', tab: 'reflect', depth: 1, load: v('journal'), list: 'reflect/journal', emptyIcon: 'notebook-pen', emptyText: 'Choose an entry to read it, or start today’s.' },
   { path: 'reflect/review/week/:date?', tab: 'reflect', depth: 1, load: v('review-week') },
   { path: 'reflect/review/month/:month?', tab: 'reflect', depth: 1, load: v('review-month') },
+  { path: 'reflect/review/year/:year?', tab: 'reflect', depth: 1, load: v('review-year') },
   { path: 'reflect/reviews', tab: 'reflect', depth: 1, load: v('reviews') },
   { path: 'reflect/insights', tab: 'reflect', depth: 1, load: v('insights') },
 

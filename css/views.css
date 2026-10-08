@@ -1173,3 +1173,13 @@
 .exp-card { display: flex; flex-direction: column; gap: var(--s3); }
 .exp-line { font-size: var(--text-body); line-height: var(--leading-body); letter-spacing: var(--tracking-body); color: var(--text); }
 .exp-facts b { color: var(--accent-ink); font-weight: var(--weight-semibold); }
+/* obstacle plans (13f) */
+.wk-obstacle { display: flex; flex-direction: column; gap: var(--s3); margin-top: var(--s4); }
+.week-if { display: flex; gap: 8px; align-items: flex-start; margin-top: var(--s3); font-size: var(--text-caption); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-2); }
+.week-if svg { color: var(--accent); flex: none; margin-top: 1px; }
+.week-if b { color: var(--text); font-weight: var(--weight-semibold); }
+/* the year's word, at the top of Plan (13f) */
+.theme-word { display: inline-flex; align-items: baseline; gap: 10px; margin: 0 0 var(--s4); color: var(--text); text-decoration: none; }
+.theme-word span { font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-2); }
+.theme-word b { font-size: var(--text-h3); font-weight: var(--weight-semibold); line-height: var(--leading-h3); letter-spacing: var(--tracking-h3); color: var(--accent-ink); }
+.year-word { font-size: var(--text-h3); font-weight: var(--weight-semibold); }
