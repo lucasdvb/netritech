@@ -81,7 +81,7 @@ export default {
       <section class="block"><h2 class="set-section">Habits</h2>
         <div class="set-list">
           ${settingRow('Habits in focus', segmented([2, 3, 4, 5].map((v) => ({ id: String(v), label: String(v) })), String(focusLimit()), { action: 'focus-limit', name: 'Habits in focus', size: 'sm', cls: 'seg--compact' }),
-            { hint: 'The ones you train and count in your score. Three works for most people; more means less attention for each.', key: 'focus-limit' })}
+            { hint: 'Three suits most people.', key: 'focus-limit' })}
         </div></section>
       <section class="block"><h2 class="set-section">Targets</h2>
         <div class="set-list">

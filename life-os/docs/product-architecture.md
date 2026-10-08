@@ -1290,7 +1290,7 @@ The owner tested the app on the phone and asked for six things. Each is below wi
 
 Where it ends:
 - The lint is clean, and 147 unit tests and all 21 browser suites pass, including the new `phase12` suite (8 flows).
-- Every screen's visual baseline was refreshed after the deliberate changes.
+- Every screen's visual baseline was refreshed after the deliberate changes. The new screens, light over dark, are in `docs/phase12-screens.png`.
 - First-screen JavaScript is back to 200 KB. To get there:
   - Minimum and sick days, opening a habit from a hold, and the day swipe now load when first needed.
   - Coming up loads only when dates exist.
