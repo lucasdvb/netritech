@@ -1295,6 +1295,10 @@ Where it ends:
   - Minimum and sick days, opening a habit from a hold, and the day swipe now load when first needed.
   - Coming up loads only when dates exist.
 - The offline copy is 1.50 MB. The unused bold font is no longer cached.
+- The monthly film had started to drop frames on a slow phone: p95 33 ms at 4× CPU throttle. The cause was that the full 1080 × 1920 canvas was being repainted for every frame of every fade.
+  - On screen it now paints each card once and redraws only while its blue line grows. The fade and rise are done by the compositor, and the progress bars are page elements.
+  - The saved video still draws every frame.
+  - p95 is now 16.8 ms, the same as seal, finale and year.
 
 ---
 
