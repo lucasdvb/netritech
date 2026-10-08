@@ -6,6 +6,9 @@ import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty } from '../ui/components.js';
 import { insightCard, insightActions } from './insight-ui.js';
+import { app } from '../ui/app-api.js';
+
+let stop = null;
 
 export default {
   id: 'insights',
@@ -22,5 +25,7 @@ export default {
         <ul class="list">${past.map((h) => html`<li class="row"><span class="${h.outcome === 'applied' ? 'row-ic row-ic--done' : 'row-ic row-ic--quiet'}">${icon(h.outcome === 'applied' ? 'check' : 'clock', { size: 16 })}</span>
           <span class="row-main"><span class="row-title">${h.outcome === 'applied' ? h.label : h.title}</span><span class="row-sub">${h.outcome === 'applied' ? 'Applied' : 'Set aside'} ${dayInline(h.on)}</span></span></li>`)}</ul></section>` : ''}`;
   },
+  mount() { stop = I.onHelps(() => app.refresh()); },
+  unmount() { stop?.(); stop = null; },
   actions: { ...insightActions },
 };

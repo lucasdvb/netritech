@@ -9,6 +9,7 @@ import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead } from '../ui/components.js';
 import * as hap from '../ui/haptics.js';
+import { app } from '../ui/app-api.js';
 import { newEntry, KIND_LABEL } from './journal.js';
 import { defaultWeek } from './review-week.js';
 import { insightCard, insightActions } from './insight-ui.js';
@@ -32,6 +33,7 @@ function promptFor(date, now = new Date()) {
 const todayEntry = (date = today()) => store.onDate('journalEntries', date).find((j) => j.kind === 'free') || null;
 
 let timer = 0;
+let stopHelps = null;
 let pending = null;
 function save(patch) {
   const t = today();
@@ -148,11 +150,12 @@ export default {
       ${films()}`;
   },
   mount(el) {
+    stopHelps = I.onHelps(() => app.refresh());
     const grow = (t) => { t.style.height = 'auto'; t.style.height = `${Math.max(t.scrollHeight, 132)}px`; };
     el.querySelectorAll('.write-area').forEach(grow);
     el.addEventListener('input', (e) => { if (e.target.matches?.('.write-area')) grow(e.target); });
   },
-  unmount() { flush(); },
+  unmount() { flush(); stopHelps?.(); stopHelps = null; },
   inputs: {
     write: ({ value }) => {
       clearTimeout(timer);

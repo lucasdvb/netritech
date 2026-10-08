@@ -249,12 +249,39 @@ export function helpsFor(h, date) {
   return best;
 }
 
-function helps(date) {
+// Sixty days of patterns don't change with each tap, and comparing every habit takes a moment on a
+// phone. So it's worked out once a day, a few habits at a time between other work (never one long
+// task), and the screens showing insights refresh when it's ready (onHelps).
+const found = { date: null, list: null, busy: null };
+const ready = new Set();
+export const onHelps = (fn) => { ready.add(fn); return () => ready.delete(fn); };
+const candidates = (date) => H.activeHabits().filter((h) => !h.mvd && !H.isLimit(h) && H.stateOf(h, date) !== 'paused');
+
+function computeHelps(date) {
+  const list = candidates(date);
+  if (typeof setTimeout === 'undefined' || typeof document === 'undefined') { found.date = date; found.list = list.map((h) => [h.id, helpsFor(h, date)]); return; }
+  if (found.busy === date) return;
+  found.busy = date;
   const out = [];
-  for (const h of H.activeHabits()) {
-    if (h.mvd || H.isLimit(h) || H.stateOf(h, date) === 'paused') continue;
-    const b = helpsFor(h, date);
-    if (!b) continue;
+  let i = 0;
+  const step = () => {
+    if (found.busy !== date) return;
+    const until = performance.now() + 8;
+    while (i < list.length && performance.now() < until) { out.push([list[i].id, helpsFor(list[i], date)]); i++; }
+    if (i < list.length) { setTimeout(step, 0); return; }
+    found.date = date; found.list = out; found.busy = null;
+    ready.forEach((fn) => fn());
+  };
+  setTimeout(step, 0);
+}
+
+function helps(date) {
+  if (found.date !== date) computeHelps(date);
+  if (found.date !== date) return [];
+  const out = [];
+  for (const [id, b] of found.list) {
+    const h = H.habit(id);
+    if (!b || !h || h.mvd || h.archived) continue;
     out.push({ id: `helps-${h.id}`, area: 'What helps you', weight: 0.7 + Math.min(0.6, b.score / 10),
       title: `The day after ${h.name} goes better`,
       detail: `Over the last ${HELPS.days} days, the day after ${h.name} you had ${b.fmt(b.with)} ${b.what}, against ${b.fmt(b.without)} after a day without it (${b.nWith} and ${b.nWithout} days). A pattern, not proof, but worth protecting.`,
