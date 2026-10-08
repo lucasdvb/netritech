@@ -33,5 +33,5 @@ export default [
     languageOptions: { ecmaVersion: 'latest', sourceType: 'module', globals: readonly(browser) },
     rules: { ...rules, 'no-unused-vars': ['error', { args: 'none', caughtErrors: 'none', ignoreRestSiblings: true }] },
   },
-  { files: ['tests/**', 'tools/**', '*.mjs'], languageOptions: { globals: readonly([...browser, ...node, ...inPage]) } },
+  { files: ['tests/**', 'tools/**', 'server/**/*.mjs', '*.mjs'], languageOptions: { globals: readonly([...browser, ...node, ...inPage]) } },
 ];
