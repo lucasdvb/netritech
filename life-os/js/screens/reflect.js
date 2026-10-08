@@ -13,6 +13,7 @@ import { newEntry, KIND_LABEL } from './journal.js';
 import { defaultWeek } from './review-week.js';
 import { insightCard, insightActions } from './insight-ui.js';
 import { filmMonths, monthFilm } from '../domain/film.js';
+import { memoryCard, experimentBlock, experimentActions } from './experiment-ui.js';
 
 const PROMPTS = {
   morning: ['What matters most today?', 'What would make today a good day?', 'What could get in the way, and what will you do about it?'],
@@ -139,8 +140,10 @@ export default {
       ${pageHead({ title: 'Reflect', sub: 'What you learned.',
         actions: html`<button type="button" class="icon-btn" data-action="open-search" aria-label="Search" aria-keyshortcuts="/">${icon('search', { size: 20 })}</button>` })}
       ${write()}
+      ${memoryCard()}
       ${reviewsDue()}
       ${insights()}
+      ${experimentBlock()}
       ${recent()}
       ${films()}`;
   },
@@ -165,5 +168,6 @@ export default {
     'close-day': async () => (await import('./ritual.js')).openRitual('evening', today()),
     film: async ({ data }) => (await import('../ceremony/film.js')).playFilm(monthFilm(data.m)),
     ...insightActions,
+    ...experimentActions,
   },
 };
