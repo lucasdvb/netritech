@@ -194,8 +194,10 @@ export function openRitual(which = 'evening', date = today()) {
     if (action !== 'seal') return;
     const undo = Rt.seal(date);
     Rt.markRitual(date, which);
-    setTimeout(() => {
+    setTimeout(async () => {
       app.closeSheet(sheet);
+      // The ceremony (G5), then Undo, in case the hold was a slip.
+      await (await import('../ceremony/seal.js')).sealCeremony(date);
       app.toast(`${relativeDay(date) === 'Today' ? 'Today' : relativeDay(date)} is sealed. Rest well.`, { icon: 'moon', action: { label: 'Undo', fn: undo } });
     }, 420);
   });

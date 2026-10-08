@@ -446,7 +446,11 @@ async function boot() {
   import('./domain/reminders.js').then((r) => r.start()).catch((err) => console.warn(err));
   import('./domain/snapshots.js').then((m) => m.start()).catch((err) => console.warn(err));
   import('./ui/badge.js').then((m) => m.start()).catch(() => {});
-  import('./domain/progression.js').then((m) => m.start((mo) => app.toast(mo.text, { icon: mo.icon }))).catch((err) => console.warn(err));
+  // The optional sound palette: a soft tick for completions (off unless chosen in Settings).
+  Promise.all([import('./ui/sound.js'), import('./ui/haptics.js')]).then(([m, h]) => h.onPlay((n) => { if (n === 'success' || n === 'commit') m.play('tick'); })).catch(() => {});
+  // Real progress is marked once, as a moment; a finished season offers its finale.
+  import('./domain/progression.js').then((m) => m.start((mo) => import('./ceremony/moments.js')
+    .then((M) => M.show(mo, { go: (x) => import('./ceremony/finale.js').then((F) => F.finale(x.id)) })))).catch((err) => console.warn(err));
   import('./ui/install.js').then((m) => m.maybePrompt()).catch(() => {});
   if (navigator.storage?.persist) navigator.storage.persisted().then((p) => { if (!p) navigator.storage.persist(); });
   window.__lifeos = { store, app, ready: true };

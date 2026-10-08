@@ -133,6 +133,12 @@
   --gym-surface: #1D1D1F;
   --gym-text: #FFFFFF;
   --gym-dim: #F5F5F7;
+  /* ceremonies: the same black stage in any theme, so a sealed day or a finale feels like an occasion */
+  --stage-bg: #000000;
+  --stage-surface: #1D1D1F;
+  --stage-surface-2: #2C2C2E;
+  --stage-text: #FFFFFF;
+  --stage-dim: #86868B;   /* 5.6:1 on black */
   --sel: var(--ink);    /* a selected option: near-black in light mode, off-white in dark */
   --on-sel: #FFFFFF;
   --ink-sel: var(--ink); /* a selected card that keeps white text: near-black, dark grey in dark mode */

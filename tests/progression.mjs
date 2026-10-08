@@ -39,7 +39,7 @@ await step('mastery: the tenth time engraves Practised with today’s date, once
   await ev(p, ({ list }) => { const { store } = window.__lifeos; store.setProfile({ trackingStart: '2026-09-01' }); for (const d of list) store.put('habitLogs', { id: `h-prayer:${d}`, habitId: 'h-prayer', date: d, value: 1 }); }, { list: days('2026-10-07', 9) });
   await p.waitForTimeout(2500); // the nine days before: engraved quietly
   await ev(p, () => window.__lifeos.store.put('habitLogs', { id: 'h-prayer:2026-10-07', habitId: 'h-prayer', date: '2026-10-07', value: 1 }));
-  await p.waitForSelector('.toast:has-text("Prayer · Practised, 10 times")', { timeout: 10000 });
+  await p.waitForSelector('.moment-plate:has-text("Prayer · Practised"):has-text("10 times")', { timeout: 10000 });
   const plates = await ev(p, () => window.__lifeos.store.all('levelEvents').filter((e) => e.habitId === 'h-prayer').map((e) => `${e.level}:${e.date}`));
   if (plates.join() !== `started:${days('2026-10-07', 9)[0]},practised:2026-10-07`) throw new Error('plates ' + plates);
   await go(p, '#/plan/habits/h-prayer', '[data-key="mastery"]');
@@ -55,7 +55,7 @@ await step('records: nothing for the first three entries, then a new best is mar
   await p.waitForTimeout(2500);
   if (await p.locator('.record').count()) throw new Error('a record from the first three entries');
   await ev(p, () => window.__lifeos.store.put('stepLogs', { id: '2026-10-07', date: '2026-10-07', steps: 11200 }));
-  await p.waitForSelector('.toast:has-text("Most steps in a day: 11,200")', { timeout: 10000 });
+  await p.waitForSelector('.moment-plate:has-text("New record"):has-text("Most steps in a day: 11,200")', { timeout: 10000 });
   await p.waitForSelector('.record:has-text("11,200")');
   if (!/before: 8,000/.test(await p.textContent('.record'))) throw new Error('previous best');
   await ctx.close();
@@ -138,7 +138,7 @@ await step('a reward unlocks only from real workouts, once; then it’s enjoyed'
   await ev(p, () => { const { store } = window.__lifeos; store.put('workouts', { id: 'w1', date: '2026-10-07', status: 'done', title: 'Upper' }); store.put('workouts', { id: 'w2', date: '2026-10-07', status: 'active', title: 'Lower' }); });
   await p.waitForSelector('.reward:has-text("1 of 2")');
   await ev(p, () => window.__lifeos.store.put('workouts', { id: 'w2', date: '2026-10-07', status: 'done', title: 'Lower' }));
-  await p.waitForSelector('.toast:has-text("Unlocked: New running shoes")', { timeout: 10000 });
+  await p.waitForSelector('.moment-plate:has-text("Unlocked: New running shoes")', { timeout: 10000 });
   await p.locator('[data-action="rw-claim"]').click();
   await p.waitForSelector('[data-key="claimed"] .reward');
   await ctx.close();

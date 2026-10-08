@@ -86,7 +86,14 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
   - **Commitments:** a 7, 14 or 30-day pledge to one habit, with a stake you choose, sealed with a press and hold. Days count from your logs. Ending early asks what got in the way and offers a smaller pledge.
   - **Rewards you set:** something you'll enjoy, unlocked by something real (so many workouts, sealed days, times you did a habit, a season's score, a goal reached), counted from the day you set it.
   - **A side quest** each week, optional, leaning towards the area you've done least; accepting adds it to your tasks.
-  - Each new level, record or reward is marked once, with a short line at the bottom of the screen.
+  - Each new level, record or reward is marked once, as a **moment**: a fine blue line draws around the card it belongs to and a plate engraves at the bottom of the screen, with a light passing over it. Finishing the last of your three gets one too (once a day). At most one moment per action.
+- **Ceremonies**, only at their moment or when you ask, always skippable with a tap and shown as a still card when the phone asks for reduced motion:
+  - **Seal the day:** after the hold, the day's card folds into its tile in the week and fills.
+  - **Season finale:** offered when a season ends (and replayable from the season page): the name and intention, six weeks filling, the numbers counting up, the plates and records it earned.
+  - **Monthly film:** your month as a short story (days sealed, plan done, strongest habit, a record, training, weight, a win), in *Reflect › Monthly films*; *Save video* records it on the phone and hands it to the share sheet.
+  - **Your year:** every day as one ray around a circle, as long as the day was full, a blue point for each sealed day. The same days always make the same picture; *Save print* makes a 3600 × 4500 PNG (12 × 15 in at 300 dpi). In *Progress › Your year*.
+  - Black, white and one blue; no confetti. An optional **sound** palette (soft, made on the phone, off by default) lives in Settings.
+  - The timing was approved from a HyperFrames preview kept in `videos/life-os-moments/` (not shipped).
 - **Habits**: every type: yes/no, numeric, duration, quantity, rating and checklist.
   - Schedules: daily, chosen weekdays, X per week, X per month, every N days.
   - **Focus on three:** each habit is in Focus (at most three), Autopilot, Later or Paused (until a date). *Choose your three* sorts every habit on one screen, with suggestions.
@@ -263,6 +270,8 @@ NODE_PATH=$(npm root -g) node tests/reflect.mjs http://localhost:4173/ ./test-sh
                                                                                     # insights applied, guided reviews, calendar file, badge
 NODE_PATH=$(npm root -g) node tests/progression.mjs http://localhost:4173/ ./test-shots # plates, records, a season, the ghost,
                                                                                     # a pledge sealed with a hold, rewards, side quest
+NODE_PATH=$(npm root -g) node tests/ceremonies.mjs http://localhost:4173/ ./test-shots # seal, finale, film and year: 60 fps at 4×
+                                                                                    # slower CPU, skip, reduced motion, video and PNG exports
 NODE_PATH=$(npm root -g) node tests/phase3.mjs http://localhost:4173/ ./test-shots   # weight, food, training, photos
 NODE_PATH=$(npm root -g) node tests/phase4.mjs http://localhost:4173/ ./test-shots   # progress, modules, reviews, backup
 NODE_PATH=$(npm root -g) node tests/phase5.mjs http://localhost:4173/ ./test-shots   # reminders, restore, offline,

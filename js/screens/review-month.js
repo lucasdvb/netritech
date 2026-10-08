@@ -141,7 +141,8 @@ export default {
       store.put('monthlyReviews', { ...cur, completedAt: cur.completedAt || new Date().toISOString(), facts: monthFacts(m) });
       hap.success();
       ui.all = true; ui.guided = false;
-      app.toast(cur.answers.focus ? `Next month: ${cur.answers.focus.slice(0, 60)}` : 'Monthly review saved', { icon: 'check' });
+      app.toast(cur.answers.focus ? `Next month: ${cur.answers.focus.slice(0, 60)}` : 'Monthly review saved', { icon: 'check',
+        action: { label: 'Watch the month', fn: async () => { const [F, D] = await Promise.all([import('../ceremony/film.js'), import('../domain/film.js')]); F.playFilm(D.monthFilm(m)); } } });
     },
   },
 };

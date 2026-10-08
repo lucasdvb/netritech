@@ -83,6 +83,8 @@ export default {
           <span class="row-main"><span class="row-title">Seasons</span><span class="row-sub">Six weeks, three habits, one intention</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>`}
         <li><a class="row" href="#/progress/trends" data-action="nav" data-to="progress/trends"><span class="row-ic">${icon('chart-spline', { size: 18 })}</span>
           <span class="row-main"><span class="row-title">All trends</span><span class="row-sub">Charts over 30, 60 or 90 days, bests and wins</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
+        <li><a class="row" href="#/progress/year" data-action="nav" data-to="progress/year"><span class="row-ic">${icon('sun', { size: 18 })}</span>
+          <span class="row-main"><span class="row-title">Your year</span><span class="row-sub">Every day as one picture, to keep or print</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
         <li><a class="row" href="#/progress/calendar" data-action="nav" data-to="progress/calendar"><span class="row-ic">${icon('calendar', { size: 18 })}</span>
           <span class="row-main"><span class="row-title">Calendar</span><span class="row-sub">Every day, and what happened on it</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
         <li><a class="row" href="#/reflect/insights" data-action="nav" data-to="reflect/insights"><span class="row-ic">${icon('lightbulb', { size: 18 })}</span>

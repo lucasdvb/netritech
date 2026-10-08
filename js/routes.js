@@ -49,6 +49,7 @@ export const ROUTES = [
   { path: 'progress/calendar', tab: 'progress', depth: 1, load: v('calendar') },
   { path: 'progress/records', tab: 'progress', depth: 1, load: v('records') },
   { path: 'progress/season', tab: 'progress', depth: 1, load: v('season') },
+  { path: 'progress/year/:year?', tab: 'progress', depth: 1, load: v('year') },
   { path: 'progress', tab: 'progress', depth: 0, load: v('progress') },
 
   { path: 'reflect', tab: 'reflect', depth: 0, load: v('reflect') },

@@ -7,28 +7,43 @@ import * as Rec from './records.js';
 import * as Rw from './rewards.js';
 import * as S from './seasons.js';
 import * as C from './commitments.js';
+import * as H from './habits.js';
+import { planHabits } from './scoring.js';
 import { today } from './dates.js';
 
 const WATCH = new Set(['habitLogs', 'workouts', 'workoutSets', 'stepLogs', 'sleepEntries', 'nutritionLogs', 'dailyReviews', 'waterLogs',
   'tasks', 'goals', 'readingSessions', 'learningSessions', 'meditationSessions', 'journalEntries', 'routineRuns']);
 
-/** Bring everything up to date. Returns what's new: { rewards, records, levels, seasons }. */
+/**
+ * The last of your three done today: true the first time all of today's focus habits count
+ * (once a day, and only on a normal or rest day).
+ */
+export function focusDone(date = today()) {
+  if (store.get('meta', 'focusMoment')?.on === date || !['normal', 'rest'].includes(H.dayMode(date))) return false;
+  const focus = planHabits(date).filter((h) => H.stateOf(h, date) === 'focus');
+  if (!focus.length || !focus.every((h) => H.counts(h, date))) return false;
+  store.put('meta', { id: 'focusMoment', on: date });
+  return true;
+}
+
+/** Bring everything up to date. Returns what's new: { rewards, records, levels, seasons, focus }. */
 export function run(date = today()) {
   const seasons = S.finalize(date);
   C.finalize(date);
-  return { rewards: Rw.sync(date), records: Rec.sync(date), levels: L.sync(date), seasons };
+  return { rewards: Rw.sync(date), records: Rec.sync(date), levels: L.sync(date), seasons, focus: focusDone(date) };
 }
 
-/** The one moment worth showing for what's new, or null. */
+/** The one moment worth showing for what's new, or null (at most one per action). */
 export function moment(news) {
   const r = news.rewards[0];
-  if (r) return { kind: 'reward', icon: 'trophy', text: `Unlocked: ${r.title}` };
+  if (r) return { kind: 'reward', title: r.title, text: `Unlocked: ${r.title}` };
   const rec = news.records[0];
-  if (rec) return { kind: 'record', icon: 'medal', text: `New record · ${rec.label}: ${rec.text}` };
+  if (rec) return { kind: 'record', label: rec.label, value: rec.text, text: `New record · ${rec.label}: ${rec.text}` };
   const l = news.levels.sort((a, b) => b.at - a.at)[0];
-  if (l) return { kind: 'level', icon: 'star', text: `${l.habit.name} · ${l.name}, ${l.at} time${l.at === 1 ? '' : 's'}` };
+  if (l) return { kind: 'level', habitId: l.habitId, name: l.habit.name, level: l.level, levelName: l.name, at: l.at, text: `${l.habit.name} · ${l.name}, ${l.at} time${l.at === 1 ? '' : 's'}` };
+  if (news.focus) return { kind: 'focus', text: 'Your three are done' };
   const s = news.seasons[0];
-  if (s) return { kind: 'season', icon: 'flag', text: `${s.name} is complete. Its summary is ready.` };
+  if (s) return { kind: 'season', id: s.id, name: s.name, text: `${s.name} is complete. Its summary is ready.` };
   return null;
 }
 
@@ -39,7 +54,7 @@ const idle = (fn) => (window.requestIdleCallback ? requestIdleCallback(fn, { tim
 function runInSteps(date, done) {
   const news = {};
   const steps = [() => { news.seasons = S.finalize(date); C.finalize(date); }, () => { news.rewards = Rw.sync(date); },
-    () => { news.records = Rec.sync(date); }, () => { news.levels = L.sync(date); }];
+    () => { news.records = Rec.sync(date); }, () => { news.levels = L.sync(date); }, () => { news.focus = focusDone(date); }];
   const next = (i) => (i < steps.length ? idle(() => { steps[i](); next(i + 1); }) : done(news));
   next(0);
 }
