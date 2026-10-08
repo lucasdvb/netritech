@@ -32,7 +32,7 @@ for (const name of NAMES) {
 }
 
 // The icons Today needs at first render go in icons.js; the rest load right after, from icons-more.js.
-const CORE = new Set(`activity bed book-open briefcase calendar chart-spline check chevron-down chevron-left chevron-right circle circle-alert database droplet dumbbell ellipsis footprints grip-vertical heart heart-pulse house leaf list-todo map minus moon notebook-pen orbit person-standing plus repeat scale search sliders-horizontal sofa sparkle sparkles star sun sunrise thermometer trash-2 user-round utensils x apple beef bike book-heart calendar-days camera chef-hat chevron-up church circle-dot coffee eye focus glass-water hand-heart list-checks message-circle monitor moon-star power ruler scan-eye scroll-text trending-up wallet arrow-up-right arrow-right info`.split(' '));
+const CORE = new Set(`bed calendar chart-spline check chevron-down chevron-right droplet ellipsis footprints grip-vertical map moon notebook-pen orbit plus repeat sliders-horizontal star sun sunrise user-round utensils circle x chevron-left chevron-up minus activity hand-heart book-heart person-standing power heart house eye moon-star sparkles circle-alert list-todo trash-2 search beef dumbbell scale`.split(' '));
 const pick = (keep) => Object.fromEntries(Object.entries(out).filter(([n]) => CORE.has(n) === keep));
 const fmt = (o) => JSON.stringify(o, null, 0).replace(/","/g, '",\n  "').replace(/^\{/, '{\n  ').replace(/\}$/, '\n}');
 

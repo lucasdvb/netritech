@@ -1,9 +1,9 @@
 // Today, as a "now" instrument (DR-03): one next action, the routine that's open, your three,
 // priorities and tasks, pinned actions, and everything else folded. Edit Today arranges the rest.
 import * as store from '../data/store.js';
-import * as M from '../domain/metrics.js';
+import * as M from '../domain/metrics-core.js';
 import * as H from '../domain/habits.js';
-import * as F from '../domain/fitness.js';
+import * as F from '../domain/fitness-core.js';
 import * as R from '../domain/routines.js';
 import * as T from '../domain/tasks.js';
 import { dayScore } from '../domain/scoring.js';

@@ -5,7 +5,7 @@ import { isWorkday } from '../../domain/day-plan.js';
 import { today } from '../../domain/dates.js';
 import { html, cx } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
-import { check } from '../../ui/components.js';
+import { check } from '../../ui/controls.js';
 import * as hap from '../../ui/haptics.js';
 import { taskRow } from '../task-ui.js';
 

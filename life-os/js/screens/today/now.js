@@ -1,13 +1,13 @@
 // The Now card: today's score and the one next action. Skip moves to the next candidate; when
 // nothing is left it becomes the done-for-today state.
-import * as M from '../../domain/metrics.js';
+import * as M from '../../domain/metrics-core.js';
 import { dayScore, rolling, band, pct } from '../../domain/scoring.js';
 import { nextActions, doneState } from '../../domain/next-action.js';
 import { lastNDays, fmtDayLetter, fmtDay } from '../../domain/dates.js';
 import * as H from '../../domain/habits.js';
 import { html, raw, cx } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
-import { ring } from '../../ui/components.js';
+import { ring } from '../../ui/controls.js';
 
 const button = (a, cls) => {
   if (!a) return '';
