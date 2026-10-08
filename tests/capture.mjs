@@ -110,6 +110,9 @@ await step('swipe a habit left for "not today", Undo, and bring it back from the
   const row = '[data-key="r-r-morning"] .rstep[data-habit="h-prayer"]';
   await p.waitForSelector(row);
   await touch(p, row, { dx: -180 });
+  // the sheet asks what got in the way (optional); Not today skips without a reason
+  await p.waitForSelector('.sheet .skip-sheet [data-action="reason"]');
+  await p.locator('.sheet [data-action="skip-anyway"]').click();
   await p.waitForSelector('.toast:has-text("Prayer: not today")');
   await p.waitForSelector(row, { state: 'detached' });
   await p.waitForSelector('.nottoday .chip:has-text("Prayer")');
@@ -121,9 +124,13 @@ await step('swipe a habit left for "not today", Undo, and bring it back from the
   await p.waitForTimeout(400);
   if (!(await p.locator(row).count())) throw new Error('a short swipe removed the row');
   if (await p.locator('.nottoday').count()) throw new Error('a short swipe set it aside');
-  // the chip brings it back
+  // the chip brings it back; this time with a reason, which answers with the help that fits
   await touch(p, row, { dx: -180 });
+  await p.locator('.sheet [data-action="reason"][data-v="busy"]').click();
+  await p.waitForSelector('.sheet .skip-done');
+  await p.locator('.sheet [data-action="close"]').click();
   await p.waitForSelector('.nottoday .chip');
+  if (await p.evaluate((day) => window.__lifeos.store.get('habitLogs', `h-prayer:${day}`)?.reason, DAY) !== 'busy') throw new Error('the reason was not kept');
   await p.screenshot({ path: `${OUT}/p4-not-today.png`, fullPage: true });
   await p.locator('.nottoday .chip', { hasText: 'Prayer' }).click();
   await p.waitForSelector(row, { state: 'attached' }).catch(() => { throw new Error('the chip did not bring it back'); });
@@ -187,6 +194,8 @@ await step('every gesture has a visible, labelled alternative in the habit sheet
   await p.locator('.rstep[data-habit="h-prayer"] .rstep-main').click();
   await p.waitForSelector('.sheet [data-action="skip"]');
   await p.locator('.sheet [data-action="skip"]').click();
+  await p.waitForSelector('.sheet [data-action="skip-anyway"]');
+  await p.locator('.sheet [data-action="skip-anyway"]').click();
   await p.waitForSelector('.toast:has-text("Prayer: not today")');
   await p.waitForSelector('.nottoday .chip[aria-label="Bring back Prayer"]');
   // labels for everything you can press in the capture sheet and the pad
@@ -210,6 +219,7 @@ await step('dark mode: capture, the pad and "not today"', async () => {
   await p.keyboard.press('Escape');
   await p.waitForSelector('.sheet-wrap', { state: 'detached' });
   await touch(p, '.rstep[data-habit="h-prayer"]', { dx: -180 });
+  await p.locator('.sheet [data-action="skip-anyway"]').click();
   await p.waitForSelector('.nottoday');
   await p.waitForTimeout(300);
   await p.screenshot({ path: `${OUT}/p4-today-dark.png`, fullPage: true });

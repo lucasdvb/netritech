@@ -1,0 +1,9 @@
+# Deploy from a terminal: npx wrangler d1 create lifeos, paste the database_id below, npx wrangler deploy
+name = "lifeos-sync"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "lifeos"
+database_id = "paste-the-id-from-wrangler-d1-create"

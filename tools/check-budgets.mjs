@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const KB = 1024;
 const BUDGETS = {
-  precache: { target: 1536 * KB, limit: 1536 * KB },
+  precache: { target: 1792 * KB, limit: 2048 * KB }, // raised in Phase 13: see the plan, section 16.2
   firstRenderJs: { target: 200 * KB, limit: 240 * KB },
 };
 

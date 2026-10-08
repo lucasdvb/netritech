@@ -83,12 +83,12 @@ export function field(label, control, { hint = '', id, cls = '', error = '' } = 
 /** What went wrong with one field, announced to screen readers. The input itself is never cleared. */
 export const fieldError = (message) => (message ? html`<span class="field-error" role="alert">${message}</span>` : '');
 
-export function stepper(value, { action, data = {}, step = 1, unit = '', min = 0 } = {}) {
+export function stepper(value, { action, data = {}, step = 1, unit = '', min = 0, max = Infinity } = {}) {
   const d = dataAttrs(data);
   return html`<div class="stepper">
     <button type="button" class="stepper-btn" data-action="${action}" data-delta="${-step}"${d} aria-label="Less"${value <= min ? raw(' disabled') : ''}>${icon('minus', { size: 18 })}</button>
     <span class="stepper-val tnum">${value}${unit ? html`<small>${unit}</small>` : ''}</span>
-    <button type="button" class="stepper-btn" data-action="${action}" data-delta="${step}"${d} aria-label="More">${icon('plus', { size: 18 })}</button>
+    <button type="button" class="stepper-btn" data-action="${action}" data-delta="${step}"${d} aria-label="More"${value >= max ? raw(' disabled') : ''}>${icon('plus', { size: 18 })}</button>
   </div>`;
 }
 

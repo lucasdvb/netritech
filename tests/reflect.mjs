@@ -142,6 +142,9 @@ await step('the monthly review, one question per screen', async () => {
   const { ctx, p } = await at('2026-10-30T19:00:00', { hash: '#/reflect/review/month' });
   await p.waitForSelector('.guide[data-step="numbers"] .report-grid');
   await p.locator('[data-action="rv-next"]').click();
+  // does it feel automatic? (asked only of strong focus habits; nothing to ask here is fine)
+  await p.waitForSelector('.guide[data-step="auto"]');
+  await p.locator('[data-action="rv-next"]').click();
   await p.locator('textarea[data-k="win"]').fill('Shipped the proposal');
   for (const s of ['ssc', 'spirit', 'business', 'focus']) { await p.locator('[data-action="rv-next"]').click(); await p.waitForSelector(`.guide[data-step="${s}"]`); }
   await p.locator('textarea[data-k="focus"]').fill('Sleep by 22:00');
@@ -165,7 +168,7 @@ await step('reminders in your calendar: one file, an alert on every event', asyn
   const events = lines.filter((l) => l === 'BEGIN:VEVENT').length;
   if (events < 5 || lines.filter((l) => l === 'BEGIN:VALARM').length !== events) throw new Error(`${events} events, alarms differ`);
   if (!lines.includes('RRULE:FREQ=WEEKLY;BYDAY=SU')) throw new Error('weekly review missing');
-  if (!lines.some((l) => l.startsWith('URL:http://localhost:4173/#/reflect/review/week'))) throw new Error('no link back');
+  if (!lines.some((l) => l.startsWith(`URL:${base}#/reflect/review/week`))) throw new Error('no link back');
   await p.waitForSelector('.toast:has-text("ready for your calendar")');
   await ctx.close();
 });

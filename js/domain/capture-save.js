@@ -1,7 +1,7 @@
 // Saving what the capture parser understood: every item in one write, with an Undo that puts each
 // record back exactly as it was (or removes it if it's new).
 import * as store from '../data/store.js';
-import * as H from './habits.js';
+import * as H from './habits-more.js';
 import { describe } from './capture.js';
 import * as B from './books.js';
 
@@ -75,7 +75,7 @@ function opsFor(i, get, at) {
       const h = H.habit(i.habitId);
       if (!h) return [];
       const id = H.logId(h.id, d);
-      return [put('habitLogs', { ...(get('habitLogs', id) || { id, habitId: h.id, date: d }), skip: true })];
+      return [put('habitLogs', { ...(get('habitLogs', id) || { id, habitId: h.id, date: d }), skip: true, reserve: H.reservesLeft(h, d) > 0 })];
     }
     case 'task': {
       const order = store.all('tasks').reduce((m, t) => Math.max(m, t.order ?? 0), 0) + 1;

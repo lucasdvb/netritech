@@ -17,6 +17,9 @@ export const activeHabits = () => habits().filter((h) => !h.archived);
 export const habit = (id) => store.get('habits', id);
 
 export const isNumeric = (h) => ['numeric', 'duration', 'quantity', 'rating'].includes(h.type);
+/** A habit to cut down or quit (13b): at most `limit` a day; 0 means none at all. */
+export const isLimit = (h) => h.type === 'limit';
+export const limitOf = (h) => Math.max(0, Number(h.limit) || 0);
 export const isFlexible = (h) => ['perWeek', 'perMonth', 'interval'].includes(h.schedule?.kind);
 export const trackingStart = () => store.profile()?.trackingStart || today();
 export const startOf = (h) => (h.startDate && h.startDate > trackingStart() ? h.startDate : trackingStart());
@@ -104,6 +107,8 @@ export function displayTarget(h, date, mode = dayMode(date)) {
 }
 
 export function isDone(h, date, mode = dayMode(date)) {
+  // A limit is kept while the day stays within it; a day with nothing logged was kept.
+  if (isLimit(h)) return (log(h.id, date)?.value || 0) <= limitOf(h);
   const l = log(h.id, date);
   const v = value(h, date);
   if (h.type === 'binary' || h.type === 'check') return v === 1;
@@ -207,7 +212,7 @@ function computeConsistency(h, end, days) {
   if (last === t && !counts(h, t)) last = addDays(t, -1);
   const first = [addDays(end, -(days - 1)), startOf(h)].sort().pop();
   if (last < first) return { done: 0, expected: 0, ratio: null };
-  const span = range(first, last).filter((d) => !isOff(dayMode(d)));
+  const span = range(first, last).filter((d) => !isOff(dayMode(d)) && !isReserve(h, d));
   const s = h.schedule || { kind: 'daily' };
   const done = span.filter((d) => counts(h, d)).length;
   let expected;
@@ -227,7 +232,7 @@ function computeConsistency(h, end, days) {
 export function dots(h, end = today(), n = 7) {
   return lastNDays(end, n).map((d) => {
     if (!started(h, d)) return { date: d, state: 'off' };
-    if (isOff(dayMode(d))) return { date: d, state: 'rest' };
+    if (isOff(dayMode(d)) || isReserve(h, d)) return { date: d, state: 'rest' };
     if (isDone(h, d)) return { date: d, state: 'done' };
     if (isTiny(h, d)) return { date: d, state: 'tiny' };
     if (d === today()) return { date: d, state: 'today' };
@@ -244,7 +249,7 @@ export function setLog(h, date, patch) {
   const prev = store.get('habitLogs', id) || { id, habitId: h.id, date };
   const next = { ...prev, ...patch };
   // Logging a habit takes back "not today".
-  if (prev.skip && patch.skip == null && (patch.value || patch.completed || patch.tiny)) next.skip = false;
+  if (prev.skip && patch.skip == null && (patch.value || patch.completed || patch.tiny)) { next.skip = false; next.reserve = false; }
   next.completed = isNumeric(h) ? !!next.completed : next.value === 1;
   return store.put('habitLogs', next);
 }
@@ -255,6 +260,7 @@ export function clearLog(h, date) {
 
 /** One-tap toggle for binary/check habits; returns the new done state. */
 export function toggle(h, date) {
+  if (isLimit(h)) return isDone(h, date);
   const done = isDone(h, date);
   const l = log(h.id, date);
   if (h.type === 'check') {
@@ -284,15 +290,18 @@ export function setValue(h, date, v) {
   setLog(h, date, { value: v === '' || v == null ? null : Number(v) });
 }
 
+
 /* ---------- not today (U3) ---------- */
 
-/** "Not today": the habit leaves the day's plan and score. For its run it counts as a miss, so it
- *  spends the grace that one miss already has; it never pretends the habit was done. */
+/** "Not today": the habit leaves the day's plan and score. A reserve day (a planned skip) leaves the
+ *  run untouched; otherwise it counts as a miss. It never pretends the habit was done. */
 export const skipped = (h, date, mode = dayMode(date)) => !!log(h.id, date)?.skip && !counts(h, date, mode);
+export const isReserve = (h, date) => { const l = log(h.id, date); return !!(l?.skip && l.reserve) && !counts(h, date); };
 
-export function setSkip(h, date, on = true) {
-  if (on) setLog(h, date, { skip: true });
-  else if (log(h.id, date)?.skip) setLog(h, date, { skip: false });
+/** Not today (on, with { reserve, reason }), or back in the plan (off). */
+export function setSkip(h, date, on = true, extra = {}) {
+  if (on) setLog(h, date, { skip: true, ...extra });
+  else if (log(h.id, date)?.skip) setLog(h, date, { skip: false, reserve: false, reason: null });
 }
 
 /* ---------- tiny versions (H3) ---------- */
@@ -315,6 +324,7 @@ export function isTiny(h, date, mode = dayMode(date)) {
 /** Counts for the score and for runs: fully done, or the tiny version. */
 export const counts = (h, date, mode = dayMode(date)) => isDone(h, date, mode) || isTiny(h, date, mode);
 export const level = (h, date, mode = dayMode(date)) => (isDone(h, date, mode) ? 'full' : isTiny(h, date, mode) ? 'tiny' : null);
+
 
 export function setTiny(h, date, on = true) {
   if (on) setLog(h, date, { tiny: true });
@@ -375,7 +385,7 @@ export function periodsOf(h, from, to) {
     return out;
   }
   for (const d of range(from, to)) {
-    if (!usable(d) || !isScheduledDay(h, d)) continue;
+    if (!usable(d) || !isScheduledDay(h, d) || isReserve(h, d)) continue;
     out.push({ key: d, met: counts(h, d) ? true : d >= t ? null : false });
   }
   return out;
@@ -383,18 +393,29 @@ export function periodsOf(h, from, to) {
 
 export const runUnit = (h) => ({ perWeek: 'week', perMonth: 'month', interval: 'time' })[h.schedule?.kind] || 'day';
 
+/** How much one judged period moves a habit's strength (as in Loop: half-life ~13 days for a daily habit). */
+export function strengthStep(h) {
+  const s = h.schedule || { kind: 'daily' };
+  const k = s.kind === 'weekdays' ? Math.max(1, (s.days || []).length) : 7;
+  const span = s.kind === 'perWeek' ? 7 * (s.count || 1) : s.kind === 'perMonth' ? 30.4 * (s.count || 1)
+    : s.kind === 'interval' ? (s.every || 7) : 7 / k;
+  return 1 - 0.5 ** (Math.sqrt(span) / 13);
+}
+
 /**
  * Runs that survive a single miss: only two misses in a row end one. Comebacks are completions
  * right after a miss (counted over the last 30 days). missesInRow is the misses since the last
- * completion, so 1 means "don't miss twice".
+ * completion, so 1 means "don't miss twice". strength (0–1) rises with each counted period and dips with a miss.
  */
 export function runs(h, end = today(), lookback = 365) {
   return store.memo(`runs:${h.id}:${end}:${lookback}`, DATA_STORES, () => {
     const from = [addDays(end, -lookback), startOf(h)].sort().pop();
     const since = addDays(end, -29);
-    let run = 0, best = 0, misses = 0, comebacks = 0, total = 0;
+    const a = strengthStep(h);
+    let run = 0, best = 0, misses = 0, comebacks = 0, total = 0, strength = 0;
     for (const p of periodsOf(h, from, end)) {
       if (p.met === null) continue;
+      strength = strength * (1 - a) + (p.met ? a : 0);
       if (p.met) {
         if (misses > 0 && total > 0 && p.key >= since) comebacks++;
         run = misses >= 2 ? 1 : run + 1;
@@ -406,6 +427,7 @@ export function runs(h, end = today(), lookback = 365) {
         if (misses >= 2) run = 0;
       }
     }
-    return { current: misses >= 2 ? 0 : run, best, comebacks, missesInRow: misses, total, unit: runUnit(h) };
+    return { current: misses >= 2 ? 0 : run, best, comebacks, missesInRow: misses, total, unit: runUnit(h), strength };
   });
 }
+

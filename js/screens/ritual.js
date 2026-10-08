@@ -3,7 +3,7 @@
 // with sealing the day (G5), a press and hold.
 import * as store from '../data/store.js';
 import * as M from '../domain/metrics.js';
-import * as H from '../domain/habits.js';
+import * as H from '../domain/habits-more.js';
 import * as T from '../domain/tasks.js';
 import * as Rt from '../domain/rituals.js';
 import { dayScore } from '../domain/scoring.js';
@@ -66,7 +66,9 @@ function body(step, s, date) {
         <label class="time-field"><span>Woke</span><input type="time" value="${u.wake}" data-input="rf" data-f="wake"></label>
       </div>
       <p class="ritual-big tnum" aria-live="polite">${hours(u) != null ? durationHM(hours(u) * 60) : '—'}</p>
-      <div><p class="form-label">Quality</p>${scale10(u.quality, { action: 'r-pick', data: { f: 'quality' }, low: 'Restless', high: 'Deep', name: 'Sleep quality' })}</div>`;
+      <div><p class="form-label">Quality</p>${scale10(u.quality, { action: 'r-pick', data: { f: 'quality' }, low: 'Restless', high: 'Deep', name: 'Sleep quality' })}</div>
+      <button type="button" class="link-btn" data-action="r-health">${icon('heart-pulse', { size: 16 })} Paste from Health</button>
+      ${u.healthNote ? html`<p class="field-hint" role="status">${u.healthNote}</p>` : ''}`;
     case 'feel': return html`<div><p class="form-label">Energy</p>${scale10(u.energy, { action: 'r-pick', data: { f: 'energy' }, low: 'Drained', high: 'Charged', name: 'Energy' })}</div>
       <div><p class="form-label">Mood</p>${scale10(u.mood, { action: 'r-pick', data: { f: 'mood' }, low: 'Low', high: 'Great', name: 'Mood' })}</div>
       <div><p class="form-label">Stress</p>${scale10(u.stress, { action: 'r-pick', data: { f: 'stress' }, low: 'Calm', high: 'Overloaded', name: 'Stress' })}</div>`;
@@ -163,6 +165,27 @@ export function openRitual(which = 'evening', date = today()) {
       'r-three': ({ el, value }) => T.setPriority(date, Number(el.dataset.i), value),
     },
     actions: {
+      // The Health Shortcut copies sleep, steps and weight: fill the check-in from it and keep the steps.
+      'r-health': async ({ sheet }) => {
+        const u = sheet.ui;
+        let text = '';
+        try { text = await navigator.clipboard.readText(); } catch { /* not shared */ }
+        const { parseHealth } = await import('../domain/health-paste.js');
+        const d = text && parseHealth(text, date);
+        if (!d) { u.healthNote = 'Nothing from Health on the clipboard. Run the Shortcut first.'; sheet.refresh(); return; }
+        const got = [];
+        if (d.sleepHours != null) {
+          const w = parseHM(u.wake) ?? 360;
+          const b = (w - Math.round(d.sleepHours * 60) + 1440) % 1440;
+          u.bedtime = `${String(Math.floor(b / 60)).padStart(2, '0')}:${String(b % 60).padStart(2, '0')}`;
+          got.push('sleep');
+        }
+        if (d.weightKg != null) { u.weight = Math.round(kgOut(d.weightKg) * 10) / 10; got.push('weight'); }
+        if (d.steps != null) { store.put('stepLogs', { ...(store.get('stepLogs', d.date) || {}), id: d.date, date: d.date, steps: d.steps, source: 'health' }); got.push('steps'); }
+        u.healthNote = got.length ? `From Health: ${got.join(', ')}. Check it, then go on.` : 'Nothing from Health on the clipboard.';
+        hap.success();
+        sheet.refresh();
+      },
       'r-pick': ({ data, sheet }) => { sheet.ui[data.f] = sheet.ui[data.f] === Number(data.value) ? null : Number(data.value); hap.tap(); sheet.refresh(); },
       'r-w': ({ data, sheet }) => { const v = Number(sheet.ui.weight) || 0; sheet.ui.weight = Math.round((v + Number(data.d) * 0.1) * 10) / 10; hap.tap(); sheet.refresh(); },
       'r-tick': ({ data, sheet }) => {
@@ -176,7 +199,7 @@ export function openRitual(which = 'evening', date = today()) {
       'r-skip-habit': ({ data, sheet }) => {
         const h = H.habit(data.id);
         if (!h) return;
-        H.setSkip(h, date, !H.skipped(h, date));
+        if (H.skipped(h, date)) H.setSkip(h, date, false); else H.skipToday(h, date);
         sheet.ui.ticked = [...new Set([...(sheet.ui.ticked || []), h.id])];
         hap.tap();
         sheet.refresh();

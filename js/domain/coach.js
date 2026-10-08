@@ -2,7 +2,7 @@
 // suggestion (advice), and nothing here diagnoses anything.
 import * as M from './metrics.js';
 import * as F from './fitness.js';
-import { isDone, dayMode, started, habit, focusHabits, runUnit } from './habits.js';
+import { isDone, dayMode, started, habit, focusHabits, runUnit, focusWord } from './habits.js';
 import { graduationDue } from './habit-system.js';
 import { rolling } from './scoring.js';
 import { today, addDays, minutesOfDay, parseHM, startOfWeek, endOfWeek, lastNDays, range } from './dates.js';
@@ -33,6 +33,17 @@ export function guidance(date = today(), now = new Date()) {
   if (!checkin && (ph === 'morning' || ph === 'night' || mins < parseHM('11:00'))) {
     out.push(item({ id: 'checkin', priority: 2, title: 'Start with a 30-second check-in',
       body: 'Sleep, energy, stress and mood shape today’s training call.', action: { label: 'Check in', act: 'open-checkin' } }));
+  }
+
+  // A short night or a low morning: offer today as a Minimum day, before it becomes a failed one.
+  if (mode === 'normal' && ph !== 'night' && ph !== 'evening') {
+    const slept = M.sleepHours(date);
+    const energy = M.mood(date)?.energy;
+    if ((slept != null && slept > 0 && slept < 6) || (energy != null && energy <= 3)) {
+      out.push(item({ id: 'light-day', tone: 'care', priority: 3, fact: true, title: 'Make today lighter?',
+        body: `${slept != null && slept > 0 && slept < 6 ? `${num(slept, 1)} hours of sleep` : `Energy ${energy}/10`}. A short night makes everything harder. A Minimum day keeps the essentials and your ${focusWord()} in their tiny versions, and it still counts.`,
+        action: { label: 'Use Minimum Day', act: 'set-mode', data: { mode: 'minimum' } } }));
+    }
   }
 
   const call = trainingCall(date);

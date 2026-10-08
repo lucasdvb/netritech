@@ -116,6 +116,18 @@ function guided(ws, r, ui) {
   <button type="button" class="link-btn block" data-action="rv-all">See it all on one page</button>`;
 }
 
+/** Days since the last backup (Infinity when there has never been one). */
+const backupAge = () => { const at = store.settings().lastBackupAt; return at ? Math.floor((Date.now() - Date.parse(at)) / 864e5) : Infinity; };
+
+/** After the review: a backup when the last one is more than two weeks old. */
+function backupNudge() {
+  const age = backupAge();
+  if (age <= 14) return '';
+  return html`<div class="notice notice--action" data-key="backup-nudge">${icon('hard-drive-download', { size: 16 })}
+    <span>${age === Infinity ? 'No backup yet.' : `Your last backup was ${age} days ago.`} One file keeps all of this safe if the phone is lost.</span>
+    <button type="button" class="btn btn--soft btn--sm" data-action="rv-backup">Save a backup</button></div>`;
+}
+
 function full(ws, r) {
   const f = weekFacts(ws);
   const ins = weeklyInsights(ws);
@@ -133,7 +145,7 @@ function full(ws, r) {
     ['Work', 'briefcase', [['Priorities', f.priorities.set ? `${f.priorities.done} of ${f.priorities.set} done` : '—'], ['Focus blocks', `${f.deepWork}`], ['Wins', f.wins.length ? f.wins.map((w) => w.text).join(' · ') : '—']]],
   ];
   return html`
-    ${r.completedAt ? html`<div class="notice">${icon('check', { size: 16 })} Completed ${dayInline(dayAt(r.completedAt))}. You can still edit it.</div>` : html`<p class="lead">Everything on one page. The guided review takes about three minutes.</p>`}
+    ${r.completedAt ? html`<div class="notice">${icon('check', { size: 16 })} Completed ${dayInline(dayAt(r.completedAt))}. You can still edit it.</div>${backupNudge()}` : html`<p class="lead">Everything on one page. The guided review takes about three minutes.</p>`}
     <div class="review-grid">${sections.map(([title, ic, rows]) => html`<section class="card review-sec">
       <p class="section-label">${icon(ic, { size: 13 })} ${title}</p>
       <dl class="facts facts--plain">${rows.map(([k, v]) => html`<div><dt>${k}</dt><dd>${v}</dd></div>`)}</dl></section>`)}</div>
@@ -219,6 +231,16 @@ export default {
       go(ui, 1);
     },
     'rv-skip': ({ ui }) => { hap.tap(); go(ui, 1); },
+    'rv-backup': async () => {
+      try {
+        const { buildBackup, saveFile } = await import('../data/backup.js');
+        const res = await saveFile(`life-os-backup-${today()}.json`, JSON.stringify(await buildBackup({ includePhotos: false })));
+        if (res !== 'cancelled') { store.setSettings({ lastBackupAt: new Date().toISOString() }); hap.success(); app.toast('Backup saved', { icon: 'check' }); }
+      } catch (err) {
+        console.error(err);
+        app.toast('Couldn’t create the backup. Your data is untouched. Try again.', { tone: 'danger' });
+      }
+    },
     'rv-back': ({ params, ui }) => { store.put('weeklyReviews', collect(weekOf(params))); go(ui, -1); },
     'rv-pick': ({ data, ui }) => { ui.pick = ui.pick === data.id ? null : data.id; hap.tap(); app.refresh(); },
     'rv-all': ({ params, ui }) => { store.put('weeklyReviews', collect(weekOf(params))); ui.all = true; ui.guided = false; app.refresh(); },

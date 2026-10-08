@@ -81,20 +81,20 @@ const row = (ic, title, value, note) => html`<li class="cap-item"><span class="c
 
 /** The Shortcut, step by step (made once in the Shortcuts app, then run each morning). */
 export function openRecipe() {
-  const url = `${location.origin}${location.pathname}#/today?paste=1`;
   app.sheet({
     title: 'The Health Shortcut',
     render: () => html`<div class="form recipe">
-      <p class="sheet-note">Life OS can’t read Apple Health from the browser, so a Shortcut does it in one tap. Make it once in the Shortcuts app:</p>
+      <p class="sheet-note">Life OS can’t read Apple Health from the browser, so a Shortcut copies today’s numbers in one tap. Make it once in the Shortcuts app:</p>
       <ol class="recipe-steps">
         <li><b>New Shortcut</b>, name it “Life OS Health”.</li>
         <li><b>Find Health Samples</b>: Steps, start date is today. Then <b>Calculate Statistics</b>: Sum.</li>
         <li><b>Find Health Samples</b>: Sleep Analysis, start date in the last 1 day, value is Asleep. Then <b>Calculate Statistics</b>: Sum (hours).</li>
         <li><b>Find Health Samples</b>: Weight, sorted latest first, limit 1.</li>
         <li><b>Text</b>: <code>steps: [Statistics 1]</code>, <code>sleep: [Statistics 2]</code>, <code>weight: [Health Samples 3]</code>, one per line.</li>
-        <li><b>Copy to Clipboard</b>, then <b>Open URLs</b>: <code>${url}</code></li>
+        <li><b>Copy to Clipboard</b>, then <b>Show Notification</b>: “Copied for Life OS”.</li>
       </ol>
-      <p class="field-hint">Add it to your Home Screen or run it from an automation each morning. In Life OS, tap Paste once and Save all.</p>
+      <p class="field-hint">Then open Life OS from your Home Screen and tap <b>Paste from Health</b>: in the morning check-in, in Body, or under +. Don’t end the Shortcut by opening a link: that opens Safari, which keeps its own separate copy of Life OS.</p>
+      <p class="field-hint">To make it automatic, add a personal automation in Shortcuts (for example, when your alarm stops) that runs it.</p>
     </div>`,
   });
 }

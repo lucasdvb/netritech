@@ -1,7 +1,7 @@
 // Lint for mistakes, not style: undefined names (a missing import breaks a screen only when that
 // path runs), unused code, unreachable code and the like. ESLint's core rules only, so it runs
 // with a plain `eslint` install and no presets:  npm run lint
-const browser = `Blob CSS CustomEvent File FileReader FormData HTMLInputElement HTMLTextAreaElement HashChangeEvent IDBKeyRange
+const browser = `Blob CSS CustomEvent File FileReader FormData TextDecoder atob btoa HTMLInputElement HTMLTextAreaElement HashChangeEvent IDBKeyRange
   MediaRecorder Notification Request Response TextEncoder URL URLSearchParams addEventListener caches
   cancelAnimationFrame clearInterval clearTimeout console createImageBitmap crypto devicePixelRatio document
   fetch getComputedStyle history indexedDB innerHeight innerWidth localStorage location matchMedia navigator
@@ -23,7 +23,7 @@ const rules = Object.fromEntries([
 
 // The tests and tools run in Node and hand functions to the page, so they see both.
 const node = ['process', 'Buffer'];
-const inPage = ['ClipboardEvent', 'DOMException', 'DataTransfer', 'Event', 'IDBObjectStore', 'PerformanceObserver', 'Touch', 'TouchEvent'];
+const inPage = ['ClipboardEvent', 'DOMException', 'DataTransfer', 'Event', 'OffscreenCanvas', 'IDBObjectStore', 'PerformanceObserver', 'Touch', 'TouchEvent'];
 const readonly = (names) => Object.fromEntries(names.map((g) => [g, 'readonly']));
 
 export default [

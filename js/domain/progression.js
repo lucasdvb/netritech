@@ -7,7 +7,7 @@ import * as Rec from './records.js';
 import * as Rw from './rewards.js';
 import * as S from './seasons.js';
 import * as C from './commitments.js';
-import * as H from './habits.js';
+import * as H from './habits-more.js';
 import { planHabits } from './scoring.js';
 import { today } from './dates.js';
 
@@ -26,11 +26,26 @@ export function focusDone(date = today()) {
   return true;
 }
 
-/** Bring everything up to date. Returns what's new: { rewards, records, levels, seasons, focus }. */
+/**
+ * A comeback: a habit in today's plan counting again right after a miss (13a). Each habit is marked
+ * once a day; the first one not yet marked is returned, and every one found is marked at once.
+ */
+export function comeback(date = today()) {
+  if (H.isOff(H.dayMode(date))) return null;
+  const seen = store.get('meta', 'comebacks');
+  const marked = new Set(seen?.on === date ? seen.ids : []);
+  const found = planHabits(date).filter((h) => !marked.has(h.id) && H.isComeback(h, date));
+  if (!found.length) return null;
+  store.put('meta', { id: 'comebacks', on: date, ids: [...marked, ...found.map((h) => h.id)] });
+  const h = found[0];
+  return { habitId: h.id, name: h.name, count: H.runs(h, date).comebacks };
+}
+
+/** Bring everything up to date. Returns what's new: { rewards, records, levels, seasons, comeback, focus }. */
 export function run(date = today()) {
   const seasons = S.finalize(date);
   C.finalize(date);
-  return { rewards: Rw.sync(date), records: Rec.sync(date), levels: L.sync(date), seasons, focus: focusDone(date) };
+  return { rewards: Rw.sync(date), records: Rec.sync(date), levels: L.sync(date), seasons, comeback: comeback(date), focus: focusDone(date) };
 }
 
 /** The one moment worth showing for what's new, or null (at most one per action). */
@@ -41,6 +56,8 @@ export function moment(news) {
   if (rec) return { kind: 'record', label: rec.label, value: rec.text, text: `New record · ${rec.label}: ${rec.text}` };
   const l = news.levels.sort((a, b) => b.at - a.at)[0];
   if (l) return { kind: 'level', habitId: l.habitId, name: l.habit.name, level: l.level, levelName: l.name, at: l.at, text: `${l.habit.name} · ${l.name}, ${l.at} time${l.at === 1 ? '' : 's'}` };
+  const c = news.comeback;
+  if (c) return { kind: 'comeback', habitId: c.habitId, name: c.name, count: c.count, text: `Back to ${c.name}` };
   if (news.focus) return { kind: 'focus', text: `Your ${H.focusWord()} are done` };
   const s = news.seasons[0];
   if (s) return { kind: 'season', id: s.id, name: s.name, text: `${s.name} is complete. Its summary is ready.` };
@@ -64,6 +81,7 @@ function runInSteps(date, done) {
     () => { news.rewards = Rw.sync(date); },
     ...Rec.seriesSteps(date), () => { news.records = Rec.sync(date); },
     ...L.syncSteps(date), () => { news.levels = L.sync(date); },
+    () => { news.comeback = comeback(date); },
     () => { news.focus = focusDone(date); },
   ];
   let i = 0;

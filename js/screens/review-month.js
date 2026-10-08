@@ -2,6 +2,8 @@
 // problem, stop · start · continue, who you're becoming, the business numbers) and next month's
 // focus. "See it all" shows everything on one page, as does a finished review.
 import * as store from '../data/store.js';
+import * as H from '../domain/habits-more.js';
+import * as HS from '../domain/habit-system.js';
 import { monthFacts } from '../domain/review-data.js';
 import { today, monthKey, fmtMonth, addMonths, dayAt, dayInline } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
@@ -18,7 +20,7 @@ const QUESTIONS = [
 ];
 const BUSINESS = [['revenue', 'Revenue'], ['profit', 'Profit'], ['expenses', 'Expenses'], ['clients', 'New clients'], ['retention', 'Retention']];
 const STEPS = [
-  ['numbers', 'The month in numbers', []], ['high', 'The high and the low', ['win', 'problem']], ['ssc', 'Stop · start · continue', ['stop', 'start', 'continue']],
+  ['numbers', 'The month in numbers', []], ['auto', 'Does it feel automatic?', []], ['high', 'The high and the low', ['win', 'problem']], ['ssc', 'Stop · start · continue', ['stop', 'start', 'continue']],
   ['spirit', 'Who you’re becoming', ['spirit']], ['business', 'The business', []], ['focus', 'Next month’s focus', ['focus']],
 ];
 
@@ -53,13 +55,25 @@ function tiles(f) {
     ${f.books.length ? html`<p class="quiet-line">${icon('book-open', { size: 15 })} ${f.books.join(' · ')}</p>` : ''}`;
 }
 
+/** Focus habits close to automatic: four quick questions each (13b). */
+function autoStep() {
+  const focus = H.focusHabits();
+  const due = focus.filter((h) => HS.autoDue(h));
+  const asked = focus.filter((h) => !due.includes(h) && H.autoScore(h) != null);
+  if (!due.length && !asked.length) return html`<p class="sheet-note">Nothing to ask this month. A habit is asked once it’s been in focus for three weeks and is getting strong.</p>`;
+  return html`<p class="sheet-note">Four quick questions per habit. When one feels automatic, its reminders fade and it can move to autopilot, so the slot goes to the next habit.</p>
+    <ul class="list">${[...due, ...asked].map((h) => html`<li class="row" data-key="auto-${h.id}"><span class="row-main"><span class="row-title">${h.name}</span>
+      <span class="row-sub">${H.autoScore(h) != null ? `${H.autoScore(h)} of 5 · ${H.feelsAutomatic(h) ? 'feels automatic' : 'not yet'}` : `Strength ${H.strength(h)}%`}</span></span>
+      ${due.includes(h) ? html`<button type="button" class="btn btn--soft btn--sm" data-action="auto-check" data-id="${h.id}">Ask</button>` : ''}</li>`)}</ul>`;
+}
+
 const business = (r) => html`<div class="grid-2">${BUSINESS.map(([k, label]) => html`<label class="field"><span class="field-label">${label}</span><input class="input" value="${r.business?.[k] || ''}" data-input="biz" data-k="${k}" placeholder="—"></label>`)}</div>`;
 
 function guided(m, r, f, ui) {
   const i = Math.min(ui.step || 0, STEPS.length - 1);
   const [step, q, keys] = STEPS[i];
   const last = i === STEPS.length - 1;
-  const body = step === 'numbers' ? tiles(f) : step === 'business' ? business(r) : html`<div class="journal-form">${keys.map((k) => prompt(k, r))}</div>`;
+  const body = step === 'numbers' ? tiles(f) : step === 'auto' ? autoStep() : step === 'business' ? business(r) : html`<div class="journal-form">${keys.map((k) => prompt(k, r))}</div>`;
   return html`<div class="guide" data-key="guide-${step}" data-step="${step}">
     <div class="ritual-progress" role="progressbar" aria-valuemin="1" aria-valuemax="${STEPS.length}" aria-valuenow="${i + 1}" aria-label="Step ${i + 1} of ${STEPS.length}">
       ${STEPS.map((x, j) => html`<span class="${cx(j < i && 'is-done', j === i && 'is-now')}"></span>`)}</div>
@@ -124,6 +138,7 @@ export default {
     },
   },
   actions: {
+    'auto-check': async ({ data }) => { const h = H.habit(data.id); if (h) (await import('./auto-check.js')).openAutoCheck(h, { onDone: () => app.refresh() }); },
     'rv-next': ({ params, ui }) => { store.put('monthlyReviews', collect(monthOf(params))); hap.tap(); go(ui, 1); },
     'rv-skip': ({ ui }) => { hap.tap(); go(ui, 1); },
     'rv-back': ({ params, ui }) => { store.put('monthlyReviews', collect(monthOf(params))); go(ui, -1); },

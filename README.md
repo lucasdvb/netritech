@@ -2,7 +2,7 @@
 
 A private, local-first app for habits, health, training and life. It is built for daily use on an iPhone from the Home Screen, and works in any modern browser.
 
-Everything you log stays on the device that logged it. There are no accounts, no servers, no analytics and no third-party services.
+Everything you log stays on the device that logged it, unless you turn on sync with your own server (below). There are no accounts, no analytics and no third-party services.
 
 Where it's heading: the owner's brief is in [`docs/master-brief.md`](docs/master-brief.md), and the architecture and phased build plan in [`docs/product-architecture.md`](docs/product-architecture.md).
 
@@ -153,6 +153,15 @@ Reminders show as a banner while Life OS is open. If you allow notifications, th
 iOS only delivers notifications to a fully closed web app through a push server. This private, server-free version deliberately doesn't use one, so **your calendar does the reminding**: *You › Reminders in your calendar* builds one calendar file (morning check-in, each training day, close the day, the weekly and monthly reviews, and every habit with a reminder time), each event with an alert at its time and a link back to the right page. On iPhone, tap *Add All* when Calendar opens. The file is made on the phone and handed straight to Calendar; nothing is sent anywhere.
 
 The **app-icon badge** shows how much of today's plan is still open and updates as you log (Settings › Reminders). On iPhone it needs notifications allowed for Life OS.
+
+### Sync between your devices
+
+*You › Sync* keeps your phone and your computer the same.
+- Each device keeps its full copy and works offline. Changes travel through a small server you own: a free Cloudflare Worker with one database, set up once in about five minutes.
+- The steps are in the app (*How to set it up*, with a button that copies the server code) and in [`server/README.md`](server/README.md).
+- Everything is encrypted on the device before it leaves, with a sync key only your devices hold, so the server can't read any of it.
+- The first device starts sync and shows the key. Another device joins with it and takes the synced data; what it had is kept as a safety copy.
+- The newest change to a record wins. Settings sync one by one, and theme and notifications stay with each device.
 
 ---
 

@@ -9,6 +9,7 @@ import * as store from '../data/store.js';
 import * as M from './metrics.js';
 import * as F from './fitness.js';
 import { habit, isDone, dueOn, activeHabits } from './habits.js';
+import { feelsAutomatic } from './habits-more.js';
 import { today, minutesOfDay, parseHM, weekday, fmtHM } from './dates.js';
 import { html } from '../ui/dom.js';
 import { LINKED, learned, ignoredStreak } from './reminder-rules.js';
@@ -84,7 +85,8 @@ export function candidates(now) {
   });
   if (nt.habits?.on) {
     for (const h of activeHabits()) {
-      if (!h.reminder || Object.values(LINKED).includes(h.id)) continue;
+      // A habit that feels automatic doesn't need reminding: reminders slow habits becoming automatic.
+      if (!h.reminder || Object.values(LINKED).includes(h.id) || feelsAutomatic(h)) continue;
       const tm = parseHM(h.reminder);
       if (m < tm || m > tm + 90 || !dueOn(h, d) || isDone(h, d)) continue;
       out.push({ cat: 'habits', key: `habit:${h.id}`, habitId: h.id, title: h.name, body: h.description || 'Still open for today.', url: `./#/habits/${h.id}`, time: h.reminder });

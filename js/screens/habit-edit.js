@@ -46,6 +46,7 @@ function clean(d, before) {
   if (!out.checklist.length) out.checklist = null;
   out.why = (d.why || '').trim() || null;
   out.backup = (d.backup?.then || '').trim() ? { when: (d.backup.when || '').trim() || null, then: d.backup.then.trim() } : null;
+  out.stretch = d.stretch && ((d.stretch.label || '').trim() || d.stretch.min != null) ? { label: (d.stretch.label || '').trim() || null, min: d.stretch.min ?? null } : null;
   if (out.type === 'rating') { out.target = 10; out.unit = ''; }
   if (out.type === 'binary' || out.type === 'check') out.target = 1;
   if (out.min === '' || out.min == null || Number.isNaN(out.min)) out.min = null;
@@ -57,8 +58,11 @@ function clean(d, before) {
   return out;
 }
 
-/** Open the editor for a habit id, or for a new habit's draft. */
-export function openHabitEditor(target) {
+/** Where `focus` points: the field a helper opened the editor for. */
+const FOCUS = { tiny: '[data-input="tiny"][data-k="label"]', backup: '[data-input="backup"][data-k="when"]', anchor: '[data-f="anchor"]', stretch: '[data-input="stretch"][data-k="label"]' };
+
+/** Open the editor for a habit id, or for a new habit's draft; { focus } opens it at one field. */
+export function openHabitEditor(target, { focus } = {}) {
   const isNew = typeof target !== 'string';
   const original = isNew ? null : H.habit(target);
   if (!isNew && !original) return;
@@ -88,7 +92,7 @@ export function openHabitEditor(target) {
   const s = app.sheet({
     title: isNew ? 'New habit' : `Edit ${original.name}`,
     size: 'detent',
-    ui: { draft, errors: {}, more: isNew, isNew, changed: false },
+    ui: { draft, errors: {}, more: isNew || ['backup', 'stretch'].includes(focus), isNew, changed: false },
     render: (sheet) => {
       const u = sheet.ui;
       const d = u.draft;
@@ -104,13 +108,13 @@ export function openHabitEditor(target) {
           <div class="field"><span class="field-label">When <small>after something you already do</small></span>
             <div class="chips" role="group" aria-label="Suggested moments">${HS.anchorSuggestions().slice(0, 6).map((a) => html`<button type="button" class="${cx('chip', d.anchor === a && 'is-active')}" aria-pressed="${d.anchor === a}" data-action="anchor" data-v="${a}">${a}</button>`)}</div>
             <textarea class="input input--grow" rows="1" data-grow data-input="f" data-f="anchor" placeholder="After I…" maxlength="60" aria-label="When, in your own words" enterkeyhint="done">${d.anchor || ''}</textarea></div>
-          <div class="${numeric && d.type !== 'rating' ? 'grid-2' : ''}">
+          ${d.type === 'limit' ? '' : html`<div class="${numeric && d.type !== 'rating' ? 'grid-2' : ''}">
             <label class="field"><span class="field-label">Tiny version</span>
               <textarea class="input input--grow" rows="1" data-grow data-input="tiny" data-k="label" placeholder="${d.name ? `The two-minute ${d.name.toLowerCase()}` : 'e.g. Read one page'}" maxlength="60" enterkeyhint="done">${d.tiny?.label || ''}</textarea></label>
             ${numeric && d.type !== 'rating' ? html`<label class="field"><span class="field-label">Tiny amount <small>${d.unit || 'counts as tiny'}</small></span>
               <input class="input" type="number" inputmode="decimal" step="any" min="0" value="${d.tiny?.min ?? ''}" data-input="tiny" data-k="min"></label>` : ''}
           </div>
-          <p class="field-hint">What you’d still do on your worst day. It always counts, for your score and your run.</p>
+          <p class="field-hint">What you’d still do on your worst day. It always counts, for your score and your run.</p>`}
           <div class="field"><span class="field-label">State</span>
             ${segmented(STATE_CHOICES, d.state, { action: 'state', name: 'State' })}
             ${fieldError(e.state)}
@@ -147,15 +151,29 @@ export function openHabitEditor(target) {
             <ul class="step-edit">${d.checklist.map((item, i) => html`<li data-key="st-${i}"><span class="tnum muted">${i + 1}</span><input class="input" value="${item}" data-input="step" data-i="${i}" aria-label="Step ${i + 1}">
               <button type="button" class="icon-btn icon-btn--sm" data-action="del-step" data-i="${i}" aria-label="Remove step ${i + 1}">${icon('x', { size: 16 })}</button></li>`)}</ul>
             <button type="button" class="link-btn" data-action="add-step">${icon('plus', { size: 16 })} Add a step</button></div>` : ''}
+          ${d.type === 'limit' ? html`<div class="field"><span class="field-label">At most <small>a day</small></span>${stepper(d.limit ?? 0, { action: 'limit', step: 1, min: 0, max: 50, unit: d.unit || '' })}
+            <span class="field-hint">0 means quitting it altogether. A day within the limit counts as kept.</span></div>
+            <label class="field"><span class="field-label">Unit <small>optional</small></span><input class="input" value="${d.unit || ''}" data-input="f" data-f="unit" placeholder="coffees, drinks, cigarettes…" maxlength="20"></label>
+            <label class="field"><span class="field-label">Instead, I will… <small>your plan for an urge</small></span>
+              <textarea class="input input--grow" rows="1" data-grow data-input="f" data-f="instead" placeholder="e.g. Walk around the block" maxlength="80" enterkeyhint="done">${d.instead || ''}</textarea></label>` : ''}
+          ${d.type === 'limit' ? '' : html`<div class="${numeric && d.type !== 'rating' ? 'grid-2' : ''}">
+            <label class="field"><span class="field-label">Stretch version <small>optional</small></span>
+              <textarea class="input input--grow" rows="1" data-grow data-input="stretch" data-k="label" placeholder="${numeric ? 'e.g. The long one' : 'e.g. The full hour'}" maxlength="60" enterkeyhint="done">${d.stretch?.label || ''}</textarea></label>
+            ${numeric && d.type !== 'rating' ? html`<label class="field"><span class="field-label">Stretch amount <small>${d.unit || ''}</small></span>
+              <input class="input" type="number" inputmode="decimal" step="any" min="0" value="${d.stretch?.min ?? ''}" data-input="stretch" data-k="min"></label>` : ''}
+          </div>
+          <p class="field-hint">For a great day. It counts as done and is marked in blue on its calendar.</p>`}
         </section>
 
         <section class="ed-group">
           <h2 class="ed-title">Schedule</h2>
-          <label class="field"><span class="field-label">Frequency</span><select class="input" data-change="kind">${SCHEDULES.map((x) => html`<option value="${x.id}" ${raw(s.kind === x.id ? 'selected' : '')}>${x.label}</option>`)}</select></label>
+          ${d.type === 'limit' ? html`<p class="field-hint">Counted every day.</p>` : html`<label class="field"><span class="field-label">Frequency</span><select class="input" data-change="kind">${SCHEDULES.map((x) => html`<option value="${x.id}" ${raw(s.kind === x.id ? 'selected' : '')}>${x.label}</option>`)}</select></label>`}
           ${s.kind === 'weekdays' ? html`<div class="field"><span class="field-label">Days</span><div class="day-pick" role="group" aria-label="Days">${DAYS.map(([v, l]) => html`<button type="button" class="${cx('day-opt', (s.days || []).includes(v) && 'is-on')}" aria-pressed="${(s.days || []).includes(v)}" aria-label="${DAY_NAMES[v]}" data-action="day" data-v="${v}">${l}</button>`)}</div>
             ${fieldError(e.days)}</div>` : ''}
           ${s.kind === 'perWeek' || s.kind === 'perMonth' ? html`<div class="field"><span class="field-label">Times per ${s.kind === 'perWeek' ? 'week' : 'month'}</span>${stepper(s.count || 1, { action: 'count', step: 1, min: 1 })}</div>` : ''}
           ${s.kind === 'interval' ? html`<div class="field"><span class="field-label">Every</span>${stepper(s.every || 7, { action: 'every', step: 1, unit: 'days', min: 2 })}</div>` : ''}
+          ${H.reserveAllowance({ ...d, reserves: 1 }) ? html`<div class="field"><span class="field-label">Reserve days <small>a week</small></span>${stepper(d.reserves ?? 1, { action: 'reserves', step: 1, min: 0, max: 3 })}
+            <span class="field-hint">Planned skips. “Not today” uses one first, and the run carries on.</span></div>` : ''}
           <div class="grid-2">
             <label class="field"><span class="field-label">Start time <small>optional</small></span><input class="input" type="time" value="${d.time || ''}" data-change="f" data-f="time"></label>
             <label class="field"><span class="field-label">Reminder <small>optional</small></span><input class="input" type="time" value="${d.reminder || ''}" data-change="f" data-f="reminder"></label>
@@ -215,6 +233,8 @@ export function openHabitEditor(target) {
         changed(sheet);
       },
       count: ({ data, sheet }) => { const sch = sheet.ui.draft.schedule; sch.count = Math.max(1, Math.min(sch.kind === 'perWeek' ? 7 : 31, (sch.count || 1) + Number(data.delta))); changed(sheet); },
+      limit: ({ data, sheet }) => { const d = sheet.ui.draft; d.limit = Math.max(0, Math.min(50, (d.limit ?? 0) + Number(data.delta))); changed(sheet); },
+      reserves: ({ data, sheet }) => { const d = sheet.ui.draft; d.reserves = Math.max(0, Math.min(3, (d.reserves ?? 1) + Number(data.delta))); changed(sheet); },
       every: ({ data, sheet }) => { const sch = sheet.ui.draft.schedule; sch.every = Math.max(2, Math.min(90, (sch.every || 7) + Number(data.delta))); changed(sheet); },
       state: ({ data, sheet }) => {
         if (data.value === 'focus' && sheet.ui.draft.state !== 'focus' && focusOthers(id) >= H.focusLimit()) {
@@ -267,12 +287,19 @@ export function openHabitEditor(target) {
         sheet.ui.draft.tiny = t;
         changed(sheet, { soon: true });
       },
+      stretch: ({ el, value, sheet }) => {
+        const t = { label: null, min: null, ...(sheet.ui.draft.stretch || {}) };
+        t[el.dataset.k] = el.dataset.k === 'min' ? n(value) : value;
+        sheet.ui.draft.stretch = t;
+        changed(sheet, { soon: true });
+      },
       step: ({ el, value, sheet }) => { sheet.ui.draft.checklist[Number(el.dataset.i)] = value; changed(sheet, { soon: true }); },
       backup: ({ el, value, sheet }) => { sheet.ui.draft.backup = { when: '', then: '', ...(sheet.ui.draft.backup || {}), [el.dataset.k]: value }; changed(sheet, { soon: true }); },
       type: ({ value, sheet }) => {
         const d = sheet.ui.draft;
         d.type = value;
         if (value === 'duration' && !d.unit) d.unit = 'min';
+        if (value === 'limit') { d.limit ??= 0; d.schedule = { kind: 'daily' }; }
         if (['numeric', 'duration', 'quantity'].includes(value) && !(d.target > 1)) d.target = value === 'duration' ? 20 : 10;
         changed(sheet);
       },
@@ -285,5 +312,9 @@ export function openHabitEditor(target) {
     },
   });
   if (isNew) s.expand?.();
+  if (focus && FOCUS[focus]) {
+    s.expand?.();
+    requestAnimationFrame(() => { const f = s.el?.querySelector(FOCUS[focus]); f?.scrollIntoView({ block: 'center' }); f?.focus({ preventScroll: true }); });
+  }
   return s;
 }

@@ -9,6 +9,7 @@ import { html, raw, cx } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
 import { ring, check } from '../../ui/controls.js';
 import { num, habitValue, habitTarget } from '../../ui/format.js';
+import { app } from '../../ui/app-api.js';
 
 export const METRIC_SOURCES = ['water', 'protein', 'steps', 'produce'];
 export const COUNTER_SOURCES = ['deepWork', 'breaks', 'eyeBreaks'];
@@ -43,7 +44,17 @@ export function counterRow(h, date, mode) {
   </div>`;
 }
 
+// A habit you're cutting down or quitting has its own row (today/limit-row.js), loaded the first
+// time one is on Today; until then it holds its place.
+let limitRow = null;
+const loadLimitRow = () => import('./limit-row.js').then((m) => { limitRow = m.limitRow; app.refresh(); });
+
 export function habitRow(h, date, mode, ui, { focus = false } = {}) {
+  if (H.isLimit(h)) {
+    if (limitRow) return limitRow(h, date);
+    loadLimitRow();
+    return html`<li class="hrow hrow--limit" data-key="${h.id}" data-habit="${h.id}" data-swipe="off" aria-busy="true"><span class="hrow-name">${h.name}</span></li>`;
+  }
   const done = H.isDone(h, date, mode);
   const lv = H.level(h, date, mode);
   const l = H.log(h.id, date);
