@@ -23,15 +23,20 @@ await step('a full disk: the write is rolled back and reported, and the next one
   });
   const before = await ev(() => window.__lifeos.store.all('waterLogs').length);
   await ev(() => { window.__full = true; });
-  await page.locator('[data-action="add-water"]').first().click();
-  await page.waitForSelector('.toast--danger');
-  const msg = await page.locator('.toast').last().textContent();
-  if (!/couldn’t save|safe/i.test(msg)) throw new Error(`message: ${msg}`);
-  await page.waitForTimeout(300);
-  if (await page.locator('.toast--danger').count() !== 1) throw new Error('the same error shown more than once');
-  if (await ev(() => window.__lifeos.store.all('waterLogs').length) !== before) throw new Error('the failed entry is still shown');
-  await shot('res-01-disk-full');
-  await ev(() => { window.__full = false; });
+  try {
+    await page.locator('[data-action="add-water"]').first().click();
+    await page.waitForSelector('.toast--danger');
+    const msg = await page.locator('.toast--danger').first().textContent();
+    if (!/couldn’t save|safe/i.test(msg)) throw new Error(`message: ${msg}`);
+    await page.waitForTimeout(300);
+    if (await page.locator('.toast--danger').count() !== 1) throw new Error('the same error shown more than once');
+    const left = await page.locator('.toast:not(.toast--danger)').allTextContents();
+    if (left.length) throw new Error(`a message still claims the entry was saved: ${left.join(' | ')}`);
+    if (await ev(() => window.__lifeos.store.all('waterLogs').length) !== before) throw new Error('the failed entry is still shown');
+    await shot('res-01-disk-full');
+  } finally {
+    await ev(() => { window.__full = false; });
+  }
   await page.locator('[data-action="add-water"]').first().click();
   await ev(() => window.__lifeos.store.flush());
   await go('#/today', '.today');
