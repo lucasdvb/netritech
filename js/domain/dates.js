@@ -105,5 +105,5 @@ export const durationHM = (minutes) => {
   const m = Math.round(minutes % 60);
   return h ? `${h}h ${pad(m)}m` : `${m}m`;
 };
-/** Order two ISO dates, times or timestamps (plain text order is their time order; much faster than localeCompare). */
+/** Order two ISO dates or times: their text order is their time order (and faster than localeCompare). */
 export const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);

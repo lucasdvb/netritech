@@ -20,8 +20,7 @@ const listeners = new Set();
 const versions = Object.create(null);
 const memos = new Map();
 const MEMO_LIMIT = 20000;
-// When each date's data last changed (a running count), so what's worked out from the past can
-// stay cached while you log today (see changedBefore).
+// store → (date → when it last changed, a running count). See changedBefore.
 const dateStamps = new Map();
 let stampSeq = 0;
 let changed = new Set();
@@ -42,9 +41,8 @@ export const now = () => new Date().toISOString();
 // window writes nothing, so nothing half-saves, and it asks once to be reloaded.
 let closed = false;
 
-// Opening on Today, the biggest store (every workout set ever logged) loads only its recent weeks
-// first, which is all Today reads, the day summaries not at all, and the rest straight after (loadRest). Anything that needs it
-// all, such as a backup or the records, waits for complete().
+// Opening on Today, workout sets (the biggest store) load only their last three weeks, all Today
+// reads, and day summaries none; the rest follows (loadRest). What needs it all waits for complete().
 const RECENT_DAYS = 21;
 let partial = new Set();
 let rest = Promise.resolve();
@@ -107,6 +105,7 @@ export async function loadRest() {
     }
   });
   partial = new Set();
+  memos.clear(); // what was worked out from part of the history no longer holds
   names.forEach((s) => emit(s));
   restDone?.();
   restDone = restFailed = null;
@@ -125,7 +124,11 @@ function emit(store, records = []) {
   changed.add(store);
   versions[store] = (versions[store] || 0) + 1;
   delete dateIndex[store];
-  if (!DERIVED.has(store)) for (const r of records) if (r?.date) { changedDates.add(r.date); dateStamps.set(r.date, ++stampSeq); }
+  if (!DERIVED.has(store)) for (const r of records) if (r?.date) {
+    changedDates.add(r.date);
+    if (!dateStamps.has(store)) dateStamps.set(store, new Map());
+    dateStamps.get(store).set(r.date, ++stampSeq);
+  }
   if (scheduled) return;
   scheduled = true;
   queueMicrotask(() => {
@@ -320,10 +323,10 @@ export const count = (store) => cache[store].size;
 /** The tombstone left by deleting a record, if any. */
 export const deleted = (store, id) => tombs[store]?.get(id);
 
-/** A stamp that changes whenever data dated before `date` changes (for memo's `extra`). */
-export function changedBefore(date) {
+/** For memo's `extra`: changes when data dated before `date` changes (in `stores`, or any). */
+export function changedBefore(date, stores = dateStamps.keys()) {
   let m = 0;
-  for (const [d, v] of dateStamps) if (d < date && v > m) m = v;
+  for (const s of stores) for (const [d, v] of dateStamps.get(s) || []) if (v > m && d < date) m = v;
   return `|${m}`;
 }
 

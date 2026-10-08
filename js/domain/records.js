@@ -8,7 +8,8 @@ import * as store from '../data/store.js';
 import * as M from './metrics.js';
 import * as F from './fitness.js';
 import * as H from './habits.js';
-import { today, addDays, range, startOfWeek, endOfWeek, parseHM, fmtHM } from './dates.js';
+import { stretches, settled } from './history.js';
+import { today, addDays, diffDays, range, startOfWeek, endOfWeek, startOfMonth, parseHM, fmtHM } from './dates.js';
 import { num } from '../ui/format.js';
 
 export const MIN_PRIOR = 3;
@@ -81,15 +82,37 @@ function stepDays(end) {
   return points.length ? [{ id: 'steps-day', label: 'Most steps in a day', fmt: (v) => num(v), points }] : [];
 }
 
-/** A habit's runs ("never miss twice"), as data points: a run's length on the day it ended or now. */
-function habitRuns(h, end) {
-  const points = [];
-  let run = 0, misses = 0, last = null;
-  for (const p of H.periodsOf(h, H.startOf(h), end)) {
+/** Runs through a list of periods, carrying on from `from`. */
+function foldRuns(periods, from) {
+  let { run, misses, last } = from;
+  const points = [...from.points];
+  for (const p of periods) {
     if (p.met === null) continue;
     if (p.met) { run = misses >= 2 ? 1 : run + 1; misses = 0; last = p.key; }
     else { misses++; if (misses === 2 && run) { points.push({ date: last, value: run }); run = 0; } }
   }
+  return { run, misses, last, points };
+}
+const NO_RUNS = { run: 0, misses: 0, last: null, points: [] };
+
+/** Where the period holding `end` starts: everything before it is settled. */
+function periodStart(h, end) {
+  const s = h.schedule || {};
+  if (s.kind === 'perWeek') return startOfWeek(end);
+  if (s.kind === 'perMonth') return startOfMonth(end);
+  if (s.kind === 'interval') { const every = s.every || 7; const start = H.startOf(h); return addDays(start, Math.floor(diffDays(end, start) / every) * every); }
+  return end;
+}
+
+// The settled periods (before the one still open) by stretch, then the open one as it stands.
+const pastStretches = (h, end) => { const start = H.startOf(h), cut = periodStart(h, end); return cut > start ? stretches(h, start, addDays(cut, -1)) : []; };
+const pastPeriods = (h, ab) => settled('periods', h, ab, () => H.periodsOf(h, ab[0], ab[1]));
+
+/** A habit's runs ("never miss twice"), as data points: a run's length on the day it ended or now. */
+function habitRuns(h, end) {
+  const past = pastStretches(h, end).reduce((state, ab) => foldRuns(pastPeriods(h, ab), state), NO_RUNS);
+  const start = H.startOf(h), cut = periodStart(h, end);
+  const { run, last, points } = foldRuns(H.periodsOf(h, cut > start ? cut : start, end), past);
   if (run) points.push({ date: last, value: run, ongoing: true });
   const unit = H.runUnit(h) === 'day' ? 'days' : H.runUnit(h) === 'week' ? 'weeks' : 'times';
   return points.length ? [{ id: `run:${h.id}`, label: `${h.name}: longest run`, fmt: (v) => `${num(v)} ${unit}`, points }] : [];
@@ -114,7 +137,8 @@ export function series(end = today()) {
 }
 
 /** The work behind series(), as small separate steps (for the background watcher). */
-export const seriesSteps = (end = today()) => [...Object.keys(PARTS).map((k) => () => part(k, end)), ...runHabits().map((h) => () => runOf(h, end))];
+export const seriesSteps = (end = today()) => [...Object.keys(PARTS).map((k) => () => part(k, end)),
+  ...runHabits().flatMap((h) => [...pastStretches(h, end).map((ab) => () => pastPeriods(h, ab)), () => runOf(h, end)])];
 
 const better = (s, a, b) => (s.lower ? a < b : a > b);
 

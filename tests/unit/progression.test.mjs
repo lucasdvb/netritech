@@ -4,7 +4,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
 import { fresh, store } from './helpers.mjs';
-import { today, addDays, setDayEnd, weekday, startOfWeek } from '../../js/domain/dates.js';
+import { today, addDays, setDayEnd, weekday, startOfWeek, range } from '../../js/domain/dates.js';
 import { profileSeed, settingsSeed, templatesSeed, exercisesSeed } from '../../js/data/seed.js';
 import * as H from '../../js/domain/habits.js';
 import * as L from '../../js/domain/levels.js';
@@ -244,4 +244,64 @@ test('side quests: one a week, the quietest area, never repeated within twelve w
   assert.equal(seen.size, 3, 'no repeats');
   Q.decline(Q.offer(addDays(T, 21)));
   assert.equal(Q.quest(startOfWeek(addDays(T, 21))).status, 'declined');
+});
+
+test('records: runs worked out in two parts (the settled past, then this period) match the whole history', async () => {
+  const habits = [hb('d'), hb('w', { schedule: { kind: 'perWeek', count: 3 } }), hb('m', { schedule: { kind: 'perMonth', count: 8 } }), hb('i', { schedule: { kind: 'interval', every: 3 } })];
+  await world({ habits });
+  let seed = 7;
+  const rand = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  for (const h of habits) for (let n = 0; n <= 400; n++) if (rand() < 0.6) log(h.id, n);
+  // The whole history in one pass, as records worked it out before.
+  const whole = (h) => {
+    const points = [];
+    let run = 0, misses = 0, last = null;
+    for (const p of H.periodsOf(h, H.startOf(h), T)) {
+      if (p.met === null) continue;
+      if (p.met) { run = misses >= 2 ? 1 : run + 1; misses = 0; last = p.key; }
+      else { misses++; if (misses === 2 && run) { points.push({ date: last, value: run }); run = 0; } }
+    }
+    if (run) points.push({ date: last, value: run, ongoing: true });
+    return points;
+  };
+  const check = (when) => {
+    const got = Object.fromEntries(Rec.series(T).filter((s) => s.id.startsWith('run:')).map((s) => [s.id.slice(4), s.points]));
+    for (const id of ['d', 'w', 'm', 'i']) assert.deepEqual(got[id] || [], whole(H.habit(id)), `${id}, ${when}`);
+  };
+  check('first');
+  log('d', 0); log('w', 0); log('i', 0);
+  check('after logging today');
+  for (const n of [40, 41, 120, 200]) { unlog('d', n); unlog('w', n); unlog('m', n); unlog('i', n); }
+  log('m', 90);
+  check('after changing the past');
+  store.put('dailyReviews', { id: day(-60), date: day(-60), mode: 'sick' });
+  check('after a sick day in the past');
+  store.update('habits', 'w', { schedule: { kind: 'perWeek', count: 2 } });
+  check('after changing the schedule');
+});
+
+test('levels: the days counted, worked out a stretch at a time, match the whole history', async () => {
+  const habits = [hb('d'), hb('wat', { type: 'numeric', unit: 'ml', target: 3000, source: 'water', tiny: { label: 'A bottle', min: 1000 } }), hb('w', { schedule: { kind: 'perWeek', count: 3 } })];
+  await world({ habits });
+  let seed = 11;
+  const rand = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  for (let n = 0; n <= 400; n++) {
+    if (rand() < 0.6) log('d', n);
+    if (rand() < 0.5) log('w', n);
+    if (rand() < 0.7) store.put('waterLogs', { id: `w-${n}`, date: day(-n), ml: Math.round(rand() * 4000) });
+  }
+  const whole = (h) => {
+    const logs = [...new Set(store.where('habitLogs', (l) => l.habitId === h.id).map((l) => l.date))].sort();
+    return (h.source ? range(H.startOf(h), T) : logs.filter((d) => d <= T)).filter((d) => H.started(h, d) && H.counts(h, d));
+  };
+  const check = (when) => { for (const id of ['d', 'wat', 'w']) assert.deepEqual(L.completionDays(H.habit(id), T), whole(H.habit(id)), `${id}, ${when}`); };
+  check('first');
+  log('d', 0); store.put('waterLogs', { id: 'w-today', date: T, ml: 3500 });
+  check('after logging today');
+  unlog('d', 150); store.remove('waterLogs', 'w-200'); store.put('waterLogs', { id: 'w-x', date: day(-90), ml: 5000 });
+  check('after changing the past');
+  store.put('dailyReviews', { id: day(-30), date: day(-30), mode: 'minimum' });
+  check('after a minimum day in the past');
+  store.update('habits', 'wat', { tiny: { label: 'A glass', min: 250 } });
+  check('after changing the tiny version');
 });
