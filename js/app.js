@@ -487,6 +487,7 @@ async function boot() {
   if (navigator.storage?.persist) navigator.storage.persisted().then((p) => { if (!p) navigator.storage.persist(); });
   // Sync, when it's set up on this device (You › Sync): loads after the first screen.
   try { if (localStorage.getItem('lifeos.sync')) import('./sync/engine.js').then((m) => m.start()).catch((err) => console.warn(err)); } catch { /* storage blocked */ }
+  try { if (localStorage.getItem('lifeos.push')) import('./push/client.js').then((m) => m.start()).catch((err) => console.warn(err)); } catch { /* storage blocked */ }
   window.__lifeos = { store, app, ready: true, readyAt: performance.now(), renders: renderTimes };
 }
 

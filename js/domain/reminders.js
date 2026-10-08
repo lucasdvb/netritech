@@ -3,8 +3,9 @@
 // • If a habit is usually done before its reminder, the reminder pauses itself.
 // • If a reminder is ignored three times in a row, it stops and suggests a new time.
 // Delivery: in-app banner when Life OS is visible; a system notification when it
-// isn't and permission was granted. No push server, so nothing arrives while iOS
-// has fully suspended the app — the settings screen says so plainly.
+// isn't and permission was granted. While iOS has the app fully suspended nothing
+// arrives from here; for that there's the calendar file, or the opt-in sender on
+// your own server (push/client.js), which then takes over the timed reminders.
 import * as store from '../data/store.js';
 import * as M from './metrics.js';
 import * as F from './fitness.js';
@@ -19,6 +20,8 @@ import { icon } from '../ui/icons.js';
 
 let timer = null;
 let banner = null;
+const SERVER_CATS = new Set(['morning', 'evening', 'weeklyReview', 'workout', 'habits']);
+const pushOn = () => { try { return !!JSON.parse(localStorage.getItem('lifeos.push'))?.on; } catch { return false; } };
 
 export const permissionState = () => (!('Notification' in window) ? 'unsupported' : Notification.permission);
 export async function requestPermission() {
@@ -105,7 +108,10 @@ async function tick() {
   const s = store.settings();
   if (!s?.notifications?.enabled) return;
   const now = new Date();
+  // With reminders on the server (13c), it sends the timed ones; in here only the nudges remain.
+  const server = pushOn();
   for (const c of candidates(now)) {
+    if (server && SERVER_CATS.has(c.cat)) continue;
     if (firedToday(c.key)) continue;
     const baseKey = c.cat === 'habits' ? c.key : c.cat;
     if (c.habitId && c.time && learned(c.habitId, c.time)) { record(c, 'skipped'); continue; }

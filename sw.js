@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = '15f0cff0e7';
+const VERSION = 'f864a9c1d3';
 const ASSETS = [
   "./",
   "./index.html",
@@ -35,6 +35,7 @@ const ASSETS = [
   "./js/domain/capture.js",
   "./js/domain/coach.js",
   "./js/domain/commitments.js",
+  "./js/domain/cues.js",
   "./js/domain/dates.js",
   "./js/domain/day-plan.js",
   "./js/domain/day.js",
@@ -60,6 +61,7 @@ const ASSETS = [
   "./js/domain/next-action.js",
   "./js/domain/progression.js",
   "./js/domain/projects.js",
+  "./js/domain/push-plan.js",
   "./js/domain/quests.js",
   "./js/domain/records.js",
   "./js/domain/reminder-rules.js",
@@ -77,6 +79,7 @@ const ASSETS = [
   "./js/domain/taxonomy.js",
   "./js/domain/templates.js",
   "./js/domain/urges.js",
+  "./js/push/client.js",
   "./js/redirects.js",
   "./js/routes.js",
   "./js/screens/area.js",
@@ -88,6 +91,7 @@ const ASSETS = [
   "./js/screens/calendar.js",
   "./js/screens/capture.js",
   "./js/screens/commitments.js",
+  "./js/screens/cues.js",
   "./js/screens/data.js",
   "./js/screens/dates.js",
   "./js/screens/exercise-picker.js",
@@ -125,6 +129,7 @@ const ASSETS = [
   "./js/screens/progress.js",
   "./js/screens/project.js",
   "./js/screens/projects.js",
+  "./js/screens/push-sheet.js",
   "./js/screens/records.js",
   "./js/screens/reflect.js",
   "./js/screens/relationships.js",
@@ -140,6 +145,7 @@ const ASSETS = [
   "./js/screens/sheets.js",
   "./js/screens/sleep.js",
   "./js/screens/sync.js",
+  "./js/screens/task-calendar.js",
   "./js/screens/task-sheet.js",
   "./js/screens/task-ui.js",
   "./js/screens/tasks.js",
@@ -259,6 +265,15 @@ self.addEventListener('fetch', (event) => {
       return new Response('', { status: 504, statusText: 'Offline' });
     }
   })());
+});
+
+// A reminder from the sender on your server (13c). Every push shows a notification, as iOS requires.
+self.addEventListener('push', (event) => {
+  let d = {};
+  try { d = event.data?.json() || {}; } catch { d = { body: event.data?.text() || '' }; }
+  event.waitUntil(self.registration.showNotification(d.title || 'Life OS', {
+    body: d.body || '', tag: d.tag || 'life-os', icon: 'assets/icons/icon-192.png', badge: 'assets/icons/icon-192.png', data: { url: d.url || './#/today' },
+  }));
 });
 
 self.addEventListener('notificationclick', (event) => {

@@ -13,10 +13,13 @@ const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select
 export const sheets = () => stack;
 export const top = () => stack[stack.length - 1] || null;
 
+// A counter, not the clock: two sheets opened in the same millisecond must not share an id.
+let opened = 0;
+
 export function open(opts) {
   layer ||= document.getElementById('sheets');
   const s = {
-    id: opts.id || `sheet-${Date.now()}`,
+    id: opts.id || `sheet-${++opened}`,
     title: opts.title || '',
     render: opts.render,
     actions: opts.actions || {},

@@ -1158,3 +1158,8 @@
 .sync-state { display: flex; align-items: center; gap: 8px; font-size: var(--text-body); font-weight: var(--weight-medium); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); color: var(--text); }
 .sync-key { display: flex; flex-direction: column; gap: 8px; }
 .sync-key-val { font-size: var(--text-h3); font-weight: var(--weight-semibold); line-height: var(--leading-h3); letter-spacing: 0.02em; color: var(--text); overflow-wrap: anywhere; }
+/* cues from your iPhone, and reminders when the app is closed (13c) */
+.cue-when { display: flex; align-items: center; gap: 8px; font-size: var(--text-body); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); color: var(--text); }
+.cue-when svg { color: var(--accent); flex: none; }
+.cue-text { background: var(--surface-2); border-radius: var(--r-sm); padding: var(--s3) var(--s4); font-size: var(--text-body); line-height: var(--leading-body); letter-spacing: var(--tracking-body); color: var(--text); overflow-wrap: anywhere; }
+.push-list .row-ic { width: auto; min-width: 52px; font-size: var(--text-caption); font-weight: var(--weight-semibold); color: var(--text); background: var(--surface-2); border-radius: var(--r-sm); padding: 0 6px; }

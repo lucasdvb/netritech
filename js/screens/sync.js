@@ -46,6 +46,7 @@ export function openServerGuide() {
         <li>The Worker’s <b>Settings › Bindings › Add</b>: a <b>D1 database</b>, variable name <code>DB</code>, database <code>lifeos</code>.</li>
         <li>Copy the Worker’s address (it ends in <code>workers.dev</code>) and paste it here.</li>
       </ol>
+      <p class="field-hint">For reminders while Life OS is closed (optional): the Worker’s <b>Settings › Trigger events › Add › Cron triggers</b>, with <code>* * * * *</code>.</p>
       <button type="button" class="btn btn--primary btn--block" data-action="sy-code">${icon('copy', { size: 18 })} Copy the server code</button>
       <p class="field-hint">The first sync key to use the server becomes its owner, so nobody else can use it.</p>
     </div>`,

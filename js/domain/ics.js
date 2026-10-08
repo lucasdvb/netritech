@@ -33,7 +33,10 @@ const local = (iso, hm) => `${iso.replace(/-/g, '')}T${hm.replace(':', '')}00`;
 
 /**
  * The calendar file for a list of events:
- * { uid, title, time: 'HH:MM', start: 'YYYY-MM-DD', rrule, minutes, note, url }.
+ * { uid, title, time: 'HH:MM', start: 'YYYY-MM-DD', rrule, minutes, note, url, alarm }, where
+ * `alarm` is how many minutes before the start the alert comes (0, at the start, by default) and
+ * an event without `rrule` happens once. A once-off event takes your time (it's busy); a repeating
+ * reminder doesn't.
  */
 export function buildCalendar(events, { name = 'Life OS', now = new Date() } = {}) {
   const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Life OS//Reminders//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
@@ -45,7 +48,8 @@ export function buildCalendar(events, { name = 'Life OS', now = new Date() } = {
     lines.push(`SUMMARY:${escapeText(e.title)}`);
     if (desc) lines.push(`DESCRIPTION:${escapeText(desc)}`);
     if (e.url) lines.push(`URL:${e.url}`);
-    lines.push('TRANSP:TRANSPARENT', 'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${escapeText(e.title)}`, 'TRIGGER:PT0S', 'END:VALARM', 'END:VEVENT');
+    const before = Math.max(0, Math.round(e.alarm || 0));
+    lines.push(`TRANSP:${e.rrule ? 'TRANSPARENT' : 'OPAQUE'}`, 'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${escapeText(e.title)}`, `TRIGGER:${before ? `-PT${before}M` : 'PT0S'}`, 'END:VALARM', 'END:VEVENT');
   }
   lines.push('END:VCALENDAR');
   return `${lines.map(fold).join('\r\n')}\r\n`;
