@@ -1,6 +1,6 @@
 import * as store from '../data/store.js';
 import * as M from '../domain/metrics.js';
-import { today, lastNDays, fmtMD, relativeDay, fmtMDY } from '../domain/dates.js';
+import { today, lastNDays, fmtMD, relativeDay, fmtMDY, dayInline } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, segmented, empty } from '../ui/components.js';
@@ -19,7 +19,7 @@ function dailyNote(s) {
   const diff = a.kg - b.kg;
   if (Math.abs(diff) < 0.3) return '';
   return html`<div class="note-card">
-    <p><span class="tag">Data</span> ${relativeDay(a.date)}: ${signed(kgOut(diff), 1)} ${weightUnit()} vs ${relativeDay(b.date).toLowerCase()}.</p>
+    <p><span class="tag">Data</span> ${relativeDay(a.date)}: ${signed(kgOut(diff), 1)} ${weightUnit()} vs ${dayInline(b.date)}.</p>
     <p><span class="tag tag--soft">Note</span> Day-to-day swings of this size are usually water, salt and food volume. The 7-day average${s.weekChange != null ? ` moved ${signed(kgOut(s.weekChange), 1)} ${weightUnit()} this week` : ' is the number to watch'}.</p>
   </div>`;
 }
@@ -47,7 +47,7 @@ export default {
       <div class="metric-top">
         <p class="section-label">7-day average</p>
         <p class="big-num tnum">${num(kgOut(s.avg7), 1)}<span>${weightUnit()}</span></p>
-        <p class="hero-meta">${s.latest ? `Latest ${fw(s.latest.kg)} · ${relativeDay(s.latest.date).toLowerCase()}` : ''}</p>
+        <p class="hero-meta">${s.latest ? `Latest ${fw(s.latest.kg)} · ${dayInline(s.latest.date)}` : ''}</p>
       </div>
       ${segmented(RANGES, String(range), { action: 'range', name: 'Range' })}
       <div class="card chart-card">${lineChart({

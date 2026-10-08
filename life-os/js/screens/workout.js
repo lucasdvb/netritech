@@ -1,7 +1,7 @@
 import * as store from '../data/store.js';
 import { deleteWithUndo } from '../ui/undo.js';
 import * as F from '../domain/fitness.js';
-import { today, fmtMDY, relativeDay } from '../domain/dates.js';
+import { today, fmtMDY, dayInline } from '../domain/dates.js';
 import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty, segmented, check, scale10 } from '../ui/components.js';
@@ -30,7 +30,7 @@ function lastTimeLine(prev, e) {
   const body = prev.metric === 'time' ? `${prev.sets} × ${Math.round(prev.totalSeconds / prev.sets)} s (best ${prev.topSeconds} s)`
     : prev.metric === 'minutes' ? `${prev.minutes} min`
       : `${prev.sets} × ${Math.round(prev.totalReps / prev.sets)}${prev.topLoad ? ` · ${num(prev.topLoad, prev.topLoad % 1 ? 1 : 0)} kg` : ''}`;
-  return `Last time · ${name}${body} · ${relativeDay(prev.workout.date).toLowerCase()}`;
+  return `Last time · ${name}${body} · ${dayInline(prev.workout.date)}`;
 }
 
 function setRow(s, e, prevSets, done) {
@@ -52,8 +52,9 @@ function exerciseCard(w, g, progress) {
   const prevSets = prev ? F.setsOf(prev.workout.id).filter((s) => s.exerciseId === prev.exerciseId && s.completed) : [];
   const row = progress?.rows.find((r) => r.exerciseId === e.id);
   const family = e.family ? F.exercises().filter((x) => x.family === e.family) : [];
-  return html`<section class="ex-card" data-key="ex-${g.order}">
+  return html`<section class="ex-card" data-key="ex-${g.sets[0].id}">
     <header class="ex-head">
+      <button type="button" class="drag-handle" data-drag aria-label="Move ${e.name}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>
       <div class="ex-title">
         <p class="ex-name">${e.name}</p>
         <p class="ex-meta">${F.categoryLabel(e.category)}${e.unilateral ? ' · per side' : ''}${family.length > 1 ? ` · level ${e.level} of ${family.length}` : ''}</p>
@@ -104,7 +105,7 @@ export default {
       ${tpl?.note ? html`<p class="sheet-note block-tight">${tpl.note}</p>` : ''}
       ${w.adjusted ? html`<p class="note-card">${w.adjusted}</p>` : ''}
       ${!gs.length ? empty({ ic: 'dumbbell', title: 'Your first exercise starts here.', body: 'Add exercises from the library. Sets fill in from last time.', cta: 'Add exercise', action: 'add-ex' }) : ''}
-      <div class="ex-list">${gs.map((g) => exerciseCard(w, g, progress))}</div>
+      <div class="ex-list" data-reorder="move-ex">${gs.map((g) => exerciseCard(w, g, progress))}</div>
       ${gs.length ? html`<button type="button" class="btn btn--soft btn--block" data-action="add-ex">${icon('plus', { size: 16 })} Add exercise</button>` : ''}
       ${!active && w.notes ? html`<div class="card block"><p class="section-label">Notes</p><p>${w.notes}</p></div>` : ''}
       ${!active ? html`<p class="fine-print center">Difficulty ${w.difficulty ?? '—'}/5${w.rpe ? ` · RPE ${w.rpe}` : ''} · ${w.minutes ? `${w.minutes} min` : ''}</p>` : ''}
@@ -148,6 +149,13 @@ export default {
       hap.tap();
     },
     'ex-menu': ({ data, params }) => exerciseMenu(params.id, Number(data.order)),
+    // Exercises in a new order: every set takes its exercise's new position.
+    'move-ex': ({ from, to, params }) => {
+      const gs = groups(params.id);
+      const [g] = gs.splice(from, 1);
+      gs.splice(to, 0, g);
+      store.batch(gs.flatMap((x, i) => x.sets.filter((s) => s.order !== i).map((s) => ({ store: 'workoutSets', value: { ...s, order: i } }))));
+    },
     'add-ex': ({ params }) => openPicker(params.id),
     menu: ({ params }) => sessionMenu(params.id),
     gym: ({ params }) => app.replace(`workout/${params.id}/gym`),
@@ -198,32 +206,7 @@ function exerciseMenu(workoutId, order) {
 }
 
 export function openPicker(workoutId) {
-  app.sheet({
-    title: 'Add exercise',
-    size: 'tall',
-    ui: { q: '', cat: 'all' },
-    render: (s) => {
-      const cats = [{ id: 'all', label: 'All' }, ...F.CATEGORIES];
-      const list = F.exercises().filter((e) => (s.ui.cat === 'all' || e.category === s.ui.cat)
-        && (!s.ui.q || e.name.toLowerCase().includes(s.ui.q.toLowerCase())));
-      return html`<div class="form">
-        <div class="search-field">${icon('search', { size: 16 })}<input type="search" placeholder="Search exercises" value="${s.ui.q}" data-input="q" aria-label="Search exercises"></div>
-        ${segmented(cats, s.ui.cat, { action: 'cat', name: 'Category' })}
-        <ul class="food-list food-list--tall">${list.map((e) => html`<li data-key="${e.id}"><button type="button" class="food-item" data-action="pick" data-id="${e.id}">
-          <span class="food-name">${e.name}</span><span class="food-meta">${F.categoryLabel(e.category)}${e.defaultLoad ? ` · ${e.defaultLoad} kg` : ''}</span><span class="food-add">${icon('plus', { size: 18 })}</span></button></li>`)}</ul>
-        ${!list.length ? html`<p class="muted center">No match. Add it in the exercise library.</p>` : ''}
-      </div>`;
-    },
-    inputs: { q: ({ value, sheet }) => { sheet.ui.q = value; sheet.refresh(); } },
-    actions: {
-      cat: ({ data, sheet }) => { sheet.ui.cat = data.value; sheet.refresh(); },
-      pick: ({ data, sheet }) => {
-        addExercise(workoutId, data.id);
-        hap.tap();
-        app.closeSheet(sheet);
-      },
-    },
-  });
+  import('./exercise-picker.js').then((m) => m.pickExercise({ onPick: (id) => addExercise(workoutId, id) }));
 }
 
 export function addExercise(workoutId, exerciseId, sets = 3) {
@@ -248,6 +231,7 @@ function sessionMenu(workoutId) {
       <label class="field"><span class="field-label">Date</span><input class="input" type="date" name="date" value="${w.date}" max="${today()}"></label>
       <label class="field"><span class="field-label">Type</span><select class="input" name="kind">${['strength', 'cardio', 'recovery'].map((k) => html`<option value="${k}" ${raw(w.kind === k ? 'selected' : '')}>${k[0].toUpperCase() + k.slice(1)}</option>`)}</select></label>
       <button type="submit" class="btn btn--primary btn--block">Save</button>
+      ${F.setsOf(w.id).length ? html`<button type="button" class="btn btn--soft btn--block" data-action="as-template">${icon('copy', { size: 16 })} Save as a workout</button>` : ''}
       <button type="button" class="btn btn--ghost btn--block btn--danger-text" data-action="discard">${w.status === 'active' ? 'Discard session' : 'Delete session'}</button>
     </form>`,
     actions: {
@@ -257,6 +241,13 @@ function sessionMenu(workoutId) {
         store.batch([{ store: 'workouts', value: { ...w, title: form.title.trim() || w.title, date, kind: form.kind } },
           ...sets.map((s) => ({ store: 'workoutSets', value: { ...s, date } }))]);
         app.closeSheet(sheet);
+      },
+      'as-template': async ({ sheet }) => {
+        const TP = await import('../domain/templates.js');
+        const t = TP.fromWorkout(w.id);
+        app.closeSheet(sheet);
+        hap.success();
+        app.toast(`Saved as “${t.name}”. Find it in Training.`, { icon: 'check', action: { label: 'Open', fn: () => app.go(`plan/training/workouts/${t.id}`) } });
       },
       discard: async ({ sheet }) => {
         app.closeSheet(sheet);

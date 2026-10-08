@@ -2,7 +2,7 @@ import * as store from '../data/store.js';
 import { buildBackup, inspect, restore, CSV_SETS, saveFile } from '../data/backup.js';
 import { loadDemo, removeDemo, hasDemo } from '../data/demo.js';
 import { safetyBackup, safetyBackups, safetyBackupFile } from '../data/migrations.js';
-import { today, fmtMDY, fmtTime, relativeDay, dayOf, dayAt } from '../domain/dates.js';
+import { today, fmtMDY, fmtTime, dayOf, dayAt, dayInline } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, toggle, settingRow } from '../ui/components.js';
@@ -36,7 +36,7 @@ export default {
       <p class="lead">Your data lives in this browser’s storage on this device. A backup file is the way to move it or keep it safe.</p>
       <section class="card">
         <p class="section-label">Backup</p>
-        <p class="card-lead" style="margin-top:0">${last ? `Last backup ${relativeDay(last.slice(0, 10)).toLowerCase()}.` : 'No backup yet.'} ${records ? `${num(records)} entries so far.` : ''}</p>
+        <p class="card-lead" style="margin-top:0">${last ? `Last backup ${dayInline(last.slice(0, 10))}.` : 'No backup yet.'} ${records ? `${num(records)} entries so far.` : ''}</p>
         <div class="set-list block-tight">${settingRow('Include progress photos', toggle(ui.photos, { action: 'photos', label: 'Include progress photos' }), { hint: 'Makes the file much larger. Off by default for privacy.' })}</div>
         <button type="button" class="btn btn--primary btn--block block-tight" data-action="backup">${icon('hard-drive-download', { size: 18 })} Back up my Life OS</button>
       </section>

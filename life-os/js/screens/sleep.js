@@ -35,11 +35,11 @@ export default {
       ${pageHead({ title: 'Sleep', back: { to: 'progress/body', label: 'Body' }, actions: html`<button type="button" class="btn btn--soft btn--sm" data-action="checkin">Log night</button>` })}
       <div class="stat-row stat-row--3">
         <div class="stat"><p class="stat-label">Last night</p><p class="stat-value tnum">${entries[0].date === today() ? durationHM(entries[0].hours * 60) : '—'}</p><p class="stat-sub">${entries[0].quality ? `quality ${entries[0].quality}/10` : ''}</p></div>
-        <div class="stat"><p class="stat-label">14-day average</p><p class="stat-value tnum">${avgH ? num(avgH, 1) : '—'}<span class="stat-unit">h</span></p><p class="stat-sub">target ${t.sleepH}–8.5 h</p></div>
+        <div class="stat"><p class="stat-label">Average</p><p class="stat-value tnum">${avgH ? num(avgH, 1) : '—'}<span class="stat-unit">h</span></p><p class="stat-sub">14 nights</p></div>
         <div class="stat"><p class="stat-label">7 h or more</p><p class="stat-value tnum">${onTarget}<span class="stat-unit">/ ${last14.length}</span></p><p class="stat-sub">nights</p></div>
       </div>
       <section class="block">
-        <div class="block-head"><h2 class="block-title">Duration · 30 days</h2></div>
+        <div class="block-head"><h2 class="block-title">Duration</h2><span class="block-meta">30 days · aim ${t.sleepH}–8.5 h</span></div>
         <div class="card">${barChart({ labels: days.map((d) => fmtDayShort(d).slice(0, 1)), tipLabels: days.map(fmtMD), values: days.map((d) => M.sleepHours(d)), color: 'var(--c-posture)', fmt: (v) => durationHM(v * 60), goal: { value: t.sleepH, label: `${t.sleepH} h` } })}</div>
       </section>
       <section class="block">

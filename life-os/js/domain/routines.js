@@ -47,7 +47,16 @@ export function progress(r, date = today(), mode = H.dayMode(date)) {
 
 /** Minutes into the day, where the hours before the day boundary (03:00) belong to yesterday's evening. */
 const minutesNow = (now) => { const m = minutesOfDay(now); return m < dayEndMinutes() ? m + 1440 : m; };
-const windowOf = (r) => ({ from: parseHM(r.window?.from || '00:00'), to: parseHM(r.window?.to || '23:59') });
+// A window can run past midnight (21:30–00:30): times before the day boundary count as the
+// evening before, and an end earlier than the start means the next morning.
+function windowOf(r) {
+  if (!r.window?.from || !r.window?.to) return { from: 0, to: 2880 };
+  let from = parseHM(r.window.from);
+  let to = parseHM(r.window.to);
+  if (from < dayEndMinutes()) from += 1440;
+  if (to < from) to += 1440;
+  return { from, to };
+}
 
 /** 'before', 'now' or 'after' the routine's window. */
 export function windowState(r, now = new Date()) {

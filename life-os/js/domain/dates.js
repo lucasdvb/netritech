@@ -98,6 +98,8 @@ export function relativeDay(iso, ref = today()) {
   if (d > -7 && d < 0) return fmtDay(iso);
   return fmtMD(iso);
 }
+/** relativeDay inside a sentence: "yesterday", "Tuesday", "Oct 27". */
+export const dayInline = (iso, ref) => { const r = relativeDay(iso, ref); return /^(Today|Yesterday|Tomorrow)$/.test(r) ? r.toLowerCase() : r; };
 
 export const durationHM = (minutes) => {
   if (minutes == null || !Number.isFinite(minutes)) return '—';

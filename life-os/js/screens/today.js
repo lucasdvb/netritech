@@ -19,7 +19,7 @@ import { taskActions, openTask } from './task-ui.js';
 import { COUNTER_SOURCES } from './today/rows.js';
 import { nowCard } from './today/now.js';
 import { routinesBlock } from './today/routines.js';
-import { prioritiesBlock, attachPriorityDrag } from './today/priorities.js';
+import { prioritiesBlock } from './today/priorities.js';
 import { threeBlock, pinnedBlock, moreBlock, minimumBlock, sickBlock, notTodayBlock, lifeMode, essentials, layoutOf, BLOCKS } from './today/blocks.js';
 // Sheets load on first use, and are fetched in the background once Today is on screen.
 const sheets = () => import('./sheets.js');
@@ -140,7 +140,6 @@ const view = {
     </div>`;
   },
   mount(el, ctx) {
-    attachPriorityDrag(el, () => ctx.params.date || today());
     attachDaySwipe(el, ctx);
     import('../ui/gestures.js').then((g) => g.attachRowGestures(el, {
       onHold: (id) => holdHabit(id, ctx.params.date || today()),
@@ -193,6 +192,7 @@ const view = {
     ...taskActions,
     'task-new': ({ params }) => openTask(null, { date: params.date || today() }),
     'task-today': ({ data }) => { T.save(data.id, { date: today() }); hap.tap(); },
+    'move-priority': ({ from, to, params }) => T.movePriority(params.date || today(), from, to),
     toggle: ({ data, params }) => {
       const date = params.date || today();
       const h = H.habit(data.id);

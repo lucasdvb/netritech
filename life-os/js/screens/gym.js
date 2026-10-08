@@ -3,6 +3,7 @@
 // to the second across app switches and reloads. The full list is one tap away.
 import * as store from '../data/store.js';
 import * as F from '../domain/fitness.js';
+import { restDefault } from '../domain/templates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { empty } from '../ui/components.js';
@@ -11,8 +12,8 @@ import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 
 // Rest between sets by kind of exercise, in seconds.
-const REST = { core: 45, calves: 60, mobility: 30, posture: 30, cardio: 0 };
-const restFor = (e) => (e && REST[e.category] != null ? REST[e.category] : 90);
+// Rest: what the workout sets for this exercise, or a default by category.
+const restFor = (e, s) => s?.rest ?? restDefault(e);
 
 let tick = 0;
 let lock = null;
@@ -157,7 +158,7 @@ export default {
       const before = { ...s };
       const wBefore = { ...w };
       store.update('workoutSets', s.id, { ...suggested(w, s, e), completed: true });
-      const rest = restFor(e);
+      const rest = restFor(e, s);
       const seq = sequence(w.id);
       const more = seq.some((x) => !x.s.completed);
       if (rest && more) store.update('workouts', w.id, { restUntil: new Date(Date.now() + rest * 1000).toISOString(), restFor: rest });

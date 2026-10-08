@@ -1,4 +1,5 @@
-// Edit a routine: its name, window and days, and its steps in order (habits or plain lines).
+// Edit a routine: its name, window and days, and its steps in order (habits or plain lines),
+// dragged into place.
 // Saves as you go; closing the sheet offers Undo. New routines start empty.
 import * as store from '../data/store.js';
 import * as H from '../domain/habits.js';
@@ -41,17 +42,15 @@ export function openRoutineEditor(id, { isNew = false } = {}) {
         <div class="field"><span class="field-label">Days <small>${days.length ? '' : 'every day'}</small></span>
           <div class="day-pick" role="group" aria-label="Days">${DAYS.map(([v, l, name]) => html`<button type="button" class="${cx('day-opt', days.includes(v) && 'is-on')}" aria-pressed="${days.includes(v)}" aria-label="${name}" data-action="day" data-v="${v}">${l}</button>`)}</div></div>
         <div class="field"><span class="field-label">Steps, in order</span>
-          ${(r.steps || []).length ? html`<ol class="re-steps">${r.steps.map((st, i) => {
+          ${(r.steps || []).length ? html`<ol class="re-steps" data-reorder="move-step">${r.steps.map((st, i) => {
             const h = st.habitId ? H.habit(st.habitId) : null;
             return html`<li class="re-step" data-key="re-${st.id}">
-              <span class="tnum muted">${i + 1}</span>
+              <button type="button" class="drag-handle" data-drag aria-label="Move ${h ? h.name : st.label || `step ${i + 1}`}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>
               ${h ? html`<span class="re-name">${h.name}<small>Habit</small></span>`
                 : html`<input class="input" value="${st.label || ''}" data-change="label" data-id="${st.id}" aria-label="Step ${i + 1}" maxlength="60">`}
-              <button type="button" class="icon-btn icon-btn--sm" data-action="move" data-id="${st.id}" data-delta="-1" aria-label="Move step ${i + 1} up"${i === 0 ? ' disabled' : ''}>${icon('chevron-up', { size: 16 })}</button>
-              <button type="button" class="icon-btn icon-btn--sm" data-action="move" data-id="${st.id}" data-delta="1" aria-label="Move step ${i + 1} down"${i === r.steps.length - 1 ? ' disabled' : ''}>${icon('chevron-down', { size: 16 })}</button>
               <button type="button" class="icon-btn icon-btn--sm" data-action="remove" data-id="${st.id}" aria-label="Remove step ${i + 1}">${icon('x', { size: 16 })}</button>
             </li>`;
-          })}</ol>` : html`<p class="field-hint">No steps yet. Add habits you already do one after another, or plain steps like “make the bed”.</p>`}
+          })}</ol><p class="field-hint">Drag the handles to change the order.</p>` : html`<p class="field-hint">No steps yet. Add habits you already do one after another, or plain steps like “make the bed”.</p>`}
         </div>
         <div class="grid-2 re-add">
           <label class="field"><span class="field-label">Add a habit</span>
@@ -75,14 +74,11 @@ export function openRoutineEditor(id, { isNew = false } = {}) {
         save({ days: set.size && set.size < 7 ? [...set].sort() : null });
         hap.tap();
       },
-      move: ({ data }) => {
+      'move-step': ({ from, to }) => {
         const steps = [...R.routine(id).steps];
-        const i = steps.findIndex((x) => x.id === data.id);
-        const j = i + Number(data.delta);
-        if (j < 0 || j >= steps.length) return;
-        [steps[i], steps[j]] = [steps[j], steps[i]];
+        const [st] = steps.splice(from, 1);
+        steps.splice(to, 0, st);
         save({ steps });
-        hap.tap();
       },
       remove: ({ data }) => { save({ steps: R.routine(id).steps.filter((x) => x.id !== data.id) }); hap.tap(); },
       delete: ({ sheet }) => {

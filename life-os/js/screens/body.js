@@ -3,7 +3,7 @@ import * as M from '../domain/metrics.js';
 import * as F from '../domain/fitness.js';
 import * as H from '../domain/habits.js';
 import { trainingCall } from '../domain/coach.js';
-import { today, lastNDays, relativeDay, durationHM, startOfWeek, addDays, diffDays } from '../domain/dates.js';
+import { today, lastNDays, relativeDay, durationHM, startOfWeek, addDays, diffDays, dayInline } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, ring } from '../ui/components.js';
@@ -30,12 +30,12 @@ export function weightCard() {
         <p class="section-label">Weight · 7-day average</p>
         <p class="big-num tnum">${s.avg7 != null ? num(kgOut(s.avg7), 1) : '—'}<span>${weightUnit()}</span></p>
         <p class="hero-meta">${s.weekChange != null ? html`<span class="${cx('delta', s.weekChange < -0.05 && 'is-down', s.weekChange > 0.05 && 'is-up')}">${signed(kgOut(s.weekChange), 1)} ${weightUnit()}</span> this week` : 'Change appears after a week'}
-          ${s.sinceStart != null ? html` · ${signed(kgOut(s.sinceStart), 1)} since start` : ''}</p>
+          ${s.sinceStart != null ? html`<span class="hero-meta-line">${signed(kgOut(s.sinceStart), 1)} ${weightUnit()} since start</span>` : ''}</p>
       </a>
       <div class="body-hero-spark">${sparkline(series, { color: 'var(--text-2)', width: 104, height: 44 })}</div>
     </div>
     <div class="body-hero-foot">
-      <span class="muted">${s.latest ? `Last weigh-in ${relativeDay(s.latest.date).toLowerCase()} · ${fw(s.latest.kg)}` : ''}</span>
+      <span class="muted">${s.latest ? `Last weigh-in ${dayInline(s.latest.date)} · ${fw(s.latest.kg)}` : ''}</span>
       <button type="button" class="btn btn--soft btn--sm" data-action="log-weight">${icon('plus', { size: 16 })} Log</button>
     </div>
   </div>`;
@@ -122,8 +122,8 @@ function measureCard() {
     </a>
     <a class="card card--link duo-cell" href="#/progress/body/photos" data-action="nav" data-to="progress/body/photos">
       <p class="section-label">${icon('camera', { size: 13 })} Photos</p>
-      <p class="duo-val">${photos.length ? relativeDay(photos[0].date) : 'None yet'}</p>
-      <p class="muted">Monthly · private to this device</p>
+      <p class="duo-val">${photos.length ? relativeDay(photos[0].date) : '—'}</p>
+      <p class="muted">${photos.length ? 'Monthly · private' : 'Add your first · private'}</p>
     </a>
   </div>`;
 }

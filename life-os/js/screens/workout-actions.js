@@ -32,7 +32,7 @@ export function startWorkout(templateId, date = today()) {
           target: it.reps, reps: e?.metric === 'reps' ? (p?.reps ?? null) : null,
           seconds: e?.metric === 'time' ? (p?.seconds ?? null) : null,
           minutes: e?.metric === 'minutes' ? (p?.minutes ?? null) : null,
-          load: p?.load ?? it.load ?? e?.defaultLoad ?? null, completed: false,
+          load: p?.load ?? it.load ?? e?.defaultLoad ?? null, rest: it.rest ?? null, completed: false,
         } });
       }
     });
@@ -52,11 +52,13 @@ export function openStartSheet(date = today()) {
         <span class="tpl-name">${t.name}</span>
         <span class="tpl-meta">${t.items.length} exercises · ~${t.minutes} min${call.template?.id === t.id ? ` · suggested for ${fmtDay(date)}` : ''}</span>
         <span class="tpl-go">${icon('play', { size: 16 })}</span></button></li>`)}</ul>
-      <button type="button" class="btn btn--ghost btn--block" data-action="blank">Empty session</button>
+      <div class="btn-row"><button type="button" class="btn btn--ghost" data-action="blank">Empty session</button>
+        <button type="button" class="btn btn--ghost" data-action="edit">Edit workouts</button></div>
     </div>`,
     actions: {
       start: ({ data, sheet }) => { app.closeSheet(sheet); startWorkout(data.id, date); },
       blank: ({ sheet }) => { app.closeSheet(sheet); startWorkout(null, date); },
+      edit: ({ sheet }) => { app.closeSheet(sheet); app.go('plan/training'); },
     },
   });
 }

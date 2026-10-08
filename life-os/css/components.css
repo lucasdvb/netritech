@@ -180,7 +180,8 @@
 
 /* ---------- blocks / cards ---------- */
 .block { margin-top: var(--s7); }
-.block-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s3); }
+.block-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px var(--s3); margin-bottom: var(--s3); }
+.block-head > .block-meta, .block-head > .link-btn { flex: none; white-space: nowrap; }
 .block-title { font-size: var(--text-h3); font-weight: var(--weight-semibold); line-height: var(--leading-h3); letter-spacing: var(--tracking-h3); }
 .block-meta { font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-3); }
 .card {
@@ -612,3 +613,15 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 .backup-card { display: flex; flex-direction: column; gap: 6px; padding: var(--s4); border-radius: var(--r-lg); background: var(--surface-2); --text-3: var(--text-2); }
 .backup-if { font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-3); }
 .backup-then { font-size: var(--text-h4); font-weight: var(--weight-semibold); line-height: var(--leading-h4); letter-spacing: var(--tracking-h4); margin-bottom: var(--s2); }
+
+/* drag to reorder (ui/reorder.js): a grip handle; the lifted item floats over its neighbours */
+.drag-handle { width: 28px; height: 44px; flex: none; display: grid; place-items: center; color: var(--text-3); margin-left: -8px; touch-action: none; cursor: grab; -webkit-user-select: none; user-select: none; }
+.drag-handle:active { cursor: grabbing; }
+[data-reorder] > .is-lifted { position: relative; z-index: 5; background: var(--surface); box-shadow: var(--shadow-md); border-radius: 12px; }
+[data-reorder].is-sorting > :not(.is-lifted) { transition: transform 180ms var(--ease-standard); }
+@media (prefers-reduced-motion: reduce) { [data-reorder].is-sorting > :not(.is-lifted) { transition: none; } }
+/* A list whose rows have a grip on the left */
+.sort-row { display: flex; align-items: center; position: relative; padding-left: 10px; }
+.sort-row > .row { flex: 1; min-width: 0; padding-left: 4px; }
+.list > .sort-row + .sort-row > .row::before { left: 4px; }
+.sort-list > .is-lifted { border-radius: var(--r-lg); }
