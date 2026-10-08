@@ -44,6 +44,11 @@ export default {
       ${est.length >= 2 ? html`<div class="card chart-card block-tight">${lineChart({ labels: est.map((e) => fmtMD(e.date)), series: [{ values: est.map((e) => e.percent), color: catColor(g.category), area: true, marks: true, label: 'Body fat' }], fmt: (v) => `${num(v, 1)}%` })}</div>` : ''}
       ${calves.length >= 2 ? html`<div class="card chart-card block-tight"><p class="section-label">Calf measurement</p>${lineChart({ labels: calves.map((e) => fmtMD(e.date)), series: [{ values: calves.map((e) => e.calves), color: catColor(g.category), area: true, marks: true, label: 'Calves' }], fmt: (v) => `${num(v, 1)} cm` })}</div>` : ''}
 
+      <section class="block" data-key="obstacle"><div class="block-head"><h2 class="block-title">If it gets in the way</h2><button type="button" class="link-btn" data-action="obstacle">${g.obstacle ? 'Edit' : 'Add'}</button></div>
+        ${g.obstacle ? html`<div class="backup-card"><p class="backup-if">If ${g.obstacle.replace(/^if\s+/i, '')}</p>${g.ifThen ? html`<p class="backup-then">${g.ifThen}</p>` : ''}</div>`
+          : html`<p class="muted small">Name what’s most likely to get in the way, and what you’ll do then. Planning for the obstacle does more than the goal alone.</p>`}
+      </section>
+
       <section class="block"><div class="block-head"><h2 class="block-title">Milestones</h2><button type="button" class="link-btn" data-action="add-m">${icon('plus', { size: 15 })} Add</button></div>
         ${(g.milestones || []).length ? html`<ul class="list">${g.milestones.map((m) => html`<li class="row milestone ${m.done ? 'is-done' : ''}" data-key="${m.id}">
           ${check(m.done, { action: 'toggle-m', data: { id: m.id }, label: m.title, color: catColor(g.category) })}
@@ -67,6 +72,17 @@ export default {
       </div>`;
   },
   actions: {
+    obstacle: async ({ params }) => {
+      const g = store.get('goals', params.id);
+      const { obstacleFields } = await import('./goals.js');
+      app.sheet({
+        title: 'If it gets in the way',
+        ui: { obstacle: g.obstacle || '', ifThen: g.ifThen || '' },
+        render: (s) => html`<div class="form">${obstacleFields(s.ui, 'ob')}<button type="button" class="btn btn--primary btn--block" data-action="ob-save">Save</button></div>`,
+        inputs: { ob: ({ el, value, sheet }) => { sheet.ui[el.dataset.f] = value; } },
+        actions: { 'ob-save': ({ sheet }) => { store.update('goals', g.id, { obstacle: sheet.ui.obstacle.trim() || null, ifThen: sheet.ui.ifThen.trim() || null }); app.closeSheet(sheet); } },
+      });
+    },
     edit: ({ params }) => goalSheet(store.get('goals', params.id)),
     'set-current': ({ form, params }) => {
       const g = store.get('goals', params.id);

@@ -21,6 +21,7 @@ import { today, addDays, fmtLong, startOfWeek, range, fmtDayShort, fmtDay } from
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, ring } from '../ui/components.js';
+import { themeWord } from '../domain/year-review.js';
 import { app } from '../ui/app-api.js';
 import { later } from '../ui/later.js';
 import * as hap from '../ui/haptics.js';
@@ -45,11 +46,13 @@ function tomorrow() {
 /** The next seven days: your three for the week (from the weekly review), then each day. */
 function thisWeek() {
   const ws = startOfWeek(today());
-  const plan = (store.get('weeklyReviews', ws)?.plan || []).filter(Boolean);
+  const wr = store.get('weeklyReviews', ws) || {};
+  const plan = (wr.plan || []).filter(Boolean);
   const days = range(today(), addDays(today(), 6));
   return html`<section class="block" data-key="week">
     ${head('This week', 'reflect/review/week', 'Weekly review')}
-    ${plan.length ? html`<div class="card week-plan"><p class="section-label">Your three for the week</p><ol class="plan-top">${plan.map((p, i) => html`<li><span class="tnum">${i + 1}</span>${p}</li>`)}</ol></div>`
+    ${plan.length ? html`<div class="card week-plan"><p class="section-label">Your three for the week</p><ol class="plan-top">${plan.map((p, i) => html`<li><span class="tnum">${i + 1}</span>${p}</li>`)}</ol>
+      ${wr.obstacle ? html`<p class="week-if">${icon('shield-check', { size: 15 })} <span>If ${wr.obstacle.replace(/^if\s+/i, '')}${wr.ifThen ? html`: <b>${wr.ifThen}</b>` : ''}</span></p>` : ''}</div>`
       : html`<p class="muted small">The weekly review sets three things for the week; they show here.</p>`}
     <ul class="list week-days">${days.map((d) => {
       const pri = T.priorities(d)[0];
@@ -192,9 +195,11 @@ export default {
   id: 'plan',
   title: 'Plan',
   render() {
+    const theme = themeWord(today());
     return html`
       ${pageHead({ title: 'Plan', sub: 'What you’re building.',
         actions: html`<button type="button" class="icon-btn" data-action="open-search" aria-label="Search" aria-keyshortcuts="/">${icon('search', { size: 20 })}</button>` })}
+      ${theme ? html`<a class="theme-word" href="#/reflect/review/year/${theme.year - 1}" data-action="nav" data-to="reflect/review/year/${theme.year - 1}" data-key="theme"><span class="tnum">${theme.year}</span><b>${theme.word}</b></a>` : ''}
       ${tomorrow()}
       ${thisWeek()}
       ${habitsCard()}

@@ -1304,7 +1304,7 @@ Where it ends:
 
 The owner asked for a complete list of improvements: researched habit science and the most successful habit apps, nothing bulky. The list was mapped against the app, and the owner approved everything except the people features (an accountability buddy, keep-in-touch rhythm) and the privacy and devices group (Face ID lock, sync, AI). Each item below names the evidence it rests on.
 
-Partway through, the owner made automatic sync between devices a must, so it was brought in ahead of 13c (see **Sync** below). 13a to 13e are built.
+Partway through, the owner made automatic sync between devices a must, so it was brought in ahead of 13c (see **Sync** below). 13a to 13f are built.
 
 **13a. Fixes and the consistency core**
 1. **Apple Health lands in the right copy.**
@@ -1404,6 +1404,10 @@ Partway through, the owner made automatic sync between devices a must, so it was
 20. **The yearly review.**
     - Offered from mid-December to the end of January: the year in numbers, your year's picture, three questions, and one word for next year, which sits at the top of Plan.
     - Why: new-year starts are when change is easiest to begin (the fresh start effect, Dai, Milkman & Riis 2014).
+
+**How 13f was built.**
+- *Plan for the obstacle* is a fourth, optional question in the goal wizard ("What could get in the way?": the obstacle, and "When it happens, I will…"), a block on the goal page to add or change it, and the same pair under next week's three in the weekly review. Plan shows the week's pair under its three all week ("If a heavy week of client work: do the first one before email").
+- *The yearly review* is a row in Reflect's reviews from 15 December to 31 January, and a page (Reflect › Your year): the year in numbers (days you showed up and sealed, workouts, books, journal pages, wins, weight, steps a day), a link to the year's picture, three questions (proudest of, leave behind, next year about), and one word. The word heads Plan for the year it was chosen for, from the moment it's chosen in December, and links back to the review. Stored in `yearlyReviews` (id = the year), which database version 8 already had.
 
 **Sync (the owner's must)**
 - **What:** every device keeps its full copy and works offline. Whenever it's online it sends what changed (from the outbox the store has kept since Phase 0) and takes what changed elsewhere: on every change, on coming back online or to the screen, and once a minute.
