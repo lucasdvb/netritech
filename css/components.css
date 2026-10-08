@@ -553,3 +553,23 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
   .sheet--detent .sheet { height: min(58dvh, calc(100dvh - var(--safe-top) - 24px)); transition: transform 380ms cubic-bezier(.2, .9, .25, 1), height var(--dur-slow) var(--spring-gentle); }
   .sheet--detent.is-large .sheet { height: calc(100dvh - var(--safe-top) - 24px); }
 }
+
+/* ---------- number pad ---------- */
+.numpad { display: flex; flex-direction: column; gap: var(--s4); }
+.numpad-display { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--s3); }
+.numpad-step { width: 48px; height: 48px; background: var(--surface-2); }
+.numpad-value { display: flex; align-items: baseline; justify-content: center; gap: 6px; min-width: 0; color: var(--text);
+  font-size: var(--text-display-lg); font-weight: var(--weight-semibold); line-height: var(--leading-display-lg); letter-spacing: var(--tracking-display-lg); }
+.numpad-value span { padding: 0 6px; border-radius: var(--r-sm); transition: background var(--dur-fast); }
+.numpad-value.is-fresh span { background: var(--surface-2); }
+.numpad-value small { color: var(--text-3); font-size: var(--text-body-lg); font-weight: var(--weight-medium); line-height: var(--leading-body-lg); letter-spacing: var(--tracking-body); }
+.numpad-hint { text-align: center; color: var(--text-3); font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+.numpad-quick { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.numpad-keys { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.numpad-key { min-height: 56px; display: grid; place-items: center; border-radius: var(--r-md); background: var(--surface-2); color: var(--text);
+  font-size: var(--text-h3); font-weight: var(--weight-semibold); line-height: var(--leading-h3); letter-spacing: var(--tracking-h3);
+  transition: transform var(--dur-fast) var(--spring-snappy), background var(--dur-fast); }
+.numpad-key:active { transform: scale(.96); background: var(--surface-3); }
+@media (hover: hover) { .numpad-key:hover { background: var(--surface-3); } }
+.numpad-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--s4); }
+.numpad-foot .btn { min-width: 140px; }

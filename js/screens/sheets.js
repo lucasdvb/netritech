@@ -2,6 +2,7 @@
 import * as store from '../data/store.js';
 import * as M from '../domain/metrics.js';
 import * as H from '../domain/habits.js';
+import * as R from '../domain/routines.js';
 import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { app } from '../ui/app-api.js';
@@ -87,11 +88,12 @@ export function openCheckin(date = today()) {
 
 /* ---------- water ---------- */
 export function addWater(date, ml) {
-  store.put('waterLogs', { date, ml, at: new Date().toISOString() });
+  const rec = store.put('waterLogs', { date, ml, at: new Date().toISOString() });
   hap.tap();
   const total = M.waterMl(date);
   const target = M.targets().waterMl;
-  if (total >= target && total - ml < target) app.toast(`Water target reached · ${litres(total)}`, { icon: 'droplet' });
+  const reached = total >= target && total - ml < target;
+  app.toast(reached ? `Water target reached · ${litres(total)}` : `Water · +${ml} ml · ${litres(total)} today`, { icon: 'droplet', action: { label: 'Undo', fn: () => store.remove('waterLogs', rec.id) } });
 }
 
 export function openWater(date = today()) {
@@ -400,6 +402,9 @@ export function openHabit(id, date = today()) {
           ? html`<p class="tiny-line">${icon('check', { size: 15, stroke: 2.2 })} Tiny version logged${tiny.label ? html` · ${tiny.label}` : ''}. It counts. <button type="button" class="link-btn" data-action="tiny-off">Undo</button></p>`
           : lv === 'tiny' ? html`<p class="tiny-line">${icon('check', { size: 15, stroke: 2.2 })} Past the tiny amount${tiny.label ? html` · ${tiny.label}` : ''}. It counts.</p>`
             : html`<button type="button" class="btn btn--soft btn--block" data-action="tiny-on">Did the tiny version${tiny.label ? html`<span class="btn-sub">${tiny.label}</span>` : ''}</button>`) : ''}
+        ${!lv && hb.type !== 'check' ? (H.skipped(hb, date, mode)
+          ? html`<p class="tiny-line">Set aside for ${dayLabel(date)}. <button type="button" class="link-btn" data-action="unskip">Bring it back</button></p>`
+          : html`<button type="button" class="btn btn--ghost btn--block" data-action="skip">Not today</button>`) : ''}
         <label class="field"><span class="field-label">Note for ${dayLabel(date)}</span>
           <input class="input" value="${l?.note || ''}" data-change="note" placeholder="Optional"></label>
         <div class="sheet-foot">
@@ -413,6 +418,8 @@ export function openHabit(id, date = today()) {
       toggle: () => { const now = H.toggle(H.habit(id), date); if (now) hap.success(); else hap.tap(); },
       'tiny-on': () => { H.setTiny(H.habit(id), date, true); hap.success(); },
       'tiny-off': () => { H.setTiny(H.habit(id), date, false); hap.tap(); },
+      skip: async ({ sheet }) => { app.closeSheet(sheet); (await import('./pads.js')).notToday(H.habit(id), date, { onDone: () => settleRoutine(id, date) }); },
+      unskip: () => { H.setSkip(H.habit(id), date, false); settleRoutine(id, date); hap.tap(); },
       cl: ({ data }) => { H.toggleChecklistItem(H.habit(id), date, Number(data.i)); hap.tap(); },
       rate: ({ data }) => { H.setValue(H.habit(id), date, Number(data.value)); hap.tap(); },
       'set-value': ({ form }) => { H.setValue(H.habit(id), date, form.v); hap.tap(); },
@@ -421,6 +428,11 @@ export function openHabit(id, date = today()) {
       details: ({ sheet }) => { app.closeSheet(sheet); app.go(`plan/habits/${id}`); },
     },
   });
+}
+
+function settleRoutine(habitId, date) {
+  const r = R.routineOf(habitId);
+  if (r) R.settle(r.routine, date);
 }
 
 function sourceCta(h) {

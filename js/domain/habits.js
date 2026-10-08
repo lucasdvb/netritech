@@ -143,6 +143,7 @@ const keptWhenSick = (h) => SICK_SOURCES.has(h.source) || h.id === 'h-lights-out
 
 export function dueOn(h, date, mode = dayMode(date)) {
   if (h.archived || h.showOnToday === false || !started(h, date)) return false;
+  if (skipped(h, date, mode)) return false;
   if (['paused', 'queue'].includes(stateOf(h, date))) return false;
   // A minimum day keeps the essentials, and your three in their tiny form.
   if (mode === 'minimum') return !!h.mvd || (stateOf(h, date) === 'focus' && dueOn(h, date, 'normal'));
@@ -239,6 +240,8 @@ export function setLog(h, date, patch) {
   const id = logId(h.id, date);
   const prev = store.get('habitLogs', id) || { id, habitId: h.id, date };
   const next = { ...prev, ...patch };
+  // Logging a habit takes back "not today".
+  if (prev.skip && patch.skip == null && (patch.value || patch.completed || patch.tiny)) next.skip = false;
   next.completed = isNumeric(h) ? !!next.completed : next.value === 1;
   return store.put('habitLogs', next);
 }
@@ -284,6 +287,17 @@ export function toggleChecklistItem(h, date, index) {
 
 export function setValue(h, date, v) {
   setLog(h, date, { value: v === '' || v == null ? null : Number(v) });
+}
+
+/* ---------- not today (U3) ---------- */
+
+/** "Not today": the habit leaves the day's plan and score. For its run it counts as a miss, so it
+ *  spends the grace that one miss already has; it never pretends the habit was done. */
+export const skipped = (h, date, mode = dayMode(date)) => !!log(h.id, date)?.skip && !counts(h, date, mode);
+
+export function setSkip(h, date, on = true) {
+  if (on) setLog(h, date, { skip: true });
+  else if (log(h.id, date)?.skip) setLog(h, date, { skip: false });
 }
 
 /* ---------- tiny versions (H3) ---------- */

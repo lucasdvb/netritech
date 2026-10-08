@@ -20,10 +20,11 @@ import { COUNTER_SOURCES } from './today/rows.js';
 import { nowCard } from './today/now.js';
 import { routinesBlock } from './today/routines.js';
 import { prioritiesBlock, attachPriorityDrag } from './today/priorities.js';
-import { threeBlock, pinnedBlock, moreBlock, minimumBlock, sickBlock, lifeMode, essentials, layoutOf, BLOCKS } from './today/blocks.js';
+import { threeBlock, pinnedBlock, moreBlock, minimumBlock, sickBlock, notTodayBlock, lifeMode, essentials, layoutOf, BLOCKS } from './today/blocks.js';
 // Sheets load on first use, and are fetched in the background once Today is on screen.
 const sheets = () => import('./sheets.js');
 const workouts = () => import('./workout-actions.js');
+const pads = () => import('./pads.js');
 
 function greeting(now = new Date()) {
   const h = now.getHours();
@@ -68,6 +69,21 @@ function header(date, ph, mode, isToday) {
 /** Re-check a routine's finished time after one of its habits changes. */
 const settleFor = (habitId, date) => { const r = R.routineOf(habitId); if (r) R.settle(r.routine, date); };
 
+/** Hold on a habit (U3): numbers open the pad, a tiny version logs in one hold, the rest show their options. */
+async function holdHabit(id, date) {
+  const h = H.habit(id);
+  if (!h) return;
+  hap.hold();
+  const P = await pads();
+  const done = () => settleFor(h.id, date);
+  if (H.isNumeric(h) && !h.source && h.type !== 'rating') return P.habitPad(h, date, { onDone: done });
+  if (h.source === 'steps') return P.stepsPad(date);
+  const tiny = H.tinyOf(h);
+  if (tiny && !H.level(h, date) && !h.source && h.type !== 'check') return P.logTiny(h, date, { onDone: done });
+  if (h.source && !COUNTER_SOURCES.includes(h.source)) return openHabitOrSource(h, date);
+  (await sheets()).openHabit(h.id, date);
+}
+
 async function openHabitOrSource(h, date) {
   if (h.id === 'h-training' || h.source?.startsWith('workout:')) {
     const active = F.activeWorkout();
@@ -104,6 +120,7 @@ export default {
     };
     const col = (c) => order.filter((id) => !hidden.includes(id) && BLOCKS.find((b) => b.id === id).column === c).map(block);
     const special = mode === 'minimum' ? minimumBlock(date, ui) : mode === 'sick' ? sickBlock(date, ui) : '';
+    const notToday = notTodayBlock(date, mode);
     return html`<div class="today" data-phase="${ph}" data-mode="${mode}">
       ${header(date, ph, mode, isToday)}
       <div class="today-grid">
@@ -112,13 +129,17 @@ export default {
           ${special ? html`<div class="tblock" data-key="b-special" style="order:1">${special}</div>` : ''}
           ${col('now')}
         </div>
-        <div class="today-col today-col--day">${col('day')}</div>
+        <div class="today-col today-col--day">${col('day')}${notToday ? html`<div class="tblock" data-key="b-nottoday" style="order:99">${notToday}</div>` : ''}</div>
       </div>
     </div>`;
   },
   mount(el, ctx) {
     attachPriorityDrag(el, () => ctx.params.date || today());
     attachDaySwipe(el, ctx);
+    import('../ui/gestures.js').then((g) => g.attachRowGestures(el, {
+      onHold: (id) => holdHabit(id, ctx.params.date || today()),
+      onSwipe: async (id) => { const h = H.habit(id); if (h) (await pads()).notToday(h, ctx.params.date || today(), { onDone: () => settleFor(id, ctx.params.date || today()) }); },
+    })).catch(() => {});
     if (ctx.query.you) {
       window.history.replaceState(window.history.state, '', location.hash.split('?')[0]);
       import('./you.js').then((m) => m.openYou());
@@ -154,13 +175,18 @@ export default {
       if (wasDone && now) { app.toast('Done from your logged data. Edit the entry to change it.'); return; }
       now ? hap.success() : hap.tap();
     },
-    tiny: ({ data, params }) => {
+    tiny: async ({ data, params }) => {
       const date = params.date || today();
       const h = H.habit(data.id);
-      H.setTiny(h, date, true);
+      if (h) (await pads()).logTiny(h, date, { onDone: () => settleFor(h.id, date) });
+    },
+    'unskip-habit': ({ data, params }) => {
+      const date = params.date || today();
+      const h = H.habit(data.id);
+      if (!h) return;
+      H.setSkip(h, date, false);
       settleFor(h.id, date);
-      hap.success();
-      app.toast('Tiny version logged. It counts.', { action: { label: 'Undo', fn: () => { H.setTiny(H.habit(h.id), date, false); settleFor(h.id, date); } } });
+      hap.tap();
     },
     // A routine step: plain steps tick; habit steps complete like any habit.
     step: async ({ data, params }) => {
@@ -217,9 +243,9 @@ export default {
     'add-water': async ({ data, params }) => (await sheets()).addWater(params.date || today(), Number(data.ml) || 500),
     'open-checkin': async ({ params }) => (await sheets()).openCheckin(params.date || today()),
     'open-shutdown': async ({ params }) => (await sheets()).openShutdown(params.date || today()),
-    'log-steps': async ({ params }) => (await sheets()).openSteps(params.date || today()),
+    'log-steps': async ({ params }) => (await pads()).stepsPad(params.date || today()),
     'log-food': async ({ params }) => (await sheets()).openFood(params.date || today()),
-    'log-weight': async ({ params }) => (await sheets()).openWeight(params.date || today()),
+    'log-weight': async ({ params }) => (await pads()).weightPad(params.date || today()),
     'pin-workout': async ({ params }) => {
       const active = F.activeWorkout();
       if (active) return app.go(`workout/${active.id}`);

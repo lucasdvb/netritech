@@ -1,23 +1,35 @@
-// Subtle haptics where the platform allows it. Android: Vibration API.
-// iOS 18+: toggling a native switch control produces the system tick.
+// Haptics map: one table from moments to feel, so the same kind of action always feels the same.
+// Android uses the Vibration API; iOS 18+ ticks when a native switch control toggles.
 const ios = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 let enabled = true;
 
 export const setEnabled = (v) => { enabled = v; };
 
+/** Vibration pattern (ms) and iOS ticks for each moment. */
+export const MAP = {
+  tap: { pattern: [8], ticks: 1 },              // a tick undone, a step, a chip, a counter
+  success: { pattern: [10, 40, 14], ticks: 2 }, // something done or saved
+  hold: { pattern: [14], ticks: 1 },            // a hold was recognised
+  threshold: { pattern: [6], ticks: 1 },        // a swipe passed the point where letting go acts
+  commit: { pattern: [12, 30, 18], ticks: 2 },  // a swipe or hold action happened (not today)
+  warn: { pattern: [20, 60, 20], ticks: 2 },    // nothing happened: it needs a choice or a fix
+  seal: { pattern: [30, 40, 60], ticks: 3 },    // sealing the day
+};
+
 function iosTick() {
-  const label = document.querySelector('.haptic-switch');
-  if (label) label.click();
+  document.querySelector('.haptic-switch')?.click();
 }
 
-export function tap() {
-  if (!enabled) return;
-  if (navigator.vibrate) navigator.vibrate(8);
-  else if (ios) iosTick();
+export function play(name) {
+  const m = MAP[name];
+  if (!enabled || !m) return;
+  if (navigator.vibrate) navigator.vibrate(m.pattern);
+  else if (ios) for (let i = 0; i < m.ticks; i++) setTimeout(iosTick, i * 90);
 }
 
-export function success() {
-  if (!enabled) return;
-  if (navigator.vibrate) navigator.vibrate([10, 40, 14]);
-  else if (ios) { iosTick(); setTimeout(iosTick, 90); }
-}
+export const tap = () => play('tap');
+export const success = () => play('success');
+export const hold = () => play('hold');
+export const threshold = () => play('threshold');
+export const commit = () => play('commit');
+export const warn = () => play('warn');

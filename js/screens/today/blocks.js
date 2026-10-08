@@ -91,6 +91,17 @@ export function moreBlock(date, mode, ui) {
   </section>`;
 }
 
+/** Habits set aside for today, each one tap from coming back. */
+export function notTodayBlock(date, mode) {
+  if (mode === 'sick') return '';
+  const list = H.activeHabits().filter((h) => H.skipped(h, date, mode));
+  if (!list.length) return '';
+  return html`<section class="nottoday" data-key="nottoday" aria-label="Not today">
+    <p class="nottoday-label">Not today</p>
+    <div class="nottoday-chips">${list.map((h) => html`<button type="button" class="chip" data-action="unskip-habit" data-id="${h.id}" data-key="nt-${h.id}" aria-label="Bring back ${h.name}">${icon('plus', { size: 15 })}${h.name}</button>`)}</div>
+  </section>`;
+}
+
 /* ---------- minimum and sick days ---------- */
 export function minimumBlock(date, ui) {
   const list = H.activeHabits().filter((h) => H.dueOn(h, date, 'minimum'));
