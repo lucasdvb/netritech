@@ -247,7 +247,7 @@ export function weeklyInsights(weekStart = startOfWeek(today())) {
   const prev = rolling(prevTo, 7).ratio;
   if (cur != null && prev != null) {
     const d = Math.round((cur - prev) * 100);
-    out.push({ id: 'consistency', area: 'System', text: `Foundation consistency ${Math.round(cur * 100)}%${d ? ` (${d > 0 ? 'up' : 'down'} ${Math.abs(d)} points on last week)` : ', unchanged'}.` });
+    out.push({ id: 'consistency', area: 'System', text: `Foundation consistency ${Math.round(cur * 100)}%${d ? ` (${d > 0 ? 'up' : 'down'} from ${Math.round(prev * 100)}% last week)` : ', unchanged'}.` });
   }
   return out;
 }

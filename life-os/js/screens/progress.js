@@ -3,7 +3,9 @@
 // measures that drive a decision, then Body and the areas. Charts live one level down.
 import * as S from '../domain/story.js';
 import { areaList } from './area.js';
-import { today, fmtDayLetter, fmtDay, fmtLong } from '../domain/dates.js';
+import { seasonLine } from './season.js';
+import * as Se from '../domain/seasons.js';
+import { today, fmtDayLetter, fmtDay, fmtLong, fmtMD } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead } from '../ui/components.js';
@@ -17,8 +19,11 @@ function story(w) {
     <div class="story-score">
       <p class="story-pct tnum">${w.ratio != null ? pct(w.ratio) : '—'}</p>
       <p class="story-label">of your plan so far</p>
-      <p class="story-ghost">${w.ghost != null ? html`Last week by ${fmtDay(t)}: <span class="tnum">${pct(w.ghost)}</span>` : 'Last week appears here once there’s one to compare.'}</p>
+      <p class="story-ghost">${w.ghostOf ? html`${w.ghostOf.label}${w.ghostOf.id === 'best' ? ` (week of ${fmtMD(w.ghostOf.from)})` : ''} by ${fmtDay(t)}: <span class="tnum">${pct(w.ghost)}</span>` : 'Your past self appears here once there’s a week to compare.'}</p>
     </div>
+    <div class="ghost-bar" role="img" aria-label="This week ${w.ratio != null ? pct(w.ratio) : 'not started'}${w.ghostOf ? `; ${w.ghostOf.noun} ${pct(w.ghost)}` : ''}">
+      <span class="ghost-fill" style="transform:scaleX(${(w.ratio || 0).toFixed(3)})"></span>
+      ${w.ghostOf ? html`<span class="ghost-mark" style="left:${(w.ghost * 100).toFixed(1)}%"></span>` : ''}</div>
     <ol class="week-strip" aria-label="Days this week">${w.days.map((d) => html`<li class="${cx('wk-day', d.date === t && 'is-today', d.future && 'is-future', d.off && 'is-off')}"
         aria-label="${fmtLong(d.date)}${d.ratio != null ? `, ${pct(d.ratio)}` : ''}${d.sealed ? ', sealed' : ''}${d.off ? ', a day off' : ''}">
       <span class="wk-letter" aria-hidden="true">${fmtDayLetter(d.date)}</span>
@@ -61,6 +66,7 @@ export default {
     return html`
       ${pageHead({ title: 'Progress', sub: 'How it’s going.',
         actions: html`<button type="button" class="icon-btn" data-action="open-search" aria-label="Search" aria-keyshortcuts="/">${icon('search', { size: 20 })}</button>` })}
+      ${seasonLine()}
       ${story(w)}
       ${moving(S.moving(today(), ms))}
       ${measures(ms)}
@@ -71,6 +77,10 @@ export default {
           ${icon('chevron-right', { size: 18 })}</a></section>
       <section class="block" data-key="areas"><div class="block-head"><h2 class="block-title">Areas</h2></div>${areaList()}</section>
       <section class="block" data-key="more"><ul class="list">
+        <li><a class="row" href="#/progress/records" data-action="nav" data-to="progress/records"><span class="row-ic">${icon('medal', { size: 18 })}</span>
+          <span class="row-main"><span class="row-title">Records & mastery</span><span class="row-sub">Your bests, and each habit’s plates</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
+        ${Se.current() || Se.upcoming() ? '' : html`<li><a class="row" href="#/progress/season" data-action="nav" data-to="progress/season"><span class="row-ic">${icon('flag', { size: 18 })}</span>
+          <span class="row-main"><span class="row-title">Seasons</span><span class="row-sub">Six weeks, three habits, one intention</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>`}
         <li><a class="row" href="#/progress/trends" data-action="nav" data-to="progress/trends"><span class="row-ic">${icon('chart-spline', { size: 18 })}</span>
           <span class="row-main"><span class="row-title">All trends</span><span class="row-sub">Charts over 30, 60 or 90 days, bests and wins</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
         <li><a class="row" href="#/progress/calendar" data-action="nav" data-to="progress/calendar"><span class="row-ic">${icon('calendar', { size: 18 })}</span>

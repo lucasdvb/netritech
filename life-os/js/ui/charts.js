@@ -170,7 +170,7 @@ function chartSummary(series, labels, fmt) {
   return series.map((s) => {
     const vals = s.values.map((v, i) => (v == null ? null : `${labels[i]}: ${fmt(v)}`)).filter(Boolean);
     if (!vals.length) return '';
-    return `${s.label ? `${s.label}. ` : ''}${vals.length} points. First ${vals[0]}. Latest ${vals[vals.length - 1]}.`;
+    return `${s.label ? `${s.label}. ` : ''}${vals.length} values. First ${vals[0]}. Latest ${vals[vals.length - 1]}.`;
   }).join(' ');
 }
 

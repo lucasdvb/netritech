@@ -1021,3 +1021,53 @@ button.hero-big { display: inline-flex; align-items: baseline; flex-wrap: wrap; 
 .pick-area { font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-3); }
 .pick-title { font-size: var(--text-body); font-weight: var(--weight-semibold); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); }
 .pick-why { font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-2); }
+
+/* ---------- The progression layer (Phase 9): quiet, never loud ---------- */
+.row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px var(--s3); margin-top: var(--s3); }
+.season-line { display: flex; align-items: center; gap: 8px; margin-bottom: var(--s3); min-height: 44px; color: var(--text-2); text-decoration: none;
+  font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+.season-line > span { flex: 1; min-width: 0; }
+.season-line b { font-weight: var(--weight-semibold); color: var(--text); }
+.season-intent { color: var(--text-3); }
+.ghost-bar { position: relative; height: 6px; border-radius: var(--r-pill); background: var(--track); }
+.ghost-fill { position: absolute; inset: 0; border-radius: inherit; background: var(--accent); transform-origin: left; transition: transform var(--dur-med) var(--ease-standard); }
+.ghost-mark { position: absolute; top: -5px; bottom: -5px; width: 2px; margin-left: -1px; border-radius: 1px; background: var(--text); }
+
+.record-shelf { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15em), 1fr)); gap: 8px; }
+.record { padding: var(--s4); border-radius: var(--r-lg); background: var(--surface); display: flex; flex-direction: column; gap: 4px; }
+.record-label { font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-2); }
+.record-value { font-size: var(--text-h3); font-weight: var(--weight-semibold); line-height: var(--leading-h3); letter-spacing: var(--tracking-h3); }
+.record-sub { font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-3); }
+.plate-row { text-decoration: none; color: inherit; }
+.plate { width: 38px; height: 38px; flex: none; display: grid; place-items: center; border-radius: var(--r-sm); background: var(--surface-2); color: var(--text-2); }
+.plate--steady, .plate--second-nature { background: var(--accent-soft); color: var(--accent-ink); }
+.plate--mastered { background: var(--accent); color: var(--on-accent); }
+.plate-bar { display: block; height: 4px; margin-top: 6px; border-radius: var(--r-pill); background: var(--track); overflow: hidden; max-width: 16em; }
+.plate-bar > span { display: block; height: 100%; background: var(--accent); transform-origin: left; }
+
+.season-card { display: flex; flex-direction: column; gap: var(--s3); padding: var(--s5); border-radius: var(--r-xl); background: var(--surface); }
+.season-name { font-size: var(--text-h2); font-weight: var(--weight-semibold); line-height: var(--leading-h2); letter-spacing: var(--tracking-h2); }
+.season-quote { font-size: var(--text-body-lg); font-weight: var(--weight-regular); line-height: var(--leading-body-lg); letter-spacing: var(--tracking-body); color: var(--text-2); max-width: var(--measure); }
+.season-weeks { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; list-style: none; padding: 0; margin: 0; }
+.season-weeks li { height: 4px; border-radius: 2px; background: var(--surface-3); }
+.season-weeks .is-done { background: var(--text-3); }
+.season-weeks .is-now { background: var(--accent); }
+.season-past { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.season-checkin textarea { margin-top: var(--s3); }
+.season-new .chips { max-height: 40vh; overflow-y: auto; }
+
+.pledge-list, .reward-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.pledge, .reward { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: var(--s4) var(--s5); border-radius: var(--r-xl); background: var(--surface); }
+.pledge-title, .reward-title { font-size: var(--text-h4); font-weight: var(--weight-semibold); line-height: var(--leading-h4); letter-spacing: var(--tracking-h4); }
+.pledge-stake { display: flex; align-items: center; gap: 6px; font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); color: var(--text-2); }
+.pledge-days { display: flex; flex-wrap: wrap; gap: 4px; list-style: none; padding: 0; margin: 4px 0; }
+.pd { width: 14px; height: 14px; border-radius: 4px; background: var(--surface-3); }
+.pd.is-kept { background: var(--accent); }
+.pd.is-missed { background: transparent; box-shadow: inset 0 0 0 1.5px var(--text-3); }
+.pd.is-today { box-shadow: inset 0 0 0 2px var(--text); }
+.pd.is-today.is-kept { box-shadow: none; }
+.pd.is-future { background: var(--track); }
+.pd.is-off { opacity: .4; }
+.reward .bar { width: 100%; }
+.quest { padding: var(--s4) var(--s5); border-radius: var(--r-xl); background: var(--surface); margin-bottom: 8px; }
+.quest-title { margin-top: 4px; font-size: var(--text-h4); font-weight: var(--weight-semibold); line-height: var(--leading-h4); letter-spacing: var(--tracking-h4); }

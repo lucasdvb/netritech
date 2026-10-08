@@ -127,6 +127,7 @@ test('protein and steps gaps add one step to a routine; dismissing keeps it quie
 
 test('the week as one sentence, against the same point last week', async () => {
   await world({ habits: [hb('x', { state: 'focus', focusSince: day(-70) }), hb('y', { state: 'focus', focusSince: day(-70) })] });
+  store.setSettings({ ghost: 'last' });
   assert.match(S.sentence(S.week(T)), /^(A new week|Nothing done yet this week)/);
   const from = startOfWeek(T);
   for (let d = addDays(from, -7); d < T; d = addDays(d, 1)) { store.put('habitLogs', { id: `x:${d}`, habitId: 'x', date: d, value: 1 }); if (d >= from) store.put('habitLogs', { id: `y:${d}`, habitId: 'y', date: d, value: 1 }); }
@@ -135,6 +136,24 @@ test('the week as one sentence, against the same point last week', async () => {
   assert.equal(w.ghost, 0.5);
   assert.equal(w.ratio, 1);
   assert.match(S.sentence(w), /^Ahead of last week: 100% of your plan done\.$/);
+});
+
+test('the ghost: a month ago by default, your best week on request, last week when nothing else exists', async () => {
+  await world({ habits: [hb('x', { state: 'focus', focusSince: day(-70) }), hb('y', { state: 'focus', focusSince: day(-70) })], profile: { trackingStart: day(-70) } });
+  const from = startOfWeek(T);
+  if (from === T) return; // Monday: nothing of this week yet
+  // four weeks ago: one of two habits; two weeks ago: both (the best week); this week: both
+  const log = (id, d) => store.put('habitLogs', { id: `${id}:${d}`, habitId: id, date: d, value: 1 });
+  for (let i = 0; i < 7; i++) { log('x', addDays(from, -28 + i)); log('x', addDays(from, -14 + i)); log('y', addDays(from, -14 + i)); }
+  for (let d = from; d < T; d = addDays(d, 1)) { log('x', d); log('y', d); }
+  assert.equal(S.ghost(T).id, 'four');
+  assert.equal(S.ghost(T).ratio, 0.5);
+  assert.equal(S.ghost(T, 'best').from, addDays(from, -14));
+  assert.equal(S.ghost(T, 'best').ratio, 1);
+  assert.equal(S.ghost(T, 'last').ratio, 0);
+  assert.match(S.sentence(S.week(T)), /^Ahead of a month ago/);
+  store.setSettings({ ghost: 'best' });
+  assert.match(S.sentence(S.week(T)), /^Level with your best week/);
 });
 
 test('every measure carries a decision line; what’s moving is the biggest change', async () => {

@@ -78,6 +78,15 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
   - **Projects** are flat: an outcome and its tasks, added in a line. Deleting a project keeps its tasks.
   - **Books**: reading now, want to read, finished. Log pages on the number pad or anywhere with "read 20 pages", which moves the book you're reading; the last two weeks' pace says when you'd finish.
   - **The weekly review plans next week**: three things for the week, and the first one can become Monday's priority.
+- **Progress you can feel, quietly** (no points, no currency, nothing that nags):
+  - **Seasons:** six weeks from a Monday with a name, three habits and one intention. Starting one makes those three your focus (any other habit in focus moves to autopilot, with Undo). Week 3 brings a short halfway check-in; at the end the summary (plan done, sealed days, workouts, each habit, records and plates) is frozen. A quiet line on Progress shows the week you're in.
+  - **The ghost:** this week against your past self at the same point of its week, as one marker on a thin bar. Race the same week a month ago (the default), your best week of the last twelve, or last week (Settings).
+  - **Records** come from your own data: heaviest lift, most reps or longest hold per exercise, best protein week, longest run on a habit, most focus blocks in a week, earliest week of wake-ups, most steps in a day. A value only counts as a record after three earlier entries, and the shelf follows your data if you edit or delete something.
+  - **Mastery plates** per habit at 1, 10, 30, 66 and 150 times: Started, Practised, Steady, Second nature, Mastered. Each plate is engraved with the day it was reached and never changes afterwards (an Undo on the same day takes it back).
+  - **Commitments:** a 7, 14 or 30-day pledge to one habit, with a stake you choose, sealed with a press and hold. Days count from your logs. Ending early asks what got in the way and offers a smaller pledge.
+  - **Rewards you set:** something you'll enjoy, unlocked by something real (so many workouts, sealed days, times you did a habit, a season's score, a goal reached), counted from the day you set it.
+  - **A side quest** each week, optional, leaning towards the area you've done least; accepting adds it to your tasks.
+  - Each new level, record or reward is marked once, with a short line at the bottom of the screen.
 - **Habits**: every type: yes/no, numeric, duration, quantity, rating and checklist.
   - Schedules: daily, chosen weekdays, X per week, X per month, every N days.
   - **Focus on three:** each habit is in Focus (at most three), Autopilot, Later or Paused (until a date). *Choose your three* sorts every habit on one screen, with suggestions.
@@ -252,6 +261,8 @@ NODE_PATH=$(npm root -g) node tests/body.mjs http://localhost:4173/ ./test-shots
                                                                                     # an app switch and a reload, Health paste
 NODE_PATH=$(npm root -g) node tests/reflect.mjs http://localhost:4173/ ./test-shots  # Progress as a story, Reflect ready to write,
                                                                                     # insights applied, guided reviews, calendar file, badge
+NODE_PATH=$(npm root -g) node tests/progression.mjs http://localhost:4173/ ./test-shots # plates, records, a season, the ghost,
+                                                                                    # a pledge sealed with a hold, rewards, side quest
 NODE_PATH=$(npm root -g) node tests/phase3.mjs http://localhost:4173/ ./test-shots   # weight, food, training, photos
 NODE_PATH=$(npm root -g) node tests/phase4.mjs http://localhost:4173/ ./test-shots   # progress, modules, reviews, backup
 NODE_PATH=$(npm root -g) node tests/phase5.mjs http://localhost:4173/ ./test-shots   # reminders, restore, offline,

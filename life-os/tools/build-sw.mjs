@@ -7,7 +7,9 @@ import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const include = ['index.html', 'manifest.webmanifest', 'css', 'js', 'assets'];
-const skip = /(\.txt|\.md|LICENSE.*)$/;
+// Inter's latin-ext files load only for characters beyond basic Latin (unicode-range), so they
+// stay out of the precache and are cached the first time a page needs them.
+const skip = /(\.txt|\.md|LICENSE.*|Inter-latin-ext-\d+\.woff2)$/;
 
 const files = [];
 const walk = (p) => {
