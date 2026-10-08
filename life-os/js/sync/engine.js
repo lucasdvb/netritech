@@ -53,6 +53,14 @@ async function call(url, body) {
   return out;
 }
 
+/** What the server knows this device by, for the other thing it does (reminders): { url, space, auth, dev }. */
+export async function credentials() {
+  const c = config();
+  if (!c) return null;
+  const K = await keysOf(c.key);
+  return { url: endpoint(c.url, ''), space: K.space, auth: K.auth, dev: c.dev };
+}
+
 /** Is there a Life OS server at this address? Resolves to true, or throws with a readable reason. */
 export async function check(url) {
   let res;

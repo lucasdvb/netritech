@@ -114,7 +114,7 @@ Things the audit found that are **good and stay**: day modes, minimum-day essent
 | C3 | "Use **streaks**" (P25) vs "never punish missed habits" (P24) | Runs with grace (DR-06): a run survives one miss; comebacks are counted and celebrated. |
 | C4 | "Levels and achievements" (P25) vs "avoid badges and fake XP" (27) | Only things earned by real behaviour: mastery levels from real repetitions, personal records, self-set rewards. No points, no currency, no badge grid. |
 | C5 | "**Addictive** to use" vs "no compulsion" (14) | Pull comes from value and satisfaction, never from fear of loss. Success is measured as time-to-log and days logged, not time in the app (section 11.9). |
-| C6 | "Reminders" as a habit property vs local-first privacy | iPhone web apps can't schedule notifications without a push server, and a server would receive your data. Reminders are delivered through your own calendar (U6). |
+| C6 | "Reminders" as a habit property vs local-first privacy | iPhone web apps can't schedule notifications without a push server, and a server would receive your data. Reminders are delivered through your own calendar (U6), or, if you choose, by your own sync server, which then holds only the reminders' times and words (13c). |
 | C7 | AI insights (18) vs data staying on the device | AI stays optional and opt-in, works from summaries, and shows exactly what would be sent. The app never depends on it. |
 | C8 | Projects (4) vs "tasks must not become project management" | Projects are flat: a name, an outcome and tasks. No sub-projects, dependencies or timelines. |
 | C9 | "Category" as a habit property vs the app's three classification systems | One area per habit (A3). |
@@ -1304,7 +1304,7 @@ Where it ends:
 
 The owner asked for a complete list of improvements: researched habit science and the most successful habit apps, nothing bulky. The list was mapped against the app, and the owner approved everything except the people features (an accountability buddy, keep-in-touch rhythm) and the privacy and devices group (Face ID lock, sync, AI). Each item below names the evidence it rests on.
 
-Partway through, the owner made automatic sync between devices a must, so it was brought in ahead of 13c (see **Sync** below). 13a and 13b are built.
+Partway through, the owner made automatic sync between devices a must, so it was brought in ahead of 13c (see **Sync** below). 13a, 13b and 13c are built.
 
 **13a. Fixes and the consistency core**
 1. **Apple Health lands in the right copy.**
@@ -1360,9 +1360,16 @@ Partway through, the owner made automatic sync between devices a must, so it was
     - Any task or priority can become a calendar event with an alert, at a time and length you choose. It is made on the phone, like the reminders file.
     - Why: a plan with a date *and* a time lifted follow-through 4× more than a date alone (Milkman 2011).
 13. **Reminders when the app is closed (opt-in).**
-    - iPhone delivers these to a Home Screen web app only through a sender. So there is a tiny sender in `push/` that you deploy to your own Cloudflare account, if you want it.
-    - What it holds: the times and words of your reminders, and a "done today" mark so a habit you've done isn't reminded. No history and no other data.
-    - It is off unless you set it up, and the app shows exactly what is sent.
+    - iPhone delivers these to a Home Screen web app only through a sender. Rather than a second server, the sync server sends them (`server/worker.js`, with its once-a-minute cron trigger), so it needs sync on.
+    - What it holds: the browser's push address, the times, words and links of this device's reminders, the time zone, and a "done today" list so a habit you've done isn't reminded. No history and no other data. Each message is encrypted for that one browser (RFC 8291) and signed with the server's own key (VAPID, RFC 8292), made the first time it's needed.
+    - It is off unless you turn it on (Settings › Reminders › When Life OS is closed), and that screen lists exactly what the server holds. While it's on, the app leaves the timed reminders to it and keeps only the in-app nudges (move, eyes, water).
+
+**How 13c was built.**
+- *Put it in your calendar* is a button in a task's sheet: a day, a time, a length (15 minutes to 1½ hours) and an alert (at the start, 10 or 30 minutes before). It hands one calendar event to the phone, like the reminders file, and moves the task to that day.
+- *Cues from your iPhone* is in Settings › Reminders and on each habit page. The cue comes from the habit's "When": waking up → the alarm stopping; teeth, coffee or desk → an NFC sticker there; the gym → arriving; after work → leaving; bed → wind down beginning; meals → a time of day; nothing named → the habit's own time, else a sticker. Five steps in the Shortcuts app and the words to paste ("Prayer now. Even just: one sentence of thanks."), and *It's set up* marks it on the habit.
+- *Reminders when the app is closed* reuses everything already there: the reminder times in Settings, the habits' own reminder times and the rule that a habit that feels automatic isn't reminded. The plan is sent again a moment after any change, so the done list stays current.
+- Found on the way: sheets were named by the current millisecond, so two opened together (a list and the item it opens) could share a name and a tap could reach the wrong one. They're numbered now.
+- Tested: the unit suite runs the real encryption and signing against a stand-in push service that decrypts each message and checks the signature; the browser suite turns reminders on through a sync server, has the server's minute run send them, and checks a habit done in the app isn't sent.
 
 **13d. Less effort to log**
 14. **Same as yesterday.** One tap repeats yesterday's food, with Undo.
