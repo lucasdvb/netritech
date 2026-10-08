@@ -74,21 +74,22 @@ await step('bad backup file is rejected without changes', async () => {
 
 await step('keyboard: toggle with Space, sheet focus trap, Escape returns focus', async () => {
   await go('#/today', '.today');
-  // Late at night every group starts folded; open one so there is a habit to reach.
-  if (!(await page.locator('.hrow .check >> visible=true').count())) await page.locator('.hsec-head').first().click();
-  const first = page.locator('.hrow .check >> visible=true').first();
+  // Outside a routine's window every routine starts folded; open one so there is a habit to reach.
+  if (!(await page.locator('.rstep .check >> visible=true').count())) await page.locator('.routine-head').first().click();
+  const first = page.locator('.rstep .check >> visible=true').first();
   await first.focus();
-  const id = await first.getAttribute('data-id');
-  const doneNow = () => page.evaluate(async (hid) => { const H = await import('./js/domain/habits.js'); const { today } = await import('./js/domain/dates.js'); return H.isDone(H.habit(hid), today()); }, id);
+  const id = (await first.getAttribute('data-s')).replace(/^s-/, '');
+  const doneNow = () => page.evaluate(async (hid) => { const H = await import('./js/domain/habits.js'); const { today } = await import('./js/domain/dates.js'); return H.counts(H.habit(hid), today()); }, id);
   const was = await doneNow();
   await page.keyboard.press('Space');
   await page.waitForTimeout(400);
   if ((await doneNow()) === was) throw new Error('Space did not toggle ' + id);
-  if (!(await page.evaluate(() => document.activeElement?.matches('.hsec-head, .check')))) throw new Error('focus lost after toggle');
+  if (!(await page.evaluate(() => document.activeElement?.matches('.routine-head, .check')))) throw new Error('focus lost after toggle');
   const bad = await page.evaluate(() => [...document.querySelectorAll('[aria-pressed], [aria-expanded], [aria-selected], [aria-checked]')]
     .filter((e) => !['true', 'false', 'mixed'].includes(e.getAttribute(e.getAttributeNames().find((n) => /^aria-(pressed|expanded|selected|checked)$/.test(n))))).length);
   if (bad) throw new Error(`${bad} controls with an empty aria state`);
-  await page.locator('[data-action="open-search"]').first().focus();
+  await go('#/plan', '[data-view="plan"]');
+  await page.locator('[data-view="plan"] [data-action="open-search"]').focus();
   await page.keyboard.press('Enter');
   await page.waitForSelector('.sheet input[type="search"]');
   for (let i = 0; i < 12; i++) await page.keyboard.press('Tab');
@@ -113,7 +114,7 @@ await step('offline: reload with the network off', async () => {
   await shot('62-offline-progress');
   // the self-hosted font must work with the network off
   await page.goto(base + '#/today');
-  await page.waitForSelector('.hero');
+  await page.waitForSelector('.now');
   const font = await page.evaluate(async () => { await document.fonts.ready; return document.fonts.check('600 16px Inter'); });
   if (!font) throw new Error('Inter not available offline');
   await shot('63-offline-today');
@@ -129,7 +130,7 @@ await step('a year of data stays fast', async () => {
     await new Promise((res) => { const f = () => (document.querySelector(s) ? res() : requestAnimationFrame(f)); f(); });
     return Math.round(performance.now() - t0);
   }, [hash, sel]);
-  for (const [h, s] of [['#/today', '[data-view="today"] .hero'], ['#/progress', '[data-view="progress"] .chart-line'], ['#/progress/calendar', '.cal-grid'], ['#/habits', '[data-view="habits"] .row'], ['#/body/weight', '[data-view="weight"] .chart-line'], ['#/more/review/week', '[data-view="review-week"] .review-grid']]) {
+  for (const [h, s] of [['#/today', '[data-view="today"] .now'], ['#/progress', '[data-view="progress"] .chart-line'], ['#/progress/calendar', '.cal-grid'], ['#/habits', '[data-view="habits"] .row'], ['#/body/weight', '[data-view="weight"] .chart-line'], ['#/more/review/week', '[data-view="review-week"] .review-grid']]) {
     await time('#/plan', '[data-view="plan"]');
     timings.push([h, await time(h, s)]);
   }

@@ -2,6 +2,7 @@
 // under "More options". Changes to an existing habit save as you make them, and closing the
 // sheet offers Undo. A new habit (from "More options" in the three questions) has a Create button.
 import * as store from '../data/store.js';
+import * as HS from '../domain/habit-system.js';
 import * as H from '../domain/habits.js';
 import { CATEGORIES, SECTIONS, HABIT_TYPES, SCHEDULES, catColor } from '../domain/taxonomy.js';
 import { fmtMD } from '../domain/dates.js';
@@ -47,7 +48,7 @@ function clean(d, before) {
   if (out.min === '' || out.min == null || Number.isNaN(out.min)) out.min = null;
   // A new state brings its own bookkeeping: when focus began, the place in the queue.
   const was = before ? H.stateOf(before) : null;
-  if (d.state !== was && d.state !== 'paused') Object.assign(out, H.statePatch(before || { ...d, state: 'autopilot' }, d.state, { focusCount: 0 }));
+  if (d.state !== was && d.state !== 'paused') Object.assign(out, HS.statePatch(before || { ...d, state: 'autopilot' }, d.state, { focusCount: 0 }));
   return out;
 }
 
@@ -96,7 +97,7 @@ export function openHabitEditor(target) {
             <textarea class="input input--grow${e.name ? ' is-invalid' : ''}" rows="1" data-grow name="name" data-input="f" data-f="name" placeholder="e.g. Evening walk" maxlength="60" ${raw(u.isNew ? 'autofocus' : '')} aria-invalid="${!!e.name}" enterkeyhint="done">${d.name}</textarea>
             ${fieldError(e.name)}</label>
           <div class="field"><span class="field-label">When <small>after something you already do</small></span>
-            <div class="chips" role="group" aria-label="Suggested moments">${H.anchorSuggestions().slice(0, 6).map((a) => html`<button type="button" class="${cx('chip', d.anchor === a && 'is-active')}" aria-pressed="${d.anchor === a}" data-action="anchor" data-v="${a}">${a}</button>`)}</div>
+            <div class="chips" role="group" aria-label="Suggested moments">${HS.anchorSuggestions().slice(0, 6).map((a) => html`<button type="button" class="${cx('chip', d.anchor === a && 'is-active')}" aria-pressed="${d.anchor === a}" data-action="anchor" data-v="${a}">${a}</button>`)}</div>
             <textarea class="input input--grow" rows="1" data-grow data-input="f" data-f="anchor" placeholder="After I…" maxlength="60" aria-label="When, in your own words" enterkeyhint="done">${d.anchor || ''}</textarea></div>
           <div class="${numeric && d.type !== 'rating' ? 'grid-2' : ''}">
             <label class="field"><span class="field-label">Tiny version</span>

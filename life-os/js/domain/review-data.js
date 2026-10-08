@@ -1,5 +1,6 @@
 // Facts for weekly and monthly reviews, computed from the logs.
 import * as store from '../data/store.js';
+import { priorities } from './tasks.js';
 import * as M from './metrics.js';
 import * as F from './fitness.js';
 import { habit, isDone, started } from './habits.js';
@@ -28,8 +29,9 @@ export function periodFacts(from, to) {
   const proteinHit = proteinDays.filter((d) => M.nutrition(d).protein >= t.proteinHitG).length;
   const scores = days.map((d) => dayScore(d).ratio).filter((r) => r != null);
   const reviews = days.map((d) => M.review(d)).filter(Boolean);
-  const priSet = reviews.reduce((a, r) => a + (r.top3 || []).filter((p) => p.text).length, 0);
-  const priDone = reviews.reduce((a, r) => a + (r.top3 || []).filter((p) => p.text && p.done).length, 0);
+  const pri = days.flatMap((d) => priorities(d));
+  const priSet = pri.length;
+  const priDone = pri.filter((t) => t.done).length;
   const books = store.all('readingSessions').filter((r) => r.finished && r.date >= from && r.date <= end).map((r) => r.book).filter(Boolean);
   return {
     from, to: end, days: days.length,

@@ -100,8 +100,8 @@ await step('weekly + monthly review', async () => {
 });
 
 await step('search', async () => {
-  await go('#/today', '.today');
-  await page.locator('.today-tools [data-action="open-search"]').click();
+  await go('#/plan', '[data-view="plan"]');
+  await page.locator('[data-view="plan"] [data-action="open-search"]').click();
   await page.fill('.sheet input[type="search"]', 'atomic');
   await page.waitForSelector('.sheet .row');
   await shot('53-search');

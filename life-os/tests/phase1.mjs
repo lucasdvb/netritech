@@ -19,8 +19,8 @@ const todayISO = () => ev(async () => (await import('./js/domain/dates.js')).tod
 await step('a fresh start asks you to choose your three, and nothing is counted yet', async () => {
   await go('#/today', '.today');
   await page.waitForSelector('.choose3');
-  const hero = await page.textContent('.hero-big');
-  if (!hero.includes('Nothing planned yet')) throw new Error('hero: ' + hero);
+  const hero = await page.textContent('.now-meta--btn');
+  if (!/planned/.test(hero)) throw new Error('score line: ' + hero);
   if ((await state()).focus.length) throw new Error('habits in focus before choosing');
   await shot('p1-01-today-choose');
 });
@@ -53,26 +53,31 @@ await step('Today shows at most three focus habits, and none of them twice', asy
   const s = await state();
   const inFocus = await page.locator('.focus3 [data-key^="h-"], .focus3 [data-key^="tile-h-"]').count();
   if (inFocus > 3) throw new Error(`${inFocus} habits in Your three`);
+  await page.locator('.more-today .more-head').click();
+  await page.waitForSelector('.more-today.is-open .more-body');
   for (const id of s.focus) {
-    if (await page.locator(`.hsec [data-key="${id}"], .hsec [data-key="tile-${id}"]`).count()) throw new Error(`${id} also in a group`);
+    if (await page.locator(`.more-today [data-key="${id}"], .more-today [data-key="tile-${id}"]`).count()) throw new Error(`${id} also under Everything else`);
   }
-  if (await page.locator('.hsec [data-key="h-desk"]').count()) throw new Error('a habit waiting in Later is on Today');
+  if (await page.locator('.more-today [data-key="h-desk"]').count()) throw new Error('a habit waiting in Later is on Today');
   await shot('p1-03-today-three');
 });
 
 await step('a tiny version counts, and the score says so', async () => {
-  const tiny = page.locator('.focus3 .tiny-btn').first();
+  // the suggested three are steps of the morning routine, so their tiny versions are there
+  const r = page.locator('[data-key="r-r-morning"]');
+  if (!(await r.getAttribute('class')).includes('is-open')) await r.locator('.routine-head').click();
+  await page.waitForSelector('[data-key="r-r-morning"].is-open .rsteps');
+  const tiny = page.locator('.routine .tiny-btn, .focus3 .tiny-btn').first();
   if (!(await tiny.count())) throw new Error('no tiny button');
   const id = await tiny.getAttribute('data-id');
   await tiny.click();
-  await page.waitForSelector(`.focus3 [data-key="${id}"] .check--tiny`);
-  const hero = await page.textContent('.hero-big');
-  if (!/1\s*tiny/.test(hero)) throw new Error('hero: ' + hero);
-  if (!(await page.textContent(`.focus3 [data-key="${id}"] .hrow-sub`)).includes('Tiny version')) throw new Error('row sub');
+  await page.waitForSelector(`.check--tiny[data-id="${id}"], [data-key$="s-${id}"] .check--tiny, [data-key="${id}"] .check--tiny`);
+  const line = await page.textContent('.now-meta--btn');
+  if (!/1\s*tiny/.test(line)) throw new Error('score line: ' + line);
 });
 
 await step('tapping the score shows exactly what counts', async () => {
-  await page.locator('button.hero-big').click();
+  await page.locator('.now-meta--btn').click();
   await page.waitForSelector('.sheet-wrap.is-open .counts-list');
   const kinds = await page.locator('.counts-kind').allTextContents();
   if (!kinds.some((k) => k.includes('tiny version'))) throw new Error('kinds ' + kinds);

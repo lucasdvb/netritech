@@ -15,7 +15,7 @@ const head = (title, to, label) => html`<div class="block-head"><h2 class="block
 
 function tomorrow() {
   const tm = addDays(today(), 1);
-  const top = (store.get('dailyReviews', tm)?.top3 || []).filter((p) => (p.text || '').trim());
+  const top = T.priorities(tm).map((t) => ({ text: t.title }));
   const tasks = T.onDay(tm).filter((t) => !t.done);
   const tpl = F.plannedTemplate(tm);
   return html`<section class="plan-tomorrow" data-key="tomorrow" aria-label="Tomorrow">

@@ -1,7 +1,10 @@
 // The daily score and rolling consistency.
-// Today's score is the share of today's plan that is done: your focus habits that are due, and
-// your Top 3. Tiny versions count. Autopilot habits never lower it (docs DR-05).
+// Today's score is the share of today's plan that is done: each routine (with partial credit for
+// its steps), your focus habits that are due, and your Top 3. Tiny versions count. Habits on
+// autopilot outside a routine never lower it (docs DR-05).
 import * as store from '../data/store.js';
+import { priorities } from './tasks.js';
+import { forDay as routinesFor } from './routines.js';
 import { activeHabits, counts, level, isScheduledDay, started, dayMode, trackingStart, DATA_STORES, consistency, stateOf, dueOn, periodDone, lastDoneBefore, isFlexible } from './habits.js';
 import { today, lastNDays, endOfWeek, endOfMonth, diffDays } from './dates.js';
 import { avg } from './metrics.js';
@@ -30,15 +33,26 @@ export function planHabits(date, mode = dayMode(date)) {
 }
 export const scoreHabits = planHabits;
 
-/** Today's Top 3 that have been written down. */
-export const top3Items = (date) => (store.get('dailyReviews', date)?.top3 || [])
-  .map((p, i) => ({ kind: 'top3', index: i, text: (p.text || '').trim(), done: !!p.done }))
-  .filter((p) => p.text);
+/** The day's priorities (ranked tasks, DR-07). */
+export const top3Items = (date) => priorities(date).map((t) => ({ kind: 'top3', index: t.rank - 1, id: t.id, text: t.title, done: !!t.done }));
+
+/** Today's routines as plan items. Your three count on their own, so a routine leaves them out. */
+export function planRoutines(date, mode = dayMode(date)) {
+  if (mode !== 'normal' && mode !== 'rest') return [];
+  return routinesFor(date, mode).map((p) => {
+    const steps = p.steps.filter((s) => !(s.kind === 'habit' && (stateOf(s.habit, date) === 'focus' || (mode === 'rest' && isTraining(s.habit)))));
+    if (!steps.length) return null;
+    const stepsDone = steps.filter((s) => s.done).length;
+    const done = stepsDone === steps.length;
+    return { kind: 'routine', routine: p.routine, steps: steps.length, stepsDone, credit: stepsDone / steps.length, done, level: done ? 'full' : null };
+  }).filter(Boolean);
+}
 
 export function dayScore(date) {
   return store.memo(`score:${date}`, DATA_STORES, () => {
     const mode = dayMode(date);
     const items = [
+      ...planRoutines(date, mode),
       ...planHabits(date, mode).map((habit) => {
         const lv = level(habit, date, mode);
         return { kind: 'habit', habit, level: lv, done: !!lv };
@@ -47,7 +61,8 @@ export function dayScore(date) {
     ];
     const done = items.filter((i) => i.done).length;
     const tiny = items.filter((i) => i.level === 'tiny').length;
-    return { date, mode, items, done, tiny, total: items.length, ratio: items.length ? done / items.length : null };
+    const credit = items.reduce((a, i) => a + (i.kind === 'routine' ? i.credit : i.done ? 1 : 0), 0);
+    return { date, mode, items, done, tiny, total: items.length, ratio: items.length ? credit / items.length : null };
   });
 }
 

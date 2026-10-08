@@ -33,18 +33,21 @@ await step('boot', async () => {
   await shot('01-today');
 });
 
-await step('toggle prayer', async () => {
-  const sec = page.locator('[data-key="sec-morning"]');
-  if (!(await sec.getAttribute('class')).includes('is-open')) await sec.locator('.hsec-head').click();
-  await page.locator('[data-key="h-prayer"] .check').click();
-  await page.waitForSelector('[data-key="h-prayer"].is-done');
+const openMorning = async () => {
+  const r = page.locator('[data-key="r-r-morning"]');
+  if (!(await r.getAttribute('class')).includes('is-open')) await r.locator('.routine-head').click();
+  await page.waitForSelector('[data-key="r-r-morning"].is-open .rsteps');
+};
+
+await step('tick prayer in the morning routine', async () => {
+  await openMorning();
+  await page.locator('[data-key="r-morning-s-h-prayer"] .check').click();
+  await page.waitForSelector('[data-key="r-morning-s-h-prayer"].is-done');
 });
 
-await step('add water', async () => {
-  const sec = page.locator('[data-key="sec-body"]');
-  if (!(await sec.getAttribute('class')).includes('is-open')) await sec.locator('.hsec-head').click();
-  await page.locator('[data-key="tile-h-water"] .tile-add').click();
-  await page.waitForFunction(() => document.querySelector('[data-key="tile-h-water"] .tile-val')?.textContent.startsWith('0.5'));
+await step('add water from a pinned action', async () => {
+  await page.locator('.pin[data-key="pin-water"]').click();
+  await page.waitForFunction(() => document.querySelector('.pin[data-key="pin-water"] .pin-val')?.textContent.startsWith('0.5'));
 });
 
 await step('persist after reload', async () => {
@@ -52,9 +55,8 @@ await step('persist after reload', async () => {
   await page.reload();
   await page.waitForFunction(() => window.__lifeos?.ready);
   await page.waitForSelector('.today');
-  const sec = page.locator('[data-key="sec-morning"]');
-  if (!(await sec.getAttribute('class')).includes('is-open')) await sec.locator('.hsec-head').click();
-  await page.waitForSelector('[data-key="h-prayer"].is-done', { timeout: 3000 });
+  await openMorning();
+  await page.waitForSelector('[data-key="r-morning-s-h-prayer"].is-done', { timeout: 3000 });
   await shot('02-today-after-reload');
 });
 
@@ -122,10 +124,15 @@ await step('edit saves as you go; archive + restore', async () => {
 await step('past day + minimum mode', async () => {
   await page.goto(base + '#/today');
   await page.waitForSelector('.today');
-  await page.locator('[data-action="day"][data-delta="-1"]').click();
+  // the date opens a day picker; yesterday may be in the previous month
+  const y = await page.evaluate(async () => { const d = await import('./js/domain/dates.js'); return { y: d.addDays(d.today(), -1), sameMonth: d.addDays(d.today(), -1).slice(0, 7) === d.today().slice(0, 7) }; });
+  await page.locator('.date-btn').click();
+  await page.waitForSelector('.sheet .dpick-grid');
+  if (!y.sameMonth) await page.locator('.sheet [data-action="month"][data-delta="-1"]').click();
+  await page.locator(`.sheet .dpick-day[data-d="${y.y}"]`).click();
   await page.waitForSelector('.greet-sub .link-btn');
   await page.locator('[data-action="go-today"]').click();
-  await page.waitForSelector('.today-head .tnum');
+  await page.waitForFunction(() => location.hash === '#/today' && !document.querySelector('.greet-sub .link-btn'));
   await page.locator('[data-action="mode"]').click();
   await page.locator('.sheet [data-mode="minimum"]').click();
   await page.waitForSelector('.minday');

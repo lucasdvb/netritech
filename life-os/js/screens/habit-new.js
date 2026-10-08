@@ -1,6 +1,8 @@
 // A new habit in three questions: what is it, when (after what), and what's the tiny version.
 // Everything else gets a sensible default and lives under "More options" in the editor.
 import * as store from '../data/store.js';
+import * as HS from '../domain/habit-system.js';
+import * as R from '../domain/routines.js';
 import * as H from '../domain/habits.js';
 import { catLabel, sectionLabel } from '../domain/taxonomy.js';
 import { html, cx } from '../ui/dom.js';
@@ -11,8 +13,8 @@ import * as hap from '../ui/haptics.js';
 
 /** The habit the three answers describe, with everything else defaulted. */
 export function draftFrom({ name = '', anchor = '', tiny = '' }) {
-  const shape = H.guessShape(name, anchor);
-  return H.newHabit({
+  const shape = HS.guessShape(name, anchor);
+  return HS.newHabit({
     name: name.trim(), anchor: anchor.trim() || null, tiny: tiny.trim() ? { label: tiny.trim(), min: null } : null,
     type: 'binary', ...shape,
   });
@@ -24,14 +26,14 @@ export function openNewHabit(prefill = {}) {
     ui: { name: prefill.name || '', anchor: prefill.anchor || '', tiny: '', error: '' },
     render: (s) => {
       const u = s.ui;
-      const shape = H.guessShape(u.name, u.anchor);
+      const shape = HS.guessShape(u.name, u.anchor);
       const free = H.focusHabits().length < H.FOCUS_LIMIT;
       return html`<form class="form new-habit" data-submit="save" novalidate>
         <label class="field"><span class="field-label">What is it?</span>
           <textarea class="input input--grow${u.error ? ' is-invalid' : ''}" rows="1" data-grow data-input="f" data-f="name" placeholder="e.g. Read 10 pages" maxlength="60" autofocus aria-invalid="${!!u.error}" enterkeyhint="done">${u.name}</textarea>
           ${fieldError(u.error)}</label>
         <div class="field"><span class="field-label">When? <small>after something you already do</small></span>
-          <div class="chips" role="group" aria-label="Suggested moments">${H.anchorSuggestions().slice(0, 6).map((a) => html`<button type="button" class="${cx('chip', u.anchor === a && 'is-active')}" aria-pressed="${u.anchor === a}" data-action="anchor" data-v="${a}">${a}</button>`)}</div>
+          <div class="chips" role="group" aria-label="Suggested moments">${HS.anchorSuggestions().slice(0, 6).map((a) => html`<button type="button" class="${cx('chip', u.anchor === a && 'is-active')}" aria-pressed="${u.anchor === a}" data-action="anchor" data-v="${a}">${a}</button>`)}</div>
           <textarea class="input input--grow" rows="1" data-grow data-input="f" data-f="anchor" placeholder="After I…" maxlength="60" aria-label="When, in your own words" enterkeyhint="done">${u.anchor}</textarea></div>
         <label class="field"><span class="field-label">What’s the tiny version?</span>
           <textarea class="input input--grow" rows="1" data-grow data-input="f" data-f="tiny" placeholder="e.g. Read one page" maxlength="60" enterkeyhint="done">${u.tiny}</textarea>
@@ -39,7 +41,7 @@ export function openNewHabit(prefill = {}) {
         <p class="new-habit-where">${icon(free ? 'target' : 'clock', { size: 16 })} ${free
           ? html`It joins <strong>your three</strong>: on Today and counted in your score.`
           : html`Your three are full, so it waits in <strong>Later</strong> until a slot frees up.`}
-          <span class="muted">${catLabel(shape.category)} · ${sectionLabel(shape.section)} · every day</span></p>
+          <span class="muted">${catLabel(shape.category)} · ${R.routines().find((r) => r.kind === shape.section) ? `the ${sectionLabel(shape.section).toLowerCase()} routine` : sectionLabel(shape.section)} · every day</span></p>
         <div class="btn-row">
           <button type="button" class="btn btn--ghost" data-action="more">More options</button>
           <button type="submit" class="btn btn--primary">Add habit</button>
@@ -70,6 +72,9 @@ export function openNewHabit(prefill = {}) {
         }
         const h = draftFrom(sheet.ui);
         store.put('habits', h);
+        // Anchored in the morning or evening: it joins the end of that routine.
+        const r = R.routines().find((x) => x.kind === h.section);
+        if (r) R.append(r.id, h.id);
         hap.success();
         app.closeSheet(sheet);
         app.toast(h.state === 'focus' ? `${h.name} is one of your three.` : `${h.name} is waiting in Later.`, {

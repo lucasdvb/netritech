@@ -6,6 +6,7 @@ import { firstDate } from '../domain/tasks.js';
 
 import { SEED_VERSION } from './schema.js';
 import { TINY_VERSIONS } from './tiny-versions.js';
+import { defaultRoutines } from '../domain/routines.js';
 export { SEED_VERSION };
 
 const WORKDAYS = [1, 2, 3, 4, 5];
@@ -423,6 +424,7 @@ export async function seedIfNeeded() {
     ...templatesSeed().map((value) => ({ store: 'templates', value })),
     ...foodsSeed().map((value) => ({ store: 'foods', value })),
     ...tasksSeed().map((value) => ({ store: 'tasks', value })),
+    ...defaultRoutines(habitsSeed(), profileSeed()).map((value) => ({ store: 'routines', value })),
     { store: 'meta', value: { id: 'seed', version: SEED_VERSION, source: 'Life OS workbook', at: new Date().toISOString() } },
   ];
   store.batch(ops);

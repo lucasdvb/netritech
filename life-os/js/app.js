@@ -4,15 +4,13 @@ import { patch } from './ui/patch.js';
 import * as router from './ui/router.js';
 import * as sheet from './ui/sheet.js';
 import { toast } from './ui/toast.js';
-import { icon } from './ui/icons.js';
+import { icon, loadIcons } from './ui/icons.js';
 import { html } from './ui/dom.js';
 import { app, APP_NAME } from './ui/app-api.js';
 import { swap } from './ui/transitions.js';
-import { attachPullToSearch } from './ui/gestures.js';
-import { attachShortcuts } from './ui/keys.js';
 import { today, setDayEnd } from './domain/dates.js';
 
-import { PLACES, ROUTES, REDIRECTS, target } from './routes.js';
+import { PLACES, ROUTES } from './routes.js';
 
 const main = document.getElementById('main');
 const tabbar = document.getElementById('tabbar');
@@ -50,9 +48,12 @@ function renderTabbar() {
 /* ---------- views ---------- */
 const ctxOf = (c) => ({ params: c.params, query: c.query, ui: c.ui, route: c.route, path: c.path });
 
-// Older addresses land on their new homes, keeping any query.
-function redirect() {
-  const { parts, query } = router.parse();
+// Older addresses land on their new homes, keeping any query. The table loads only when needed.
+const LEGACY = /^(habits|body|more)(\/|$)|^you$|^progress\/areas$|^plan\/habits\/[^/]+\/edit$/;
+async function redirect() {
+  const { parts, query, path } = router.parse();
+  if (!LEGACY.test(path)) return false;
+  const { REDIRECTS, target } = await import('./redirects.js');
   const old = router.match(REDIRECTS, parts);
   if (!old) return false;
   let to = target(old.route.to, old.params);
@@ -86,7 +87,8 @@ function dropPane() {
 
 async function navigate() {
   const token = ++navToken;
-  redirect();
+  await redirect();
+  if (token !== navToken) return;
   const back = wentBack;
   wentBack = false;
   const { parts, query, path } = router.parse();
@@ -94,7 +96,8 @@ async function navigate() {
   const listRoute = found.route.list && wide.matches ? ROUTES.find((r) => r.path === found.route.list) : null;
   let mod, listMod;
   try {
-    [mod, listMod] = await Promise.all([found.route.load(), listRoute && listRoute !== found.route ? listRoute.load() : null]);
+    // Screens other than Today wait for the rest of the icons (already loaded after the first screen).
+    [mod, listMod] = await Promise.all([found.route.load(), listRoute && listRoute !== found.route ? listRoute.load() : null, found.route.tab !== 'today' ? loadIcons() : null]);
   } catch (err) {
     console.error(err);
     toast('That screen couldn’t load. Check your connection once, then it works offline.', { tone: 'danger' });
@@ -313,7 +316,6 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && sheet.top()) { sheet.close(); return; }
   if (e.key === 'Tab') sheet.trapFocus(e);
 });
-attachShortcuts({ places: PLACES, go: (path) => app.go(path), capture: () => globalActions.capture(), search: () => app.search() });
 
 /* ---------- navigation helpers ---------- */
 let internalNavs = 0;
@@ -437,7 +439,10 @@ async function boot() {
   }, 15000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
 
-  attachPullToSearch({ enabled: () => current?.route.depth === 0, onSearch: () => app.search() });
+  // After the first screen: the rest of the icons, keyboard shortcuts and pull-to-search.
+  loadIcons().then(() => refresh()).catch(() => {});
+  import('./ui/keys.js').then((m) => m.attachShortcuts({ places: PLACES, go: (path) => app.go(path), capture: () => globalActions.capture(), search: () => app.search() })).catch(() => {});
+  import('./ui/gestures.js').then((m) => m.attachPullToSearch({ enabled: () => current?.route.depth === 0, onSearch: () => app.search() })).catch(() => {});
   import('./domain/reminders.js').then((r) => r.start()).catch((err) => console.warn(err));
   import('./domain/snapshots.js').then((m) => m.start()).catch((err) => console.warn(err));
   import('./ui/install.js').then((m) => m.maybePrompt()).catch(() => {});

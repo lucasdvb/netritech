@@ -1,7 +1,6 @@
 // Screen changes. Where the browser has View Transitions, the old screen hands over to the new
 // one in a single animation, and the title you tapped (a habit, a goal, an entry) grows into
 // the next screen's title: a morph. Elsewhere, or with reduced motion, the CSS entrances run.
-import { reducedMotion } from './motion.js';
 
 let tapped = null; // the data-morph key of what was just tapped
 
@@ -11,6 +10,7 @@ document.addEventListener('click', (e) => {
   tapped = m?.dataset.morph || null;
 }, true);
 
+const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 export const supported = () => typeof document.startViewTransition === 'function' && !reducedMotion();
 
 const named = (el) => { if (el) el.style.viewTransitionName = 'morph'; };

@@ -5,6 +5,7 @@
 import * as store from './store.js';
 import { BACKUP_STORES, DB_VERSION } from './schema.js';
 import { TINY_VERSIONS } from './tiny-versions.js';
+import { defaultRoutines } from '../domain/routines.js';
 
 /** Each run() returns store.batch ops; it must leave already-migrated data unchanged. */
 export const MIGRATIONS = [
@@ -26,6 +27,30 @@ export const MIGRATIONS = [
       const tiny = h.tiny || (t || h.mvdLabel || h.mvdMin != null ? { label: h.mvdLabel || t?.label || null, min: h.mvdMin ?? t?.min ?? null } : null);
       return { store: 'habits', value: { ...h, state: h.priority === 'optional' ? 'queue' : 'autopilot', tiny, anchor: h.anchor ?? null } };
     }),
+  },
+  {
+    id: '2026-10-top3-tasks',
+    about: 'your Top 3 become ranked tasks, so there is one list of things to do',
+    // Each written priority becomes a task dated that day with rank 1–3 (done stays done).
+    run: () => store.all('dailyReviews').filter((r) => Array.isArray(r.top3)).flatMap((r) => {
+      const ops = [];
+      let rank = 0;
+      for (const p of r.top3) {
+        const title = (p.text || '').trim();
+        if (!title) continue;
+        rank += 1;
+        ops.push({ store: 'tasks', value: { id: `t3-${r.date}-${rank}`, title, notes: '', area: 'work', repeat: null, date: r.date, rank,
+          done: !!p.done, doneAt: p.done ? `${r.date}T18:00:00` : null, order: rank } });
+      }
+      const { top3: _t, ...rest } = r;
+      ops.push({ store: 'dailyReviews', value: rest });
+      return ops;
+    }),
+  },
+  {
+    id: '2026-10-routines',
+    about: 'your morning and evening habits become routines you can do in one go',
+    run: () => (store.all('routines').length ? [] : defaultRoutines(store.all('habits'), store.profile() || {}).map((value) => ({ store: 'routines', value }))),
   },
 ];
 
