@@ -245,7 +245,7 @@ await step('weekly tidy-up: untouched habits, keep / smaller / pause / archive, 
   await p.waitForSelector('.toast:has-text("Tidied")');
   const st = await ev(p, async () => { const H = await import('./js/domain/habits.js'); return [H.stateOf(H.habit('h-desk'), '2026-10-11'), H.habit('h-desk').pausedUntil]; });
   if (st[0] !== 'paused' || st[1] !== '2026-10-25') throw new Error('state ' + st);
-  if (await p.locator('.tidy-card').count()) throw new Error('tidy card still showing this week');
+  if (await p.waitForSelector('.tidy-card', { state: 'detached', timeout: 2000 }).then(() => false, () => true)) throw new Error('tidy card still showing this week');
   await p.locator('.toast-btn', { hasText: 'Undo' }).click();
   await p.waitForFunction(async () => { const H = await import('./js/domain/habits.js'); return H.stateOf(H.habit('h-desk'), '2026-10-11') !== 'paused'; });
   await ctx.close();

@@ -1,5 +1,5 @@
 import * as store from '../data/store.js';
-import { today, relativeDay, fmtMDY, fmtTime } from '../domain/dates.js';
+import { today, relativeDay, fmtMDY, fmtTime, cmp } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, segmented, empty } from '../ui/components.js';
@@ -29,7 +29,7 @@ export default {
   title: 'Journal',
   render({ ui }) {
     const filter = ui.filter || 'all';
-    const all = store.all('journalEntries').sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (b.createdAt || '').localeCompare(a.createdAt || '')));
+    const all = store.all('journalEntries').sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : cmp(b.createdAt || '', a.createdAt || '')));
     const list = all.filter((j) => filter === 'all' || j.kind === filter);
     const hour = new Date().getHours();
     return html`

@@ -23,7 +23,8 @@ export default {
       return html`${pageHead({ title: 'Sleep', back: { to: 'progress/body', label: 'Body' } })}
         ${empty({ ic: 'bed', title: 'No nights logged yet', body: 'The morning check-in takes 30 seconds: bedtime, wake time and how you feel.', cta: 'Morning check-in', action: 'checkin' })}`;
     }
-    const last14 = entries.filter((e) => e.date > lastNDays(today(), 14)[0] || e.date === lastNDays(today(), 14)[0]);
+    const since = lastNDays(today(), 14)[0];
+    const last14 = entries.filter((e) => e.date >= since);
     const avgH = M.avg(last14.map((e) => e.hours).filter(Boolean));
     const beds = last14.map((e) => bedMinutes(e.bedtime)).filter((x) => x != null);
     const wakes = last14.map((e) => parseHM(e.wake)).filter((x) => x != null);

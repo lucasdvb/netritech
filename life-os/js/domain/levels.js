@@ -49,6 +49,9 @@ export function mastery(h, end = today()) {
   return { count, level: current, next, toNext: next ? Math.max(0, next.at - count) : 0, plates: ps };
 }
 
+/** The work behind sync(), one habit per step (for the background watcher). */
+export const syncSteps = (date = today(), habits = H.activeHabits()) => habits.map((h) => () => completionDays(h, date));
+
 /**
  * Engrave newly reached levels for the given habits. Returns the plates engraved now whose day is
  * today or yesterday, the ones worth a moment (older history is engraved quietly).

@@ -18,6 +18,7 @@ import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, ring } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
+import { later } from '../ui/later.js';
 import * as hap from '../ui/haptics.js';
 
 const head = (title, to, label) => html`<div class="block-head"><h2 class="block-title">${title}</h2>
@@ -173,11 +174,11 @@ export default {
       ${tomorrow()}
       ${thisWeek()}
       ${habitsCard()}
-      ${goalsCard()}
-      ${projectsCard()}
-      ${booksCard()}
-      ${keepGoing()}
-      ${tasksAndTraining()}`;
+      ${later('goals', goalsCard, 240)}
+      ${later('projects', projectsCard, 160)}
+      ${later('books', booksCard, 160)}
+      ${later('keep', keepGoing, 280)}
+      ${later('more', tasksAndTraining, 200)}`;
   },
   actions: {
     'quest-yes': () => { const undo = Q.accept(Q.offer()); hap.success(); app.toast('Added to your tasks', { icon: 'check', action: { label: 'Undo', fn: undo } }); },

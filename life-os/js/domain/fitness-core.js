@@ -2,7 +2,7 @@
 // ask about a day). The rest of training (progression, bests, history) is in fitness.js, which
 // re-exports all of this.
 import * as store from '../data/store.js';
-import { lastNDays, today, weekday } from './dates.js';
+import { lastNDays, today, weekday, cmp } from './dates.js';
 
 export const exercise = (id) => store.get('exercises', id);
 export const exercises = () => store.all('exercises').filter((e) => !e.archived).sort((a, b) => a.name.localeCompare(b.name));
@@ -26,7 +26,7 @@ const setIndex = () => store.memo('sets-by-workout', ['workoutSets'], () => {
   return m;
 });
 export const setsOf = (workoutId) => setIndex().get(workoutId) || [];
-export const allWorkouts = () => store.memo('all-workouts', ['workouts'], () => store.all('workouts').filter((w) => w.status === 'done').sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (b.startedAt || '').localeCompare(a.startedAt || ''))));
+export const allWorkouts = () => store.memo('all-workouts', ['workouts'], () => store.all('workouts').filter((w) => w.status === 'done').sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : cmp(b.startedAt || '', a.startedAt || ''))));
 export const activeWorkout = () => store.all('workouts').find((w) => w.status === 'active') || null;
 
 export function categoriesIn(workout) {
@@ -47,18 +47,25 @@ export function workoutFacts(date) {
 function computeFacts(date) {
   const ws = workoutsOn(date);
   const facts = { any: ws.length > 0, strength: false, core: false, calves: false, cardio: false, progression: false };
+  if (!ws.length) return facts;
+  // One pass over the sets of this day's workouts (cheaper than indexing every set ever logged).
+  const ids = new Set(ws.map((w) => w.id));
+  const cats = new Map(ws.map((w) => [w.id, { cats: new Set(), cardioMin: 0 }]));
+  for (const s of store.where('workoutSets', (x) => x.completed && ids.has(x.workoutId))) {
+    const c = exercise(s.exerciseId)?.category;
+    if (!c) continue;
+    const w = cats.get(s.workoutId);
+    w.cats.add(c);
+    if (c === 'cardio') w.cardioMin += Number(s.minutes) || 0;
+  }
   for (const w of ws) {
     if (w.kind === 'strength') facts.strength = true;
     if (w.kind === 'cardio') facts.cardio = true;
     if (w.progression === 'improved') facts.progression = true;
-    const cats = categoriesIn(w);
-    if (cats.has('core')) facts.core = true;
-    if (cats.has('calves')) facts.calves = true;
-    if (cats.has('cardio')) {
-      const mins = setsOf(w.id).filter((s) => s.completed && exercise(s.exerciseId)?.category === 'cardio')
-        .reduce((a, s) => a + (Number(s.minutes) || 0), 0);
-      if (mins >= 20) facts.cardio = true;
-    }
+    const { cats: c, cardioMin } = cats.get(w.id);
+    if (c.has('core')) facts.core = true;
+    if (c.has('calves')) facts.calves = true;
+    if (c.has('cardio') && cardioMin >= 20) facts.cardio = true;
   }
   return facts;
 }

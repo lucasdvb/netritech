@@ -127,3 +127,21 @@ test('rituals: the evening only asks what applies; sealing is undoable', async (
   Rt.markRitual(T, 'morning');
   assert.ok(Rt.ritualDone(T, 'morning'));
 });
+
+test('the bounded miss count matches the full history, for every kind of schedule', async () => {
+  const kinds = [{ kind: 'daily' }, { kind: 'weekdays', days: [1, 3, 5] }, { kind: 'perWeek', count: 3 }, { kind: 'perMonth', count: 4 }, { kind: 'interval', every: 3 }];
+  let seed = 7;
+  const rand = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  for (const schedule of kinds) {
+    for (let trial = 0; trial < 8; trial++) {
+      await world({ habits: [hb('x', { schedule })], start: addDays(T, -200) });
+      // Long gaps on some trials, so the answer sits beyond the 14- and 60-day windows.
+      const gap = [0, 20, 90, 190][trial % 4];
+      logDays('x', Array.from({ length: 200 }, (_, i) => i).filter((n) => n > gap && rand() < (trial % 2 ? 0.5 : 0.15)));
+      const end = addDays(T, -1);
+      const full = H.runs(H.habit('x'), end).missesInRow;
+      assert.equal(A.missesInRow(H.habit('x'), end), full, `${schedule.kind}, trial ${trial}`);
+      assert.equal(A.missesInRow(H.habit('x'), end, A.recentRecord(H.habit('x'), T).periods), full, `${schedule.kind}, trial ${trial}, sharing the fortnight`);
+    }
+  }
+});

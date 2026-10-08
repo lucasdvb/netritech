@@ -1,7 +1,7 @@
 import * as store from '../data/store.js';
 import { areaBlocks } from './area.js';
 import * as H from '../domain/habits.js';
-import { today, lastNDays, startOfWeek, relativeDay, fmtDayLetter } from '../domain/dates.js';
+import { today, lastNDays, startOfWeek, relativeDay, fmtDayLetter, cmp } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead } from '../ui/components.js';
@@ -20,7 +20,7 @@ export default {
   render() {
     const days = lastNDays(today(), 7);
     const wk = startOfWeek(today());
-    const moments = store.all('relationshipEntries').sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (b.createdAt || '').localeCompare(a.createdAt || '')));
+    const moments = store.all('relationshipEntries').sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : cmp(b.createdAt || '', a.createdAt || '')));
     return html`
       ${pageHead({ title: 'Relationships', back: { to: 'progress', label: 'Progress' } })}
       <p class="lead">Presence, not performance. Notes here are for remembering, not scoring.</p>

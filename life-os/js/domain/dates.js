@@ -2,10 +2,7 @@
 const pad = (n) => String(n).padStart(2, '0');
 
 export const toISO = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-export const fromISO = (s) => {
-  const [y, m, d] = s.split('-').map(Number);
-  return new Date(y, m - 1, d, 12);
-};
+export const fromISO = (s) => new Date(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10), 12);
 // The day you're living doesn't end at midnight: until `dayEndsAt` (03:00 by default)
 // it is still the previous day, so late-night logging lands where you expect.
 let dayEnd = 180;
@@ -44,7 +41,9 @@ export const addMonths = (iso, n) => {
 };
 export const range = (from, to) => {
   const out = [];
-  for (let d = from; d <= to; d = addDays(d, 1)) out.push(d);
+  if (from > to) return out;
+  const d = fromISO(from);
+  for (let iso = from; iso <= to; d.setDate(d.getDate() + 1), iso = toISO(d)) out.push(iso);
   return out;
 };
 export const lastNDays = (end, n) => range(addDays(end, -(n - 1)), end);
@@ -91,3 +90,5 @@ export const durationHM = (minutes) => {
   const m = Math.round(minutes % 60);
   return h ? `${h}h ${pad(m)}m` : `${m}m`;
 };
+/** Order two ISO dates, times or timestamps (plain text order is their time order; much faster than localeCompare). */
+export const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);

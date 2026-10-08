@@ -10,13 +10,22 @@ import * as hap from '../../ui/haptics.js';
 import { taskRow } from '../task-ui.js';
 
 const PLACEHOLDERS = ['The one that matters most', 'Second priority', 'Third priority'];
+// Today shows only the most recent overdue tasks; the rest wait on the Tasks screen.
+const LATE_SHOWN = 3;
 
 export function prioritiesBlock(date, mode) {
   if (mode === 'sick' || mode === 'minimum') return '';
   const isToday = date === today();
   const slots = T.slots(date);
   const doneN = slots.filter((t) => t?.done).length;
-  const others = T.forToday(date).filter((t) => !(t.rank && t.date === date));
+  let others = T.forToday(date).filter((t) => !(t.rank && t.date === date));
+  const late = isToday ? others.filter((t) => !t.done && t.date < date) : [];
+  const hidden = Math.max(0, late.length - LATE_SHOWN);
+  if (late.length) {
+    const recent = late.slice(hidden).reverse();
+    const lateSet = new Set(late);
+    others = [...recent, ...others.filter((t) => !lateSet.has(t))];
+  }
   if (!isToday && !slots.some(Boolean) && !others.length) return '';
   return html`<section class="prio" data-key="priorities" aria-label="Priorities and tasks">
     <div class="block-head"><h2 class="block-title">${isWorkday(date) ? 'Priorities' : 'Top 3 for today'}</h2>
@@ -28,6 +37,7 @@ export function prioritiesBlock(date, mode) {
       <input class="top3-input" value="${t?.title || ''}" placeholder="${PLACEHOLDERS[i]}" aria-label="Priority ${i + 1}" data-change="top3-text" data-i="${i}" enterkeyhint="done" maxlength="120">
     </li>`)}</ol>
     ${others.length ? html`<p class="prio-label">Also today</p><ul class="tlist">${others.map((t) => taskRow(t, { showDue: t.date !== date, ref: date }))}</ul>` : ''}
+    ${hidden ? html`<a class="link-btn prio-more" href="#/plan/tasks" data-action="nav" data-to="plan/tasks">${hidden} more from earlier days</a>` : ''}
     ${isToday ? html`<div class="task-add">
       <span class="task-add-ic" aria-hidden="true">${icon('plus', { size: 18 })}</span>
       <input class="task-add-input" data-change="task-add" placeholder="${others.length ? 'Add another task' : 'Add a task for today'}" aria-label="Add a task for today" enterkeyhint="done" maxlength="140">

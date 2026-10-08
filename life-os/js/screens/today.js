@@ -156,6 +156,8 @@ export default {
     }
     // The coach's suggestions and the safety nets arrive a moment after the first screen.
     Promise.all([import('../domain/coach.js'), import('../domain/next-action.js'), import('../domain/adapt.js')]).then(([c, n, a]) => {
+      // Only the first visit needs a second render; after that the first one already had them.
+      const first = !nets;
       n.useCoach(c.guidance);
       n.useAdapt(a);
       nets = a;
@@ -166,7 +168,7 @@ export default {
         a.markFreshStart();
         import('./fresh-start.js').then((m) => m.openFreshStart(away));
       }
-      app.refresh();
+      if (first) app.refresh();
     }).catch(() => {});
     setTimeout(() => Promise.all([sheets(), workouts()]).catch(() => {}), 1500);
   },

@@ -822,6 +822,9 @@ button.hero-big { display: inline-flex; align-items: baseline; flex-wrap: wrap; 
 .prio .link-btn { min-height: 32px; }
 .prio-label { margin-top: var(--s4); font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-3); }
 .prio > .top3-list + .task-add { border-top: 0.5px solid var(--border); }
+.prio .prio-more { display: flex; align-items: center; min-height: 44px; }
+/* A count followed by an action: both sit together on the right. */
+.block-head > .block-meta:not(:last-child) { margin-left: auto; }
 
 /* pinned actions */
 .pins { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 6.5em), 1fr)); gap: 8px; }

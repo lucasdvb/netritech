@@ -3,7 +3,7 @@ import * as F from '../domain/fitness.js';
 import * as H from '../domain/habits.js';
 import * as M from '../domain/metrics.js';
 import { trainingCall } from '../domain/coach.js';
-import { today, startOfWeek, addDays, fmtDayShort, fmtMD, relativeDay, weekday, diffDays, lastNDays } from '../domain/dates.js';
+import { today, startOfWeek, addDays, fmtDayShort, fmtMD, relativeDay, weekday, diffDays, lastNDays, cmp } from '../domain/dates.js';
 import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty } from '../ui/components.js';
@@ -85,7 +85,7 @@ export default {
     const call = trainingCall(today());
     const active = F.activeWorkout();
     const history = F.allWorkouts().slice(0, 12);
-    const pbs = F.personalBests().filter((p) => p.reps || p.seconds || p.load).sort((a, b) => (b.repsDate || b.secondsDate || '').localeCompare(a.repsDate || a.secondsDate || '')).slice(0, 8);
+    const pbs = F.personalBests().filter((p) => p.reps || p.seconds || p.load).sort((a, b) => cmp(b.repsDate || b.secondsDate || '', a.repsDate || a.secondsDate || '')).slice(0, 8);
     const w = F.weekStats(today());
     return html`
       ${pageHead({ title: 'Training', back: { to: 'plan', label: 'Plan' },

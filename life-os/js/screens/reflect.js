@@ -4,7 +4,7 @@
 import * as store from '../data/store.js';
 import * as I from '../domain/insights.js';
 import * as Rt from '../domain/rituals.js';
-import { today, relativeDay, fmtMD, fmtLong, endOfWeek, monthKey, fmtMonth, weekday, addDays, diffDays, fmtTime } from '../domain/dates.js';
+import { today, relativeDay, fmtMD, fmtLong, endOfWeek, monthKey, fmtMonth, weekday, addDays, diffDays, fmtTime, cmp } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead } from '../ui/components.js';
@@ -113,7 +113,7 @@ function films() {
     <div class="block-head"><h2 class="block-title">Monthly films</h2></div>
     <ul class="list">${months.map((m) => html`<li><button type="button" class="row" data-action="film" data-m="${m}">
       <span class="row-ic">${icon('play', { size: 16 })}</span>
-      <span class="row-main"><span class="row-title">${fmtMonth(`${m}-01`)}${m === cur ? ' · so far' : ''}</span><span class="row-sub">About ${Math.round(monthFilm(m).cards.length * 2.2)} seconds · save it as a video</span></span>
+      <span class="row-main"><span class="row-title">${fmtMonth(`${m}-01`)}${m === cur ? ' · so far' : ''}</span><span class="row-sub">Under a minute · save it as a video</span></span>
       <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></button></li>`)}</ul>
   </section>`;
 }
@@ -121,7 +121,7 @@ function films() {
 function recent() {
   const t = today();
   const list = store.all('journalEntries').filter((j) => !(j.date === t && j.kind === 'free'))
-    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (b.createdAt || '').localeCompare(a.createdAt || ''))).slice(0, 4);
+    .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : cmp(b.createdAt || '', a.createdAt || ''))).slice(0, 4);
   return html`<section class="block" data-key="journal">
     <div class="block-head"><h2 class="block-title">Journal</h2><a class="link-btn" href="#/reflect/journal" data-action="nav" data-to="reflect/journal">All entries</a></div>
     ${list.length ? html`<ul class="list">${list.map((j) => html`<li><a class="row journal-row" href="#/reflect/journal/${j.id}" data-action="nav" data-to="reflect/journal/${j.id}">

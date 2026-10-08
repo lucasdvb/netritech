@@ -3,7 +3,7 @@ import * as store from '../data/store.js';
 import { priorities } from './tasks.js';
 import * as M from './metrics-core.js';
 import { workoutFacts } from './fitness-core.js';
-import { today, weekday, startOfWeek, endOfWeek, startOfMonth, endOfMonth, range, addDays, diffDays, lastNDays, monthKey } from './dates.js';
+import { today, weekday, startOfWeek, endOfWeek, startOfMonth, endOfMonth, range, addDays, diffDays, lastNDays, monthKey, cmp } from './dates.js';
 
 export const DATA_STORES = ['habits', 'habitLogs', 'waterLogs', 'nutritionLogs', 'stepLogs', 'sleepEntries', 'dailyReviews',
   'workouts', 'workoutSets', 'exercises', 'readingSessions', 'learningSessions', 'meditationSessions', 'relationshipEntries',
@@ -365,7 +365,7 @@ export function stateOf(h, date = today()) {
 }
 export const inState = (state, date = today()) => activeHabits().filter((h) => stateOf(h, date) === state);
 export const focusHabits = (date = today()) => inState('focus', date)
-  .sort((a, b) => (a.focusSince || '').localeCompare(b.focusSince || '') || (a.order ?? 0) - (b.order ?? 0));
+  .sort((a, b) => cmp(a.focusSince || '', b.focusSince || '') || (a.order ?? 0) - (b.order ?? 0));
 export const queue = () => inState('queue').sort((a, b) => (a.queueOrder ?? a.order ?? 0) - (b.queueOrder ?? b.order ?? 0));
 
 /* ---------- runs with grace (H4) ---------- */

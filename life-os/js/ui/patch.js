@@ -12,6 +12,7 @@ if (typeof document !== 'undefined') {
   }, true);
 }
 
+const FIELD = new Set(['INPUT', 'TEXTAREA', 'SELECT']);
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export function patch(parent, markup) {
@@ -60,6 +61,9 @@ function morphNode(a, b) {
   if (a.nodeType !== 1) return;
   if (a.hasAttribute('data-static') && b.hasAttribute('data-static')
       && a.getAttribute('data-static') === b.getAttribute('data-static')) return;
+  // Nothing changed below here (the browser compares natively, far faster than walking it).
+  // Form fields still sync, since what's typed lives in a property, not an attribute.
+  if (a.isEqualNode(b) && !a.querySelector('input, textarea, select') && !FIELD.has(a.tagName)) return;
 
   const oldTween = a.getAttribute('data-tween');
   syncAttributes(a, b);
@@ -76,10 +80,14 @@ function morphNode(a, b) {
 }
 
 function syncAttributes(a, b) {
-  for (const { name } of [...a.attributes]) {
+  const old = a.attributes;
+  for (let i = old.length - 1; i >= 0; i--) {
+    const name = old[i].name;
     if (!b.hasAttribute(name)) a.removeAttribute(name);
   }
-  for (const { name, value } of b.attributes) {
+  const next = b.attributes;
+  for (let i = 0; i < next.length; i++) {
+    const { name, value } = next[i];
     if (a.getAttribute(name) !== value) a.setAttribute(name, value);
   }
 }

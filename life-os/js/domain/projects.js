@@ -2,6 +2,7 @@
 // projectId and never nest further, so a project is never more than one level deep.
 import * as store from '../data/store.js';
 import * as T from './tasks.js';
+import { cmp } from './dates.js';
 
 export const STATUS = { active: 'Active', paused: 'Paused', done: 'Done' };
 
@@ -14,8 +15,8 @@ export const active = () => projects().filter((p) => p.status === 'active');
 export function tasksOf(id) {
   return store.memo(`project-tasks:${id}`, ['tasks'], () => {
     const list = T.all().filter((t) => t.projectId === id);
-    const open = list.filter((t) => !t.done).sort((a, b) => (a.date || '9999').localeCompare(b.date || '9999') || (a.order ?? 0) - (b.order ?? 0));
-    const done = list.filter((t) => t.done).sort((a, b) => (b.doneAt || '').localeCompare(a.doneAt || ''));
+    const open = list.filter((t) => !t.done).sort((a, b) => cmp(a.date || '9999', b.date || '9999') || (a.order ?? 0) - (b.order ?? 0));
+    const done = list.filter((t) => t.done).sort((a, b) => cmp(b.doneAt || '', a.doneAt || ''));
     return { open, done };
   });
 }
