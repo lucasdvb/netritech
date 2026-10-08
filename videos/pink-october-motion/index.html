@@ -7,6 +7,7 @@
     <script src="assets/vendor/gsap.min.js"></script>
     <style>
       @font-face { font-family: "Dela Gothic One"; src: url("assets/fonts/DelaGothicOne.woff2") format("woff2"); font-display: block; }
+      @font-face { font-family: "Fredoka"; src: url("assets/fonts/Fredoka-Bold.woff2") format("woff2"); font-weight: 700; font-display: block; }
       @font-face { font-family: "Righteous"; src: url("assets/fonts/Righteous.woff2") format("woff2"); font-display: block; }
       @font-face { font-family: "Forma DJR Micro"; src: url("assets/fonts/FormaDJRMicro-Medium.woff2") format("woff2"); font-weight: 500; font-display: block; }
       @font-face { font-family: "Forma DJR Micro"; src: url("assets/fonts/FormaDJRMicro-Bold.woff2") format("woff2"); font-weight: 700; font-display: block; }
@@ -65,11 +66,11 @@
       }
 
       /* ---------- header ---------- */
-      .hdr-word { position: absolute; font-family: "Righteous", sans-serif; line-height: 1; white-space: nowrap; overflow: hidden; padding: 0 2px 6px; }
+      .hdr-word { position: absolute; font-family: "Fredoka", sans-serif; font-weight: 700; line-height: 1; white-space: nowrap; overflow: hidden; padding: 0 2px 6px; }
       .hdr-word span { display: inline-block; }
-      #hdr-oct { left: 612px; top: 22px; font-size: 117px; color: var(--oct); letter-spacing: -3px; }
-      #hdr-ober { left: 532px; top: 102px; font-size: 117px; color: var(--ober); letter-spacing: -3px; }
-      #hdr-sub { position: absolute; left: 540px; top: 222px; width: 300px; text-align: center; font-family: "Forma DJR Micro", sans-serif; font-weight: 500; font-size: 33px; line-height: 1.02; color: var(--mauve); }
+      #hdr-oct { left: 604px; top: 6px; font-size: 155px; color: var(--oct); letter-spacing: -4px; }
+      #hdr-ober { left: 549px; top: 84px; font-size: 155px; color: var(--ober); letter-spacing: -4px; }
+      #hdr-sub { position: absolute; left: 532px; top: 222px; width: 300px; text-align: center; font-family: "Forma DJR Micro", sans-serif; font-weight: 700; font-size: 32px; line-height: 1.02; color: var(--mauve); }
       #hdr-sub div { white-space: nowrap; }
 
       /* ---------- butterflies (CSS 3D wing flaps) ---------- */
@@ -94,8 +95,9 @@
       .big { font-family: "Dela Gothic One", sans-serif; font-size: 139px; color: var(--hot); letter-spacing: 0px; }
       .big .ch { display: inline-block; transform-origin: 50% 70%; }
       #t-breast { top: 1573px; }
-      #t-health { top: 1696px; letter-spacing: -11px; }
-      #t-health .shine { letter-spacing: -11px; }
+      #t-health { top: 1696px; }
+      #t-health .word, #t-health .shine { display: block; transform: scaleX(0.875); transform-origin: 50% 50%; }
+      #t-health .ch:nth-child(5) { margin-left: -18px; }
       .shine {
         position: absolute; left: 0; top: 0; width: 1080px; text-align: center; color: transparent;
         background-image: linear-gradient(100deg, rgba(255,255,255,0) 40%, rgba(255,236,246,0.85) 50%, rgba(255,255,255,0) 60%);
@@ -108,9 +110,9 @@
     </style>
   </head>
   <body>
-    <div id="stage" data-composition-id="main" data-start="0" data-duration="12" data-fps="30" data-width="1080" data-height="1920">
-      <audio id="score" src="assets/audio/score.wav" data-start="0" data-duration="12" data-track-index="1" data-volume="1"></audio>
-      <div id="scene" class="clip" data-start="0" data-duration="12" data-track-index="0" style="position:absolute;inset:0;">
+    <div id="stage" data-composition-id="main" data-start="0" data-duration="10" data-fps="30" data-width="1080" data-height="1920">
+      <audio id="score" src="assets/audio/score.wav" data-start="0" data-duration="10" data-track-index="1" data-volume="1"></audio>
+      <div id="scene" class="clip" data-start="0" data-duration="10" data-track-index="0" style="position:absolute;inset:0;">
         <div id="cam">
           <img id="paper" data-layout-ignore="true" src="assets/img/paper.jpg" alt="" />
           <div id="light"></div>
@@ -123,6 +125,9 @@
               </filter>
               <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
                 <feDropShadow dx="1.6" dy="2.4" stdDeviation="1.8" flood-color="#9b3a55" flood-opacity="0.32" />
+              </filter>
+              <filter id="tinyShadow" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="0.8" dy="1.2" stdDeviation="0.7" flood-color="#9b3a55" flood-opacity="0.35" />
               </filter>
               <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
                 <feGaussianBlur stdDeviation="1.6" />
@@ -258,21 +263,21 @@
           </svg>
 
           <!-- header type (HTML for crisp glyphs) -->
-          <div id="hdr-oct" class="hdr-word" data-layout-allow-occlusion="true"><span data-layout-allow-occlusion="true">o</span><span data-layout-allow-occlusion="true">c</span><span data-layout-allow-occlusion="true">t</span></div>
-          <div id="hdr-ober" class="hdr-word" data-layout-allow-occlusion="true"><span data-layout-allow-occlusion="true">o</span><span data-layout-allow-occlusion="true">b</span><span data-layout-allow-occlusion="true">e</span><span data-layout-allow-occlusion="true">r</span></div>
+          <div id="hdr-oct" class="hdr-word" data-layout-allow-occlusion="true" data-layout-allow-overlap="true"><span data-layout-allow-occlusion="true" data-layout-allow-overlap="true">o</span><span data-layout-allow-occlusion="true" data-layout-allow-overlap="true">c</span><span data-layout-allow-occlusion="true" data-layout-allow-overlap="true">t</span></div>
+          <div id="hdr-ober" class="hdr-word" data-layout-allow-occlusion="true" data-layout-allow-overlap="true"><span data-layout-allow-occlusion="true" data-layout-allow-overlap="true">o</span><span data-layout-allow-occlusion="true" data-layout-allow-overlap="true">b</span><span data-layout-allow-occlusion="true" data-layout-allow-overlap="true">e</span><span data-layout-allow-occlusion="true" data-layout-allow-overlap="true">r</span></div>
 
           <svg class="art" id="art-top" viewBox="0 0 738 1312" xmlns="http://www.w3.org/2000/svg">
             <!-- ---------- header daisy ---------- -->
             <g id="hdaisy-pos" transform="translate(398 77)">
-              <g id="hdaisy" filter="url(#softShadow)">
+              <g id="hdaisy" filter="url(#tinyShadow)">
                 <g id="hpetals"></g>
                 <circle r="7.5" fill="url(#discG)" />
               </g>
             </g>
-            <g id="hribbon" mask="url(#hdrCut)" filter="url(#softShadow)">
-              <path class="hrb" pathLength="1" d="M 528 131 L 562 76 C 577 56, 589 42, 585 27 C 581 13, 571 9, 564 9 C 553 9, 543 17, 544 30 C 545 45, 551 60, 563 76 L 601 131" fill="none" stroke="url(#hdrRibbon)" stroke-width="15" stroke-linejoin="round" />
-              <path class="hrb" pathLength="1" d="M 528 131 L 562 76 C 577 56, 589 42, 585 27 C 581 13, 571 9, 564 9 C 553 9, 543 17, 544 30 C 545 45, 551 60, 563 76 L 601 131" fill="none" stroke="#f7a6c2" stroke-opacity="0.45" stroke-width="4.5" filter="url(#glow)" transform="translate(-1.5 -1)" />
-            </g>
+            <g id="hribbon-pos" transform="translate(-9 7)"><g id="hribbon" mask="url(#hdrCut)" filter="url(#softShadow)">
+              <path class="hrb" pathLength="1" d="M 528 131 L 562 76 C 577 56, 589 42, 585 27 C 581 13, 571 9, 564 9 C 553 9, 543 17, 544 30 C 545 45, 551 60, 563 76 L 601 131" fill="none" stroke="url(#hdrRibbon)" stroke-width="18" stroke-linejoin="round" />
+              <path class="hrb" pathLength="1" d="M 528 131 L 562 76 C 577 56, 589 42, 585 27 C 581 13, 571 9, 564 9 C 553 9, 543 17, 544 30 C 545 45, 551 60, 563 76 L 601 131" fill="none" stroke="#f9b3cb" stroke-opacity="0.55" stroke-width="5" filter="url(#glow)" transform="translate(-1.5 -1)" />
+            </g></g>
             <!-- sparkles -->
             <g id="sparkles" fill="#ffffff"></g>
           </svg>
@@ -358,15 +363,15 @@
         // header daisy petals (pink)
         const hp = document.getElementById("hpetals");
         const hpD = "M 0 -6 C 5 -10, 6 -27, 2 -32 C 1 -33.5, -1 -33.5, -2 -32 C -6 -27, -5 -10, 0 -6 Z";
-        for (let i = 0; i < 16; i++) {
-          const g = el("g", { transform: `rotate(${(360 / 16) * i})` }, hp);
-          el("path", { d: hpD, fill: "url(#petalP)", class: "hpetal" }, g);
+        for (let i = 0; i < 14; i++) {
+          const g = el("g", { transform: `rotate(${(360 / 14) * i})` }, hp);
+          el("path", { d: hpD, fill: "url(#petalP)", stroke: "#b8456d", "stroke-width": 0.45, class: "hpetal" }, g);
         }
 
         // ---------- heartbeat rings ----------
         const rings = document.getElementById("rings");
-        const beats = [];
-        for (let t = 2.45; t < 11.6; t += 1.0) { beats.push(t); beats.push(t + 0.24); }
+        const beats = [0.1, 0.34]; // opening heartbeat, before the stethoscope arrives
+        for (let t = 2.15; t < 9.7; t += 1.0) { beats.push(t); beats.push(t + 0.24); }
         beats.forEach(() => el("circle", { cx: 566, cy: 661, r: 40, "stroke-width": 3, opacity: 0, class: "ring" }, rings));
 
         // ---------- sparkles ----------
@@ -390,11 +395,11 @@
         };
         // [poster x, poster y, size(px), resting tilt(deg), entry dx, entry dy]
         const BF = [
-          [252, 115, 104, -28, -520, -260],
-          [181, 312, 92, -12, -460, 120],
-          [628, 352, 80, 18, 520, -200],
-          [118, 851, 70, -16, -420, 220],
-          [644, 826, 92, 22, 480, 260],
+          [252, 115, 134, -28, -520, -260],
+          [181, 312, 118, -12, -460, 120],
+          [628, 352, 104, 18, 520, -200],
+          [118, 851, 94, -16, -420, 220],
+          [644, 826, 118, 22, 480, 260],
         ];
         const bfs = document.getElementById("bfs");
         BF.forEach(([x, y, size, tilt], i) => {
@@ -406,120 +411,118 @@
         });
 
         document.querySelectorAll(".bf-tilt").forEach((t) => gsap.set(t, { rotation: +t.dataset.tilt, scale: +t.dataset.scale }));
-        gsap.set(".bf-body", { rotationX: 24 });
+        gsap.set(".bf-body", { rotationX: 38 });
 
         // split BREAST / HEALTH into letters
-        document.querySelectorAll(".big > .word").forEach((w) => {
+        document.querySelectorAll(".big > .word, .big > .shine").forEach((w) => {
           w.innerHTML = [...w.textContent].map((c) => `<span class="ch" data-layout-allow-occlusion="true">${c}</span>`).join("");
         });
 
         // ================= TIMELINE =================
+        // Beat map (s): lines 0.05 · logo 0.05 · stethoscope 0.3→2.05 · daisy 0.95 · butterflies 1.2+
+        // ribbon 1.85 · heartbeat grid 2.15 + k (lub) / +0.24 (dub) · header 2.2 · headline 3.0
+        // BREAST/HEALTH 4.3 · hashtags 5.1 · shine 5.8 / 9.0 · sweep 6.6 · hold to 10.0
         const tl = gsap.timeline({ paused: true });
         const dash = (sel) => gsap.utils.toArray(sel);
+        const DRAW0 = { attr: { "stroke-dasharray": "1 2", "stroke-dashoffset": 1.03 } };
+        const draw = (targets, at, dur, ease) => tl.fromTo(targets, DRAW0, { attr: { "stroke-dashoffset": 0 }, duration: dur, ease }, at);
 
-        // camera: slow settle, then a barely-there drift through the hold
-        tl.fromTo("#cam", { scale: 1.07, y: 26 }, { scale: 1.0, y: 0, duration: 2.6, ease: "expo.out" }, 0);
-        tl.to("#cam", { scale: 1.018, duration: 9.4, ease: "sine.inOut" }, 2.6);
-        tl.fromTo("#light", { opacity: 0.2 }, { opacity: 1, duration: 3, ease: "sine.inOut" }, 0);
-        tl.to("#light", { opacity: 0.55, duration: 2.2, ease: "sine.inOut", yoyo: true, repeat: 3 }, 3);
+        // camera: push-in settle; then still (no drift, so nothing ever crops)
+        tl.fromTo("#cam", { scale: 1.09, y: 34 }, { scale: 1.0, y: 0, duration: 2.4, ease: "expo.out" }, 0);
+        tl.fromTo("#light", { opacity: 0.25 }, { opacity: 1, duration: 2.4, ease: "sine.inOut" }, 0);
+        tl.to("#light", { opacity: 0.55, duration: 1.9, ease: "sine.inOut", yoyo: true, repeat: 3 }, 2.4);
 
         // 1) torso emboss draws itself — shoulders, collarbone, sides, breasts, waist
-        const torsoOrder = [ [0, 0.05, 1.6], [1, 0.1, 1.5], [2, 0.5, 0.8], [3, 0.45, 1.6], [4, 0.65, 1.2], [5, 0.85, 1.5], [6, 0.9, 1.5] ];
+        const torsoOrder = [ [0, 0.05, 1.3, "power2.inOut"], [1, 0.1, 1.2, "power2.inOut"], [2, 0.42, 0.7, "sine.out"], [3, 0.35, 1.3, "power3.inOut"], [4, 0.5, 1.0, "power3.inOut"], [5, 0.7, 1.2, "sine.inOut"], [6, 0.75, 1.2, "sine.inOut"] ];
         const embs = dash("#torso .emb");
-        torsoOrder.forEach(([i, at, dur]) => {
-          const ps = embs[i].querySelectorAll("path");
-          tl.fromTo(ps, { strokeDasharray: "1 2", strokeDashoffset: 1.03 }, { strokeDashoffset: 0, duration: dur, ease: "power2.inOut" }, at);
-        });
+        torsoOrder.forEach(([i, at, dur, ease]) => draw(embs[i].querySelectorAll("path"), at, dur, ease));
 
-        // 2) logo — mark pops (uniform scale only), wordmark wipes
-        tl.fromTo("#logo-mark", { scale: 0, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.7, ease: "back.out(2.2)" }, 0.2);
-        tl.fromTo("#logo-glow", { scale: 0.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" }, 0.32);
-        tl.to("#logo-glow", { scale: 1.8, opacity: 0, duration: 0.8, ease: "power2.out" }, 0.62);
-        tl.fromTo("#logo-word", { clipPath: "inset(0 100% 0 29.4%)" }, { clipPath: "inset(0 0% 0 29.4%)", duration: 0.65, ease: "power3.out" }, 0.52);
+        // 2) logo — mark pops with a uniform scale only; wordmark wipes. The PNG is never reshaped.
+        tl.fromTo("#logo-mark", { scale: 0 }, { scale: 1, duration: 0.6, ease: "back.out(1.6)" }, 0.05);
+        tl.fromTo("#logo-glow", { scale: 0.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" }, 0.15);
+        tl.to("#logo-glow", { scale: 1.8, opacity: 0, duration: 0.8, ease: "power2.out" }, 0.45);
+        tl.fromTo("#logo-word", { clipPath: "inset(0 100% 0 29.4%)" }, { clipPath: "inset(0 0% 0 29.4%)", duration: 0.65, ease: "power3.out" }, 0.38);
 
-        // 3) stethoscope assembles: ear tips pop, metal draws down, tubing flows into the chest piece
-        tl.fromTo(["#tip-l", "#tip-r"], { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.45, ease: "back.out(2.6)", stagger: 0.08 }, 0.55);
-        tl.fromTo(dash("#bin-l path, #bin-r path"), { strokeDasharray: "1 2", strokeDashoffset: 1.03 }, { strokeDashoffset: 0, duration: 0.55, ease: "power2.in" }, 0.65);
-        tl.fromTo("#sleeves", { opacity: 0, scale: 0.6, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 1.12);
-        tl.fromTo(dash("#tube-l path, #tube-r path, #tube-u path"), { strokeDasharray: "1 2", strokeDashoffset: 1.03 }, { strokeDashoffset: 0, duration: 0.42, ease: "sine.inOut" }, 1.15);
-        tl.fromTo(dash("#stem path"), { strokeDasharray: "1 2", strokeDashoffset: 1.03 }, { strokeDashoffset: 0, duration: 0.75, ease: "power2.inOut" }, 1.5);
-        tl.fromTo("#chest", { scale: 0, rotation: -120, svgOrigin: "566 661" }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(1.9)" }, 1.95);
+        // 3) stethoscope assembles: ear tips, metal draws down, tubing flows into the chest piece
+        tl.fromTo(["#tip-l", "#tip-r"], { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.4, ease: "back.out(2)", stagger: 0.07 }, 0.3);
+        draw(dash("#bin-l path, #bin-r path"), 0.38, 0.5, "power2.in");
+        tl.fromTo("#sleeves", { opacity: 0 }, { opacity: 1, duration: 0.15, ease: "power1.out" }, 0.82);
+        draw(dash("#tube-l path, #tube-r path, #tube-u path"), 0.85, 0.38, "sine.inOut");
+        draw(dash("#stem path"), 1.15, 0.6, "power2.inOut");
+        tl.fromTo("#chest", { scale: 0, rotation: -120, svgOrigin: "566 661" }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(1.5)" }, 1.6);
 
         // 4) ribbon unspools out from behind the chest piece
-        tl.fromTo(dash(".rb"), { strokeDasharray: "1 2", strokeDashoffset: 1.03 }, { strokeDashoffset: 0, duration: 1.0, ease: "power3.inOut" }, 2.2);
-        tl.fromTo("#ribbon-wrap", { scale: 0.86, rotation: -8, svgOrigin: "566 661" }, { scale: 1, rotation: 0, duration: 1.2, ease: "expo.out" }, 2.2);
+        draw(dash(".rb"), 1.85, 1.0, "power3.inOut");
+        tl.fromTo("#ribbon-wrap", { scale: 0.9, rotation: -6, svgOrigin: "566 661" }, { scale: 1, rotation: 0, duration: 1.2, ease: "expo.out" }, 1.85);
 
         // 5) daisy blooms petal by petal, then turns slowly for the rest of the film
-        tl.fromTo("#disc", { scale: 0, svgOrigin: "0 0" }, { scale: 1, duration: 0.5, ease: "back.out(3)" }, 1.25);
-        tl.fromTo("#florets", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 1.45);
-        tl.fromTo(dash("#petals .petal"), { scale: 0, rotation: -35, svgOrigin: "0 0" }, { scale: 1, rotation: 0, duration: 0.7, ease: "back.out(1.6)", stagger: { each: 0.028, from: 0 } }, 1.35);
-        tl.fromTo("#daisy", { rotation: -40, svgOrigin: "0 0" }, { rotation: 0, duration: 1.6, ease: "expo.out" }, 1.35);
-        tl.to("#daisy", { rotation: 26, duration: 9.0, ease: "none" }, 2.95);
+        tl.fromTo("#disc", { scale: 0, svgOrigin: "0 0" }, { scale: 1, duration: 0.45, ease: "back.out(2.2)" }, 0.95);
+        tl.fromTo("#florets", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 1.1);
+        tl.fromTo(dash("#petals .petal"), { scale: 0, rotation: -35, svgOrigin: "0 0" }, { scale: 1, rotation: 0, duration: 0.7, ease: "expo.out", stagger: { each: 0.026, from: 0 } }, 1.02);
+        tl.fromTo("#daisy", { rotation: -40, svgOrigin: "0 0" }, { rotation: 0, duration: 1.6, ease: "expo.out" }, 1.02);
+        tl.to("#daisy", { rotation: 22, duration: 7.4, ease: "none" }, 2.62);
 
         // 6) header — daisy spins in, letters rise from their baseline, ribbon draws, subtitle settles
-        tl.fromTo("#hdaisy", { scale: 0, rotation: -200, svgOrigin: "0 0" }, { scale: 1, rotation: 0, duration: 0.9, ease: "back.out(1.8)" }, 2.55);
-        tl.to("#hdaisy", { rotation: 60, duration: 8.5, ease: "none" }, 3.45);
-        tl.fromTo("#hdr-oct span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.06 }, 2.7);
-        tl.fromTo("#hdr-ober span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.06 }, 2.86);
-        tl.fromTo(dash(".hrb"), { strokeDasharray: "1 2", strokeDashoffset: 1.03 }, { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut" }, 3.0);
-        tl.fromTo(["#sub1", "#sub2"], { opacity: 0, y: 18, scale: 1.12, filter: "blur(6px)" }, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.9, ease: "power3.out", stagger: 0.12 }, 3.25);
+        tl.fromTo("#hdaisy", { scale: 0, rotation: -200, svgOrigin: "0 0" }, { scale: 1, rotation: 0, duration: 0.8, ease: "back.out(1.4)" }, 2.2);
+        tl.to("#hdaisy", { rotation: 50, duration: 7.0, ease: "none" }, 3.0);
+        tl.fromTo("#hdr-oct span", { yPercent: 110 }, { yPercent: 0, duration: 0.65, ease: "expo.out", stagger: 0.06 }, 2.32);
+        tl.fromTo("#hdr-ober span", { yPercent: 110 }, { yPercent: 0, duration: 0.65, ease: "expo.out", stagger: 0.06 }, 2.46);
+        draw(dash(".hrb"), 2.6, 0.75, "power2.inOut");
+        tl.fromTo(["#sub1", "#sub2"], { opacity: 0, y: 18, filter: "blur(6px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.8, ease: "power3.out", stagger: 0.12 }, 2.85);
 
         // 7) butterflies flutter in on curved paths (fast flaps in flight, lazy flaps at rest)
         BF.forEach(([x, y, size, tilt, dx, dy], i) => {
-          const t0 = 1.5 + i * 0.32, fly = 1.6;
+          const t0 = 1.2 + i * 0.28, fly = 1.5;
           const node = "#bf" + i, wl = node + " .wing.l", wr = node + " .wing.r";
           tl.fromTo(node, { x: dx, opacity: 0 }, { x: 0, opacity: 1, duration: fly, ease: "power2.out" }, t0);
           tl.fromTo(node + " .bf-tilt", { y: dy, rotation: tilt + (dx < 0 ? 35 : -35) }, { y: 0, rotation: tilt, duration: fly, ease: "sine.inOut" }, t0);
           const fast = Math.round(fly / 0.11);
           const rep = fast - (fast % 2) + 1; // odd: each wing lands back on its resting angle
-          tl.fromTo(wl, { rotationY: 20 }, { rotationY: 78, duration: 0.11, ease: "sine.inOut", yoyo: true, repeat: rep }, t0);
-          tl.fromTo(wr, { rotationY: -20 }, { rotationY: -78, duration: 0.11, ease: "sine.inOut", yoyo: true, repeat: rep }, t0);
-          // resting: lazy double-flaps with pauses + a gentle bob
-          for (let t = t0 + fly + 0.5 + i * 0.27; t < 11.4; t += 1.7 + (i % 3) * 0.35) {
-            tl.to(wl, { rotationY: 62, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 3 }, t);
-            tl.to(wr, { rotationY: -62, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 3 }, t);
+          tl.fromTo(wl, { rotationY: 30 }, { rotationY: 80, duration: 0.11, ease: "sine.inOut", yoyo: true, repeat: rep }, t0);
+          tl.fromTo(wr, { rotationY: -30 }, { rotationY: -80, duration: 0.11, ease: "sine.inOut", yoyo: true, repeat: rep }, t0);
+          for (let t = t0 + fly + 0.4 + i * 0.27; t < 9.5; t += 1.6 + (i % 3) * 0.35) {
+            tl.to(wl, { rotationY: 66, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 3 }, t);
+            tl.to(wr, { rotationY: -66, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 3 }, t);
           }
-          tl.to(node + " .bf-body", { y: -6, duration: 1.4 + i * 0.13, ease: "sine.inOut", yoyo: true, repeat: 3 }, t0 + fly);
+          tl.to(node + " .bf-body", { y: -6, duration: 1.3 + i * 0.12, ease: "sine.inOut", yoyo: true, repeat: 3 }, t0 + fly);
         });
 
-        // 8) headline — words rise out of their own baselines
-        tl.fromTo("#t-listen .mask > span", { yPercent: 115 }, { yPercent: 0, duration: 0.85, ease: "expo.out", stagger: 0.1 }, 3.3);
-        tl.fromTo("#t-body .mask > span", { yPercent: 115 }, { yPercent: 0, duration: 0.85, ease: "expo.out", stagger: 0.1 }, 3.5);
-        // "body" answers the heartbeat
-        tl.to("#w-body", { scale: 1.08, duration: 0.11, ease: "power2.out", yoyo: true, repeat: 1, transformOrigin: "50% 60%" }, 4.45);
-        tl.to("#w-body", { scale: 1.05, duration: 0.1, ease: "power2.out", yoyo: true, repeat: 1, transformOrigin: "50% 60%" }, 4.69);
+        // 8) headline — words rise out of their own baselines; "body" thumps on the heartbeat
+        tl.fromTo("#t-listen .mask > span", { yPercent: 115 }, { yPercent: 0, duration: 0.85, ease: "expo.out", stagger: 0.1 }, 3.0);
+        tl.fromTo("#t-body .mask > span", { yPercent: 115 }, { yPercent: 0, duration: 0.85, ease: "expo.out", stagger: 0.1 }, 3.2);
+        tl.to("#w-body", { scale: 1.08, duration: 0.11, ease: "power2.out", yoyo: true, repeat: 1, transformOrigin: "50% 60%" }, 4.15);
+        tl.to("#w-body", { scale: 1.05, duration: 0.1, ease: "power2.out", yoyo: true, repeat: 1, transformOrigin: "50% 60%" }, 4.39);
+        tl.fromTo(["#t-reg1 span", "#t-reg2 span"], { opacity: 0, y: 26, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power3.out", stagger: 0.14 }, 3.7);
 
-        tl.fromTo(["#t-reg1 span", "#t-reg2 span"], { opacity: 0, y: 26, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power3.out", stagger: 0.14 }, 4.0);
-
-        // 9) BREAST HEALTH — letters slam in, then a satin shine travels across
-        tl.fromTo("#t-breast .ch", { scale: 2.2, opacity: 0, y: -30, filter: "blur(10px)" }, { scale: 1, opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "expo.out", stagger: 0.05 }, 4.6);
-        tl.fromTo("#t-health .ch", { scale: 2.2, opacity: 0, y: -30, filter: "blur(10px)" }, { scale: 1, opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "expo.out", stagger: 0.05 }, 4.85);
-        tl.fromTo(["#t-breast", "#t-health"], { y: 0 }, { y: 6, duration: 0.08, ease: "power1.out", yoyo: true, repeat: 1, stagger: 0.25 }, 4.9);
-        tl.fromTo(".shine", { backgroundPosition: "120% 0" }, { backgroundPosition: "-20% 0", duration: 1.2, ease: "power2.inOut", stagger: 0.12 }, 6.0);
-        tl.to(".shine", { backgroundPosition: "-120% 0", duration: 0.01 }, 7.4);
-        tl.fromTo(".shine", { backgroundPosition: "120% 0" }, { backgroundPosition: "-20% 0", duration: 1.2, ease: "power2.inOut", stagger: 0.12, immediateRender: false }, 9.6);
+        // 9) BREAST HEALTH — letters slam in, the block takes the hit, a satin shine travels across
+        tl.fromTo("#t-breast .word .ch", { scale: 2.2, opacity: 0, y: -30, filter: "blur(10px)" }, { scale: 1, opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "expo.out", stagger: 0.045 }, 4.3);
+        tl.fromTo("#t-health .word .ch", { scale: 2.2, opacity: 0, y: -30, filter: "blur(10px)" }, { scale: 1, opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "expo.out", stagger: 0.045 }, 4.55);
+        tl.fromTo(["#t-breast", "#t-health"], { y: 0 }, { y: 7, duration: 0.07, ease: "power1.out", yoyo: true, repeat: 1, stagger: 0.25 }, 4.6);
+        tl.fromTo(".shine", { backgroundPosition: "120% 0" }, { backgroundPosition: "-20% 0", duration: 1.2, ease: "power2.inOut", stagger: 0.12 }, 5.8);
+        tl.to(".shine", { backgroundPosition: "-120% 0", duration: 0.01 }, 7.2);
+        tl.fromTo(".shine", { backgroundPosition: "120% 0" }, { backgroundPosition: "-20% 0", duration: 1.2, ease: "power2.inOut", stagger: 0.12, immediateRender: false }, 8.9);
 
         // 10) hashtags type on
-        tl.fromTo("#t-tag1", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.9, ease: "power1.inOut" }, 5.4);
-        tl.fromTo("#t-tag2", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.5, ease: "power1.inOut" }, 6.0);
+        tl.fromTo("#t-tag1", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.85, ease: "power1.inOut" }, 5.1);
+        tl.fromTo("#t-tag2", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.45, ease: "power1.inOut" }, 5.65);
 
         // 11) heartbeat — lub-dub rings radiate from the chest piece, chest piece thumps
         dash("#rings .ring").forEach((r, i) => {
           const t = beats[i], strong = i % 2 === 0;
           tl.fromTo(r, { attr: { r: 40, "stroke-width": strong ? 3.2 : 2.2 }, opacity: strong ? 0.75 : 0.5 }, { attr: { r: strong ? 112 : 92, "stroke-width": 0.4 }, opacity: 0, duration: 1.1, ease: "power2.out", immediateRender: false }, t);
-          tl.to("#chest", { svgOrigin: "566 661", scale: strong ? 1.07 : 1.04, duration: 0.1, ease: "power2.out", yoyo: true, repeat: 1 }, t);
+          if (t > 2) tl.to("#chest", { svgOrigin: "566 661", scale: strong ? 1.07 : 1.04, duration: 0.1, ease: "power2.out", yoyo: true, repeat: 1 }, t);
         });
 
         // 12) sparkles twinkle around the ribbon, daisy and header
-        dash("#sparkles .spark").forEach((s, i) => {
-          for (let t = 3.4 + i * 0.47; t < 11.3; t += 2.9 + (i % 3) * 0.4) {
-            tl.fromTo(s, { opacity: 0, rotation: 0, transformOrigin: "50% 50%" }, { opacity: 1, rotation: 90, duration: 0.45, ease: "power2.out", immediateRender: false }, t);
-            tl.to(s, { opacity: 0, rotation: 180, duration: 0.45, ease: "power2.in" }, t + 0.45);
+        dash("#sparkles .spark").forEach((sk, i) => {
+          for (let t = 3.0 + i * 0.43; t < 9.3; t += 2.6 + (i % 3) * 0.4) {
+            tl.fromTo(sk, { opacity: 0, rotation: 0, transformOrigin: "50% 50%" }, { opacity: 1, rotation: 90, duration: 0.45, ease: "power2.out", immediateRender: false }, t);
+            tl.to(sk, { opacity: 0, rotation: 180, duration: 0.45, ease: "power2.in" }, t + 0.45);
           }
         });
 
         // 13) one soft light sweep across the finished poster
-        tl.fromTo("#sweep", { x: 0, rotation: 18 }, { x: 2400, rotation: 18, duration: 2.2, ease: "sine.inOut" }, 7.0);
+        tl.fromTo("#sweep", { x: 0, rotation: 18 }, { x: 2400, rotation: 18, duration: 2.2, ease: "sine.inOut" }, 6.6);
 
         window.__timelines["main"] = tl;
         tl.seek(0);

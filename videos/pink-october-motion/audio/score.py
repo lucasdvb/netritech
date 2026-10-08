@@ -1,5 +1,5 @@
 """Synthesize the Pink October score: a soft 60 BPM bed whose beat grid is the
-on-screen heartbeat (first pulse 2.45s, every 1.0s), plus light SFX on reveals.
+on-screen heartbeat (first pulse 2.15s, every 1.0s), plus light SFX on reveals.
 
     python3 audio/score.py   ->  audio/score_raw.wav  (then loudnorm via ffmpeg)
 
@@ -10,7 +10,7 @@ import soundfile as sf
 from scipy.signal import butter, sosfilt, fftconvolve
 
 SR = 48000
-DUR = 12.0
+DUR = 10.0
 N = int(SR * DUR)
 L = np.zeros(N)
 R = np.zeros(N)
@@ -127,64 +127,69 @@ def boom():
 
 
 # ---------- the bed: F major, beat grid = heartbeat grid ----------
-BEAT0 = 0.45  # music beat k lands at 0.45 + k (heartbeat starts at 2.45 = beat 2)
+BEAT0 = 0.15  # music beat k lands at 0.15 + k (heartbeat starts at 2.15 = beat 2)
 chords = [  # (start beat, beats, midi notes)
-    (-0.45, 2.45, [53, 57, 60, 64]),        # Fmaj7
+    (-0.15, 2.15, [53, 57, 60, 64]),        # Fmaj7
     (2, 2, [57, 60, 64, 67]),               # Am7
     (4, 2, [58, 62, 65, 69]),               # Bbmaj7
-    (6, 2, [60, 65, 67, 72]),               # Csus4/add
-    (8, 3.55, [53, 60, 64, 67, 69]),        # Fmaj9 (resolve)
+    (6, 1.5, [60, 65, 67, 72]),             # Csus4/add
+    (7.5, 2.4, [53, 60, 64, 67, 69]),       # Fmaj9 (resolve)
 ]
 for b, nb, notes in chords:
     t0 = BEAT0 + b
-    place(pad([hz(m) for m in notes], nb + 1.3, attack=0.9 if b > 0 else 0.45), max(0, t0), gain=0.16)
-    place(pad([hz(notes[0] - 12)], nb + 1.3), max(0, t0), gain=0.10)
+    place(pad([hz(m) for m in notes], nb + 1.3, attack=0.9 if b > 0 else 0.3), max(0, t0), gain=0.16)
+    place(pad([hz(notes[0] - 12)], nb + 1.3, attack=0.9 if b > 0 else 0.3), max(0, t0), gain=0.10)
 
 # piano arpeggio on 8ths from beat 0, soft, rising contour per chord
 arp_t = BEAT0
-while arp_t < 11.2:
+while arp_t < 9.2:
     k = int(round((arp_t - BEAT0) * 2))
-    b = (arp_t - BEAT0)
+    b = arp_t - BEAT0
     notes = [c[2] for c in chords if c[0] <= b < c[0] + c[1] + 1e-6]
     notes = notes[-1] if notes else chords[0][2]
     pat = [0, 2, 1, 3, 2, 4, 1, 3]
     m = notes[pat[k % 8] % len(notes)] + 12
     vel = 0.55 if k % 2 == 0 else 0.38
-    if arp_t > 9.8:
-        vel *= max(0.0, 1 - (arp_t - 9.8) / 1.6)
+    if arp_t > 7.8:
+        vel *= max(0.0, 1 - (arp_t - 7.8) / 1.5)
     place(piano(hz(m), vel=vel), arp_t, gain=0.20, pan=-0.35 + 0.7 * ((k * 3) % 5) / 4)
     arp_t += 0.5
 
+# opening heartbeat (rings pulse where the chest piece will land)
+place(heartbeat(True), 0.1, gain=0.3)
+place(heartbeat(False), 0.34, gain=0.3)
+
 # heartbeat: lub-dub, synced to rings
-t = 2.45
-while t < 11.6:
-    place(heartbeat(True), t, gain=0.46)
-    place(heartbeat(False), t + 0.24, gain=0.46)
+t = 2.15
+while t < 9.7:
+    place(heartbeat(True), t, gain=0.27)
+    place(heartbeat(False), t + 0.24, gain=0.27)
     t += 1.0
 
 # ---------- SFX on reveals ----------
-place(bell(hz(88), vel=0.7), 0.22, gain=0.12, pan=-0.5)            # logo mark pop
-place(bell(hz(95), vel=0.5), 0.34, gain=0.08, pan=-0.45)
-for i, tt in enumerate((0.55, 0.63)):                                # ear tips
+place(bell(hz(88), vel=0.7), 0.07, gain=0.12, pan=-0.5)            # logo mark pop
+place(bell(hz(95), vel=0.5), 0.19, gain=0.08, pan=-0.45)
+for i, tt in enumerate((0.3, 0.37)):                                 # ear tips
     place(piano(hz(84 + i * 3), dur=0.4, vel=0.5), tt, gain=0.10, pan=-0.1 + 0.2 * i)
-place(swish(1.1, 700, 3000, "arc"), 1.15, gain=0.018)                 # tubing flowing
-place(bell(hz(91), vel=0.6), 2.2, gain=0.10, pan=0.4)               # chest piece lands (metal)
-place(bell(hz(98) * 1.003, vel=0.4), 2.22, gain=0.06, pan=0.45)
+place(swish(0.95, 700, 3000, "arc"), 0.85, gain=0.018)               # tubing flowing
+place(bell(hz(91), vel=0.6), 1.75, gain=0.10, pan=0.4)              # chest piece lands (metal)
+place(bell(hz(98) * 1.003, vel=0.4), 1.77, gain=0.06, pan=0.45)
 for i, m in enumerate((81, 84, 88, 91)):                             # daisy blooms
-    place(piano(hz(m), dur=1.2, vel=0.5), 1.35 + i * 0.07, gain=0.09, pan=-0.4)
-place(swish(1.1, 1200, 6000, "arc"), 2.2, gain=0.018, pan=0.35)     # ribbon unspools
+    place(piano(hz(m), dur=1.2, vel=0.5), 1.02 + i * 0.07, gain=0.09, pan=-0.4)
+place(swish(1.1, 1200, 6000, "arc"), 1.85, gain=0.018, pan=0.35)    # ribbon unspools
 for i in range(5):                                                   # butterflies
-    place(flutter(0.7), 1.5 + i * 0.32, gain=0.016, pan=(-0.7, -0.6, 0.6, -0.5, 0.6)[i])
+    place(flutter(0.7), 1.2 + i * 0.28, gain=0.016, pan=(-0.7, -0.6, 0.6, -0.5, 0.6)[i])
 for i, m in enumerate((88, 93, 96)):                                 # header letters
-    place(bell(hz(m), dur=1.4, vel=0.45), 2.6 + i * 0.12, gain=0.06, pan=0.3)
-place(swish(0.8, 200, 1400, "arc"), 3.2, gain=0.025)                  # headline rise
-place(boom(), 4.62, gain=0.42)                                       # BREAST slam
-place(swish(0.35, 2000, 9000, "arc"), 4.55, gain=0.025)
-place(boom(), 4.88, gain=0.26)                                       # HEALTH slam
-for tt in (6.0, 9.6):                                                # satin shine sparkle
+    place(bell(hz(m), dur=1.4, vel=0.45), 2.32 + i * 0.12, gain=0.06, pan=0.3)
+place(swish(0.8, 200, 1400, "arc"), 2.9, gain=0.025)                 # headline rise
+place(boom(), 4.32, gain=0.8)                                        # BREAST slam
+place(lp(boom(), 120), 4.32, gain=0.6)                               # sub layer
+place(swish(0.35, 2000, 9000, "arc"), 4.25, gain=0.03)
+place(boom(), 4.57, gain=0.45)                                       # HEALTH slam
+for tt in (5.8, 8.9):                                                # satin shine sparkle
     for i, m in enumerate((96, 100, 103, 108)):
         place(bell(hz(m), dur=1.2, vel=0.35), tt + 0.15 + i * 0.09, gain=0.045, pan=-0.4 + 0.27 * i)
-place(swish(2.0, 600, 5000, "arc"), 7.0, gain=0.016, pan=0.0)         # light sweep
+place(swish(2.0, 600, 5000, "arc"), 6.6, gain=0.016, pan=0.0)        # light sweep
 
 # ---------- room + master ----------
 ir_n = int(2.0 * SR)
