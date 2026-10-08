@@ -1236,6 +1236,8 @@ What it covered: a lint for mistakes (ESLint's built-in rules, `npm run lint`, n
 - **Speed:** the timing suite caught a 54 ms block on Today after ticking a task (budget 50 ms). Tasks counted as data every habit reads (for the one habit fed by your Top 3), so a tick redid every habit's history: the shrink-and-grow check, mastery levels and records. Now each habit's history is kept in fixed two-month stretches that are redone only when something dated in them changes (`js/domain/history.js`), each habit depends only on its own kind of data, and the background work goes one stretch at a time. With the CPU four times slower and a year of data, three timing runs in a row have no task over 50 ms, and ticking a task is answered in 32 to 40 ms. Unit tests check the stretch-by-stretch results against working out the whole history, after changes to today, to the past, to a day mode and to the habit itself.
 - **Cleanup:** 21 unused CSS classes, unused imports and values, and stale README paths are gone. The service worker setup, the safety nets' actions and the habit labels only later screens use (`habits-more.js`) load after the first screen, so first-screen JavaScript stays within 200 KB despite the safer saving.
 
+Where it ends: the lint is clean, 137 unit tests and all 20 browser suites (176 steps) pass, and every budget holds with a year of data and the CPU four times slower: Today is ready in about 490 ms (budget 600), no screen takes more than 70 ms to render, the slowest tap is answered in 48 ms (budget 50), nothing blocks for more than 50 ms, first-screen JavaScript is 199 KB and the offline copy 1.4 MB. Screenshots, light and dark: [`final-pass-screens.png`](final-pass-screens.png).
+
 ---
 
 ## 16. Testing, performance and scalability
