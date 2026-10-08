@@ -1,7 +1,7 @@
 import * as store from '../data/store.js';
 import { areaBlocks } from './area.js';
 import * as M from '../domain/metrics.js';
-import { today, lastNDays, startOfWeek, startOfMonth, relativeDay, fmtMD, fmtDayShort } from '../domain/dates.js';
+import { today, lastNDays, startOfWeek, startOfMonth, relativeDay, fmtMD, fmtDayShort, dayInline } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty } from '../ui/components.js';
@@ -40,18 +40,18 @@ export default {
         <button type="button" class="btn btn--soft btn--sm" data-action="log" data-kind="meditation">${icon('leaf', { size: 16 })} Meditation</button>
       </div>
       <div class="stat-row stat-row--3 block-tight">
-        <div class="stat"><p class="stat-label">Reading · week</p><p class="stat-value tnum">${num(sumMin('readingSessions', wk))}<span class="stat-unit">min</span></p></div>
-        <div class="stat"><p class="stat-label">Learning · week</p><p class="stat-value tnum">${num(sumMin('learningSessions', wk))}<span class="stat-unit">min</span></p></div>
-        <div class="stat"><p class="stat-label">Meditation · week</p><p class="stat-value tnum">${num(sumMin('meditationSessions', wk))}<span class="stat-unit">min</span></p></div>
+        <div class="stat"><p class="stat-label">Reading</p><p class="stat-value tnum">${num(sumMin('readingSessions', wk))}<span class="stat-unit">min</span></p><p class="stat-sub">this week</p></div>
+        <div class="stat"><p class="stat-label">Learning</p><p class="stat-value tnum">${num(sumMin('learningSessions', wk))}<span class="stat-unit">min</span></p><p class="stat-sub">this week</p></div>
+        <div class="stat"><p class="stat-label">Meditation</p><p class="stat-value tnum">${num(sumMin('meditationSessions', wk))}<span class="stat-unit">min</span></p><p class="stat-sub">this week</p></div>
       </div>
-      <section class="block"><div class="block-head"><h2 class="block-title">Reading & learning · 14 days</h2><span class="block-meta">target 20 min/day</span></div>
+      <section class="block"><div class="block-head"><h2 class="block-title">Reading & learning</h2><span class="block-meta">14 days · aim 20 min</span></div>
         <div class="card">${barChart({ labels: days.map((d) => fmtDayShort(d).slice(0, 1)), tipLabels: days.map(fmtMD), values: days.map((d) => M.mindMinutes(d) || null), color: 'var(--c-mind)', fmt: (v) => `${v} min`, goal: { value: 20, label: '20' } })}</div>
       </section>
       <section class="block"><div class="block-head"><h2 class="block-title">Books</h2><span class="block-meta">${finished.filter((b) => b.last >= mo).length} finished this month</span></div>
         ${current.length || finished.length ? html`<ul class="list">
-          ${current.map((b) => html`<li class="row"><span class="row-ic" style="--ic:var(--c-mind)">${icon('book-open', { size: 16 })}</span><span class="row-main"><span class="row-title">${b.title}</span><span class="row-sub">Reading · ${num(b.minutes)} min${b.pages ? ` · ${b.pages} pages` : ''} · last ${relativeDay(b.last).toLowerCase()}</span></span>
+          ${current.map((b) => html`<li class="row"><span class="row-ic" style="--ic:var(--c-mind)">${icon('book-open', { size: 16 })}</span><span class="row-main"><span class="row-title">${b.title}</span><span class="row-sub">Reading · ${num(b.minutes)} min${b.pages ? ` · ${b.pages} pages` : ''} · last ${dayInline(b.last)}</span></span>
             <button type="button" class="btn btn--soft btn--sm" data-action="continue" data-book="${b.title}">Log</button></li>`)}
-          ${finished.map((b) => html`<li class="row"><span class="row-ic" style="--ic:var(--accent)">${icon('check', { size: 16 })}</span><span class="row-main"><span class="row-title">${b.title}</span><span class="row-sub">Finished ${relativeDay(b.last).toLowerCase()}${b.ratings.length ? ` · ${Math.max(...b.ratings)}/10` : ''}</span></span></li>`)}
+          ${finished.map((b) => html`<li class="row"><span class="row-ic" style="--ic:var(--accent)">${icon('check', { size: 16 })}</span><span class="row-main"><span class="row-title">${b.title}</span><span class="row-sub">Finished ${dayInline(b.last)}${b.ratings.length ? ` · ${Math.max(...b.ratings)}/10` : ''}</span></span></li>`)}
         </ul>` : html`<p class="muted">Log a reading session with a title and your books collect here.</p>`}
       </section>
       <section class="block"><div class="block-head"><h2 class="block-title">What I learned this week</h2></div>

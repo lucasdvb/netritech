@@ -26,12 +26,12 @@ export default {
       ${pageHead({ title: 'Work', back: { to: 'progress', label: 'Progress' } })}
       <p class="lead">Do the important work in the day, then close it so the evening belongs to people.</p>
       <div class="stat-row stat-row--3 block-tight">
-        <div class="stat"><p class="stat-label">Focus blocks today</p><p class="stat-value tnum">${r.deepWork || 0}<span class="stat-unit">/ 2–3</span></p>
+        <div class="stat"><p class="stat-label">Focus today</p><p class="stat-value tnum">${r.deepWork || 0}<span class="stat-unit">/ 2–3</span></p>
           <div class="mini-ctl"><button type="button" class="icon-btn icon-btn--sm" data-action="deep" data-delta="-1" aria-label="One less focus block">${icon('minus', { size: 15 })}</button><button type="button" class="icon-btn icon-btn--sm icon-btn--filled" data-action="deep" data-delta="1" aria-label="Add a focus block">${icon('plus', { size: 15 })}</button></div></div>
-        <div class="stat"><p class="stat-label">Priorities · week</p><p class="stat-value tnum">${priDone}<span class="stat-unit">/ ${priSet}</span></p><p class="stat-sub">done / set</p></div>
-        <div class="stat"><p class="stat-label">Focus · week</p><p class="stat-value tnum">${deep}</p><p class="stat-sub">blocks</p></div>
+        <div class="stat"><p class="stat-label">Priorities</p><p class="stat-value tnum">${priDone}<span class="stat-unit">/ ${priSet}</span></p><p class="stat-sub">this week</p></div>
+        <div class="stat"><p class="stat-label">Focus blocks</p><p class="stat-value tnum">${deep}</p><p class="stat-sub">this week</p></div>
       </div>
-      <section class="block"><div class="block-head"><h2 class="block-title">Focus blocks · 14 days</h2></div>
+      <section class="block"><div class="block-head"><h2 class="block-title">Focus blocks</h2><span class="block-meta">14 days</span></div>
         <div class="card">${barChart({ labels: days.map((d) => fmtDayShort(d).slice(0, 1)), tipLabels: days.map(fmtMD), values: days.map((d) => M.review(d)?.deepWork || null), color: 'var(--c-work)', fmt: (v) => `${v} blocks`, goal: { value: 2, label: '2' }, height: 110 })}</div>
       </section>
       <section class="block"><div class="block-head"><h2 class="block-title">Shutdown</h2></div>

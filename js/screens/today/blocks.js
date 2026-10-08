@@ -1,4 +1,4 @@
-// The rest of Today: your three, pinned actions, everything else (folded), and the minimum and
+// The rest of Today: your three, pinned actions, other habits (folded), and the minimum and
 // sick day lists.
 import * as store from '../../data/store.js';
 import * as M from '../../domain/metrics-core.js';
@@ -43,10 +43,10 @@ export function threeBlock(date, mode, ui) {
   </section>`;
 }
 
-/* ---------- pinned actions (up to three, from Edit Today) ---------- */
+/* ---------- pinned actions (up to six, chosen and ordered in Edit Today) ---------- */
 export const PINS = {
-  water: { ic: 'droplet', label: 'Water', badge: '+500 ml', act: 'add-water', data: { ml: 500 }, value: (d) => litres(M.waterMl(d)) },
-  food: { ic: 'utensils', label: 'Food', act: 'log-food', value: (d) => `${num(M.nutrition(d).protein)} g protein` },
+  water: { ic: 'droplet', label: 'Water', quick: 'adds 500 ml', act: 'add-water', data: { ml: 500 }, value: (d) => litres(M.waterMl(d)) },
+  food: { ic: 'utensils', label: 'Protein', act: 'log-food', value: (d) => `${num(M.nutrition(d).protein)} g` },
   steps: { ic: 'footprints', label: 'Steps', act: 'log-steps', value: (d) => (M.steps(d) != null ? num(M.steps(d)) : 'Add') },
   weight: { ic: 'scale', label: 'Weight', act: 'log-weight', value: (d) => (M.weight(d) != null ? `${num(M.weight(d), 1)} kg` : 'Log') },
   workout: { ic: 'dumbbell', label: 'Workout', act: 'pin-workout', value: () => 'Start' },
@@ -57,29 +57,30 @@ export const PINS = {
   task: { ic: 'list-todo', label: 'Task', act: 'task-new', value: () => 'New' },
 };
 export const DEFAULT_PINS = ['water', 'food', 'steps'];
-export const pinsOf = () => (store.settings().pinned || DEFAULT_PINS).filter((k) => PINS[k]).slice(0, 3);
+export const MAX_PINS = 6;
+export const pinsOf = () => (store.settings().pinned || DEFAULT_PINS).filter((k) => PINS[k]).slice(0, MAX_PINS);
 
 export function pinnedBlock(date) {
   const pins = pinsOf();
   if (!pins.length) return '';
-  return html`<section class="pins" data-key="pinned" aria-label="Pinned actions">${pins.map((k) => {
+  return html`<section class="pins pins--${pins.length === 4 ? 2 : Math.min(3, pins.length)}" data-key="pinned" aria-label="Pinned actions">${pins.map((k) => {
     const p = PINS[k];
     return html`<button type="button" class="pin" data-action="${p.act}"${dataAttrs(p.data)} data-key="pin-${k}">
-      <span class="pin-top"><span class="pin-ic">${icon(p.ic, { size: 18 })}</span>${p.badge ? html`<span class="pin-badge">${p.badge}</span>` : ''}</span><span class="pin-label">${p.label}</span><span class="pin-val tnum">${p.value(date)}</span></button>`;
+      <span class="pin-top"><span class="pin-ic">${icon(p.ic, { size: 18 })}</span>${p.quick ? html`<span class="pin-quick" aria-hidden="true">${icon('plus', { size: 14 })}</span>` : ''}</span><span class="pin-label">${p.label}</span><span class="pin-val tnum">${p.value(date)}</span>${p.quick ? html`<span class="sr-only">, tap ${p.quick}</span>` : ''}</button>`;
   })}</section>`;
 }
 
-/* ---------- everything else, folded ---------- */
+/* ---------- other habits (autopilot), folded ---------- */
 export function moreBlock(date, mode, ui) {
   if (mode === 'sick' || mode === 'minimum') return '';
   const rest = H.activeHabits().filter((h) => H.dueOn(h, date, mode) && h.source !== 'top3' && H.stateOf(h, date) !== 'focus' && !R.inRoutine(h.id));
   if (!rest.length) return '';
   const open = !!ui.moreOpen;
   const doneN = rest.filter((h) => H.counts(h, date, mode)).length;
-  return html`<section class="${cx('more-today', open && 'is-open')}" data-key="more" aria-label="Everything else">
+  return html`<section class="${cx('more-today', open && 'is-open')}" data-key="more" aria-label="Other habits, on autopilot">
     <button type="button" class="more-head" data-action="more-today" aria-expanded="${open}">
-      <span class="more-title">Everything else</span>
-      <span class="more-meta tnum">${doneN} of ${rest.length} · on autopilot</span>
+      <span class="more-title">Other habits</span>
+      <span class="more-meta tnum">${doneN} of ${rest.length}</span>
       ${icon('chevron-down', { size: 18, cls: 'routine-chev' })}
     </button>
     ${open ? html`<div class="more-body">${SECTIONS.map((sec) => {
@@ -139,7 +140,7 @@ export const BLOCKS = [
   { id: 'three', label: 'Your three', column: 'now' },
   { id: 'priorities', label: 'Priorities and tasks', column: 'day' },
   { id: 'pinned', label: 'Pinned actions', column: 'day' },
-  { id: 'more', label: 'Everything else', column: 'day' },
+  { id: 'more', label: 'Other habits', column: 'day' },
 ];
 /** Block order and hidden blocks, with any block added since you last edited Today at the end. */
 export function layoutOf() {

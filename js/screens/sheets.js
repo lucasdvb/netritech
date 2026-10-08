@@ -10,7 +10,7 @@ import * as hap from '../ui/haptics.js';
 import { check, scale10, segmented, stepper, ring, bar, toggle } from '../ui/components.js';
 import * as T from '../domain/tasks-more.js';
 import { num, litres, kgIn, kgOut, weightUnit, habitValue, habitTarget, plural } from '../ui/format.js';
-import { today, relativeDay, parseHM, durationHM, addDays, fmtTime } from '../domain/dates.js';
+import { today, relativeDay, parseHM, durationHM, addDays, fmtTime, dayInline } from '../domain/dates.js';
 import { MODES, habitColor } from '../domain/taxonomy.js';
 import { dayScore } from '../domain/scoring.js';
 
@@ -19,7 +19,7 @@ const setField = ({ el, ui, value }) => {
   ui[f] = el.type === 'number' || el.inputMode === 'decimal' || el.inputMode === 'numeric' ? (value === '' ? '' : value) : value;
 };
 const n = (v) => (v === '' || v == null || Number.isNaN(Number(v)) ? null : Number(v));
-const dayLabel = (date) => (date === today() ? 'today' : relativeDay(date).toLowerCase());
+const dayLabel = (date) => (date === today() ? 'today' : dayInline(date));
 
 import { reviewOf, saveReview } from '../domain/day.js';
 export { reviewOf, saveReview };
@@ -333,7 +333,7 @@ export function setMode(date, mode) {
 const KIND = { focus: 'Your three', essential: 'Essential', top3: 'Top 3' };
 export function openPlan(date = today()) {
   app.sheet({
-    title: date === today() ? 'What counts today' : `What counted ${relativeDay(date).toLowerCase()}`,
+    title: date === today() ? 'What counts today' : `What counted ${dayInline(date)}`,
     render: () => {
       const s = dayScore(date);
       const note = {

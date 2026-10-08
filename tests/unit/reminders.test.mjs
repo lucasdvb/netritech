@@ -1,7 +1,7 @@
 // Reminders: named like the calendar's, and quiet once their moment has passed.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { fresh, store } from './helpers.mjs';
+import { fresh } from './helpers.mjs';
 import { today, setDayEnd } from '../../js/domain/dates.js';
 import { profileSeed, settingsSeed } from '../../js/data/seed.js';
 import { candidates } from '../../js/domain/reminders.js';

@@ -28,8 +28,10 @@ function scoreLine(date) {
   const r7 = rolling(date, 7);
   const b = band(r7.ratio);
   return html`<button type="button" class="now-meta now-meta--btn" data-action="plan" aria-label="${s.total ? `${s.done} of ${s.total} planned done${s.tiny ? `, ${s.tiny} tiny` : ''}` : 'Nothing planned yet'}. What counts today">
-    <span class="tnum">${s.total ? html`${s.done} of ${s.total} planned${s.tiny ? html` · ${s.tiny} tiny` : ''}` : 'Nothing planned yet'}</span>
-    ${r7.ratio != null && r7.days >= 3 ? html`<span class="now-week">· 7 days <strong class="tnum">${pct(r7.ratio)}</strong> <span class="band band--${b.key}">${b.label}</span></span>` : ''}
+    <span class="now-meta-text">
+      <span class="now-meta-main tnum">${s.total ? html`${s.done} of ${s.total} done${s.tiny ? html` · ${s.tiny} tiny` : ''}` : 'Nothing planned yet'}</span>
+      ${r7.ratio != null && r7.days >= 3 ? html`<span class="now-week"><span class="tnum">${pct(r7.ratio)}</span> over 7 days · <span class="band band--${b.key}">${b.label}</span></span>` : ''}
+    </span>
     ${icon('chevron-right', { size: 16, cls: 'now-chev' })}</button>`;
 }
 

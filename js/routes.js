@@ -27,6 +27,7 @@ export const ROUTES = [
   { path: 'plan/projects', tab: 'plan', depth: 1, load: v('projects'), list: 'plan/projects', emptyIcon: 'layers', emptyText: 'Choose a project to see its outcome and tasks here.' },
   { path: 'plan/books/:id', tab: 'plan', depth: 2, load: v('book'), list: 'plan/books' },
   { path: 'plan/books', tab: 'plan', depth: 1, load: v('books'), list: 'plan/books', emptyIcon: 'book-open', emptyText: 'Choose a book to see your page, your pace and your notes.' },
+  { path: 'plan/training/workouts/:id', tab: 'plan', depth: 2, load: v('template') },
   { path: 'plan/training/exercises/:id', tab: 'plan', depth: 3, load: v('exercise') },
   { path: 'plan/training/exercises', tab: 'plan', depth: 2, load: v('exercises') },
   { path: 'plan/training', tab: 'plan', depth: 1, load: v('training') },

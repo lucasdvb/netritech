@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = '99d65ad63e';
+const VERSION = '35db2367f6';
 const ASSETS = [
   "./",
   "./index.html",
@@ -70,6 +70,7 @@ const ASSETS = [
   "./js/domain/tasks-more.js",
   "./js/domain/tasks.js",
   "./js/domain/taxonomy.js",
+  "./js/domain/templates.js",
   "./js/redirects.js",
   "./js/routes.js",
   "./js/screens/area.js",
@@ -81,6 +82,7 @@ const ASSETS = [
   "./js/screens/capture.js",
   "./js/screens/commitments.js",
   "./js/screens/data.js",
+  "./js/screens/exercise-picker.js",
   "./js/screens/exercise.js",
   "./js/screens/exercises.js",
   "./js/screens/faith.js",
@@ -126,6 +128,7 @@ const ASSETS = [
   "./js/screens/task-sheet.js",
   "./js/screens/task-ui.js",
   "./js/screens/tasks.js",
+  "./js/screens/template.js",
   "./js/screens/tidy.js",
   "./js/screens/today/blocks.js",
   "./js/screens/today/day-picker.js",
@@ -163,6 +166,7 @@ const ASSETS = [
   "./js/ui/motion.js",
   "./js/ui/numpad.js",
   "./js/ui/patch.js",
+  "./js/ui/reorder.js",
   "./js/ui/router.js",
   "./js/ui/sheet.js",
   "./js/ui/sound.js",

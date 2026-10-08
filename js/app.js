@@ -316,6 +316,23 @@ document.addEventListener('click', (e) => {
   if (flip) refresh();
 });
 
+// Drag to reorder: a [data-drag] handle in a [data-reorder] list. The code loads on first use;
+// the list's action (data-reorder) gets { from, to }.
+const REORDER_KEYS = ['ArrowUp', 'ArrowDown', 'Home', 'End'];
+for (const type of ['pointerdown', 'keydown']) {
+  document.addEventListener(type, (e) => {
+    const handle = e.target.closest?.('[data-reorder] [data-drag]');
+    if (!handle || (type === 'pointerdown' && e.button > 0) || (type === 'keydown' && !REORDER_KEYS.includes(e.key))) return;
+    e.preventDefault();
+    import('./ui/reorder.js').then((m) => m.begin(e, handle));
+  });
+}
+document.addEventListener('lifeos:reorder', (e) => {
+  const el = e.target;
+  const handler = resolve(el, 'action', el.dataset.reorder);
+  if (handler) run(handler, el, e, { from: e.detail.from, to: e.detail.to });
+});
+
 for (const type of ['input', 'change']) {
   document.addEventListener(type, (e) => {
     const el = e.target.closest(`[data-${type}]`);

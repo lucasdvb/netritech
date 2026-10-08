@@ -11,6 +11,8 @@ import { barChart } from '../ui/charts.js';
 import { num } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
 import { startWorkout, openStartSheet } from './workout-actions.js';
+import * as TP from '../domain/templates.js';
+import { newTemplate } from './template.js';
 
 const VERDICT = { improved: ['Improved', 'good'], maintained: ['Maintained', ''], declined: ['Declined', 'warn'] };
 
@@ -28,7 +30,8 @@ function weekStrip() {
     </div>`;
   })}</div>`;
 }
-const shortName = (t) => ({ 't-upper': 'Upper', 't-lower': 'Lower', 't-recovery': 'Walk', 't-cardio': 'Cardio', 't-minimum': '20 min' }[t.id] || t.name.split(' ')[0]);
+// The week strip shows each workout by its first word ("Upper", "Walk", "20 min").
+const shortName = (t) => t.name.split(/\s+/)[0].replace(/-minute$/, ' min');
 
 function calfCard() {
   const weeks = F.weeklySeries(8, (d) => F.weekStats(d));
@@ -38,7 +41,7 @@ function calfCard() {
     <div class="comp-grid">
       <div><p class="stat-label">Sessions</p><p class="comp-val tnum">${w.calfSessions}</p></div>
       <div><p class="stat-label">Total reps</p><p class="comp-val tnum">${num(w.calfReps)}</p></div>
-      <div><p class="stat-label">Loaded volume</p><p class="comp-val tnum">${num(w.calfVolume)}<small> kg</small></p></div>
+      <div><p class="stat-label">Volume</p><p class="comp-val tnum">${num(w.calfVolume)}<small> kg</small></p></div>
     </div>
     ${weeks.some((x) => x.calfReps) ? barChart({ labels: weeks.map((x) => fmtMD(x.date).split(' ')[1] || fmtMD(x.date)), tipLabels: weeks.map((x) => `Week of ${fmtMD(x.date)}`), values: weeks.map((x) => x.calfReps || null), color: 'var(--c-body)', fmt: (v) => `${num(v)} reps`, height: 110 }) : html`<p class="muted small">Calf reps per week will chart here.</p>`}
     <p class="fine-print">Progression: standing → single-leg → slow eccentric → paused, then add the 10 kg dumbbell.</p>
@@ -68,8 +71,8 @@ function postureCard() {
   return html`<div class="card">
     <div class="card-head"><p class="section-label">Posture · this week</p></div>
     <div class="comp-grid">
-      <div><p class="stat-label">Mobility routine</p><p class="comp-val tnum">${mobDays}<small>/${days.length} days</small></p></div>
-      <div><p class="stat-label">Breaks / workday</p><p class="comp-val tnum">${num(avgBreaks, 1)}<small>/8</small></p></div>
+      <div><p class="stat-label">Mobility</p><p class="comp-val tnum">${mobDays}<small>/${days.length} days</small></p></div>
+      <div><p class="stat-label">Breaks a day</p><p class="comp-val tnum">${num(avgBreaks, 1)}<small>/${store.settings().targets?.movementBreaks || 8}</small></p></div>
       <div><p class="stat-label">Desk check</p><p class="comp-val">${desk && H.periodDone(desk, today()) ? 'Done' : '—'}</p></div>
     </div>
     <p class="fine-print">Chin tucks, wall angels, thoracic extensions, external rotation, scapular work and chest stretching. Tracks consistency — it doesn’t diagnose or correct posture.</p>
@@ -100,8 +103,9 @@ export default {
           </div></div>`}
       <section class="block"><div class="block-head"><h2 class="block-title">This week</h2><button type="button" class="link-btn" data-action="plan">Edit plan</button></div>
         ${weekStrip()}
-        <p class="quiet-line">${w.sessions} session${w.sessions === 1 ? '' : 's'} · ${w.strength}/4 strength · ${w.cardio}/2 cardio · ${num(w.minutes)} min</p>
+        <p class="quiet-line">${weekLine(w)}</p>
       </section>
+      ${workoutsBlock()}
       <section class="block stack">${calfCard()}${coreCard()}${postureCard()}</section>
       <section class="block"><div class="block-head"><h2 class="block-title">Personal bests</h2></div>
         ${pbs.length ? html`<ul class="list">${pbs.map((p) => html`<li><a class="row" href="#/plan/training/exercises/${p.exercise.id}" data-action="nav" data-to="plan/training/exercises/${p.exercise.id}">
@@ -121,8 +125,29 @@ export default {
     start: ({ data }) => startWorkout(data.id, today()),
     choose: () => openStartSheet(today()),
     plan: () => planSheet(),
+    'new-tpl': () => newTemplate(),
+    'move-tpl': ({ from, to }) => TP.move(from, to),
   },
 };
+
+function weekLine(w) {
+  const t = TP.planTargets();
+  return [`${w.sessions} session${w.sessions === 1 ? '' : 's'}`, t.strength ? `${w.strength}/${t.strength} strength` : '', t.cardio ? `${w.cardio}/${t.cardio} cardio` : '', `${num(w.minutes)} min`].filter(Boolean).join(' · ');
+}
+
+/** Your workouts: tap to edit, drag to reorder, or make a new one. */
+function workoutsBlock() {
+  const list = F.templates();
+  return html`<section class="block"><div class="block-head"><h2 class="block-title">Your workouts</h2>
+      <button type="button" class="link-btn" data-action="new-tpl">${icon('plus', { size: 16 })} New</button></div>
+    ${list.length ? html`<ol class="list sort-list" data-reorder="move-tpl">${list.map((t) => html`<li class="sort-row" data-key="${t.id}">
+      <button type="button" class="drag-handle" data-drag aria-label="Move ${t.name}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>
+      <a class="row" href="#/plan/training/workouts/${t.id}" data-action="nav" data-to="plan/training/workouts/${t.id}">
+        <span class="row-main"><span class="row-title">${t.name}</span><span class="row-sub">${t.items.length} exercise${t.items.length === 1 ? '' : 's'} · ~${t.minutes || TP.estimateMinutes(t.items)} min · ${TP.KINDS.find((k) => k.id === t.kind)?.label || 'Strength'}</span></span>
+        <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>`)}</ol>`
+      : empty({ ic: 'dumbbell', title: 'No workouts yet', body: 'Make one: name it, add exercises, set sets and reps. Then put it in your week.', cta: 'New workout', action: 'new-tpl' })}
+  </section>`;
+}
 
 function planSheet() {
   const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -131,15 +156,17 @@ function planSheet() {
     render: () => {
       const plan = store.profile().plan || {};
       return html`<div class="form">
-        <p class="sheet-note">Four strength days, one easy walk day, optional cardio and a recovery day. Training happens at ${store.profile().trainTime}.</p>
+        <p class="sheet-note">Pick a workout for each day, or rest. Training happens at ${store.profile().trainTime}.</p>
         <div class="set-list">${DAYS.map((d, i) => html`<div class="set-row"><span class="set-label">${d}</span><div class="set-ctl">
           <select class="input" data-change="plan" data-day="${i + 1}" aria-label="${d}">
             <option value="">Rest / recovery</option>
             ${F.templates().map((t) => html`<option value="${t.id}" ${raw(plan[i + 1] === t.id ? 'selected' : '')}>${t.name}</option>`)}
           </select></div></div>`)}</div>
         <label class="field"><span class="field-label">Training time</span><input class="input" type="time" value="${store.profile().trainTime}" data-change="time"></label>
+        <button type="button" class="btn btn--soft btn--block" data-action="new">${icon('plus', { size: 16 })} New workout</button>
       </div>`;
     },
+    actions: { new: ({ sheet }) => { app.closeSheet(sheet); newTemplate(); } },
     inputs: {
       plan: ({ el, value }) => store.setProfile({ plan: { ...store.profile().plan, [el.dataset.day]: value || null } }),
       time: ({ value }) => value && store.setProfile({ trainTime: value }),

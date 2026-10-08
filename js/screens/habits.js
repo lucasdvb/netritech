@@ -53,8 +53,10 @@ function routinesSection() {
   return html`<section class="block" data-key="g-routines">
     <div class="block-head"><h2 class="block-title">Routines</h2><button type="button" class="link-btn" data-action="new-routine">${icon('plus', { size: 16 })} New routine</button></div>
     <p class="block-hint">Habits you do one after another, with a window of time. Today opens the one that’s due.</p>
-    ${list.length ? html`<ul class="list">${list.map((r) => html`<li>${row({ ic: r.kind === 'evening' ? 'moon' : r.kind === 'morning' ? 'sunrise' : 'repeat', title: r.name,
-      sub: `${(r.steps || []).length} step${(r.steps || []).length === 1 ? '' : 's'} · ${R.windowLabel(r)}`, action: 'edit-routine', data: { id: r.id }, key: `rt-${r.id}` })}</li>`)}</ul>`
+    ${list.length ? html`<ol class="list sort-list" data-reorder="move-routine">${list.map((r) => html`<li class="sort-row" data-key="rt-${r.id}">
+      <button type="button" class="drag-handle" data-drag aria-label="Move ${r.name}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>
+      ${row({ ic: r.kind === 'evening' ? 'moon' : r.kind === 'morning' ? 'sunrise' : 'repeat', title: r.name,
+        sub: `${(r.steps || []).length} step${(r.steps || []).length === 1 ? '' : 's'} · ${R.windowLabel(r)}`, action: 'edit-routine', data: { id: r.id } })}</li>`)}</ol>`
       : html`<p class="card-lead">No routines yet.</p>`}
   </section>`;
 }
@@ -106,6 +108,12 @@ export default {
     by: ({ data, ui }) => { ui.by = data.value; hap.tap(); app.refresh(); },
     'edit-routine': async ({ data }) => (await import('./routine-edit.js')).openRoutineEditor(data.id),
     'new-routine': async () => (await import('./routine-edit.js')).newRoutine(),
+    'move-routine': ({ from, to }) => {
+      const list = [...R.routines()];
+      const [r] = list.splice(from, 1);
+      list.splice(to, 0, r);
+      store.batch(list.map((x, i) => (x.order === i ? null : { store: 'routines', value: { ...x, order: i } })).filter(Boolean));
+    },
     new: async () => (await import('./habit-new.js')).openNewHabit(),
     archive: ({ data }) => {
       const h = H.habit(data.id);

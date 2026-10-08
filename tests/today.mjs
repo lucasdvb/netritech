@@ -107,19 +107,22 @@ await step('minimum and sick days change the plan and the Now card', async () =>
   await ctx.close();
 });
 
-await step('Edit Today: hide a block, move one up, pin weight', async () => {
+await step('Edit Today: hide a block, move one up with the keyboard, pin a fourth action', async () => {
   const { ctx, p } = await at('2026-10-07T13:00:00');
   await p.locator('[data-action="edit-today"]').click();
   await p.waitForSelector('.sheet .edit-today');
   await p.locator('.sheet [data-action="et-show"][data-id="more"]').click();
-  await p.locator('.sheet [data-action="et-move"][data-id="priorities"][data-delta="-1"]').click();
+  await p.locator('.sheet [data-key="et-priorities"] [data-drag]').focus();
+  await p.keyboard.press('ArrowUp');
+  await p.waitForFunction(() => document.activeElement?.closest('[data-key="et-priorities"]'));
   await p.locator('.sheet [data-action="et-pin"][data-k="weight"]').click();
   await p.screenshot({ path: `${OUT}/t3-edit-today.png` });
   await p.keyboard.press('Escape');
   await p.waitForSelector('.sheet-wrap', { state: 'detached' });
-  if (await p.locator('.more-today').count()) throw new Error('Everything else still shown');
+  if (await p.locator('.more-today').count()) throw new Error('Other habits still shown');
   if (!(await p.locator('.pin[data-key="pin-weight"]').count())) throw new Error('weight not pinned');
-  if (await p.locator('.pin[data-key="pin-water"]').count()) throw new Error('a fourth pin was kept');
+  if (!(await p.locator('.pin[data-key="pin-water"]').count())) throw new Error('water was unpinned');
+  if (!(await p.locator('.pins.pins--2').count())) throw new Error('four pins should sit two by two');
   const order = await p.evaluate(() => ['priorities', 'three'].map((id) => Number(getComputedStyle(document.querySelector(`[data-key="b-${id}"]`) || document.body).order)));
   if (!(order[0] < (order[1] || 99))) throw new Error('order ' + order);
   await ctx.close();

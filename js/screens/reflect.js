@@ -57,10 +57,11 @@ function write() {
       <div class="mood-row" role="group" aria-label="Mood, optional">${MOODS.map(([v, label]) => html`<button type="button" class="${cx('mood-chip', j?.mood === v && 'is-on')}" data-action="mood" data-v="${v}" aria-pressed="${j?.mood === v}">${label}</button>`)}</div>
       <p class="write-saved" aria-live="polite">${j?.updatedAt ? `Saved ${fmtTime(new Date(j.updatedAt))}` : ''}</p>
     </div>
-    <div class="write-more"><span>${icon('lock', { size: 13 })} Private, on this device</span>
-      <span class="write-guided">Guided:
+    <div class="write-more">
+      <span class="write-guided">Guided entry:
         <button type="button" class="link-btn" data-action="new" data-kind="morning">${guided.some((e) => e.kind === 'morning') ? html`${icon('check', { size: 13 })} Morning` : 'Morning'}</button> ·
-        <button type="button" class="link-btn" data-action="new" data-kind="evening">${guided.some((e) => e.kind === 'evening') ? html`${icon('check', { size: 13 })} Evening` : 'Evening'}</button></span></div>
+        <button type="button" class="link-btn" data-action="new" data-kind="evening">${guided.some((e) => e.kind === 'evening') ? html`${icon('check', { size: 13 })} Evening` : 'Evening'}</button></span>
+      <span>${icon('lock', { size: 13 })} Private, on this device</span></div>
   </section>`;
 }
 
