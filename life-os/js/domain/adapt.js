@@ -4,6 +4,7 @@
 import * as store from '../data/store.js';
 import * as H from './habits.js';
 import { planHabits } from './scoring.js';
+import { UNDATED, historyStores } from './history.js';
 import * as R from './routines.js';
 import { today, dayAt, addDays, diffDays, range } from './dates.js';
 
@@ -99,20 +100,17 @@ export function markSuggested(habitId, date = today()) {
   store.put('meta', { id: 'adaptShown', items: { ...shownLog(), [habitId]: date } });
 }
 
-// What the suggestions and the catch-up read besides dated data: they look only at days before
-// today, so logging today never makes them work everything out again.
-const UNDATED = ['habits', 'settings', 'profile', 'meta', 'routines', 'weeklyReviews', 'monthlyReviews'];
-
 /** Today's suggestions, focus habits first, at most one per habit per fortnight. */
 export function suggestions(date = today()) {
   if (!netOn('adapt')) return [];
-  return store.memo(`suggestions:${date}`, UNDATED, () => {
-    const list = H.activeHabits().filter((h) => H.started(h, addDays(date, -7)));
-    const focus = (h) => (H.stateOf(h, date) === 'focus' ? 0 : 1);
-    return list.sort((a, b) => focus(a) - focus(b))
-      .filter((h) => !recentlySuggested(h.id, date))
-      .map((h) => proposal(h, date)).filter(Boolean);
-  }, store.changedBefore(date));
+  const list = H.activeHabits().filter((h) => H.started(h, addDays(date, -7)));
+  const focus = (h) => (H.stateOf(h, date) === 'focus' ? 0 : 1);
+  // Each habit's proposal reads only days before today, and only its own kind of data, so logging
+  // today (or ticking a task) never makes them all work everything out again.
+  const of = (h) => store.memo(`proposal:${h.id}:${date}`, UNDATED, () => proposal(h, date), store.changedBefore(date, historyStores(h)));
+  return list.sort((a, b) => focus(a) - focus(b))
+    .filter((h) => !recentlySuggested(h.id, date))
+    .map(of).filter(Boolean);
 }
 
 /** Accept a suggestion. Returns an undo that puts the habit back exactly. */

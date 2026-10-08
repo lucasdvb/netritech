@@ -5,6 +5,7 @@
 // exception is an Undo on the same day, which takes back a level reached and lost that day.
 import * as store from '../data/store.js';
 import * as H from './habits.js';
+import { stretches, settled } from './history.js';
 import { today, addDays, range } from './dates.js';
 
 export const LEVELS = [
@@ -22,12 +23,16 @@ const logsByHabit = () => store.memo('logs-by-habit', ['habitLogs'], () => {
   return m;
 });
 
+/** The days a habit counted in one stretch of its history. */
+const countedIn = (h, ab) => settled('counted', h, ab, () => {
+  const [a, b] = ab;
+  const days = h.source ? range(a, b) : [...new Set(logsByHabit().get(h.id) || [])].filter((d) => d >= a && d <= b).sort();
+  return days.filter((d) => H.started(h, d) && H.counts(h, d));
+});
+
 /** The days a habit counted (its tiny version counts too), oldest first. */
 export function completionDays(h, end = today()) {
-  return store.memo(`completions:${h.id}:${end}`, H.DATA_STORES, () => {
-    const days = h.source ? range(H.startOf(h), end) : [...new Set(logsByHabit().get(h.id) || [])].filter((d) => d <= end).sort();
-    return days.filter((d) => H.started(h, d) && H.counts(h, d));
-  });
+  return store.memo(`completions:${h.id}:${end}`, H.DATA_STORES, () => stretches(h, H.startOf(h), end).flatMap((ab) => countedIn(h, ab)));
 }
 
 const eventsByHabit = () => store.memo('level-events', ['levelEvents'], () => {
@@ -50,7 +55,8 @@ export function mastery(h, end = today()) {
 }
 
 /** The work behind sync(), one habit per step (for the background watcher). */
-export const syncSteps = (date = today(), habits = H.activeHabits()) => habits.map((h) => () => completionDays(h, date));
+export const syncSteps = (date = today(), habits = H.activeHabits()) => habits.flatMap((h) => [
+  ...stretches(h, H.startOf(h), date).map((ab) => () => countedIn(h, ab)), () => completionDays(h, date)]);
 
 /**
  * Engrave newly reached levels for the given habits. Returns the plates engraved now whose day is

@@ -114,7 +114,7 @@ async function navigate() {
   const listRoute = found.route.list && wide.matches ? ROUTES.find((r) => r.path === found.route.list) : null;
   let mod, listMod;
   try {
-    // Screens other than Today wait for the rest of the icons (already loaded after the first screen).
+    // Screens other than Today wait for the rest of the icons (loaded after the first screen).
     [mod, listMod] = await Promise.all([found.route.load(), listRoute && listRoute !== found.route ? listRoute.load() : null, found.route.tab !== 'today' ? loadIcons() : null]);
   } catch (err) {
     console.error(err);
@@ -435,7 +435,7 @@ async function boot() {
   if (!location.hash) history.replaceState(null, '', '#/today');
   await navigate();
   import('./ui/updates.js').then((m) => m.registerSW()).catch((err) => console.warn(err));
-  // The rest of the workout history, straight after the first screen; what needs all of it waits.
+  // The rest of the workout history, straight after the first screen.
   setTimeout(() => store.loadRest().catch((err) => console.error(err)));
 
   let lastMinute = new Date().getMinutes();

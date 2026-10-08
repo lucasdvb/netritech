@@ -21,7 +21,7 @@ export const overdue = (ref = today()) => open().filter((t) => t.date && t.date 
 export const onDay = (date) => store.onDate('tasks', date).slice().sort((a, b) => Number(a.done) - Number(b.done) || sortOpen(a, b));
 /** Local calendar day a task was ticked off. */
 export const doneDay = (t) => (t.doneAt ? dayOf(new Date(t.doneAt)) : null);
-/** What Today shows: overdue items, the day's own tasks, and late ones ticked off today (only the day's own when looking back). */
+/** What Today shows: overdue tasks, the day's own, and late ones ticked off today (looking back: the day's own). */
 export function forToday(date = today()) {
   return store.memo(`tasks:today:${date}:${today()}`, ['tasks'], () => {
     const own = onDay(date);
