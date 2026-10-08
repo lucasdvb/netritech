@@ -136,6 +136,7 @@ await step('a version 5 database with a year in it upgrades with every record in
     const db = await new Promise((res) => { const r = indexedDB.open('life-os'); r.onsuccess = () => res(r.result); });
     const version = db.version;
     db.close();
+    await window.__lifeos.store.complete(); // the whole history, not only the weeks loaded first
     return { version, DB_VERSION, counts: Object.fromEntries(BACKUP_STORES.map((k) => [k, window.__lifeos.store.count(k)])) };
   });
   if (s.version !== s.DB_VERSION) throw new Error(`database at version ${s.version}`);
