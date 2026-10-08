@@ -20,7 +20,39 @@ function counted(d) {
   return s.ratio;
 }
 
-/** The week so far, and last week at the same point (the ghost). */
+/* ---------- the ghost (G2): your past self at the same point of its week ---------- */
+
+export const GHOSTS = [
+  { id: 'four', label: 'A month ago', noun: 'a month ago' },
+  { id: 'best', label: 'Your best week', noun: 'your best week' },
+  { id: 'last', label: 'Last week', noun: 'last week' },
+];
+const weekScore = (from, upTo) => { const v = range(from, upTo).map(counted).filter((r) => r != null); return v.length ? { ratio: mean(v), days: v.length } : null; };
+
+/**
+ * The week to race: four weeks ago (the default), your best of the last twelve full weeks, or last
+ * week; whichever is chosen in Settings, falling back to last week when there's no data for it.
+ * Returns { id, label, noun, from, ratio } with ratio taken at the same point of that week.
+ */
+export function ghost(date = today(), kind = store.settings()?.ghost || 'four') {
+  const from = startOfWeek(date);
+  const point = (wk) => addDays(wk, Math.round((Date.parse(date) - Date.parse(from)) / 864e5));
+  const pick = (id, wk) => { const sc = weekScore(wk, point(wk)); return sc ? { ...GHOSTS.find((g) => g.id === id), from: wk, ratio: sc.ratio } : null; };
+  if (kind === 'best') {
+    let best = null;
+    for (let i = 1; i <= 12; i++) {
+      const wk = addDays(from, -7 * i);
+      const full = weekScore(wk, endOfWeek(wk));
+      if (full && full.days >= 5 && (!best || full.ratio > best.full)) best = { wk, full: full.ratio };
+    }
+    const g = best && pick('best', best.wk);
+    if (g) return g;
+  }
+  if (kind === 'four') { const g = pick('four', addDays(from, -28)); if (g) return g; }
+  return pick('last', addDays(from, -7));
+}
+
+/** The week so far, and your past self at the same point (the ghost). */
 export function week(date = today()) {
   const from = startOfWeek(date);
   const days = range(from, endOfWeek(date)).map((d) => {
@@ -29,13 +61,13 @@ export function week(date = today()) {
   });
   const sofar = days.filter((d) => !d.future);
   const ratio = mean(sofar.map((d) => d.ratio).filter((r) => r != null));
-  const ghostDays = range(addDays(from, -7), addDays(date, -7)).map(counted).filter((r) => r != null);
+  const g = ghost(date);
   const ws = F.weekStats(date);
   const wNow = M.weightAvg(date, 7);
   const wThen = M.weightAvg(addDays(from, -1), 7);
   return {
     from, days, ratio, elapsed: sofar.length,
-    ghost: ghostDays.length ? mean(ghostDays) : null,
+    ghost: g?.ratio ?? null, ghostOf: g,
     sealed: sofar.filter((d) => d.sealed).length,
     sessions: ws.sessions,
     weightChange: wNow != null && wThen != null && Math.abs(wNow - wThen) >= 0.1 ? wNow - wThen : null,
@@ -47,7 +79,8 @@ export function sentence(w = week()) {
   if (w.ratio == null && w.elapsed <= 1) return 'A new week. The first thing you log sets its shape.';
   if (!w.ratio && !w.sessions) return 'Nothing done yet this week. One small thing today restarts it.';
   const diff = w.ghost == null ? null : w.ratio - w.ghost;
-  const lead = diff == null ? (w.elapsed <= 1 ? 'Day one' : 'So far') : diff >= 0.05 ? 'Ahead of last week' : diff <= -0.05 ? 'Behind last week' : 'Level with last week';
+  const noun = w.ghostOf?.noun || 'last week';
+  const lead = diff == null ? (w.elapsed <= 1 ? 'Day one' : 'So far') : diff >= 0.05 ? `Ahead of ${noun}` : diff <= -0.05 ? `Behind ${noun}` : `Level with ${noun}`;
   const parts = [`${pct(w.ratio)} of your plan done`];
   if (w.sessions) parts.push(`${w.sessions} training session${w.sessions === 1 ? '' : 's'}`);
   if (w.weightChange != null) parts.push(`weight ${w.weightChange < 0 ? 'down' : 'up'} ${num(Math.abs(kgOut(w.weightChange)), 1)} ${weightUnit()}`);
@@ -93,7 +126,7 @@ export function measures(date = today()) {
           : r >= 0.5 ? 'Slipping. Lean on tiny versions this week; they always count.'
             : 'Too heavy right now. Run Minimum days and add nothing new.',
       change: pts == null ? 0 : pts / 8, up: pts > 0,
-      changeText: pts == null || !pts ? '' : `${pts > 0 ? 'up' : 'down'} ${Math.abs(pts)} points on last week` });
+      changeText: pts == null || !pts ? '' : `${pts > 0 ? 'up' : 'down'} from ${pct(r0.ratio)} last week` });
   }
 
   const avg7 = M.weightAvg(date, 7);

@@ -33,8 +33,8 @@ export function projectionLine(g, date = today()) {
     case 'behind': return `${p.weeksBehind} week${p.weeksBehind === 1 ? '' : 's'} behind: at this pace ${target} arrives ${fmtMD(p.eta)}, with ${p.daysLeft} days left.`;
     case 'flat': return `Not moving towards ${target} yet. Now ${valueText(g, p.current)}.`;
     case 'milestones': return `${p.done} of ${p.total} milestones${p.daysLeft != null ? `, ${Math.max(0, p.daysLeft)} days left` : ''}.`;
-    case 'improving': return `Improving: ${Math.round(p.now * 100)}% over two weeks, up ${Math.round(p.delta * 100)} points.`;
-    case 'slipping': return `Slipping: ${Math.round(p.now * 100)}% over two weeks, down ${Math.round(-p.delta * 100)} points.`;
+    case 'improving': return `Improving: ${Math.round(p.now * 100)}% over two weeks, up from ${Math.round((p.now - p.delta) * 100)}%.`;
+    case 'slipping': return `Slipping: ${Math.round(p.now * 100)}% over two weeks, down from ${Math.round((p.now - p.delta) * 100)}%.`;
     case 'steady': return `Holding steady at ${Math.round(p.now * 100)}% over two weeks.`;
     default: return '';
   }

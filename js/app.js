@@ -446,6 +446,7 @@ async function boot() {
   import('./domain/reminders.js').then((r) => r.start()).catch((err) => console.warn(err));
   import('./domain/snapshots.js').then((m) => m.start()).catch((err) => console.warn(err));
   import('./ui/badge.js').then((m) => m.start()).catch(() => {});
+  import('./domain/progression.js').then((m) => m.start((mo) => app.toast(mo.text, { icon: mo.icon }))).catch((err) => console.warn(err));
   import('./ui/install.js').then((m) => m.maybePrompt()).catch(() => {});
   if (navigator.storage?.persist) navigator.storage.persisted().then((p) => { if (!p) navigator.storage.persist(); });
   window.__lifeos = { store, app, ready: true };

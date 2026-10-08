@@ -31,6 +31,8 @@ export const ROUTES = [
   { path: 'plan/training/exercises', tab: 'plan', depth: 2, load: v('exercises') },
   { path: 'plan/training', tab: 'plan', depth: 1, load: v('training') },
   { path: 'plan/playbook', tab: 'plan', depth: 1, load: v('playbook') },
+  { path: 'plan/commitments', tab: 'plan', depth: 1, load: v('commitments') },
+  { path: 'plan/rewards', tab: 'plan', depth: 1, load: v('rewards') },
 
   { path: 'progress/body/weight', tab: 'progress', depth: 2, load: v('weight') },
   { path: 'progress/body/nutrition/:date?', tab: 'progress', depth: 2, load: v('nutrition') },
@@ -45,6 +47,8 @@ export const ROUTES = [
   { path: 'progress/areas/:id', tab: 'progress', depth: 1, load: v('area') },
   { path: 'progress/trends/:metric?', tab: 'progress', depth: 1, load: v('trends') },
   { path: 'progress/calendar', tab: 'progress', depth: 1, load: v('calendar') },
+  { path: 'progress/records', tab: 'progress', depth: 1, load: v('records') },
+  { path: 'progress/season', tab: 'progress', depth: 1, load: v('season') },
   { path: 'progress', tab: 'progress', depth: 0, load: v('progress') },
 
   { path: 'reflect', tab: 'reflect', depth: 0, load: v('reflect') },

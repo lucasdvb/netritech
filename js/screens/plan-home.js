@@ -6,14 +6,19 @@ import * as T from '../domain/tasks.js';
 import * as F from '../domain/fitness.js';
 import * as P from '../domain/projects.js';
 import * as B from '../domain/books.js';
+import * as C from '../domain/commitments.js';
+import * as Rw from '../domain/rewards.js';
+import * as Q from '../domain/quests.js';
 import { projectionLine } from './goals.js';
 import { projectRow } from './projects.js';
 import { bookRow } from './books.js';
 import { catColor, CATEGORIES } from '../domain/taxonomy.js';
-import { today, addDays, fmtLong, startOfWeek, range, fmtDayShort } from '../domain/dates.js';
+import { today, addDays, fmtLong, startOfWeek, range, fmtDayShort, fmtDay } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, ring } from '../ui/components.js';
+import { app } from '../ui/app-api.js';
+import * as hap from '../ui/haptics.js';
 
 const head = (title, to, label) => html`<div class="block-head"><h2 class="block-title">${title}</h2>
   ${to ? html`<a class="link-btn" href="#/${to}" data-action="nav" data-to="${to}">${label}</a>` : ''}</div>`;
@@ -104,6 +109,36 @@ function goalsCard() {
   </section>`;
 }
 
+const questDay = (q) => { const d = T.task(q.taskId)?.date; return !d ? '' : d === today() ? ' for today' : d === addDays(today(), 1) ? ' for tomorrow' : ` for ${fmtDay(d)}`; };
+
+/** Keep going (G7–G9): this week's side quest, your pledges and the rewards you've set. */
+function keepGoing() {
+  const q = Q.offer();
+  const pledges = C.active();
+  const rewards = Rw.rewards().filter((r) => r.status !== 'claimed');
+  const unlocked = rewards.filter((r) => r.status === 'unlocked').length;
+  const quest = q.status === 'declined' ? '' : html`<div class="quest" data-key="quest">
+      <p class="section-label">Side quest · this week, if you like</p>
+      <p class="quest-title">${q.title}</p>
+      ${q.status === 'offered' ? html`<div class="row-actions"><button type="button" class="btn btn--soft btn--sm" data-action="quest-yes">Add to my tasks</button><button type="button" class="link-btn" data-action="quest-no">Not this week</button></div>`
+        : html`<p class="row-sub">${Q.isDone(q) ? html`${icon('check', { size: 14 })} Done` : `In your tasks${questDay(q)}`}</p>`}
+    </div>`;
+  return html`<section class="block" data-key="keep">
+    ${head('Keep going')}
+    ${quest}
+    <ul class="list">
+      <li><a class="row" href="#/plan/commitments" data-action="nav" data-to="plan/commitments">
+        <span class="row-ic">${icon('hand', { size: 18 })}</span>
+        <span class="row-main"><span class="row-title">Commitments</span><span class="row-sub">${pledges.length ? pledges.map((c) => `${c.title} · day ${C.state(c).day}`).join(' · ') : 'A 7, 14 or 30-day pledge, with your own stake'}</span></span>
+        <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
+      <li><a class="row" href="#/plan/rewards" data-action="nav" data-to="plan/rewards">
+        <span class="row-ic">${icon('trophy', { size: 18 })}</span>
+        <span class="row-main"><span class="row-title">Rewards</span><span class="row-sub">${unlocked ? `${unlocked} unlocked` : rewards.length ? `${rewards.length} you’re working towards` : 'Something you’ll enjoy, unlocked by something real'}</span></span>
+        <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
+    </ul>
+  </section>`;
+}
+
 function tasksAndTraining() {
   const open = T.open();
   const overdue = T.overdue();
@@ -141,7 +176,12 @@ export default {
       ${goalsCard()}
       ${projectsCard()}
       ${booksCard()}
+      ${keepGoing()}
       ${tasksAndTraining()}`;
+  },
+  actions: {
+    'quest-yes': () => { const undo = Q.accept(Q.offer()); hap.success(); app.toast('Added to your tasks', { icon: 'check', action: { label: 'Undo', fn: undo } }); },
+    'quest-no': () => { const undo = Q.decline(Q.offer()); hap.tap(); app.toast('Let it go for this week', { action: { label: 'Undo', fn: undo } }); },
   },
   inputs: {
     'tm-three': ({ el, value }) => T.setPriority(addDays(today(), 1), Number(el.dataset.i), value),

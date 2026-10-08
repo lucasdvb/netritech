@@ -46,7 +46,7 @@ await step('Progress is a story: one sentence, the week against last week, every
   const sentence = (await p.textContent('.story-sentence')).trim();
   if (!/\.$/.test(sentence) || sentence.length < 20) throw new Error('sentence ' + sentence);
   if ((await p.locator('.week-strip .wk-day').count()) !== 7) throw new Error('week strip');
-  if (!/Last week by Wednesday/.test(await p.textContent('.story-ghost'))) throw new Error('ghost line');
+  if (!/(A month ago|Last week) by Wednesday/.test(await p.textContent('.story-ghost'))) throw new Error('ghost line');
   const ms = await p.$$eval('.measure', (els) => els.map((e) => [e.querySelector('.measure-label').textContent, e.querySelector('.measure-decision').textContent.trim()]));
   if (ms.length < 5) throw new Error('measures ' + ms.length);
   for (const [label, d] of ms) if (d.length < 12) throw new Error(`${label} has no decision line`);

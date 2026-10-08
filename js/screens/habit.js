@@ -9,6 +9,8 @@ import { today, addDays, range, lastNDays, fmtMD, fmtDayShort, fmtDayLetter, rel
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty, dots } from '../ui/components.js';
+import { plateCard } from './records.js';
+import * as C from '../domain/commitments.js';
 import { lineChart, barChart, heatmap } from '../ui/charts.js';
 import { habitValue, habitTarget, pct, num, plural } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
@@ -80,6 +82,7 @@ export default {
     const days30 = lastNDays(today(), 30);
     const notes = store.where('habitLogs', (l) => l.habitId === h.id && (l.note || '').trim()).sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 8);
     const goal = h.goalId ? store.get('goals', h.goalId) : null;
+    const pledge = C.forHabit(h.id);
     const facts = [
       ['Schedule', H.scheduleLabel(h)],
       h.anchor ? ['When', h.anchor] : null,
@@ -117,6 +120,10 @@ export default {
         </dl>
         <p class="run-note">${runNote(r)}${r.comebacks ? ` ${plural(r.comebacks, 'comeback')} in the last 30 days.` : ''}</p>
       </section>
+
+      ${plateCard(h) ? html`<section class="block" data-key="mastery-block"><div class="block-head"><h2 class="block-title">Mastery</h2><a class="link-btn" href="#/progress/records" data-action="nav" data-to="progress/records">All plates</a></div>
+        <div class="list">${plateCard(h)}</div>
+        ${pledge ? html`<p class="quiet-line">${icon('hand', { size: 15 })} Pledge: day ${C.state(pledge).day} of ${pledge.days}${pledge.stake ? ` · ${pledge.stake}` : ''}</p>` : ''}</section>` : ''}
 
       ${!h.archived ? html`<section class="block" data-key="state">
         <div class="block-head"><h2 class="block-title">State</h2></div>

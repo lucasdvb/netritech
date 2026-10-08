@@ -2,7 +2,7 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
-**Status.** Phases 0–8 are done (see section 15). Phases 9–11 are next, in order.
+**Status.** Phases 0–9 are done (see section 15). Phases 10 and 11 are next, in order.
 
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
@@ -1155,7 +1155,10 @@ What shipped, against the acceptance criteria: every visible metric on Progress 
 - **Tests:** unit (insight rules on fixtures, `.ics` validity); e2e (review flows, apply an insight).
 - **UX:** an insight you can't act on is not shown.
 
-### Phase 9: The progression layer (L)
+### Phase 9: The progression layer (L) · done
+
+What shipped, against the acceptance criteria: records never trigger on the first three data points (a value must beat at least three earlier ones; unit-tested, and the browser suite checks the shelf stays empty until then); level dates never change after the fact (each plate is stored with the day of the completion that reached it, and backfilled, edited and deleted logs leave it alone; the one exception is an Undo on the same day, which takes back a plate reached and lost that day); rewards unlock only from real data counted from the day they were set (an unfinished session doesn't count); no points or currency exist anywhere (a unit test scans every screen and rule for them, and "points" wording elsewhere was rephrased). Decisions made on the way: six new stores (DB v6: seasons, records, levelEvents, rewards, commitments, quests); the records shelf is worked out from the data each time, so it follows edits and deletions, and the `records` store only remembers what has been marked; a run still in progress is marked once, the day it takes the lead; record kinds are lifts per exercise (heaviest, or most reps for bodyweight, or longest hold), best protein week, longest run per habit, most focus blocks in a week, earliest week of wake-ups and most steps in a day. Starting a season makes its three habits your focus three and moves any other focus habit to autopilot (with Undo); a season starts this Monday until Wednesday, otherwise next Monday; its summary is frozen at the end (or when ended early, at once with Undo). The ghost races the same week a month ago by default (falling back to last week when there's no data), with your best week of the last twelve or last week in Settings; the sentence names who you're racing. Pledges count your scheduled days from your logs (the tiny version counts) and close as kept in full or kept for so many days, never "failed"; ending early offers seven days of the tiny version. Side quests come from a 24-item library across the eight areas, lean towards the area with the lowest 30-day consistency, never repeat within twelve weeks, and become a task for the Saturday. A watcher marks new levels, records and rewards once each (at most one moment per action: reward, then record, then level), one small step per idle moment so it never blocks a scroll; the full moments arrive in Phase 10. To keep room in the offline budget, Inter's latin-ext font files are no longer precached; they load (and are cached) the first time a page needs a character beyond basic Latin.
+
 
 - **Objective:** quiet, adult satisfaction from real progress.
 - **Features:**
