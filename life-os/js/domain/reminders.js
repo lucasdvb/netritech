@@ -12,6 +12,7 @@ import { habit, isDone, dueOn, activeHabits } from './habits.js';
 import { today, minutesOfDay, parseHM, weekday, fmtHM } from './dates.js';
 import { html } from '../ui/dom.js';
 import { LINKED, learned, ignoredStreak } from './reminder-rules.js';
+import { ritualDone, sealedAt } from './rituals.js';
 export { stats, suggestions } from './reminder-rules.js';
 import { icon } from '../ui/icons.js';
 
@@ -34,7 +35,8 @@ export function start() {
 const firedToday = (slot) => store.onDate('reminderLog', today()).some((r) => r.slot === slot);
 const lastFired = (key) => store.onDate('reminderLog', today()).filter((r) => r.key.startsWith(key)).sort((a, b) => (a.at < b.at ? 1 : -1))[0];
 
-function candidates(now) {
+/** What is due right now, in order (exported for the tests). */
+export function candidates(now) {
   const s = store.settings();
   const nt = s.notifications || {};
   const p = store.profile();
@@ -52,10 +54,10 @@ function candidates(now) {
     out.push({ key: cat, cat, habitId, title, body, url, time });
   };
   const tpl = F.plannedTemplate(d);
-  at('morning', nt.morning?.time, LINKED.morning, 'Morning reset', 'Water, light, prayer, then mobility.', './#/today');
+  if (!ritualDone(d, 'morning')) at('morning', nt.morning?.time, LINKED.morning, 'Morning check-in', 'One minute: sleep, how you feel, your three.', './#/today');
   if (tpl) at('workout', nt.workout?.time, LINKED.workout, `Training at ${p.trainTime}`, tpl.name, './#/plan/training');
-  at('evening', nt.evening?.time, LINKED.evening, 'Evening routine', 'Kit ready, tomorrow reviewed, screens down soon.', './#/today');
-  if (weekday(d) === 7) at('weeklyReview', nt.weeklyReview?.time, LINKED.weeklyReview, 'Weekly review', '15–30 minutes. One change for next week.', './#/reflect/review/week');
+  if (!ritualDone(d, 'evening') && !sealedAt(d)) at('evening', nt.evening?.time, LINKED.evening, 'Close the day', 'What’s left, one win, tomorrow’s first task. Then seal the day.', './#/today');
+  if (weekday(d) === 7) at('weeklyReview', nt.weeklyReview?.time, LINKED.weeklyReview, 'Weekly review', 'About three minutes. One change for next week.', './#/reflect/review/week');
 
   const every = (cat, minutes, cond, make) => {
     if (!nt[cat]?.on || !cond) return;

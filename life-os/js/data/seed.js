@@ -67,7 +67,6 @@ export function settingsSeed() {
     },
     installDismissed: false,
     welcomed: false,
-    showAllSections: false,
   };
 }
 
@@ -192,7 +191,7 @@ export function habitsSeed() {
     h({ id: 'h-mealprep', name: 'Meal prep', section: 'life', category: 'life', icon: 'chef-hat', schedule: { kind: 'weekdays', days: [7] },
       goalId: 'g-body', description: '30–60 min: a protein, a carb base, chopped veg, easy snacks. Make the healthy option the lazy option.' }),
     h({ id: 'h-weekly-review', name: 'Weekly review', section: 'life', category: 'life', icon: 'calendar-days', schedule: { kind: 'weekdays', days: [7] },
-      source: 'weeklyReview', time: '19:00', description: '15–30 minutes on Sunday evening. One change for next week.' }),
+      source: 'weeklyReview', time: '19:00', description: 'About three minutes on Sunday evening. One change for next week.' }),
     h({ id: 'h-finance', name: 'Business & finance review', section: 'life', category: 'work', icon: 'wallet', schedule: { kind: 'perWeek', count: 1 },
       description: 'Revenue, pipeline, sales, delivery, marketing, cash flow, outstanding tasks, one strategic priority.' }),
     h({ id: 'h-monthly-review', name: 'Monthly review', section: 'life', category: 'life', icon: 'calendar', schedule: { kind: 'perMonth', count: 1 },

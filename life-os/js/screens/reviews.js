@@ -21,7 +21,7 @@ export default {
         <a class="card card--link review-cta" href="#/reflect/review/week/${ws}" data-action="nav" data-to="reflect/review/week/${ws}">
           <span class="row-ic" style="--ic:var(--c-life)">${icon('calendar-days', { size: 18 })}</span>
           <span class="row-main"><span class="row-title">Weekly review · ${fmtMD(ws)} – ${fmtMD(endOfWeek(ws))}</span>
-            <span class="row-sub">${cur?.completedAt ? 'Done · tap to revisit' : weekday(today()) === 7 ? 'Sunday evening is the moment · 15–30 min' : 'Best on Sunday evening · 15–30 min'}</span></span>
+            <span class="row-sub">${cur?.completedAt ? 'Done · tap to revisit' : weekday(today()) === 7 ? 'Sunday evening is the moment · about 3 minutes' : 'Best on Sunday evening · about 3 minutes'}</span></span>
           ${icon('chevron-right', { size: 18, cls: 'muted' })}</a>
         <a class="card card--link review-cta" href="#/reflect/review/month/${m}" data-action="nav" data-to="reflect/review/month/${m}">
           <span class="row-ic" style="--ic:var(--c-life)">${icon('calendar', { size: 18 })}</span>
