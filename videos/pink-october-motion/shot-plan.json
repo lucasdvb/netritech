@@ -1,0 +1,20 @@
+{
+  "category": "kinetic-type + illustration build (poster animation)",
+  "canvas": { "width": 1080, "height": 1920, "fps": 30, "duration": 12 },
+  "asset_needs": [],
+  "palette": { "paper": "#f6c3c9", "plum": "#8f2859", "hot": "#e91e7b", "ribbon": "#df7786", "tube": "#e58a97", "oct": "#e88dab", "ober": "#cd5b81" },
+  "beats": [
+    { "t": 0.05, "what": "torso emboss line art draws itself" },
+    { "t": 0.2,  "what": "NETRI TECH mark pops (uniform scale) + glow; wordmark clip-wipes" },
+    { "t": 0.55, "what": "stethoscope ear tips pop, metal binaurals draw, tubing flows down to chest piece (lands 1.95-2.45)" },
+    { "t": 1.25, "what": "daisy blooms petal by petal, then turns slowly" },
+    { "t": 1.5,  "what": "five paper butterflies flutter in on curved paths (3D wing flaps)" },
+    { "t": 2.2,  "what": "awareness ribbon unspools from behind the chest piece" },
+    { "t": 2.45, "what": "heartbeat starts: lub-dub rings every 1.0s, synced to audio" },
+    { "t": 2.55, "what": "header: pink daisy spins in, oct/ober rise, ribbon draws, subtitle settles" },
+    { "t": 3.3,  "what": "'Listen to your body' words rise; 'body' thumps on the heartbeat at 4.45" },
+    { "t": 4.6,  "what": "BREAST / HEALTH letters slam in with blur + impact" },
+    { "t": 5.4,  "what": "hashtags type on" },
+    { "t": 6.0,  "what": "satin shine across BREAST HEALTH (again at 9.6), light sweep at 7.0, sparkles, ambient hold to 12s" }
+  ]
+}

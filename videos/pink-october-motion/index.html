@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>Pink October — NETRI TECH</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Dela Gothic One"; src: url("assets/fonts/DelaGothicOne.woff2") format("woff2"); font-display: block; }
+      @font-face { font-family: "Righteous"; src: url("assets/fonts/Righteous.woff2") format("woff2"); font-display: block; }
+      @font-face { font-family: "Forma DJR Micro"; src: url("assets/fonts/FormaDJRMicro-Medium.woff2") format("woff2"); font-weight: 500; font-display: block; }
+      @font-face { font-family: "Forma DJR Micro"; src: url("assets/fonts/FormaDJRMicro-Bold.woff2") format("woff2"); font-weight: 700; font-display: block; }
+
+      :root {
+        /* palette — sampled from the original post */
+        --paper: #f6c3c9;
+        --plum: #8f2859;
+        --plum-soft: #8d3256;
+        --mauve: #7c435b;
+        --hashtag: #794a4e;
+        --hot: #e91e7b;
+        --hot-deep: #c8106a;
+        --oct: #e88dab;
+        --ober: #cd5b81;
+        --ribbon: #df7786;
+        --ribbon-deep: #c24d6c;
+        --ribbon-hi: #f8a9b9;
+        --tube: #e58a97;
+        --tube-deep: #c4637a;
+        --tube-hi: #fbc4cd;
+        --metal: #cfc9cc;
+        --metal-deep: #8e878b;
+        --white: #ffffff;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); }
+
+      #stage { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--paper); }
+      #cam { position: absolute; inset: 0; transform-origin: 52% 42%; }
+      .layer { position: absolute; inset: 0; width: 1080px; height: 1920px; }
+      #paper { position: absolute; inset: 0; width: 1080px; height: 1920px; object-fit: cover; display: block; }
+
+      #light {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(ellipse 60% 38% at 70% 18%, rgba(255, 244, 246, 0.55), rgba(255, 244, 246, 0) 70%);
+        mix-blend-mode: soft-light;
+      }
+      #sweep {
+        position: absolute; left: -900px; top: -400px; width: 700px; height: 2800px; pointer-events: none;
+        background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.32) 50%, rgba(255,255,255,0) 100%);
+        mix-blend-mode: soft-light; transform-origin: 50% 50%;
+      }
+
+      svg.art { position: absolute; inset: 0; width: 1080px; height: 1920px; overflow: visible; }
+
+      /* ---------- logo (never distorted: uniform scale + clip reveals only) ---------- */
+      #logo { position: absolute; left: 92px; top: 74px; width: 222px; height: 66px; }
+      #logo img { position: absolute; left: 0; top: 0; width: 222px; height: auto; display: block; }
+      #logo-mark { clip-path: inset(0 70.6% 0 0); transform-origin: 14.7% 50%; }
+      #logo-word { position: absolute; left: 0; top: 0; width: 222px; height: 65.85px; background: url("assets/img/netritech-logo.png") left top / contain no-repeat; clip-path: inset(0 0 0 29.4%); }
+      #logo-glow {
+        position: absolute; left: -14px; top: -16px; width: 92px; height: 92px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(91, 180, 225, 0.45), rgba(91, 180, 225, 0) 68%);
+      }
+
+      /* ---------- header ---------- */
+      .hdr-word { position: absolute; font-family: "Righteous", sans-serif; line-height: 1; white-space: nowrap; overflow: hidden; padding: 0 2px 6px; }
+      .hdr-word span { display: inline-block; }
+      #hdr-oct { left: 612px; top: 22px; font-size: 117px; color: var(--oct); letter-spacing: -3px; }
+      #hdr-ober { left: 532px; top: 102px; font-size: 117px; color: var(--ober); letter-spacing: -3px; }
+      #hdr-sub { position: absolute; left: 540px; top: 222px; width: 300px; text-align: center; font-family: "Forma DJR Micro", sans-serif; font-weight: 500; font-size: 33px; line-height: 1.02; color: var(--mauve); }
+      #hdr-sub div { white-space: nowrap; }
+
+      /* ---------- butterflies (CSS 3D wing flaps) ---------- */
+      .bf { position: absolute; width: 0; height: 0; }
+      .bf-tilt { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+      .bf-persp { position: absolute; left: -60px; top: -60px; width: 120px; height: 120px; perspective: 420px; filter: drop-shadow(5px 9px 5px rgba(150, 60, 85, 0.26)); }
+      .bf-body { position: absolute; inset: 0; transform-style: preserve-3d; }
+      .wing { position: absolute; top: 0; width: 60px; height: 120px; transform-style: preserve-3d; }
+      .wing svg { width: 60px; height: 120px; display: block; overflow: visible; }
+      .wing.l { left: 0; transform-origin: 100% 50%; }
+      .wing.r { left: 60px; transform-origin: 0% 50%; }
+      .thorax { position: absolute; left: 57px; top: 38px; width: 6px; height: 44px; border-radius: 3px; background: linear-gradient(90deg, #e9dcdf, #ffffff 45%, #e2d3d7); }
+
+      /* ---------- body copy ---------- */
+      .line { position: absolute; left: 0; width: 1080px; text-align: center; white-space: nowrap; line-height: 1; }
+      .mask { display: inline-block; overflow: hidden; padding: 4px 6px 20px; margin: -4px -6px -20px; vertical-align: top; }
+      .mask > span { display: inline-block; }
+      #t-listen { top: 1226px; font-family: "Righteous", sans-serif; font-size: 113px; color: var(--plum); letter-spacing: -1px; }
+      #t-body { top: 1335px; font-family: "Righteous", sans-serif; font-size: 113px; color: var(--plum); letter-spacing: -4px; }
+      #t-reg1 { top: 1465px; font-family: "Righteous", sans-serif; font-size: 49px; color: var(--plum-soft); }
+      #t-reg2 { top: 1515px; font-family: "Righteous", sans-serif; font-size: 49px; color: var(--plum-soft); }
+      .big { font-family: "Dela Gothic One", sans-serif; font-size: 139px; color: var(--hot); letter-spacing: 0px; }
+      .big .ch { display: inline-block; transform-origin: 50% 70%; }
+      #t-breast { top: 1573px; }
+      #t-health { top: 1696px; letter-spacing: -11px; }
+      #t-health .shine { letter-spacing: -11px; }
+      .shine {
+        position: absolute; left: 0; top: 0; width: 1080px; text-align: center; color: transparent;
+        background-image: linear-gradient(100deg, rgba(255,255,255,0) 40%, rgba(255,236,246,0.85) 50%, rgba(255,255,255,0) 60%);
+        background-size: 300% 100%; background-repeat: no-repeat; background-position: 120% 0;
+        -webkit-background-clip: text; background-clip: text;
+      }
+      .tag { font-family: "Forma DJR Micro", sans-serif; font-weight: 500; font-size: 29px; color: var(--hashtag); }
+      #t-tag1 { top: 1851px; }
+      #t-tag2 { top: 1885px; }
+    </style>
+  </head>
+  <body>
+    <div id="stage" data-composition-id="main" data-start="0" data-duration="12" data-fps="30" data-width="1080" data-height="1920">
+      <audio id="score" src="assets/audio/score.wav" data-start="0" data-duration="12" data-track-index="1" data-volume="1"></audio>
+      <div id="scene" class="clip" data-start="0" data-duration="12" data-track-index="0" style="position:absolute;inset:0;">
+        <div id="cam">
+          <img id="paper" data-layout-ignore="true" src="assets/img/paper.jpg" alt="" />
+          <div id="light"></div>
+
+          <!-- ================= VECTOR ART (poster coordinate space: 738 x 1312) ================= -->
+          <svg class="art" id="art" viewBox="0 0 738 1312" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="paperShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="2.2" dy="3.2" stdDeviation="2.4" flood-color="#9b3a55" flood-opacity="0.30" />
+              </filter>
+              <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="1.6" dy="2.4" stdDeviation="1.8" flood-color="#9b3a55" flood-opacity="0.32" />
+              </filter>
+              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="1.6" />
+              </filter>
+              <linearGradient id="ribbonSatin" x1="505" y1="560" x2="655" y2="770" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#f3a0b3" />
+                <stop offset="0.28" stop-color="#df6f89" />
+                <stop offset="0.46" stop-color="#ef93a8" />
+                <stop offset="0.68" stop-color="#d45f7d" />
+                <stop offset="0.85" stop-color="#e98aa0" />
+                <stop offset="1" stop-color="#c9506f" />
+              </linearGradient>
+              <linearGradient id="loopBack" x1="0" y1="548" x2="0" y2="600" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#f6a9ba" />
+                <stop offset="0.5" stop-color="#e57c94" />
+                <stop offset="1" stop-color="#c85472" stop-opacity="0" />
+              </linearGradient>
+              <linearGradient id="hdrRibbon" x1="530" y1="5" x2="600" y2="130" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#d9558a" />
+                <stop offset="0.5" stop-color="#c63f74" />
+                <stop offset="1" stop-color="#d4507f" />
+              </linearGradient>
+              <radialGradient id="metalG" cx="0.38" cy="0.32" r="0.75">
+                <stop offset="0" stop-color="#ffffff" />
+                <stop offset="0.45" stop-color="#dcd6d9" />
+                <stop offset="0.85" stop-color="#a7a0a4" />
+                <stop offset="1" stop-color="#8b8488" />
+              </radialGradient>
+              <radialGradient id="diaG" cx="0.4" cy="0.35" r="0.7">
+                <stop offset="0" stop-color="#fbfafa" />
+                <stop offset="0.7" stop-color="#d8d3d5" />
+                <stop offset="1" stop-color="#b9b2b5" />
+              </radialGradient>
+              <radialGradient id="tipG" cx="0.35" cy="0.3" r="0.8">
+                <stop offset="0" stop-color="#fcc6d0" />
+                <stop offset="0.55" stop-color="#e98d9e" />
+                <stop offset="1" stop-color="#c9647b" />
+              </radialGradient>
+              <radialGradient id="discG" cx="0.42" cy="0.38" r="0.7">
+                <stop offset="0" stop-color="#ffe066" />
+                <stop offset="0.6" stop-color="#f2bd2c" />
+                <stop offset="1" stop-color="#c98a17" />
+              </radialGradient>
+              <linearGradient id="petalW" x1="0" y1="-14" x2="0" y2="-74" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#e9dfe1" />
+                <stop offset="0.35" stop-color="#ffffff" />
+                <stop offset="1" stop-color="#fbf7f8" />
+              </linearGradient>
+              <linearGradient id="petalP" x1="0" y1="-6" x2="0" y2="-32" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#c5527a" />
+                <stop offset="1" stop-color="#ee8eab" />
+              </linearGradient>
+              <!-- tail notches for both ribbons -->
+              <mask id="ribbonCut" maskUnits="userSpaceOnUse" x="0" y="0" width="738" height="1312">
+                <rect x="0" y="0" width="738" height="1312" fill="#fff" />
+                <polygon points="485,763 560,758 560,800 485,800" fill="#000" />
+                <polygon points="505,762 533,760 520,747" fill="#000" />
+                <polygon points="595,758 670,763 670,800 595,800" fill="#000" />
+                <polygon points="619,760 647,762 633,747" fill="#000" />
+              </mask>
+              <mask id="hdrCut" maskUnits="userSpaceOnUse" x="0" y="0" width="738" height="1312">
+                <rect x="0" y="0" width="738" height="1312" fill="#fff" />
+                <polygon points="515,124 615,127 615,150 515,150" fill="#000" />
+                <polygon points="523,125 539,125 531,117" fill="#000" />
+                <polygon points="589,127 605,128 597,119" fill="#000" />
+              </mask>
+            </defs>
+
+            <!-- ---------- embossed torso line art ---------- -->
+            <g id="torso" fill="none" stroke-linecap="round">
+              <g class="emb" data-d="M 300 210 C 302 260, 300 300, 285 330 C 265 365, 230 385, 170 403 C 115 418, 80 432, 55 470 C 35 505, 28 545, 30 590 C 31 615, 36 635, 42 650"></g>
+              <g class="emb" data-d="M 553 390 C 600 398, 650 412, 680 448 C 700 475, 710 515, 709 560 C 708 600, 703 640, 690 674"></g>
+              <g class="emb" data-d="M 200 418 C 240 418, 280 424, 311 443"></g>
+              <g class="emb" data-d="M 128 548 C 136 590, 118 640, 116 690 C 115 730, 130 765, 162 784 C 200 800, 260 798, 300 781 C 335 760, 360 715, 366 659"></g>
+              <g class="emb" data-d="M 387 681 C 395 725, 430 765, 480 785 C 515 797, 548 795, 572 787"></g>
+              <g class="emb" data-d="M 147 772 C 160 805, 178 845, 181 880 C 183 925, 168 975, 148 1025 C 138 1050, 130 1065, 126 1078"></g>
+              <g class="emb" data-d="M 590 756 C 576 790, 562 835, 555 880 C 552 905, 556 925, 566 945 C 580 975, 598 1010, 609 1062"></g>
+            </g>
+
+            <!-- ---------- main awareness ribbon (sits under the chest piece) ---------- -->
+            <g id="ribbon-wrap">
+              <g id="ribbon" mask="url(#ribbonCut)" filter="url(#paperShadow)">
+                <path class="rb" pathLength="1" d="M 510 770 L 573 675 C 602 640, 632 618, 629 586 C 626 560, 602 548, 578 548 C 554 548, 530 560, 527 586 C 524 618, 552 642, 581 675 L 642 770" fill="none" stroke="url(#ribbonSatin)" stroke-width="29" stroke-linejoin="round" />
+                <path class="rb" pathLength="1" d="M 527 586 C 526 560, 554 548, 578 548 C 602 548, 626 560, 629 586" fill="none" stroke="url(#loopBack)" stroke-width="29" />
+              </g>
+            </g>
+
+            <!-- ---------- stethoscope ---------- -->
+            <g id="steth" filter="url(#paperShadow)" fill="none" stroke-linecap="round">
+              <!-- metal binaurals -->
+              <g class="tube" id="bin-l" data-kind="metal" data-d="M 410 218 C 385 212, 362 214, 356 238 C 351 262, 356 330, 367 385"></g>
+              <g class="tube" id="bin-r" data-kind="metal" data-d="M 512 222 C 540 224, 556 236, 557 262 C 559 300, 548 345, 535 385"></g>
+              <!-- pink tubing -->
+              <g class="tube" id="tube-l" data-kind="pink" data-d="M 371 400 C 382 448, 402 488, 446 512"></g>
+              <g class="tube" id="tube-r" data-kind="pink" data-d="M 528 405 C 514 452, 492 492, 452 512"></g>
+              <g class="tube" id="tube-u" data-kind="thin" data-d="M 375 410 C 392 470, 500 480, 524 412"></g>
+              <g class="tube" id="stem" data-kind="pink" data-d="M 449 510 C 440 545, 425 600, 420 640 C 416 668, 432 676, 460 672 C 490 668, 512 664, 534 662"></g>
+              <!-- sleeves -->
+              <g id="sleeves">
+                <path d="M 365 378 L 374 414" stroke="#d8758a" stroke-width="14" />
+                <path d="M 364 378 L 372 410" stroke="#f3a8b6" stroke-width="3" />
+                <path d="M 536 383 L 526 418" stroke="#d8758a" stroke-width="14" />
+                <path d="M 537 383 L 529 414" stroke="#f3a8b6" stroke-width="3" />
+              </g>
+              <!-- ear tips -->
+              <ellipse id="tip-l" cx="423" cy="221" rx="14" ry="10" fill="url(#tipG)" transform="rotate(8 423 221)" />
+              <ellipse id="tip-r" cx="500" cy="222" rx="14" ry="10" fill="url(#tipG)" transform="rotate(-8 500 222)" />
+            </g>
+
+            <!-- heartbeat pulse rings (between tubing and chest piece) -->
+            <g id="rings" fill="none" stroke="#e91e7b"></g>
+
+            <!-- chest piece -->
+            <g id="chest" filter="url(#paperShadow)">
+              <circle cx="566" cy="661" r="40" fill="url(#metalG)" />
+              <circle cx="566" cy="661" r="30.5" fill="#3a3236" />
+              <circle cx="566" cy="661" r="26" fill="url(#diaG)" />
+              <circle cx="566" cy="661" r="26" fill="none" stroke="#ffffff" stroke-opacity="0.6" stroke-width="1" />
+              <circle cx="566" cy="661" r="5" fill="none" stroke="#9c9599" stroke-width="1.2" />
+              <circle cx="566" cy="661" r="1.8" fill="#5b5357" />
+              <path d="M 538 640 A 36 36 0 0 1 590 632" fill="none" stroke="#ffffff" stroke-opacity="0.7" stroke-width="2" stroke-linecap="round" />
+            </g>
+
+            <!-- ---------- main daisy ---------- -->
+            <g id="daisy-pos" transform="translate(232 645)">
+              <g id="daisy" filter="url(#softShadow)">
+                <g id="petals"></g>
+                <circle id="disc" r="21" fill="url(#discG)" />
+                <g id="florets"></g>
+              </g>
+            </g>
+
+          </svg>
+
+          <!-- header type (HTML for crisp glyphs) -->
+          <div id="hdr-oct" class="hdr-word" data-layout-allow-occlusion="true"><span data-layout-allow-occlusion="true">o</span><span data-layout-allow-occlusion="true">c</span><span data-layout-allow-occlusion="true">t</span></div>
+          <div id="hdr-ober" class="hdr-word" data-layout-allow-occlusion="true"><span data-layout-allow-occlusion="true">o</span><span data-layout-allow-occlusion="true">b</span><span data-layout-allow-occlusion="true">e</span><span data-layout-allow-occlusion="true">r</span></div>
+
+          <svg class="art" id="art-top" viewBox="0 0 738 1312" xmlns="http://www.w3.org/2000/svg">
+            <!-- ---------- header daisy ---------- -->
+            <g id="hdaisy-pos" transform="translate(398 77)">
+              <g id="hdaisy" filter="url(#softShadow)">
+                <g id="hpetals"></g>
+                <circle r="7.5" fill="url(#discG)" />
+              </g>
+            </g>
+            <g id="hribbon" mask="url(#hdrCut)" filter="url(#softShadow)">
+              <path class="hrb" pathLength="1" d="M 528 131 L 562 76 C 577 56, 589 42, 585 27 C 581 13, 571 9, 564 9 C 553 9, 543 17, 544 30 C 545 45, 551 60, 563 76 L 601 131" fill="none" stroke="url(#hdrRibbon)" stroke-width="15" stroke-linejoin="round" />
+              <path class="hrb" pathLength="1" d="M 528 131 L 562 76 C 577 56, 589 42, 585 27 C 581 13, 571 9, 564 9 C 553 9, 543 17, 544 30 C 545 45, 551 60, 563 76 L 601 131" fill="none" stroke="#f7a6c2" stroke-opacity="0.45" stroke-width="4.5" filter="url(#glow)" transform="translate(-1.5 -1)" />
+            </g>
+            <!-- sparkles -->
+            <g id="sparkles" fill="#ffffff"></g>
+          </svg>
+
+          <div id="hdr-sub"><div id="sub1">Breast Cancer</div><div id="sub2">Awareness Month</div></div>
+
+          <!-- logo: two clipped copies of the untouched lockup PNG -->
+          <div id="logo">
+            <div id="logo-glow"></div>
+            <img id="logo-mark" src="assets/img/netritech-logo.png" alt="NETRI TECH" />
+            <div id="logo-word" role="img" aria-label="NETRI TECH"></div>
+          </div>
+
+          <!-- butterflies -->
+          <div id="bfs"></div>
+
+          <!-- body copy -->
+          <div id="t-listen" class="line"><span class="mask"><span data-layout-allow-occlusion="true">Listen</span></span> <span class="mask"><span data-layout-allow-occlusion="true">to</span></span></div>
+          <div id="t-body" class="line"><span class="mask"><span data-layout-allow-occlusion="true">your</span></span> <span class="mask"><span id="w-body" data-layout-allow-occlusion="true">body</span></span></div>
+          <div id="t-reg1" class="line"><span>Regular check-ups</span></div>
+          <div id="t-reg2" class="line"><span>are vital for</span></div>
+          <div id="t-breast" data-layout-allow-occlusion="true" class="line big"><span class="word">BREAST</span><div class="shine big" data-layout-ignore="true">BREAST</div></div>
+          <div id="t-health" data-layout-allow-occlusion="true" class="line big"><span class="word">HEALTH</span><div class="shine big" data-layout-ignore="true">HEALTH</div></div>
+          <div id="t-tag1" data-layout-allow-occlusion="true" class="line tag">#BreastCancerAwareness #HealthCheck</div>
+          <div id="t-tag2" data-layout-allow-occlusion="true" class="line tag">#EarlyDetection</div>
+
+          <div id="sweep" data-layout-allow-overflow="true"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const NS = "http://www.w3.org/2000/svg";
+        const S = 1080 / 738; // poster px -> canvas px
+        const el = (tag, attrs, parent) => {
+          const n = document.createElementNS(NS, tag);
+          for (const k in attrs) n.setAttribute(k, attrs[k]);
+          if (parent) parent.appendChild(n);
+          return n;
+        };
+
+        // ---------- build embossed torso lines ----------
+        document.querySelectorAll("#torso .emb").forEach((g) => {
+          const d = g.dataset.d;
+          el("path", { d, pathLength: 1, stroke: "#ffffff", "stroke-opacity": 0.85, "stroke-width": 1.8, transform: "translate(1.1 1)" }, g);
+          el("path", { d, pathLength: 1, stroke: "#bd7385", "stroke-opacity": 0.9, "stroke-width": 1.55 }, g);
+        });
+
+        // ---------- build cylindrical tubes (shadow / base / highlight layers) ----------
+        const TUBE = {
+          pink: [ ["#c2627a", 12.4, "translate(1.2 1.4)", 1], ["#e58a97", 11.4, "", 1], ["#fbc4cd", 3.0, "translate(-2.6 -1.8)", 0.8] ],
+          thin: [ ["#c2627a", 6.8, "translate(0.8 1)", 1], ["#e27f91", 6.0, "", 1], ["#f9bcc7", 1.6, "translate(-1.4 -1)", 0.8] ],
+          metal: [ ["#8e878b", 6.6, "translate(0.7 0.9)", 1], ["#d3cdd0", 5.8, "", 1], ["#ffffff", 1.8, "translate(-1.2 -0.7)", 0.95] ],
+        };
+        document.querySelectorAll("#steth .tube").forEach((g) => {
+          for (const [c, w, tr, o] of TUBE[g.dataset.kind]) {
+            const a = { d: g.dataset.d, pathLength: 1, stroke: c, "stroke-width": w, "stroke-opacity": o };
+            if (tr) a.transform = tr;
+            el("path", a, g);
+          }
+        });
+
+        // ---------- daisy petals ----------
+        const petalD = "M 0 -15 C 12 -23, 13 -62, 5 -72 C 2 -75, -2 -75, -5 -72 C -13 -62, -12 -23, 0 -15 Z";
+        const petals = document.getElementById("petals");
+        const N = 17;
+        for (let i = 0; i < N; i++) {
+          const ang = (360 / N) * i + (i % 2 ? 4 : -3);
+          const len = 0.94 + ((i * 37) % 7) * 0.012;
+          const g = el("g", { transform: `rotate(${ang})` }, petals);
+          const p = el("g", { class: "petal" }, g);
+          el("path", { d: petalD, fill: "url(#petalW)", stroke: "#e6d9dc", "stroke-width": 0.6, transform: `scale(1 ${len})` }, p);
+          el("path", { d: "M 0 -24 L 0 -62", stroke: "#e4d6d9", "stroke-width": 0.7, fill: "none", transform: `scale(1 ${len})` }, p);
+        }
+        // florets: phyllotaxis dots (deterministic)
+        const fl = document.getElementById("florets");
+        for (let i = 1; i < 70; i++) {
+          const r = 1.95 * Math.sqrt(i), t = i * 2.39996;
+          if (r > 19) break;
+          el("circle", { cx: (r * Math.cos(t)).toFixed(2), cy: (r * Math.sin(t)).toFixed(2), r: 0.9, fill: i % 3 ? "#d4931c" : "#fff0a0", "fill-opacity": 0.8 }, fl);
+        }
+        // header daisy petals (pink)
+        const hp = document.getElementById("hpetals");
+        const hpD = "M 0 -6 C 5 -10, 6 -27, 2 -32 C 1 -33.5, -1 -33.5, -2 -32 C -6 -27, -5 -10, 0 -6 Z";
+        for (let i = 0; i < 16; i++) {
+          const g = el("g", { transform: `rotate(${(360 / 16) * i})` }, hp);
+          el("path", { d: hpD, fill: "url(#petalP)", class: "hpetal" }, g);
+        }
+
+        // ---------- heartbeat rings ----------
+        const rings = document.getElementById("rings");
+        const beats = [];
+        for (let t = 2.45; t < 11.6; t += 1.0) { beats.push(t); beats.push(t + 0.24); }
+        beats.forEach(() => el("circle", { cx: 566, cy: 661, r: 40, "stroke-width": 3, opacity: 0, class: "ring" }, rings));
+
+        // ---------- sparkles ----------
+        const sp = document.getElementById("sparkles");
+        const spD = "M 0 -9 C 1 -2, 2 -1, 9 0 C 2 1, 1 2, 0 9 C -1 2, -2 1, -9 0 C -2 -1, -1 -2, 0 -9 Z";
+        const SPARKS = [ [628, 548, 0.9], [505, 600, 0.6], [300, 600, 0.75], [168, 700, 0.55], [610, 30, 0.6], [372, 40, 0.5], [655, 700, 0.7], [470, 230, 0.5] ];
+        SPARKS.forEach(([x, y, s]) => {
+          const g = el("g", { transform: `translate(${x} ${y})` }, sp);
+          el("path", { d: spD, class: "spark", transform: `scale(${s})`, opacity: 0 }, g);
+        });
+
+        // ---------- butterflies (HTML for real 3D wing flaps) ----------
+        const wingSVG = (side) => {
+          const flip = side === "l" ? "" : 'transform="translate(60 0) scale(-1 1)"';
+          return `<svg viewBox="0 0 60 120"><g ${flip}>
+            <path d="M 60 56 C 52 36, 34 8, 12 4 C 3 3, 0 10, 3 18 C 8 34, 28 52, 60 59 Z" fill="#fffdfd" stroke="#eadcdf" stroke-width="0.8"/>
+            <path d="M 60 61 C 46 63, 28 72, 24 88 C 21 100, 32 108, 42 100 C 52 92, 57 78, 60 63 Z" fill="#f6eef0" stroke="#e8d9dd" stroke-width="0.8"/>
+            <path d="M 58 56 C 46 40, 30 20, 12 10" fill="none" stroke="#ece0e3" stroke-width="0.9"/>
+            <path d="M 58 63 C 48 72, 36 84, 30 96" fill="none" stroke="#ece0e3" stroke-width="0.9"/>
+          </g></svg>`;
+        };
+        // [poster x, poster y, size(px), resting tilt(deg), entry dx, entry dy]
+        const BF = [
+          [252, 115, 104, -28, -520, -260],
+          [181, 312, 92, -12, -460, 120],
+          [628, 352, 80, 18, 520, -200],
+          [118, 851, 70, -16, -420, 220],
+          [644, 826, 92, 22, 480, 260],
+        ];
+        const bfs = document.getElementById("bfs");
+        BF.forEach(([x, y, size, tilt], i) => {
+          const d = document.createElement("div");
+          d.className = "bf"; d.id = "bf" + i;
+          d.style.left = (x * S).toFixed(1) + "px"; d.style.top = (y * S).toFixed(1) + "px";
+          d.innerHTML = `<div class="bf-tilt" data-tilt="${tilt}" data-scale="${(size / 120).toFixed(3)}"><div class="bf-persp"><div class="bf-body"><div class="wing l">${wingSVG("l")}</div><div class="wing r">${wingSVG("r")}</div><div class="thorax"></div></div></div></div>`;
+          bfs.appendChild(d);
+        });
+
+        document.querySelectorAll(".bf-tilt").forEach((t) => gsap.set(t, { rotation: +t.dataset.tilt, scale: +t.dataset.scale }));
+        gsap.set(".bf-body", { rotationX: 24 });
+
+        // split BREAST / HEALTH into letters
+        document.querySelectorAll(".big > .word").forEach((w) => {
+          w.innerHTML = [...w.textContent].map((c) => `<span class="ch" data-layout-allow-occlusion="true">${c}</span>`).join("");
+        });
+
+        // ================= TIMELINE =================
+        const tl = gsap.timeline({ paused: true });
+        const dash = (sel) => gsap.utils.toArray(sel);
+
+        // camera: slow settle, then a barely-there drift through the hold
+        tl.fromTo("#cam", { scale: 1.07, y: 26 }, { scale: 1.0, y: 0, duration: 2.6, ease: "expo.out" }, 0);
+        tl.to("#cam", { scale: 1.018, duration: 9.4, ease: "sine.inOut" }, 2.6);
+        tl.fromTo("#light", { opacity: 0.2 }, { opacity: 1, duration: 3, ease: "sine.inOut" }, 0);
+        tl.to("#light", { opacity: 0.55, duration: 2.2, ease: "sine.inOut", yoyo: true, repeat: 3 }, 3);
+
+        // 1) torso emboss draws itself — shoulders, collarbone, sides, breasts, waist
+        const torsoOrder = [ [0, 0.05, 1.6], [1, 0.1, 1.5], [2, 0.5, 0.8], [3, 0.45, 1.6], [4, 0.65, 1.2], [5, 0.85, 1.5], [6, 0.9, 1.5] ];
+        const embs = dash("#torso .emb");
+        torsoOrder.forEach(([i, at, dur]) => {
+          const ps = embs[i].querySelectorAll("path");
+          tl.fromTo(ps, { strokeDasharray: "1 2", strokeDashoffset: 1.03 }, { strokeDashoffset: 0, duration: dur, ease: "power2.inOut" }, at);
+        });
+
+        // 2) logo — mark pops (uniform scale only), wordmark wipes
+        tl.fromTo("#logo-mark", { scale: 0, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.7, ease: "back.out(2.2)" }, 0.2);
+        tl.fromTo("#logo-glow", { scale: 0.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out" }, 0.32);
+        tl.to("#logo-glow", { scale: 1.8, opacity: 0, duration: 0.8, ease: "power2.out" }, 0.62);
+        tl.fromTo("#logo-word", { clipPath: "inset(0 100% 0 29.4%)" }, { clipPath: "inset(0 0% 0 29.4%)", duration: 0.65, ease: "power3.out" }, 0.52);
+
+        // 3) stethoscope assembles: ear tips pop, metal draws down, tubing flows into the chest piece
+        tl.fromTo(["#tip-l", "#tip-r"], { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.45, ease: "back.out(2.6)", stagger: 0.08 }, 0.55);
+        tl.fromTo(dash("#bin-l path, #bin-r path"), { strokeDasharray: "1 2", strokeDashoffset: 1.03 }, { strokeDashoffset: 0, duration: 0.55, ease: "power2.in" }, 0.65);
+        tl.fromTo("#sleeves", { opacity: 0, scale: 0.6, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)" }, 1.12);
+        tl.fromTo(dash("#tube-l path, #tube-r path, #tube-u path"), { strokeDasharray: "1 2", strokeDashoffset: 1.03 }, { strokeDashoffset: 0, duration: 0.42, ease: "sine.inOut" }, 1.15);
+        tl.fromTo(dash("#stem path"), { strokeDasharray: "1 2", strokeDashoffset: 1.03 }, { strokeDashoffset: 0, duration: 0.75, ease: "power2.inOut" }, 1.5);
+        tl.fromTo("#chest", { scale: 0, rotation: -120, svgOrigin: "566 661" }, { scale: 1, rotation: 0, duration: 0.5, ease: "back.out(1.9)" }, 1.95);
+
+        // 4) ribbon unspools out from behind the chest piece
+        tl.fromTo(dash(".rb"), { strokeDasharray: "1 2", strokeDashoffset: 1.03 }, { strokeDashoffset: 0, duration: 1.0, ease: "power3.inOut" }, 2.2);
+        tl.fromTo("#ribbon-wrap", { scale: 0.86, rotation: -8, svgOrigin: "566 661" }, { scale: 1, rotation: 0, duration: 1.2, ease: "expo.out" }, 2.2);
+
+        // 5) daisy blooms petal by petal, then turns slowly for the rest of the film
+        tl.fromTo("#disc", { scale: 0, svgOrigin: "0 0" }, { scale: 1, duration: 0.5, ease: "back.out(3)" }, 1.25);
+        tl.fromTo("#florets", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 1.45);
+        tl.fromTo(dash("#petals .petal"), { scale: 0, rotation: -35, svgOrigin: "0 0" }, { scale: 1, rotation: 0, duration: 0.7, ease: "back.out(1.6)", stagger: { each: 0.028, from: 0 } }, 1.35);
+        tl.fromTo("#daisy", { rotation: -40, svgOrigin: "0 0" }, { rotation: 0, duration: 1.6, ease: "expo.out" }, 1.35);
+        tl.to("#daisy", { rotation: 26, duration: 9.0, ease: "none" }, 2.95);
+
+        // 6) header — daisy spins in, letters rise from their baseline, ribbon draws, subtitle settles
+        tl.fromTo("#hdaisy", { scale: 0, rotation: -200, svgOrigin: "0 0" }, { scale: 1, rotation: 0, duration: 0.9, ease: "back.out(1.8)" }, 2.55);
+        tl.to("#hdaisy", { rotation: 60, duration: 8.5, ease: "none" }, 3.45);
+        tl.fromTo("#hdr-oct span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.06 }, 2.7);
+        tl.fromTo("#hdr-ober span", { yPercent: 110 }, { yPercent: 0, duration: 0.7, ease: "expo.out", stagger: 0.06 }, 2.86);
+        tl.fromTo(dash(".hrb"), { strokeDasharray: "1 2", strokeDashoffset: 1.03 }, { strokeDashoffset: 0, duration: 0.8, ease: "power2.inOut" }, 3.0);
+        tl.fromTo(["#sub1", "#sub2"], { opacity: 0, y: 18, scale: 1.12, filter: "blur(6px)" }, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.9, ease: "power3.out", stagger: 0.12 }, 3.25);
+
+        // 7) butterflies flutter in on curved paths (fast flaps in flight, lazy flaps at rest)
+        BF.forEach(([x, y, size, tilt, dx, dy], i) => {
+          const t0 = 1.5 + i * 0.32, fly = 1.6;
+          const node = "#bf" + i, wl = node + " .wing.l", wr = node + " .wing.r";
+          tl.fromTo(node, { x: dx, opacity: 0 }, { x: 0, opacity: 1, duration: fly, ease: "power2.out" }, t0);
+          tl.fromTo(node + " .bf-tilt", { y: dy, rotation: tilt + (dx < 0 ? 35 : -35) }, { y: 0, rotation: tilt, duration: fly, ease: "sine.inOut" }, t0);
+          const fast = Math.round(fly / 0.11);
+          const rep = fast - (fast % 2) + 1; // odd: each wing lands back on its resting angle
+          tl.fromTo(wl, { rotationY: 20 }, { rotationY: 78, duration: 0.11, ease: "sine.inOut", yoyo: true, repeat: rep }, t0);
+          tl.fromTo(wr, { rotationY: -20 }, { rotationY: -78, duration: 0.11, ease: "sine.inOut", yoyo: true, repeat: rep }, t0);
+          // resting: lazy double-flaps with pauses + a gentle bob
+          for (let t = t0 + fly + 0.5 + i * 0.27; t < 11.4; t += 1.7 + (i % 3) * 0.35) {
+            tl.to(wl, { rotationY: 62, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 3 }, t);
+            tl.to(wr, { rotationY: -62, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 3 }, t);
+          }
+          tl.to(node + " .bf-body", { y: -6, duration: 1.4 + i * 0.13, ease: "sine.inOut", yoyo: true, repeat: 3 }, t0 + fly);
+        });
+
+        // 8) headline — words rise out of their own baselines
+        tl.fromTo("#t-listen .mask > span", { yPercent: 115 }, { yPercent: 0, duration: 0.85, ease: "expo.out", stagger: 0.1 }, 3.3);
+        tl.fromTo("#t-body .mask > span", { yPercent: 115 }, { yPercent: 0, duration: 0.85, ease: "expo.out", stagger: 0.1 }, 3.5);
+        // "body" answers the heartbeat
+        tl.to("#w-body", { scale: 1.08, duration: 0.11, ease: "power2.out", yoyo: true, repeat: 1, transformOrigin: "50% 60%" }, 4.45);
+        tl.to("#w-body", { scale: 1.05, duration: 0.1, ease: "power2.out", yoyo: true, repeat: 1, transformOrigin: "50% 60%" }, 4.69);
+
+        tl.fromTo(["#t-reg1 span", "#t-reg2 span"], { opacity: 0, y: 26, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power3.out", stagger: 0.14 }, 4.0);
+
+        // 9) BREAST HEALTH — letters slam in, then a satin shine travels across
+        tl.fromTo("#t-breast .ch", { scale: 2.2, opacity: 0, y: -30, filter: "blur(10px)" }, { scale: 1, opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "expo.out", stagger: 0.05 }, 4.6);
+        tl.fromTo("#t-health .ch", { scale: 2.2, opacity: 0, y: -30, filter: "blur(10px)" }, { scale: 1, opacity: 1, y: 0, filter: "blur(0px)", duration: 0.55, ease: "expo.out", stagger: 0.05 }, 4.85);
+        tl.fromTo(["#t-breast", "#t-health"], { y: 0 }, { y: 6, duration: 0.08, ease: "power1.out", yoyo: true, repeat: 1, stagger: 0.25 }, 4.9);
+        tl.fromTo(".shine", { backgroundPosition: "120% 0" }, { backgroundPosition: "-20% 0", duration: 1.2, ease: "power2.inOut", stagger: 0.12 }, 6.0);
+        tl.to(".shine", { backgroundPosition: "-120% 0", duration: 0.01 }, 7.4);
+        tl.fromTo(".shine", { backgroundPosition: "120% 0" }, { backgroundPosition: "-20% 0", duration: 1.2, ease: "power2.inOut", stagger: 0.12, immediateRender: false }, 9.6);
+
+        // 10) hashtags type on
+        tl.fromTo("#t-tag1", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.9, ease: "power1.inOut" }, 5.4);
+        tl.fromTo("#t-tag2", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.5, ease: "power1.inOut" }, 6.0);
+
+        // 11) heartbeat — lub-dub rings radiate from the chest piece, chest piece thumps
+        dash("#rings .ring").forEach((r, i) => {
+          const t = beats[i], strong = i % 2 === 0;
+          tl.fromTo(r, { attr: { r: 40, "stroke-width": strong ? 3.2 : 2.2 }, opacity: strong ? 0.75 : 0.5 }, { attr: { r: strong ? 112 : 92, "stroke-width": 0.4 }, opacity: 0, duration: 1.1, ease: "power2.out", immediateRender: false }, t);
+          tl.to("#chest", { svgOrigin: "566 661", scale: strong ? 1.07 : 1.04, duration: 0.1, ease: "power2.out", yoyo: true, repeat: 1 }, t);
+        });
+
+        // 12) sparkles twinkle around the ribbon, daisy and header
+        dash("#sparkles .spark").forEach((s, i) => {
+          for (let t = 3.4 + i * 0.47; t < 11.3; t += 2.9 + (i % 3) * 0.4) {
+            tl.fromTo(s, { opacity: 0, rotation: 0, transformOrigin: "50% 50%" }, { opacity: 1, rotation: 90, duration: 0.45, ease: "power2.out", immediateRender: false }, t);
+            tl.to(s, { opacity: 0, rotation: 180, duration: 0.45, ease: "power2.in" }, t + 0.45);
+          }
+        });
+
+        // 13) one soft light sweep across the finished poster
+        tl.fromTo("#sweep", { x: 0, rotation: 18 }, { x: 2400, rotation: 18, duration: 2.2, ease: "sine.inOut" }, 7.0);
+
+        window.__timelines["main"] = tl;
+        tl.seek(0);
+      })();
+    </script>
+  </body>
+</html>
