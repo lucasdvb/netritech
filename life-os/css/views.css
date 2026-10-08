@@ -903,3 +903,44 @@ button.hero-big { display: inline-flex; align-items: baseline; flex-wrap: wrap; 
 .week-plan .section-label { margin-bottom: 8px; }
 .week-days .row { gap: var(--s3); }
 .week-dow { flex: none; width: 3.2em; color: var(--text-3); font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+
+/* ---------- gym mode (U9): one set at a time, dark and high-contrast in any theme, 56 px+ targets ---------- */
+.in-gym .tabbar, .in-gym .rail { display: none; }
+.gym { position: fixed; inset: 0; z-index: 30; display: flex; flex-direction: column; gap: var(--s4);
+  padding: calc(var(--safe-top) + var(--s3)) var(--s4) calc(var(--safe-bottom) + var(--s4)); background: var(--gym-bg); color: var(--gym-text); overflow-y: auto; }
+.gym-top { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
+.gym-meta { color: var(--gym-dim); font-size: var(--text-body); font-weight: var(--weight-medium); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); }
+.gym-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-height: 56px; min-width: 56px; padding: 0 16px; border-radius: var(--r-pill);
+  background: var(--gym-surface); color: var(--gym-text); font-size: var(--text-body); font-weight: var(--weight-semibold); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); }
+.gym-ghost:disabled { opacity: .35; }
+.gym-ghost:active, .gym-step:active, .gym-go:active { transform: scale(.97); }
+.gym-warn { display: flex; gap: 8px; align-items: flex-start; padding: var(--s3) var(--s4); border-radius: var(--r-lg); background: var(--gym-surface); color: var(--gym-dim);
+  font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+.gym-card { flex: 1; display: flex; flex-direction: column; gap: var(--s4); justify-content: center; }
+.gym-eyebrow { color: var(--gym-dim); font-size: var(--text-body); font-weight: var(--weight-medium); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); }
+.gym-name { font-size: var(--text-display-md); font-weight: var(--weight-semibold); line-height: var(--leading-display-md); letter-spacing: var(--tracking-display-md); }
+.gym-ctls { display: flex; flex-direction: column; gap: var(--s3); }
+.gym-ctl { display: grid; grid-template-columns: 72px minmax(0, 1fr) 72px; align-items: center; gap: var(--s3); }
+.gym-step { height: 72px; border-radius: var(--r-lg); background: var(--gym-surface); color: var(--gym-text); display: grid; place-items: center; transition: transform var(--dur-fast) var(--spring-snappy); }
+.gym-val { display: flex; flex-direction: column; align-items: center; }
+.gym-val .tnum { font-size: var(--text-display-xl); font-weight: var(--weight-semibold); line-height: var(--leading-display-xl); letter-spacing: var(--tracking-display-xl); }
+.gym-val small { color: var(--gym-dim); font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+.gym-go { width: 100%; min-height: 72px; border-radius: var(--r-pill); background: var(--accent); color: var(--gym-text);
+  font-size: var(--text-h3); font-weight: var(--weight-semibold); line-height: var(--leading-h3); letter-spacing: var(--tracking-h3); transition: transform var(--dur-fast) var(--spring-snappy); }
+.gym-rest { display: flex; flex-direction: column; align-items: center; gap: var(--s3); text-align: center; }
+.gym-rest-label { color: var(--gym-dim); font-size: var(--text-body); font-weight: var(--weight-medium); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); }
+.gym-rest-time { font-size: var(--text-display-xl); font-weight: var(--weight-semibold); line-height: var(--leading-display-xl); letter-spacing: var(--tracking-display-xl); }
+.gym-rest-ctl { display: flex; gap: var(--s3); }
+.gym-next { color: var(--gym-dim); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+.gym-nav { display: flex; justify-content: space-between; gap: var(--s3); }
+.gym-nav .gym-ghost { flex: 1; }
+.gym-empty, .gym-card--done { align-items: center; text-align: center; }
+
+/* Apple Health paste and composition line */
+.health-btn { margin-top: var(--s3); }
+.comp-link { display: flex; align-items: center; gap: var(--s3); }
+.comp-link .row-main { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 0; }
+.comp-line { font-size: var(--text-body); font-weight: var(--weight-medium); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); color: var(--text); }
+.recipe-steps { display: flex; flex-direction: column; gap: var(--s3); padding-left: 1.2em; list-style: decimal;
+  font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+.recipe-steps code { font-family: ui-monospace, Menlo, monospace; font-size: var(--text-caption); background: var(--surface-2); padding: 1px 6px; border-radius: 6px; overflow-wrap: anywhere; }
