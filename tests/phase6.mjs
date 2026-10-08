@@ -22,7 +22,7 @@ await step('everything is preloaded on first launch', async () => {
   if (!s.archived.includes('h-caffeine') || !s.archived.includes('h-alcohol')) throw new Error('optional habits missing');
   if (!s.upper.includes('e-calf-raise') || !s.upper.includes('e-plank')) throw new Error('upper finisher missing');
   if (!s.reset.some((x) => x.includes('weigh in'))) throw new Error('weigh-in missing');
-  const card = await page.textContent('.tasks-card');
+  const card = await page.textContent('.prio');
   if (!card.includes('eye specialist') || !card.includes('orthodontic')) throw new Error('today card: ' + card);
   await shot('80-today-tasks');
   await a11y('today with tasks');
@@ -31,10 +31,10 @@ await step('everything is preloaded on first launch', async () => {
 await step('quick add and tick a task on Today', async () => {
   await page.fill('.task-add-input', 'Call the accountant');
   await page.press('.task-add-input', 'Enter');
-  await page.waitForSelector('.tasks-card .trow:has-text("Call the accountant")');
+  await page.waitForSelector('.prio .trow:has-text("Call the accountant")');
   if (await page.inputValue('.task-add-input')) throw new Error('input not cleared');
-  await page.locator('.tasks-card .trow:has-text("Call the accountant") .check').click();
-  await page.waitForSelector('.tasks-card .trow.is-done:has-text("Call the accountant")');
+  await page.locator('.prio .trow:has-text("Call the accountant") .check').click();
+  await page.waitForSelector('.prio .trow.is-done:has-text("Call the accountant")');
   const [x] = await taskBy('Call the accountant');
   if (!x.done || !x.doneAt) throw new Error('not saved as done');
 });
@@ -44,7 +44,7 @@ await step('overdue tasks surface on Today', async () => {
     const { addDays, today } = await import('./js/domain/dates.js');
     window.__lifeos.store.put('tasks', { id: 'late-1', title: 'Renew car insurance', area: 'life', date: addDays(today(), -2), done: false, repeat: null, order: 99 });
   });
-  await page.waitForSelector('.tasks-card .trow.is-late:has-text("Renew car insurance")');
+  await page.waitForSelector('.prio .trow.is-late:has-text("Renew car insurance")');
   const meta = await page.textContent('.trow.is-late .trow-meta');
   if (!meta.includes('2 days ago')) throw new Error(meta);
 });
