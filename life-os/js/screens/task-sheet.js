@@ -1,5 +1,6 @@
 // The add/edit task sheet, loaded the first time you open a task.
 import * as T from '../domain/tasks.js';
+import * as P from '../domain/projects.js';
 import { CATEGORIES, catColor } from '../domain/taxonomy.js';
 import { today, addDays, weekday, fromISO } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
@@ -29,6 +30,7 @@ export function openTask(id = null, defaults = {}) {
     repeat: cur?.repeat ? cur.repeat.kind : 'none',
     day: cur?.repeat?.kind === 'weekly' ? cur.repeat.day : null,
     mday: cur?.repeat?.kind === 'monthly' ? cur.repeat.day : null,
+    projectId: cur ? cur.projectId || null : defaults.projectId || null,
     error: '',
   };
   const repeatOf = () => {
@@ -61,6 +63,9 @@ export function openTask(id = null, defaults = {}) {
           ${u.repeat !== 'none' ? html`<span class="field-hint">${T.repeatLabel(repeatOf())}. Ticking one schedules the next, so missed ones never pile up.</span>` : ''}</div>
         <div class="field"><span class="field-label">Area</span>
           <div class="chips">${CATEGORIES.map((c) => html`<button type="button" class="${cx('chip chip--area', u.area === c.id && 'is-active')}" style="--ic:${catColor(c.id)}" aria-pressed="${u.area === c.id}" data-action="area" data-id="${c.id}"><i class="chip-dot" aria-hidden="true"></i>${c.label}</button>`)}</div></div>
+        ${P.active().length || u.projectId ? html`<div class="field"><span class="field-label">Project</span>
+          <div class="chips"><button type="button" class="${cx('chip', !u.projectId && 'is-active')}" aria-pressed="${!u.projectId}" data-action="project" data-id="">None</button>
+          ${[...new Set([...P.active().map((p) => p.id), ...(u.projectId ? [u.projectId] : [])])].map((pid) => P.project(pid)).filter(Boolean).map((p) => html`<button type="button" class="${cx('chip', u.projectId === p.id && 'is-active')}" aria-pressed="${u.projectId === p.id}" data-action="project" data-id="${p.id}">${p.name}</button>`)}</div></div>` : ''}
         <label class="field"><span class="field-label">Notes <span class="muted">(optional)</span></span>
           <textarea class="input" rows="2" data-input="notes">${u.notes}</textarea></label>
         <button type="button" class="btn btn--primary btn--block" data-action="save">${cur ? 'Save' : 'Add task'}</button>
@@ -78,6 +83,7 @@ export function openTask(id = null, defaults = {}) {
       repeat: ({ sheet, data }) => { sheet.ui.repeat = data.value; sheet.refresh(); },
       rday: ({ sheet, data }) => { sheet.ui.day = Number(data.v); sheet.refresh(); },
       area: ({ sheet, data }) => { sheet.ui.area = data.id; sheet.refresh(); },
+      project: ({ sheet, data }) => { sheet.ui.projectId = data.id || null; sheet.refresh(); },
       save: ({ sheet }) => {
         const u = sheet.ui;
         const title = (sheet.el.querySelector('input[data-input="title"]')?.value ?? u.title).trim();
@@ -87,8 +93,8 @@ export function openTask(id = null, defaults = {}) {
         let date = u.date || null;
         if (repeat && (!date || T.firstDate(repeat, date) !== date)) date = T.firstDate(repeat, date && date > today() ? date : today());
         const notes = (sheet.el.querySelector('textarea[data-input="notes"]')?.value ?? u.notes).trim();
-        if (cur) T.save(cur.id, { title, notes, area: u.area, date, repeat });
-        else T.add({ title, notes, area: u.area, date, repeat });
+        if (cur) T.save(cur.id, { title, notes, area: u.area, date, repeat, projectId: u.projectId || null });
+        else T.add({ title, notes, area: u.area, date, repeat, projectId: u.projectId });
         hap.success();
         app.closeSheet(sheet);
         if (!cur) app.toast(`Added · ${T.dueLabel(date).toLowerCase() === 'anytime' ? 'anytime' : T.dueLabel(date).toLowerCase()}`, { icon: 'check' });

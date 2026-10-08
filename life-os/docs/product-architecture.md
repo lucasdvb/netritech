@@ -2,7 +2,7 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
-**Status.** Phases 0–5 are done (see section 15). Phases 6–11 are next, in order.
+**Status.** Phases 0–6 are done (see section 15). Phases 7–11 are next, in order.
 
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
@@ -1092,7 +1092,10 @@ What shipped, against the acceptance criteria: the evening ritual asks only what
 - **Tests:** unit (adaptation rules, absence detection); e2e over simulated calendars (clock control).
 - **UX:** every safety net appears at most once per occasion and can be dismissed for good.
 
-### Phase 6: Plan (M)
+### Phase 6: Plan (M) · done
+
+What shipped, against the acceptance criteria: a new goal takes exactly three questions (what outcome, by when, how you'll know), tested screen by screen; every goal, seeded or new, shows where it's heading or says what data it needs (weight goals need three weigh-ins over a week, body fat two estimates a week apart, count goals a week of logging); tasks never nest more than one level (project → task, checked in the unit tests). Decisions made on the way: projections use a least-squares trend over the last six weeks for levels (weight, body fat, a number you update) and the pace since the goal began for counts (habit completions, workouts, pages), and a goal moving the wrong way says so instead of showing a date; projects and books are new stores (DB v5, created on upgrade); deleting a project keeps its tasks; "read 20 pages" moves the book you're reading (or the one you name) and finishes it at the last page; tomorrow's three are typed straight into Plan; the weekly review's last section plans next week (three things, kept on next week's review record and shown on Plan all week, the first one optionally made Monday's priority). Training and the playbook already lived in Plan from Phase 2.
+
 
 - **Objective:** one calm place for what you're building.
 - **Features:**

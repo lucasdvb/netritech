@@ -4,6 +4,11 @@ import * as H from '../domain/habits.js';
 import * as G from '../domain/goals.js';
 import * as T from '../domain/tasks.js';
 import * as F from '../domain/fitness.js';
+import * as P from '../domain/projects.js';
+import * as B from '../domain/books.js';
+import { projectionLine } from './goals.js';
+import { projectRow } from './projects.js';
+import { bookRow } from './books.js';
 import { catColor, CATEGORIES } from '../domain/taxonomy.js';
 import { today, addDays, fmtLong, startOfWeek, range, fmtDayShort } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
@@ -13,16 +18,53 @@ import { pageHead, ring } from '../ui/components.js';
 const head = (title, to, label) => html`<div class="block-head"><h2 class="block-title">${title}</h2>
   ${to ? html`<a class="link-btn" href="#/${to}" data-action="nav" data-to="${to}">${label}</a>` : ''}</div>`;
 
+/** Tomorrow: its three, written here, plus the session and how many tasks are waiting. */
 function tomorrow() {
   const tm = addDays(today(), 1);
-  const top = T.priorities(tm).map((t) => ({ text: t.title }));
-  const tasks = T.onDay(tm).filter((t) => !t.done);
+  const slots = T.slots(tm);
+  const tasks = T.onDay(tm).filter((t) => !t.done && !t.rank);
   const tpl = F.plannedTemplate(tm);
   return html`<section class="plan-tomorrow" data-key="tomorrow" aria-label="Tomorrow">
     <p class="section-label">Tomorrow · ${fmtLong(tm)}</p>
-    ${top.length ? html`<ol class="plan-top">${top.map((p, i) => html`<li><span class="tnum">${i + 1}</span>${p.text}</li>`)}</ol>`
-      : html`<p class="card-lead">No priorities yet. The evening shutdown sets tomorrow’s first one.</p>`}
-    <p class="plan-tomorrow-meta">${icon('activity', { size: 15 })} ${tpl ? tpl.name : 'Recovery · walk or mobility'}${tasks.length ? html` · ${icon('list-todo', { size: 15 })} ${tasks.length} task${tasks.length === 1 ? '' : 's'}` : ''}</p>
+    <ol class="plan-three">${slots.map((t, i) => html`<li data-key="tm-${i}"><span class="tnum">${i + 1}</span>
+      <input class="plan-three-input" value="${t?.title || ''}" data-change="tm-three" data-i="${i}" placeholder="${['The one that matters most', 'Second', 'Third'][i]}" aria-label="Tomorrow’s priority ${i + 1}" enterkeyhint="next" maxlength="140"></li>`)}</ol>
+    <p class="plan-tomorrow-meta">${icon('activity', { size: 15 })} ${tpl ? tpl.name : 'Recovery · walk or mobility'}${tasks.length ? html` · ${icon('list-todo', { size: 15 })} ${tasks.length} more task${tasks.length === 1 ? '' : 's'}` : ''}</p>
+  </section>`;
+}
+
+/** The next seven days: your three for the week (from the weekly review), then each day. */
+function thisWeek() {
+  const ws = startOfWeek(today());
+  const plan = (store.get('weeklyReviews', ws)?.plan || []).filter(Boolean);
+  const days = range(today(), addDays(today(), 6));
+  return html`<section class="block" data-key="week">
+    ${head('This week', 'reflect/review/week', 'Weekly review')}
+    ${plan.length ? html`<div class="card week-plan"><p class="section-label">Your three for the week</p><ol class="plan-top">${plan.map((p, i) => html`<li><span class="tnum">${i + 1}</span>${p}</li>`)}</ol></div>`
+      : html`<p class="muted small">The weekly review sets three things for the week; they show here.</p>`}
+    <ul class="list week-days">${days.map((d) => {
+      const pri = T.priorities(d)[0];
+      const n = T.onDay(d).filter((t) => !t.done).length;
+      const tpl = F.plannedTemplate(d);
+      return html`<li class="row" data-key="wd-${d}"><span class="week-dow">${d === today() ? 'Today' : fmtDayShort(d)}</span>
+        <span class="row-main"><span class="row-title">${pri ? pri.title : n ? `${n} task${n === 1 ? '' : 's'}` : 'Open'}</span>
+          <span class="row-sub">${tpl ? tpl.name : 'Rest or recovery'}${pri && n > 1 ? ` · ${n - 1} more` : ''}</span></span></li>`;
+    })}</ul>
+  </section>`;
+}
+
+function projectsCard() {
+  const list = P.active().slice(0, 4);
+  return html`<section class="block" data-key="projects">
+    ${head('Projects', 'plan/projects', 'All projects')}
+    ${list.length ? html`<ul class="list">${list.map(projectRow)}</ul>` : html`<p class="card-lead">Anything with more than one task: a launch, a move. One level, no folders.</p>`}
+  </section>`;
+}
+
+function booksCard() {
+  const reading = B.byStatus('reading').slice(0, 2);
+  return html`<section class="block" data-key="books">
+    ${head('Reading', 'plan/books', 'All books')}
+    ${reading.length ? html`<ul class="list">${reading.map(bookRow)}</ul>` : html`<p class="card-lead">Add the book you’re reading and “read 20 pages” moves it along.</p>`}
   </section>`;
 }
 
@@ -56,7 +98,7 @@ function goalsCard() {
       const p = G.progress(g);
       return html`<li><a class="row" href="#/plan/goals/${g.id}" data-action="nav" data-to="plan/goals/${g.id}">
         <span class="goal-ring" style="--ic:${catColor(g.category)}">${ring(p.ratio || 0, { size: 38, stroke: 4, color: 'var(--accent)' })}<span class="goal-ic">${icon(CATEGORIES.find((c) => c.id === g.category)?.icon || 'target', { size: 14 })}</span></span>
-        <span class="row-main"><span class="row-title" data-morph="goal-${g.id}">${g.name}</span><span class="row-sub">${p.label || ''}</span></span>
+        <span class="row-main"><span class="row-title" data-morph="goal-${g.id}">${g.name}</span><span class="row-sub">${projectionLine(g) || p.label || ''}</span></span>
         <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>`;
     })}</ul>` : html`<p class="card-lead">No active goals. A goal is a direction your habits serve.</p>`}
   </section>`;
@@ -94,8 +136,14 @@ export default {
       ${pageHead({ title: 'Plan', sub: 'What you’re building.',
         actions: html`<button type="button" class="icon-btn" data-action="open-search" aria-label="Search" aria-keyshortcuts="/">${icon('search', { size: 20 })}</button>` })}
       ${tomorrow()}
+      ${thisWeek()}
       ${habitsCard()}
       ${goalsCard()}
+      ${projectsCard()}
+      ${booksCard()}
       ${tasksAndTraining()}`;
+  },
+  inputs: {
+    'tm-three': ({ el, value }) => T.setPriority(addDays(today(), 1), Number(el.dataset.i), value),
   },
 };

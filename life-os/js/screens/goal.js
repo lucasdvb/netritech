@@ -11,7 +11,8 @@ import { lineChart } from '../ui/charts.js';
 import { pct, num } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
-import { goalSheet } from './goals.js';
+import { goalSheet, projectionLine } from './goals.js';
+import { kgOut, weightUnit } from '../ui/format.js';
 
 export default {
   id: 'goal',
@@ -24,6 +25,11 @@ export default {
     const habits = store.all('habits').filter((h) => !h.archived);
     const est = g.metric === 'bodyFat' ? store.all('bodyFatEstimates').sort((a, b) => (a.date < b.date ? -1 : 1)) : [];
     const calves = g.id === 'g-calves' ? store.all('measurements').filter((m) => m.calves).sort((a, b) => (a.date < b.date ? -1 : 1)) : [];
+    const measure = G.measureOf(g);
+    const pts = measure && g.metric !== 'bodyFat' ? G.series(g).slice(-30) : [];
+    const kgs = measure === 'weight';
+    // Habits in the same area that aren't linked yet: one tap to add.
+    const suggest = habits.filter((h) => h.category === g.category && !(g.habitIds || []).includes(h.id)).slice(0, 4);
     return html`
       ${pageHead({ title: g.name, morph: `goal-${g.id}`, eyebrow: catLabel(g.category), back: { to: 'plan/goals', label: 'Goals' }, actions: html`<button type="button" class="btn btn--soft btn--sm" data-action="edit">Edit</button>` })}
       ${g.description ? html`<p class="lead">${g.description}</p>` : ''}
@@ -33,7 +39,9 @@ export default {
           <p class="muted small">${p.kind === 'numeric' ? (g.metric === 'bodyFat' ? 'From your latest body-fat estimate. An estimate, not a lab value.' : 'Measured value.') : p.kind === 'milestones' ? 'Progress counts finished milestones, not effort.' : 'Average 30-day consistency of the habits below.'}</p>
           ${g.deadline ? html`<p class="muted small">Deadline ${fmtMDY(g.deadline)} · ${Math.max(0, diffDays(g.deadline, today()))} days left</p>` : ''}</div>
       </div>
-      ${g.type === 'numeric' && g.metric == null ? html`<form class="inline-form block-tight" data-submit="set-current"><span class="input-unit"><input name="v" type="number" step="any" value="${g.current ?? ''}" placeholder="Current value" aria-label="Current value"><span>${g.unit}</span></span><button class="btn btn--soft" type="submit">Update</button></form>` : ''}
+      <p class="goal-projection" data-key="projection">${icon('trending-up', { size: 16 })}<span>${projectionLine(g)}</span></p>
+      ${pts.length >= 2 ? html`<div class="card chart-card block-tight">${lineChart({ labels: pts.map((e) => fmtMD(e.date)), series: [{ values: pts.map((e) => (kgs ? kgOut(e.value) : e.value)), color: catColor(g.category), area: true, marks: pts.length < 12, label: g.name }], fmt: (v) => (kgs ? `${num(v, 1)} ${weightUnit()}` : num(v, 1)) })}</div>` : ''}
+      ${g.type === 'numeric' && g.metric == null && (!measure || measure === 'number') ? html`<form class="inline-form block-tight" data-submit="set-current"><span class="input-unit"><input name="v" type="number" step="any" value="${g.current ?? ''}" placeholder="Current value" aria-label="Current value"><span>${g.unit}</span></span><button class="btn btn--soft" type="submit">Update</button></form>` : ''}
       ${est.length >= 2 ? html`<div class="card chart-card block-tight">${lineChart({ labels: est.map((e) => fmtMD(e.date)), series: [{ values: est.map((e) => e.percent), color: catColor(g.category), area: true, marks: true, label: 'Body fat' }], fmt: (v) => `${num(v, 1)}%` })}</div>` : ''}
       ${calves.length >= 2 ? html`<div class="card chart-card block-tight"><p class="section-label">Calf measurement</p>${lineChart({ labels: calves.map((e) => fmtMD(e.date)), series: [{ values: calves.map((e) => e.calves), color: catColor(g.category), area: true, marks: true, label: 'Calves' }], fmt: (v) => `${num(v, 1)} cm` })}</div>` : ''}
 
@@ -50,6 +58,8 @@ export default {
           <span class="row-ic" style="--ic:${habitColor(r.habit)}">${icon(r.habit.icon, { size: 16 })}</span>
           <span class="row-main"><span class="row-title">${r.habit.name}</span><span class="row-sub">30 days</span></span><span class="row-right tnum">${pct(r.c.ratio)}</span></a></li>`)}</ul>`
           : html`<p class="muted small">Link habits and their consistency shows here.</p>`}
+        ${suggest.length ? html`<div class="goal-suggest"><p class="muted small">Suggested from ${catLabel(g.category)}:</p>
+          <div class="chips">${suggest.map((h) => html`<button type="button" class="chip" data-action="link-one" data-id="${h.id}" aria-label="Link ${h.name}">${icon('plus', { size: 14 })}${h.name}</button>`)}</div></div>` : ''}
       </section>
       <div class="danger-zone">
         <button type="button" class="btn btn--soft" data-action="status" data-v="${g.status === 'active' ? 'done' : 'active'}">${g.status === 'active' ? 'Mark achieved' : 'Make active'}</button>
@@ -59,7 +69,15 @@ export default {
   },
   actions: {
     edit: ({ params }) => goalSheet(store.get('goals', params.id)),
-    'set-current': ({ form, params }) => { store.update('goals', params.id, { current: form.v === '' ? null : Number(form.v) }); hap.tap(); },
+    'set-current': ({ form, params }) => {
+      const g = store.get('goals', params.id);
+      const v = form.v === '' ? null : Number(form.v);
+      // Each update is a point in the goal's history, which is what the projection reads.
+      const history = v == null ? g.history || [] : [...(g.history || []).filter((h) => h.date !== today()), { date: today(), value: v }];
+      store.update('goals', params.id, { current: v, history });
+      hap.tap();
+    },
+    'link-one': ({ data, params }) => { const g = store.get('goals', params.id); store.update('goals', g.id, { habitIds: [...new Set([...(g.habitIds || []), data.id])] }); hap.tap(); },
     'toggle-m': ({ data, params }) => {
       const g = store.get('goals', params.id);
       const ms = g.milestones.map((m) => (m.id === data.id ? { ...m, done: !m.done, doneAt: !m.done ? new Date().toISOString() : null } : m));
