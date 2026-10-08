@@ -2,7 +2,7 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
-**Status.** Phases 0–4 are done (see section 15). Phases 5–11 are next, in order.
+**Status.** Phases 0–5 are done (see section 15). Phases 6–11 are next, in order.
 
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
@@ -1068,7 +1068,10 @@ What shipped, against the acceptance criteria: the parser reads a 167-phrase tab
 - **Tests:** parser table (unit), gesture e2e with touch emulation, screen-reader labels.
 - **UX:** the parser must be predictable. It always shows what it understood before saving.
 
-### Phase 5: Rituals and resilience (L)
+### Phase 5: Rituals and resilience (L) · done
+
+What shipped, against the acceptance criteria: the evening ritual asks only what applies (habits left, one win, unfinished tasks, tomorrow's first task) and ends with sealing the day as a press and hold; five screens took under six seconds automated, so about a minute by hand, and every step skips without saving anything. After a simulated five-day absence Today shows a fresh start instead of misses: the gap is marked *away*, runs carry on over it (a 30-day run stayed intact in the test), and no catch-up list appears. Shrink and grow suggestions never repeat within 14 days (tested day by day). Decisions made on the way: the morning check-in became the morning ritual (sleep, how you feel, an optional weigh-in, your three) and is the Now card's first action; *away* is a day mode set only by a fresh start, treated like a sick day by runs and scores and never offered in the mode picker; shrinking sets a two-week temporary target (or "just the tiny version" for yes/no habits, or a pause when there is no tiny version), which ends by itself; grow is +10%, numeric habits only; the backup plan and your why live on the habit and appear in one sheet when you go to mark it *not today*, where doing the backup counts as done; backup plans are seeded for training, reading, meditation and the evening routine (with a migration for existing installs), while whys are left for you to write; the tidy-up appears on Sundays and Mondays and is always reachable from Plan › Habits; every net can be switched off in *Settings › Safety nets*. The Seal the day ceremony itself is Phase 10's.
+
 
 - **Objective:** the daily rhythm and the safety nets that stop you quitting.
 - **Features:**
