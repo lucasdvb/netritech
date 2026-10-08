@@ -1,13 +1,13 @@
 // Rows shared by every block on Today: habit rows, metric tiles, counters and weekly chips.
 import * as store from '../../data/store.js';
-import * as M from '../../domain/metrics.js';
+import * as M from '../../domain/metrics-core.js';
 import * as H from '../../domain/habits.js';
 import { trainingCall } from '../../domain/day-plan.js';
 import { habitColor } from '../../domain/taxonomy.js';
 import { durationHM } from '../../domain/dates.js';
 import { html, raw, cx } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
-import { ring, check } from '../../ui/components.js';
+import { ring, check } from '../../ui/controls.js';
 import { num, habitValue, habitTarget } from '../../ui/format.js';
 
 export const METRIC_SOURCES = ['water', 'protein', 'steps', 'produce'];

@@ -1,8 +1,8 @@
 // The shape of a day: which part of it you're in, whether it's a workday, and today's
 // training call from sleep, energy and stress. Small and needed for the first screen.
 import * as store from '../data/store.js';
-import * as M from './metrics.js';
-import * as F from './fitness.js';
+import * as M from './metrics-core.js';
+import * as F from './fitness-core.js';
 import { dayMode } from './habits.js';
 import { today, minutesOfDay, parseHM, weekday } from './dates.js';
 import { num } from '../ui/format.js';

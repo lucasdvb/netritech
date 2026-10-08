@@ -5,7 +5,7 @@ import { catColor, catLabel } from '../domain/taxonomy.js';
 import { today } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { check } from '../ui/components.js';
+import { check } from '../ui/controls.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 

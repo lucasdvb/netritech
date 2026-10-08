@@ -1,7 +1,7 @@
 // The rest of Today: your three, pinned actions, everything else (folded), and the minimum and
 // sick day lists.
 import * as store from '../../data/store.js';
-import * as M from '../../domain/metrics.js';
+import * as M from '../../domain/metrics-core.js';
 import * as H from '../../domain/habits.js';
 import * as R from '../../domain/routines.js';
 import { SECTIONS, habitColor } from '../../domain/taxonomy.js';
@@ -9,7 +9,7 @@ import { today, fmtTime } from '../../domain/dates.js';
 import { html, raw, cx } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
 import { num, litres } from '../../ui/format.js';
-import { check } from '../../ui/components.js';
+import { check } from '../../ui/controls.js';
 import { habitGroup, metricTile, habitRow, METRIC_SOURCES } from './rows.js';
 
 const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];

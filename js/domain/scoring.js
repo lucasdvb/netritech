@@ -7,7 +7,7 @@ import { priorities } from './tasks.js';
 import { forDay as routinesFor } from './routines.js';
 import { activeHabits, counts, level, isScheduledDay, started, dayMode, trackingStart, DATA_STORES, consistency, stateOf, dueOn, periodDone, lastDoneBefore, isFlexible, skipped } from './habits.js';
 import { today, lastNDays, endOfWeek, endOfMonth, diffDays } from './dates.js';
-import { avg } from './metrics.js';
+import { avg } from './metrics-core.js';
 
 const isTraining = (h) => h.id === 'h-training' || !!h.source?.startsWith('workout:');
 

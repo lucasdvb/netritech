@@ -1,8 +1,8 @@
 // The habit engine: schedules, values, completion, consistency.
 import * as store from '../data/store.js';
 import { priorities } from './tasks.js';
-import * as M from './metrics.js';
-import { workoutFacts } from './fitness.js';
+import * as M from './metrics-core.js';
+import { workoutFacts } from './fitness-core.js';
 import { today, weekday, startOfWeek, endOfWeek, startOfMonth, endOfMonth, range, addDays, diffDays, lastNDays, monthKey } from './dates.js';
 
 export const DATA_STORES = ['habits', 'habitLogs', 'waterLogs', 'nutritionLogs', 'stepLogs', 'sleepEntries', 'dailyReviews',

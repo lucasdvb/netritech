@@ -2,7 +2,7 @@
 import * as store from '../../data/store.js';
 import { html, cx } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
-import { toggle } from '../../ui/components.js';
+import { toggle } from '../../ui/controls.js';
 import { app } from '../../ui/app-api.js';
 import * as hap from '../../ui/haptics.js';
 import { BLOCKS, PINS, DEFAULT_PINS, layoutOf, pinsOf } from './blocks.js';

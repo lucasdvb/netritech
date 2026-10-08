@@ -69,8 +69,17 @@ const wide = matchMedia('(min-width: 1024px)');
 let pane = null; // { route, path, view, ui, params, query, el }
 const ERROR_HTML = () => String(html`<div class="empty"><p class="empty-title">Something went wrong on this screen.</p><p class="empty-body">Your data is safe. Try going back to Today.</p><a class="btn btn--soft" href="#/today">Back to Today</a></div>`);
 
+// How long each view takes to render and reach the page (the last 60), for the performance tests.
+const renderTimes = [];
+function timed(c, fn) {
+  const t0 = performance.now();
+  fn();
+  renderTimes.push({ route: c.route.path, ms: performance.now() - t0 });
+  if (renderTimes.length > 60) renderTimes.shift();
+}
+
 function renderInto(el, c) {
-  try { el.innerHTML = String(c.view.render(ctxOf(c))); } catch (err) { console.error(err); el.innerHTML = ERROR_HTML(); }
+  timed(c, () => { try { el.innerHTML = String(c.view.render(ctxOf(c))); } catch (err) { console.error(err); el.innerHTML = ERROR_HTML(); } });
 }
 
 function markSelected() {
@@ -142,7 +151,7 @@ async function navigate() {
   if (isList) {
     el = pane.el;
     current.el = el;
-    if (!freshPane) patch(el, view.render(ctxOf(current)));
+    if (!freshPane) timed(current, () => patch(el, view.render(ctxOf(current))));
   } else {
     el = document.createElement('div');
     el.className = `view ${dir === 'view--fade' ? '' : dir}${view.wide ? ' view--wide' : ''}${listRoute ? ' split-detail' : ''}`;
@@ -200,7 +209,7 @@ function refresh() {
     if (!current?.el) return;
     try {
       const restore = focusAnchor(main);
-      patch(current.el, current.view.render(ctxOf(current)));
+      timed(current, () => patch(current.el, current.view.render(ctxOf(current))));
       current.view.update?.(current.el, ctxOf(current));
       if (pane && pane.el !== current.el) patch(pane.el, pane.view.render(ctxOf(pane)));
       markSelected();
@@ -453,7 +462,7 @@ async function boot() {
     .then((M) => M.show(mo, { go: (x) => import('./ceremony/finale.js').then((F) => F.finale(x.id)) })))).catch((err) => console.warn(err));
   import('./ui/install.js').then((m) => m.maybePrompt()).catch(() => {});
   if (navigator.storage?.persist) navigator.storage.persisted().then((p) => { if (!p) navigator.storage.persist(); });
-  window.__lifeos = { store, app, ready: true };
+  window.__lifeos = { store, app, ready: true, renders: renderTimes };
 }
 
 boot();

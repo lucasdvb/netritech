@@ -2,7 +2,7 @@
 // your Top 3, anything overdue and, last, one coach suggestion. Everything is a plain rule over
 // your own data; nothing is guessed or sent anywhere.
 import * as store from '../data/store.js';
-import * as M from './metrics.js';
+import * as M from './metrics-core.js';
 import * as H from './habits.js';
 import * as R from './routines.js';
 import * as T from './tasks.js';

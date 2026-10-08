@@ -6,7 +6,7 @@ import { habitColor } from '../../domain/taxonomy.js';
 import { fmtTime } from '../../domain/dates.js';
 import { html, cx } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
-import { check } from '../../ui/components.js';
+import { check } from '../../ui/controls.js';
 
 function step(p, s, i, date) {
   const h = s.habit;
