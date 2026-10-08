@@ -100,7 +100,7 @@ async function openHabitOrSource(h, date) {
   (await sheets()).openHabit(h.id, date);
 }
 
-export default {
+const view = {
   id: 'today',
   title: 'Today',
   wide: true,
@@ -163,6 +163,7 @@ export default {
       n.useAdapt(a);
       netCards = cards;
       nets = a;
+      Object.assign(view.actions, cards.actions);
       // Back after three or more days away: those days read as "away", and a fresh start is offered once.
       const away = !ctx.params.date && a.freshStartDue();
       if (away) {
@@ -206,24 +207,7 @@ export default {
       const h = H.habit(data.id);
       if (h) (await pads()).logTiny(h, date, { onDone: () => settleFor(h.id, date) });
     },
-    'cu-tick': ({ data }) => { const h = H.habit(data.id); if (!h) return; H.tap(h, data.d) ? hap.success() : hap.tap(); },
-    'cu-done': ({ data }) => { nets?.closeCatchUp(data.d); hap.tap(); },
-    'cu-off': ({ data }) => {
-      const before = store.settings()?.nets || {};
-      store.setSettings({ nets: { ...before, catchUp: false } });
-      nets?.closeCatchUp(data.d);
-      app.toast('Catch-up is off. Settings can turn it back on.', { action: { label: 'Undo', fn: () => store.setSettings({ nets: before }) } });
-    },
-    'adapt-yes': ({ data }) => {
-      const p = nets?.suggestions(today()).find((x) => x.habitId === data.id);
-      if (!p) return;
-      const undo = nets.accept(p);
-      hap.success();
-      app.toast(p.kind === 'grow' ? 'Stepped up.' : p.kind === 'pause' ? 'Paused for two weeks.' : 'Smaller for two weeks.', { action: { label: 'Undo', fn: undo } });
-    },
-    'adapt-no': ({ data }) => { nets?.markSuggested(data.id); hap.tap(); },
-    tidy: async () => (await import('./tidy.js')).openTidy(),
-    'tidy-later': () => { nets?.markTidy(); hap.tap(); },
+    // The safety nets' own actions (today/nets.js) join these when they load.
     'unskip-habit': ({ data, params }) => {
       const date = params.date || today();
       const h = H.habit(data.id);
@@ -344,3 +328,5 @@ function attachDaySwipe(root, ctx) {
     app.replace(next === today() ? 'today' : `today/${next}`);
   });
 }
+
+export default view;

@@ -62,6 +62,14 @@ await step('backup → replace restore → data swapped back', async () => {
   const state = await page.evaluate(() => ({ stray: window.__lifeos.store.get('weightEntries', '2001-01-01'), habits: window.__lifeos.store.all('habits').length }));
   if (state.stray) throw new Error('replace kept a record that was not in the backup');
   if (state.habits !== before) throw new Error(`habits ${state.habits} vs ${before}`);
+  // What it replaced was kept as a safety copy, and restoring that copy brings it back.
+  await go('#/more/data', '[data-action="copy-restore"]');
+  const copy = await page.evaluate(async () => (await (await import('./js/data/migrations.js')).safetyBackups())[0]);
+  if (!/before restoring a backup/i.test(copy.reason)) throw new Error(`newest safety copy: ${copy.reason}`);
+  await page.locator('[data-action="copy-restore"]').first().click();
+  await page.locator('.sheet [data-action="yes"]').click();
+  await page.waitForSelector('[data-view="today"]');
+  if (!await page.evaluate(() => window.__lifeos.store.get('weightEntries', '2001-01-01'))) throw new Error('restoring the safety copy did not bring the replaced data back');
 });
 
 await step('bad backup file is rejected without changes', async () => {

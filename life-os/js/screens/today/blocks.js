@@ -6,7 +6,7 @@ import * as H from '../../domain/habits.js';
 import * as R from '../../domain/routines.js';
 import { SECTIONS } from '../../domain/taxonomy.js';
 import { today, fmtTime } from '../../domain/dates.js';
-import { html, raw, cx } from '../../ui/dom.js';
+import { html, cx, dataAttrs } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
 import { num, litres } from '../../ui/format.js';
 import { habitGroup, metricTile, habitRow, METRIC_SOURCES } from './rows.js';
@@ -64,8 +64,7 @@ export function pinnedBlock(date) {
   if (!pins.length) return '';
   return html`<section class="pins" data-key="pinned" aria-label="Pinned actions">${pins.map((k) => {
     const p = PINS[k];
-    const d = Object.entries(p.data || {}).map(([a, b]) => ` data-${a}="${b}"`).join('');
-    return html`<button type="button" class="pin" data-action="${p.act}"${raw(d)} data-key="pin-${k}">
+    return html`<button type="button" class="pin" data-action="${p.act}"${dataAttrs(p.data)} data-key="pin-${k}">
       <span class="pin-top"><span class="pin-ic">${icon(p.ic, { size: 18 })}</span>${p.badge ? html`<span class="pin-badge">${p.badge}</span>` : ''}</span><span class="pin-label">${p.label}</span><span class="pin-val tnum">${p.value(date)}</span></button>`;
   })}</section>`;
 }

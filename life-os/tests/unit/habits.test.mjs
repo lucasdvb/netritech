@@ -3,7 +3,7 @@ import { test } from 'node:test';
 import * as HS from '../../js/domain/habit-system.js';
 import assert from 'node:assert/strict';
 import { fresh, store } from './helpers.mjs';
-import { today, addDays, setDayEnd, startOfWeek } from '../../js/domain/dates.js';
+import { today, addDays, setDayEnd, startOfWeek, diffDays } from '../../js/domain/dates.js';
 import { profileSeed, settingsSeed, habitsSeed } from '../../js/data/seed.js';
 import * as H from '../../js/domain/habits.js';
 import { dayScore } from '../../js/domain/scoring.js';
@@ -64,6 +64,28 @@ test('weekly habits keep runs by the week', async () => {
   const r = H.runs(H.habit('s'));
   assert.equal(r.unit, 'week');
   assert.ok(r.current >= 3, `current ${r.current}`);
+});
+
+test('a week or month only partly usable needs its share of the count', async () => {
+  // Started on a Sunday and done that day: a one-day week can't hold three, so it isn't a miss.
+  const lastWeek = addDays(startOfWeek(T), -7);
+  const sunday = addDays(lastWeek, -1);
+  await world([simple('s', { schedule: { kind: 'perWeek', count: 3 } })], sunday);
+  done('s', -diffDays(T, sunday));
+  for (const n of [0, 2, 4]) done('s', -diffDays(T, addDays(lastWeek, n)));
+  let p = H.periodsOf(H.habit('s'), sunday, addDays(lastWeek, 6));
+  assert.deepEqual(p.map((x) => x.met), [true, true], 'the one-day week and the full week are both met');
+  assert.equal(H.runs(H.habit('s'), addDays(lastWeek, 6)).missesInRow, 0);
+  // Four sick days: the three left need two, not three.
+  await world([simple('s', { schedule: { kind: 'perWeek', count: 3 } })], d(-60));
+  for (const n of [0, 1, 2, 3]) store.put('dailyReviews', { id: addDays(lastWeek, n), date: addDays(lastWeek, n), mode: 'sick' });
+  for (const n of [4, 6]) done('s', -diffDays(T, addDays(lastWeek, n)));
+  p = H.periodsOf(H.habit('s'), lastWeek, addDays(lastWeek, 6));
+  assert.deepEqual(p.map((x) => x.met), [true]);
+  // A full week still needs all three, and the week in progress isn't judged early.
+  await world([simple('s', { schedule: { kind: 'perWeek', count: 3 } })], d(-60));
+  for (const n of [0, 1]) done('s', -diffDays(T, addDays(lastWeek, n)));
+  assert.deepEqual(H.periodsOf(H.habit('s'), lastWeek, addDays(lastWeek, 6)).map((x) => x.met), [false]);
 });
 
 test('only three habits can be in focus', async () => {

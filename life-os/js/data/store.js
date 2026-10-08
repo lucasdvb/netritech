@@ -30,6 +30,8 @@ let scheduled = false;
 let pending = [];
 let draining = false;
 let writes = Promise.resolve();
+// Each record's writes not yet on disk, so a failed one is undone without undoing a later one.
+const unsaved = new Map();
 
 const TZ = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || null; } catch { return null; } })();
 
@@ -47,6 +49,7 @@ const RECENT_DAYS = 21;
 let partial = new Set();
 let rest = Promise.resolve();
 let restDone = null;
+let restFailed = null;
 export const complete = () => rest;
 
 function fill(s, rows) {
@@ -72,23 +75,41 @@ export async function init({ recentFirst = false } = {}) {
   const first = (s) => (STORES[s].indexes.includes('date') ? adapter.getSince(s, since) : []);
   const results = await Promise.all(CACHED.map((s) => (partial.has(s) ? first(s) : adapter.getAll(s))));
   CACHED.forEach((s, i) => fill(s, results[i]));
-  rest = partial.size ? new Promise((resolve) => { restDone = resolve; }) : Promise.resolve();
+  rest = partial.size ? new Promise((resolve, reject) => { restDone = resolve; restFailed = reject; }) : Promise.resolve();
+  rest.catch(() => {}); // reported where it's awaited
 }
 
 /** Load the rest of the deferred stores (after the first screen). Anything written meanwhile is kept. */
 export async function loadRest() {
   if (!partial.size) return;
   const names = [...partial];
-  const rows = await Promise.all(names.map((s) => adapter.getAll(s)));
+  let rows;
+  try {
+    rows = await Promise.all(names.map((s) => adapter.getAll(s)));
+  } catch (err) {
+    // A backup waiting for all of it fails rather than saving part.
+    restFailed?.(err);
+    restDone = restFailed = null;
+    throw err;
+  }
+  const newer = (a, b) => (a.updatedAt || '') > (b?.updatedAt || '');
   names.forEach((s, i) => {
     const mine = cache[s];
+    const gone = tombs[s];
     fill(s, rows[i]);
-    for (const [id, r] of mine) if (!cache[s].has(id) || (r.updatedAt || '') > (cache[s].get(id).updatedAt || '')) cache[s].set(id, r);
+    for (const [id, r] of mine) if (!cache[s].has(id) || newer(r, cache[s].get(id))) cache[s].set(id, r);
+    // A delete made meanwhile may not be on the disk yet: it still holds.
+    for (const [id, t] of gone) {
+      const live = cache[s].get(id);
+      if (live && !newer(t, live)) continue; // written again since
+      cache[s].delete(id);
+      if (newer(t, tombs[s].get(id))) tombs[s].set(id, t);
+    }
   });
   partial = new Set();
   names.forEach((s) => emit(s));
   restDone?.();
-  restDone = null;
+  restDone = restFailed = null;
 }
 
 /**
@@ -128,8 +149,8 @@ const SAVE_FAILED = 'Couldn’t save that entry. Your data is still safe. Try ag
 const DELETE_FAILED = 'Couldn’t delete that. Nothing was lost. Try again.';
 
 // Queue disk operations; everything queued in the same moment lands in one transaction.
-function enqueue(ops, rollback, message) {
-  pending.push({ ops, rollback, message });
+function enqueue(ops, rollback, message, commit) {
+  pending.push({ ops, rollback, message, commit });
   if (!draining) {
     draining = true;
     queueMicrotask(drain);
@@ -142,7 +163,9 @@ function drain() {
   const group = pending;
   pending = [];
   const ops = group.flatMap((g) => g.ops);
-  writes = writes.then(() => adapter.write(ops)).catch((err) => {
+  writes = writes.then(() => adapter.write(ops)).then(() => {
+    for (const g of group) g.commit();
+  }, (err) => {
     for (const g of [...group].reverse()) g.rollback();
     if (!closed) fail(err, group[group.length - 1].message);
   });
@@ -179,27 +202,56 @@ function apply(store, op, ts) {
   if (!('delete' in op) && !op.value.id) op = { ...op, value: { ...op.value, id: uid() } };
   const id = op.delete ?? op.value.id;
   const prev = cache[store].get(id);
-  const prevTomb = tombs[store].get(id);
-  const undo = () => {
-    if (prev) cache[store].set(prev.id, prev);
-    else cache[store].delete(id);
-    if (prevTomb) tombs[store].set(prevTomb.id, prevTomb);
-    else tombs[store].delete(id);
-  };
+  if ('delete' in op && !prev) return null;
+  const w = track(store, id, prev, tombs[store].get(id));
+  const undo = () => undoWrite(w);
+  const commit = () => commitWrite(w);
   if ('delete' in op) {
-    if (!prev) return null;
     cache[store].delete(id);
-    if (LOCAL_ONLY.has(store)) return { disk: [{ store, delete: id }], undo, touched: [prev], prev };
+    if (LOCAL_ONLY.has(store)) return { disk: [{ store, delete: id }], undo, commit, touched: [prev], prev };
     const t = tombstoneOf(prev, ts);
     tombs[store].set(id, t);
-    return { disk: [{ store, value: t }, outboxEntry(store, t, 'delete')], undo, touched: [prev], prev };
+    return { disk: [{ store, value: t }, outboxEntry(store, t, 'delete')], undo, commit, touched: [prev], prev };
   }
   const rec = stamp(store, op.value, ts);
   cache[store].set(rec.id, rec);
   tombs[store].delete(rec.id);
   const disk = [{ store, value: rec }];
   if (!LOCAL_ONLY.has(store)) disk.push(outboxEntry(store, rec, 'put'));
-  return { disk, undo, touched: [rec, prev], value: rec };
+  return { disk, undo, commit, touched: [rec, prev], value: rec };
+}
+
+// Writes land in order: when one settles, every older write of the same record has too.
+function track(store, id, prev, prevTomb) {
+  const key = `${store}\u0000${id}`;
+  const w = { store, id, key, prev, prevTomb, older: unsaved.get(key) || null, newer: null };
+  if (w.older) w.older.newer = w;
+  unsaved.set(key, w);
+  return w;
+}
+
+function unlink(w) {
+  if (w.older) w.older.newer = w.newer;
+  if (w.newer) w.newer.older = w.older;
+  else if (w.older) unsaved.set(w.key, w.older);
+  else unsaved.delete(w.key);
+}
+
+/** It reached the disk. */
+function commitWrite(w) { unlink(w); }
+
+/** It failed: put back what it replaced, or leave that to a later write still on its way. */
+function undoWrite(w) {
+  unlink(w);
+  if (w.newer) {
+    w.newer.prev = w.prev;
+    w.newer.prevTomb = w.prevTomb;
+    return;
+  }
+  if (w.prev) cache[w.store].set(w.id, w.prev);
+  else cache[w.store].delete(w.id);
+  if (w.prevTomb) tombs[w.store].set(w.id, w.prevTomb);
+  else tombs[w.store].delete(w.id);
 }
 
 export function put(store, record) {
@@ -239,7 +291,7 @@ export function batch(ops, message = SAVE_FAILED) {
   enqueue(applied.flatMap((a) => a.disk), () => {
     for (const a of [...applied].reverse()) a.undo();
     byStore.forEach((recs, store) => emit(store, recs));
-  }, message);
+  }, message, () => { for (const a of applied) a.commit(); });
   return applied.filter((a) => a.value).map((a) => a.value);
 }
 

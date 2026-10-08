@@ -28,6 +28,8 @@ export function html(strings, ...values) {
 }
 
 export const attr = (cond, name, value = '') => (cond ? raw(value === '' ? ` ${name}` : ` ${name}="${esc(value)}"`) : '');
+/** data-* attributes from an object, values escaped. */
+export const dataAttrs = (data = {}) => raw(Object.entries(data).map(([k, v]) => ` data-${k}="${esc(v)}"`).join(''));
 export const cx = (...xs) => xs.filter(Boolean).join(' ');
 
 export const $ = (sel, root = document) => root.querySelector(sel);

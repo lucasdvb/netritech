@@ -2,7 +2,7 @@ import * as store from '../data/store.js';
 import { deleteWithUndo } from '../ui/undo.js';
 import * as G from '../domain/goals.js';
 import { catLabel, catColor, habitColor } from '../domain/taxonomy.js';
-import { fmtMDY, today, diffDays, fmtMD } from '../domain/dates.js';
+import { fmtMDY, today, dayAt, diffDays, fmtMD } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty, check, ring } from '../ui/components.js';
@@ -47,7 +47,7 @@ export default {
       <section class="block"><div class="block-head"><h2 class="block-title">Milestones</h2><button type="button" class="link-btn" data-action="add-m">${icon('plus', { size: 15 })} Add</button></div>
         ${(g.milestones || []).length ? html`<ul class="list">${g.milestones.map((m) => html`<li class="row milestone ${m.done ? 'is-done' : ''}" data-key="${m.id}">
           ${check(m.done, { action: 'toggle-m', data: { id: m.id }, label: m.title, color: catColor(g.category) })}
-          <span class="row-main"><span class="row-title">${m.title}</span>${m.doneAt ? html`<span class="row-sub">Done ${fmtMDY(m.doneAt.slice(0, 10))}</span>` : ''}</span>
+          <span class="row-main"><span class="row-title">${m.title}</span>${m.doneAt ? html`<span class="row-sub">Done ${fmtMDY(dayAt(m.doneAt))}</span>` : ''}</span>
           <button type="button" class="icon-btn icon-btn--sm" data-action="del-m" data-id="${m.id}" aria-label="Remove milestone">${icon('x', { size: 15 })}</button></li>`)}</ul>`
           : html`<p class="muted small">Milestones make qualitative goals concrete. Add one when it helps.</p>`}
       </section>

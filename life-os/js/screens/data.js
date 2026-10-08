@@ -1,8 +1,8 @@
 import * as store from '../data/store.js';
 import { buildBackup, inspect, restore, CSV_SETS, saveFile } from '../data/backup.js';
 import { loadDemo, removeDemo, hasDemo } from '../data/demo.js';
-import { safetyBackups, safetyBackupFile } from '../data/migrations.js';
-import { today, fmtMDY, fmtTime, relativeDay, dayOf } from '../domain/dates.js';
+import { safetyBackup, safetyBackups, safetyBackupFile } from '../data/migrations.js';
+import { today, fmtMDY, fmtTime, relativeDay, dayOf, dayAt } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, toggle, settingRow } from '../ui/components.js';
@@ -47,7 +47,7 @@ export default {
         </div>
       </section>
       ${copies.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Safety copies</h2></div>
-        <p class="fine-print">Saved automatically, on this device, before Life OS updates how your data is stored. The last three are kept.</p>
+        <p class="fine-print">Saved automatically, on this device, before Life OS updates how your data is stored and before a backup is restored. The last three are kept.</p>
         <ul class="list">${copies.map((c) => html`<li data-key="copy-${c.id}"><button type="button" class="row" data-action="copy-restore" data-id="${c.id}"><span class="row-ic">${icon('history', { size: 16 })}</span><span class="row-main"><span class="row-title">${fmtMDY(dayOf(new Date(c.id)))} · ${fmtTime(new Date(c.id))}</span><span class="row-sub">${c.reason}</span></span><span class="row-right">Restore</span></button></li>`)}</ul>
       </section>` : ''}
       <section class="block"><div class="block-head"><h2 class="block-title">Export as CSV</h2></div>
@@ -75,10 +75,10 @@ export default {
   actions: {
     photos: ({ ui }) => { ui.photos = !ui.photos; app.refresh(); },
     'copy-restore': async ({ data }) => {
-      const ok = await app.confirm({ title: 'Restore this safety copy?', body: 'Your data goes back to how it was when the copy was saved. Anything entered since then will be replaced.', confirm: 'Restore', tone: 'danger' });
+      const ok = await app.confirm({ title: 'Restore this safety copy?', body: 'Your data goes back to how it was when the copy was saved. What’s here now is kept as a new safety copy first.', confirm: 'Restore', tone: 'danger' });
       if (!ok) return;
       try {
-        await doRestore(await safetyBackupFile(data.id), 'replace');
+        await doRestore(await safetyBackupFile(data.id), 'replace', 'Before restoring a safety copy');
       } catch (err) {
         console.error(err);
         app.toast(`${err.message} Nothing was changed.`, { tone: 'danger' });
@@ -130,7 +130,7 @@ export default {
       app.sheet({
         title: 'Restore backup',
         render: () => html`<div class="form">
-          <p class="sheet-note">Backup from ${info.exportedAt ? fmtMDY(info.exportedAt.slice(0, 10)) : 'an unknown date'} · ${num(total)} records${info.includesPhotos ? ' · includes photos' : ''}.</p>
+          <p class="sheet-note">Backup from ${dayAt(info.exportedAt) ? fmtMDY(dayAt(info.exportedAt)) : 'an unknown date'} · ${num(total)} records${info.includesPhotos ? ' · includes photos' : ''}.</p>
           <dl class="facts facts--plain">${Object.entries(info.counts).filter(([, n]) => n).map(([k, n]) => html`<div><dt>${k}</dt><dd>${num(n)}</dd></div>`)}</dl>
           <button type="button" class="btn btn--primary btn--block" data-action="merge">Merge with what’s here</button>
           <p class="fine-print">Adds anything new and keeps the newer version of anything that exists in both.</p>
@@ -140,7 +140,7 @@ export default {
           merge: async ({ sheet }) => { app.closeSheet(sheet); await doRestore(json, 'merge'); },
           replace: async ({ sheet }) => {
             app.closeSheet(sheet);
-            const ok = await app.confirm({ title: 'Replace everything?', body: 'All current data on this device will be swapped for the backup. This can’t be undone.', confirm: 'Replace', tone: 'danger' });
+            const ok = await app.confirm({ title: 'Replace everything?', body: 'All current data on this device will be swapped for the backup. A safety copy of it is kept first, under Safety copies.', confirm: 'Replace', tone: 'danger' });
             if (ok) await doRestore(json, 'replace');
           },
         },
@@ -149,8 +149,10 @@ export default {
   },
 };
 
-async function doRestore(json, mode) {
+async function doRestore(json, mode, reason = mode === 'merge' ? 'Before merging a backup' : 'Before restoring a backup') {
   try {
+    // What's here now is kept as a safety copy first, so any restore can be taken back.
+    await safetyBackup(reason);
     await restore(json, mode);
     hap.success();
     app.toast(mode === 'merge' ? 'Backup merged' : 'Backup restored', { icon: 'check' });

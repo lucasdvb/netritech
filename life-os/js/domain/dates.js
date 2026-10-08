@@ -17,6 +17,13 @@ export const dayOf = (date = new Date()) => {
   return minutesOfDay(date) < dayEnd ? addDays(iso, -1) : iso;
 };
 export const today = () => dayOf(new Date());
+/** The day a stored timestamp (createdAt, doneAt…) belongs to here: its UTC date can be a day out. */
+export const dayAt = (stamp) => {
+  if (!stamp) return null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(stamp)) return stamp;
+  const t = new Date(stamp);
+  return Number.isNaN(t.getTime()) ? null : dayOf(t);
+};
 export const addDays = (iso, n) => {
   const d = fromISO(iso);
   d.setDate(d.getDate() + n);

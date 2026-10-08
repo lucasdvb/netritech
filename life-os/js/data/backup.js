@@ -2,6 +2,7 @@
 import * as store from './store.js';
 import { blobs } from './blobs.js';
 import { STORES, DB_VERSION, BACKUP_STORES } from './schema.js';
+import { dayAt } from '../domain/dates.js';
 
 export const APP_ID = 'life-os';
 const DATA_STORES = BACKUP_STORES;
@@ -49,6 +50,9 @@ export async function restore(json, mode = 'replace') {
   for (const s of DATA_STORES) incoming[s] = Array.isArray(json.data[s]) ? json.data[s] : [];
   // A backup without your profile or settings keeps the ones you have.
   for (const s of ['profile', 'settings']) if (!incoming[s]?.length) incoming[s] = store.all(s);
+  // Without the seed marker the next start would take this for a new install and seed over it:
+  // marked as seeded at the first version, the built-in habits are brought up to date instead.
+  if (!incoming.meta.some((r) => r.id === 'seed')) incoming.meta = [...incoming.meta, { id: 'seed', version: 1 }];
   let photoBlobs = null;
   if (Array.isArray(json.data.photoBlobs)) {
     photoBlobs = await Promise.all(json.data.photoBlobs.map(async (p) => ({ id: p.id, blob: await dataURLToBlob(p.dataUrl), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() })));
@@ -97,7 +101,7 @@ export const CSV_SETS = {
   sleep: { label: 'Sleep & mood', make: () => toCSV(store.all('sleepEntries').sort(byDate).map((s) => ({ ...s, ...(store.get('moodEntries', s.date) || {}) })), ['date', 'bedtime', 'wake', 'hours', 'quality', 'energy', 'stress', 'mood', 'body']) },
   workouts: { label: 'Workout sets', make: () => toCSV(store.all('workoutSets').filter((s) => s.completed).sort(byDate).map((s) => ({ ...s, workout: store.get('workouts', s.workoutId)?.title, exercise: store.get('exercises', s.exerciseId)?.name })), ['date', 'workout', 'exercise', 'setIndex', 'reps', 'load', 'seconds', 'minutes']) },
   journal: { label: 'Journal', make: () => toCSV(store.all('journalEntries').sort(byDate).map((j) => ({ ...j, answers: Object.values(j.answers || {}).join(' | ') })), ['date', 'kind', 'answers', 'text']) },
-  tasks: { label: 'Tasks', make: () => toCSV(store.all('tasks').sort((a, b) => (a.date || '9999').localeCompare(b.date || '9999')).map((t) => ({ ...t, repeat: t.repeat ? `${t.repeat.kind}:${t.repeat.day}` : '', doneAt: t.doneAt ? t.doneAt.slice(0, 10) : '' })), ['date', 'title', 'area', 'repeat', 'done', 'doneAt', 'notes']) },
+  tasks: { label: 'Tasks', make: () => toCSV(store.all('tasks').sort((a, b) => (a.date || '9999').localeCompare(b.date || '9999')).map((t) => ({ ...t, repeat: t.repeat ? `${t.repeat.kind}:${t.repeat.day}` : '', doneAt: dayAt(t.doneAt) || '' })), ['date', 'title', 'area', 'repeat', 'done', 'doneAt', 'notes']) },
 };
 function byDate(a, b) { return (a.date || '') < (b.date || '') ? -1 : 1; }
 

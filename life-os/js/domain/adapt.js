@@ -5,7 +5,7 @@ import * as store from '../data/store.js';
 import * as H from './habits.js';
 import { planHabits } from './scoring.js';
 import * as R from './routines.js';
-import { today, addDays, diffDays, range } from './dates.js';
+import { today, dayAt, addDays, diffDays, range } from './dates.js';
 
 export const FORTNIGHT = 14;
 export const netOn = (name) => store.settings()?.nets?.[name] !== false;
@@ -139,7 +139,7 @@ export function lastActive(date = today()) {
   return store.memo(`last-active:${date}`, [...ACTIVITY, 'tasks'], () => {
     let best = null;
     for (const s of ACTIVITY) for (const r of store.all(s)) if (r.date && r.date < date && (!best || r.date > best)) best = r.date;
-    for (const t of store.all('tasks')) { const d = t.doneAt?.slice(0, 10); if (t.done && d && d < date && (!best || d > best)) best = d; }
+    for (const t of store.all('tasks')) { const d = dayAt(t.doneAt); if (t.done && d && d < date && (!best || d > best)) best = d; }
     return best;
   });
 }
