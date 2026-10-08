@@ -614,10 +614,12 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 .ritual-seal { display: grid; place-items: center; padding: var(--s4) 0; }
 .ritual-foot { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); position: sticky; bottom: 0; padding: var(--s3) 0 var(--s1); background: var(--bg-elevated); }
 .ritual-go { display: flex; gap: 8px; }
+/* The sheet's bottom padding sits under the footer; cover it so nothing scrolls into view below the buttons. */
+.ritual-foot::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 80px; background: var(--bg-elevated); }
 
 /* ---------- before you skip: your why and a backup plan (H10, H6) ---------- */
 .skip-sheet { gap: var(--s4); }
-.why-line { font-size: var(--text-h3); font-weight: var(--weight-semibold); line-height: var(--leading-h3); letter-spacing: var(--tracking-h3); color: var(--text); }
+.why-line { margin: 0; font-size: var(--text-h3); font-weight: var(--weight-semibold); line-height: var(--leading-h3); letter-spacing: var(--tracking-h3); color: var(--text); }
 .why-count { font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); color: var(--text-2); }
 .backup-card { display: flex; flex-direction: column; gap: 6px; padding: var(--s4); border-radius: var(--r-lg); background: var(--surface-2); }
 .backup-if { font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-3); }
