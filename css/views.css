@@ -8,6 +8,8 @@
 .mode-chip {
   display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px 0 12px; border-radius: var(--r-pill);
   background: var(--surface); color: var(--text); font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+.mode-chip { white-space: nowrap; flex: none; }
+@media (max-width: 385px) { .mode-day { display: none; } } /* small phones: the date keeps its room */
 .mode-chip--minimum { background: var(--accent); color: var(--on-accent); }
 .mode-chip--sick { background: var(--warn-soft); color: var(--warn); }
 .mode-chip--rest { background: color-mix(in srgb, var(--c-posture) 14%, transparent); color: var(--c-posture); }

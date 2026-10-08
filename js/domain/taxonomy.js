@@ -42,7 +42,7 @@ export const SCHEDULES = [
 ];
 
 export const MODES = {
-  normal: { label: 'Normal day', short: 'Normal', icon: 'sun' },
+  normal: { label: 'Normal day', short: 'Normal', icon: 'activity' },
   minimum: { label: 'Minimum day', short: 'Minimum', icon: 'leaf', hint: 'Just the essentials. Never abandon the system completely.' },
   rest: { label: 'Rest day', short: 'Rest', icon: 'sofa', hint: 'Lower intensity: walking, mobility, family.' },
   sick: { label: 'Sick day', short: 'Sick', icon: 'thermometer', hint: 'Rest, fluids, food, sleep. Scoring is paused.' },

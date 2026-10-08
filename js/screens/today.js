@@ -58,7 +58,7 @@ function header(date, ph, mode, isToday) {
       <button type="button" class="date-btn" data-action="pick-day" aria-label="${fmtLong(date)}. Choose a day">
         ${icon('calendar', { size: 16 })}<span class="d-long">${fmtLong(date)}</span><span class="d-short">${fmtShortDate(date)}</span></button>
       <div class="today-tools">
-        <button type="button" class="${cx('mode-chip', mode !== 'normal' && `mode-chip--${mode}`)}" data-action="mode" aria-label="Day mode: ${mod.label}">${icon(mod.icon, { size: 15 })}<span>${mod.short}</span></button>
+        <button type="button" class="${cx('mode-chip', mode !== 'normal' && `mode-chip--${mode}`)}" data-action="mode" aria-label="Day mode: ${mod.label}">${icon(mod.icon, { size: 15 })}<span>${mod.short}${mode !== 'away' ? html`<span class="mode-day"> day</span>` : ''}</span></button>
         <button type="button" class="icon-btn" data-action="edit-today" aria-label="Edit Today">${icon('sliders-horizontal', { size: 19 })}</button>
         <button type="button" class="you-btn" data-action="you" aria-label="You: settings, data and privacy">${(store.profile().name || 'Y').slice(0, 1).toUpperCase()}</button>
       </div>
