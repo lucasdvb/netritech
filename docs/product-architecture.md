@@ -1304,7 +1304,7 @@ Where it ends:
 
 The owner asked for a complete list of improvements: researched habit science and the most successful habit apps, nothing bulky. The list was mapped against the app, and the owner approved everything except the people features (an accountability buddy, keep-in-touch rhythm) and the privacy and devices group (Face ID lock, sync, AI). Each item below names the evidence it rests on.
 
-Partway through, the owner made automatic sync between devices a must, so it was brought in ahead of 13c (see **Sync** below). 13a to 13d are built.
+Partway through, the owner made automatic sync between devices a must, so it was brought in ahead of 13c (see **Sync** below). 13a to 13e are built.
 
 **13a. Fixes and the consistency core**
 1. **Apple Health lands in the right copy.**
@@ -1391,6 +1391,11 @@ Partway through, the owner made automatic sync between devices a must, so it was
     - "Try it for 7, 14 or 21 days": a habit, and up to two things to watch (sleep, mood, energy, plan done, weight, steps).
     - At the end, the same number of days before and during are compared, and you keep it or drop it.
 18. **On this day.** Reflect shows your entry or win from a year ago, or else a month ago, when there is one.
+
+**How 13e was built.**
+- *What helps you* is a rule in the insight engine. For each habit it compares the days it counted with the days it was due and didn't, on how the next day went: plan done, energy and mood, the last 60 days. It needs 5 days each way and a clear gap (12 points of plan done, or a point of energy or mood), and keeps the habit's strongest measure. Only the strongest habit is shown at a time, worded as a pattern ("the day after… A pattern, not proof"), and its one tap keeps the habit on Minimum days, with Undo. Looking at the next day keeps the habit from counting towards its own result.
+- *Experiments* sit on Reflect: one at a time, for 7, 14 or 21 days, on a habit you have or a new one, watching up to two of sleep, mood, energy, plan done, weight and steps. While it runs: the day, the days done, before against so far. At the end each value gets a verdict (better, worse, about the same, or not enough logged), and you keep it or drop it. Dropping archives a habit made for the experiment (its history stays) and leaves one you already had alone; both with Undo.
+- *On this day* is a card under today's page on Reflect: the journal entry, or else the day's win, from the same day a year ago, or else a month ago (a day either side for a year, and the month's last day when it's shorter). A journal entry opens when tapped.
 
 **13f. Direction**
 19. **Plan for the obstacle.**

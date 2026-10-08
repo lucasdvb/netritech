@@ -1165,3 +1165,11 @@
 .push-list .row-ic { width: auto; min-width: 52px; font-size: var(--text-caption); font-weight: var(--weight-semibold); color: var(--text); background: var(--surface-2); border-radius: var(--r-sm); padding: 0 6px; }
 .gym-step-note { color: var(--gym-dim); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
 .gym-step-note b { color: var(--accent); font-weight: var(--weight-semibold); }
+/* on this day, experiments (13e) */
+.memory { display: flex; flex-direction: column; gap: 6px; }
+.memory-eyebrow { display: flex; align-items: center; gap: 6px; font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-2); }
+.memory-text { font-size: var(--text-body-lg); line-height: var(--leading-body-lg); letter-spacing: var(--tracking-body); color: var(--text); }
+.memory-kind { font-size: var(--text-caption); line-height: var(--leading-caption); color: var(--text-2); }
+.exp-card { display: flex; flex-direction: column; gap: var(--s3); }
+.exp-line { font-size: var(--text-body); line-height: var(--leading-body); letter-spacing: var(--tracking-body); color: var(--text); }
+.exp-facts b { color: var(--accent-ink); font-weight: var(--weight-semibold); }

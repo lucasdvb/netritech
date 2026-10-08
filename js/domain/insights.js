@@ -218,9 +218,55 @@ function forgotten(date) {
   return out.slice(0, 1);
 }
 
+/**
+ * What helps you (13e): days with a habit against days it was due and skipped, on how the next day
+ * went (plan done, mood, energy), over the last 60 days. Needs 5 days each way and a clear
+ * difference, and says it's a pattern, not a cause. The one tap protects the habit: it stays on
+ * Minimum days. Answers the brief's "what habits are correlated with better weeks?"
+ */
+export const HELPS = { days: 60, least: 5, plan: 0.12, scale: 1 };
+export function helpsFor(h, date) {
+  const end = addDays(date, -2); // the day after must be complete too
+  const days = range(addDays(date, -(HELPS.days + 1)), end).filter((d) => d >= H.trackingStart() && !H.isOff(H.dayMode(d)) && H.dueOn(h, d));
+  const yes = days.filter((d) => H.counts(h, d));
+  const no = days.filter((d) => !H.counts(h, d));
+  if (yes.length < HELPS.least || no.length < HELPS.least) return null;
+  const next = (d) => addDays(d, 1);
+  const measures = [
+    { key: 'plan', what: 'of your plan done', get: (d) => dayScore(next(d)).ratio, min: HELPS.plan, fmt: pct },
+    { key: 'energy', what: 'energy', get: (d) => M.mood(next(d))?.energy, min: HELPS.scale, fmt: (v) => `${num(v, 1)}/10` },
+    { key: 'mood', what: 'mood', get: (d) => M.mood(next(d))?.mood, min: HELPS.scale, fmt: (v) => `${num(v, 1)}/10` },
+  ];
+  let best = null;
+  for (const m of measures) {
+    const a = yes.map(m.get).filter((v) => v != null), b = no.map(m.get).filter((v) => v != null);
+    if (a.length < HELPS.least || b.length < HELPS.least) continue;
+    const diff = mean(a) - mean(b);
+    if (diff < m.min) continue;
+    const score = diff / m.min;
+    if (!best || score > best.score) best = { ...m, with: mean(a), without: mean(b), nWith: a.length, nWithout: b.length, score };
+  }
+  return best;
+}
+
+function helps(date) {
+  const out = [];
+  for (const h of H.activeHabits()) {
+    if (h.mvd || H.isLimit(h) || H.stateOf(h, date) === 'paused') continue;
+    const b = helpsFor(h, date);
+    if (!b) continue;
+    out.push({ id: `helps-${h.id}`, area: 'What helps you', weight: 0.7 + Math.min(0.6, b.score / 10),
+      title: `The day after ${h.name} goes better`,
+      detail: `Over the last ${HELPS.days} days, the day after ${h.name} you had ${b.fmt(b.with)} ${b.what}, against ${b.fmt(b.without)} after a day without it (${b.nWith} and ${b.nWithout} days). A pattern, not proof, but worth protecting.`,
+      action: { label: `Keep ${h.name} on Minimum days`, done: `${h.name} now stays on Minimum days.`,
+        apply: () => { const before = { ...H.habit(h.id) }; store.put('habits', { ...before, mvd: true }); return () => store.put('habits', before); } } });
+  }
+  return out.sort((a, b) => b.weight - a.weight).slice(0, 1);
+}
+
 export const rules = {
   id: 'rules',
-  run: (date) => [weakRoutine, weakDay, sleepLink, trainingDays, autopilot, weightStall, proteinGap, stepsGap, forgotten].flatMap((f) => f(date)),
+  run: (date) => [weakRoutine, weakDay, sleepLink, trainingDays, autopilot, weightStall, proteinGap, stepsGap, forgotten, helps].flatMap((f) => f(date)),
 };
 
 /* ---------- the engine interface ---------- */
