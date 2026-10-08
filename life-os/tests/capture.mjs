@@ -42,7 +42,7 @@ async function touch(p, sel, { dx = 0, hold = 0 } = {}) {
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
   if (hold) await p.waitForTimeout(hold);
   const steps = 8;
-  for (let i = 1; i <= steps && dx; i++) {
+  if (dx) for (let i = 1; i <= steps; i++) {
     await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x + (dx * i) / steps, y }] });
     await p.waitForTimeout(16);
   }

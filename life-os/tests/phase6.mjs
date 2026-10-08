@@ -102,7 +102,7 @@ await step('edit, delete and undo', async () => {
 
 await step('shutdown moves unfinished tasks to tomorrow', async () => {
   await go('#/today', '.today');
-  const moved = await ev(async () => {
+  await ev(async () => {
     const S = await import('./js/screens/sheets.js');
     const { today } = await import('./js/domain/dates.js');
     S.openShutdown(today());

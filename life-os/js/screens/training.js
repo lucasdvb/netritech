@@ -60,11 +60,9 @@ function coreCard() {
 
 function postureCard() {
   const mob = H.habit('h-mobility');
-  const brk = H.habit('h-breaks');
   const desk = H.habit('h-desk');
   const days = lastNDays(today(), diffDays(today(), startOfWeek(today())) + 1);
   const mobDays = mob ? days.filter((d) => H.isDone(mob, d)).length : 0;
-  const breaks = days.map((d) => M.review(d)?.breaks || 0);
   const workdays = days.filter((d) => (store.profile().workDays || []).includes(weekday(d)));
   const avgBreaks = workdays.length ? workdays.reduce((a, d) => a + (M.review(d)?.breaks || 0), 0) / workdays.length : 0;
   return html`<div class="card">

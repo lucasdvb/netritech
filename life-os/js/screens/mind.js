@@ -47,7 +47,7 @@ export default {
       <section class="block"><div class="block-head"><h2 class="block-title">Reading & learning · 14 days</h2><span class="block-meta">target 20 min/day</span></div>
         <div class="card">${barChart({ labels: days.map((d) => fmtDayShort(d).slice(0, 1)), tipLabels: days.map(fmtMD), values: days.map((d) => M.mindMinutes(d) || null), color: 'var(--c-mind)', fmt: (v) => `${v} min`, goal: { value: 20, label: '20' } })}</div>
       </section>
-      <section class="block"><div class="block-head"><h2 class="block-title">Books</h2><span class="block-meta">${finished.filter((b) => b.last >= startOfMonth(today())).length} finished this month</span></div>
+      <section class="block"><div class="block-head"><h2 class="block-title">Books</h2><span class="block-meta">${finished.filter((b) => b.last >= mo).length} finished this month</span></div>
         ${current.length || finished.length ? html`<ul class="list">
           ${current.map((b) => html`<li class="row"><span class="row-ic" style="--ic:var(--c-mind)">${icon('book-open', { size: 16 })}</span><span class="row-main"><span class="row-title">${b.title}</span><span class="row-sub">Reading · ${num(b.minutes)} min${b.pages ? ` · ${b.pages} pages` : ''} · last ${relativeDay(b.last).toLowerCase()}</span></span>
             <button type="button" class="btn btn--soft btn--sm" data-action="continue" data-book="${b.title}">Log</button></li>`)}

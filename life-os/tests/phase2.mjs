@@ -4,7 +4,7 @@
 import { createRequire } from 'node:module';
 import { setup } from './helpers.mjs';
 import { ROUTES, PLACES } from '../js/routes.js';
-import { REDIRECTS, target, LEGACY } from '../js/redirects.js';
+import { REDIRECTS, target } from '../js/redirects.js';
 import { match } from '../js/ui/router.js';
 const { devices } = createRequire(import.meta.url)('playwright');
 const t = await setup({ base: process.argv[2], out: process.argv[3] });

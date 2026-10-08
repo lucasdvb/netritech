@@ -8,7 +8,7 @@ import { catLabel, sectionLabel, habitColor } from '../domain/taxonomy.js';
 import { today, addDays, range, lastNDays, fmtMD, fmtDayShort, fmtDayLetter, relativeDay, startOfWeek, endOfWeek, addMonths } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { pageHead, empty, dots } from '../ui/components.js';
+import { pageHead, empty } from '../ui/components.js';
 import { plateCard } from './records.js';
 import * as C from '../domain/commitments.js';
 import { lineChart, barChart, heatmap } from '../ui/charts.js';
