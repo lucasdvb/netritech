@@ -6,6 +6,8 @@ import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { today, fmtDay } from '../domain/dates.js';
 import { trainingCall } from '../domain/coach.js';
+import { nextStep, parseRange } from '../domain/next-step.js';
+import { weightUnit } from '../ui/format.js';
 
 export function startWorkout(templateId, date = today()) {
   const active = F.activeWorkout();
@@ -25,8 +27,17 @@ export function startWorkout(templateId, date = today()) {
       const prev = F.previousPerformance(it.exerciseId, { before: date });
       const prevSets = prev ? F.setsOf(prev.workout.id).filter((s) => s.exerciseId === prev.exerciseId && s.completed) : [];
       const sets = lighter ? Math.max(2, it.sets - 1) : it.sets;
+      // The next step (13d): heavier when every set reached the top of the range, else one more rep.
+      const step = lighter ? null : nextStep(it.exerciseId, it.reps, { before: date, unit: weightUnit() });
+      const high = parseRange(it.reps)?.high ?? Infinity;
       for (let i = 0; i < sets; i++) {
-        const p = prevSets[i] || prevSets[prevSets.length - 1];
+        const last = prevSets[i] || prevSets[prevSets.length - 1];
+        const p = !last || !step ? last
+          : step.kind === 'load' ? { ...last, load: step.load, reps: step.reps }
+            // One more rep (or 5 more seconds), up to the top of the range; past it once every set got there.
+            : step.kind === 'reps' ? { ...last, reps: Math.max(Number(last.reps) || 0, Math.min(step.reps > high ? Infinity : high, (Number(last.reps) || 0) + 1)) }
+              : step.kind === 'seconds' ? { ...last, seconds: Math.max(Number(last.seconds) || 0, Math.min(step.seconds > high ? step.seconds : high, (Number(last.seconds) || 0) + 5)) }
+                : last;
         ops.push({ store: 'workoutSets', value: {
           workoutId: w.id, date, exerciseId: prev?.exerciseId && prev.exerciseId !== it.exerciseId ? prev.exerciseId : it.exerciseId, order, setIndex: i,
           target: it.reps, reps: e?.metric === 'reps' ? (p?.reps ?? null) : null,

@@ -8,6 +8,7 @@ import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { empty } from '../ui/components.js';
 import { kgOut, kgIn, weightUnit, loadText } from '../ui/format.js';
+import { nextStep, stepLabel } from '../domain/next-step.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 
@@ -25,6 +26,8 @@ function sequence(workoutId) {
   return F.setsOf(workoutId).slice().sort((a, b) => a.order - b.order || a.setIndex - b.setIndex).map((s) => ({ s, e: F.exercise(s.exerciseId) }));
 }
 
+const stepFor = (w, s) => nextStep(s.exerciseId, s.target, { excludeWorkoutId: w.id, before: w.date, unit: weightUnit() });
+
 /** What a set will be logged as: what you've entered, or last time's numbers, or the goal. */
 function suggested(w, s, e) {
   const prev = F.previousPerformance(s.exerciseId, { excludeWorkoutId: w.id, before: w.date });
@@ -33,7 +36,10 @@ function suggested(w, s, e) {
   // Within this session, the set before carries forward (next set prefilled).
   const before = F.setsOf(w.id).filter((x) => x.order === s.order && x.setIndex < s.setIndex && x.completed).pop();
   const goal = Number(String(s.target || '').match(/\d+/)?.[0]) || null;
-  const pick = (f) => s[f] ?? before?.[f] ?? p?.[f] ?? null;
+  // The first set of an exercise starts from the next step (13d): heavier, one more rep, or held.
+  const step = !before ? stepFor(w, s) : null;
+  const next = step && step.kind !== 'variation' ? { reps: step.reps, load: step.load, seconds: step.seconds } : {};
+  const pick = (f) => s[f] ?? before?.[f] ?? next[f] ?? p?.[f] ?? null;
   return {
     reps: e?.metric === 'reps' ? pick('reps') ?? goal ?? 10 : null,
     load: e?.metric === 'reps' ? pick('load') ?? e?.defaultLoad ?? null : null,
@@ -94,6 +100,7 @@ export default {
         : html`<div class="${cx('gym-card', resting && 'is-resting')}" data-key="card-${cur.s.id}">
           <p class="gym-eyebrow">Exercise ${exIndex + 1} of ${exCount} · set ${cur.s.setIndex + 1} of ${setsOfEx.length}${cur.s.target ? ` · goal ${cur.s.target}` : ''}</p>
           <p class="gym-name">${cur.e?.name || 'Exercise'}</p>
+          ${!resting && cur.s.setIndex === 0 && !cur.s.completed && stepFor(w, cur.s) ? html`<p class="gym-step-note" data-key="step-${cur.s.exerciseId}"><b>${stepLabel(stepFor(w, cur.s), loadText)}</b> · ${stepFor(w, cur.s).why}</p>` : ''}
           ${resting ? html`<div class="gym-rest" aria-live="polite">
               <p class="gym-rest-label">Rest</p>
               <p class="gym-rest-time tnum" id="gym-rest">${clock(restLeft(w))}</p>
