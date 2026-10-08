@@ -1,6 +1,6 @@
 // The small controls Today draws at first render: the progress ring and bar, the check and the
 // switch. components.js re-exports them with everything else.
-import { html, raw, attr, cx } from './dom.js';
+import { html, raw, attr, cx, esc } from './dom.js';
 
 /** Progress ring. value 0..1. */
 export function ring(value, { size = 56, stroke = 5, color = 'var(--accent)', track = 'var(--track)', label = '', cls = '' } = {}) {
@@ -21,7 +21,7 @@ export function bar(value, { color = 'var(--accent)', cls = '', label = '' } = {
 }
 
 export function check(done, { action, data = {}, label, color, cls = '', state } = {}) {
-  const dataAttrs = Object.entries(data).map(([k, v]) => ` data-${k}="${String(v).replace(/"/g, '&quot;')}"`).join('');
+  const dataAttrs = Object.entries(data).map(([k, v]) => ` data-${k}="${esc(v)}"`).join('');
   const s = state || (done ? 'done' : 'open');
   // tiny: the two-minute version was done. It counts, so it reads as partly checked, not empty.
   return html`<button type="button" class="${cx('check', `check--${s}`, cls)}" role="checkbox" aria-checked="${s === 'done' ? 'true' : s === 'no' || s === 'tiny' ? 'mixed' : 'false'}"
@@ -32,6 +32,6 @@ export function check(done, { action, data = {}, label, color, cls = '', state }
 }
 
 export function toggle(on, { action, data = {}, label, cls = '' } = {}) {
-  const d = Object.entries(data).map(([k, v]) => ` data-${k}="${v}"`).join('');
+  const d = Object.entries(data).map(([k, v]) => ` data-${k}="${esc(v)}"`).join('');
   return html`<button type="button" role="switch" aria-checked="${!!on}" aria-label="${label}" class="${cx('switch', cls)}" data-action="${action}"${raw(d)}><span class="switch-knob"></span></button>`;
 }

@@ -20,13 +20,14 @@ import { COUNTER_SOURCES } from './today/rows.js';
 import { nowCard } from './today/now.js';
 import { routinesBlock } from './today/routines.js';
 import { prioritiesBlock, attachPriorityDrag } from './today/priorities.js';
-import { threeBlock, pinnedBlock, moreBlock, minimumBlock, sickBlock, notTodayBlock, catchUpBlock, tidyBlock, lifeMode, essentials, layoutOf, BLOCKS } from './today/blocks.js';
+import { threeBlock, pinnedBlock, moreBlock, minimumBlock, sickBlock, notTodayBlock, lifeMode, essentials, layoutOf, BLOCKS } from './today/blocks.js';
 // Sheets load on first use, and are fetched in the background once Today is on screen.
 const sheets = () => import('./sheets.js');
 const workouts = () => import('./workout-actions.js');
 const pads = () => import('./pads.js');
 // The safety nets (catch-up, fresh start, shrink and grow, tidy-up) arrive right after the first screen.
 let nets = null;
+let netCards = null; // their cards (today/nets.js), loaded with them
 
 function greeting(now = new Date()) {
   const h = now.getHours();
@@ -123,8 +124,8 @@ export default {
     const col = (c) => order.filter((id) => !hidden.includes(id) && BLOCKS.find((b) => b.id === id).column === c).map(block);
     const special = mode === 'minimum' ? minimumBlock(date, ui) : mode === 'sick' ? sickBlock(date, ui) : '';
     const notToday = notTodayBlock(date, mode);
-    const catchUp = isToday && nets ? catchUpBlock(nets.catchUp(date), ui) : '';
-    const tidy = isToday && nets && [7, 1].includes(weekday(date)) ? tidyBlock(nets.tidyDue(date)) : '';
+    const catchUp = isToday && nets ? netCards.catchUpBlock(nets.catchUp(date), ui) : '';
+    const tidy = isToday && nets && [7, 1].includes(weekday(date)) ? netCards.tidyBlock(nets.tidyDue(date)) : '';
     return html`<div class="today" data-phase="${ph}" data-mode="${mode}">
       ${header(date, ph, mode, isToday)}
       <div class="today-grid">
@@ -155,11 +156,12 @@ export default {
       import('./you.js').then((m) => m.openYou());
     }
     // The coach's suggestions and the safety nets arrive a moment after the first screen.
-    Promise.all([import('../domain/coach.js'), import('../domain/next-action.js'), import('../domain/adapt.js')]).then(([c, n, a]) => {
+    Promise.all([import('../domain/coach.js'), import('../domain/next-action.js'), import('../domain/adapt.js'), import('./today/nets.js')]).then(([c, n, a, cards]) => {
       // Only the first visit needs a second render; after that the first one already had them.
       const first = !nets;
       n.useCoach(c.guidance);
       n.useAdapt(a);
+      netCards = cards;
       nets = a;
       // Back after three or more days away: those days read as "away", and a fresh start is offered once.
       const away = !ctx.params.date && a.freshStartDue();
@@ -169,7 +171,7 @@ export default {
         import('./fresh-start.js').then((m) => m.openFreshStart(away));
       }
       if (first) app.refresh();
-    }).catch(() => {});
+    }).catch((err) => console.error(err));
     setTimeout(() => Promise.all([sheets(), workouts()]).catch(() => {}), 1500);
   },
   update(el, ctx) {
