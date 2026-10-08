@@ -23,7 +23,7 @@ const rules = Object.fromEntries([
 
 // The tests and tools run in Node and hand functions to the page, so they see both.
 const node = ['process', 'Buffer'];
-const inPage = ['DOMException', 'Event', 'IDBObjectStore', 'PerformanceObserver', 'Touch', 'TouchEvent'];
+const inPage = ['ClipboardEvent', 'DOMException', 'DataTransfer', 'Event', 'IDBObjectStore', 'PerformanceObserver', 'Touch', 'TouchEvent'];
 const readonly = (names) => Object.fromEntries(names.map((g) => [g, 'readonly']));
 
 export default [
