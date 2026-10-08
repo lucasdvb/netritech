@@ -83,7 +83,8 @@ export function habitRow(h, date, mode, ui, { focus = false } = {}) {
   const state = h.type === 'check' && H.value(h, date) === 0 ? 'no' : lv === 'tiny' ? 'tiny' : undefined;
   const isSleep = h.source === 'sleep';
   const canTiny = focus && !lv && tiny && !isSleep && h.type !== 'check';
-  return html`<li class="${cx('hrow', done && 'is-done', expanded && 'is-expanded')}" data-key="${h.id}" style="--ic:${habitColor(h)}">
+  // Hold for an amount or the tiny version; swipe left for "not today" (not once it's done).
+  return html`<li class="${cx('hrow', done && 'is-done', expanded && 'is-expanded')}" data-key="${h.id}" data-habit="${h.id}" data-swipe="${lv ? 'off' : 'on'}" style="--ic:${habitColor(h)}">
     ${isSleep
       ? html`<span class="${cx('auto-ic', done && 'is-done')}">${done ? icon('check', { size: 16, stroke: 2.2 }) : icon('bed', { size: 16 })}</span>`
       : check(done, { action: 'toggle', data: { id: h.id }, label: `${name}${done ? ', done' : lv === 'tiny' ? ', tiny version done' : ''}`, color: habitColor(h), state })}

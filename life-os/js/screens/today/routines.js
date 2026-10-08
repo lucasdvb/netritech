@@ -17,7 +17,7 @@ function step(p, s, i, date) {
   const auto = s.kind === 'habit' && h.source === 'sleep';
   // One of your three inside a routine keeps its tiny version one tap away.
   const canTiny = s.kind === 'habit' && !s.done && H.stateOf(h, date) === 'focus' && H.tinyOf(h) && !h.source && h.type !== 'check';
-  return html`<li class="${cx('rstep', s.done && 'is-done', isNext && 'is-next')}" data-key="${p.routine.id}-${s.id}" style="--ic:${s.kind === 'habit' ? habitColor(h) : 'var(--accent)'}">
+  return html`<li class="${cx('rstep', s.done && 'is-done', isNext && 'is-next')}" data-key="${p.routine.id}-${s.id}"${s.kind === 'habit' ? html` data-habit="${h.id}" data-swipe="${s.done ? 'off' : 'on'}"` : ''} style="--ic:${s.kind === 'habit' ? habitColor(h) : 'var(--accent)'}">
     ${auto ? html`<span class="${cx('auto-ic', s.done && 'is-done')}">${s.done ? icon('check', { size: 16, stroke: 2.2 }) : icon('bed', { size: 16 })}</span>`
       : check(s.done, { action: 'step', data: { r: p.routine.id, s: s.id }, label: `${name}${s.done ? ', done' : ''}`, state: lv === 'tiny' ? 'tiny' : undefined, cls: 'rstep-check' })}
     <button type="button" class="rstep-main" data-action="${s.kind === 'habit' ? 'habit' : 'step'}" data-id="${h?.id || ''}" data-r="${p.routine.id}" data-s="${s.id}">

@@ -2,7 +2,7 @@
 
 The answer to the owner's [master brief](master-brief.md). It covers what Life OS should become, what is wrong with it today, and the order it gets built in.
 
-**Status.** Phases 0–3 are done (see section 15). Phases 4–11 are next, in order.
+**Status.** Phases 0–4 are done (see section 15). Phases 5–11 are next, in order.
 
 **Committed scope.** Everything in the master brief, plus all 30 ideas agreed in conversation (listed in [section 13](#13-the-30-committed-ideas)). None of them are optional.
 
@@ -1047,7 +1047,10 @@ What shipped, against the acceptance criteria: at most six blocks on first load 
 - **Tests:** unit (next-action rules across times of day and modes); e2e (morning, midday and evening states, routine flow, Edit Today); year-of-data render under 70 ms.
 - **UX:** test at 07:00, 13:00, 21:00 and 00:30 (day boundary), on minimum and sick days.
 
-### Phase 4: Capture and logging (M)
+### Phase 4: Capture and logging (M) · done
+
+What shipped, against the acceptance criteria: the parser reads a 167-phrase table with every phrase right and none logged as something else (the bar was 95% and no silent mislogs); anything it can't be sure of is a question with the readings to pick from, a line about the future becomes a task, and what it understood (what, how much, which day) is always shown before saving. Hold and swipe work with real touch input, and each has a labelled button in the habit's sheet; Undo restores every record exactly, including ones that existed before. Decisions made on the way: *Not today* is stored on the day's habit log, takes the habit out of the day's plan and score, and counts as the run's one allowed miss (so it never pretends the habit was done); a hold logs the tiny version when there is one and opens the number pad for habits that count something; weight and steps open on the number pad with the last value; right-click is the hold on a computer; things logged where they live (the journal, a workout, the shutdown) open there instead of being guessed; quick water adds gained Undo. The only confirmation dialogs left are the whole-device ones (restore, erase), as planned. First-render JavaScript is 208 KB (target 200 KB), left for Phase 11 with the rest of the budget work.
+
 
 - **Objective:** logging anything takes one gesture or one line.
 - **Features:**

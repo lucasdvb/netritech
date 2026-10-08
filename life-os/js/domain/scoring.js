@@ -5,7 +5,7 @@
 import * as store from '../data/store.js';
 import { priorities } from './tasks.js';
 import { forDay as routinesFor } from './routines.js';
-import { activeHabits, counts, level, isScheduledDay, started, dayMode, trackingStart, DATA_STORES, consistency, stateOf, dueOn, periodDone, lastDoneBefore, isFlexible } from './habits.js';
+import { activeHabits, counts, level, isScheduledDay, started, dayMode, trackingStart, DATA_STORES, consistency, stateOf, dueOn, periodDone, lastDoneBefore, isFlexible, skipped } from './habits.js';
 import { today, lastNDays, endOfWeek, endOfMonth, diffDays } from './dates.js';
 import { avg } from './metrics.js';
 
@@ -26,7 +26,7 @@ function neededOn(h, date) {
 export function planHabits(date, mode = dayMode(date)) {
   if (mode === 'sick') return [];
   const live = activeHabits().filter((h) => started(h, date) && h.showOnToday !== false);
-  const focus = live.filter((h) => stateOf(h, date) === 'focus' && neededOn(h, date) && !(mode === 'rest' && isTraining(h)));
+  const focus = live.filter((h) => stateOf(h, date) === 'focus' && neededOn(h, date) && !(mode === 'rest' && isTraining(h)) && !skipped(h, date, mode));
   if (mode !== 'minimum') return focus;
   const essentials = live.filter((h) => h.mvd && !['paused', 'queue'].includes(stateOf(h, date)) && dueOn(h, date, 'minimum'));
   return [...new Set([...focus, ...essentials])];
