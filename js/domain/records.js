@@ -21,7 +21,7 @@ function weeks(from, end) {
   return out;
 }
 
-function lifts() {
+function lifts(_end) {
   const by = new Map();
   for (const w of F.allWorkouts()) {
     for (const s of F.setsOf(w.id)) {
@@ -81,29 +81,33 @@ function stepDays(end) {
   return points.length ? [{ id: 'steps-day', label: 'Most steps in a day', fmt: (v) => num(v), points }] : [];
 }
 
-/** Each habit's runs ("never miss twice"), as data points: a run's length on the day it ended or now. */
-function habitRuns(end) {
-  const out = [];
-  for (const h of H.activeHabits()) {
-    if (h.optional || h.weekly === false) continue;
-    const points = [];
-    let run = 0, misses = 0, last = null;
-    for (const p of H.periodsOf(h, H.startOf(h), end)) {
-      if (p.met === null) continue;
-      if (p.met) { run = misses >= 2 ? 1 : run + 1; misses = 0; last = p.key; }
-      else { misses++; if (misses === 2 && run) { points.push({ date: last, value: run }); run = 0; } }
-    }
-    if (run) points.push({ date: last, value: run, ongoing: true });
-    const unit = H.runUnit(h) === 'day' ? 'days' : H.runUnit(h) === 'week' ? 'weeks' : 'times';
-    if (points.length) out.push({ id: `run:${h.id}`, label: `${h.name}: longest run`, fmt: (v) => `${num(v)} ${unit}`, points });
+/** A habit's runs ("never miss twice"), as data points: a run's length on the day it ended or now. */
+function habitRuns(h, end) {
+  const points = [];
+  let run = 0, misses = 0, last = null;
+  for (const p of H.periodsOf(h, H.startOf(h), end)) {
+    if (p.met === null) continue;
+    if (p.met) { run = misses >= 2 ? 1 : run + 1; misses = 0; last = p.key; }
+    else { misses++; if (misses === 2 && run) { points.push({ date: last, value: run }); run = 0; } }
   }
-  return out;
+  if (run) points.push({ date: last, value: run, ongoing: true });
+  const unit = H.runUnit(h) === 'day' ? 'days' : H.runUnit(h) === 'week' ? 'weeks' : 'times';
+  return points.length ? [{ id: `run:${h.id}`, label: `${h.name}: longest run`, fmt: (v) => `${num(v)} ${unit}`, points }] : [];
 }
+
+// Each part is cached on its own, so the background watcher can work them out one at a time.
+const PARTS = { lifts, protein: proteinWeeks, focus: focusWeeks, wake: wakeWeeks, steps: stepDays };
+const part = (name, end) => store.memo(`record-part:${name}:${end}`, H.DATA_STORES, () => PARTS[name](end));
+const runOf = (h, end) => store.memo(`record-run:${h.id}:${end}`, H.DATA_STORES, () => habitRuns(h, end));
+const runHabits = () => H.activeHabits().filter((h) => !h.optional && h.weekly !== false);
 
 /** Every series that can hold a record. */
 export function series(end = today()) {
-  return store.memo(`record-series:${end}`, H.DATA_STORES, () => [...lifts(), ...proteinWeeks(end), ...focusWeeks(end), ...wakeWeeks(end), ...stepDays(end), ...habitRuns(end)]);
+  return store.memo(`record-series:${end}`, H.DATA_STORES, () => [...Object.keys(PARTS).flatMap((k) => part(k, end)), ...runHabits().flatMap((h) => runOf(h, end))]);
 }
+
+/** The work behind series(), as small separate steps (for the background watcher). */
+export const seriesSteps = (end = today()) => [...Object.keys(PARTS).map((k) => () => part(k, end)), ...runHabits().map((h) => () => runOf(h, end))];
 
 const better = (s, a, b) => (s.lower ? a < b : a > b);
 

@@ -3,7 +3,7 @@
 // when the routine was finished, are kept per day in routineRuns.
 import * as store from '../data/store.js';
 import * as H from './habits.js';
-import { today, weekday, parseHM, fmtHM, minutesOfDay, dayEndMinutes } from './dates.js';
+import { today, weekday, parseHM, fmtHM, minutesOfDay, dayEndMinutes, cmp } from './dates.js';
 
 export const runId = (routineId, date) => `${routineId}:${date}`;
 export const routines = () => store.memo('routines-sorted', ['routines'], () => store.all('routines').sort((a, b) => (a.order ?? 0) - (b.order ?? 0)));
@@ -130,7 +130,7 @@ export function didItAll(r, date = today()) {
 export function defaultRoutines(habits, profile = {}) {
   // Sleep comes from the morning check-in, so it opens the morning; the rest follow their times.
   const when = (h) => (h.source === 'sleep' ? '00:00' : h.time || '99');
-  const byTime = (a, b) => when(a).localeCompare(when(b)) || (a.order ?? 0) - (b.order ?? 0);
+  const byTime = (a, b) => cmp(when(a), when(b)) || (a.order ?? 0) - (b.order ?? 0);
   const pick = (section) => habits.filter((h) => !h.archived && h.section === section).sort(byTime).map((h, i) => ({ id: `s-${h.id}`, habitId: h.id, order: i }));
   const wake = parseHM(profile.wakeTime || '06:00');
   const bed = parseHM(profile.bedTime || '22:00');

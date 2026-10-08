@@ -4,7 +4,7 @@ import * as M from '../../domain/metrics-core.js';
 import * as H from '../../domain/habits.js';
 import { trainingCall } from '../../domain/day-plan.js';
 import { habitColor } from '../../domain/taxonomy.js';
-import { durationHM } from '../../domain/dates.js';
+import { durationHM, cmp } from '../../domain/dates.js';
 import { html, raw, cx } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
 import { ring, check } from '../../ui/controls.js';
@@ -126,7 +126,7 @@ export function split(list) {
   const counters = list.filter((h) => COUNTER_SOURCES.includes(h.source));
   const flexible = list.filter((h) => H.isFlexible(h) && !tiles.includes(h) && !counters.includes(h));
   const rows = list.filter((h) => !tiles.includes(h) && !counters.includes(h) && !flexible.includes(h))
-    .sort((a, b) => (a.time || '99').localeCompare(b.time || '99') || a.order - b.order);
+    .sort((a, b) => cmp(a.time || '99', b.time || '99') || a.order - b.order);
   return { tiles, counters, flexible, rows };
 }
 

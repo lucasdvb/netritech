@@ -4,7 +4,7 @@ import * as store from '../data/store.js';
 import * as HS from '../domain/habit-system.js';
 import * as H from '../domain/habits.js';
 import { SECTIONS, habitColor } from '../domain/taxonomy.js';
-import { today, addDays, fmtMD } from '../domain/dates.js';
+import { today, addDays, fmtMD, cmp } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead } from '../ui/components.js';
@@ -62,7 +62,7 @@ export default {
     const map = draft(ui);
     const all = H.activeHabits();
     const focus = all.filter((h) => stateIn(map, h) === 'focus')
-      .sort((a, b) => (map[a.id] === 'focus') - (map[b.id] === 'focus') || (a.focusSince || '').localeCompare(b.focusSince || ''));
+      .sort((a, b) => (map[a.id] === 'focus') - (map[b.id] === 'focus') || cmp(a.focusSince || '', b.focusSince || ''));
     const full = focus.length >= H.FOCUS_LIMIT;
     const counts = { autopilot: 0, queue: 0, paused: 0 };
     for (const h of all) { const st = stateIn(map, h); if (st in counts) counts[st]++; }

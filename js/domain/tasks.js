@@ -2,14 +2,14 @@
 // The day's Top 3 are tasks too, with a rank of 1 to 3 (one task system, DR-07). A repeating
 // task is a chain of single tasks: finishing one creates the next, so a slipped week never piles up.
 import * as store from '../data/store.js';
-import { today, addDays, weekday, fromISO, toISO, dayOf } from './dates.js';
+import { today, addDays, weekday, fromISO, toISO, dayOf, cmp } from './dates.js';
 
 const ORD = ['', 'st', 'nd', 'rd'];
 const ordinal = (n) => `${n}${(n % 100 > 10 && n % 100 < 14) ? 'th' : ORD[n % 10] || 'th'}`;
 const DAY_NAMES = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-const sortOpen = (a, b) => (a.date || '9999').localeCompare(b.date || '9999') || (a.order ?? 0) - (b.order ?? 0)
-  || (a.createdAt || '').localeCompare(b.createdAt || '');
+const sortOpen = (a, b) => cmp(a.date || '9999', b.date || '9999') || (a.order ?? 0) - (b.order ?? 0)
+  || cmp(a.createdAt || '', b.createdAt || '');
 
 export const all = () => store.all('tasks');
 export const task = (id) => store.get('tasks', id);
@@ -18,7 +18,7 @@ export const open = () => store.memo('tasks:open', ['tasks'], () => all().filter
 /** Open tasks dated before `ref`. */
 export const overdue = (ref = today()) => open().filter((t) => t.date && t.date < ref);
 /** Everything dated `date`, open first. */
-export const onDay = (date) => all().filter((t) => t.date === date).sort((a, b) => Number(a.done) - Number(b.done) || sortOpen(a, b));
+export const onDay = (date) => store.onDate('tasks', date).slice().sort((a, b) => Number(a.done) - Number(b.done) || sortOpen(a, b));
 /** Open tasks with no date. */
 export const anytime = () => open().filter((t) => !t.date);
 /** Open tasks dated after `from`. */
@@ -33,10 +33,13 @@ export const doneRecently = (days = 14) => {
 
 /** What Today shows: overdue items, the day's own tasks, and late ones ticked off today (only the day's own when looking back). */
 export function forToday(date = today()) {
-  const own = onDay(date);
-  if (date !== today()) return own;
-  const lateDone = all().filter((t) => t.done && t.date && t.date < date && doneDay(t) === date);
-  return [...overdue(date), ...own.filter((t) => !t.done), ...lateDone, ...own.filter((t) => t.done)];
+  return store.memo(`tasks:today:${date}:${today()}`, ['tasks'], () => {
+    const own = onDay(date);
+    if (date !== today()) return own;
+    const since = addDays(date, -1); // a timestamp from `date` can't be earlier than this in any time zone
+    const lateDone = all().filter((t) => t.done && t.date && t.date < date && t.doneAt >= since && doneDay(t) === date);
+    return [...overdue(date), ...own.filter((t) => !t.done), ...lateDone, ...own.filter((t) => t.done)];
+  });
 }
 
 /* ---------- repeats ---------- */
@@ -113,12 +116,23 @@ export function toggle(id) {
 
 export const remove = (id) => store.remove('tasks', id);
 
-/** Move every unfinished task dated on or before `from` to `to`. Returns how many moved. */
+/**
+ * Move every unfinished task dated on or before `from` to `to`. Returns how many moved. A priority
+ * keeps its place only if that slot is free on `to` (the most recent day wins); the rest move as
+ * plain tasks, so a day never holds two of the same rank.
+ */
 export function moveUnfinished(from, to) {
-  const list = open().filter((t) => t.date && t.date <= from);
-  if (list.length) store.batch(list.map((t) => ({ store: 'tasks', value: { ...t, date: to } })));
+  const list = open().filter((t) => t.date && t.date <= from).reverse();
+  if (!list.length) return 0;
+  const taken = new Set(priorities(to).map((t) => t.rank));
+  store.batch(list.map((t) => {
+    const rank = t.rank && !taken.has(t.rank) ? t.rank : null;
+    if (rank) taken.add(rank);
+    return { store: 'tasks', value: { ...t, date: to, rank } };
+  }));
   return list.length;
 }
+
 
 /* ---------- priorities: the day's Top 3 (DR-07) ---------- */
 export const RANKS = 3;

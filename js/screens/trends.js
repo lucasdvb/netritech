@@ -13,6 +13,7 @@ import { pageHead, segmented } from '../ui/components.js';
 import { lineChart, barChart } from '../ui/charts.js';
 import { num, pct, kgOut, weightUnit, cmOut, lengthUnit } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
+import { later } from '../ui/later.js';
 
 const RANGES = [{ id: '30', label: '30d' }, { id: '60', label: '60d' }, { id: '90', label: '90d' }];
 const pctFmt = (v) => `${Math.round(v * 100)}%`;
@@ -34,7 +35,7 @@ function charts(ui) {
   const started = (d) => d >= H.trackingStart();
   const c7 = rolling(end, 7), c30 = rolling(end, 30), c90 = rolling(end, 90);
   const barLabels = span.map((d) => (days <= 30 ? fmtDayShort(d).slice(0, 1) : ''));
-  const exercisesWithHistory = () => F.exercises().map((e) => ({ e, n: F.exerciseHistory(e.id, 60).length })).filter((x) => x.n)
+  const exercisesWithHistory = () => F.exercises().map((e) => ({ e, n: F.sessionsPerExercise().get(e.id) || 0 })).filter((x) => x.n)
     .sort((a, b) => (['cardio', 'mobility'].includes(a.e.category) - ['cardio', 'mobility'].includes(b.e.category)) || b.n - a.n).map((x) => x.e);
   return {
     cons: () => html`<section class="block" data-key="cons">
@@ -119,8 +120,8 @@ export default {
     const keys = focus ? focus.keys : Object.keys(all);
     return html`
       ${pageHead({ title: focus ? focus.title : 'All trends', morph: focus ? `metric-${params.metric}` : null, back: { to: 'progress', label: 'Progress' } })}
-      ${keys.map((k) => all[k]())}
-      ${focus ? html`<a class="btn btn--soft btn--block block" href="#/progress/trends" data-action="nav" data-to="progress/trends">All trends</a>` : bests()}`;
+      ${keys.map((k, i) => (focus || i < 2 ? all[k]() : later(k, all[k])))}
+      ${focus ? html`<a class="btn btn--soft btn--block block" href="#/progress/trends" data-action="nav" data-to="progress/trends">All trends</a>` : later('pb', bests, 560)}`;
   },
   actions: { range: ({ data, ui }) => { ui.range = data.value; app.refresh(); } },
   inputs: { ex: ({ value, ui }) => { ui.ex = value; app.refresh(); } },

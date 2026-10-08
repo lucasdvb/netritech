@@ -6,8 +6,8 @@ import * as sheet from './ui/sheet.js';
 import { toast } from './ui/toast.js';
 import { icon, loadIcons } from './ui/icons.js';
 import { html } from './ui/dom.js';
+import { firstRender, fill } from './ui/later.js';
 import { app, APP_NAME } from './ui/app-api.js';
-import { swap } from './ui/transitions.js';
 import { today, setDayEnd } from './domain/dates.js';
 
 import { PLACES, ROUTES } from './routes.js';
@@ -19,6 +19,8 @@ const uiMemory = new Map();
 let current = null;
 let navToken = 0;
 let refreshQueued = false;
+// Screen changes animate once ui/transitions.js has loaded (just after the first screen).
+let swap = (update) => update();
 
 /* ---------- theme ---------- */
 const media = matchMedia('(prefers-color-scheme: dark)');
@@ -78,8 +80,15 @@ function timed(c, fn) {
   if (renderTimes.length > 60) renderTimes.shift();
 }
 
-function renderInto(el, c) {
-  timed(c, () => { try { el.innerHTML = String(c.view.render(ctxOf(c))); } catch (err) { console.error(err); el.innerHTML = ERROR_HTML(); } });
+let waiting = []; // sections of the screen being opened that fill in after it (ui/later.js)
+function renderInto(el, c, defer = true) {
+  timed(c, () => {
+    try {
+      const r = defer ? firstRender(() => c.view.render(ctxOf(c))) : { markup: c.view.render(ctxOf(c)), waiting: [] };
+      el.innerHTML = String(r.markup);
+      waiting.push(...r.waiting);
+    } catch (err) { console.error(err); el.innerHTML = ERROR_HTML(); }
+  });
 }
 
 function markSelected() {
@@ -128,12 +137,16 @@ async function navigate() {
     if (found.route.depth > prev.route.depth) dir = 'view--push';
     else if (found.route.depth < prev.route.depth) dir = 'view--pop';
   }
+  // Back returns to exactly where you were; going somewhere new starts at the top. A screen
+  // returned to mid-page draws in full at once, so nothing below shifts under you.
+  const y = back || dir === 'view--pop' ? scrollMemory.get(path) || 0 : 0;
   const ui = uiMemory.get(path) || {};
   uiMemory.set(path, ui);
   current = { route: found.route, params: found.params, query, view, ui, path, el: null };
   const isList = !!listRoute && listRoute === found.route;
 
   // The list pane: kept if it's the same list, otherwise rendered fresh.
+  waiting = [];
   let freshPane = false;
   if (listRoute && !keepPane) {
     const lv = isList ? view : listMod.default;
@@ -157,7 +170,7 @@ async function navigate() {
     el.className = `view ${dir === 'view--fade' ? '' : dir}${view.wide ? ' view--wide' : ''}${listRoute ? ' split-detail' : ''}`;
     el.dataset.view = view.id || '';
     current.el = el;
-    renderInto(el, current);
+    renderInto(el, current, !y);
   }
   const detail = isList ? (() => {
     const d = document.createElement('div');
@@ -192,10 +205,10 @@ async function navigate() {
     } else {
       main.replaceChildren(el);
     }
-    // Back returns to exactly where you were; going somewhere new starts at the top.
-    const y = back || dir === 'view--pop' ? scrollMemory.get(path) || 0 : 0;
     window.scrollTo(0, y);
     settle();
+    // The sections that waited fill in after, once the screen is on its way.
+    if (waiting.length) { fill(main, waiting); waiting = []; }
   };
   if (prev) swap(apply, dir.replace('view--', '')); else apply();
 }
@@ -204,7 +217,9 @@ wide.addEventListener?.('change', () => { if (current?.route.list) navigate(); }
 function refresh() {
   if (refreshQueued) return;
   refreshQueued = true;
-  requestAnimationFrame(() => {
+  // The frame after a change first paints the tap's own response (the pressed state, a check
+  // ticking); the screen redraws straight after that paint, so a tap never waits on a render.
+  requestAnimationFrame(() => setTimeout(() => {
     refreshQueued = false;
     if (!current?.el) return;
     try {
@@ -219,7 +234,7 @@ function refresh() {
       console.error(err);
     }
     sheet.refreshAll();
-  });
+  }));
 }
 
 // If a re-render removes or hides the focused control (a group that collapses once
@@ -283,7 +298,15 @@ document.addEventListener('click', (e) => {
   const handler = resolve(el, 'action', el.dataset.action);
   if (!handler) return;
   if (el.tagName === 'A') e.preventDefault();
+  // A check or switch flips at once; the redraw that follows shows what was really saved.
+  const flip = el.matches('[role="checkbox"], [role="switch"]') && ['true', 'false'].includes(el.getAttribute('aria-checked'));
+  if (flip) {
+    const on = el.getAttribute('aria-checked') === 'false';
+    el.setAttribute('aria-checked', String(on));
+    if (el.classList.contains('check')) { el.classList.toggle('check--done', on); el.classList.toggle('check--open', !on); }
+  }
   run(handler, el, e);
+  if (flip) refresh();
 });
 
 for (const type of ['input', 'change']) {
@@ -337,27 +360,6 @@ let wentBack = false;
 window.addEventListener('hashchange', () => navigate());
 window.addEventListener('popstate', () => { wentBack = true; if (internalNavs > 0) internalNavs--; });
 
-/* ---------- confirm ---------- */
-function confirmDialog({ title, body = '', confirm = 'Confirm', cancel = 'Cancel', tone = '' }) {
-  return new Promise((resolveP) => {
-    let answered = false;
-    const s = sheet.open({
-      title,
-      render: () => html`<div class="confirm">
-        ${body ? html`<p class="confirm-body">${body}</p>` : ''}
-        <div class="btn-row">
-          <button type="button" class="btn btn--ghost" data-action="no">${cancel}</button>
-          <button type="button" class="btn ${tone === 'danger' ? 'btn--danger' : 'btn--primary'}" data-action="yes">${confirm}</button>
-        </div></div>`,
-      actions: {
-        yes: () => { answered = true; resolveP(true); sheet.close(s); },
-        no: () => { answered = true; resolveP(false); sheet.close(s); },
-      },
-      onClose: () => { if (!answered) resolveP(false); },
-    });
-  });
-}
-
 /* ---------- service worker ---------- */
 function registerSW() {
   if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
@@ -386,6 +388,9 @@ function registerSW() {
 
 /* ---------- boot ---------- */
 async function boot() {
+  performance.mark('lifeos:boot');
+  // The first screen's code loads while the data does (navigate() then finds it ready).
+  try { (router.match(ROUTES, router.parse().parts) || router.match(ROUTES, ['today'])).route.load().catch(() => {}); } catch { /* navigate() reports it */ }
   Object.assign(app, {
     go: (path) => { internalNavs++; router.go(path); },
     replace: (path) => router.go(path, { replace: true }),
@@ -394,13 +399,14 @@ async function boot() {
     sheet: (opts) => { const s = sheet.open(opts); growAll(s.el); return s; },
     closeSheet: (s) => sheet.close(s),
     toast,
-    confirm: confirmDialog,
+    confirm: async (opts) => (await import('./ui/confirm.js')).confirmDialog(opts),
     current: () => current,
     search: async () => (await import('./screens/search.js')).openSearch(),
   });
 
   try {
     await store.init();
+    performance.mark('lifeos:data');
     // The built-in habit system is only loaded on first run, or when it has an update.
     const seeded = store.get('meta', 'seed');
     const { seedIfNeeded } = !seeded || (seeded.version || 1) < SEED_VERSION ? await import('./data/seed.js') : {};
@@ -448,7 +454,8 @@ async function boot() {
   }, 15000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
 
-  // After the first screen: the rest of the icons, keyboard shortcuts and pull-to-search.
+  // After the first screen: screen transitions, the rest of the icons, keyboard shortcuts and pull-to-search.
+  import('./ui/transitions.js').then((m) => { swap = m.swap; }).catch(() => {});
   loadIcons().then(() => refresh()).catch(() => {});
   import('./ui/keys.js').then((m) => m.attachShortcuts({ places: PLACES, go: (path) => app.go(path), capture: () => globalActions.capture(), search: () => app.search() })).catch(() => {});
   import('./ui/gestures.js').then((m) => m.attachPullToSearch({ enabled: () => current?.route.depth === 0, onSearch: () => app.search() })).catch(() => {});
@@ -462,7 +469,7 @@ async function boot() {
     .then((M) => M.show(mo, { go: (x) => import('./ceremony/finale.js').then((F) => F.finale(x.id)) })))).catch((err) => console.warn(err));
   import('./ui/install.js').then((m) => m.maybePrompt()).catch(() => {});
   if (navigator.storage?.persist) navigator.storage.persisted().then((p) => { if (!p) navigator.storage.persist(); });
-  window.__lifeos = { store, app, ready: true, renders: renderTimes };
+  window.__lifeos = { store, app, ready: true, readyAt: performance.now(), renders: renderTimes };
 }
 
 boot();

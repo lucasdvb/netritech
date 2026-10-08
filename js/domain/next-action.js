@@ -15,7 +15,7 @@ export const useCoach = (guidance) => { coachTips = guidance; };
 // Shrink and grow suggestions (H7) arrive the same way, from adapt.js.
 let adapt = null;
 export const useAdapt = (m) => { adapt = m; };
-import { today, addDays, parseHM, minutesOfDay, weekday, startOfWeek } from './dates.js';
+import { today, addDays, parseHM, minutesOfDay, weekday, startOfWeek, cmp } from './dates.js';
 
 const act = (label, name, data = {}) => ({ label, act: name, data });
 
@@ -99,7 +99,7 @@ export function nextActions(date = today(), now = new Date()) {
 
   // Your three (and, on a minimum day, the essentials), by their time.
   const plan = planHabits(date, mode).filter((h) => !H.counts(h, date, mode) && h.source !== 'top3')
-    .sort((a, b) => (a.time || '99').localeCompare(b.time || '99'));
+    .sort((a, b) => cmp(a.time || '99', b.time || '99'));
   for (const h of plan) {
     if (cur?.next?.habitId === h.id) continue;
     const late = h.time && mins >= parseHM(h.time);

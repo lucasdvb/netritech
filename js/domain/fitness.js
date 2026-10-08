@@ -14,9 +14,11 @@ export const categoryLabel = (id) => CATEGORIES.find((c) => c.id === id)?.label 
 
 /* ---------- performance of one exercise in one workout ---------- */
 export function performance(workoutId, exerciseId) {
-  const sets = setsOf(workoutId).filter((s) => s.exerciseId === exerciseId && s.completed);
+  return perfOf(setsOf(workoutId).filter((s) => s.exerciseId === exerciseId && s.completed), exercise(exerciseId));
+}
+
+function perfOf(sets, e) {
   if (!sets.length) return null;
-  const e = exercise(exerciseId);
   const reps = sets.map((s) => Number(s.reps) || 0);
   const secs = sets.map((s) => Number(s.seconds) || 0);
   const loads = sets.map((s) => Number(s.load) || 0);
@@ -142,6 +144,21 @@ export function personalBests() {
   return [...best.values()];
 }
 
+/** One exercise's performance in every completed workout that trained it, oldest first (at most `limit`, the latest). */
 export function exerciseHistory(exerciseId, limit = 20) {
-  return allWorkouts().map((w) => ({ workout: w, perf: performance(w.id, exerciseId) })).filter((x) => x.perf).slice(0, limit).reverse();
+  const all = store.memo(`ex-history:${exerciseId}`, ['workouts', 'workoutSets', 'exercises'],
+    () => allWorkouts().map((w) => ({ workout: w, perf: performance(w.id, exerciseId) })).filter((x) => x.perf));
+  return all.slice(0, limit).reverse();
 }
+
+/** How many completed workouts trained each exercise: Map(exerciseId → count). */
+export const sessionsPerExercise = () => store.memo('ex-sessions', ['workouts', 'workoutSets'], () => {
+  const done = new Set(allWorkouts().map((w) => w.id));
+  const seen = new Map();
+  for (const s of store.all('workoutSets')) {
+    if (!s.completed || !done.has(s.workoutId)) continue;
+    if (!seen.has(s.exerciseId)) seen.set(s.exerciseId, new Set());
+    seen.get(s.exerciseId).add(s.workoutId);
+  }
+  return new Map([...seen].map(([id, ws]) => [id, ws.size]));
+});

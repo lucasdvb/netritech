@@ -48,15 +48,32 @@ export function moment(news) {
 }
 
 let timer = 0;
+let runId = 0;
+const SLICE_MS = 8;
 const idle = (fn) => (window.requestIdleCallback ? requestIdleCallback(fn, { timeout: 2000 }) : setTimeout(fn, 50));
 
-/** The same work as run(), one step per idle moment, so it never holds up a scroll or a tap. */
+/**
+ * The same work as run(), in small steps (a habit at a time) taken in slices of about 8 ms, so it
+ * never holds up a scroll or a tap. A newer run replaces one still in progress.
+ */
 function runInSteps(date, done) {
+  const id = ++runId;
   const news = {};
-  const steps = [() => { news.seasons = S.finalize(date); C.finalize(date); }, () => { news.rewards = Rw.sync(date); },
-    () => { news.records = Rec.sync(date); }, () => { news.levels = L.sync(date); }, () => { news.focus = focusDone(date); }];
-  const next = (i) => (i < steps.length ? idle(() => { steps[i](); next(i + 1); }) : done(news));
-  next(0);
+  const steps = [
+    () => { news.seasons = S.finalize(date); C.finalize(date); },
+    () => { news.rewards = Rw.sync(date); },
+    ...Rec.seriesSteps(date), () => { news.records = Rec.sync(date); },
+    ...L.syncSteps(date), () => { news.levels = L.sync(date); },
+    () => { news.focus = focusDone(date); },
+  ];
+  let i = 0;
+  const slice = () => {
+    if (id !== runId) return;
+    const t0 = performance.now();
+    do steps[i++](); while (i < steps.length && performance.now() - t0 < SLICE_MS);
+    if (i < steps.length) setTimeout(slice); else done(news);
+  };
+  idle(slice);
 }
 
 /** Watch the data and call `show` with each moment. */

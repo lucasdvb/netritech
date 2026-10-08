@@ -19,6 +19,11 @@ const dateIndex = Object.create(null);
 const listeners = new Set();
 const versions = Object.create(null);
 const memos = new Map();
+const MEMO_LIMIT = 20000;
+// When each date's data last changed (a running count), so what's worked out from the past can
+// stay cached while you log today (see changedBefore).
+const dateStamps = new Map();
+let stampSeq = 0;
 let changed = new Set();
 let changedDates = new Set();
 let scheduled = false;
@@ -55,7 +60,7 @@ function emit(store, records = []) {
   changed.add(store);
   versions[store] = (versions[store] || 0) + 1;
   delete dateIndex[store];
-  if (!DERIVED.has(store)) for (const r of records) if (r?.date) changedDates.add(r.date);
+  if (!DERIVED.has(store)) for (const r of records) if (r?.date) { changedDates.add(r.date); dateStamps.set(r.date, ++stampSeq); }
   if (scheduled) return;
   scheduled = true;
   queueMicrotask(() => {
@@ -192,14 +197,19 @@ export function batch(ops, message = SAVE_FAILED) {
 
 /* ---------- reading ---------- */
 
-/** Cache a derived value until any of the listed stores changes. */
-export function memo(key, stores, fn) {
-  const stamp = stores.map((s) => versions[s] || 0).join('.');
+const stampOf = (stores) => stores.map((s) => versions[s] || 0).join('.');
+/** Cache a derived value until any of the listed stores changes (or `extra`, when given, differs). */
+export function memo(key, stores, fn, extra = '') {
+  const stamp = stampOf(stores) + extra;
   const hit = memos.get(key);
   if (hit && hit.stamp === stamp) return hit.value;
   const value = fn();
-  memos.set(key, { stamp, value });
-  if (memos.size > 5000) memos.clear();
+  memos.set(key, { stamp, stores, value });
+  // Past the limit, drop what no longer holds first; only if that isn't enough, start over.
+  if (memos.size > MEMO_LIMIT) {
+    for (const [k, m] of memos) if (m.stamp !== stampOf(m.stores)) memos.delete(k);
+    if (memos.size > MEMO_LIMIT) memos.clear();
+  }
   return value;
 }
 
@@ -209,6 +219,13 @@ export const has = (store, id) => cache[store].has(id);
 export const count = (store) => cache[store].size;
 /** The tombstone left by deleting a record, if any. */
 export const deleted = (store, id) => tombs[store]?.get(id);
+
+/** A stamp that changes whenever data dated before `date` changes (for memo's `extra`). */
+export function changedBefore(date) {
+  let m = 0;
+  for (const [d, v] of dateStamps) if (d < date && v > m) m = v;
+  return `|${m}`;
+}
 
 /** Records of a date-indexed store for one date (cached per store until it changes). */
 export function onDate(store, date) {
