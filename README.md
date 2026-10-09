@@ -16,6 +16,8 @@ Theme, brand assets, local preview and QA tooling for **moana-beaute.myshopify.c
 cd tools/node && npm install && cd ../..
 ./dev/restart.sh                 # http://localhost:4100
 node dev/e2e.mjs                 # 40 interaction checks
+node dev/new-pages-test.mjs      # 11 checks: routine finder and wishlist
+node dev/cls.mjs /               # layout-shift sources on one page
 node dev/sweep.mjs               # every page at 320–1440 px: overflow, errors, alt text, headings, ids
 node dev/shoot.mjs /products/round-lab-1025-dokdo-cleanser 390   # one screenshot
 node tools/node/theme-check.mjs theme                              # Shopify Theme Check

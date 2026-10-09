@@ -83,7 +83,7 @@ export const linklists = {
   'moana-nav': { links: [link('New In', '/collections/new'), link('Skincare', '/collections/skincare', catLinks), link('Cleansers', '/collections/cleansers'), link('Toners & Essences', '/collections/toners-essences'), link('Serums', '/collections/serums-ampoules'), link('Moisturisers', '/collections/moisturisers'), link('Sunscreen', '/collections/sunscreen'), link('Brands', '/pages/brands'), link('Routine guide', '/pages/k-beauty')] },
   'moana-footer-help': { links: [link('Delivery & returns', '/pages/delivery'), link('FAQ', '/pages/faq'), link('Contact', '/pages/contact')] },
   footer: { links: [link('Delivery & returns', '/pages/delivery'), link('FAQ', '/pages/faq'), link('Contact', '/pages/contact'), link('Privacy policy', '/policies/privacy-policy'), link('Terms of service', '/policies/terms-of-service')] },
-  'moana-footer-shop': { links: [link('All skincare', '/collections/skincare'), link('New', '/collections/new'), link('Brands', '/pages/brands'), link('The routine guide', '/pages/k-beauty'), link('About us', '/pages/about')] }
+  'moana-footer-shop': { links: [link('All skincare', '/collections/skincare'), link('New in', '/collections/new'), link('Brands', '/pages/brands'), link('Find my routine', '/pages/routine-finder'), link('The routine guide', '/pages/k-beauty'), link('Wishlist', '/pages/wishlist'), link('About us', '/pages/about')] }
 };
 
 /* ------------------------------------------------------------------ locale + money */

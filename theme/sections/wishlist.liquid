@@ -33,37 +33,49 @@
     var root = document.querySelector('[data-wishlist-page]');
     if (!root) return;
     var grid = root.querySelector('[data-wl-grid]'), empty = root.querySelector('[data-wl-empty]'), foot = root.querySelector('[data-wl-foot]'), count = root.querySelector('[data-wl-count]');
-    var labels = {{ 'wishlist.count' | t: count: 1 | json }}, labelsN = {{ 'wishlist.count' | t: count: 2 | json }};
-    function W() { return window.MoanaWishlist; }
-    function paintCount(n) { count.textContent = n ? (n === 1 ? labels : labelsN.replace('2', n)) : ''; }
-    function render() {
-      var list = W() ? W().read() : [];
-      paintCount(list.length);
-      empty.hidden = list.length > 0; foot.hidden = list.length === 0;
-      if (!list.length) { grid.innerHTML = ''; return; }
+    var one = {{ 'wishlist.count' | t: count: 1 | json }}, many = {{ 'wishlist.count' | t: count: 2 | json }};
+    var KEY = 'moana:wishlist';
+    function read() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; } }
+    function paintCount(n) { count.textContent = n ? (n === 1 ? one : many.replace('2', n)) : ''; }
+    function state(n) { paintCount(n); empty.hidden = n > 0; foot.hidden = n === 0; }
+
+    // Decide empty or full while the page is still parsing (storage is synchronous), and hold card-shaped
+    // placeholders for the saved products, so nothing jumps when the real cards arrive.
+    var list = read();
+    state(list.length);
+    grid.innerHTML = list.map(function () { return '<li class="wl__ghost" aria-hidden="true"><span></span></li>'; }).join('');
+
+    function load() {
+      if (!list.length) return;
       Promise.all(list.map(function (h) {
         return fetch({{ routes.root_url | json }}.replace(/\/$/, '') + '/products/' + encodeURIComponent(h) + '?view=card')
           .then(function (r) { return r.ok ? r.text() : ''; }).catch(function () { return ''; });
       })).then(function (cards) {
         grid.innerHTML = cards.filter(Boolean).map(function (c) { return '<li>' + c + '</li>'; }).join('');
         grid.querySelectorAll('.reveal').forEach(function (r) { r.classList.add('is-in'); });
-        if (W()) W().paint();
+        if (window.MoanaWishlist) window.MoanaWishlist.paint();
       });
     }
     document.addEventListener('wishlist:change', function () {
       // removing a heart here removes the card straight away
-      var list = W() ? W().read() : [];
+      list = read();
       grid.querySelectorAll('[data-wishlist-toggle]').forEach(function (b) {
         if (list.indexOf(b.getAttribute('data-wishlist-toggle')) === -1) { var li = b.closest('li'); if (li) li.remove(); }
       });
-      paintCount(list.length); empty.hidden = list.length > 0; foot.hidden = list.length === 0;
+      state(list.length);
     });
-    root.querySelector('[data-wl-clear]').addEventListener('click', function () { if (W()) { W().write([]); W().paint(); } render(); });
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render); else render();
+    root.querySelector('[data-wl-clear]').addEventListener('click', function () {
+      try { localStorage.setItem(KEY, '[]'); } catch (e) {}
+      if (window.MoanaWishlist) window.MoanaWishlist.paint();
+      list = []; grid.innerHTML = ''; state(0);
+    });
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load); else load();
   })();
 </script>
 
 {% stylesheet %}
+  .wl__ghost span { display: block; aspect-ratio: 1 / 1.04; margin-bottom: 11rem; background: linear-gradient(90deg, #f4f4f4, #fafafa, #f4f4f4); background-size: 200% 100%; animation: wl-shimmer 1.4s linear infinite; }
+  @keyframes wl-shimmer { to { background-position: -200% 0; } }
   .wl__head { display: grid; justify-items: center; gap: var(--s-2); margin-bottom: clamp(1.5rem, 1rem + 2vw, 3rem); }
   .wl__foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--s-3); margin-top: var(--s-7); padding-top: var(--s-4); border-top: 1px solid var(--line); }
   .wl__clear { font-size: var(--fs-small); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; min-height: 44px; }

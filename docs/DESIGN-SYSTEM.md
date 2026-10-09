@@ -11,12 +11,13 @@ The guide names five colours but gives **no hex or Pantone codes**. The hex valu
 |---|---|---|---|---|
 | `--c-white` | #FFFFFF | – | Page ground everywhere (client rule) | – |
 | `--c-licorice` | #343434 | Licorice | All text, outline buttons | 12.45:1 |
-| `--c-forest` | #283106 | Logo green (wordmark and mark) | Primary buttons, links, labels, footer ground, active states | 13.71:1 |
+| `--c-forest` | #283106 | Logo green (wordmark and mark) | Promo bar, product-page ADD TO BAG, labels, badges, active states | 13.71:1 |
 | `--c-sage` | #ABB086 | Sage | Decorative only: step numerals, icons on dark, the footer's column labels | 2.26:1 (never body text; 6.06:1 on forest) |
 | `--c-linen` | #C7C2AB | Khaki Linen | Reserved, not yet used | – |
 | `--c-spring` | #D1D9BE | Spring | The one tinted band per page (routine), free-delivery "unlocked" state, hover fills | – |
 | `--c-frost` | #EBEBEB | First Frost | Concern tiles, info panels, image wells (lifted to #F4F4F4) | – |
-| `--c-mist` | #DFE0DB | Logo colour on dark grounds | Text on the forest footer and password page | 10.33:1 on forest |
+| `--c-mist` | #DFE0DB | Logo colour on dark grounds | Text on the footer and password page | 11.49:1 on night |
+| `--c-night` | #212721 | Pantone Black 3 C (green-black, chosen by the client for the footer) | Footer ground, primary buttons, card ADD TO BAG, header CTA | 15.25:1 on white |
 | `--error` | #8F2D24 | – (functional) | Form errors and failed cart actions only, always with an icon and text | 8.18:1 |
 
 Secondary text is Licorice at 74 % opacity on white (5.49:1) and on First Frost (4.96:1), and at 88 % on Spring (6.3:1). All ratios are computed with the WCAG 2 formula. Lighthouse accessibility: 100 on home, collection, product, routine guide, cart and contact (local preview).
@@ -49,13 +50,18 @@ The official files are Canva exports: vector lettering, with the wave as an embe
 
 Fonts are self-hosted WOFF2 (SIL OFL), latin and latin-ext subsets, `font-display: swap`; only Raleway and Instrument Serif regular are preloaded.
 
+## Fallback fonts (no layout shift)
+
+`Instrument Serif Fallback` (Times New Roman / Liberation Serif at `size-adjust: 83%`) and `Raleway Fallback` (Arial / Liberation Sans at `103.2%`) sit second in the stacks, so text keeps its line breaks when the web fonts arrive. Ratios were measured in the browser.
+
 ## Space, shape, layout
 
 - 4 px base: 4, 8, 12, 16, 24, 32, 48, 64, 96, 128.
 - Section rhythm `--section`: 56 → 104 px. Page width 1440 px; gutters 16 → 48 px.
-- Radii: 4 (thumbs), 8 (inputs, image wells), 14 (cards, panels, media), pill (buttons, chips, steppers). Soft corners echo the wave mark.
+- Radii: **0 everywhere** (v3, after Cult Beauty: square buttons, cards, chips, inputs, filter boxes). The one curve on the site is the footer slab's rounded top (GetLayers Lumora).
 - Hairlines: Licorice at 14 % (32 % for strong). No drop shadows except the mega menu and the floating brand packshot.
-- Product grid: 2 columns under 750 px, 3 to 1199 px, 4 from 1200 px; image wells 4:5.
+- Product grid: 2 columns under 750 px, 3 to 1199 px, 4 from 1200 px; white image wells at 1:1.04; product rails show 4 across on desktop and peek on phones.
+- Section titles (Cult Beauty's voice): `.t-title`, Raleway 400, uppercase, tracked 0.12em, centred. Editorial headlines stay in Instrument Serif.
 
 ## Motion
 
@@ -70,9 +76,13 @@ Fonts are self-hosted WOFF2 (SIL OFL), latin and latin-ext subsets, `font-displa
 
 - **Reveal:** rise 24 px out of an 8 px blur, opacity lands at 280 ms, 90 ms stagger for text and 110 ms for cards. Fires once at 15 % visibility. It is never applied to the hero headline or the hero image, so those paint first.
 - **Hover:** fills wipe in from an edge, never a fade. Product images scale to 1.035 and the second photo crossfades in. Hover effects are gated behind `(hover: hover)`.
-- **No preloader, no smooth-scroll hijacking, no WebGL.**
+- **Line reveal** (GetLayers Lumora): headings marked `data-lines` split into their rendered lines; each rises out of its own mask, 100 ms apart, 900 ms ease-out cubic; descenders protected.
+- **Carousels**: native scroll-snap (swipe works without script) plus arrows, dots and autoplay that pauses on hover, focus, a background tab, the pause tab and reduced motion. Hero slides rise out of a blur and their pictures settle from 1.06 scale.
+- **WebGL**: the GetLayers *Feather* wash (one fragment shader, WebGL2). Compiled only near the viewport and when idle, half resolution, 30 fps, paused off screen, still frame on software GL or under reduced motion.
+- **Glass**: white at 50–80 % with 20–24 px backdrop blur and an inset highlight; solid fallback where `backdrop-filter` is unsupported.
+- **No preloader, no smooth-scroll hijacking.**
 - `prefers-reduced-motion` removes every transform, blur and clip and shortens transitions to 0.01 ms.
 
 ## Components
 
-Header (sticky, hides on scroll down and returns on scroll up), mega menu, phone menu drawer, announcement bar, buttons (primary, secondary, light, ghost-light, small), pills, tags, quantity stepper, accordion (native `<details>` with height animation where supported), product card (price in button), price, cart drawer, cart line, free-delivery bar, cart summary, search overlay with predictive results, filter drawer with check rows, pagination, breadcrumbs, toast, notices, form fields with inline errors, lightbox, sticky buy bar, footer.
+Service bar, promo bar, header (search field, Find my routine, wishlist, account, bag; glass on scroll, hides on scroll down), centred nav, mega menu, hero carousel, promo strip, category tiles, product tabs, editorial cards, brand tiles, wishlist heart, routine finder, phone menu drawer, announcement bar, buttons (primary, secondary, light, ghost-light, small), pills, tags, quantity stepper, accordion (native `<details>` with height animation where supported), product card (price in button), price, cart drawer, cart line, free-delivery bar, cart summary, search overlay with predictive results, filter drawer with check rows, pagination, breadcrumbs, toast, notices, form fields with inline errors, lightbox, sticky buy bar, footer.

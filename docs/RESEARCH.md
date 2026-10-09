@@ -6,6 +6,8 @@ Internal working notes behind the Moana Beauté theme (October 2026).
 
 | Source | Status | How |
 |---|---|---|
+| cultbeauty.co.uk | **Inspected (v3)** | Headless Chromium at 1440 and 390 px: homepage, Korean skincare category, a product page, computed CSS. Needed `www.cultbeauty.co.uk` and `static.thcdn.com` allowed |
+| kyliecosmetics.com (voice) | Read (v3) | Page text of the homepage and Kylie Skin, for tone |
 | kosas.com | Inspected | Headless Chromium at 1440 and 390 px: homepage, mega menu, collections, 2 product pages, cart drawer, search, computed CSS and motion |
 | kyliecosmetics.com | Partly inspected | Same method. Its collection grid, filters and typed search are rendered client-side by Algolia, which the sandbox blocks, so they stayed on skeleton loaders. Reviews, loyalty and video widgets were also blocked |
 | rhodeskin.com | **Not inspected** | `www.rhodeskin.com` is denied by this environment's network policy. Nothing here is based on Rhode's live site |
@@ -13,6 +15,23 @@ Internal working notes behind the Moana Beauté theme (October 2026).
 | GetLayers library | Explored | Through its MCP: 109 compositions, 53 templates, 54 styles, sections, gradients; Halden and Dantora source read in detail |
 
 Screenshots and raw CSS dumps from the reference study are in the session scratchpad (not committed: third-party material).
+
+## Cult Beauty (THG platform, Inter, square, black) — the v3 reference
+
+**Measured**: Inter throughout. Body 16/24. Nav 14 px with 0.35 px tracking. Section titles 14–20 px at weight 300, uppercase, 1.4 px tracking. Buttons 48 px tall, black, square, 14 px weight 600 uppercase. Badges 12 px weight 600 uppercase in a 1 px outlined box. Prices 14 px bold. No border radius anywhere.
+
+**Structure taken**
+- Header: a service bar (four promises with icons), a coloured promo bar, a boxed search field left, logo centred, a black "ASK CULT" button with account and bag right, and centred category nav underneath.
+- Homepage: a thin split promo carousel; a split hero carousel (light line over a bold uppercase line, two black buttons, picture beside it); SHOP BY CATEGORY square tiles; tabbed product carousels; editorial "JUST LAUNCHED" and "IN FOCUS" cards with SHOP NOW; brand tiles; a black sign-up strip and a black footer.
+- Product card: wishlist heart, name, outlined badge, bold price, full-width ADD TO BAG.
+- Collection: breadcrumbs, item count, centred uppercase title, a description with Read more, a row of filter boxes and Sort, a 4-column grid.
+- Product page: a 2-up gallery; brand name large, title, "View product details →", price, badge, a green "ADD TO BAG – £X", Add to Wishlist, "In stock | Usually dispatched…", ruled rows; a grey description band with accordions; "Other customers bought"; a sticky add bar.
+
+**Adapted for Moana**:
+- **Type and colour:** brand type (Raleway for interface, Instrument Serif for editorial lines) and brand colours replace Inter and black. Pantone Black 3 C replaces black, and forest replaces Cult's green.
+- **ASK CULT:** became **Find my routine**, a quiz over the real catalogue.
+- **Badges:** come only from real data.
+- **Not taken:** reviews and star ratings (none yet), "frequently bought together" (no sales data), and app-download and loyalty prompts.
 
 ## Kosas (custom Shopify theme, Tailwind + web components, Splide)
 
