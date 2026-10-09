@@ -23,7 +23,7 @@ The first time you open it from the Home Screen, go to **You → Data** (the ini
 
 | Host | How |
 |---|---|
-| **Netlify Drop** | Go to app.netlify.com/drop and drag the `life-os` folder in. You get an HTTPS URL in seconds. |
+| **Netlify Drop** | Run `sh tools/pack-site.sh` to make `life-os-site.zip` (only the files the app serves), then drop that zip, or the `life-os` folder, on app.netlify.com/drop. `netlify.toml` turns Netlify's build off: the app has no build step, and `package.json`'s scripts are developer checks that must not run there. |
 | **Cloudflare Pages** | Create a project, choose "Direct upload" and upload the `life-os` folder. |
 | **GitHub Pages** | Enable Pages for the repo and point it at the branch. The app lives at `https://<user>.github.io/<repo>/life-os/`. Paths are all relative, so a sub-path is fine. |
 
