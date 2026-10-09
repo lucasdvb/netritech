@@ -14,7 +14,7 @@
       "name": {{ site_name | json }},
       {%- if settings.legal_name != blank %}"legalName": {{ settings.legal_name | json }},{% endif %}
       "url": {{ shop.url | append: routes.root_url | json }},
-      "logo": {{ 'logo-lockup-dark.svg' | asset_url | prepend: 'https:' | json }},
+      "logo": {{ 'logo-lockup-dark.webp' | asset_url | prepend: 'https:' | json }},
       "email": {{ shop.email | json }},
       {%- if settings.whatsapp_number != blank %}"telephone": {{ settings.whatsapp_number | prepend: '+' | json }},{% endif %}
       {%- if settings.address_locality != blank %}

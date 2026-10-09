@@ -15,7 +15,7 @@ let lines = []; // { handle, qty }
 function cartObj() {
   const items = lines.map((l, i) => {
     const p = productByHandle[l.handle]; const v = p.variants[0];
-    return { key: `${v.id}:${i}`, id: v.id, quantity: l.qty, variant: v, product: p, url: p.url, image: p.featured_media, title: p.title, vendor: p.vendor,
+    return { key: `${v.id}:${i}`, id: v.id, product_id: p.id, quantity: l.qty, variant: v, product: p, url: p.url, image: p.featured_media, title: p.title, vendor: p.vendor,
       price: v.price, final_price: v.price, final_line_price: v.price * l.qty, original_line_price: v.price * l.qty, line_level_discount_allocations: [] };
   });
   return { items, item_count: items.reduce((a, b) => a + b.quantity, 0), total_price: items.reduce((a, b) => a + b.final_line_price, 0),

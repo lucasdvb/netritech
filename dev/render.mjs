@@ -190,7 +190,7 @@ export function createEngine(ctxExtra = {}) {
       const name = this.token.args.trim().replace(/['"]/g, '');
       if (group) {
         const g = readJSON(`sections/${name}.json`);
-        for (const key of g.order) emitter.write(yield renderSection(engine, key, g.sections[key], ctx));
+        for (const key of g.order) emitter.write(yield renderSection(engine, key, g.sections[key], ctx, 'sections--1__'));
       } else {
         emitter.write(yield renderSection(engine, name, { type: name, settings: {} }, ctx));
       }
@@ -232,13 +232,13 @@ function settingsFor(defs, raw) {
   for (const d of defs || []) if (d.id) out[d.id] = resolveSetting(d, raw?.[d.id]);
   return out;
 }
-export async function renderSection(engine, id, data, ctx) {
+export async function renderSection(engine, id, data, ctx, prefix = 'template--1__') {
   const file = read(`sections/${data.type}.liquid`);
   const schema = schemaOf(file);
   const blockDefs = Object.fromEntries((schema.blocks || []).map((b) => [b.type, b]));
   const order = data.block_order || Object.keys(data.blocks || {});
   const blocks = order.map((k) => { const b = data.blocks[k]; return { id: k, type: b.type, settings: settingsFor(blockDefs[b.type]?.settings, b.settings), shopify_attributes: '' }; });
-  const section = { id: `template--1__${id}`, settings: settingsFor(schema.settings, data.settings), blocks };
+  const section = { id: `${prefix}${id}`, settings: settingsFor(schema.settings, data.settings), blocks };
   const scope = { section };
   const g = ctx.getAll ? ctx.getAll() : ctx;
   // Shopify globals (settings, shop, routes…) must also reach {% render %}ed snippets: pass them as liquidjs globals.

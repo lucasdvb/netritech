@@ -13,7 +13,7 @@
 <body>
   <main class="section">
     <div class="page-width page-width--narrow center stack" style="--stack: var(--s-5)">
-      <img src="{{ 'logo-lockup-dark.svg' | asset_url }}" alt="{{ settings.brand_name | default: shop.name | escape }}" width="785" height="380" style="width:180px;height:auto;margin-inline:auto">
+      <img src="{{ 'logo-lockup-dark.webp' | asset_url }}" alt="{{ settings.brand_name | default: shop.name | escape }}" width="900" height="436" style="width:180px;height:auto;margin-inline:auto">
       <h1 class="t-h1">{{ 'gift_card.title' | t }}</h1>
       <p class="t-h3">{{ gift_card.balance | money }}</p>
       {%- if gift_card.expired or gift_card.enabled == false -%}

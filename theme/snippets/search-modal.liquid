@@ -26,6 +26,13 @@
               <a class="pill pill--sm" href="{{ child.url }}">{{ child.title }}</a>
             {%- endfor -%}
           </div>
+          {%- assign start_col = collections['new'] -%}
+          {%- if start_col.products_count > 0 -%}
+            <p class="t-label search-modal__new">{{ 'search.new_in' | t }}</p>
+            <ul class="mini-list search-modal__mini" role="list">
+              {%- for p in start_col.products limit: 4 -%}{%- render 'mini-product', product: p -%}{%- endfor -%}
+            </ul>
+          {%- endif -%}
         </div>
       </div>
     </div>

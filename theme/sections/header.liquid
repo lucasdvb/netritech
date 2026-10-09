@@ -78,7 +78,7 @@
       {%- if section.settings.logo != blank -%}
         {{ section.settings.logo | image_url: width: 400 | image_tag: widths: '140, 210, 280, 400', sizes: '140px', alt: brand_name, fetchpriority: 'high', loading: 'eager' }}
       {%- else -%}
-        <img src="{{ 'logo-lockup-dark.svg' | asset_url }}" alt="{{ brand_name | escape }}" width="785" height="380" fetchpriority="high" decoding="async">
+        <img src="{{ 'logo-lockup-dark.webp' | asset_url }}" alt="{{ brand_name | escape }}" width="900" height="436" fetchpriority="high" decoding="async">
       {%- endif -%}
     </a>
 
@@ -104,7 +104,7 @@
 {%- comment -%} Phone and tablet menu. The same information as the mega menu, as an accordion. {%- endcomment -%}
 <div class="drawer drawer--left menu-drawer" id="menu-drawer" role="dialog" aria-modal="true" aria-label="{{ 'header.menu' | t }}" tabindex="-1">
   <div class="drawer__head">
-    <img src="{{ 'logo-lockup-dark.svg' | asset_url }}" alt="" width="785" height="380" style="height:40px;width:auto" loading="lazy">
+    <img src="{{ 'logo-lockup-dark.webp' | asset_url }}" alt="" width="900" height="436" style="height:40px;width:auto" loading="lazy">
     <button class="icon-btn" type="button" data-drawer-close>{%- render 'icon', name: 'close' -%}<span class="sr-only">{{ 'general.close' | t }}</span></button>
   </div>
   <div class="drawer__body">

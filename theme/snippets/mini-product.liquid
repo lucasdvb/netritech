@@ -1,0 +1,17 @@
+{%- comment -%} Compact product row with an add button. Params: product. {%- endcomment -%}
+{%- assign v = product.selected_or_first_available_variant -%}
+<li class="mini">
+  <a class="mini__img" href="{{ product.url }}" tabindex="-1" aria-hidden="true">{%- if product.featured_media -%}{{ product.featured_media.preview_image | image_url: width: 160 | image_tag: widths: '80, 160', sizes: '56px', alt: '', loading: 'lazy' }}{%- endif -%}</a>
+  <span class="mini__text">
+    <span class="card__vendor">{{ product.vendor }}</span>
+    <a class="mini__name" href="{{ product.url }}">{{ product.title }}</a>
+    <span class="t-price">{{ v.price | money }}</span>
+  </span>
+  {%- if product.available and product.has_only_default_variant -%}
+    {%- form 'product', product, data-product-form: '', novalidate: 'novalidate' -%}
+      <input type="hidden" name="id" value="{{ v.id }}">
+      <input type="hidden" name="quantity" value="1">
+      <button class="btn btn--small" type="submit" name="add" aria-label="{{ 'products.add_named' | t: title: product.title | escape }}">{{ 'products.add' | t }}</button>
+    {%- endform -%}
+  {%- endif -%}
+</li>
