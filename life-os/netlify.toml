@@ -1,0 +1,17 @@
+# Life OS has no build step: Netlify serves these files as they are. (package.json's "build" is a
+# developer check, not a site build, so it must not run here.)
+[build]
+  publish = "."
+  command = "echo 'No build step: Life OS is served as it is.'"
+
+# The app and its offline worker are checked for updates on every visit; everything else is cached
+# by the service worker.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
