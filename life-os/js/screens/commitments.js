@@ -102,8 +102,7 @@ export default {
     const act = C.active();
     const past = C.commitments().filter((c) => c.status !== 'active').slice(0, 10);
     return html`
-      ${pageHead({ title: 'Commitments', back: { to: 'plan', label: 'Plan' }, actions: html`<button type="button" class="btn btn--primary btn--sm" data-action="pg-new">New pledge</button>` })}
-      <p class="lead">A pledge you choose for a week, two, a month or any length you like, with a stake you set. It’s the one place Life OS counts down.</p>
+      ${pageHead({ title: 'Commitments', back: { to: 'plan', label: 'Plan' }, actions: html`<button type="button" class="btn btn--primary btn--sm" data-action="pg-new">New pledge</button>`, info: 'A pledge you choose for a week, two, a month or any length you like, with a stake you set. It’s the one place Life OS counts down.' })}
       ${act.length ? html`<ul class="pledge-list">${act.map(pledgeCard)}</ul>`
         : html`<div class="card"><p class="card-lead">No pledge running. Pick one habit you want to prove to yourself.</p><button type="button" class="btn btn--soft btn--sm" data-action="pg-new">New pledge</button></div>`}
       ${past.length ? html`<section class="block" data-key="past"><div class="block-head"><h2 class="block-title">Before</h2></div>

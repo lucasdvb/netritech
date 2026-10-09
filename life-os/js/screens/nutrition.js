@@ -3,7 +3,7 @@ import * as M from '../domain/metrics.js';
 import { today, lastNDays, fmtMD, fmtDayShort, relativeDay, addDays, fmtTime } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { pageHead, empty } from '../ui/components.js';
+import { pageHead, empty, infoBtn, tipText } from '../ui/components.js';
 import { barChart } from '../ui/charts.js';
 import { num, litres } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
@@ -18,13 +18,13 @@ function adaptiveCard() {
   const t = M.targets();
   if (!a.ready) {
     return html`<div class="card">
-      <p class="section-label">Adaptive calories</p>
+      <p class="section-label">Adaptive calories${infoBtn('adaptive', 'adaptive calories')}</p>
+      ${tipText('adaptive', 'Once both are there, Life OS estimates your maintenance from intake vs weight change.')}
       <p class="card-lead">Your target starts at ${num(t.kcalMin)}–${num(t.kcalMax)} kcal and adjusts from your real trend, not a formula.</p>
       <div class="progress-steps">
         <p><span class="tnum">${Math.min(a.loggedDays, a.needDays)}/${a.needDays}</span> days with calories logged</p>
         <p><span class="tnum">${Math.min(a.weighIns, a.needWeighIns)}/${a.needWeighIns}</span> weigh-ins in the last 3 weeks</p>
       </div>
-      <p class="fine-print">Once both are there, Life OS estimates your maintenance from intake vs weight change.</p>
     </div>`;
   }
   const status = {

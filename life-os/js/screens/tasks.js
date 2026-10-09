@@ -33,7 +33,7 @@ export default {
     const anytime = T.anytime();
     const done = T.doneRecently(14);
     return html`
-      ${pageHead({ title: 'Tasks', back: { to: 'plan', label: 'Plan' }, sub: 'One-off jobs and weekly chores. Your Top 3 lives on Today.',
+      ${pageHead({ title: 'Tasks', back: { to: 'plan', label: 'Plan' }, info: 'One-off jobs and weekly chores. Your Top 3 lives on Today.',
         actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New task">${icon('plus', { size: 20 })}</button>` })}
       ${!total ? empty({ ic: 'list-todo', title: 'No tasks yet', body: 'Add the one-off things that don’t belong in a habit: an appointment to book, a chore, a call to make.', cta: 'Add a task', action: 'new' }) : ''}
       ${late.length ? html`<section class="block tgroup" data-key="g-overdue">

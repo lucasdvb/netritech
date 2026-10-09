@@ -202,8 +202,8 @@ export default {
     };
     return html`
       ${pageHead({ title: 'Goals', back: { to: 'plan', label: 'Plan' }, actions: html`${active.length > 1 ? html`<button type="button" class="btn btn--soft btn--sm" data-action="arrange" aria-pressed="${!!ui.arranging}">${ui.arranging ? 'Done' : 'Arrange'}</button>` : ''}
-        <button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New goal">${icon('plus', { size: 20 })}</button>` })}
-      <p class="lead">${ui.arranging ? 'Drag your goals into the order that matters to you. Plan shows them this way too.' : 'Where each goal is heading, from your own data. A new goal takes three questions.'}</p>
+        <button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New goal">${icon('plus', { size: 20 })}</button>`, info: 'Where each goal is heading, from your own data. A new goal takes three questions.' })}
+      ${ui.arranging ? html`<p class="lead">Drag your goals into the order that matters to you. Plan shows them this way too.</p>` : ''}
       ${active.length && ui.arranging ? html`<ol class="list sort-list" data-reorder="move-goal">${active.map((g) => html`<li class="sort-row" data-key="ar-${g.id}">
           <button type="button" class="drag-handle" data-drag aria-label="Move ${g.name}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>
           <span class="row"><span class="row-main"><span class="row-title">${g.name}</span><span class="row-sub">${catLabel(g.category)}</span></span></span></li>`)}</ol>`

@@ -74,8 +74,7 @@ export default {
     const open = list.filter((r) => r.status !== 'claimed');
     const claimed = list.filter((r) => r.status === 'claimed').reverse().slice(0, 10);
     return html`
-      ${pageHead({ title: 'Rewards', back: { to: 'plan', label: 'Plan' }, actions: html`<button type="button" class="btn btn--primary btn--sm" data-action="rw-new">New reward</button>` })}
-      <p class="lead">Rewards you set yourself, unlocked only by what really happened. No points, nothing to spend.</p>
+      ${pageHead({ title: 'Rewards', back: { to: 'plan', label: 'Plan' }, actions: html`<button type="button" class="btn btn--primary btn--sm" data-action="rw-new">New reward</button>`, info: 'Rewards you set yourself, unlocked only by what really happened. No points, nothing to spend.' })}
       ${open.length ? html`<ul class="reward-list">${open.map(rewardRow)}</ul>`
         : html`<div class="card"><p class="card-lead">Pick something you’d enjoy and tie it to something real: twelve workouts, twenty sealed days, a goal reached.</p><button type="button" class="btn btn--soft btn--sm" data-action="rw-new">New reward</button></div>`}
       ${claimed.length ? html`<section class="block" data-key="claimed"><div class="block-head"><h2 class="block-title">Enjoyed</h2></div><ul class="reward-list">${claimed.map(rewardRow)}</ul></section>` : ''}`;

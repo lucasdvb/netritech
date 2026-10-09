@@ -17,8 +17,7 @@ export default {
     const list = I.insights();
     const past = I.history().filter((h) => h.title).slice(0, 8);
     return html`
-      ${pageHead({ title: 'Insights', back: { to: 'reflect', label: 'Reflect' } })}
-      <p class="lead">Patterns in your own logs, each with one change to your plan. Acted on or set aside, an insight stays quiet for two weeks.</p>
+      ${pageHead({ title: 'Insights', back: { to: 'reflect', label: 'Reflect' }, info: 'Patterns in your own logs, each with one change to your plan. Acted on or set aside, an insight stays quiet for two weeks.' })}
       ${list.length ? html`<ul class="insight-cards">${list.map(insightCard)}</ul>`
         : empty({ ic: 'lightbulb', title: 'Nothing to change right now.', body: 'Your patterns will appear here as you use Life OS, each with one thing to do about it.' })}
       ${past.length ? html`<section class="block" data-key="past"><div class="block-head"><h2 class="block-title">Lately</h2></div>

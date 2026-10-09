@@ -1,7 +1,22 @@
 import { html, raw, attr, cx, esc, dataAttrs } from './dom.js';
 import { icon } from './icons.js';
 import { ring, bar, check, toggle } from './controls.js';
+import { tipOpen } from './tips.js';
 export { ring, bar, check, toggle };
+
+/* ---------- explanations behind an ⓘ (see tips.js) ---------- */
+const tipId = (key) => `tip-${String(key).replace(/[^a-z0-9-]/gi, '-').toLowerCase()}`;
+
+/** The ⓘ button. `label` names what it explains, for screen readers. */
+export function infoBtn(key, label = 'this') {
+  const open = tipOpen(key);
+  return html`<button type="button" class="${cx('info-btn', open && 'is-open')}" data-action="tip" data-tip="${key}" aria-expanded="${open}" aria-controls="${tipId(key)}" aria-label="About ${label}">${icon('info', { size: 18 })}</button>`;
+}
+
+/** The explanation itself: shown only while its ⓘ is open. */
+export function tipText(key, text, { cls = '' } = {}) {
+  return tipOpen(key) ? html`<p class="${cx('tip-text', cls)}" id="${tipId(key)}" data-key="${tipId(key)}">${text}</p>` : '';
+}
 
 
 
@@ -22,23 +37,28 @@ export function empty({ ic = 'sparkle', title, body = '', cta, action, data = {}
   </div>`;
 }
 
-export function pageHead({ title, eyebrow, back, actions = '', sub, morph }) {
+export function pageHead({ title, eyebrow, back, actions = '', sub, morph, info }) {
+  const key = info && `page:${typeof title === 'string' ? title : eyebrow || 'page'}`;
   return html`<header class="page-head${back ? ' page-head--child' : ''}">
     ${back ? html`<button type="button" class="back-btn" data-action="go-back" data-fallback="${back.to}" aria-label="Back to ${back.label}">${icon('chevron-left', { size: 22 })}<span>${back.label}</span></button>` : ''}
     <div class="page-head-row">
       <div>
         ${eyebrow ? html`<p class="eyebrow">${eyebrow}</p>` : ''}
-        <h1 class="page-title"${attr(morph, 'data-morph', morph)}>${title}</h1>
+        ${info ? html`<div class="title-line"><h1 class="page-title"${attr(morph, 'data-morph', morph)}>${title}</h1>${infoBtn(key, typeof title === 'string' ? title : 'this page')}</div>`
+    : html`<h1 class="page-title"${attr(morph, 'data-morph', morph)}>${title}</h1>`}
         ${sub ? html`<p class="page-sub">${sub}</p>` : ''}
       </div>
       <div class="page-actions">${actions}</div>
     </div>
+    ${info ? tipText(key, info, { cls: 'tip-text--page' }) : ''}
   </header>`;
 }
 
-export function section(title, body, { action = '', cls = '', id } = {}) {
+export function section(title, body, { action = '', cls = '', id, info } = {}) {
+  const key = info && `sec:${id || title}`;
   return html`<section class="${cx('block', cls)}"${attr(id, 'data-key', id)}>
-    ${title ? html`<div class="block-head"><h2 class="block-title">${title}</h2>${action}</div>` : ''}
+    ${title ? html`<div class="block-head"><h2 class="block-title">${title}${info ? infoBtn(key, title) : ''}</h2>${action}</div>` : ''}
+    ${info ? tipText(key, info) : ''}
     ${body}
   </section>`;
 }

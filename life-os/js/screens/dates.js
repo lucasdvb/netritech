@@ -23,8 +23,7 @@ export default {
       <span class="row-right tnum">${E.inWords(x.in)}</span></button></li>`;
     return html`
       ${pageHead({ title: 'Dates', back: { to: 'plan', label: 'Plan' },
-        actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New date">${icon('plus', { size: 20 })}</button>` })}
-      <p class="lead">Birthdays, anniversaries and the days you’re counting down to. The next two weeks show on Today.</p>
+        actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New date">${icon('plus', { size: 20 })}</button>`, info: 'Birthdays, anniversaries and the days you’re counting down to. The next two weeks show on Today.' })}
       ${ahead.length ? html`<ul class="list">${ahead.map(row)}</ul>`
         : empty({ ic: 'calendar-heart', title: 'Never miss the ones that matter', body: 'Add birthdays and anniversaries once; they come round every year. Add an event to count down to it.', cta: 'Add a date', action: 'new' })}
       ${past.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Past events</h2></div><ul class="list">${past.map(row)}</ul></section>` : ''}`;

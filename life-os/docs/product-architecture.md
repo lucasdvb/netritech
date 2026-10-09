@@ -1455,6 +1455,10 @@ Partway through, the owner made automatic sync between devices a must, so it was
   - The habit stays in the morning with its goal and history. Its checklist is gone: tapping it starts the workout, and finishing the workout ticks it. "Stretched" in Capture still ticks it.
   - A mobility session doesn't count as training: not for the Training habit, the week's sessions, seasons, rewards or the yearly numbers. It doesn't suggest progression either.
   - Installed data is converted by the migration `2026-10-mobility-workout`. A day with every checklist item ticked stays done.
+- **Explanations behind an ⓘ** (`ui/tips.js`, `infoBtn`, `tipText` and `pageHead({ info })` in `ui/components.js`).
+  - Text that explains a screen or a card, and that you couldn't edit or hide, now folds behind an ⓘ beside the title: the page leads (Work, Rewards, Books, Goals, Sync and the rest), long page subtitles (Your plan, Tasks, Moodboard, Habits in focus) and the fine print on cards (calves, core, posture, adaptive calories, the weight pace, safety copies, the week's rules).
+  - Tap the ⓘ to read it, tap again to fold it. It stays open while the app is open. **Settings › Show explanations** keeps every one open.
+  - Kept in sight on purpose: your own words (descriptions, notes, cues), status lines with your numbers, instructions while you are doing something (arranging goals, restore choices), and the two warnings that protect data or health (clearing Safari's data deletes yours; "not medical advice").
 - **Tested:** `tests/unit/workout-notes.test.mjs`, `tests/unit/mobility.test.mjs` and `tests/workout-notes.mjs`, which covers typing to log, same as last time, warm-ups, add and remove set, the clock across gym mode, leaving, a manual pause and the finish, and the brain dump end to end in light and dark.
 
 **Handover audit (October 2026).** A full audit before handover: security, calculations, persistence and every form, then crawlers over every screen and sheet at seven widths. What was found, fixed and proven, and what is still open, is in [`handover-audit.md`](handover-audit.md).
