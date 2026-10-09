@@ -174,6 +174,7 @@ The **app-icon badge** shows how much of today's plan is still open and updates 
 - **Sample data:** opt-in, clearly labelled and removable in one tap. Every sample record carries `demo: true` and never overwrites a real entry.
 - **Erase:** You → Data → *Erase everything on this device* (asks twice). Sync is turned off first, so the fresh start never replaces your records on your other devices.
 - **Brain dump:** Plan → Brain dump keeps notes by category; they're in backups, sync and the CSV export.
+- **Exercise photos and notes:** up to two photos and a note per exercise (⋯ › Photos and note). They're always in backups, like the moodboard.
 
 **Security.** The app runs only its own code: a Content Security Policy (`index.html`) allows scripts from this site alone, so even a damaged or hostile record can't run anything. Everything you type is shown as text, and colours or categories that reach markup are checked against known values. A backup is checked in full before anything changes, and a restore that fails part-way changes nothing. CSV cells that a spreadsheet would treat as formulas are exported as text.
 

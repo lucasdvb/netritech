@@ -5,6 +5,8 @@ import { pageHead, empty } from '../ui/components.js';
 import { lineChart } from '../ui/charts.js';
 import { num, kgOut, weightUnit, loadText } from '../ui/format.js';
 import { exerciseSheet } from './exercises.js';
+import { mediaLine, mediaActions, mediaInputs, hydrateMedia, openMedia } from './exercise-media-ui.js';
+import { icon } from '../ui/icons.js';
 
 export default {
   id: 'exercise',
@@ -23,6 +25,9 @@ export default {
       ${pageHead({ title: e.name, eyebrow: F.categoryLabel(e.category), back: { to: 'plan/training/exercises', label: 'Exercises' },
         actions: html`<button type="button" class="btn btn--soft btn--sm" data-action="edit">Edit</button>` })}
       ${e.cues ? html`<p class="lead">${e.cues}</p>` : ''}
+      <section class="block" data-key="media"><div class="block-head"><h2 class="block-title">Your photos and note</h2>
+        <button type="button" class="link-btn" data-action="media">${icon('image-plus', { size: 16 })} ${e.photos?.length || e.note ? 'Edit' : 'Add'}</button></div>
+        ${mediaLine(e) || html`<p class="muted small">Up to two photos and a note, for the setup or the position you'd otherwise forget. They show in the workout and in gym mode.</p>`}</section>
       <div class="stat-row stat-row--3">
         <div class="stat"><p class="stat-label">Sessions</p><p class="stat-value tnum">${hist.length}</p></div>
         <div class="stat"><p class="stat-label">${isTime ? 'Longest hold' : isMin ? 'Longest' : 'Best set'}</p><p class="stat-value tnum">${pb ? (isTime ? `${pb.seconds}s` : isMin ? `${pb.minutes}m` : pb.reps) : '—'}</p></div>
@@ -42,5 +47,8 @@ export default {
           : html`<p class="muted">Not logged yet.</p>`}
       </section>`;
   },
-  actions: { edit: ({ params }) => exerciseSheet(F.exercise(params.id)) },
+  mount(el) { hydrateMedia(el); },
+  update(el) { hydrateMedia(el); },
+  inputs: { ...mediaInputs },
+  actions: { ...mediaActions, edit: ({ params }) => exerciseSheet(F.exercise(params.id)), media: ({ params }) => openMedia(params.id) },
 };

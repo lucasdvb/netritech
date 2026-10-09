@@ -1445,6 +1445,11 @@ Partway through, the owner made automatic sync between devices a must, so it was
   - Categories can be renamed (their notes move with them; a name that already exists merges the two), reordered or deleted. Deleting one moves its notes to Unsorted, with Undo.
   - In Capture, "idea: …" files a note under Ideas and "dump: …" under Unsorted. Brain dump is also on the capture grid.
   - Global search finds notes and opens them. Notes are in the CSV export, sync like everything else, and stay on the device.
+- **Photos and a note on each exercise** (`domain/exercise-media.js`, `screens/exercise-media-ui.js`).
+  - Up to two photos per exercise, for the machine's setup or the position you'd forget, plus a note (up to 500 characters).
+  - They live on the exercise, so they show every time you do it: on the workout card, in gym mode and on the exercise page. Tap a photo to see it full size.
+  - Add or edit them from the exercise's ⋯ menu (Photos and note), from gym mode, or from the exercise page.
+  - Pictures are shrunk to 1400 px and stored as `ex-…` blobs. Like the moodboard, they're always in backups and they sync. Removing one has Undo.
 - **Tested:** `tests/unit/workout-notes.test.mjs` and `tests/workout-notes.mjs`, which covers typing to log, same as last time, warm-ups, add and remove set, the clock across gym mode, leaving, a manual pause and the finish, and the brain dump end to end in light and dark.
 
 **Handover audit (October 2026).** A full audit before handover: security, calculations, persistence and every form, then crawlers over every screen and sheet at seven widths. What was found, fixed and proven, and what is still open, is in [`handover-audit.md`](handover-audit.md).

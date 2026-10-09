@@ -11,6 +11,7 @@ import * as Clock from '../domain/session-clock.js';
 import { restDefault } from '../domain/templates.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
+import { mediaLine, mediaActions, mediaInputs, hydrateMedia } from './exercise-media-ui.js';
 
 const VERDICT = { improved: ['Improved', 'good'], maintained: ['Maintained', ''], declined: ['Declined', 'warn'], first: ['First time', ''] };
 const n = (v) => (v === '' || v == null || Number.isNaN(Number(v)) ? null : Number(v));
@@ -95,6 +96,7 @@ function exerciseCard(w, g, progress) {
       ${row ? html`<span class="badge badge--${VERDICT[row.verdict]?.[1] || ''}" title="${row.reason}">${VERDICT[row.verdict]?.[0]}</span>` : ''}
       <button type="button" class="icon-btn icon-btn--sm" data-action="ex-menu" data-order="${g.order}" aria-label="Options for ${e.name}">${icon('ellipsis', { size: 18 })}</button>
     </header>
+    ${mediaLine(e)}
     <p class="ex-last">${lastTimeLine(prev, e)}${row && row.verdict !== 'first' ? html` · <strong>${row.reason}</strong>` : ''}</p>
     ${w.status === 'active' && !g.sets.some((x) => x.completed) && step ? html`<p class="ex-last ex-step"><strong>${stepLabel(step, loadText)}</strong> · ${step.why}</p>` : ''}
     ${g.sets[0].target ? html`<p class="ex-goal">Goal <b>${g.sets[0].target}</b>${restOf(e, g.sets[0]) ? html` · rest ${restLabel(restOf(e, g.sets[0]))}` : ''}</p>` : ''}
@@ -148,7 +150,9 @@ export default {
           : html`<button type="button" class="btn btn--soft btn--block" data-action="finish-edit">Edit difficulty & notes</button>`}
       </div>`;
   },
+  update(el) { hydrateMedia(el); },
   mount(el, { params }) {
+    hydrateMedia(el);
     Clock.enter(store, params.id);
     clearInterval(timer);
     timer = setInterval(() => {
@@ -161,6 +165,7 @@ export default {
   },
   unmount(el, { params } = {}) { clearInterval(timer); if (params?.id) Clock.leave(store, params.id, () => inSession(params.id)); },
   actions: {
+    ...mediaActions,
     // The set number marks a warm-up: it's logged, but doesn't count for records or progress.
     'set-kind': ({ data }) => { const s = store.get('workoutSets', data.id); if (s) { store.update('workoutSets', s.id, { warmup: !s.warmup }); hap.tap(); } },
     // Same as last time, in one tap: the weight and the reps, and the set is logged.
@@ -205,6 +210,7 @@ export default {
     'finish-edit': ({ params }) => finishSheet(params.id, false),
   },
   inputs: {
+    ...mediaInputs,
     set: ({ el, value }) => {
       const s = store.get('workoutSets', el.dataset.id);
       if (!s) return;
@@ -234,6 +240,7 @@ function exerciseMenu(workoutId, order) {
       ${family.length > 1 ? html`<div><p class="form-label">Variation</p><ul class="tpl-list">${family.map((f) => html`<li><button type="button" class="${cx('tpl-item', f.id === e.id && 'is-suggested')}" data-action="swap" data-id="${f.id}">
         <span class="tpl-name">${f.name}</span><span class="tpl-meta">Level ${f.level}${f.id === e.id ? ' · current' : f.level > e.level ? ' · harder' : ' · easier'}</span></button></li>`)}</ul></div>` : ''}
       ${e?.cues ? html`<p class="sheet-note">${e.cues}</p>` : ''}
+      <button type="button" class="btn btn--soft btn--block" data-action="media">${icon('image-plus', { size: 16 })} Photos and note</button>
       <button type="button" class="btn btn--soft btn--block" data-action="history">Exercise history</button>
       <button type="button" class="btn btn--ghost btn--block btn--danger-text" data-action="remove">Remove from session</button>
     </div>`,
@@ -244,6 +251,7 @@ function exerciseMenu(workoutId, order) {
         app.closeSheet(sheet);
       },
       history: ({ sheet }) => { app.closeSheet(sheet); app.go(`plan/training/exercises/${e.id}`); },
+      media: async ({ sheet }) => { app.closeSheet(sheet); (await import('./exercise-media-ui.js')).openMedia(e.id); },
       remove: ({ sheet }) => {
         store.batch(sets.map((s) => ({ store: 'workoutSets', delete: s.id })));
         app.closeSheet(sheet);
