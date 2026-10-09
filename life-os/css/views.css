@@ -2,8 +2,10 @@
 .today { padding-bottom: var(--s6); }
 .today-head { padding: var(--s4) 0 var(--s5); }
 .today-meta { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); min-height: 44px; }
-.d-short { display: none; }
+.d-short, .d-tiny { display: none; }
 @media (max-width: 420px) { .d-long { display: none; } .d-short { display: inline; } }
+/* The smallest phones: "Fri 9", so the date never ends in an ellipsis. */
+@media (max-width: 359px) { .d-short { display: none; } .d-tiny { display: inline; } }
 .today-tools { display: flex; align-items: center; gap: 8px; }
 .mode-chip {
   display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 14px 0 12px; border-radius: var(--r-pill);
@@ -1144,6 +1146,8 @@
 .chips--scroll .chip { flex: none; }
 .block > .chips--scroll, .form .chips--scroll { margin: 0; padding: 0; }
 .chip-n { opacity: .64; }
+/* With room to spare, categories wrap instead of scrolling. */
+@media (min-width: 768px) { .chips--scroll { flex-wrap: wrap; overflow: visible; margin: 0; padding: 0; } }
 .chip--add { background: transparent; box-shadow: inset 0 0 0 1.5px var(--border-strong); }
 .note-list { display: flex; flex-direction: column; gap: var(--s2); }
 .note-card { display: flex; flex-direction: column; gap: 6px; width: 100%; padding: var(--s4); border-radius: var(--r-lg); background: var(--surface); text-align: left; }
@@ -1206,7 +1210,7 @@
 .cue-text { background: var(--surface-2); border-radius: var(--r-sm); padding: var(--s3) var(--s4); font-size: var(--text-body); line-height: var(--leading-body); letter-spacing: var(--tracking-body); color: var(--text); overflow-wrap: anywhere; }
 .push-list .row-ic { width: auto; min-width: 52px; font-size: var(--text-caption); font-weight: var(--weight-semibold); color: var(--text); background: var(--surface-2); border-radius: var(--r-sm); padding: 0 6px; }
 .gym-step-note { color: var(--gym-dim); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
-.gym-step-note b { color: var(--accent); font-weight: var(--weight-semibold); }
+.gym-step-note b { color: var(--gym-accent); font-weight: var(--weight-semibold); }
 /* on this day, experiments (13e) */
 .memory { display: flex; flex-direction: column; gap: 6px; }
 .memory-eyebrow { display: flex; align-items: center; gap: 6px; font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-2); }

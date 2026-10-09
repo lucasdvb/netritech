@@ -9,7 +9,7 @@ import * as T from '../domain/tasks.js';
 import { dayScore } from '../domain/scoring.js';
 import { phase as phaseOf, trainingCall, isWorkday } from '../domain/day-plan.js';
 import { MODES } from '../domain/taxonomy.js';
-import { today, fmtLong, fmtShortDate, addDays, relativeDay, weekday } from '../domain/dates.js';
+import { today, fmtLong, fmtShortDate, fmtDayShort, addDays, relativeDay, weekday } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { app } from '../ui/app-api.js';
@@ -58,7 +58,7 @@ function header(date, ph, mode, isToday) {
   return html`<header class="today-head" data-key="head">
     <div class="today-meta">
       <button type="button" class="date-btn" data-action="pick-day" aria-label="${fmtLong(date)}. Choose a day">
-        ${icon('calendar', { size: 16 })}<span class="d-long">${fmtLong(date)}</span><span class="d-short">${fmtShortDate(date)}</span></button>
+        ${icon('calendar', { size: 16 })}<span class="d-long">${fmtLong(date)}</span><span class="d-short">${fmtShortDate(date)}</span><span class="d-tiny">${fmtDayShort(date)} ${Number(date.slice(8))}</span></button>
       <div class="today-tools">
         <button type="button" class="${cx('mode-chip', mode !== 'normal' && `mode-chip--${mode}`)}" data-action="mode" aria-label="Day mode: ${mod.label}">${icon(mod.icon, { size: 15 })}<span>${mod.short}${mode !== 'away' ? html`<span class="mode-day"> day</span>` : ''}</span></button>
         <button type="button" class="icon-btn" data-action="edit-today" aria-label="Edit Today">${icon('sliders-horizontal', { size: 19 })}</button>

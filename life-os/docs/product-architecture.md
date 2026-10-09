@@ -1447,6 +1447,8 @@ Partway through, the owner made automatic sync between devices a must, so it was
   - Global search finds notes and opens them. Notes are in the CSV export, sync like everything else, and stay on the device.
 - **Tested:** `tests/unit/workout-notes.test.mjs` and `tests/workout-notes.mjs`, which covers typing to log, same as last time, warm-ups, add and remove set, the clock across gym mode, leaving, a manual pause and the finish, and the brain dump end to end in light and dark.
 
+**Handover audit (October 2026).** A full audit before handover: security, calculations, persistence and every form, then crawlers over every screen and sheet at seven widths. What was found, fixed and proven, and what is still open, is in [`handover-audit.md`](handover-audit.md).
+
 **Left out on purpose:** points and pets, money stakes, "21 days" countdowns, willpower budgets, more default notifications, a barcode food database, a timeline planner. Each is either unsupported by the evidence or adds weight without value.
 
 ---
