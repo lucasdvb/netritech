@@ -17,7 +17,7 @@ export function startWorkout(templateId, date = today()) {
   const lighter = tpl && call.kind === 'lighter' && call.template?.id === tpl.id;
   const w = store.put('workouts', {
     date, templateId: tpl?.id || null, title: tpl?.name || 'Workout', kind: tpl?.kind || 'strength',
-    status: 'active', startedAt: new Date().toISOString(), notes: '', difficulty: null, rpe: null,
+    status: 'active', startedAt: new Date().toISOString(), notes: '', difficulty: null, rpe: null, activeMs: 0, runningSince: new Date().toISOString(),
     adjusted: lighter ? `Lighter today: one set fewer per exercise. ${call.reason}` : null,
   });
   if (tpl) {
@@ -40,9 +40,9 @@ export function startWorkout(templateId, date = today()) {
                 : last;
         ops.push({ store: 'workoutSets', value: {
           workoutId: w.id, date, exerciseId: prev?.exerciseId && prev.exerciseId !== it.exerciseId ? prev.exerciseId : it.exerciseId, order, setIndex: i,
-          target: it.reps, reps: e?.metric === 'reps' ? (p?.reps ?? null) : null,
-          seconds: e?.metric === 'time' ? (p?.seconds ?? null) : null,
-          minutes: e?.metric === 'minutes' ? (p?.minutes ?? null) : null,
+          // Today's suggestion waits as a placeholder: entering the reps (or the time) is what logs a set.
+          target: it.reps, reps: null, seconds: null, minutes: null,
+          plan: { reps: e?.metric === 'reps' ? (p?.reps ?? null) : null, seconds: e?.metric === 'time' ? (p?.seconds ?? null) : null, minutes: e?.metric === 'minutes' ? (p?.minutes ?? null) : null },
           load: p?.load ?? it.load ?? e?.defaultLoad ?? null, rest: it.rest ?? null, completed: false,
         } });
       }

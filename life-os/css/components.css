@@ -52,6 +52,8 @@
 .btn--ghost { color: var(--text); background: transparent; box-shadow: inset 0 0 0 1.5px var(--border-strong); }
 .btn--danger { background: var(--danger-fill); color: #fff; }
 .btn--sm { min-height: 38px; padding: 0 15px; font-size: var(--text-caption); border-radius: var(--r-pill); }
+.page-actions .btn { white-space: nowrap; flex: none; }
+.btn--gym { gap: 6px; padding: 0 14px; }
 .btn--block { width: 100%; min-height: 54px; }
 .btn--block.btn--sm { min-height: 40px; }
 .btn-row { display: flex; flex-wrap: wrap; gap: var(--s2); justify-content: flex-end; }

@@ -26,7 +26,7 @@ function lifts(_end) {
   const by = new Map();
   for (const w of F.allWorkouts()) {
     for (const s of F.setsOf(w.id)) {
-      if (!s.completed) continue;
+      if (!s.completed || s.warmup) continue;
       const e = F.exercise(s.exerciseId);
       if (!e || e.metric === 'minutes') continue;
       if (!by.has(e.id)) by.set(e.id, { e, days: new Map() });

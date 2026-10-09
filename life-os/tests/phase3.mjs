@@ -42,9 +42,15 @@ await step('training: start, log, finish', async () => {
   await page.locator('[data-action="choose"]').first().click();
   await page.locator('.sheet [data-action="start"][data-id="t-lower"]').click();
   await page.waitForSelector('[data-view="workout"] .ex-card');
-  const checks = page.locator('.wset-row .check');
-  const n = await checks.count();
-  for (let i = 0; i < n; i++) await checks.nth(i).click();
+  // Entering the reps (or the time) is what logs a set: the suggestion shows faintly until you type.
+  const rows = page.locator('.wset-row:not(.wset-row--head)');
+  const n = await rows.count();
+  for (let i = 0; i < n; i++) {
+    const f = rows.nth(i).locator('.set-in').last();
+    await f.fill((await f.getAttribute('placeholder')) || '10');
+    await f.press('Tab');
+  }
+  await page.waitForFunction((k) => document.querySelectorAll('.wset-row.is-done').length === k, n);
   await page.fill('.ex-card >> nth=0 >> .wset-row:not(.wset-row--head) >> nth=0 >> input[data-f="reps"]', '12');
   await page.keyboard.press('Tab');
   await shot('34-workout');

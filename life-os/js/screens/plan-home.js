@@ -10,6 +10,7 @@ import * as B from '../domain/books.js';
 import * as C from '../domain/commitments.js';
 import * as Rw from '../domain/rewards.js';
 import * as L from '../domain/lists.js';
+import * as N from '../domain/notes.js';
 import * as $ from '../domain/money.js';
 import * as E from '../domain/events.js';
 import * as Q from '../domain/quests.js';
@@ -158,6 +159,7 @@ function tasksAndTraining() {
   const week = range(startOfWeek(today()), addDays(startOfWeek(today()), 6));
   const sessions = week.map((d) => ({ d, tpl: F.plannedTemplate(d), done: F.workoutsOn(d).length > 0 }));
   const lists = L.lists();
+  const notes = N.notes();
   const spent = $.summary();
   const soon = E.sorted().find((x) => x.in >= 0);
   return html`<section class="block" data-key="more">
@@ -169,6 +171,10 @@ function tasksAndTraining() {
       <li><a class="row" href="#/plan/lists" data-action="nav" data-to="plan/lists">
         <span class="row-ic">${icon('list-checks', { size: 18 })}</span>
         <span class="row-main"><span class="row-title">Lists</span><span class="row-sub">${lists.length ? lists.slice(0, 3).map((l) => l.name).join(' · ') : 'Groceries, packing, ideas'}</span></span>
+        <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
+      <li><a class="row" href="#/plan/notes" data-action="nav" data-to="plan/notes">
+        <span class="row-ic">${icon('brain', { size: 18 })}</span>
+        <span class="row-main"><span class="row-title">Brain dump</span><span class="row-sub tnum">${notes.length ? `${notes.length} note${notes.length === 1 ? '' : 's'}${notes[0] ? ` · ${N.firstLine(notes[0].text, 40)}` : ''}` : 'Ideas and thoughts, filed by category'}</span></span>
         <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
       <li><a class="row" href="#/plan/training" data-action="nav" data-to="plan/training">
         <span class="row-ic">${icon('dumbbell', { size: 18 })}</span>

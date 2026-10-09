@@ -1423,6 +1423,30 @@ Partway through, the owner made automatic sync between devices a must, so it was
   - Pictures sync too. Deletions travel as the tombstones the store already keeps.
 - **Tested:** the server's real SQL runs over SQLite in the tests (`tests/support/`). `tests/sync.mjs` runs two browsers, a phone and a computer, through it: start, join, changes and deletions both ways, device settings kept, a stranger's key refused, nothing echoed.
 
+**Owner fixes (October 2026): training and the brain dump.** After using the app, the owner asked for five changes. Each one was checked against how Hevy, Strong and Setgraph log sets, then built into what was already there rather than rebuilt.
+
+- **Gym mode button.** It wrapped to two lines next to the session title. It is now a quiet grey pill on one line, so Finish session stays the screen's one coloured button. In gym mode itself, the big button reads "Log set 1" at button size rather than heading size.
+- **Session clock (`domain/session-clock.js`).**
+  - The workout keeps `activeMs` and `runningSince`. The clock runs while you are in the session's list or gym mode.
+  - It pauses when you leave (moving between the list and gym mode doesn't count as leaving), and you can pause or carry on by tapping the time.
+  - It stops when you finish. The session's minutes are the time counted, so pauses don't count.
+  - A stretch left running counts four hours at most, so a session forgotten overnight can't show days. Older sessions read as before.
+- **Set rows.**
+  - Units moved out of the fields and into the column heads: Set, Previous, kg, Reps. The fields were as narrow as 30 px, which is why typed numbers seemed not to appear. They are now 76 px, centred, at input size.
+  - The tick box is gone: typing the reps (or the time) is what logs a set, and clearing it takes the set back.
+  - Reps are no longer prefilled. Today's aim (`plan` on the set, from last time and the next step) shows faintly until you type. The weight stays filled in.
+  - Previous shows last time's set; tap it to do the same again.
+  - Tap a set's number to mark it a warm-up (W). Warm-ups are logged but count for neither progress, records, nor the next step.
+  - The rest starts on its own when a set is logged, shown in the bar with Skip. Add set and Remove set sit under each exercise, with the goal and rest above.
+- **Brain dump (`domain/notes.js`, `screens/notes.js`, Plan › Brain dump, DB v9 `notes` store).**
+  - Write at the top and file the note under a category: Ideas, To think about, Work, Personal, Someday, or your own. Or leave it Unsorted.
+  - Filter by category, with counts. Search appears once there are more than six notes.
+  - Tap a note to edit it, move it, pin it to the top, make it a task, or delete it with Undo.
+  - Categories can be renamed (their notes move with them; a name that already exists merges the two), reordered or deleted. Deleting one moves its notes to Unsorted, with Undo.
+  - In Capture, "idea: …" files a note under Ideas and "dump: …" under Unsorted. Brain dump is also on the capture grid.
+  - Global search finds notes and opens them. Notes are in the CSV export, sync like everything else, and stay on the device.
+- **Tested:** `tests/unit/workout-notes.test.mjs` and `tests/workout-notes.mjs`, which covers typing to log, same as last time, warm-ups, add and remove set, the clock across gym mode, leaving, a manual pause and the finish, and the brain dump end to end in light and dark.
+
 **Left out on purpose:** points and pets, money stakes, "21 days" countdowns, willpower budgets, more default notifications, a barcode food database, a timeline planner. Each is either unsupported by the evidence or adds weight without value.
 
 ---
