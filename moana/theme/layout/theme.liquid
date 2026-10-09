@@ -61,7 +61,12 @@
         addToCart: {{ 'products.add_to_cart' | t | json }},
         soldOut: {{ 'products.sold_out' | t | json }},
         contactPrefill: {{ 'contact.prefill' | t: range: '__RANGE__' | json }},
-        loading: {{ 'general.loading' | t | json }}
+        loading: {{ 'general.loading' | t | json }},
+        wishlistAdded: {{ 'wishlist.added' | t | json }},
+        wishlistRemoved: {{ 'wishlist.removed' | t | json }},
+        slideN: {{ 'general.slide_n' | t: n: '__N__' | json }},
+        readMore: {{ 'collections.read_more' | t | json }},
+        readLess: {{ 'collections.read_less' | t | json }}
       }
     };
   </script>

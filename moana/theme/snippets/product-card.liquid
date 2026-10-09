@@ -1,35 +1,48 @@
 {%- comment -%}
-  Product card.
+  Product card, after Cult Beauty: photo with a wishlist heart, the name, one outlined badge, the price in bold,
+  and a full-width ADD TO BAG.
   Params: product (required), index (reveal stagger), sizes, eager (bool, first row above the fold),
           heading (h2|h3, default h3), quick_add (default true).
-  Quick add is a plain POST to /cart/add, so it works with JavaScript off; theme.js turns it into an AJAX add
-  that opens the cart drawer. Products with real options get a link to choose instead.
+  Badges come from real data only: sold out, a compare-at price (shown as % off), low stock (under the theme
+  threshold), or NEW IN for products published in the last 60 days.
+  Add to bag is a plain POST to /cart/add, so it works with JavaScript off; theme.js turns it into an AJAX add
+  that opens the bag drawer. Products with real options link to the product page instead.
 {%- endcomment -%}
 {%- liquid
   assign variant = product.selected_or_first_available_variant
   assign img = product.featured_media.preview_image
   assign alt_img = product.media[1].preview_image
-  assign img_sizes = sizes | default: '(min-width: 1200px) 22vw, (min-width: 750px) 30vw, 46vw'
+  assign img_sizes = sizes | default: '(min-width: 1200px) 23vw, (min-width: 750px) 31vw, 47vw'
   assign h = heading | default: 'h3'
   assign show_quick = true
   if quick_add == false
     assign show_quick = false
   endif
-  assign size = product.metafields.custom.size.value
-  assign concern_list = settings.concern_tags | split: ','
-  assign concerns = ''
-  for tag in product.tags
-    for c in concern_list
-      assign c_clean = c | strip
-      if tag == c_clean
-        assign concerns = concerns | append: tag | append: '|'
-      endif
-    endfor
-  endfor
-  assign concerns = concerns | split: '|'
   assign loading = 'lazy'
   if eager
     assign loading = 'eager'
+  endif
+
+  assign badge = ''
+  assign badge_class = ''
+  if product.available == false
+    assign badge = 'products.sold_out' | t
+    assign badge_class = ' badge--muted'
+  elsif variant.compare_at_price > variant.price
+    assign pct = variant.compare_at_price | minus: variant.price | times: 100 | divided_by: variant.compare_at_price
+    assign badge = 'products.percent_off' | t: pct: pct
+  else
+    assign low = settings.low_stock_threshold | default: 0
+    if variant.inventory_management == 'shopify' and variant.inventory_quantity > 0 and variant.inventory_quantity <= low
+      assign badge = 'products.low_stock' | t: count: variant.inventory_quantity
+    else
+      assign now_s = 'now' | date: '%s' | plus: 0
+      assign pub_s = product.published_at | default: product.created_at | date: '%s' | plus: 0
+      assign age = now_s | minus: pub_s
+      if age < 5184000
+        assign badge = 'products.new_in' | t
+      endif
+    endif
   endif
 -%}
 <article class="card reveal" style="--i: {{ index | default: 0 | modulo: 4 }}">
@@ -39,7 +52,6 @@
           widths: '240, 360, 480, 600, 750, 900',
           sizes: img_sizes,
           loading: loading,
-          fetchpriority: 'auto',
           class: 'card__img--main',
           alt: img.alt | default: product.title
       -}}
@@ -49,42 +61,33 @@
     {%- else -%}
       {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
     {%- endif -%}
-    <div class="card__badges">
-      {%- unless product.available -%}
-        <span class="tag tag--soldout">{{ 'products.sold_out' | t }}</span>
-      {%- else -%}
-        {%- if variant.compare_at_price > variant.price -%}<span class="tag">{{ 'products.sale' | t }}</span>{%- endif -%}
-      {%- endunless -%}
-    </div>
   </div>
+  <button class="card__heart" type="button" data-wishlist-toggle="{{ product.handle }}" aria-pressed="false">
+    {%- render 'icon', name: 'heart' -%}<span class="sr-only">{{ 'wishlist.save' | t: title: product.title }}</span>
+  </button>
   <div class="card__body">
-    {%- if product.vendor != blank -%}<p class="card__vendor">{{ product.vendor }}</p>{%- endif -%}
     <{{ h }} class="card__title"><a href="{{ product.url }}">{{ product.title }}</a></{{ h }}>
-    {%- if concerns.size > 0 -%}
-      <p class="card__concerns t-xs t-soft">{{ concerns | slice: 0, 2 | join: ' · ' }}</p>
-    {%- endif -%}
-    {%- if size != blank -%}<p class="card__size">{{ size }}</p>{%- endif -%}
+    {%- if badge != blank -%}<p class="badge{{ badge_class }}">{{ badge }}</p>{%- endif -%}
   </div>
-  {%- comment -%}
-    The price lives in the button (pattern from Kosas): one clear action per card, always visible, never over the photo.
-  {%- endcomment -%}
+  <p class="card__price">
+    {%- if product.price_varies -%}
+      {{ 'products.from_price' | t: price: product.price_min | money }}
+    {%- else -%}
+      {%- if variant.compare_at_price > variant.price -%}<s><span class="sr-only">{{ 'products.regular_price' | t }}</span>{{ variant.compare_at_price | money }}</s> <span class="sr-only">{{ 'products.sale_price' | t }}</span>{%- endif -%}
+      {{ variant.price | money }}
+    {%- endif -%}
+  </p>
   <div class="card__buy">
-    {%- assign price_label = variant.price | money -%}
-    {%- if product.price_varies -%}{%- assign price_label = 'products.from_price' | t: price: price_label -%}{%- endif -%}
     {%- if show_quick and product.available and product.has_only_default_variant -%}
       {%- form 'product', product, class: 'card__form', data-product-form: '', novalidate: 'novalidate' -%}
         <input type="hidden" name="id" value="{{ variant.id }}">
         <input type="hidden" name="quantity" value="1">
-        {%- comment -%} No aria-label: the accessible name must start with the visible words (WCAG 2.5.3). {%- endcomment -%}
-        <button class="btn btn--secondary btn--small card__btn" type="submit" name="add">
-          <span><span class="hide-mobile">{{ 'products.add_to_cart' | t }}</span><span class="hide-desktop">{{ 'products.add' | t }}</span><span class="sr-only">: {{ product.title }}</span></span>
-          <span class="card__btn-price">{%- if variant.compare_at_price > variant.price -%}<s>{{ variant.compare_at_price | money }}</s> {% endif -%}{{ price_label }}</span>
-        </button>
+        <button class="btn btn--full card__btn" type="submit" name="add">{{ 'products.add_to_cart' | t }}<span class="sr-only">: {{ product.title }}</span></button>
       {%- endform -%}
     {%- elsif product.available -%}
-      <a class="btn btn--secondary btn--small card__btn" href="{{ product.url }}"><span>{{ 'products.choose' | t }}<span class="sr-only">: {{ product.title }}</span></span><span class="card__btn-price">{{ price_label }}</span></a>
+      <a class="btn btn--full card__btn" href="{{ product.url }}">{{ 'products.choose' | t }}<span class="sr-only">: {{ product.title }}</span></a>
     {%- else -%}
-      <span class="btn btn--secondary btn--small card__btn" aria-disabled="true"><span>{{ 'products.sold_out' | t }}</span><span class="card__btn-price">{{ price_label }}</span></span>
+      <span class="btn btn--full btn--secondary card__btn" aria-disabled="true">{{ 'products.sold_out' | t }}</span>
     {%- endif -%}
   </div>
 </article>

@@ -134,7 +134,9 @@ void main() {
     bias: 0.84, biasAngle: 3.54, rim: 0.74, rimStep: 0.061, rimCurve: 1.45, absorb: 0.75,
     tooth: 0.098, toothScale: 35, contrast: 2.48, midpoint: 0.59, sink: 0.26, glow: 0.12,
     grain: 0.06, grainAnim: 0, dither: 1.54, vignette: 0, damp: 0.06, cursor: 1,
-    pointerRadius: 0.71, drift: 0.02, parallax: 0.008, maxDpr: 1
+    pointerRadius: 0.71, drift: 0.02, parallax: 0.008, maxDpr: 1,
+    resolution: 0.5,   // the wash is all soft edges: half-resolution, upscaled by CSS, is indistinguishable and 4x cheaper
+    fps: 30            // it moves at a fifth of the house speed; 30 frames a second is plenty
   };
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -187,7 +189,7 @@ void main() {
 
     let w = 0, h = 0, visible = false, running = false, prev = 0;
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, CONFIG.maxDpr);
+      const dpr = Math.min(window.devicePixelRatio || 1, CONFIG.maxDpr) * CONFIG.resolution;
       const r = canvas.getBoundingClientRect();
       w = Math.max(1, Math.round(r.width * dpr)); h = Math.max(1, Math.round(r.height * dpr));
       if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
@@ -214,9 +216,15 @@ void main() {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
 
+    // Software GL (no GPU: some laptops, VMs, headless test browsers) or a slow first frame: keep a still image.
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+    const renderer = dbg ? String(gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL)) : '';
+    let still = /swiftshader|llvmpipe|software|basic render/i.test(renderer);
+
     const frame = (now) => {
-      if (!visible || document.hidden || reduce.matches) { running = false; return; }
+      if (!visible || document.hidden || reduce.matches || still) { running = false; return; }
       requestAnimationFrame(frame);
+      if (now - prev < 1000 / CONFIG.fps - 2) return;
       const raw = now - prev; prev = now;
       const ms = raw > 50 ? 50 : raw < 4.167 ? 4.167 : raw;
       const s = ms > 36.7 ? 2.2 : ms * 0.06;
@@ -227,11 +235,14 @@ void main() {
       draw();
     };
     const run = () => {
-      if (running || !visible || document.hidden || reduce.matches) return;
+      if (running || !visible || document.hidden || reduce.matches || still) return;
       running = true; prev = performance.now(); requestAnimationFrame(frame);
     };
 
+    const t0 = performance.now();
     draw();
+    gl.finish();
+    if (performance.now() - t0 > 40) still = true;
     canvas.classList.add('is-ready');
 
     new IntersectionObserver((es) => { visible = es[0].isIntersecting; run(); }, { rootMargin: '80px' }).observe(canvas);

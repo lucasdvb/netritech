@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "finder": {
+      "type": "routine-finder",
+      "settings": {
+        "eyebrow": "Find my routine",
+        "heading": "Your routine, <em>in 60 seconds</em>",
+        "text": "Three quick questions and we'll pick a product for every step, from what's actually in stock. No sign-up, no email, just your routine.",
+        "collection": "skincare"
+      }
+    }
+  },
+  "order": [
+    "finder"
+  ]
+}

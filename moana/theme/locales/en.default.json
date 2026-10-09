@@ -12,8 +12,13 @@
     "opens_new_window": "opens in a new window",
     "page_n": "Page {{ page }}",
     "pagination": "Pagination",
-    "whatsapp": "WhatsApp",
-    "whatsapp_us": "WhatsApp us"
+    "slide_n": "Go to slide {{ n }}",
+    "pause": "Pause the slideshow",
+    "play": "Play the slideshow",
+    "slides": "Slides",
+    "prev_slide": "Previous",
+    "next_slide": "Next",
+    "shop_now": "Shop now"
   },
   "meta": {
     "home_title": "Moana Beauté · Korean skincare in Mauritius",
@@ -30,7 +35,8 @@
     "menu": "Menu",
     "primary_nav": "Main",
     "search": "Search",
-    "shop_all": "Shop all"
+    "shop_all": "Shop all",
+    "wishlist": "Wishlist"
   },
   "footer": {
     "brn": "BRN",
@@ -45,7 +51,6 @@
     "add": "Add",
     "add_named": "Add {{ title }} to your bag",
     "add_to_cart": "Add to bag",
-    "ask_whatsapp": "Got a question about this one? Ask us on WhatsApp",
     "assure_ingredients": "Every ingredient is listed below.",
     "choose": "Choose",
     "choose_named": "Choose options for {{ title }}",
@@ -77,10 +82,16 @@
     "suits": "Suits",
     "targets": "Targets",
     "tax_included": "Taxes included.",
-    "whatsapp_prefill": "Hi Moana Beauté! I have a question about {{ title }}.",
     "zoom": "Enlarge image {{ n }}",
     "zoom_dialog": "Enlarged product image",
-    "add_named_price": "Add {{ title }} to your bag, {{ price }}"
+    "add_named_price": "Add {{ title }} to your bag, {{ price }}",
+    "ask_question": "Got a question about this one? Ask us",
+    "percent_off": "{{ pct }}% off",
+    "new_in": "New in",
+    "view_details": "View product details",
+    "add_to_wishlist": "Add to wishlist",
+    "in_stock": "In stock",
+    "description": "Product description"
   },
   "routine": {
     "step_n": "Step {{ n }}"
@@ -114,7 +125,11 @@
     "soon_label": "Coming soon",
     "soon_text": "Tell us what you'd love to see here and you'll be the first to know when it lands.",
     "sort_by": "Sort by",
-    "meanwhile": "In the meantime, shop what just landed"
+    "meanwhile": "In the meantime, shop what just landed",
+    "read_more": "Read more",
+    "read_less": "Read less",
+    "more_filters": "More filters",
+    "sort_short": "Sort"
   },
   "cart": {
     "checkout": "Check out",
@@ -133,7 +148,7 @@
     "free_delivery_unlocked": "Nice! Your delivery is free.",
     "increase_named": "Add one more {{ title }}",
     "max_reached": "That's all we have in stock.",
-    "pay_by_card": "Secure card payment at checkout.",
+    "pay_by_card": "Secure checkout.",
     "quantity_named": "Quantity of {{ title }}",
     "remove": "Remove",
     "remove_named": "Remove {{ title }} from your bag",
@@ -143,7 +158,7 @@
     "title": "Your bag",
     "toast_added": "Added to your bag",
     "view_cart": "View bag",
-    "suggestions": "Pairs well with"
+    "suggestions": "You might also love"
   },
   "search": {
     "collections": "Collections",
@@ -210,5 +225,38 @@
     "how": "Enter this code at checkout.",
     "shop": "Start shopping",
     "title": "Your gift card"
+  },
+  "wishlist": {
+    "added": "Saved to your wishlist",
+    "removed": "Removed from your wishlist",
+    "save": "Save {{ title }} to your wishlist",
+    "title": "Your wishlist",
+    "empty": "Nothing saved yet",
+    "empty_text": "Tap the heart on anything you love and it waits for you here, on this device.",
+    "clear": "Clear wishlist",
+    "count": {
+      "one": "{{ count }} saved",
+      "other": "{{ count }} saved"
+    },
+    "note": "Your wishlist is saved on this device only."
+  },
+  "finder": {
+    "note": "Your answers stay on this page. Nothing is saved or sent anywhere.",
+    "q_skin": "How would you describe your skin?",
+    "q_concern": "What's the one thing you'd most like to work on?",
+    "q_steps": "How much time do you have?",
+    "steps_3": "Keep it simple",
+    "steps_3_note": "Three steps: cleanse, tone, protect",
+    "steps_5": "The full ritual",
+    "steps_5_note": "Five steps: cleanse, tone, treat, moisturise, protect",
+    "done": "See my routine",
+    "result_label": "Your routine",
+    "result_title": "Your {{ n }}-step routine for {{ concern }}",
+    "none": "Nothing in stock fits this step right now. Browse the category instead.",
+    "add_all": "Add the whole routine",
+    "see_all": "See everything for this concern",
+    "restart": "Start again",
+    "added": "Routine added to your bag",
+    "noscript": "Turn on JavaScript for the quiz, or start from a concern:"
   }
 }

@@ -1,0 +1,167 @@
+{%- comment -%}
+  Split hero carousel, after Cult Beauty's homepage banners: a text panel (a light serif line over a bold uppercase
+  line, a sentence, two square buttons) beside a full-height picture, with edge arrows, dots and a pause tab.
+
+  A slide's picture can be: an uploaded image, one of the theme's own photographs, or the GetLayers "Feather"
+  wash (WebGL) with a product floating on frosted glass. The wash on a slide is only compiled once that slide
+  is actually on screen, so it never costs the first paint.
+  The first slide's image is the LCP: it loads eagerly with high priority and never animates in.
+{%- endcomment -%}
+{%- assign autoplay = section.settings.autoplay | times: 1000 -%}
+<section class="hero-c" aria-roledescription="carousel" aria-label="{{ section.settings.label | escape }}">
+  <div class="carousel" data-carousel{% if section.blocks.size > 1 %} data-autoplay="{{ autoplay }}"{% endif %}>
+    <div class="carousel__track hero-c__track" data-carousel-track>
+      {%- for block in section.blocks -%}
+        {%- assign b = block.settings -%}
+        <div class="hero-c__slide{% if b.flip %} hero-c__slide--flip{% endif %}{% if forloop.first %} is-active{% endif %}" data-slide role="group" aria-roledescription="slide" aria-label="{{ forloop.index }} / {{ forloop.length }}" {{ block.shopify_attributes }}>
+          <div class="hero-c__panel">
+            <div class="hero-c__copy">
+              {%- if b.kicker != blank -%}<p class="hero-c__kicker">{{ b.kicker }}</p>{%- endif -%}
+              {%- if forloop.first -%}<h1 class="hero-c__title">{%- else -%}<h2 class="hero-c__title">{%- endif -%}
+                {%- if b.light != blank -%}<span class="hero-c__light">{{ b.light }}</span>{%- endif -%}
+                <span class="hero-c__bold">{{ b.bold }}</span>
+              {%- if forloop.first -%}</h1>{%- else -%}</h2>{%- endif -%}
+              {%- if b.text != blank -%}<p class="hero-c__text">{{ b.text }}</p>{%- endif -%}
+              <div class="hero-c__btns">
+                {%- if b.btn1_label != blank -%}<a class="btn" href="{{ b.btn1_link }}">{{ b.btn1_label }}</a>{%- endif -%}
+                {%- if b.btn2_label != blank -%}<a class="btn" href="{{ b.btn2_link }}">{{ b.btn2_label }}</a>{%- endif -%}
+              </div>
+            </div>
+          </div>
+          <div class="hero-c__media{% if b.media == 'wash' %} hero-c__media--wash{% endif %}">
+            {%- case b.media -%}
+              {%- when 'wash' -%}
+                <div class="wash" aria-hidden="true"><canvas data-wash data-bg="{{ b.wash_bg }}" data-a="#eef1e4" data-b="#d1d9be" data-c="#d6d2bf" data-d="#bcc09b"></canvas></div>
+                {%- if b.product != blank -%}
+                  {%- assign p = b.product -%}
+                  <a class="hero-c__float glass" href="{{ p.url }}" tabindex="-1">
+                    <span class="hero-c__float-img">{{ p.featured_media.preview_image | image_url: width: 700 | image_tag: widths: '350, 500, 700', sizes: '(min-width: 990px) 22vw, 50vw', loading: 'lazy', alt: p.featured_media.preview_image.alt | default: p.title }}</span>
+                    <span class="hero-c__float-meta"><span class="hero-c__float-name">{{ p.title }}</span><span class="hero-c__float-price">{{ p.price | money }}</span></span>
+                  </a>
+                {%- endif -%}
+              {%- when 'theme' -%}
+                {%- assign base = b.theme_image -%}
+                {%- if base == 'hero-bg' -%}
+                  <picture>
+                    <source type="image/webp" srcset="{{ 'hero-bg-800.webp' | asset_url }} 800w, {{ 'hero-bg-1600.webp' | asset_url }} 1600w" sizes="(min-width: 750px) 50vw, 100vw">
+                    <img src="{{ 'hero-bg-1600.jpg' | asset_url }}" srcset="{{ 'hero-bg-800.jpg' | asset_url }} 800w, {{ 'hero-bg-1600.jpg' | asset_url }} 1600w" sizes="(min-width: 750px) 50vw, 100vw" width="1600" height="2000" alt="{{ b.image_alt | escape }}"{% if forloop.first %} fetchpriority="high"{% else %} loading="lazy"{% endif %}>
+                  </picture>
+                {%- else -%}
+                  <img src="{{ base | append: '-1200.jpg' | asset_url }}" srcset="{{ base | append: '-800.jpg' | asset_url }} 800w, {{ base | append: '-1200.jpg' | asset_url }} 1200w" sizes="(min-width: 750px) 50vw, 100vw" width="1200" height="1500" alt="{{ b.image_alt | escape }}"{% if forloop.first %} fetchpriority="high"{% else %} loading="lazy"{% endif %}>
+                {%- endif -%}
+              {%- else -%}
+                {%- if b.image != blank -%}
+                  {%- if forloop.first -%}
+                    {{ b.image | image_url: width: 1800 | image_tag: widths: '600, 900, 1200, 1500, 1800', sizes: '(min-width: 750px) 50vw, 100vw', fetchpriority: 'high', loading: 'eager', alt: b.image_alt | default: b.image.alt }}
+                  {%- else -%}
+                    {{ b.image | image_url: width: 1800 | image_tag: widths: '600, 900, 1200, 1500, 1800', sizes: '(min-width: 750px) 50vw, 100vw', loading: 'lazy', alt: b.image_alt | default: b.image.alt }}
+                  {%- endif -%}
+                {%- endif -%}
+            {%- endcase -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+    {%- if section.blocks.size > 1 -%}
+      <button class="carousel__arrow carousel__arrow--prev" type="button" data-carousel-prev>{% render 'icon', name: 'chevron-left' %}<span class="sr-only">{{ 'general.prev_slide' | t }}</span></button>
+      <button class="carousel__arrow carousel__arrow--next" type="button" data-carousel-next>{% render 'icon', name: 'chevron-right' %}<span class="sr-only">{{ 'general.next_slide' | t }}</span></button>
+      <button class="carousel__pause" type="button" data-carousel-pause aria-pressed="false"><span class="i-pause">{% render 'icon', name: 'pause' %}</span><span class="i-play">{% render 'icon', name: 'play' %}</span><span class="sr-only">{{ 'general.pause' | t }}</span></button>
+      <div class="carousel__dots" data-carousel-dots role="group" aria-label="{{ 'general.slides' | t }}"></div>
+    {%- endif -%}
+  </div>
+</section>
+
+<script src="{{ 'wash.js' | asset_url }}" defer></script>
+
+{% stylesheet %}
+  .hero-c { position: relative; }
+  .hero-c__slide { display: grid; grid-template-rows: auto auto; background: var(--tile); }
+  .hero-c__panel { order: 2; display: grid; place-items: center; padding: var(--s-6) var(--gutter) var(--s-7); text-align: center; }
+  .hero-c__copy { display: grid; justify-items: center; gap: var(--s-4); max-width: 36rem; }
+  .hero-c__kicker { font: 700 .75rem/1.4 var(--f-body); letter-spacing: .16em; text-transform: uppercase; color: var(--c-forest); }
+  .hero-c__title { display: grid; gap: .1em; color: var(--ink); }
+  .hero-c__light { font: 400 clamp(2rem, 1.5rem + 2.2vw, 3.5rem)/1 var(--f-display); letter-spacing: -.01em; }
+  .hero-c__bold { font: 800 clamp(1.625rem, 1.2rem + 1.8vw, 2.75rem)/1.05 var(--f-body); letter-spacing: .01em; text-transform: uppercase; }
+  .hero-c__text { font-size: clamp(1rem, .95rem + .25vw, 1.125rem); line-height: 1.6; color: var(--ink-soft); max-width: 32rem; text-wrap: pretty; }
+  .hero-c__btns { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-4); margin-top: var(--s-2); }
+  .hero-c__media { order: 1; position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--c-frost); }
+  .hero-c__media > img, .hero-c__media picture img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .hero-c__media picture { display: contents; }
+  .hero-c__media--wash { background: var(--c-spring); }
+
+  /* the product floating on glass over the wash */
+  .hero-c__float {
+    position: absolute; left: 50%; top: 50%; width: min(62%, 300px); transform: translate(-50%, -50%);
+    display: grid; gap: var(--s-3); padding: var(--s-4); z-index: 1;
+    animation: float-y 7s ease-in-out infinite;
+  }
+  .hero-c__float-img { display: block; aspect-ratio: 1; background: rgba(255,255,255,.55); }
+  .hero-c__float-img img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 8%; }
+  .hero-c__float-meta { display: flex; justify-content: space-between; gap: var(--s-3); font-size: var(--fs-small); }
+  .hero-c__float-name { font-weight: 500; line-height: 1.35; }
+  .hero-c__float-price { font-weight: 700; white-space: nowrap; }
+  @keyframes float-y { 0%, 100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, calc(-50% - 10px)); } }
+
+  /* motion on the active slide (GetLayers: text rises out of a blur, the picture unmasks top-down) */
+  .js .hero-c__slide:not(:first-child) .hero-c__copy > * { opacity: 0; transform: translateY(18px); filter: blur(6px); transition: opacity 500ms var(--ease), transform 700ms var(--ease), filter 700ms var(--ease); }
+  .js .hero-c__slide.is-active .hero-c__copy > * { opacity: 1; transform: none; filter: none; }
+  .js .hero-c__slide.is-active .hero-c__copy > :nth-child(2) { transition-delay: 90ms; }
+  .js .hero-c__slide.is-active .hero-c__copy > :nth-child(3) { transition-delay: 180ms; }
+  .js .hero-c__slide.is-active .hero-c__copy > :nth-child(4) { transition-delay: 270ms; }
+  .js .hero-c__slide:not(:first-child) .hero-c__media img { transform: scale(1.06); transition: transform 1600ms var(--ease-out); }
+  .js .hero-c__slide.is-active .hero-c__media img { transform: none; }
+
+  .hero-c .carousel__arrow { top: calc(37.5vw - 0px); }
+  .hero-c .carousel__dots { padding-block: var(--s-2) 0; }
+  @media (min-width: 750px) {
+    .hero-c__slide { grid-template-columns: 1fr 1fr; grid-template-rows: none; height: clamp(26rem, 18rem + 18vw, 34rem); }
+    .hero-c__panel { order: 0; padding: var(--s-7) clamp(3rem, 6vw, 6rem); }
+    .hero-c__media { order: 0; aspect-ratio: auto; }
+    .hero-c__slide--flip .hero-c__panel { order: 2; }
+    .hero-c .carousel__arrow { top: 50%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hero-c__float { animation: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Hero carousel",
+  "tag": "div",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Accessible name", "default": "Highlights" },
+    { "type": "range", "id": "autoplay", "label": "Seconds per slide", "min": 4, "max": 12, "step": 1, "default": 7 }
+  ],
+  "max_blocks": 5,
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        { "type": "text", "id": "kicker", "label": "Small label" },
+        { "type": "text", "id": "light", "label": "Light line (serif)", "default": "New & hand-picked" },
+        { "type": "text", "id": "bold", "label": "Bold line (uppercase)", "default": "The first drop" },
+        { "type": "textarea", "id": "text", "label": "Text" },
+        { "type": "text", "id": "btn1_label", "label": "Button 1 label", "default": "Shop now" },
+        { "type": "url", "id": "btn1_link", "label": "Button 1 link" },
+        { "type": "text", "id": "btn2_label", "label": "Button 2 label" },
+        { "type": "url", "id": "btn2_link", "label": "Button 2 link" },
+        { "type": "select", "id": "media", "label": "Picture", "default": "image", "options": [
+          { "value": "image", "label": "Uploaded image" },
+          { "value": "theme", "label": "Theme photograph" },
+          { "value": "wash", "label": "Watercolour wash (WebGL) with a product" }
+        ] },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "select", "id": "theme_image", "label": "Theme photograph", "default": "hero-bg", "options": [
+          { "value": "hero-bg", "label": "Wet tropical leaves" },
+          { "value": "about", "label": "Two women on the beach" }
+        ] },
+        { "type": "text", "id": "image_alt", "label": "Image description (alt text)" },
+        { "type": "product", "id": "product", "label": "Product on the wash" },
+        { "type": "color", "id": "wash_bg", "label": "Wash ground", "default": "#f6f8f0" },
+        { "type": "checkbox", "id": "flip", "label": "Picture on the left", "default": false }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Hero carousel", "blocks": [{ "type": "slide" }, { "type": "slide" }] }]
+}
+{% endschema %}

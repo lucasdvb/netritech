@@ -2,15 +2,10 @@
   Shopify product recommendations. The section renders empty on the product page, then theme.js fetches
   /recommendations/products?section_id=…&product_id=… and swaps in the filled version (Shopify's own pattern).
 {%- endcomment -%}
-<section class="section section--flush-top recs" data-recommendations="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.limit }}&intent={{ section.settings.intent }}" aria-labelledby="recs-{{ section.id }}">
+<section class="section recs" data-recommendations="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.limit }}&intent={{ section.settings.intent }}" aria-labelledby="recs-{{ section.id }}">
   {%- if recommendations.performed and recommendations.products_count > 0 -%}
     <div class="page-width">
-      <div class="section-head">
-        <div class="section-head__text">
-          <p class="t-label">{{ section.settings.eyebrow }}</p>
-          <h2 class="t-h2" data-lines id="recs-{{ section.id }}">{{ section.settings.heading }}</h2>
-        </div>
-      </div>
+      <h2 class="t-title recs__title" id="recs-{{ section.id }}">{{ section.settings.heading }}</h2>
       <ul class="product-grid product-grid--4" role="list">
         {%- for product in recommendations.products -%}
           <li>{%- render 'product-card', product: product, index: forloop.index0 -%}</li>
@@ -20,12 +15,16 @@
   {%- endif -%}
 </section>
 
+{% stylesheet %}
+  .recs__title { margin-bottom: clamp(1.5rem, 1rem + 2vw, 3rem); }
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "Product recommendations",
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Label", "default": "Complete the routine" },
-    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Pairs well with" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "You might also love" },
     { "type": "select", "id": "intent", "label": "Type", "default": "related", "options": [ { "value": "related", "label": "Related" }, { "value": "complementary", "label": "Complementary (set up in Search & Discovery)" } ] },
     { "type": "range", "id": "limit", "label": "Products", "min": 2, "max": 8, "step": 1, "default": 4 }
   ]

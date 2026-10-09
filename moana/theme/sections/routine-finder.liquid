@@ -1,0 +1,165 @@
+{%- comment -%}
+  Find my routine: a three-question quiz (skin type, main concern, how many steps) that builds a routine from the
+  real catalogue. Moana's answer to Cult Beauty's "Ask Cult".
+
+  Every product's tags are written into the page as JSON; routine-finder.js scores them (concern match, skin-type
+  match, the right routine step) and shows one product per step with a real add-to-bag form, plus "add the whole
+  routine". Nothing is invented: if no product fits a step, that step says so and links to the category.
+  Without JavaScript the page still offers the concern and skin-type shortcuts.
+  Background: the GetLayers "Feather" wash (WebGL); the quiz sits on it as frosted glass.
+{%- endcomment -%}
+{%- liquid
+  assign source = section.settings.collection | default: collections['skincare']
+  assign skin_list = settings.skin_type_tags | split: ','
+  assign concern_list = settings.concern_tags | split: ','
+  assign step_list = settings.step_tags | split: ','
+-%}
+<section class="rf" aria-labelledby="rf-{{ section.id }}">
+  <div class="wash" aria-hidden="true"><canvas data-wash data-bg="#f6f8f0" data-a="#eef1e4" data-b="#d1d9be" data-c="#d6d2bf" data-d="#bcc09b"></canvas></div>
+  <div class="page-width rf__grid">
+    <div class="rf__intro">
+      {%- if section.settings.eyebrow != blank -%}<p class="t-label">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h1 class="t-h1" id="rf-{{ section.id }}">{{ section.settings.heading }}</h1>
+      {%- if section.settings.text != blank -%}<p class="t-lead">{{ section.settings.text }}</p>{%- endif -%}
+      <p class="rf__note t-xs t-soft">{{ 'finder.note' | t }}</p>
+    </div>
+
+    <div class="rf__card glass" data-finder>
+      <form class="rf__form" data-finder-form novalidate>
+        <fieldset class="rf__step is-current" data-q="skin">
+          <legend class="rf__q"><span class="rf__n">1/3</span>{{ 'finder.q_skin' | t }}</legend>
+          <div class="rf__opts">
+            {%- for raw in skin_list -%}{%- assign t = raw | strip -%}
+              <label class="rf__opt"><input type="radio" name="skin" value="{{ t | escape }}"{% if forloop.first %} required{% endif %}><span>{{ t }}</span></label>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+        <fieldset class="rf__step" data-q="concern">
+          <legend class="rf__q"><span class="rf__n">2/3</span>{{ 'finder.q_concern' | t }}</legend>
+          <div class="rf__opts">
+            {%- for raw in concern_list -%}{%- assign t = raw | strip -%}
+              {%- comment -%} only offer concerns that at least one product answers {%- endcomment -%}
+              {%- assign has = false -%}
+              {%- for p in source.products -%}{%- if p.tags contains t -%}{%- assign has = true -%}{%- break -%}{%- endif -%}{%- endfor -%}
+              {%- if has -%}<label class="rf__opt"><input type="radio" name="concern" value="{{ t | escape }}"><span>{{ t }}</span></label>{%- endif -%}
+            {%- endfor -%}
+          </div>
+        </fieldset>
+        <fieldset class="rf__step" data-q="steps">
+          <legend class="rf__q"><span class="rf__n">3/3</span>{{ 'finder.q_steps' | t }}</legend>
+          <div class="rf__opts rf__opts--wide">
+            <label class="rf__opt"><input type="radio" name="steps" value="3"><span><strong>{{ 'finder.steps_3' | t }}</strong><small>{{ 'finder.steps_3_note' | t }}</small></span></label>
+            <label class="rf__opt"><input type="radio" name="steps" value="5"><span><strong>{{ 'finder.steps_5' | t }}</strong><small>{{ 'finder.steps_5_note' | t }}</small></span></label>
+          </div>
+        </fieldset>
+        <div class="rf__nav">
+          <button class="btn btn--secondary" type="button" data-finder-back hidden>{{ 'general.previous' | t }}</button>
+          <p class="rf__progress" aria-hidden="true"><span data-finder-bar></span></p>
+          <button class="btn" type="button" data-finder-next disabled data-next-label="{{ 'general.next' | t }}" data-done-label="{{ 'finder.done' | t }}">{{ 'general.next' | t }}</button>
+        </div>
+      </form>
+
+      <div class="rf__result" data-finder-result hidden tabindex="-1">
+        <p class="t-label">{{ 'finder.result_label' | t }}</p>
+        <h2 class="rf__result-title" data-finder-title></h2>
+        <ol class="rf__list" role="list" data-finder-list></ol>
+        <div class="rf__actions">
+          <button class="btn btn--brand" type="button" data-finder-addall>{{ 'finder.add_all' | t }}</button>
+          <a class="btn btn--secondary" href="#" data-finder-more>{{ 'finder.see_all' | t }}</a>
+          <button class="rf__restart" type="button" data-finder-restart>{{ 'finder.restart' | t }}</button>
+        </div>
+      </div>
+
+      <noscript>
+        <div class="rf__noscript">
+          <p>{{ 'finder.noscript' | t }}</p>
+          <div class="cluster">{%- render 'tag-counts', source: source, tags: settings.concern_tags, style: 'pills' -%}</div>
+        </div>
+      </noscript>
+    </div>
+  </div>
+</section>
+
+<script type="application/json" data-finder-data>
+{
+  "steps": [{%- for raw in step_list limit: 5 -%}{{ raw | strip | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],
+  "collectionUrl": {{ source.url | json }},
+  "strings": {
+    "title": {{ 'finder.result_title' | t: n: '__N__', concern: '__C__' | json }},
+    "none": {{ 'finder.none' | t | json }},
+    "add": {{ 'products.add_to_cart' | t | json }},
+    "added": {{ 'finder.added' | t | json }},
+    "stepLabel": {{ 'routine.step_n' | t: n: '__N__' | json }}
+  },
+  "products": [
+    {%- for p in source.products -%}
+      {%- assign v = p.selected_or_first_available_variant -%}
+      {"handle": {{ p.handle | json }}, "title": {{ p.title | json }}, "url": {{ p.url | json }}, "vendor": {{ p.vendor | json }},
+       "price": {{ p.price | money | json }}, "available": {{ p.available | json }}, "variant": {{ v.id | json }}, "single": {{ p.has_only_default_variant | json }},
+       "image": {{ p.featured_media.preview_image | image_url: width: 240 | json }}, "tags": {{ p.tags | json }}}{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+<script src="{{ 'wash.js' | asset_url }}" defer></script>
+<script src="{{ 'routine-finder.js' | asset_url }}" defer></script>
+
+{% stylesheet %}
+  .rf { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(3rem, 2rem + 4vw, 6rem); min-height: 70vh; }
+  .rf .wash { z-index: -1; }
+  .rf__grid { display: grid; gap: var(--s-7); align-items: start; }
+  .rf__intro > * + * { margin-top: var(--s-4); }
+  .rf__card { padding: clamp(1.25rem, .8rem + 2vw, 2.5rem); }
+  .rf__step { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .js .rf__step:not(.is-current) { display: none; }
+  .rf__step.is-current { animation: rf-in 500ms var(--ease) both; }
+  @keyframes rf-in { from { opacity: 0; transform: translateY(14px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+  .rf__q { display: grid; gap: var(--s-2); margin-bottom: var(--s-5); font: 400 clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem)/1.15 var(--f-display); }
+  .rf__n { font: 700 .75rem/1 var(--f-body); letter-spacing: .14em; color: var(--c-forest); }
+  .rf__opts { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .rf__opts--wide { display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 750px) { .rf__opts--wide { grid-template-columns: 1fr 1fr; } }
+  .rf__opt { position: relative; }
+  .rf__opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .rf__opt span { display: grid; gap: 2px; min-height: 48px; align-content: center; padding: .6rem 1.1rem; border: 1px solid var(--c-night); background: rgba(255,255,255,.7); font-size: .9375rem; transition: background-color var(--t-fast) var(--ease), color var(--t-fast) var(--ease); }
+  .rf__opt span small { font-size: var(--fs-xs); color: var(--ink-soft); }
+  .rf__opt input:checked + span { background: var(--c-night); color: var(--c-white); }
+  .rf__opt input:checked + span small { color: rgba(255,255,255,.8); }
+  .rf__opt input:focus-visible + span { outline: 2px solid var(--c-forest); outline-offset: 2px; }
+  .rf__opt:hover span { background: var(--c-white); }
+  .rf__opt:hover input:checked + span { background: var(--c-night); }
+  .rf__nav { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); margin-top: var(--s-6); }
+  .rf__progress { flex: 1; height: 2px; background: rgba(33,39,33,.15); }
+  .rf__progress span { display: block; height: 100%; width: 33%; background: var(--c-night); transition: width var(--t-slow) var(--ease); }
+  .rf__result:focus { outline: none; }
+  .rf__result > * + * { margin-top: var(--s-4); }
+  .rf__result-title { font: 400 clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem)/1.15 var(--f-display); }
+  .rf__list { display: grid; gap: var(--s-2); }
+  .rf__item { display: grid; grid-template-columns: 72px 1fr auto; gap: var(--s-4); align-items: center; padding: var(--s-3); background: rgba(255,255,255,.8); animation: rf-in 600ms var(--ease) both; animation-delay: calc(var(--k) * 110ms); }
+  .rf__img { display: block; aspect-ratio: 1; background: var(--c-white); }
+  .rf__img img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 6%; }
+  .rf__step-name { font: 700 .6875rem/1.3 var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: var(--c-forest); }
+  .rf__name { display: block; font-size: .9375rem; line-height: 1.4; }
+  .rf__name:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .rf__price { font-weight: 700; font-size: var(--fs-small); }
+  .rf__item .btn { min-height: 40px; padding: 0 1rem; font-size: .6875rem; }
+  .rf__none { grid-column: 2 / -1; font-size: var(--fs-small); color: var(--ink-soft); }
+  .rf__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); padding-top: var(--s-3); }
+  .rf__restart { font-size: var(--fs-small); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; min-height: 44px; }
+  @media (min-width: 990px) { .rf__grid { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(3rem, 6vw, 7rem); } .rf__intro { position: sticky; top: calc(var(--header-h) + 3rem); padding-top: var(--s-6); } }
+  @media (max-width: 749px) { .rf__item { grid-template-columns: 56px 1fr; } .rf__item .rf__buy { grid-column: 1 / -1; } .rf__item .btn { width: 100%; } }
+  @media (prefers-reduced-motion: reduce) { .rf__step.is-current, .rf__item { animation: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Routine finder",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Label", "default": "Find my routine" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Your routine, <em>in 60 seconds</em>" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Three quick questions and we'll pick a product for every step, from what's actually in stock." },
+    { "type": "collection", "id": "collection", "label": "Products to choose from", "info": "Defaults to Skincare. Uses Theme settings > Discovery for the tags." }
+  ],
+  "presets": [{ "name": "Routine finder" }]
+}
+{% endschema %}

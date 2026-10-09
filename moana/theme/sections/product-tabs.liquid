@@ -1,0 +1,63 @@
+{%- comment -%}
+  Tabbed product carousel (Cult Beauty: WHAT'S NEW | GIFTING | CULT PICKS). Each tab is a collection shown as a
+  rail of product cards with edge arrows and dots. Tabs follow the ARIA tabs pattern (arrow keys, Home, End).
+{%- endcomment -%}
+<section class="section section--tight ptabs" aria-label="{{ section.settings.label | escape }}">
+  <div class="page-width">
+    {%- if section.settings.heading != blank -%}<h2 class="t-title ptabs__heading">{{ section.settings.heading }}</h2>{%- endif -%}
+    <div data-tabs>
+      {%- if section.blocks.size > 1 -%}
+        <div class="tabs" role="tablist" aria-label="{{ section.settings.label | escape }}">
+          {%- for block in section.blocks -%}
+            <button class="tab" type="button" role="tab" id="tab-{{ block.id }}" aria-controls="panel-{{ block.id }}" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" tabindex="{% if forloop.first %}0{% else %}-1{% endif %}" {{ block.shopify_attributes }}>{{ block.settings.title | default: block.settings.collection.title }}</button>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+      {%- for block in section.blocks -%}
+        {%- assign c = block.settings.collection -%}
+        <div class="ptabs__panel" id="panel-{{ block.id }}"{% if section.blocks.size > 1 %} role="tabpanel" aria-labelledby="tab-{{ block.id }}" tabindex="0"{% endif %}{% unless forloop.first %} hidden{% endunless %}>
+          <div class="carousel rail-wrap" data-carousel>
+            <ul class="carousel__track rail-track" data-carousel-track role="list">
+              {%- for p in c.products limit: block.settings.limit -%}
+                <li>{% render 'product-card', product: p, index: forloop.index0, sizes: '(min-width: 1200px) 22vw, (min-width: 750px) 36vw, 46vw' %}</li>
+              {%- endfor -%}
+            </ul>
+            <button class="carousel__arrow carousel__arrow--prev" type="button" data-carousel-prev>{% render 'icon', name: 'chevron-left' %}<span class="sr-only">{{ 'general.prev_slide' | t }}</span></button>
+            <button class="carousel__arrow carousel__arrow--next" type="button" data-carousel-next>{% render 'icon', name: 'chevron-right' %}<span class="sr-only">{{ 'general.next_slide' | t }}</span></button>
+            <div class="carousel__dots" data-carousel-dots role="group" aria-label="{{ 'general.slides' | t }}"></div>
+          </div>
+          {%- if block.settings.link_label != blank -%}
+            <p class="ptabs__all"><a class="btn btn--secondary" href="{{ c.url }}">{{ block.settings.link_label }}</a></p>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .ptabs__heading { margin-bottom: var(--s-5); }
+  .ptabs__panel:focus-visible { outline-offset: 6px; }
+  .ptabs__all { display: flex; justify-content: center; margin-top: var(--s-5); }
+  .ptabs .carousel__dots { padding-top: var(--s-4); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product tabs",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Accessible name", "default": "Shop the edit" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading (optional)" }
+  ],
+  "max_blocks": 4,
+  "blocks": [
+    { "type": "tab", "name": "Tab", "settings": [
+      { "type": "text", "id": "title", "label": "Tab title (defaults to collection title)" },
+      { "type": "collection", "id": "collection", "label": "Collection" },
+      { "type": "range", "id": "limit", "label": "Products", "min": 4, "max": 16, "step": 1, "default": 12 },
+      { "type": "text", "id": "link_label", "label": "Shop-all button label" }
+    ] }
+  ],
+  "presets": [{ "name": "Product tabs", "blocks": [{ "type": "tab" }] }]
+}
+{% endschema %}
