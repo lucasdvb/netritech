@@ -1,5 +1,5 @@
 // Regenerates the precache list and version in sw.js from the files on disk.
-// Run after changing any asset: node tools/build-sw.mjs
+// Run after changing any asset: node tools/build-sw.mjs (a unit test runs it with --check)
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, dirname } from 'node:path';
 import { createHash } from 'node:crypto';
@@ -28,5 +28,15 @@ const assets = ['./', ...files.map((f) => `./${relative(root, f).split('\\').joi
 const swPath = join(root, 'sw.js');
 const sw = readFileSync(swPath, 'utf8');
 const block = `// BEGIN GENERATED (node tools/build-sw.mjs)\nconst VERSION = '${version}';\nconst ASSETS = ${JSON.stringify(assets, null, 2)};\n// END GENERATED`;
-writeFileSync(swPath, sw.replace(/\/\/ BEGIN GENERATED[\s\S]*?\/\/ END GENERATED/, block));
-console.log(`sw.js: ${assets.length} assets, version ${version}`);
+const next = sw.replace(/\/\/ BEGIN GENERATED[\s\S]*?\/\/ END GENERATED/, block);
+// --check: fail when sw.js is out of date, so a change can't ship that phones never download.
+if (process.argv.includes('--check')) {
+  if (next !== sw) {
+    console.error(`sw.js is out of date (should be version ${version}). Run: node tools/build-sw.mjs`);
+    process.exit(1);
+  }
+  console.log(`sw.js is up to date: version ${version}`);
+} else {
+  writeFileSync(swPath, next);
+  console.log(`sw.js: ${assets.length} assets, version ${version}`);
+}

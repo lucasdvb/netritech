@@ -37,7 +37,7 @@ After changing any file, rebuild the service-worker asset list, then redeploy:
 node tools/build-sw.mjs
 ```
 
-This gives the cache a new version. The next time the app is opened online, it fetches the update and reloads once.
+This gives the cache a new version (a unit test fails if you forget). A phone that already has Life OS opens the version it has, downloads the new one in the background, and switches to it the next time the app opens; if the app is already in use, a message offers **Update** instead. So after a deploy, open the app once, close it, and open it again.
 
 ---
 
@@ -315,6 +315,8 @@ NODE_PATH=$(npm root -g) node tests/journey.mjs http://localhost:4173/ ./test-sh
                                                                                     # edit, log, reload, delete; tasks, journal, settings, ⓘ
 NODE_PATH=$(npm root -g) node tests/day-plan.mjs http://localhost:4173/ ./test-shots # your day: change a block and Today and the
                                                                                     # reminders follow, carry the morning, drag, add, remove
+NODE_PATH=$(npm root -g) node tests/update.mjs x ./test-shots                         # a phone with the app gets a new release: applied on
+                                                                                    # the next open, or offered with Update mid-session
 NODE_PATH=$(npm root -g) node tests/a11y.mjs http://localhost:4173/ ./test-shots     # axe (WCAG 2.2 AA) on every screen, sheet and
                                                                                     # state, light and dark; a keyboard-only morning
 NODE_PATH=$(npm root -g) node tests/visual.mjs http://localhost:4173/ ./test-shots   # every screen against its baseline in tests/visual
