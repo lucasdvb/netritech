@@ -114,7 +114,7 @@ Things the audit found that are **good and stay**: day modes, minimum-day essent
 | C3 | "Use **streaks**" (P25) vs "never punish missed habits" (P24) | Runs with grace (DR-06): a run survives one miss; comebacks are counted and celebrated. |
 | C4 | "Levels and achievements" (P25) vs "avoid badges and fake XP" (27) | Only things earned by real behaviour: mastery levels from real repetitions, personal records, self-set rewards. No points, no currency, no badge grid. |
 | C5 | "**Addictive** to use" vs "no compulsion" (14) | Pull comes from value and satisfaction, never from fear of loss. Success is measured as time-to-log and days logged, not time in the app (section 11.9). |
-| C6 | "Reminders" as a habit property vs local-first privacy | iPhone web apps can't schedule notifications without a push server, and a server would receive your data. Reminders are delivered through your own calendar (U6). |
+| C6 | "Reminders" as a habit property vs local-first privacy | iPhone web apps can't schedule notifications without a push server, and a server would receive your data. Reminders are delivered through your own calendar (U6), or, if you choose, by your own sync server, which then holds only the reminders' times and words (13c). |
 | C7 | AI insights (18) vs data staying on the device | AI stays optional and opt-in, works from summaries, and shows exactly what would be sent. The app never depends on it. |
 | C8 | Projects (4) vs "tasks must not become project management" | Projects are flat: a name, an outcome and tasks. No sub-projects, dependencies or timelines. |
 | C9 | "Category" as a habit property vs the app's three classification systems | One area per habit (A3). |
@@ -1304,7 +1304,7 @@ Where it ends:
 
 The owner asked for a complete list of improvements: researched habit science and the most successful habit apps, nothing bulky. The list was mapped against the app, and the owner approved everything except the people features (an accountability buddy, keep-in-touch rhythm) and the privacy and devices group (Face ID lock, sync, AI). Each item below names the evidence it rests on.
 
-Partway through, the owner made automatic sync between devices a must, so it was brought in ahead of 13c (see **Sync** below). 13a and 13b are built.
+Partway through, the owner made automatic sync between devices a must, so it was brought in ahead of 13c (see **Sync** below). 13a to 13f are built.
 
 **13a. Fixes and the consistency core**
 1. **Apple Health lands in the right copy.**
@@ -1360,15 +1360,27 @@ Partway through, the owner made automatic sync between devices a must, so it was
     - Any task or priority can become a calendar event with an alert, at a time and length you choose. It is made on the phone, like the reminders file.
     - Why: a plan with a date *and* a time lifted follow-through 4× more than a date alone (Milkman 2011).
 13. **Reminders when the app is closed (opt-in).**
-    - iPhone delivers these to a Home Screen web app only through a sender. So there is a tiny sender in `push/` that you deploy to your own Cloudflare account, if you want it.
-    - What it holds: the times and words of your reminders, and a "done today" mark so a habit you've done isn't reminded. No history and no other data.
-    - It is off unless you set it up, and the app shows exactly what is sent.
+    - iPhone delivers these to a Home Screen web app only through a sender. Rather than a second server, the sync server sends them (`server/worker.js`, with its once-a-minute cron trigger), so it needs sync on.
+    - What it holds: the browser's push address, the times, words and links of this device's reminders, the time zone, and a "done today" list so a habit you've done isn't reminded. No history and no other data. Each message is encrypted for that one browser (RFC 8291) and signed with the server's own key (VAPID, RFC 8292), made the first time it's needed.
+    - It is off unless you turn it on (Settings › Reminders › When Life OS is closed), and that screen lists exactly what the server holds. While it's on, the app leaves the timed reminders to it and keeps only the in-app nudges (move, eyes, water).
+
+**How 13c was built.**
+- *Put it in your calendar* is a button in a task's sheet: a day, a time, a length (15 minutes to 1½ hours) and an alert (at the start, 10 or 30 minutes before). It hands one calendar event to the phone, like the reminders file, and moves the task to that day.
+- *Cues from your iPhone* is in Settings › Reminders and on each habit page. The cue comes from the habit's "When": waking up → the alarm stopping; teeth, coffee or desk → an NFC sticker there; the gym → arriving; after work → leaving; bed → wind down beginning; meals → a time of day; nothing named → the habit's own time, else a sticker. Five steps in the Shortcuts app and the words to paste ("Prayer now. Even just: one sentence of thanks."), and *It's set up* marks it on the habit.
+- *Reminders when the app is closed* reuses everything already there: the reminder times in Settings, the habits' own reminder times and the rule that a habit that feels automatic isn't reminded. The plan is sent again a moment after any change, so the done list stays current.
+- Found on the way: sheets were named by the current millisecond, so two opened together (a list and the item it opens) could share a name and a tap could reach the wrong one. They're numbered now.
+- Tested: the unit suite runs the real encryption and signing against a stand-in push service that decrypts each message and checks the signature; the browser suite turns reminders on through a sync server, has the server's minute run send them, and checks a habit done in the app isn't sent.
 
 **13d. Less effort to log**
 14. **Same as yesterday.** One tap repeats yesterday's food, with Undo.
 15. **Next-weight suggestion.**
     - When every set reached the top of the rep range last time, the next session suggests the next step (2.5 kg or 5 lb, one more rep, or 5 more seconds) and says why.
     - After two sessions without progress below the top of the range, it suggests holding the weight.
+
+**How 13d was built.**
+- *Same as yesterday* sits on Body, on the Nutrition page and at the top of the food sheet, once a day while yesterday has food. It copies every entry to today at the same times of day, marked as repeated, and its Undo takes all of them back.
+- The next step is worked out when a session starts, so the sets are already filled in, and it's shown with its reason above the exercise in the list and on its first set in gym mode ("Next step: 12.5 kg × 8 · Every set reached 15 reps last time."). Bodyweight exercises at the top of their range get the next harder variation when the family has one, else one more rep; holds get 5 more seconds. Weight steps are 2.5 kg, or 5 lb for someone using pounds. A lighter day (the coach's call after a hard week) skips it.
+- Found on the way: the sample data wrote food and water times without a leading zero ("T8:00:00"), which isn't a valid time, so those rows broke the Nutrition list. Fixed, and repeating a day reads times defensively.
 
 **13e. What works for you**
 16. **What helps you.**
@@ -1380,6 +1392,11 @@ Partway through, the owner made automatic sync between devices a must, so it was
     - At the end, the same number of days before and during are compared, and you keep it or drop it.
 18. **On this day.** Reflect shows your entry or win from a year ago, or else a month ago, when there is one.
 
+**How 13e was built.**
+- *What helps you* is a rule in the insight engine. For each habit it compares the days it counted with the days it was due and didn't, on how the next day went: plan done, energy and mood, the last 60 days. It needs 5 days each way and a clear gap (12 points of plan done, or a point of energy or mood), and keeps the habit's strongest measure. Only the strongest habit is shown at a time, worded as a pattern ("the day after… A pattern, not proof"), and its one tap keeps the habit on Minimum days, with Undo. Looking at the next day keeps the habit from counting towards its own result. Comparing every habit took about 100 ms on the phone profile and pushed Reflect over its 70 ms budget, so it's worked out once a day, a few habits at a time between other work, and Reflect and Insights refresh when it's ready (Reflect back to about 20 ms).
+- *Experiments* sit on Reflect: one at a time, for 7, 14 or 21 days, on a habit you have or a new one, watching up to two of sleep, mood, energy, plan done, weight and steps. While it runs: the day, the days done, before against so far. At the end each value gets a verdict (better, worse, about the same, or not enough logged), and you keep it or drop it. Dropping archives a habit made for the experiment (its history stays) and leaves one you already had alone; both with Undo.
+- *On this day* is a card under today's page on Reflect: the journal entry, or else the day's win, from the same day a year ago, or else a month ago (a day either side for a year, and the month's last day when it's shorter). A journal entry opens when tapped.
+
 **13f. Direction**
 19. **Plan for the obstacle.**
     - A goal takes two optional questions: what's most likely to get in the way, and what you'll do then. The weekly review's three gets the same pair.
@@ -1387,6 +1404,10 @@ Partway through, the owner made automatic sync between devices a must, so it was
 20. **The yearly review.**
     - Offered from mid-December to the end of January: the year in numbers, your year's picture, three questions, and one word for next year, which sits at the top of Plan.
     - Why: new-year starts are when change is easiest to begin (the fresh start effect, Dai, Milkman & Riis 2014).
+
+**How 13f was built.**
+- *Plan for the obstacle* is a fourth, optional question in the goal wizard ("What could get in the way?": the obstacle, and "When it happens, I will…"), a block on the goal page to add or change it, and the same pair under next week's three in the weekly review. Plan shows the week's pair under its three all week ("If a heavy week of client work: do the first one before email").
+- *The yearly review* is a row in Reflect's reviews from 15 December to 31 January, and a page (Reflect › Your year): the year in numbers (days you showed up and sealed, workouts, books, journal pages, wins, weight, steps a day), a link to the year's picture, three questions (proudest of, leave behind, next year about), and one word. The word heads Plan for the year it was chosen for, from the moment it's chosen in December, and links back to the review. Stored in `yearlyReviews` (id = the year), which database version 8 already had.
 
 **Sync (the owner's must)**
 - **What:** every device keeps its full copy and works offline. Whenever it's online it sends what changed (from the outbox the store has kept since Phase 0) and takes what changed elsewhere: on every change, on coming back online or to the screen, and once a minute.
@@ -1401,6 +1422,54 @@ Partway through, the owner made automatic sync between devices a must, so it was
   - Another device joining with the key takes the synced data, after a safety copy of its own.
   - Pictures sync too. Deletions travel as the tombstones the store already keeps.
 - **Tested:** the server's real SQL runs over SQLite in the tests (`tests/support/`). `tests/sync.mjs` runs two browsers, a phone and a computer, through it: start, join, changes and deletions both ways, device settings kept, a stranger's key refused, nothing echoed.
+
+**Owner fixes (October 2026): training and the brain dump.** After using the app, the owner asked for five changes. Each one was checked against how Hevy, Strong and Setgraph log sets, then built into what was already there rather than rebuilt.
+
+- **Gym mode button.** It wrapped to two lines next to the session title. It is now a quiet grey pill on one line, so Finish session stays the screen's one coloured button. In gym mode itself, the big button reads "Log set 1" at button size rather than heading size.
+- **Session clock (`domain/session-clock.js`).**
+  - The workout keeps `activeMs` and `runningSince`. The clock runs while you are in the session's list or gym mode.
+  - It pauses when you leave (moving between the list and gym mode doesn't count as leaving), and you can pause or carry on by tapping the time.
+  - It stops when you finish. The session's minutes are the time counted, so pauses don't count.
+  - A stretch left running counts four hours at most, so a session forgotten overnight can't show days. Older sessions read as before.
+- **Set rows.**
+  - Units moved out of the fields and into the column heads: Set, Previous, kg, Reps. The fields were as narrow as 30 px, which is why typed numbers seemed not to appear. They are now 76 px, centred, at input size.
+  - The tick box is gone: typing the reps (or the time) is what logs a set, and clearing it takes the set back.
+  - Reps are no longer prefilled. Today's aim (`plan` on the set, from last time and the next step) shows faintly until you type. The weight stays filled in.
+  - Previous shows last time's set; tap it to do the same again.
+  - Tap a set's number to mark it a warm-up (W). Warm-ups are logged but count for neither progress, records, nor the next step.
+  - The rest starts on its own when a set is logged, shown in the bar with Skip. Add set and Remove set sit under each exercise, with the goal and rest above.
+- **Brain dump (`domain/notes.js`, `screens/notes.js`, Plan › Brain dump, DB v9 `notes` store).**
+  - Write at the top and file the note under a category: Ideas, To think about, Work, Personal, Someday, or your own. Or leave it Unsorted.
+  - Filter by category, with counts. Search appears once there are more than six notes.
+  - Tap a note to edit it, move it, pin it to the top, make it a task, or delete it with Undo.
+  - Categories can be renamed (their notes move with them; a name that already exists merges the two), reordered or deleted. Deleting one moves its notes to Unsorted, with Undo.
+  - In Capture, "idea: …" files a note under Ideas and "dump: …" under Unsorted. Brain dump is also on the capture grid.
+  - Global search finds notes and opens them. Notes are in the CSV export, sync like everything else, and stay on the device.
+- **Photos and a note on each exercise** (`domain/exercise-media.js`, `screens/exercise-media-ui.js`).
+  - Up to two photos per exercise, for the machine's setup or the position you'd forget, plus a note (up to 500 characters).
+  - They live on the exercise, so they show every time you do it: on the workout card, in gym mode and on the exercise page. Tap a photo to see it full size.
+  - Add or edit them from the exercise's ⋯ menu (Photos and note), from gym mode, or from the exercise page.
+  - Pictures are shrunk to 1400 px and stored as `ex-…` blobs. Like the moodboard, they're always in backups and they sync. Removing one has Undo.
+- **Mobility & posture became a workout plan** (`t-mobility`, its own *Mobility* type).
+  - It holds the eight exercises from the old checklist with their sets and reps, external rotation at 2 kg.
+  - The habit stays in the morning with its goal and history. Its checklist is gone: tapping it starts the workout, and finishing the workout ticks it. "Stretched" in Capture still ticks it.
+  - A mobility session doesn't count as training: not for the Training habit, the week's sessions, seasons, rewards or the yearly numbers. It doesn't suggest progression either.
+  - Installed data is converted by the migration `2026-10-mobility-workout`. A day with every checklist item ticked stays done.
+- **Explanations behind an ⓘ** (`ui/tips.js`, `infoBtn`, `tipText` and `pageHead({ info })` in `ui/components.js`).
+  - Text that explains a screen or a card, and that you couldn't edit or hide, now folds behind an ⓘ beside the title: the page leads (Work, Rewards, Books, Goals, Sync and the rest), long page subtitles (Your plan, Tasks, Moodboard, Habits in focus) and the fine print on cards (calves, core, posture, adaptive calories, the weight pace, safety copies, the week's rules).
+  - Tap the ⓘ to read it, tap again to fold it. It stays open while the app is open. **Settings › Show explanations** keeps every one open.
+  - Kept in sight on purpose: your own words (descriptions, notes, cues), status lines with your numbers, instructions while you are doing something (arranging goals, restore choices), and the two warnings that protect data or health (clearing Safari's data deletes yours; "not medical advice").
+- **Your day, editable and linked** (`domain/day-blocks.js`, `screens/day-planner.js`, Your plan › Your day).
+  - The day is a list of blocks stored on the profile (`profile.day`; until you change it, it's built from your profile and habits). A block is linked to what's behind it, and its time lives there, never in two places: wake, training and lights out are your profile times (with Morning reset, Training and Lights out); work is your work hours; a habit block is the habit's time (Prayer & Scripture moves both); a routine block is the routine's window; a plain block ("Breakfast", "Lunch") keeps its own time and shows only in the plan.
+  - Changing a block writes to all of it in one save, with one Undo: the habit's time and its own reminder, the named reminders hanging off it (the morning check-in from wake, training's, the evening's), and the old time in its words ("Lights out by 22:00", "Out of bed at 06:00").
+  - Routines follow: their habit steps run in time order, and a habit moved into another routine's window joins that routine. So Today's routine list, its rows (sorted by time) and the Now card all follow the plan.
+  - Moving wake can carry the morning (the blocks after waking and before work, and the routines that open before work); moving lights out can carry the evening. It's a switch in the block's sheet, on by default.
+  - Drag a block's handle (or use the arrow keys) to move it: it then starts when the block before it ends. Add any active habit or routine, training or work if you removed them, or a plain block; remove any block except wake and lights out (the habit or routine itself stays).
+  - Settings' wake, training, work and lights-out fields and Training's time field go through the same links.
+  - A list arriving from a backup or another device is read defensively: bad times read as noon, missing habits drop out.
+- **Tested:** `tests/unit/workout-notes.test.mjs`, `tests/unit/mobility.test.mjs` and `tests/workout-notes.mjs`, `tests/unit/day-blocks.test.mjs` and `tests/day-plan.mjs` (the planner through the interface: change, Undo, carry the morning, drag, add, remove, reload), which covers typing to log, same as last time, warm-ups, add and remove set, the clock across gym mode, leaving, a manual pause and the finish, and the brain dump end to end in light and dark.
+
+**Handover audit (October 2026).** A full audit before handover: security, calculations, persistence and every form, then crawlers over every screen and sheet at seven widths. What was found, fixed and proven, and what is still open, is in [`handover-audit.md`](handover-audit.md).
 
 **Left out on purpose:** points and pets, money stakes, "21 days" countdowns, willpower budgets, more default notifications, a barcode food database, a timeline planner. Each is either unsupported by the evidence or adds weight without value.
 

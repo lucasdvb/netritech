@@ -15,6 +15,8 @@ import { num, pct, kgOut, weightUnit, cmOut, lengthUnit } from '../ui/format.js'
 import { app } from '../ui/app-api.js';
 import { later } from '../ui/later.js';
 
+// What the charts read: every logged store, weigh-ins included.
+const TREND_READS = [...H.DATA_STORES, 'weightEntries', 'bodyFatEstimates', 'moodEntries'];
 const RANGES = [{ id: '30', label: '30d' }, { id: '60', label: '60d' }, { id: '90', label: '90d' }];
 const pctFmt = (v) => `${Math.round(v * 100)}%`;
 const axisPct = (v) => `${Math.round(v * 100)}`;
@@ -126,7 +128,7 @@ export default {
     const keys = focus ? focus.keys : Object.keys(all);
     // A chart is redrawn only when your data or its range changes, not on every redraw of the page
     // (background work such as records and levels redraws the screen it is on).
-    const chart = (k) => () => raw(store.memo(`trends:${k}:${ui.range || 30}:${ui.ex || ''}`, H.DATA_STORES, () => String(all[k]())));
+    const chart = (k) => () => raw(store.memo(`trends:${k}:${ui.range || 30}:${ui.ex || ''}`, TREND_READS, () => String(all[k]())));
     return html`
       ${pageHead({ title: focus ? focus.title : 'All trends', morph: focus ? `metric-${params.metric}` : null, back: { to: 'progress', label: 'Progress' } })}
       ${keys.map((k, i) => (focus || i < 2 ? chart(k)() : later(k, chart(k))))}

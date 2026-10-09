@@ -14,7 +14,8 @@ export const categoryLabel = (id) => CATEGORIES.find((c) => c.id === id)?.label 
 
 /* ---------- performance of one exercise in one workout ---------- */
 export function performance(workoutId, exerciseId) {
-  return perfOf(setsOf(workoutId).filter((s) => s.exerciseId === exerciseId && s.completed), exercise(exerciseId));
+  // Warm-up sets are logged but don't count: not for progress, not for records.
+  return perfOf(setsOf(workoutId).filter((s) => s.exerciseId === exerciseId && s.completed && !s.warmup), exercise(exerciseId));
 }
 
 function perfOf(sets, e) {
@@ -100,11 +101,11 @@ export function weekStats(date = today()) {
 
 function computeWeekStats(date) {
   const from = startOfWeek(date), to = endOfWeek(date);
-  const ws = store.all('workouts').filter((w) => w.status === 'done' && w.date >= from && w.date <= to);
+  const ws = store.all('workouts').filter((w) => w.status === 'done' && w.kind !== 'mobility' && w.date >= from && w.date <= to);
   let calfSessions = 0, coreSessions = 0, calfReps = 0, calfVolume = 0, minutes = 0;
   for (const w of ws) {
     minutes += Number(w.minutes) || 0;
-    const sets = setsOf(w.id).filter((s) => s.completed);
+    const sets = setsOf(w.id).filter((s) => s.completed && !s.warmup);
     const cat = (s) => exercise(s.exerciseId)?.category;
     if (sets.some((s) => cat(s) === 'calves')) calfSessions++;
     if (sets.some((s) => cat(s) === 'core')) coreSessions++;
@@ -133,7 +134,7 @@ export function weeklySeries(weeks, fn, end = today()) {
 export function personalBests() {
   const best = new Map();
   for (const s of store.all('workoutSets')) {
-    if (!s.completed) continue;
+    if (!s.completed || s.warmup) continue;
     const w = store.get('workouts', s.workoutId);
     if (!w || w.status !== 'done') continue;
     const e = exercise(s.exerciseId);

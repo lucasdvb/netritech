@@ -53,6 +53,14 @@ async function call(url, body) {
   return out;
 }
 
+/** What the server knows this device by, for the other thing it does (reminders): { url, space, auth, dev }. */
+export async function credentials() {
+  const c = config();
+  if (!c) return null;
+  const K = await keysOf(c.key);
+  return { url: endpoint(c.url, ''), space: K.space, auth: K.auth, dev: c.dev };
+}
+
 /** Is there a Life OS server at this address? Resolves to true, or throws with a readable reason. */
 export async function check(url) {
   let res;
@@ -68,7 +76,7 @@ const hash = (v) => { const s = JSON.stringify(v ?? null); let h = 0; for (let i
 /* ---------- what goes out ---------- */
 
 async function sealRecord(K, s, rec) {
-  return { k: await K.name(`${s}:${rec.id}`), ts: rec.updatedAt || rec.createdAt || '', d: await K.seal({ s, r: rec }) };
+  return { k: await K.name(`${s}:${rec.id}`), ts: rec.updatedAt || rec.createdAt || '1970-01-01T00:00:00.000Z', d: await K.seal({ s, r: rec }) };
 }
 
 async function blobRecord(rec) {
@@ -101,7 +109,9 @@ async function outgoing(K, seeded) {
     }
   }
   const disk = store.disk();
-  const box = seeded ? await disk.getAll('outbox') : [];
+  // The first time, what the outbox held as the upload was built is what it covers; anything
+  // changed after that stays in the outbox for the next round.
+  const box = await disk.getAll('outbox');
   if (!seeded) {
     for (const s of SYNCED) for (const rec of store.all(s)) items.push(await sealRecord(K, s, rec));
     for (const rec of await disk.getAll('photoBlobs')) { const r = await blobRecord(rec); if (r) items.push(await sealRecord(K, 'photoBlobs', r)); }
@@ -116,10 +126,10 @@ async function outgoing(K, seeded) {
   }
   const sent = async () => {
     write(FIELDS, { ...read(FIELDS, {}), ...fields });
-    if (!box.length && seeded) return;
+    if (!box.length) return;
     // Clear the outbox, except entries changed again while this was on its way.
     const now = new Map((await disk.getAll('outbox')).map((e) => [e.id, e.at]));
-    const gone = (seeded ? box : [...now.keys()].map((id) => ({ id, at: now.get(id) }))).filter((e) => now.get(e.id) === e.at);
+    const gone = box.filter((e) => now.get(e.id) === e.at);
     if (gone.length) await disk.write(gone.map((e) => ({ store: 'outbox', delete: e.id })));
   };
   return { items, sent };
@@ -133,12 +143,17 @@ async function incoming(K, items) {
   const recs = [];
   const blobs = [];
   const fields = {};
+  // A record the app can't use (an unknown store, a malformed id or date, a future timestamp)
+  // is set aside instead of stopping sync.
+  const soon = new Date(Date.now() + 86400000).toISOString();
+  const usable = (r) => r && typeof r === 'object' && (typeof r.id === 'string' || Number.isFinite(r.id)) && (!r.updatedAt || (typeof r.updatedAt === 'string' && r.updatedAt <= soon));
   for (const it of items) {
     let m;
     try { m = await K.open(it.d); } catch { continue; } // sealed with another key, or damaged
-    if (m.f) (fields[m.s] ||= []).push(m);
-    else if (m.s === 'photoBlobs') blobs.push(m.r);
-    else if (SYNCED.includes(m.s) && m.r?.id) recs.push({ store: m.s, value: m.r });
+    if (!m || typeof m !== 'object') continue;
+    if (m.f) { if (Object.hasOwn(FIELDWISE, m.s) && typeof m.f === 'string') (fields[m.s] ||= []).push(m); }
+    else if (m.s === 'photoBlobs') { if (usable(m.r) && (m.r.deletedAt || typeof m.r.b64 === 'string')) blobs.push(m.r); }
+    else if (SYNCED.includes(m.s) && usable(m.r)) recs.push({ store: m.s, value: m.r });
   }
   quietUntil = Date.now() + 800;
   let n = recs.length ? store.adopt(recs) : 0;
@@ -163,8 +178,10 @@ async function incoming(K, items) {
       const cur = await disk.get('photoBlobs', r.id);
       if (cur && (cur.updatedAt || '') >= (r.updatedAt || '')) continue;
       const { b64: data, type, ...rest } = r;
-      await disk.write([{ store: 'photoBlobs', value: r.deletedAt ? rest : { ...rest, blob: new Blob([unb64(data)], { type }) } }]);
-      landed.push(r.id);
+      try {
+        await disk.write([{ store: 'photoBlobs', value: r.deletedAt ? rest : { ...rest, blob: new Blob([unb64(data)], { type }) } }]);
+        landed.push(r.id);
+      } catch { /* a damaged picture is skipped; the rest still land */ }
     }
     if (landed.length) {
       const img = await import('../ui/images.js');
@@ -208,6 +225,8 @@ async function cycle() {
       const r = await call(c.url, { space: K.space, auth: K.auth, dev: c.dev, since, push: items.slice(i, i + CHUNK) });
       if (r.reset) { saveConfig({ seq: 0, seeded: false }); write(FIELDS, {}); again = true; return; }
       await incoming(K, r.items || []);
+      // Move on only once what came in is safely on disk; otherwise it comes again next time.
+      if (!(await store.flush())) throw new Error('Couldn’t save what came from your other devices.');
       since = r.seq;
       more = !!r.more;
       if (i + CHUNK >= items.length && !more) break;

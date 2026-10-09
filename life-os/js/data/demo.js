@@ -36,8 +36,8 @@ export async function loadDemo(days = 42) {
     if (sick) continue;
     put('stepLogs', { id: d, date: d, steps: Math.round(6500 + rnd() * 5200) });
     const prot = [['Oats + whey + banana', 35, 420], ['Chicken curry with rice', 40, 650], ['Yoghurt + 2 eggs', 19, 240], ['Grilled chicken, potatoes, veg', 45, 560]];
-    prot.forEach(([name, p, k], i) => { if (i < 3 || pick(0.8)) put('nutritionLogs', { date: d, name, protein: p + Math.round((rnd() - 0.5) * 10), kcal: k + Math.round((rnd() - 0.5) * 120), fruit: i === 0 ? 1 : 0, veg: i >= 1 ? 1 : 0, at: `${d}T${8 + i * 4}:00:00` }); });
-    for (let i = 0; i < 4 + Math.floor(rnd() * 3); i++) put('waterLogs', { date: d, ml: 500, at: `${d}T${7 + i * 2}:30:00` });
+    prot.forEach(([name, p, k], i) => { if (i < 3 || pick(0.8)) put('nutritionLogs', { date: d, name, protein: p + Math.round((rnd() - 0.5) * 10), kcal: k + Math.round((rnd() - 0.5) * 120), fruit: i === 0 ? 1 : 0, veg: i >= 1 ? 1 : 0, at: `${d}T${String(8 + i * 4).padStart(2, '0')}:00:00` }); });
+    for (let i = 0; i < 4 + Math.floor(rnd() * 3); i++) put('waterLogs', { date: d, ml: 500, at: `${d}T${String(7 + i * 2).padStart(2, '0')}:30:00` });
     if (wd <= 5) {
       put('dailyReviews', { id: d, date: d, deepWork: 1 + Math.floor(rnd() * 3), breaks: 3 + Math.floor(rnd() * 6), eyeBreaks: Math.floor(rnd() * 6),
         shutdown: pick(0.75) ? { done: true, at: `${d}T20:0${Math.floor(rnd() * 9)}:00`, completed: 'Proposal sent', remains: 'Invoices', first: 'Follow up with client' } : null,

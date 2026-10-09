@@ -50,8 +50,8 @@ const WHEN = () => [['In a month', addMonths(today(), 1)], ['In 3 months', addMo
 /** A new goal in three questions. */
 export function newGoal() {
   const lastKg = store.all('weightEntries').reduce((a, b) => (!a || b.date > a.date ? b : a), null)?.kg ?? null;
-  const ui = { i: 0, name: '', area: 'body', deadline: addMonths(today(), 3), how: null, target: '', start: lastKg != null ? Math.round(kgOut(lastKg) * 10) / 10 : '', unit: '', habitId: '', milestone: '' };
-  const STEPS = ['What outcome?', 'By when?', 'How will you know?'];
+  const ui = { i: 0, name: '', area: 'body', deadline: addMonths(today(), 3), how: null, target: '', start: lastKg != null ? Math.round(kgOut(lastKg) * 10) / 10 : '', unit: '', habitId: '', milestone: '', obstacle: '', ifThen: '' };
+  const STEPS = ['What outcome?', 'By when?', 'How will you know?', 'What could get in the way?'];
   app.sheet({
     title: 'New goal',
     size: 'detent',
@@ -60,7 +60,7 @@ export function newGoal() {
       const u = s.ui;
       const step = u.i;
       return html`<div class="ritual goal-new" data-step="${step}" data-key="gn-${step}">
-        <div class="ritual-progress" role="progressbar" aria-valuemin="1" aria-valuemax="3" aria-valuenow="${step + 1}" aria-label="Question ${step + 1} of 3">${STEPS.map((_, j) => html`<span class="${cx(j < step && 'is-done', j === step && 'is-now')}"></span>`)}</div>
+        <div class="ritual-progress" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="${step + 1}" aria-label="Question ${step + 1} of 4">${STEPS.map((_, j) => html`<span class="${cx(j < step && 'is-done', j === step && 'is-now')}"></span>`)}</div>
         <h3 class="ritual-q">${STEPS[step]}</h3>
         <div class="ritual-body">
           ${step === 0 ? html`<input class="input" value="${u.name}" data-input="gn" data-f="name" placeholder="e.g. Get to 15% body fat" maxlength="60" aria-label="The outcome" enterkeyhint="next">
@@ -69,10 +69,11 @@ export function newGoal() {
             <input class="input" type="date" min="${addDays(today(), 1)}" value="${u.deadline}" data-change="gn" data-f="deadline" aria-label="Deadline">` : ''}
           ${step === 2 ? html`<div class="chips">${HOW.map((m) => html`<button type="button" class="${cx('chip', u.how === m.id && 'is-active')}" aria-pressed="${u.how === m.id}" data-action="gn-how" data-id="${m.id}">${m.label}</button>`)}</div>
             ${howFields(u)}` : ''}
+          ${step === 3 ? obstacleFields(u, 'gn') : ''}
         </div>
         <div class="ritual-foot">
           ${step > 0 ? html`<button type="button" class="link-btn" data-action="gn-back">Back</button>` : html`<span></span>`}
-          ${step < 2 ? html`<button type="button" class="btn btn--primary" data-action="gn-next">Next</button>` : html`<button type="button" class="btn btn--primary" data-action="gn-save">Create goal</button>`}
+          ${step < 3 ? html`<button type="button" class="btn btn--primary" data-action="gn-next">Next</button>` : html`<button type="button" class="btn btn--primary" data-action="gn-save">Create goal</button>`}
         </div>
       </div>`;
     },
@@ -84,6 +85,7 @@ export function newGoal() {
       'gn-back': ({ sheet }) => { sheet.ui.i--; sheet.refresh(); },
       'gn-next': ({ sheet }) => {
         if (sheet.ui.i === 0 && !sheet.ui.name.trim()) { app.toast('Name the outcome first.'); return; }
+        if (sheet.ui.i === 2 && !sheet.ui.how) { app.toast('Choose how you’ll know.'); return; }
         sheet.ui.i++;
         sheet.refresh();
       },
@@ -104,6 +106,7 @@ export function newGoal() {
           history: measure === 'number' && start != null ? [{ date: today(), value: start }] : [], current: measure === 'number' ? start : null,
           habitIds: measure === 'habitCount' ? [u.habitId] : [],
           milestones: u.how === 'milestones' && u.milestone.trim() ? [{ id: store.uid(), title: u.milestone.trim(), done: false, doneAt: null }] : [],
+          obstacle: u.obstacle.trim() || null, ifThen: u.ifThen.trim() || null,
         });
         hap.success();
         app.closeSheet(sheet);
@@ -111,6 +114,19 @@ export function newGoal() {
       },
     },
   });
+}
+
+/**
+ * Plan for the obstacle (13f): what's most likely to get in the way, and what you'll do then.
+ * Naming the obstacle and the if-then plan together (WOOP: Oettingen; Gollwitzer & Sheeran 2006)
+ * does more than the goal alone. Both optional. `input` names the data-input the fields report to.
+ */
+export function obstacleFields(u, input) {
+  return html`<p class="ritual-note">Optional, and it helps: name what’s most likely to get in the way, and decide now what you’ll do when it does.</p>
+    <label class="field"><span class="field-label">The obstacle</span>
+      <input class="input" value="${u.obstacle || ''}" data-input="${input}" data-f="obstacle" placeholder="e.g. Late client calls" maxlength="100" enterkeyhint="next"></label>
+    <label class="field"><span class="field-label">When it happens, I will…</span>
+      <input class="input" value="${u.ifThen || ''}" data-input="${input}" data-f="ifThen" placeholder="e.g. Train at lunch instead" maxlength="100" enterkeyhint="done"></label>`;
 }
 
 function howFields(u) {
@@ -156,7 +172,12 @@ export function goalSheet(existing) {
         if (!form.name?.trim()) { app.toast('Give the goal a name.'); return; }
         const n = (v) => (v === '' || v == null ? null : weight ? kgIn(Number(v)) : Number(v));
         const patch = { name: form.name.trim(), description: form.description || '', category: form.category, deadline: form.deadline || null };
-        if (m) Object.assign(patch, { start: n(form.start), target: n(form.target) });
+        if (m) {
+          const start = n(form.start), target = n(form.target);
+          // A number goal needs its target; the direction follows from start and target.
+          if (target == null || !Number.isFinite(target)) { app.toast('Give the goal a target number.'); return; }
+          Object.assign(patch, { start, target, direction: start != null && Number.isFinite(start) && start !== target ? (target < start ? 'down' : 'up') : existing.direction ?? null });
+        }
         store.put('goals', { ...existing, ...patch });
         hap.tap();
         app.closeSheet(sheet);
@@ -181,8 +202,8 @@ export default {
     };
     return html`
       ${pageHead({ title: 'Goals', back: { to: 'plan', label: 'Plan' }, actions: html`${active.length > 1 ? html`<button type="button" class="btn btn--soft btn--sm" data-action="arrange" aria-pressed="${!!ui.arranging}">${ui.arranging ? 'Done' : 'Arrange'}</button>` : ''}
-        <button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New goal">${icon('plus', { size: 20 })}</button>` })}
-      <p class="lead">${ui.arranging ? 'Drag your goals into the order that matters to you. Plan shows them this way too.' : 'Where each goal is heading, from your own data. A new goal takes three questions.'}</p>
+        <button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New goal">${icon('plus', { size: 20 })}</button>`, info: 'Where each goal is heading, from your own data. A new goal takes three questions.' })}
+      ${ui.arranging ? html`<p class="lead">Drag your goals into the order that matters to you. Plan shows them this way too.</p>` : ''}
       ${active.length && ui.arranging ? html`<ol class="list sort-list" data-reorder="move-goal">${active.map((g) => html`<li class="sort-row" data-key="ar-${g.id}">
           <button type="button" class="drag-handle" data-drag aria-label="Move ${g.name}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>
           <span class="row"><span class="row-main"><span class="row-title">${g.name}</span><span class="row-sub">${catLabel(g.category)}</span></span></span></li>`)}</ol>`

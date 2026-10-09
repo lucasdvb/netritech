@@ -10,6 +10,12 @@ const sheets = () => import('../sheets.js');
 
 export async function openHabitOrSource(h, date) {
   if (H.isLimit(h)) return (await import('../less.js')).openLess(h, date);
+  // A habit with its own workout plan starts that workout (or goes back to it).
+  if (h.templateId && F.template?.(h.templateId)) {
+    const active = F.activeWorkout();
+    if (active && active.templateId === h.templateId) return app.go(`workout/${active.id}`);
+    if (!active) return (await import('../workout-actions.js')).startWorkout(h.templateId, date);
+  }
   if (h.id === 'h-training' || h.source?.startsWith('workout:')) {
     const active = F.activeWorkout();
     if (active) return app.go(`workout/${active.id}`);

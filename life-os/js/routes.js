@@ -35,6 +35,7 @@ export const ROUTES = [
   { path: 'plan/moodboard', tab: 'plan', depth: 1, load: v('moodboard') },
   { path: 'plan/lists/:id', tab: 'plan', depth: 2, load: v('list'), list: 'plan/lists' },
   { path: 'plan/lists', tab: 'plan', depth: 1, load: v('lists'), list: 'plan/lists', emptyIcon: 'list-checks', emptyText: 'Choose a list to see what’s on it.' },
+  { path: 'plan/notes', tab: 'plan', depth: 1, load: v('notes') },
   { path: 'plan/money/:month?', tab: 'plan', depth: 1, load: v('money') },
   { path: 'plan/dates', tab: 'plan', depth: 1, load: v('dates') },
   { path: 'plan/commitments', tab: 'plan', depth: 1, load: v('commitments') },
@@ -63,6 +64,7 @@ export const ROUTES = [
   { path: 'reflect/journal', tab: 'reflect', depth: 1, load: v('journal'), list: 'reflect/journal', emptyIcon: 'notebook-pen', emptyText: 'Choose an entry to read it, or start today’s.' },
   { path: 'reflect/review/week/:date?', tab: 'reflect', depth: 1, load: v('review-week') },
   { path: 'reflect/review/month/:month?', tab: 'reflect', depth: 1, load: v('review-month') },
+  { path: 'reflect/review/year/:year?', tab: 'reflect', depth: 1, load: v('review-year') },
   { path: 'reflect/reviews', tab: 'reflect', depth: 1, load: v('reviews') },
   { path: 'reflect/insights', tab: 'reflect', depth: 1, load: v('insights') },
 

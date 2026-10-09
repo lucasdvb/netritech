@@ -59,7 +59,8 @@ export function checkIn(s, { note = '', keep = true } = {}) {
 export function summarize(s, end = today()) {
   const last = s.end < end ? s.end : end;
   const days = last >= s.start ? range(s.start, last).filter((d) => d >= H.trackingStart()) : [];
-  const scored = days.map((d) => dayScore(d)).filter((x) => x.ratio != null && !H.isOff(x.mode));
+  // Today counts once something is done (as in the week's story), never as a zero first thing.
+  const scored = days.map((d) => dayScore(d)).filter((x) => x.ratio != null && !H.isOff(x.mode) && !(x.date === today() && x.done === 0));
   const focus = s.habitIds.map((id) => H.habit(id)).filter(Boolean).map((h) => {
     const c = H.consistency(h, last, days.length || 1);
     return { habitId: h.id, name: h.name, ratio: c.ratio, done: c.done };
@@ -68,7 +69,7 @@ export function summarize(s, end = today()) {
     days: days.length,
     score: mean(scored.map((x) => x.ratio)),
     sealed: days.filter((d) => store.get('dailyReviews', d)?.sealedAt).length,
-    workouts: F.allWorkouts().filter((w) => w.date >= s.start && w.date <= last).length,
+    workouts: F.trainingWorkouts().filter((w) => w.date >= s.start && w.date <= last).length,
     focus,
     records: setBetween(s.start, last).map((r) => ({ label: r.label, text: r.text, date: r.date })),
     levels: store.all('levelEvents').filter((e) => e.date >= s.start && e.date <= last).map((e) => ({ habitId: e.habitId, level: e.level, date: e.date })),

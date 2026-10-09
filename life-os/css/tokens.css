@@ -133,6 +133,7 @@
   --gym-surface: #1D1D1F;
   --gym-text: #FFFFFF;
   --gym-dim: #F5F5F7;
+  --gym-accent: #2997FF;  /* blue text on the gym's black: the brand blue lifted to 4.5:1 and over */
   /* ceremonies: the same black stage in any theme, so a sealed day or a finale feels like an occasion */
   --stage-bg: #000000;
   --stage-surface: #1D1D1F;

@@ -48,7 +48,7 @@ export function openNumpad(o) {
   const onKey = (e) => {
     if (sheet?.el && !sheet.el.isConnected) { removeEventListener('keydown', onKey); return; }
     if (e.target.matches?.('input, textarea')) return;
-    if (/^[0-9.]$/.test(e.key)) { e.preventDefault(); press(e.key); }
+    if (/^[0-9.,]$/.test(e.key)) { e.preventDefault(); press(e.key === ',' ? '.' : e.key); }
     else if (e.key === 'Backspace') { e.preventDefault(); press('del'); }
     else if (e.key === 'Enter') { e.preventDefault(); save(); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); step(1); }

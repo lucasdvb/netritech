@@ -16,7 +16,7 @@ await step('everything is preloaded on first launch', async () => {
       upper: store.get('templates', 't-upper').items.map((i) => i.exerciseId), reset: store.get('habits', 'h-morning-reset').checklist,
       mvd: store.all('habits').filter((h) => h.mvd && !h.archived).length };
   });
-  const want = { tasks: 12, templates: 5, goals: 8, mvd: 8 };
+  const want = { tasks: 12, templates: 6, goals: 8, mvd: 8 }; // six workouts: Mobility & posture is one
   for (const [k, v] of Object.entries(want)) if (s[k] !== v) throw new Error(`${k}: ${s[k]} (want ${v})`);
   if (s.habits < 40 || s.exercises < 39 || s.foods < 17) throw new Error(JSON.stringify(s));
   if (!s.archived.includes('h-caffeine') || !s.archived.includes('h-alcohol')) throw new Error('optional habits missing');
@@ -143,7 +143,7 @@ await step('search finds tasks; csv and backup include them', async () => {
   await page.keyboard.press('Escape');
   await go('#/you/data', '[data-view="data"]');
   const [dl] = await Promise.all([page.waitForEvent('download'), page.locator('[data-action="csv"][data-k="tasks"]').click()]);
-  const csv = readFileSync(await dl.path(), 'utf8');
+  const csv = readFileSync(await dl.path(), 'utf8').replace(/^\ufeff/, ''); // the byte-order mark is for spreadsheets
   if (!csv.startsWith('date,title,area,repeat,done') || !csv.includes('Laundry')) throw new Error(csv.slice(0, 80));
   const [b] = await Promise.all([page.waitForEvent('download'), page.locator('[data-action="backup"]').click()]);
   const json = JSON.parse(readFileSync(await b.path(), 'utf8'));

@@ -3,27 +3,28 @@ import * as M from '../domain/metrics.js';
 import { today, lastNDays, fmtMD, fmtDayShort, relativeDay, addDays, fmtTime } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { pageHead, empty } from '../ui/components.js';
+import { pageHead, empty, infoBtn, tipText } from '../ui/components.js';
 import { barChart } from '../ui/charts.js';
 import { num, litres } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { attachSwipe } from '../ui/swipe.js';
 import { nutritionRings } from './body.js';
-import { openFood, openWater, addServing, removeWithUndo } from './sheets.js';
+import { openFood, openWater, addServing, removeWithUndo, repeatYesterday } from './sheets.js';
+import { canRepeat } from '../domain/meals.js';
 
 function adaptiveCard() {
   const a = M.adaptiveCalories();
   const t = M.targets();
   if (!a.ready) {
     return html`<div class="card">
-      <p class="section-label">Adaptive calories</p>
+      <p class="section-label">Adaptive calories${infoBtn('adaptive', 'adaptive calories')}</p>
+      ${tipText('adaptive', 'Once both are there, Life OS estimates your maintenance from intake vs weight change.')}
       <p class="card-lead">Your target starts at ${num(t.kcalMin)}–${num(t.kcalMax)} kcal and adjusts from your real trend, not a formula.</p>
       <div class="progress-steps">
         <p><span class="tnum">${Math.min(a.loggedDays, a.needDays)}/${a.needDays}</span> days with calories logged</p>
         <p><span class="tnum">${Math.min(a.weighIns, a.needWeighIns)}/${a.needWeighIns}</span> weigh-ins in the last 3 weeks</p>
       </div>
-      <p class="fine-print">Once both are there, Life OS estimates your maintenance from intake vs weight change.</p>
     </div>`;
   }
   const status = {
@@ -72,6 +73,7 @@ export default {
       <div class="card">${nutritionRings(date)}
         <div class="quick-row">
           <button type="button" class="btn btn--primary btn--sm" data-action="food">${icon('plus', { size: 16 })} Log food</button>
+          ${canRepeat(date) ? html`<button type="button" class="btn btn--soft btn--sm" data-action="same">${icon('repeat', { size: 15 })} Same as yesterday</button>` : ''}
           <button type="button" class="btn btn--soft btn--sm" data-action="whey">Whey</button>
           <button type="button" class="btn btn--soft btn--sm" data-action="serving" data-kind="fruit">+ Fruit</button>
           <button type="button" class="btn btn--soft btn--sm" data-action="serving" data-kind="veg">+ Veg</button>
@@ -124,6 +126,7 @@ export default {
     food: ({ params }) => openFood(params.date || today()),
     water: ({ params }) => openWater(params.date || today()),
     serving: ({ data, params }) => addServing(params.date || today(), data.kind),
+    same: ({ params }) => repeatYesterday(params.date || today()),
     whey: ({ params }) => {
       const f = store.get('foods', 'f-whey');
       store.batch([{ store: 'nutritionLogs', value: { date: params.date || today(), name: f.name, protein: f.protein, kcal: f.kcal, fruit: 0, veg: 0, foodId: f.id, at: new Date().toISOString() } },

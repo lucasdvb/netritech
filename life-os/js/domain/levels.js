@@ -26,7 +26,11 @@ const logsByHabit = () => store.memo('logs-by-habit', ['habitLogs'], () => {
 /** The days a habit counted in one stretch of its history. */
 const countedIn = (h, ab) => settled('counted', h, ab, () => {
   const [a, b] = ab;
-  const days = h.source ? range(a, b) : [...new Set(logsByHabit().get(h.id) || [])].filter((d) => d >= a && d <= b).sort();
+  // Habits fed by other logs, and limits (a day with nothing logged was a day kept), count on
+  // days with no log of their own; a limit's day counts once it's over.
+  const y = addDays(today(), -1);
+  const days = h.source ? range(a, b) : H.isLimit(h) ? (a <= (b < y ? b : y) ? range(a, b < y ? b : y) : [])
+    : [...new Set(logsByHabit().get(h.id) || [])].filter((d) => d >= a && d <= b).sort();
   return days.filter((d) => H.started(h, d) && H.counts(h, d));
 });
 

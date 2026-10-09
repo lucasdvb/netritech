@@ -514,6 +514,8 @@ function habitIntent(h, s) {
   const src = h.source || '';
   if (COUNTER_SOURCES[src]) return { kind: 'counter', field: src, delta: count(s.match(new RegExp(`\\b${NUM}\\b`))?.[1]) || 1 };
   if (src.startsWith('rel:')) return { kind: 'relation', person: src.slice(4), type: null, minutes: duration(s) };
+  // A habit with its own workout (Mobility & posture) can still be ticked in a line: "stretched".
+  if (h.templateId && (h.type || 'binary') === 'binary') return { kind: 'habit', habitId: h.id };
   if (src && src !== 'top3') return { kind: 'open', habitId: h.id };
   const numeric = ['numeric', 'duration', 'quantity'].includes(h.type);
   if (numeric) {
@@ -612,12 +614,13 @@ export function parse(input, ctx) {
   const raw = String(input || '').trim();
   if (!raw) return { status: 'empty', items: [], options: [] };
   const lower = normalize(raw);
-  // Forced kinds: "task: …", "note: …", "win: …".
-  const pre = lower.match(/^(task|todo|to do|note|journal|diary|win)\s*:\s*(.+)$/);
+  // Forced kinds: "task: …", "note: …", "win: …", and the brain dump: "idea: …", "dump: …".
+  const pre = lower.match(/^(task|todo|to do|note|journal|diary|win|idea|dump|brain dump|thought)\s*:\s*(.+)$/);
   if (pre) {
     const body = raw.slice(raw.indexOf(':') + 1).trim();
     const { rest, when } = takeDate(normalize(body));
     if (/^(?:task|todo|to do)$/.test(pre[1])) return { status: 'ok', items: [finish({ kind: 'task', title: titleOf(body) }, ctx, when, body, rest)], options: [] };
+    if (/^(?:idea|dump|brain dump|thought)$/.test(pre[1])) return { status: 'ok', items: [{ kind: 'dump', text: cap(body), category: pre[1] === 'idea' ? 'Ideas' : '' }], options: [] };
     return { status: 'ok', items: [{ kind: pre[1] === 'win' ? 'win' : 'note', text: cap(body), date: ctx.today }], options: [] };
   }
   const { rest, when } = takeDate(lower);
@@ -686,6 +689,7 @@ export function describe(i, ctx = {}) {
     case 'open': { const h = habit(i.habitId); return { icon: h?.icon || 'arrow-right', title: h?.name || 'Open', value: 'Open to log' }; }
     case 'task': return { icon: 'list-todo', title: i.title, value: 'Task' };
     case 'note': return { icon: 'notebook-pen', title: i.text, value: 'Note' };
+    case 'dump': return { icon: 'brain', title: i.text, value: i.category ? `Brain dump · ${i.category}` : 'Brain dump' };
     case 'win': return { icon: 'star', title: i.text, value: 'Today’s win' };
     default: return { icon: 'circle', title: '', value: '' };
   }
@@ -714,7 +718,7 @@ export function suggest(text, ctx = {}) {
   const common = [
     'water 500 ml', 'water 250 ml', w ? `weight ${w} ${unit}` : null, 'slept 7h', `steps ${ctx.lastSteps || 8000}`, 'read 20 pages', 'read 30 min',
     'meditated 10 min', 'prayed', 'walked 30 min', 'ran 5k', '30g protein', '2 fruit', '3 veg', 'energy 7', 'mood 7', 'deep work block',
-    'movement break', 'called mum', 'note: ', 'win: ', 'task: ',
+    'movement break', 'called mum', 'note: ', 'win: ', 'task: ', 'idea: ',
     ...(ctx.habits || []).filter((h) => !h.archived && !DATA_SOURCES.has(h.source)).map((h) => h.name.toLowerCase()),
   ].filter(Boolean);
   const last = t.split(' ').pop();

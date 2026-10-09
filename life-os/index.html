@@ -2,6 +2,9 @@
 <html lang="en" data-theme="system">
 <head>
   <meta charset="utf-8">
+  <!-- Only this app's own code runs. Inline styles are allowed for the layout values set in markup;
+       nothing is loaded from elsewhere except the sync server you choose (https). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-TVa53IWUqTwjZ6CeJgsJr4EUySq6njcQME22fceR4wM='; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; media-src 'self' blob:; font-src 'self'; connect-src 'self' https: http://localhost:* http://127.0.0.1:* data: blob:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Life OS</title>
   <meta name="description" content="A quiet, local-first personal operating system for habits, health, training and life.">
@@ -24,14 +27,8 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/views.css">
   <link rel="stylesheet" href="css/motion.css">
-  <script>
-    (function () {
-      try {
-        var t = localStorage.getItem('lifeos.theme') || 'system';
-        document.documentElement.setAttribute('data-theme', t);
-      } catch (e) {}
-    })();
-  </script>
+  <!-- The saved theme before the first paint (allowed by its hash in the policy above). -->
+  <script>(function () { try { document.documentElement.setAttribute('data-theme', localStorage.getItem('lifeos.theme') || 'system'); } catch (e) { /* storage blocked */ } })();</script>
   <script type="module" src="js/app.js"></script>
 </head>
 <body>

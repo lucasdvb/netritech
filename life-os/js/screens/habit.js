@@ -124,6 +124,7 @@ export default {
       h.ramp ? ['Adaptive target', h.ramp.map((x) => num(x)).join(' → ')] : null,
       h.time ? ['Time', h.time] : null,
       h.reminder ? ['Reminder', h.reminder] : null,
+      h.cueSetAt ? ['iPhone cue', 'Set up in Shortcuts'] : null,
       h.mvd ? ['Minimum day', 'Essential'] : null,
       H.autoScore(h) != null ? ['Feels automatic', `${H.autoScore(h)} of 5${H.feelsAutomatic(h) ? ' · reminders fade' : ''}`] : null,
       h.source ? ['Tracked from', sourceName(h.source)] : null,
@@ -189,7 +190,7 @@ export default {
         ${h.type === 'rating' ? html`<div class="card block-tight">${lineChart({ labels: days30.map((d) => fmtMD(d)), series: [{ values: days30.map((d) => H.value(h, d)), color: habitColor(h), area: true }], yMin: 0, yMax: 10 })}</div>` : ''}
       </section>
 
-      <section class="block" data-key="details"><div class="block-head"><h2 class="block-title">Details</h2></div>
+      <section class="block" data-key="details"><div class="block-head"><h2 class="block-title">Details</h2>${!h.archived ? html`<button type="button" class="link-btn" data-action="cue">${icon('smartphone', { size: 15 })} iPhone cue</button>` : ''}</div>
         <dl class="facts">${facts.map(([k, v]) => html`<div><dt>${k}</dt><dd>${v}</dd></div>`)}</dl>
         ${h.checklist?.length ? html`<div class="card steps-card"><p class="section-label">Steps</p><ol class="steps">${h.checklist.map((x) => html`<li>${x}</li>`)}</ol></div>` : ''}
       </section>
@@ -212,6 +213,10 @@ export default {
   },
   actions: {
     edit: async ({ params }) => (await import('./habit-edit.js')).openHabitEditor(params.id),
+    cue: async ({ params }) => {
+      const [{ openCue }, C] = await Promise.all([import('./cues.js'), import('../domain/cues.js')]);
+      openCue(C.habitItem(H.habit(params.id)), { onDone: () => app.refresh() });
+    },
     'log-today': ({ params }) => openHabit(params.id, today()),
     state: ({ data, params }) => {
       const h = H.habit(params.id);
@@ -268,7 +273,7 @@ function openPause(h) {
         HS.setState(H.habit(h.id), 'paused', { until: sheet.ui.until });
         hap.tap();
         app.closeSheet(sheet);
-        app.toast(`${h.name} paused until ${fmtMD(sheet.ui.until)}.`, { action: { label: 'Undo', fn: () => store.update('habits', h.id, { state: h.state, pausedUntil: h.pausedUntil ?? null }) } });
+        app.toast(`${h.name} paused until ${fmtMD(sheet.ui.until)}.`, { action: { label: 'Undo', fn: () => store.update('habits', h.id, { state: h.state, pausedUntil: h.pausedUntil ?? null, stateBeforePause: h.stateBeforePause ?? null, stateLog: h.stateLog ?? null }) } });
       },
     },
     inputs: { until: ({ value, sheet }) => { if (value && value > t) { sheet.ui.until = value; sheet.refresh(); } } },

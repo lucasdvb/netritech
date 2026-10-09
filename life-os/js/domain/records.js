@@ -10,7 +10,7 @@ import * as F from './fitness.js';
 import * as H from './habits.js';
 import { stretches, settled } from './history.js';
 import { today, addDays, diffDays, range, startOfWeek, endOfWeek, startOfMonth, parseHM, fmtHM } from './dates.js';
-import { num } from '../ui/format.js';
+import { num, kgOut, weightUnit } from '../ui/format.js';
 
 export const MIN_PRIOR = 3;
 const mean = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
@@ -26,7 +26,7 @@ function lifts(_end) {
   const by = new Map();
   for (const w of F.allWorkouts()) {
     for (const s of F.setsOf(w.id)) {
-      if (!s.completed) continue;
+      if (!s.completed || s.warmup) continue;
       const e = F.exercise(s.exerciseId);
       if (!e || e.metric === 'minutes') continue;
       if (!by.has(e.id)) by.set(e.id, { e, days: new Map() });
@@ -39,7 +39,7 @@ function lifts(_end) {
   for (const { e, days } of by.values()) {
     const pts = [...days.entries()].sort((a, b) => (a[0] < b[0] ? -1 : 1));
     if (e.metric === 'time') out.push({ id: `hold:${e.id}`, label: `${e.name}: longest hold`, unit: 's', fmt: (v) => `${num(v)} s`, points: pts.filter(([, v]) => v.seconds).map(([date, v]) => ({ date, value: v.seconds })) });
-    else if (pts.some(([, v]) => v.load > 0)) out.push({ id: `lift:${e.id}`, label: `${e.name}: heaviest`, fmt: (v) => `${num(v, v % 1 ? 1 : 0)} kg`, points: pts.filter(([, v]) => v.load > 0).map(([date, v]) => ({ date, value: v.load })) });
+    else if (pts.some(([, v]) => v.load > 0)) out.push({ id: `lift:${e.id}`, label: `${e.name}: heaviest`, fmt: (v) => { const x = Math.round(kgOut(v) * 10) / 10; return `${num(x, x % 1 ? 1 : 0)} ${weightUnit()}`; }, points: pts.filter(([, v]) => v.load > 0).map(([date, v]) => ({ date, value: v.load })) });
     else out.push({ id: `reps:${e.id}`, label: `${e.name}: most reps in a set`, fmt: (v) => `${num(v)} reps`, points: pts.filter(([, v]) => v.reps).map(([date, v]) => ({ date, value: v.reps })) });
   }
   return out;

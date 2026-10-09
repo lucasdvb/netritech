@@ -3,6 +3,7 @@
 // your plan rather than noted, and next week's three. A finished review, or "See it all", shows
 // every number and question on one page.
 import * as store from '../data/store.js';
+import { saver, applyPatches } from '../ui/save-later.js';
 import * as H from '../domain/habits.js';
 import * as T from '../domain/tasks.js';
 import * as S from '../domain/story.js';
@@ -32,12 +33,9 @@ export function defaultWeek() {
   return cur;
 }
 
-const timers = new Map();
-function saveLater(id, patch) {
-  clearTimeout(timers.get(id));
-  timers.set(id, setTimeout(() => store.put('weeklyReviews', { ...(store.get('weeklyReviews', id) || { id, weekStart: id }), ...patch(store.get('weeklyReviews', id) || {}) }), 400));
-}
-const flush = (ws) => { clearTimeout(timers.get(ws)); };
+const saving = saver((id, patches) => store.put('weeklyReviews', applyPatches(store.get('weeklyReviews', id) || { id, weekStart: id }, patches)), 400);
+const saveLater = (id, patch) => saving.later(id, patch);
+const flush = (ws) => saving.now(ws);
 const reviewOf = (ws) => store.get('weeklyReviews', ws) || { id: ws, weekStart: ws };
 
 // Resolve the week once per visit so completing last week's review doesn't flip the screen to this week.
@@ -51,13 +49,20 @@ const facts = (list, empty) => (list.length ? html`<ul class="review-facts">${li
 /** Planning the week ahead: three things, the first one onto Monday. */
 function nextWeek(ws) {
   const nw = addDays(ws, 7);
-  const plan = store.get('weeklyReviews', nw)?.plan || [];
+  const next = store.get('weeklyReviews', nw) || {};
+  const plan = next.plan || [];
   return html`<section class="block" data-key="next-week"><div class="block-head"><h2 class="block-title">Next week</h2><span class="block-meta">${fmtMD(nw)} – ${fmtMD(endOfWeek(nw))}</span></div>
     <div class="card">
       <p class="muted small">Three things for the week. They stay on Plan all week.</p>
       <ol class="plan-three">${[0, 1, 2].map((i) => html`<li data-key="wk-${i}"><span class="tnum">${i + 1}</span>
         <input class="plan-three-input" value="${plan[i] || ''}" data-change="wk-plan" data-i="${i}" placeholder="${['The one that matters most', 'Second', 'Third'][i]}" aria-label="Next week, thing ${i + 1}" maxlength="140"></li>`)}</ol>
       <button type="button" class="btn btn--soft btn--sm" data-action="wk-monday">Make the first one Monday’s priority</button>
+      <div class="wk-obstacle">
+        <label class="field"><span class="field-label">What’s most likely to get in the way? <small>optional</small></span>
+          <input class="input" value="${next.obstacle || ''}" data-change="wk-ob" data-f="obstacle" placeholder="e.g. A heavy week of client work" maxlength="100"></label>
+        <label class="field"><span class="field-label">When it does, I will…</span>
+          <input class="input" value="${next.ifThen || ''}" data-change="wk-ob" data-f="ifThen" placeholder="e.g. Do the first one before email" maxlength="100"></label>
+      </div>
     </div>
   </section>`;
 }
@@ -193,7 +198,10 @@ export default {
       ${showAll && !r.completedAt ? html`<button type="button" class="link-btn block" data-action="rv-guided">Back to the guided review</button>` : ''}
       ${showAll && r.completedAt ? html`<button type="button" class="link-btn block" data-action="rv-guided">Go through it step by step</button>` : ''}`;
   },
+  // Whatever is still waiting to save goes in when you leave a field or the review.
+  unmount() { saving.now(); },
   async mount(el, { ui }) {
+    el.addEventListener('focusout', () => saving.now());
     // The suggestions for the one change are worked out once per visit, so applying one doesn't reshuffle the list.
     if (!ui.suggestions) {
       const I = await import('../domain/insights.js');
@@ -210,6 +218,12 @@ export default {
       const plan = [...(cur.plan || ['', '', ''])];
       plan[Number(el.dataset.i)] = value.trim();
       store.put('weeklyReviews', { ...cur, id: nw, weekStart: nw, plan });
+    },
+    // ...and the obstacle to plan for (13f), on the same record.
+    'wk-ob': ({ el, value, params }) => {
+      const nw = addDays(weekOf(params), 7);
+      const cur = store.get('weeklyReviews', nw) || { id: nw, weekStart: nw };
+      store.put('weeklyReviews', { ...cur, id: nw, weekStart: nw, [el.dataset.f]: value.trim() || null });
     },
     answer: ({ el, value, params }) => {
       const ws = weekOf(params);

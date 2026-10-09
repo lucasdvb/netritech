@@ -10,6 +10,16 @@ import * as hap from '../ui/haptics.js';
 
 const base = () => `${location.origin}${location.pathname}`;
 
+/** Hand a calendar file to the phone: on iPhone, Calendar opens it and offers to add the events. */
+export function handToCalendar(ics, name) {
+  const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
+  const a = Object.assign(document.createElement('a'), { href: url, download: name });
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+}
+
 export function openCalendarFile() {
   const opts = reminderOptions(base());
   const saved = store.settings()?.calendarPicks || {};
@@ -29,13 +39,7 @@ export function openCalendarFile() {
       'cf-add': ({ sheet }) => {
         const picked = opts.filter((o) => sheet.ui.on[o.key]);
         if (!picked.length) { app.toast('Choose at least one reminder.'); return; }
-        const ics = buildCalendar(picked.map((o) => o.event));
-        const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
-        const a = Object.assign(document.createElement('a'), { href: url, download: 'life-os-reminders.ics' });
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 60000);
+        handToCalendar(buildCalendar(picked.map((o) => o.event)), 'life-os-reminders.ics');
         store.setSettings({ calendarPicks: sheet.ui.on, calendarAddedAt: new Date().toISOString() });
         hap.success();
         app.closeSheet(sheet);

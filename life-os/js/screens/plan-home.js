@@ -10,6 +10,7 @@ import * as B from '../domain/books.js';
 import * as C from '../domain/commitments.js';
 import * as Rw from '../domain/rewards.js';
 import * as L from '../domain/lists.js';
+import * as N from '../domain/notes.js';
 import * as $ from '../domain/money.js';
 import * as E from '../domain/events.js';
 import * as Q from '../domain/quests.js';
@@ -21,6 +22,7 @@ import { today, addDays, fmtLong, startOfWeek, range, fmtDayShort, fmtDay } from
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, ring } from '../ui/components.js';
+import { themeWord } from '../domain/year-review.js';
 import { app } from '../ui/app-api.js';
 import { later } from '../ui/later.js';
 import * as hap from '../ui/haptics.js';
@@ -45,11 +47,13 @@ function tomorrow() {
 /** The next seven days: your three for the week (from the weekly review), then each day. */
 function thisWeek() {
   const ws = startOfWeek(today());
-  const plan = (store.get('weeklyReviews', ws)?.plan || []).filter(Boolean);
+  const wr = store.get('weeklyReviews', ws) || {};
+  const plan = (wr.plan || []).filter(Boolean);
   const days = range(today(), addDays(today(), 6));
   return html`<section class="block" data-key="week">
     ${head('This week', 'reflect/review/week', 'Weekly review')}
-    ${plan.length ? html`<div class="card week-plan"><p class="section-label">Your three for the week</p><ol class="plan-top">${plan.map((p, i) => html`<li><span class="tnum">${i + 1}</span>${p}</li>`)}</ol></div>`
+    ${plan.length ? html`<div class="card week-plan"><p class="section-label">Your three for the week</p><ol class="plan-top">${plan.map((p, i) => html`<li><span class="tnum">${i + 1}</span>${p}</li>`)}</ol>
+      ${wr.obstacle ? html`<p class="week-if">${icon('shield-check', { size: 15 })} <span>If ${wr.obstacle.replace(/^if\s+/i, '')}${wr.ifThen ? html`: <b>${wr.ifThen}</b>` : ''}</span></p>` : ''}</div>`
       : html`<p class="muted small">The weekly review sets three things for the week; they show here.</p>`}
     <ul class="list week-days">${days.map((d) => {
       const pri = T.priorities(d)[0];
@@ -155,6 +159,7 @@ function tasksAndTraining() {
   const week = range(startOfWeek(today()), addDays(startOfWeek(today()), 6));
   const sessions = week.map((d) => ({ d, tpl: F.plannedTemplate(d), done: F.workoutsOn(d).length > 0 }));
   const lists = L.lists();
+  const notes = N.notes();
   const spent = $.summary();
   const soon = E.sorted().find((x) => x.in >= 0);
   return html`<section class="block" data-key="more">
@@ -166,6 +171,10 @@ function tasksAndTraining() {
       <li><a class="row" href="#/plan/lists" data-action="nav" data-to="plan/lists">
         <span class="row-ic">${icon('list-checks', { size: 18 })}</span>
         <span class="row-main"><span class="row-title">Lists</span><span class="row-sub">${lists.length ? lists.slice(0, 3).map((l) => l.name).join(' · ') : 'Groceries, packing, ideas'}</span></span>
+        <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
+      <li><a class="row" href="#/plan/notes" data-action="nav" data-to="plan/notes">
+        <span class="row-ic">${icon('brain', { size: 18 })}</span>
+        <span class="row-main"><span class="row-title">Brain dump</span><span class="row-sub tnum">${notes.length ? `${notes.length} note${notes.length === 1 ? '' : 's'}${notes[0] ? ` · ${N.firstLine(notes[0].text, 40)}` : ''}` : 'Ideas and thoughts, filed by category'}</span></span>
         <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
       <li><a class="row" href="#/plan/training" data-action="nav" data-to="plan/training">
         <span class="row-ic">${icon('dumbbell', { size: 18 })}</span>
@@ -192,9 +201,11 @@ export default {
   id: 'plan',
   title: 'Plan',
   render() {
+    const theme = themeWord(today());
     return html`
       ${pageHead({ title: 'Plan', sub: 'What you’re building.',
         actions: html`<button type="button" class="icon-btn" data-action="open-search" aria-label="Search" aria-keyshortcuts="/">${icon('search', { size: 20 })}</button>` })}
+      ${theme ? html`<a class="theme-word" href="#/reflect/review/year/${theme.year - 1}" data-action="nav" data-to="reflect/review/year/${theme.year - 1}" data-key="theme"><span class="tnum">${theme.year}</span><b>${theme.word}</b></a>` : ''}
       ${tomorrow()}
       ${thisWeek()}
       ${habitsCard()}
@@ -209,6 +220,9 @@ export default {
     'quest-no': () => { const undo = Q.decline(Q.offer()); hap.tap(); app.toast('Let it go for this week', { action: { label: 'Undo', fn: undo } }); },
   },
   inputs: {
-    'tm-three': ({ el, value }) => T.setPriority(addDays(today(), 1), Number(el.dataset.i), value),
+    'tm-three': ({ el, value }) => {
+      const undo = T.setPriorityUndoable(addDays(today(), 1), Number(el.dataset.i), value);
+      if (undo) app.toast('Priority cleared', { action: { label: 'Undo', fn: undo } });
+    },
   },
 };

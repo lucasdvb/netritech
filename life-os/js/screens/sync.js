@@ -46,6 +46,7 @@ export function openServerGuide() {
         <li>The Worker’s <b>Settings › Bindings › Add</b>: a <b>D1 database</b>, variable name <code>DB</code>, database <code>lifeos</code>.</li>
         <li>Copy the Worker’s address (it ends in <code>workers.dev</code>) and paste it here.</li>
       </ol>
+      <p class="field-hint">For reminders while Life OS is closed (optional): the Worker’s <b>Settings › Trigger events › Add › Cron triggers</b>, with <code>* * * * *</code>.</p>
       <button type="button" class="btn btn--primary btn--block" data-action="sy-code">${icon('copy', { size: 18 })} Copy the server code</button>
       <p class="field-hint">The first sync key to use the server becomes its owner, so nobody else can use it.</p>
     </div>`,
@@ -90,7 +91,6 @@ function onView(ui) {
 function offView(ui) {
   const checked = ui.checked === ui.url && ui.url;
   return html`
-    <p class="lead">Your Life OS on your phone and your computer, the same everywhere. Each device keeps its full copy and works offline; changes travel through a small server you own, encrypted on the device first, so the server can’t read them.</p>
     <section class="block" data-key="sync-server"><div class="block-head"><h2 class="block-title">1 · Your server</h2><button type="button" class="link-btn" data-action="sy-guide">How to set it up</button></div>
       <label class="field"><span class="field-label">Server address</span>
         <input class="input" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://lifeos-sync.you.workers.dev" value="${ui.url || ''}" data-input="sy-url"></label>
@@ -112,7 +112,7 @@ export default {
   id: 'sync',
   title: 'Sync',
   render({ ui }) {
-    return html`${pageHead({ title: 'Sync', back: { to: 'today', label: 'Today' } })}
+    return html`${pageHead({ title: 'Sync', back: { to: 'today', label: 'Today' }, info: 'Your Life OS on your phone and your computer, the same everywhere. Each device keeps its full copy and works offline; changes travel through a small server you own, encrypted on the device first, so the server can’t read them.' })}
       ${S.config() ? onView(ui) : offView(ui)}`;
   },
   mount() { stopWatching = S.onStatus(() => app.refresh()); },

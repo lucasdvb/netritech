@@ -24,6 +24,7 @@ const ACTIONS = [
   { id: 'spend', ic: 'wallet', label: 'Spent', run: async () => (await import('./money.js')).openExpense() },
   { id: 'habit', ic: 'list-checks', label: 'Habit', run: async () => (await import('./habit-new.js')).openNewHabit() },
   { id: 'journal', ic: 'notebook-pen', label: 'Journal', run: async () => (await import('./journal.js')).newEntry('free') },
+  { id: 'dump', ic: 'brain', label: 'Brain dump', run: () => app.go('plan/notes') },
   { id: 'reading', ic: 'book-open', label: 'Reading', run: async () => (await sheets()).openSession('reading', today()) },
   { id: 'measure', ic: 'ruler', label: 'Measurements', run: () => app.go('progress/body/measurements') },
   { id: 'health', ic: 'heart-pulse', label: 'From Health', run: async () => (await import('./health.js')).openHealthPaste() },
@@ -33,7 +34,7 @@ const HISTORY = 'captureHistory';
 const history = () => store.get('meta', HISTORY)?.items || [];
 function remember(text, items) {
   // Lines that logged something are worth offering again; notes and one-off tasks aren't.
-  if (!items.every((i) => !['note', 'win', 'task'].includes(i.kind))) return;
+  if (!items.every((i) => !['note', 'dump', 'win', 'task'].includes(i.kind))) return;
   const t = text.trim().toLowerCase();
   const items2 = [t, ...history().filter((x) => x !== t)].slice(0, 12);
   store.put('meta', { id: HISTORY, items: items2 });
@@ -143,6 +144,9 @@ export function openCapture(initial = '') {
 }
 
 async function commit(items, sheet, ctx) {
+  // A second tap (or Enter) while the first is still on its way logs nothing twice.
+  if (sheet.ui.saving) return;
+  sheet.ui.saving = true;
   const { save } = await import('../domain/capture-save.js');
   const res = save(items, ctx);
   remember(sheet.ui.text, items);

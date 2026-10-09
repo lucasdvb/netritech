@@ -9,7 +9,7 @@ import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { check, scale10, segmented, stepper, ring, bar, toggle } from '../ui/components.js';
 import * as T from '../domain/tasks-more.js';
-import { num, litres, kgIn, kgOut, weightUnit, habitValue, habitTarget, plural } from '../ui/format.js';
+import { num, litres, kgIn, kgOut, weightUnit, habitValue, habitTarget, plural, fieldNum } from '../ui/format.js';
 import { today, relativeDay, parseHM, durationHM, addDays, fmtTime, dayInline } from '../domain/dates.js';
 import { MODES, habitColor } from '../domain/taxonomy.js';
 import { dayScore } from '../domain/scoring.js';
@@ -38,7 +38,7 @@ export function openCheckin(date = today()) {
     stress: prevMood?.stress ?? null,
     mood: prevMood?.mood ?? null,
     body: prevMood?.body ?? null,
-    weight: M.weight(date) != null ? num(kgOut(M.weight(date)), 1) : '',
+    weight: M.weight(date) != null ? fieldNum(kgOut(M.weight(date))) : '',
   };
   const hours = () => {
     const b = parseHM(ui.bedtime), w = parseHM(ui.wake);
@@ -153,18 +153,20 @@ export function openFood(date = today()) {
           <div class="macro"><p class="macro-label">Protein</p><p class="macro-val tnum">${num(nut.protein)}<small> / ${t.proteinG} g</small></p>${bar(nut.protein / t.proteinG, { color: 'var(--c-health)', label: 'Protein' })}</div>
           <div class="macro"><p class="macro-label">Calories</p><p class="macro-val tnum">${num(nut.kcal)}<small> / ${num(t.kcal)}</small></p>${bar(nut.kcal / t.kcal, { color: 'var(--c-body)', label: 'Calories' })}</div>
         </div>
-        <div class="food-tools"><div class="search-field">${icon('search', { size: 16 })}<input type="search" placeholder="Find a quick food" value="${s.ui.q}" data-input="q" aria-label="Find a quick food"></div>
+        ${!s.ui.q && store.onDate('nutritionLogs', addDays(date, -1)).length && !store.onDate('nutritionLogs', date).some((l) => l.repeated)
+          ? html`<button type="button" class="btn btn--soft btn--block" data-action="same" data-key="same">${icon('repeat', { size: 16 })} Same as yesterday</button>` : ''}
+        <div class="food-tools" data-key="food-tools"><div class="search-field">${icon('search', { size: 16 })}<input type="search" placeholder="Find a quick food" value="${s.ui.q}" data-input="q" aria-label="Find a quick food"></div>
           <button type="button" class="link-btn" data-action="manage" aria-pressed="${!!s.ui.manage}">${s.ui.manage ? 'Done' : 'Edit'}</button></div>
-        <ul class="food-list">${foods.map((f) => html`<li data-key="${f.id}"${s.ui.manage ? raw(' class="food-row"') : ''}><button type="button" class="food-item" data-action="${s.ui.manage ? 'food-edit' : 'quick'}" data-id="${f.id}"${s.ui.manage ? raw(` aria-label="Edit ${f.name}"`) : ''}>
+        <ul class="food-list">${foods.map((f) => html`<li data-key="${f.id}"${s.ui.manage ? raw(' class="food-row"') : ''}><button type="button" class="food-item" data-action="${s.ui.manage ? 'food-edit' : 'quick'}" data-id="${f.id}"${s.ui.manage ? html` aria-label="Edit ${f.name}"` : ''}>
           <span class="food-name">${f.name}</span><span class="food-meta tnum">${num(f.protein, f.protein % 1 ? 1 : 0)} g · ${num(f.kcal)} kcal${f.approx ? ' · approx.' : ''}</span>
           <span class="food-add">${icon(s.ui.manage ? 'pencil' : 'plus', { size: 18 })}</span></button>
           ${s.ui.manage ? html`<button type="button" class="icon-btn icon-btn--sm" data-action="food-del" data-id="${f.id}" aria-label="Delete ${f.name}">${icon('trash-2', { size: 16 })}</button>` : ''}</li>`)}</ul>
         <details class="disclosure" ${s.ui.open ? raw('open') : ''}>
           <summary>Custom entry</summary>
           <form class="form" data-submit="custom">
-            <input class="input" name="name" placeholder="What did you eat?" autocomplete="off">
+            <input class="input" name="name" placeholder="What did you eat?" autocomplete="off" maxlength="60" aria-label="What you ate">
             <div class="grid-2">
-              <label class="field"><span class="field-label">Protein</span><span class="input-unit"><input name="protein" type="number" inputmode="decimal" step="0.5" min="0"><span>g</span></span></label>
+              <label class="field"><span class="field-label">Protein</span><span class="input-unit"><input name="protein" type="number" inputmode="decimal" step="any" min="0"><span>g</span></span></label>
               <label class="field"><span class="field-label">Calories</span><span class="input-unit"><input name="kcal" type="number" inputmode="numeric" min="0"><span>kcal</span></span></label>
               <label class="field"><span class="field-label">Fruit</span><span class="input-unit"><input name="fruit" type="number" inputmode="numeric" min="0" max="10" value="0"><span>serv.</span></span></label>
               <label class="field"><span class="field-label">Veg</span><span class="input-unit"><input name="veg" type="number" inputmode="numeric" min="0" max="10" value="0"><span>serv.</span></span></label>
@@ -180,6 +182,7 @@ export function openFood(date = today()) {
     },
     inputs: { q: ({ value, sheet }) => { sheet.ui.q = value; sheet.refresh(); } },
     actions: {
+      same: ({ sheet }) => { app.closeSheet(sheet); repeatYesterday(date); },
       quick: ({ data }) => {
         const f = store.get('foods', data.id);
         store.batch([
@@ -216,7 +219,7 @@ function editFood(id) {
     render: () => html`<form class="form" data-submit="save">
       <label class="field"><span class="field-label">Name</span><input class="input" name="name" value="${f.name}" maxlength="60" required></label>
       <div class="grid-2">
-        <label class="field"><span class="field-label">Protein</span><span class="input-unit"><input name="protein" type="number" inputmode="decimal" step="0.5" min="0" value="${f.protein ?? 0}"><span>g</span></span></label>
+        <label class="field"><span class="field-label">Protein</span><span class="input-unit"><input name="protein" type="number" inputmode="decimal" step="any" min="0" value="${f.protein ?? 0}"><span>g</span></span></label>
         <label class="field"><span class="field-label">Calories</span><span class="input-unit"><input name="kcal" type="number" inputmode="numeric" min="0" value="${f.kcal ?? 0}"><span>kcal</span></span></label>
         <label class="field"><span class="field-label">Fruit</span><span class="input-unit"><input name="fruit" type="number" inputmode="numeric" min="0" max="10" value="${f.fruit || 0}"><span>serv.</span></span></label>
         <label class="field"><span class="field-label">Veg</span><span class="input-unit"><input name="veg" type="number" inputmode="numeric" min="0" max="10" value="${f.veg || 0}"><span>serv.</span></span></label>
@@ -233,6 +236,17 @@ function editFood(id) {
       },
     },
   });
+}
+
+/** Same as yesterday: the day before's food onto `date`, with Undo. */
+export async function repeatYesterday(date = today(), { onDone } = {}) {
+  const Meals = await import('../domain/meals.js');
+  const ids = Meals.repeatDayBefore(date);
+  if (!ids.length) { app.toast('Nothing logged the day before.'); return; }
+  hap.success();
+  onDone?.();
+  const sum = Meals.summary(ids.map((id) => store.get('nutritionLogs', id)).filter(Boolean));
+  app.toast(`Same as yesterday · ${sum.protein} g protein`, { icon: 'check', action: { label: 'Undo', fn: () => { store.batch(ids.map((id) => ({ store: 'nutritionLogs', delete: id }))); onDone?.(); } } });
 }
 
 export function addServing(date, kind) {
@@ -271,7 +285,7 @@ export function openWeight(date = today()) {
     title: cur ? 'Edit weight' : 'Log weight',
     render: () => html`<form class="form" data-submit="save">
       <label class="field"><span class="field-label">Morning weight</span>
-        <span class="input-unit input-unit--xl"><input class="tnum" name="w" type="number" inputmode="decimal" step="0.1" min="20" max="400" value="${cur ? num(kgOut(cur.kg), 1).replace(/,/g, '') : ''}" placeholder="0.0" autofocus><span>${weightUnit()}</span></span></label>
+        <span class="input-unit input-unit--xl"><input class="tnum" name="w" type="number" inputmode="decimal" step="0.1" min="20" max="400" value="${cur ? fieldNum(kgOut(cur.kg)) : ''}" placeholder="0.0" autofocus><span>${weightUnit()}</span></span></label>
       <div class="grid-2">
         <label class="field"><span class="field-label">Date</span><input class="input" type="date" name="date" value="${date}" max="${today()}"></label>
         <label class="field"><span class="field-label">Note</span><input class="input" name="note" value="${cur?.note || ''}" placeholder="Optional"></label>
@@ -463,7 +477,15 @@ export function openHabit(id, date = today()) {
       cl: ({ data }) => { H.toggleChecklistItem(H.habit(id), date, Number(data.i)); hap.tap(); },
       rate: ({ data }) => { H.setValue(H.habit(id), date, Number(data.value)); hap.tap(); },
       'set-value': ({ form }) => { H.setValue(H.habit(id), date, form.v); hap.tap(); },
-      inc: () => { const hb = H.habit(id); H.setValue(hb, date, (Number(H.value(hb, date)) || 0) + (hb.step || 1)); hap.tap(); },
+      inc: ({ sheet }) => {
+        const hb = H.habit(id);
+        const next = (Number(H.value(hb, date)) || 0) + (hb.step || 1);
+        H.setValue(hb, date, next);
+        // The Set field shows the new total, even if something was typed in it.
+        const f = sheet.el.querySelector('input[name="v"]');
+        if (f) f.value = String(next);
+        hap.tap();
+      },
       source: ({ sheet }) => { app.closeSheet(sheet); openSource(H.habit(id), date); },
       details: ({ sheet }) => { app.closeSheet(sheet); app.go(`plan/habits/${id}`); },
     },
@@ -483,7 +505,7 @@ function sourceCta(h) {
 }
 
 /** Route a sourced habit to the place its data comes from. */
-export function openSource(h, date = today()) {
+export async function openSource(h, date = today()) {
   const src = h.source || '';
   if (src === 'water') return openWater(date);
   if (src === 'protein' || src === 'produce') return openFood(date);
@@ -494,6 +516,7 @@ export function openSource(h, date = today()) {
   if (src === 'journal') return app.go('reflect/journal');
   if (src === 'shutdown') return openShutdown(date);
   if (src.startsWith('rel:')) return openRelationship(src.slice(4), date);
+  if (src.startsWith('workout:') && h.templateId) return (await import('./today/open.js')).openHabitOrSource(h, date);
   if (src.startsWith('workout:')) return app.go('plan/training');
   if (src === 'measurements') return app.go('progress/body/measurements');
   if (src === 'photos') return app.go('progress/body/photos');

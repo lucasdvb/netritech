@@ -31,7 +31,7 @@ export function exerciseSheet(existing = null) {
     actions: {
       save: ({ form, sheet }) => {
         if (!form.name?.trim()) { app.toast('Give the exercise a name.'); return; }
-        store.put('exercises', { ...(existing || { family: null, level: 0, archived: false }), name: form.name.trim(), category: form.category, metric: form.metric,
+        store.put('exercises', { ...((existing && store.get('exercises', existing.id)) || existing || { family: null, level: 0, archived: false }), name: form.name.trim(), category: form.category, metric: form.metric,
           unilateral: !!form.unilateral, defaultLoad: form.load === '' ? 0 : Math.round(kgIn(Number(form.load)) * 100) / 100, cues: form.cues || '' });
         app.closeSheet(sheet);
       },

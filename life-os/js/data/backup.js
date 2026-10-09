@@ -21,11 +21,16 @@ export async function buildBackup({ includePhotos = false } = {}) {
   const data = {};
   for (const s of DATA_STORES) data[s] = store.all(s);
   // Moodboard pictures always travel with a backup; progress photos only when you choose.
-  const photos = (await blobs.all()).filter((b) => includePhotos || b.id.startsWith('mb-'));
+  const photos = (await blobs.all()).filter((b) => includePhotos || b.id.startsWith('mb-') || b.id.startsWith('ex-'));
   if (photos.length) data.photoBlobs = await Promise.all(photos.map(async (b) => ({ id: b.id, dataUrl: await blobToDataURL(b.blob) })));
   const counts = Object.fromEntries(Object.entries(data).map(([k, v]) => [k, v.length]));
   return { app: APP_ID, kind: 'backup', schema: DB_VERSION, exportedAt: new Date().toISOString(), includesPhotos: includePhotos, counts, data };
 }
+
+// Ids are what the database keys on: a non-empty string or a number, nothing else.
+const validId = (id) => (typeof id === 'string' && id.length > 0 && id.length <= 200) || (typeof id === 'number' && Number.isFinite(id));
+// Photos travel as image data, never as a link to fetch from somewhere.
+const PHOTO = /^data:image\/(?:jpeg|png|webp|gif|heic|avif);base64,/;
 
 /** Validates a parsed backup and returns counts, or throws a readable error. */
 export function inspect(json) {
@@ -35,14 +40,15 @@ export function inspect(json) {
   for (const [k, v] of Object.entries(json.data)) {
     if (!STORES[k]) continue;
     if (!Array.isArray(v)) throw new Error(`The “${k}” section of this backup is damaged.`);
-    if (v.some((r) => !r || typeof r !== 'object' || !r.id)) throw new Error(`Some “${k}” records in this backup are missing their ids.`);
+    if (v.some((r) => !r || typeof r !== 'object' || Array.isArray(r) || !validId(r.id))) throw new Error(`Some “${k}” records in this backup are missing their ids.`);
+    if (k === 'photoBlobs' && v.some((r) => !PHOTO.test(String(r.dataUrl || '')))) throw new Error('Some photos in this backup are damaged.');
     counts[k] = v.length;
   }
   return { counts, exportedAt: json.exportedAt, includesPhotos: !!json.includesPhotos };
 }
 
 /** mode 'replace' wipes current data first; 'merge' keeps the newer version of each record. */
-export async function restore(json, mode = 'replace') {
+export async function restore(json, mode = 'replace', onWritten) {
   inspect(json);
   await store.flush();
   const incoming = {};
@@ -60,7 +66,7 @@ export async function restore(json, mode = 'replace') {
     // Day summaries are rebuilt from the restored logs, so the old ones are cleared too.
     const payload = { ...incoming, daySnapshots: [] };
     // A backup without progress photos keeps the ones on this device.
-    if (photoBlobs && !json.includesPhotos) photoBlobs.push(...(await blobs.all()).filter((b) => !b.id.startsWith('mb-')));
+    if (photoBlobs && !json.includesPhotos) photoBlobs.push(...(await blobs.all()).filter((b) => !b.id.startsWith('mb-') && !b.id.startsWith('ex-')));
     if (photoBlobs) payload.photoBlobs = photoBlobs;
     await store.disk().replaceAll(payload);
   } else {
@@ -75,6 +81,7 @@ export async function restore(json, mode = 'replace') {
     if (photoBlobs) photoBlobs.forEach((p) => ops.push({ store: 'photoBlobs', value: p }));
     await store.disk().write(ops);
   }
+  onWritten?.();
   await store.reload();
   // Older backups catch up with any data migrations they predate.
   const { runMigrations } = await import('./migrations.js');
@@ -84,12 +91,15 @@ export async function restore(json, mode = 'replace') {
 /* ---------- CSV ---------- */
 const csvCell = (v) => {
   if (v == null) return '';
-  const s = typeof v === 'object' ? JSON.stringify(v) : String(v);
-  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  let s = typeof v === 'object' ? JSON.stringify(v) : String(v);
+  // Text that a spreadsheet would run as a formula (=, +, -, @) is kept as text.
+  if (typeof v === 'string' && /^[=+\-@\t\r]/.test(s)) s = `'${s}`;
+  return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 };
+/** CSV with a byte-order mark, so spreadsheets read accents and symbols as UTF-8. */
 export function toCSV(rows, columns) {
   const cols = columns || [...new Set(rows.flatMap((r) => Object.keys(r)))];
-  return [cols.join(','), ...rows.map((r) => cols.map((c) => csvCell(r[c])).join(','))].join('\n');
+  return `\ufeff${[cols.join(','), ...rows.map((r) => cols.map((c) => csvCell(r[c])).join(','))].join('\r\n')}`;
 }
 
 export const CSV_SETS = {
@@ -102,6 +112,7 @@ export const CSV_SETS = {
   sleep: { label: 'Sleep & mood', make: () => toCSV(store.all('sleepEntries').sort(byDate).map((s) => ({ ...s, ...(store.get('moodEntries', s.date) || {}) })), ['date', 'bedtime', 'wake', 'hours', 'quality', 'energy', 'stress', 'mood', 'body']) },
   workouts: { label: 'Workout sets', make: () => toCSV(store.all('workoutSets').filter((s) => s.completed).sort(byDate).map((s) => ({ ...s, workout: store.get('workouts', s.workoutId)?.title, exercise: store.get('exercises', s.exerciseId)?.name })), ['date', 'workout', 'exercise', 'setIndex', 'reps', 'load', 'seconds', 'minutes']) },
   journal: { label: 'Journal', make: () => toCSV(store.all('journalEntries').sort(byDate).map((j) => ({ ...j, answers: Object.values(j.answers || {}).join(' | ') })), ['date', 'kind', 'answers', 'text']) },
+  notes: { label: 'Brain dump', make: () => toCSV(store.all('notes').map((n) => ({ ...n, date: (n.createdAt || '').slice(0, 10) })).sort(byDate), ['date', 'category', 'pinned', 'text']) },
   tasks: { label: 'Tasks', make: () => toCSV(store.all('tasks').sort((a, b) => (a.date || '9999').localeCompare(b.date || '9999')).map((t) => ({ ...t, repeat: t.repeat ? `${t.repeat.kind}:${t.repeat.day}` : '', doneAt: dayAt(t.doneAt) || '' })), ['date', 'title', 'area', 'repeat', 'done', 'doneAt', 'notes']) },
 };
 function byDate(a, b) { return (a.date || '') < (b.date || '') ? -1 : 1; }

@@ -191,7 +191,7 @@ export function measures(date = today()) {
   const from = startOfWeek(date);
   const planned = range(from, endOfWeek(date)).filter((d) => F.plannedTemplate(d)?.kind === 'strength');
   const ws = F.weekStats(date);
-  const lastSoFar = F.allWorkouts().filter((w) => w.date >= addDays(from, -7) && w.date <= addDays(date, -7)).length;
+  const lastSoFar = F.trainingWorkouts().filter((w) => w.date >= addDays(from, -7) && w.date <= addDays(date, -7)).length;
   if (planned.length || ws.sessions || lastSoFar) {
     const due = planned.filter((d) => d <= date).length;
     const next = nextSession(date);

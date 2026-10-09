@@ -52,7 +52,7 @@ export function openTask(id = null, defaults = {}) {
       const custom = u.date && !opts.some(([, d]) => d === u.date);
       return html`<div class="form task-form">
         <label class="field"><span class="field-label">Task</span>
-          <input class="input" data-input="title" value="${u.title}" placeholder="What needs doing?" maxlength="140" enterkeyhint="done" autofocus>
+          <input class="input" data-input="title" data-enter="save" value="${u.title}" placeholder="What needs doing?" maxlength="140" enterkeyhint="done" autofocus aria-label="Task">
           ${u.error ? html`<span class="field-error" role="alert">${u.error}</span>` : ''}</label>
         <div class="field"><span class="field-label">When</span>
           <div class="chips">${opts.map(([label, d]) => html`<button type="button" class="${cx('chip', u.date === d && 'is-active')}" aria-pressed="${u.date === d}" data-action="when" data-date="${d}">${label}</button>`)}</div>
@@ -75,6 +75,7 @@ export function openTask(id = null, defaults = {}) {
           ${[...new Set([...P.active().map((p) => p.id), ...(u.projectId ? [u.projectId] : [])])].map((pid) => P.project(pid)).filter(Boolean).map((p) => html`<button type="button" class="${cx('chip', u.projectId === p.id && 'is-active')}" aria-pressed="${u.projectId === p.id}" data-action="project" data-id="${p.id}">${p.name}</button>`)}</div></div>` : ''}
         <label class="field"><span class="field-label">Notes <span class="muted">(optional)</span></span>
           <textarea class="input" rows="2" data-input="notes">${u.notes}</textarea></label>
+        ${cur && !cur.done ? html`<button type="button" class="btn btn--soft btn--block" data-action="to-calendar">${icon('calendar-check', { size: 18 })} ${cur.calendar ? `In your calendar · ${cur.calendar.time}, ${cur.calendar.minutes} min` : 'Put it in your calendar'}</button>` : ''}
         <button type="button" class="btn btn--primary btn--block" data-action="save">${cur ? 'Save' : 'Add task'}</button>
         ${cur ? html`<button type="button" class="btn btn--ghost btn--block btn--danger-text" data-action="delete">${icon('trash-2', { size: 16 })} Delete task</button>` : ''}
       </div>`;
@@ -112,6 +113,10 @@ export function openTask(id = null, defaults = {}) {
         hap.success();
         app.closeSheet(sheet);
         if (!cur) app.toast(`Added · ${T.dueLabel(date).toLowerCase() === 'anytime' ? 'anytime' : T.dueLabel(date).toLowerCase()}`, { icon: 'check' });
+      },
+      'to-calendar': async ({ sheet }) => {
+        app.closeSheet(sheet);
+        (await import('./task-calendar.js')).openTaskCalendar(cur.id);
       },
       delete: ({ sheet }) => {
         const rec = T.task(cur.id);

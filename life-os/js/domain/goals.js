@@ -76,7 +76,7 @@ export function series(g, date = today()) {
       const h = habit(g.habitId);
       if (h) for (const l of store.all('habitLogs')) if (l.habitId === h.id && counts(h, l.date)) add(l.date, 1);
     }
-    if (m === 'workouts') for (const w of store.all('workouts')) if (w.status === 'done') add(w.date, 1);
+    if (m === 'workouts') for (const w of store.all('workouts')) if (w.status === 'done' && w.kind !== 'mobility') add(w.date, 1);
     if (m === 'pages') for (const r of store.all('readingSessions')) if (r.pages) add(r.date, Number(r.pages) || 0);
     let total = 0;
     return [{ date: from, value: 0 }, ...[...per.keys()].sort().map((d) => ({ date: d, value: (total += per.get(d)) }))];

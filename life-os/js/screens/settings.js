@@ -1,7 +1,7 @@
 import * as store from '../data/store.js';
 import { html, raw, cx } from '../ui/dom.js';
 import { pageHead, toggle, settingRow, segmented } from '../ui/components.js';
-import { kgOut, kgIn, weightUnit, num } from '../ui/format.js';
+import { kgOut, kgIn, weightUnit, fieldNum } from '../ui/format.js';
 import * as hap from '../ui/haptics.js';
 import { requestPermission, permissionState, stats as reminderStats } from '../domain/reminders.js';
 import * as badge from '../ui/badge.js';
@@ -46,6 +46,8 @@ const NETS = [
   ['tidy', 'Weekly tidy-up', 'Habits untouched for two weeks, once a week.'],
 ];
 
+const pushOn = () => { try { return !!JSON.parse(localStorage.getItem('lifeos.push'))?.on; } catch { return false; } };
+
 export default {
   id: 'settings',
   title: 'Settings',
@@ -63,9 +65,9 @@ export default {
           ${profileField('Name', 'name')}
           ${profileField('Age', 'age', 'number', { attrs: 'inputmode="numeric" min="10" max="100"' })}
           ${profileField('Height', 'heightCm', 'number', { unit: 'cm', attrs: 'inputmode="numeric"' })}
-          <label class="set-row"><span class="set-text"><span class="set-label">Starting weight</span></span><span class="set-ctl"><input class="input input--inline input--num" type="number" step="0.1" inputmode="decimal" value="${num(kgOut(p.startWeightKg), 1).replace(/,/g, '')}" data-change="start-weight" aria-label="Starting weight"><span class="muted small">${weightUnit()}</span></span></label>
-          ${profileField('Body fat (estimate)', 'startBodyFat', 'number', { unit: '%', attrs: 'step="0.5"' })}
-          ${profileField('Goal body fat', 'goalBodyFat', 'number', { unit: '%', attrs: 'step="0.5"' })}
+          <label class="set-row"><span class="set-text"><span class="set-label">Starting weight</span></span><span class="set-ctl"><input class="input input--inline input--num" type="number" step="0.1" inputmode="decimal" value="${fieldNum(kgOut(p.startWeightKg))}" data-change="start-weight" aria-label="Starting weight"><span class="muted small">${weightUnit()}</span></span></label>
+          ${profileField('Body fat (estimate)', 'startBodyFat', 'number', { unit: '%', attrs: 'step="any"' })}
+          ${profileField('Goal body fat', 'goalBodyFat', 'number', { unit: '%', attrs: 'step="any"' })}
         </div></section>
       <section class="block"><h2 class="set-section">Day</h2>
         <div class="set-list">
@@ -102,6 +104,7 @@ export default {
       <section class="block"><h2 class="set-section">Appearance</h2>
         <div class="set-list">
           ${settingRow('Theme', segmented([{ id: 'system', label: 'System' }, { id: 'light', label: 'Light' }, { id: 'dark', label: 'Dark' }], s.theme, { action: 'theme', name: 'Theme', cls: 'seg--compact' }))}
+          ${settingRow('Show explanations', toggle(s.showTips === true, { action: 'tips', label: 'Show explanations' }), { hint: 'Keep the text behind every ⓘ open. Off, tap an ⓘ to read one.', key: 'tips' })}
           ${settingRow('Haptics', toggle(s.haptics !== false, { action: 'haptics', label: 'Haptics' }), { hint: 'Subtle taps where the device supports them.' })}
           ${settingRow('Sound', toggle(s.sound === true, { action: 'sound', label: 'Sound' }), { hint: 'Soft sounds made on the phone for completions, moments and sealing the day. Off by default.', key: 'sound' })}
           ${settingRow('Race against', segmented([{ id: 'four', label: 'A month ago' }, { id: 'best', label: 'Best week' }, { id: 'last', label: 'Last week' }], s.ghost || 'four', { action: 'ghost', name: 'Race against', cls: 'seg--compact' }), { hint: 'Your past self at the same point of the week, on Progress. A quiet marker, never an alarm.', key: 'ghost' })}
@@ -114,13 +117,18 @@ export default {
         <div class="set-list">
           ${settingRow('In your calendar', html`<button type="button" class="btn btn--soft btn--sm" data-action="calendar-file">${s.calendarAddedAt ? 'Add again' : 'Set up'}</button>`,
             { hint: 'The way that always works on iPhone: your calendar alerts you, even when Life OS is closed, and nothing is sent anywhere.', key: 'n-cal' })}
+          ${settingRow('Cues from your iPhone', html`<button type="button" class="btn btn--soft btn--sm" data-action="cues">Set up</button>`,
+            { hint: 'A nudge at the real moment: when your alarm stops, when you get to the gym. Made in the Shortcuts app; nothing is sent anywhere.', key: 'n-cues' })}
+          ${settingRow('When Life OS is closed', html`<button type="button" class="btn btn--soft btn--sm" data-action="push">${pushOn() ? 'On' : 'Set up'}</button>`,
+            { hint: 'Your reminders, sent by your own sync server even when the app is closed. Optional.', key: 'n-push' })}
           ${badge.supported() ? settingRow('Badge on the app icon', toggle(s.badge !== false, { action: 'badge', label: 'Badge on the app icon' }),
             { hint: perm === 'granted' ? 'How much of today’s plan is still open.' : 'How much of today’s plan is still open. On iPhone it needs notifications allowed for Life OS.', key: 'n-badge' }) : ''}
         </div>
         <div class="card block-tight">
           <p class="card-lead" style="margin-top:0">Quiet and adaptive: if you already do something without the nudge, Life OS stops nudging. If you keep dismissing one, it asks whether a different time would suit you better.</p>
           <p class="fine-print">${perm === 'unsupported' ? 'This browser doesn’t support notifications. Reminders show inside the app while it’s open.'
-            : 'In-app reminders arrive while Life OS is open or recently used. Background notifications on iPhone would need a push server, which this private, local-only version doesn’t use; your calendar covers that.'}</p>
+            : pushOn() ? 'Your server sends the timed reminders below, even when Life OS is closed. The nudges (move, eyes, water) arrive while it’s open or recently used.'
+              : 'In-app reminders arrive while Life OS is open or recently used. For when it’s closed, use your calendar, or turn on reminders from your own server above.'}</p>
         </div>
         <div class="set-list block-tight">
           ${settingRow('Reminders', toggle(nt.enabled, { action: 'notif-master', label: 'Reminders' }), { hint: perm === 'granted' ? 'System notifications allowed' : perm === 'denied' ? 'Notifications are blocked in system settings — in-app only' : 'In-app, plus system notifications if you allow them' })}
@@ -138,6 +146,8 @@ export default {
   },
   actions: {
     'calendar-file': async () => (await import('./calendar-file.js')).openCalendarFile(),
+    cues: async () => (await import('./cues.js')).openCues(),
+    push: async () => (await import('./push-sheet.js')).openPushSheet({ onDone: () => app.refresh() }),
     badge: async () => {
       const on = store.settings().badge === false;
       if (on) await requestPermission();
@@ -155,6 +165,7 @@ export default {
     },
     unit: ({ data }) => store.setSettings({ units: { ...store.settings().units, weight: data.value } }),
     'unit-len': ({ data }) => store.setSettings({ units: { ...store.settings().units, length: data.value } }),
+    tips: () => store.setSettings({ showTips: store.settings().showTips !== true }),
     sound: async () => { const on = store.settings().sound !== true; store.setSettings({ sound: on }); if (on) (await import('../ui/sound.js')).play('moment'); },
     ghost: ({ data }) => { store.setSettings({ ghost: data.value }); hap.tap(); },
     theme: ({ data }) => { store.setSettings({ theme: data.value }); hap.tap(); },
@@ -180,8 +191,12 @@ export default {
     profile: ({ el, value }) => {
       const k = el.dataset.k;
       const numeric = ['age', 'heightCm', 'startBodyFat', 'goalBodyFat'].includes(k);
-      if (numeric && n(value) == null) return;
+      // Numbers outside what a person can be are refused; the field goes back to what's saved.
+      const RANGE = { age: [10, 110], heightCm: [100, 250], startBodyFat: [3, 60], goalBodyFat: [3, 60] };
+      if (numeric && (n(value) == null || n(value) < RANGE[k][0] || n(value) > RANGE[k][1])) return;
       if (!numeric && !value.trim()) return;
+      // Your day's times are linked: wake, training, work and lights out move what hangs off them.
+      if (['wakeTime', 'trainTime', 'workStart', 'workEnd', 'bedTime'].includes(k)) { import('../domain/day-blocks.js').then((D) => D.setTime(k, value.trim())); return; }
       store.setProfile({ [k]: numeric ? n(value) : value.trim() });
     },
     steps: ({ value }) => {
@@ -190,7 +205,7 @@ export default {
       const t = Math.round(v / 100) * 100;
       store.update('habits', 'h-steps', { target: t, min: Math.round(t * 0.9 / 100) * 100, ramp: null });
     },
-    'start-weight': ({ value }) => { const kg = kgIn(n(value)); if (kg) store.setProfile({ startWeightKg: Math.round(kg * 10) / 10 }); },
+    'start-weight': ({ value }) => { const kg = kgIn(n(value)); if (kg >= 20 && kg <= 400) store.setProfile({ startWeightKg: Math.round(kg * 10) / 10 }); },
     target: ({ el, value }) => {
       const v = n(value);
       if (v == null || v <= 0) return;

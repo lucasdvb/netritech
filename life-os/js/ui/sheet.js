@@ -13,10 +13,13 @@ const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select
 export const sheets = () => stack;
 export const top = () => stack[stack.length - 1] || null;
 
+// A counter, not the clock: two sheets opened in the same millisecond must not share an id.
+let opened = 0;
+
 export function open(opts) {
   layer ||= document.getElementById('sheets');
   const s = {
-    id: opts.id || `sheet-${Date.now()}`,
+    id: opts.id || `sheet-${++opened}`,
     title: opts.title || '',
     render: opts.render,
     actions: opts.actions || {},
@@ -71,6 +74,9 @@ export function close(s = top()) {
   if (!s) return;
   const i = stack.indexOf(s);
   if (i < 0) return;
+  // A field still being edited saves first (its change event needs the sheet to find its
+  // handler): Escape, a drag down or a tap outside don't take the focus away on their own.
+  if (s.el.contains(document.activeElement)) document.activeElement.blur();
   stack.splice(i, 1);
   s.el.classList.remove('is-open');
   s.el.classList.add('is-closing');

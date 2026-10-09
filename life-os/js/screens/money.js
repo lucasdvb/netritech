@@ -25,7 +25,7 @@ export default {
     return html`
       ${pageHead({ title: 'Money', back: { to: 'plan', label: 'Plan' },
         actions: html`<button type="button" class="icon-btn" data-action="settings" aria-label="Budget and currency">${icon('sliders-horizontal', { size: 20 })}</button>
-          <button type="button" class="btn btn--primary btn--sm" data-action="add">${icon('plus', { size: 16 })} Add</button>` })}
+          <button type="button" class="btn btn--primary btn--sm" data-action="add">${icon('plus', { size: 16 })} Add</button>`, info: 'What you spend, by category, against the budget you set. Kept on this device only; not linked to any bank.' })}
       <div class="cal-head block-tight">
         <button type="button" class="icon-btn" data-action="nav" data-to="plan/money/${addMonths(`${month}-01`, -1).slice(0, 7)}" aria-label="Previous month">${icon('chevron-left', { size: 20 })}</button>
         <h2 class="block-title">${fmtMonth(`${month}-01`)}</h2>
@@ -46,8 +46,7 @@ export default {
             <span class="row-main"><span class="row-title">${e.note || $.category(e.category).label}</span><span class="row-sub">${relativeDay(e.date)}${e.note ? ` · ${$.category(e.category).label}` : ''}</span></span>
             <span class="row-right money-amt tnum">${$.fmt(e.amount)}</span></button></li>`)}</ul>`
           : empty({ ic: 'wallet', title: month === now ? 'Nothing spent yet this month' : 'Nothing logged that month', body: 'Log what you spend as it happens: an amount and a category. It takes five seconds.', cta: 'Add spending', action: 'add' })}
-      </section>
-      <p class="foot-note">Kept on this device only. Not linked to any bank.</p>`;
+      </section>`;
   },
   actions: {
     add: ({ params }) => openExpense(null, { date: monthOf(params) === monthKey(today()) ? today() : `${monthOf(params)}-01` }),
@@ -109,7 +108,7 @@ function openMoneySettings() {
             <button type="button" class="drag-handle" data-drag aria-label="Move ${c.label}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>
             <input class="input et-input" value="${c.label}" data-change="cat-name" data-id="${c.id}" maxlength="24" aria-label="Category name">
             <button type="button" class="icon-btn icon-btn--sm" data-action="cat-del" data-id="${c.id}" aria-label="Remove ${c.label}"${cfg.categories.length <= 1 ? ' disabled' : ''}>${icon('x', { size: 16 })}</button></li>`)}</ol>
-          <input class="input block-tight" data-change="cat-add" placeholder="Add a category" maxlength="24" enterkeyhint="done"></div>
+          <input class="input block-tight" data-change="cat-add" placeholder="Add a category" maxlength="24" enterkeyhint="done" aria-label="Add a category"></div>
         <p class="field-hint">Entries keep their category if you remove it; they show as “Other”.</p>
       </div>`;
     },

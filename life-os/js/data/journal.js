@@ -21,15 +21,20 @@ export function watch() {
 
 /** On start, before anything is read: write back what was kept and never landed. Never blocks the start. */
 export async function replay() {
+  let ops;
+  try { ops = JSON.parse(localStorage.getItem(KEY)); } catch { ops = null; }
+  // Nothing readable to replay: let it go.
+  if (!Array.isArray(ops)) { drop(); return; }
   try {
-    const ops = JSON.parse(localStorage.getItem(KEY));
     const disk = store.disk();
     const when = (r) => r?.updatedAt || r?.at || '';
     const todo = [];
     for (const op of ops) if (op?.store && ('delete' in op || when(op.value) > when(await disk.get(op.store, op.value?.id)))) todo.push(op);
     if (todo.length) await disk.write(todo);
   } catch (err) {
+    // Kept for the next start: these are your last edits and the disk didn't take them this time.
     console.error(err);
+    return;
   }
   drop();
 }

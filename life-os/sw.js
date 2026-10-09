@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = '15f0cff0e7';
+const VERSION = '38ea10c990';
 const ASSETS = [
   "./",
   "./index.html",
@@ -35,10 +35,14 @@ const ASSETS = [
   "./js/domain/capture.js",
   "./js/domain/coach.js",
   "./js/domain/commitments.js",
+  "./js/domain/cues.js",
   "./js/domain/dates.js",
+  "./js/domain/day-blocks.js",
   "./js/domain/day-plan.js",
   "./js/domain/day.js",
   "./js/domain/events.js",
+  "./js/domain/exercise-media.js",
+  "./js/domain/experiments.js",
   "./js/domain/film.js",
   "./js/domain/fitness-core.js",
   "./js/domain/fitness.js",
@@ -53,13 +57,18 @@ const ASSETS = [
   "./js/domain/insights.js",
   "./js/domain/levels.js",
   "./js/domain/lists.js",
+  "./js/domain/meals.js",
+  "./js/domain/memories.js",
   "./js/domain/metrics-core.js",
   "./js/domain/metrics.js",
   "./js/domain/money.js",
   "./js/domain/moodboard.js",
   "./js/domain/next-action.js",
+  "./js/domain/next-step.js",
+  "./js/domain/notes.js",
   "./js/domain/progression.js",
   "./js/domain/projects.js",
+  "./js/domain/push-plan.js",
   "./js/domain/quests.js",
   "./js/domain/records.js",
   "./js/domain/reminder-rules.js",
@@ -70,6 +79,7 @@ const ASSETS = [
   "./js/domain/routines.js",
   "./js/domain/scoring.js",
   "./js/domain/seasons.js",
+  "./js/domain/session-clock.js",
   "./js/domain/snapshots.js",
   "./js/domain/story.js",
   "./js/domain/tasks-more.js",
@@ -77,6 +87,8 @@ const ASSETS = [
   "./js/domain/taxonomy.js",
   "./js/domain/templates.js",
   "./js/domain/urges.js",
+  "./js/domain/year-review.js",
+  "./js/push/client.js",
   "./js/redirects.js",
   "./js/routes.js",
   "./js/screens/area.js",
@@ -88,11 +100,15 @@ const ASSETS = [
   "./js/screens/calendar.js",
   "./js/screens/capture.js",
   "./js/screens/commitments.js",
+  "./js/screens/cues.js",
   "./js/screens/data.js",
   "./js/screens/dates.js",
+  "./js/screens/day-planner.js",
+  "./js/screens/exercise-media-ui.js",
   "./js/screens/exercise-picker.js",
   "./js/screens/exercise.js",
   "./js/screens/exercises.js",
+  "./js/screens/experiment-ui.js",
   "./js/screens/faith.js",
   "./js/screens/focus-sheet.js",
   "./js/screens/fresh-start.js",
@@ -116,6 +132,7 @@ const ASSETS = [
   "./js/screens/mind.js",
   "./js/screens/money.js",
   "./js/screens/moodboard.js",
+  "./js/screens/notes.js",
   "./js/screens/nutrition.js",
   "./js/screens/pads.js",
   "./js/screens/photos.js",
@@ -125,11 +142,13 @@ const ASSETS = [
   "./js/screens/progress.js",
   "./js/screens/project.js",
   "./js/screens/projects.js",
+  "./js/screens/push-sheet.js",
   "./js/screens/records.js",
   "./js/screens/reflect.js",
   "./js/screens/relationships.js",
   "./js/screens/review-month.js",
   "./js/screens/review-week.js",
+  "./js/screens/review-year.js",
   "./js/screens/reviews.js",
   "./js/screens/rewards.js",
   "./js/screens/ritual.js",
@@ -140,6 +159,7 @@ const ASSETS = [
   "./js/screens/sheets.js",
   "./js/screens/sleep.js",
   "./js/screens/sync.js",
+  "./js/screens/task-calendar.js",
   "./js/screens/task-sheet.js",
   "./js/screens/task-ui.js",
   "./js/screens/tasks.js",
@@ -191,9 +211,11 @@ const ASSETS = [
   "./js/ui/patch.js",
   "./js/ui/reorder.js",
   "./js/ui/router.js",
+  "./js/ui/save-later.js",
   "./js/ui/sheet.js",
   "./js/ui/sound.js",
   "./js/ui/swipe.js",
+  "./js/ui/tips.js",
   "./js/ui/toast.js",
   "./js/ui/transitions.js",
   "./js/ui/undo.js",
@@ -261,9 +283,20 @@ self.addEventListener('fetch', (event) => {
   })());
 });
 
+// A reminder from the sender on your server (13c). Every push shows a notification, as iOS requires.
+self.addEventListener('push', (event) => {
+  let d = {};
+  try { d = event.data?.json() || {}; } catch { d = { body: event.data?.text() || '' }; }
+  event.waitUntil(self.registration.showNotification(d.title || 'Life OS', {
+    body: d.body || '', tag: d.tag || 'life-os', icon: 'assets/icons/icon-192.png', badge: 'assets/icons/icon-192.png', data: { url: d.url || './#/today' },
+  }));
+});
+
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const target = event.notification.data?.url || './#/today';
+  // Only ever a page of this app: a push can't send you anywhere else.
+  let target = './#/today';
+  try { const u = new URL(event.notification.data?.url || target, self.location.href); if (u.origin === self.location.origin) target = u.href; } catch { /* keep Today */ }
   event.waitUntil((async () => {
     const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     for (const c of all) {

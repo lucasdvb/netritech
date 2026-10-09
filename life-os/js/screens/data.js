@@ -5,7 +5,7 @@ import { safetyBackup, safetyBackups, safetyBackupFile } from '../data/migration
 import { today, fmtMDY, fmtTime, dayOf, dayAt, dayInline } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { pageHead, toggle, settingRow } from '../ui/components.js';
+import { pageHead, toggle, settingRow, infoBtn, tipText } from '../ui/components.js';
 import { num } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
@@ -32,8 +32,7 @@ export default {
     const last = s.lastBackupAt;
     const records = ['habitLogs', 'weightEntries', 'nutritionLogs', 'workouts', 'journalEntries', 'measurements'].reduce((a, k) => a + store.count(k), 0);
     return html`
-      ${pageHead({ title: 'Data & backup', back: { to: 'today', label: 'Today' } })}
-      <p class="lead">Your data lives in this browser’s storage on this device. A backup file is the way to move it or keep it safe.</p>
+      ${pageHead({ title: 'Data & backup', back: { to: 'today', label: 'Today' }, info: 'Your data lives in this browser’s storage on this device. A backup file is the way to move it or keep it safe.' })}
       <section class="card">
         <p class="section-label">Backup</p>
         <p class="card-lead" style="margin-top:0">${last ? `Last backup ${dayInline(last.slice(0, 10))}.` : 'No backup yet.'} ${records ? `${num(records)} entries so far.` : ''}</p>
@@ -46,8 +45,8 @@ export default {
           <label class="btn btn--soft btn--block block-tight file-btn">${icon('upload', { size: 18 })} Choose backup file<input type="file" accept="application/json,.json" class="sr-only" data-change="restore-file"></label>
         </div>
       </section>
-      ${copies.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Safety copies</h2></div>
-        <p class="fine-print">Saved automatically, on this device, before Life OS updates how your data is stored and before a backup is restored. The last three are kept.</p>
+      ${copies.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Safety copies${infoBtn('copies', 'safety copies')}</h2></div>
+        ${tipText('copies', 'Saved automatically, on this device, before Life OS updates how your data is stored and before a backup is restored. The last three are kept.')}
         <ul class="list">${copies.map((c) => html`<li data-key="copy-${c.id}"><button type="button" class="row" data-action="copy-restore" data-id="${c.id}"><span class="row-ic">${icon('history', { size: 16 })}</span><span class="row-main"><span class="row-title">${fmtMDY(dayOf(new Date(c.id)))} · ${fmtTime(new Date(c.id))}</span><span class="row-sub">${c.reason}</span></span><span class="row-right">Restore</span></button></li>`)}</ul>
       </section>` : ''}
       <section class="block"><div class="block-head"><h2 class="block-title">Export as CSV</h2></div>
@@ -99,8 +98,9 @@ export default {
       await store.complete();
       await saveFile(`life-os-${data.k}-${today()}.csv`, set.make(), 'text/csv');
     },
-    'demo-on': async () => { await loadDemo(); hap.success(); app.toast('Sample data loaded. Remove it here any time.'); },
-    'demo-off': async () => { await removeDemo(); app.toast('Sample data removed'); },
+    // Said only once it's on disk: a failed write has already explained itself.
+    'demo-on': async () => { await loadDemo(); if (await store.flush()) { hap.success(); app.toast('Sample data loaded. Remove it here any time.'); } },
+    'demo-off': async () => { await removeDemo(); if (await store.flush()) app.toast('Sample data removed'); },
     storage: () => { refreshStorage(); navigator.storage?.persist?.().then(refreshStorage); },
     reset: async () => {
       const ok = await app.confirm({ title: 'Erase everything?', body: 'Every habit, log, journal entry and photo on this device will be deleted. Back up first if you might want it. This can’t be undone.', confirm: 'Erase everything', tone: 'danger' });
@@ -108,6 +108,9 @@ export default {
       const sure = await app.confirm({ title: 'Last check', body: 'Life OS will restart with the original habit system and no history.', confirm: 'Yes, erase', tone: 'danger' });
       if (!sure) return;
       await store.flush();
+      // Sync is turned off first: otherwise the fresh start's built-in habits would go up to the
+      // server as the newest copies and replace your records on every other device.
+      try { (await import('../sync/engine.js')).stop(); } catch { /* sync never loaded */ }
       await store.disk().clearAll();
       try { localStorage.removeItem('lifeos.theme'); } catch { /* ignore */ }
       location.reload();
@@ -127,6 +130,7 @@ export default {
         return;
       }
       const total = Object.values(info.counts).reduce((a, b) => a + b, 0);
+      const synced = !!(await import('../sync/engine.js')).config();
       app.sheet({
         title: 'Restore backup',
         render: () => html`<div class="form">
@@ -134,6 +138,7 @@ export default {
           <dl class="facts facts--plain">${Object.entries(info.counts).filter(([, n]) => n).map(([k, n]) => html`<div><dt>${k}</dt><dd>${num(n)}</dd></div>`)}</dl>
           <button type="button" class="btn btn--primary btn--block" data-action="merge">Merge with what’s here</button>
           <p class="fine-print">Adds anything new and keeps the newer version of anything that exists in both.</p>
+          ${synced ? html`<p class="fine-print">Sync is on: where your other devices have a newer version of something, that newer version wins.</p>` : ''}
           <button type="button" class="btn btn--ghost btn--block btn--danger-text" data-action="replace">Replace everything on this device</button>
         </div>`,
         actions: {
@@ -150,15 +155,21 @@ export default {
 };
 
 async function doRestore(json, mode, reason = mode === 'merge' ? 'Before merging a backup' : 'Before restoring a backup') {
+  let stage = 'copy';
   try {
     // What's here now is kept as a safety copy first, so any restore can be taken back.
     await safetyBackup(reason);
-    await restore(json, mode);
+    stage = 'restore';
+    await restore(json, mode, () => { stage = 'after'; });
     hap.success();
     app.toast(mode === 'merge' ? 'Backup merged' : 'Backup restored', { icon: 'check' });
     app.go('today');
   } catch (err) {
     console.error(err);
-    app.toast('Couldn’t restore that backup. Your current data is unchanged.', { tone: 'danger', duration: 6000 });
+    // Say what actually happened: the restore either never touched your data, or it landed and
+    // something after it failed.
+    app.toast(stage === 'after' ? 'The backup was restored, but finishing up failed. Reload Life OS; your previous data is under Safety copies.'
+      : stage === 'copy' ? 'Couldn’t make a safety copy first (storage may be full), so nothing was restored. Your data is unchanged.'
+        : 'Couldn’t restore that backup. Your current data is unchanged.', { tone: 'danger', duration: 8000 });
   }
 }

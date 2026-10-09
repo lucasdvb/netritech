@@ -1,11 +1,12 @@
 import * as store from './data/store.js';
 import { SEED_VERSION, LATEST_MIGRATION } from './data/schema.js';
-import { patch } from './ui/patch.js';
+import { patch, settle } from './ui/patch.js';
 import * as router from './ui/router.js';
 import * as sheet from './ui/sheet.js';
 import { toast, stick, retract } from './ui/toast.js';
 import { icon, loadIcons } from './ui/icons.js';
 import { html } from './ui/dom.js';
+import { toggleTip } from './ui/tips.js';
 import { firstRender, fill, waitingKeys } from './ui/later.js';
 import { app, APP_NAME } from './ui/app-api.js';
 import { today, setDayEnd } from './domain/dates.js';
@@ -104,6 +105,9 @@ function dropPane() {
 }
 
 async function navigate() {
+  // Leaving a screen saves the field you were in, before that screen goes away.
+  const active = document.activeElement;
+  if (active && active !== document.body && main.contains(active) && active.matches('input, textarea, select')) active.blur();
   const token = ++navToken;
   await redirect();
   if (token !== navToken) return;
@@ -274,6 +278,11 @@ const globalActions = {
   'open-search': () => app.search(),
   capture: async () => (await import('./screens/capture.js')).openCapture(),
   you: async () => (await import('./screens/you.js')).openYou(),
+  // An ⓘ beside a title: open or fold the explanation it stands for, then redraw where it lives.
+  tip: ({ data, sheet: s }) => {
+    toggleTip(data.tip);
+    if (s) s.refresh(); else refresh();
+  },
 };
 
 /** The view that owns an element: the list pane beside a detail, or the current screen. */
@@ -302,9 +311,14 @@ document.addEventListener('click', (e) => {
   if (closer) { sheet.close(sheetOf(closer)); return; }
   const el = e.target.closest('[data-action]');
   if (!el || el.disabled || el.getAttribute('aria-disabled') === 'true') return;
+  // A field that saves on change saves before the button acts (iOS doesn't move the focus
+  // when you tap a button, so the button would otherwise act on the old value).
+  const editing = document.activeElement;
+  if (editing && editing !== el && editing.matches?.('input[data-change], textarea[data-change], select[data-change]')) editing.blur();
   const handler = resolve(el, 'action', el.dataset.action);
   if (!handler) return;
   if (el.tagName === 'A') e.preventDefault();
+  if (el.tagName === 'BUTTON') settle(el.closest('[data-sheet]') || main);
   // A check or switch flips at once; the redraw that follows shows what was really saved.
   const flip = el.matches('[role="checkbox"], [role="switch"]') && ['true', 'false'].includes(el.getAttribute('aria-checked'));
   if (flip) {
@@ -333,10 +347,13 @@ document.addEventListener('lifeos:reorder', (e) => {
   if (handler) run(handler, el, e, { from: e.detail.from, to: e.detail.to });
 });
 
+// A date field mid-typing (or with a five-digit year) isn't a date yet: it's not passed on.
+const badDate = (el) => el.type === 'date' && el.value !== '' && !/^\d{4}-\d{2}-\d{2}$/.test(el.value);
+
 for (const type of ['input', 'change']) {
   document.addEventListener(type, (e) => {
     const el = e.target.closest(`[data-${type}]`);
-    if (!el) return;
+    if (!el || badDate(el)) return;
     const handler = resolve(el, 'input', el.dataset[type]);
     if (handler) run(handler, el, e, { value: el.type === 'checkbox' ? el.checked : el.value });
   });
@@ -365,10 +382,18 @@ document.addEventListener('submit', (e) => {
   if (!form) return;
   e.preventDefault();
   const handler = resolve(form, 'action', form.dataset.submit);
+  const wrong = [...form.querySelectorAll('input[type="date"]')].find(badDate);
+  if (wrong) { toast('That date isn’t right. Check the year.', { tone: 'danger' }); wrong.focus(); return; }
   if (handler) run(handler, form, e, { form: Object.fromEntries(new FormData(form)) });
 });
 
 document.addEventListener('keydown', (e) => {
+  // Return in a field marked data-enter presses that action's button (fields outside a form).
+  if (e.key === 'Enter' && !e.isComposing && e.target.matches?.('input[data-enter]')) {
+    const scope = e.target.closest('[data-sheet]') || main;
+    const btn = scope.querySelector(`[data-action="${e.target.dataset.enter}"]`);
+    if (btn) { e.preventDefault(); btn.click(); return; }
+  }
   if (e.key === 'Escape' && sheet.top()) { sheet.close(); return; }
   if (e.key === 'Tab') sheet.trapFocus(e);
 });
@@ -402,6 +427,17 @@ async function boot() {
     search: async () => (await import('./screens/search.js')).openSearch(),
   });
 
+  // An older copy left open elsewhere holds the database while this one updates it.
+  let wasBlocked = false;
+  const blocked = () => {
+    wasBlocked = true;
+    main.innerHTML = String(html`<div class="view"><div class="empty empty--page" role="status">
+      <div class="empty-ic">${icon('refresh-cw', { size: 22 })}</div>
+      <p class="empty-title">Finishing an update</p>
+      <p class="empty-body">Life OS is open in another tab or window. Close it, and this one carries on by itself. Nothing has been lost.</p>
+    </div></div>`);
+  };
+  addEventListener('lifeos:blocked', blocked, { once: true });
   try {
     // Writes that hadn't landed when the app last closed go back first (data/journal.js).
     let kept = null;
@@ -410,6 +446,8 @@ async function boot() {
     // Opening on Today itself, the long workout history loads just after the first screen.
     const onToday = !location.hash || /^#\/today(\?|$)/.test(location.hash);
     await store.init({ recentFirst: onToday });
+    removeEventListener('lifeos:blocked', blocked);
+    if (wasBlocked) main.innerHTML = '';
     performance.mark('lifeos:data');
     // The built-in habit system is only loaded on first run, or when it has an update.
     const seeded = store.get('meta', 'seed');
@@ -487,6 +525,7 @@ async function boot() {
   if (navigator.storage?.persist) navigator.storage.persisted().then((p) => { if (!p) navigator.storage.persist(); });
   // Sync, when it's set up on this device (You › Sync): loads after the first screen.
   try { if (localStorage.getItem('lifeos.sync')) import('./sync/engine.js').then((m) => m.start()).catch((err) => console.warn(err)); } catch { /* storage blocked */ }
+  try { if (localStorage.getItem('lifeos.push')) import('./push/client.js').then((m) => m.start()).catch((err) => console.warn(err)); } catch { /* storage blocked */ }
   window.__lifeos = { store, app, ready: true, readyAt: performance.now(), renders: renderTimes };
 }
 

@@ -15,7 +15,10 @@ export function plannedTemplate(date) {
   return id ? template(id) : null;
 }
 
-export const workoutsOn = (date) => store.onDate('workouts', date).filter((w) => w.status === 'done');
+/** Finished training sessions on a date. Mobility sessions have their own habit and aren't
+ *  training, so they're left out unless asked for. */
+export const workoutsOn = (date, { mobility = false } = {}) => store.onDate('workouts', date).filter((w) => w.status === 'done' && (mobility || w.kind !== 'mobility'));
+export const isTraining = (w) => w.kind !== 'mobility';
 const setIndex = () => store.memo('sets-by-workout', ['workoutSets'], () => {
   const m = new Map();
   for (const s of store.all('workoutSets')) {
@@ -26,6 +29,8 @@ const setIndex = () => store.memo('sets-by-workout', ['workoutSets'], () => {
   return m;
 });
 export const setsOf = (workoutId) => setIndex().get(workoutId) || [];
+/** Training sessions only (no mobility), for counts of sessions. */
+export const trainingWorkouts = () => store.memo('training-workouts', ['workouts'], () => allWorkouts().filter(isTraining));
 export const allWorkouts = () => store.memo('all-workouts', ['workouts'], () => store.all('workouts').filter((w) => w.status === 'done').sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : cmp(b.startedAt || '', a.startedAt || ''))));
 export const activeWorkout = () => store.all('workouts').find((w) => w.status === 'active') || null;
 
@@ -35,8 +40,9 @@ export function workoutFacts(date) {
 }
 
 function computeFacts(date) {
-  const ws = workoutsOn(date);
-  const facts = { any: ws.length > 0, strength: false, core: false, calves: false, cardio: false, progression: false };
+  const ws = workoutsOn(date, { mobility: true });
+  // Mobility has its own habit: a mobility session alone isn't the day's training.
+  const facts = { any: ws.some((w) => w.kind !== 'mobility'), mobility: ws.some((w) => w.kind === 'mobility'), strength: false, core: false, calves: false, cardio: false, progression: false };
   if (!ws.length) return facts;
   // One pass over the sets of this day's workouts (cheaper than indexing every set ever logged).
   const ids = new Set(ws.map((w) => w.id));

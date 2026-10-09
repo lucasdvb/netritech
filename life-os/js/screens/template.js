@@ -6,7 +6,7 @@ import * as TP from '../domain/templates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty, segmented } from '../ui/components.js';
-import { num, kgOut, kgIn, weightUnit } from '../ui/format.js';
+import { num, kgOut, kgIn, weightUnit, fieldNum } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { startWorkout } from './workout-actions.js';
@@ -110,7 +110,7 @@ function itemSheet(id, i) {
           <label class="field"><span class="field-label">${e?.metric === 'time' ? 'Hold' : e?.metric === 'minutes' ? 'Time' : 'Reps'}</span>
             <input class="input" value="${it.reps || ''}" data-change="reps" maxlength="20" placeholder="${e?.metric === 'time' ? '30–45 s' : e?.metric === 'minutes' ? '20 min' : '8–12'}"></label>
           ${e?.metric === 'reps' ? html`<label class="field"><span class="field-label">Start load</span>
-            <span class="input-unit"><input class="input" type="number" inputmode="decimal" min="0" step="0.5" value="${it.load ? num(kgOut(it.load), 1).replace(/,/g, '') : ''}" placeholder="Bodyweight" data-change="load"><span>${weightUnit()}</span></span></label>` : html`<span></span>`}
+            <span class="input-unit"><input class="input" type="number" inputmode="decimal" min="0" step="0.5" value="${it.load ? fieldNum(kgOut(it.load)) : ''}" placeholder="Bodyweight" data-change="load"><span>${weightUnit()}</span></span></label>` : html`<span></span>`}
         </div>
         <p class="field-hint">A range like 8–12 works well: when you reach the top for every set, the load goes up.</p>
         ${e?.metric !== 'minutes' ? html`<div class="field"><span class="field-label">Rest between sets</span>

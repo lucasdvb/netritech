@@ -4,6 +4,9 @@ One small Cloudflare Worker you own. It syncs your devices, and it never sees yo
 record is encrypted on the device with your sync key before it's sent, and named with a keyed
 hash, so the server holds only opaque names, timestamps and ciphertext.
 
+It can also send your reminders while Life OS is closed (optional, *Settings › Reminders › When
+Life OS is closed*). For that it needs its once-a-minute trigger, step 7 below.
+
 ## Set it up in the dashboard (about five minutes, once)
 
 1. Sign in at **dash.cloudflare.com**. The free plan is plenty.
@@ -14,6 +17,8 @@ hash, so the server holds only opaque names, timestamps and ciphertext.
 5. The Worker's **Settings › Bindings › Add binding › D1 database**: variable name `DB`,
    database `lifeos`, then **Add binding**.
 6. Copy the Worker's address (`https://lifeos-sync.<your-subdomain>.workers.dev`).
+7. For reminders while the app is closed: the Worker's **Settings › Trigger events › Add › Cron
+   triggers**, the expression `* * * * *` (every minute), then **Add**. The free plan includes it.
 
 Then in Life OS on your phone: **You › Sync**, paste the address, **Check the server**,
 **Start sync here**. Copy your sync key somewhere safe. On your computer: **You › Sync**, the
@@ -35,6 +40,8 @@ npx wrangler deploy
 |---|---|
 | `spaces` | your space id and a hash of its password (both derived from your sync key) |
 | `items` | one row per record: an opaque name, its last-changed time, which device wrote it, and the ciphertext |
+| `push` | only for devices with reminders on: where to send them (the browser's push address), their times, words and links, your time zone, which are done today, and which were sent today |
+| `config` | the server's own signing key for reminders, made the first time it's needed |
 
 Deleting the database deletes everything on the server; your devices keep their own copies.
 
@@ -45,5 +52,5 @@ template plus Account › D1 › Edit), and `api.cloudflare.com` and `workers.de
 network, one command does all of the above and prints the address:
 
 ```sh
-node server/deploy.mjs              # add --subdomain <name> the first time, if asked
+node server/deploy.mjs --cron       # add --subdomain <name> the first time, if asked
 ```

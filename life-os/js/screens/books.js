@@ -55,8 +55,7 @@ export default {
   render() {
     const shelves = Object.entries(B.STATUS).map(([id, label]) => ({ id, label, list: B.byStatus(id) })).filter((s) => s.list.length);
     return html`
-      ${pageHead({ title: 'Books', back: { to: 'plan', label: 'Plan' }, actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="Add a book">${icon('plus', { size: 20 })}</button>` })}
-      <p class="lead">Log pages from anywhere (“read 20 pages”) and the book you’re reading moves on.</p>
+      ${pageHead({ title: 'Books', back: { to: 'plan', label: 'Plan' }, actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="Add a book">${icon('plus', { size: 20 })}</button>`, info: 'Log pages from anywhere (“read 20 pages”) and the book you’re reading moves on.' })}
       ${shelves.length ? shelves.map((s) => html`<section class="block" data-key="shelf-${s.id}"><div class="block-head"><h2 class="block-title">${s.label}</h2><span class="block-meta tnum">${s.list.length}</span></div>
         <ul class="list">${s.list.map(bookRow)}</ul></section>`)
         : empty({ ic: 'book-open', title: 'No books yet', body: 'Add what you’re reading now. Pages you log move it along.', cta: 'Add a book', action: 'new' })}`;
