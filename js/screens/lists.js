@@ -16,8 +16,7 @@ export default {
     const free = STARTERS.filter((n) => !all.some((l) => l.name === n));
     return html`
       ${pageHead({ title: 'Lists', back: { to: 'plan', label: 'Plan' },
-        actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New list">${icon('plus', { size: 20 })}</button>` })}
-      <p class="lead">Checklists for what isn’t a task: shopping, packing, ideas. Tick as you go; untick to use a list again.</p>
+        actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New list">${icon('plus', { size: 20 })}</button>`, info: 'Checklists for what isn’t a task: shopping, packing, ideas. Tick as you go; untick to use a list again.' })}
       ${all.length ? html`<ol class="list sort-list" data-reorder="move-list">${all.map((l) => {
         const c = L.counts(l);
         return html`<li class="sort-row" data-key="${l.id}">

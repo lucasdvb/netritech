@@ -22,8 +22,7 @@ export default {
     const wk = startOfWeek(today());
     const moments = store.all('relationshipEntries').sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : cmp(b.createdAt || '', a.createdAt || '')));
     return html`
-      ${pageHead({ title: 'Relationships', back: { to: 'progress', label: 'Progress' } })}
-      <p class="lead">Presence, not performance. Notes here are for remembering, not scoring.</p>
+      ${pageHead({ title: 'Relationships', back: { to: 'progress', label: 'Progress' }, info: 'Presence, not performance. Notes here are for remembering, not scoring.' })}
       <div class="people">${PEOPLE.map((p) => {
         const h = H.habit(p.habit);
         const thisWeek = moments.filter((m) => m.person === p.id && m.date >= wk).length;

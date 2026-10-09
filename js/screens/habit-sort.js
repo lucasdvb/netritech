@@ -69,7 +69,7 @@ export default {
     const changed = Object.entries(map).some(([id, st]) => H.habit(id) && H.stateOf(H.habit(id)) !== st);
     return html`
       ${pageHead({ title: `Choose your ${H.focusWord()}`, back: { to: 'plan/habits', label: 'Habits' },
-        sub: 'Three habits get your full attention and count in your score. Everything else runs on autopilot and never counts against you.' })}
+        info: 'Three habits get your full attention and count in your score. Everything else runs on autopilot and never counts against you.' })}
 
       <section class="sort-three" data-key="three" aria-label="Your ${H.focusWord()}">
         <div class="block-head"><h2 class="block-title">Your ${H.focusWord()}</h2><span class="block-meta tnum">${focus.length} of ${H.focusLimit()}</span></div>

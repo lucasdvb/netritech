@@ -6,7 +6,7 @@ import { trainingCall } from '../domain/coach.js';
 import { today, startOfWeek, addDays, fmtDayShort, fmtMD, relativeDay, weekday, diffDays, lastNDays, cmp } from '../domain/dates.js';
 import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { pageHead, empty } from '../ui/components.js';
+import { pageHead, empty, infoBtn, tipText } from '../ui/components.js';
 import { barChart } from '../ui/charts.js';
 import { num, kgOut, weightUnit, loadText } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
@@ -37,14 +37,14 @@ function calfCard() {
   const weeks = F.weeklySeries(8, (d) => F.weekStats(d));
   const w = weeks[weeks.length - 1];
   return html`<div class="card">
-    <div class="card-head"><p class="section-label">Calves · priority</p><span class="badge">${w.calfSessions}/3 this week</span></div>
+    <div class="card-head"><p class="section-label">Calves · priority${infoBtn('calves', 'calf progression')}</p><span class="badge">${w.calfSessions}/3 this week</span></div>
+    ${tipText('calves', 'Progression: standing → single-leg → slow eccentric → paused, then add the 10 kg dumbbell.')}
     <div class="comp-grid">
       <div><p class="stat-label">Sessions</p><p class="comp-val tnum">${w.calfSessions}</p></div>
       <div><p class="stat-label">Total reps</p><p class="comp-val tnum">${num(w.calfReps)}</p></div>
       <div><p class="stat-label">Volume</p><p class="comp-val tnum">${num(kgOut(w.calfVolume || 0))}<small> ${weightUnit()}</small></p></div>
     </div>
     ${weeks.some((x) => x.calfReps) ? barChart({ labels: weeks.map((x) => fmtMD(x.date).split(' ')[1] || fmtMD(x.date)), tipLabels: weeks.map((x) => `Week of ${fmtMD(x.date)}`), values: weeks.map((x) => x.calfReps || null), color: 'var(--c-body)', fmt: (v) => `${num(v)} reps`, height: 110 }) : html`<p class="muted small">Calf reps per week will chart here.</p>`}
-    <p class="fine-print">Progression: standing → single-leg → slow eccentric → paused, then add the 10 kg dumbbell.</p>
   </div>`;
 }
 
@@ -52,12 +52,12 @@ function coreCard() {
   const weeks = F.weeklySeries(8, (d) => F.weekStats(d));
   const w = weeks[weeks.length - 1];
   const pbs = F.personalBests().filter((p) => p.exercise.category === 'core');
-  const plank = pbs.find((p) => p.exercise.id === 'e-plank');
   return html`<div class="card">
-    <div class="card-head"><p class="section-label">Core</p><span class="badge">${w.coreSessions}/3 this week</span></div>
+    <div class="card-head"><p class="section-label">Core${infoBtn('core', 'core training')}</p><span class="badge">${w.coreSessions}/3 this week</span></div>
+    ${tipText('core', 'Plank, side plank, dead bug, hollow hold, reverse crunch, leg raise. A stable trunk, not endless ab work.')}
     ${weeks.some((x) => x.coreSessions) ? barChart({ labels: weeks.map((x) => fmtMD(x.date).split(' ')[1] || ''), tipLabels: weeks.map((x) => `Week of ${fmtMD(x.date)}`), values: weeks.map((x) => x.coreSessions || null), color: 'var(--c-body)', fmt: (v) => `${v} sessions`, height: 90, goal: { value: 3, label: '3' } }) : html`<p class="muted small">Core sessions per week will chart here.</p>`}
     ${pbs.length ? html`<ul class="pb-mini">${pbs.slice(0, 4).map((p) => html`<li><span>${p.exercise.name}</span><b class="tnum">${p.exercise.metric === 'time' ? `${p.seconds} s` : `${p.reps} reps`}</b></li>`)}</ul>` : ''}
-    ${plank ? '' : html`<p class="fine-print">Plank, side plank, dead bug, hollow hold, reverse crunch, leg raise. A stable trunk, not endless ab work.</p>`}
+    
   </div>`;
 }
 
@@ -69,13 +69,13 @@ function postureCard() {
   const workdays = days.filter((d) => (store.profile().workDays || []).includes(weekday(d)));
   const avgBreaks = workdays.length ? workdays.reduce((a, d) => a + (M.review(d)?.breaks || 0), 0) / workdays.length : 0;
   return html`<div class="card">
-    <div class="card-head"><p class="section-label">Posture · this week</p></div>
+    <div class="card-head"><p class="section-label">Posture · this week${infoBtn('posture', 'posture tracking')}</p></div>
+    ${tipText('posture', 'Chin tucks, wall angels, thoracic extensions, external rotation, scapular work and chest stretching. Tracks consistency — it doesn’t diagnose or correct posture.')}
     <div class="comp-grid">
       <div><p class="stat-label">Mobility</p><p class="comp-val tnum">${mobDays}<small>/${days.length} days</small></p></div>
       <div><p class="stat-label">Breaks a day</p><p class="comp-val tnum">${num(avgBreaks, 1)}<small>/${store.settings().targets?.movementBreaks || 8}</small></p></div>
       <div><p class="stat-label">Desk check</p><p class="comp-val">${desk && H.periodDone(desk, today()) ? 'Done' : '—'}</p></div>
     </div>
-    <p class="fine-print">Chin tucks, wall angels, thoracic extensions, external rotation, scapular work and chest stretching. Tracks consistency — it doesn’t diagnose or correct posture.</p>
   </div>`;
 }
 

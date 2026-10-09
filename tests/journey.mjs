@@ -164,5 +164,36 @@ await step('settings persist: day end, units and theme survive a reload', async 
   await ev(() => window.__lifeos.store.setSettings({ weightUnit: 'kg', theme: 'system' }));
 });
 
+await step('explanations sit behind an ⓘ: folded, opened by a tap, folded again, and Settings keeps them all open', async () => {
+  await go('#/plan/tasks', '[data-view="tasks"] .page-title');
+  const btn = p.locator('[data-view="tasks"] .page-head .info-btn');
+  if ((await btn.getAttribute('aria-expanded')) !== 'false') throw new Error('starts open');
+  if (await p.locator('[data-view="tasks"] .tip-text').count()) throw new Error('text shown before the tap');
+  await btn.click();
+  await p.waitForSelector('[data-view="tasks"] .tip-text--page');
+  const txt = await p.textContent('[data-view="tasks"] .tip-text');
+  if (!txt.includes('One-off jobs')) throw new Error(txt);
+  if ((await btn.getAttribute('aria-expanded')) !== 'true') throw new Error('aria-expanded not set');
+  const ctl = await btn.getAttribute('aria-controls');
+  if (!(await p.locator(`#${ctl}`).count())) throw new Error('aria-controls points nowhere');
+  await p.screenshot({ path: `${OUT}/tip-open.png` });
+  await btn.click();
+  await p.waitForSelector('[data-view="tasks"] .tip-text', { state: 'detached' });
+  // A card-level ⓘ (Training › Calves) works the same way.
+  await go('#/plan/training', '[data-view="training"]');
+  await p.locator('[data-tip="calves"]').click();
+  await p.waitForSelector('[data-view="training"] #tip-calves');
+  if (!(await p.textContent('#tip-calves')).includes('single-leg')) throw new Error('card tip did not open');
+  // Settings › Show explanations: every one open, everywhere.
+  await go('#/you/settings', '[data-view="settings"]');
+  await p.locator('[data-action="tips"]').click();
+  if ((await ev(() => window.__lifeos.store.settings().showTips)) !== true) throw new Error('setting not saved');
+  await go('#/plan/goals', '[data-view="goals"] .page-title');
+  await p.waitForSelector('[data-view="goals"] .tip-text');
+  await go('#/you/settings', '[data-view="settings"]');
+  await p.locator('[data-action="tips"]').click();
+  if ((await ev(() => window.__lifeos.store.settings().showTips)) !== false) throw new Error('setting not cleared');
+});
+
 await ctx.close();
 await finish();

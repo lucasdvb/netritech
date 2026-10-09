@@ -32,15 +32,13 @@ export default {
     return html`
       ${pageHead({ title: `Your ${y}`, back: { to: 'progress', label: 'Progress' },
         actions: html`<div class="seg-mini"><button type="button" class="icon-btn icon-btn--sm" data-action="yr" data-d="-1" aria-label="Previous year" ${y <= first ? 'disabled' : ''}>${icon('chevron-left', { size: 18 })}</button>
-          <button type="button" class="icon-btn icon-btn--sm" data-action="yr" data-d="1" aria-label="Next year" ${y >= Number(today().slice(0, 4)) ? 'disabled' : ''}>${icon('chevron-right', { size: 18 })}</button></div>` })}
-      <p class="lead">One line a day around the circle, as long as the day was full; a blue point for every sealed day. The same days always make the same picture.</p>
+          <button type="button" class="icon-btn icon-btn--sm" data-action="yr" data-d="1" aria-label="Next year" ${y >= Number(today().slice(0, 4)) ? 'disabled' : ''}>${icon('chevron-right', { size: 18 })}</button></div>`, info: 'One line a day around the circle, as long as the day was full; a blue point for every sealed day. The same days always make the same picture. The print is 3600 × 4500 pixels: 12 × 15 inches at 300 dpi.' })}
       <div class="year-frame" data-key="art-${y}"><canvas class="year-art" role="img" aria-label="Your ${y}: ${data.logged} days you showed up, ${data.sealed} sealed"></canvas></div>
       <p class="year-stats"><b class="tnum">${data.logged}</b> days you showed up · <b class="tnum">${data.sealed}</b> sealed</p>
       <div class="row-actions">
         <button type="button" class="btn btn--primary" data-action="yr-print">${icon('download', { size: 18 })} Save print</button>
         <button type="button" class="btn btn--soft" data-action="yr-play">Watch it draw</button>
-      </div>
-      <p class="fine-print">The print is 3600 × 4500 pixels: 12 × 15 inches at 300 dpi.</p>`;
+      </div>`;
   },
   mount(el, { params }) { paint(el, yearData(yearOf(params))); },
   actions: {

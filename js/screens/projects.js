@@ -55,8 +55,7 @@ export default {
     const active = all.filter((p) => p.status === 'active');
     const rest = all.filter((p) => p.status !== 'active');
     return html`
-      ${pageHead({ title: 'Projects', back: { to: 'plan', label: 'Plan' }, actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New project">${icon('plus', { size: 20 })}</button>` })}
-      <p class="lead">An outcome and the tasks that get you there. One level, no folders.</p>
+      ${pageHead({ title: 'Projects', back: { to: 'plan', label: 'Plan' }, actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New project">${icon('plus', { size: 20 })}</button>`, info: 'An outcome and the tasks that get you there. One level, no folders.' })}
       ${active.length ? html`<ul class="list">${active.map(projectRow)}</ul>` : empty({ ic: 'layers', title: 'No projects yet', body: 'A project is anything with more than one task: a launch, a move, a renovation.', cta: 'New project', action: 'new' })}
       ${rest.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Paused or done</h2></div><ul class="list">${rest.map(projectRow)}</ul></section>` : ''}`;
   },

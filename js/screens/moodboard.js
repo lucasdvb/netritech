@@ -22,7 +22,7 @@ export default {
     const room = MB.MAX - list.length;
     const editing = ui.editing && list.length;
     return html`
-      ${pageHead({ title: 'Moodboard', back: { to: 'plan', label: 'Plan' }, sub: 'Up to five images that remind you why. They sit on Today.',
+      ${pageHead({ title: 'Moodboard', back: { to: 'plan', label: 'Plan' }, info: 'Up to five images that remind you why. They sit on Today.',
         actions: list.length ? html`<button type="button" class="btn btn--soft btn--sm" data-action="edit">${editing ? 'Done' : 'Edit'}</button>` : '' })}
       ${!list.length ? empty({ ic: 'image', title: 'Add what keeps you going', body: 'A place you’re working towards, people you do it for, the strength you’re building. Pictures stay on this device.' }) : ''}
       ${!list.length ? html`<div class="center block-tight">${addButton('Add images', 'btn btn--primary')}</div>` : ''}

@@ -3,7 +3,7 @@ import * as M from '../domain/metrics.js';
 import { today, lastNDays, fmtMD, relativeDay, fmtMDY, dayInline } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { pageHead, segmented, empty } from '../ui/components.js';
+import { pageHead, segmented, empty, infoBtn, tipText } from '../ui/components.js';
 import { lineChart } from '../ui/charts.js';
 import { num, weight as fw, signed, kgOut, weightUnit } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
@@ -67,10 +67,10 @@ export default {
         <div class="stat"><p class="stat-label">14-day avg</p><p class="stat-value tnum">${num(kgOut(s.avg14), 1)}</p><p class="stat-sub">${weightUnit()}</p></div>
       </div>
       <div class="card block">
-        <p class="section-label">30-day trend</p>
+        <p class="section-label">30-day trend${infoBtn('pace', 'the target pace')}</p>
+        ${tipText('pace', 'Target pace 0.4–0.8 kg a week. Faster isn’t better if strength, sleep or energy suffer.')}
         <p class="trend-line"><strong class="tnum">${rate == null ? '—' : `${rate >= 0 ? '−' : '+'}${num(Math.abs(rate), 2)} ${weightUnit() === 'kg' ? 'kg' : 'lb'}/week`}</strong> <span class="muted">${rateNote}</span></p>
         ${trajectory != null ? html`<p class="trend-line"><strong class="tnum">~${trajectory} weeks</strong> <span class="muted">to about ${fw(c.goalWeight)} at this pace · estimate, assumes muscle is kept</span></p>` : ''}
-        <p class="fine-print">Target pace 0.4–0.8 kg a week. Faster isn’t better if strength, sleep or energy suffer.</p>
       </div>`}
       ${entries.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Entries</h2><span class="block-meta">${entries.length}</span></div>
         <ul class="list">${entries.slice(0, ui.all ? 400 : 20).map((e, i) => {

@@ -71,7 +71,7 @@ export default {
     const archived = all.filter((h) => h.archived);
     const focus = H.focusHabits().length;
     return html`
-      ${pageHead({ title: 'Habits', sub: `${focus} of ${H.focusLimit()} in focus · ${active.length} active`,
+      ${pageHead({ title: 'Habits', sub: `${focus} of ${H.focusLimit()} in focus · ${active.length} active`, info: 'Tap a habit to see and change it. Swipe left on one to archive it; archived habits keep their history.',
         actions: html`<button type="button" class="icon-btn" data-action="open-search" aria-label="Search">${icon('search', { size: 20 })}</button>
           <button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New habit">${icon('plus', { size: 20 })}</button>` })}
       <div class="habits-bar">${segmented(GROUPINGS, by, { action: 'by', name: 'Group habits by' })}
@@ -98,8 +98,7 @@ export default {
           <span class="row-main"><span class="row-title">${h.name}</span><span class="row-sub">History kept</span></span>
           <button type="button" class="btn btn--soft btn--sm" data-action="restore" data-id="${h.id}">Restore</button></li>`)}</ul>
       </details>` : ''}
-      ${active.length ? html`<button type="button" class="link-btn tidy-link" data-action="tidy" data-key="tidy-link">${icon('sparkles', { size: 16 })} Tidy up: keep, shrink, pause or archive what you haven’t touched</button>` : ''}
-      <p class="foot-note">Swipe left on a habit to archive it. Archived habits keep their history.</p>`;
+      ${active.length ? html`<button type="button" class="link-btn tidy-link" data-action="tidy" data-key="tidy-link">${icon('sparkles', { size: 16 })} Tidy up: keep, shrink, pause or archive what you haven’t touched</button>` : ''}`;
   },
   mount(el, ctx) {
     attachSwipe(el);

@@ -6,15 +6,16 @@ import * as F from '../domain/fitness.js';
 import * as T from '../domain/tasks.js';
 import { parseHM, fmtHM } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
-import { pageHead } from '../ui/components.js';
+import { pageHead, infoBtn, tipText } from '../ui/components.js';
 import { num } from '../ui/format.js';
 
 const DAY_NAMES = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const PARTS = [['day', 'Day'], ['week', 'Week'], ['routines', 'Routines'], ['training', 'Training'], ['food', 'Food'], ['rules', 'Rules']];
 
 const shift = (hm, mins) => fmtHM(parseHM(hm) + mins);
-const sec = (id, title, body, link) => html`<section class="block plan-sec" id="plan-${id}" data-key="plan-${id}">
-  <div class="block-head"><h2 class="block-title">${title}</h2>${link ? html`<button type="button" class="link-btn" data-action="nav" data-to="${link[0]}">${link[1]}</button>` : ''}</div>
+const sec = (id, title, body, link, info) => html`<section class="block plan-sec" id="plan-${id}" data-key="plan-${id}">
+  <div class="block-head"><h2 class="block-title">${title}${info ? infoBtn(`plan-${id}`, title) : ''}</h2>${link ? html`<button type="button" class="link-btn" data-action="nav" data-to="${link[0]}">${link[1]}</button>` : ''}</div>
+  ${info ? tipText(`plan-${id}`, info) : ''}
   ${body}</section>`;
 const kv = (rows) => html`<dl class="facts plan-facts">${rows.filter(Boolean).map(([k, v]) => html`<div><dt>${k}</dt><dd>${v}</dd></div>`)}</dl>`;
 const notes = (rows) => html`<div class="card plan-notes">${rows.map(([k, v]) => html`<p><strong>${k}</strong> ${v}</p>`)}</div>`;
@@ -64,7 +65,7 @@ export default {
     const routines = ['h-morning-reset', 'h-mobility', 'h-evening'].map((id) => H.habit(id)).filter((h) => h && !h.archived && h.checklist?.length);
     const tpls = F.templates();
     return html`
-      ${pageHead({ title: 'Your plan', back: { to: 'plan', label: 'Plan' }, sub: 'The playbook behind the ticks. Edit any habit, template or target and this page follows.' })}
+      ${pageHead({ title: 'Your plan', back: { to: 'plan', label: 'Plan' }, info: 'The playbook behind the ticks. Edit any habit, template or target and this page follows.' })}
       <p class="plan-motto">Consistency over intensity · Progress over perfection · Systems over motivation · Health over extreme results</p>
       <nav class="chips plan-jump" aria-label="Jump to">${PARTS.map(([id, label]) => html`<button type="button" class="chip" data-action="jump" data-id="${id}">${label}</button>`)}</nav>
 
@@ -73,9 +74,8 @@ export default {
 
       ${sec('week', 'Your week', html`<ul class="card plan-week">${weekRows(p).map((r) => html`<li>
         <span class="plan-dow">${r.name.slice(0, 3)}</span>
-        <span class="plan-what"><strong>${r.session}</strong>${r.extras.length ? html`<span>${r.extras.join(' · ')}</span>` : ''}</span></li>`)}</ul>
-        <p class="fine-print">At least one lower-intensity day a week: walking, mobility, light cycling, family activity. Missed a session? Do the 20-minute minimum once, then carry on. Don’t move the whole week around.</p>`,
-        ['plan/training', 'Edit plan'])}
+        <span class="plan-what"><strong>${r.session}</strong>${r.extras.length ? html`<span>${r.extras.join(' · ')}</span>` : ''}</span></li>`)}</ul>`,
+        ['plan/training', 'Edit plan'], 'At least one lower-intensity day a week: walking, mobility, light cycling, family activity. Missed a session? Do the 20-minute minimum once, then carry on. Don’t move the whole week around.')}
 
       ${sec('routines', 'Routines', html`${routines.map((h) => html`<div class="card plan-routine">
           <div class="plan-routine-head"><strong>${h.name}</strong>${h.time ? html`<span class="muted tnum">${h.time}</span>` : ''}

@@ -16,6 +16,23 @@
 .page-sub, .empty-body, .card-lead, .lead, .sheet-note { max-width: var(--measure); }
 .page-sub { margin-top: 8px; color: var(--text-2); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
 .page-actions { display: flex; gap: var(--s2); align-items: center; }
+/* an ⓘ beside a title: a 44 px target around an 18 px mark, quiet until opened */
+.title-line { display: flex; align-items: center; gap: 2px; }
+.page-head--child .title-line { margin-top: var(--s4); }
+.page-head--child .title-line .page-title { margin-top: 0; }
+.info-btn {
+  flex: none; width: 44px; height: 44px; display: inline-grid; place-items: center; border-radius: 50%;
+  color: var(--text-3); vertical-align: middle; transition: color var(--dur-fast), transform var(--dur-fast) var(--ease-standard);
+}
+.block-title .info-btn, .card-title .info-btn, .section-label .info-btn { margin: -12px -10px -12px -4px; }
+.info-btn:active { transform: scale(.9); }
+.info-btn.is-open { color: var(--accent-ink); }
+@media (hover: hover) { .info-btn:hover { color: var(--text); } }
+.tip-text {
+  max-width: var(--measure); margin: 0 0 var(--s3); color: var(--text-2);
+  font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body);
+}
+.tip-text--page { margin: var(--s3) 0 0; font-size: var(--text-body); line-height: var(--leading-body); }
 .back-btn {
   display: inline-grid; place-items: center; width: 46px; height: 46px; border-radius: 50%;
   background: var(--surface); color: var(--text); transition: transform var(--dur-fast) var(--ease-standard), background var(--dur-fast);

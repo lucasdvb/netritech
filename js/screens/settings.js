@@ -104,6 +104,7 @@ export default {
       <section class="block"><h2 class="set-section">Appearance</h2>
         <div class="set-list">
           ${settingRow('Theme', segmented([{ id: 'system', label: 'System' }, { id: 'light', label: 'Light' }, { id: 'dark', label: 'Dark' }], s.theme, { action: 'theme', name: 'Theme', cls: 'seg--compact' }))}
+          ${settingRow('Show explanations', toggle(s.showTips === true, { action: 'tips', label: 'Show explanations' }), { hint: 'Keep the text behind every ⓘ open. Off, tap an ⓘ to read one.', key: 'tips' })}
           ${settingRow('Haptics', toggle(s.haptics !== false, { action: 'haptics', label: 'Haptics' }), { hint: 'Subtle taps where the device supports them.' })}
           ${settingRow('Sound', toggle(s.sound === true, { action: 'sound', label: 'Sound' }), { hint: 'Soft sounds made on the phone for completions, moments and sealing the day. Off by default.', key: 'sound' })}
           ${settingRow('Race against', segmented([{ id: 'four', label: 'A month ago' }, { id: 'best', label: 'Best week' }, { id: 'last', label: 'Last week' }], s.ghost || 'four', { action: 'ghost', name: 'Race against', cls: 'seg--compact' }), { hint: 'Your past self at the same point of the week, on Progress. A quiet marker, never an alarm.', key: 'ghost' })}
@@ -164,6 +165,7 @@ export default {
     },
     unit: ({ data }) => store.setSettings({ units: { ...store.settings().units, weight: data.value } }),
     'unit-len': ({ data }) => store.setSettings({ units: { ...store.settings().units, length: data.value } }),
+    tips: () => store.setSettings({ showTips: store.settings().showTips !== true }),
     sound: async () => { const on = store.settings().sound !== true; store.setSettings({ sound: on }); if (on) (await import('../ui/sound.js')).play('moment'); },
     ghost: ({ data }) => { store.setSettings({ ghost: data.value }); hap.tap(); },
     theme: ({ data }) => { store.setSettings({ theme: data.value }); hap.tap(); },

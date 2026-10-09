@@ -6,6 +6,7 @@ import * as sheet from './ui/sheet.js';
 import { toast, stick, retract } from './ui/toast.js';
 import { icon, loadIcons } from './ui/icons.js';
 import { html } from './ui/dom.js';
+import { toggleTip } from './ui/tips.js';
 import { firstRender, fill, waitingKeys } from './ui/later.js';
 import { app, APP_NAME } from './ui/app-api.js';
 import { today, setDayEnd } from './domain/dates.js';
@@ -277,6 +278,11 @@ const globalActions = {
   'open-search': () => app.search(),
   capture: async () => (await import('./screens/capture.js')).openCapture(),
   you: async () => (await import('./screens/you.js')).openYou(),
+  // An ⓘ beside a title: open or fold the explanation it stands for, then redraw where it lives.
+  tip: ({ data, sheet: s }) => {
+    toggleTip(data.tip);
+    if (s) s.refresh(); else refresh();
+  },
 };
 
 /** The view that owns an element: the list pane beside a detail, or the current screen. */

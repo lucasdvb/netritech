@@ -21,8 +21,7 @@ export default {
     const study = H.habit('h-study');
     const mr = store.get('monthlyReviews', monthKey(today()));
     return html`
-      ${pageHead({ title: 'Faith', back: { to: 'progress', label: 'Progress' } })}
-      <p class="lead">Practice, not points. This page shows what you did, nothing more.</p>
+      ${pageHead({ title: 'Faith', back: { to: 'progress', label: 'Progress' }, info: 'Practice, not points. This page shows what you did, nothing more.' })}
       <section class="card">
         <p class="section-label">Daily · last 7 days</p>
         <div class="practice">${DAILY.map(([id, label]) => {

@@ -21,8 +21,7 @@ export default {
   title: 'Privacy',
   render() {
     return html`
-      ${pageHead({ title: 'Privacy', back: { to: 'today', label: 'Today' } })}
-      <p class="lead">A personal system holds personal things. Here’s exactly where they go: nowhere.</p>
+      ${pageHead({ title: 'Privacy', back: { to: 'today', label: 'Today' }, info: 'A personal system holds personal things. Here’s exactly where they go: nowhere.' })}
       <ul class="privacy-list">${(syncOn() ? [POINTS[0], SYNC, ...(pushOn() ? [PUSH] : []), ...POINTS.slice(1).map((p) => (p[1] === 'Journal and photos stay put' ? PRIVATE_SYNCED : p))] : POINTS).map(([ic, t, b]) => html`<li><span class="row-ic" style="--ic:var(--accent)">${icon(ic, { size: 18 })}</span><div><p class="card-title">${t}</p><p class="muted">${b}</p></div></li>`)}</ul>
       <p class="fine-print">If you clear Safari’s website data for this site, your Life OS data is deleted with it. Keep a recent backup.</p>`;
   },
