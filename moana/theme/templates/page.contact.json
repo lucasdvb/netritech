@@ -4,16 +4,16 @@
       "type": "page-header",
       "settings": {
         "eyebrow": "Contact",
-        "heading": "Talk to us",
-        "text": "A question about a product, an order, or a skin worry you want to think through. Send a message and you will get an answer by email, or write to us on WhatsApp.",
+        "heading": "We're here for you",
+        "text": "A question about a product, your order, or which serum is right for you? Send a message and we'll answer by email, or chat with us on WhatsApp.",
         "center": false
       }
     },
     "contact": {
       "type": "contact",
       "settings": {
-        "trade_heading": "Brands and distributors",
-        "trade_text": "<p>Moana Beauté is opening supply accounts for the Mauritian market. If you represent a Korean beauty house or its regional distributor, we would like to talk.</p>"
+        "trade_heading": "",
+        "trade_text": ""
       }
     }
   },

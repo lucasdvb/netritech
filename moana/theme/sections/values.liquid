@@ -2,7 +2,7 @@
   <div class="page-width">
     <div class="section-head"><div class="section-head__text">
       {%- if section.settings.eyebrow != blank -%}<p class="t-label">{{ section.settings.eyebrow }}</p>{%- endif -%}
-      <h2 class="t-h2" id="val-{{ section.id }}">{{ section.settings.heading }}</h2>
+      <h2 class="t-h2" data-lines id="val-{{ section.id }}">{{ section.settings.heading }}</h2>
     </div></div>
     <ul class="values__list" role="list">
       {%- for block in section.blocks -%}
@@ -28,7 +28,7 @@
   "name": "Values",
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Label" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "What we stand by" }
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "What we promise you" }
   ],
   "blocks": [ { "type": "value", "name": "Value", "settings": [
     { "type": "text", "id": "title", "label": "Title", "default": "Authentic" },

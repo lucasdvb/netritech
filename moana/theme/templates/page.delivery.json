@@ -4,8 +4,8 @@
       "type": "page-header",
       "settings": {
         "eyebrow": "Delivery & returns",
-        "heading": "Delivered across the island",
-        "text": "Everything you need to know about getting your order, and what to do if something is not right.",
+        "heading": "From us to your <em>door</em>",
+        "text": "Everything about getting your order, and what to do if something isn't right.",
         "center": false
       }
     },
@@ -14,7 +14,7 @@
       "settings": {
         "eyebrow": "",
         "heading": "Delivery",
-        "note": "<p>Questions about a delivery? Write to us by email or on WhatsApp.</p>"
+        "note": "<p>Question about a delivery? Message us on WhatsApp or by email.</p>"
       },
       "blocks": {
         "row_1": {
@@ -28,7 +28,7 @@
           "type": "row",
           "settings": {
             "label": "Cost",
-            "value": "<p>Rs 100 per order. Free when your order is above Rs 1,500.</p>"
+            "value": "<p>Rs 100 per order, and free when your order is over Rs 1,500.</p>"
           }
         },
         "row_3": {
@@ -42,14 +42,14 @@
           "type": "row",
           "settings": {
             "label": "Collection",
-            "value": "<p>By arrangement in Mon Gout. Contact us by email or on WhatsApp and we will agree a time.</p>"
+            "value": "<p>In Mon Gout, by arrangement. Message us on WhatsApp or by email and we'll find a time.</p>"
           }
         },
         "row_5": {
           "type": "row",
           "settings": {
             "label": "Payment",
-            "value": "<p>By card at checkout. Card payments are processed by MIPS.</p>"
+            "value": "<p>By card at checkout. Payments go through MIPS.</p>"
           }
         }
       },
@@ -73,21 +73,21 @@
           "type": "row",
           "settings": {
             "label": "Unopened",
-            "value": "<p>Unopened products in their original packaging can be returned within seven days of delivery. Send us a message with your order number and the reason, and we will arrange it.</p>"
+            "value": "<p>Unopened products in their original packaging can come back within seven days of delivery. Send us your order number and the reason, and we'll sort it.</p>"
           }
         },
         "row_2": {
           "type": "row",
           "settings": {
             "label": "Opened",
-            "value": "<p>Opened skincare cannot be returned, for hygiene reasons, unless it is faulty or not what you ordered.</p>"
+            "value": "<p>Opened skincare can't be returned for hygiene reasons, unless it's faulty or not what you ordered.</p>"
           }
         },
         "row_3": {
           "type": "row",
           "settings": {
             "label": "Refunds",
-            "value": "<p>Once we have the product back and have checked it, we refund you on the card you paid with.</p>"
+            "value": "<p>Once it's back with us and checked, we refund the card you paid with.</p>"
           }
         }
       },

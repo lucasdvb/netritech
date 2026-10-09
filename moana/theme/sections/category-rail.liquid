@@ -3,7 +3,7 @@
     <div class="section-head">
       <div class="section-head__text">
         {%- if section.settings.eyebrow != blank -%}<p class="t-label">{{ section.settings.eyebrow }}</p>{%- endif -%}
-        <h2 class="t-h2" id="cat-{{ section.id }}">{{ section.settings.heading }}</h2>
+        <h2 class="t-h2" data-lines id="cat-{{ section.id }}">{{ section.settings.heading }}</h2>
       </div>
       <div class="rail-controls hide-mobile" data-rail-controls="cat-list-{{ section.id }}">
         <button type="button" data-rail-prev aria-label="{{ 'general.previous' | t }}">{% render 'icon', name: 'chevron-left' %}</button>
@@ -52,7 +52,7 @@
   "name": "Category rail",
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Label", "default": "Shop by category" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Every step of the routine" }
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Find your next favourite" }
   ],
   "blocks": [
     { "type": "category", "name": "Category", "settings": [

@@ -10,7 +10,7 @@
         "contact": { "type": "contact", "settings": { "heading": "Talk to us" } }
       },
       "block_order": ["shop", "help", "contact"],
-      "settings": { "tagline": "Authentic Korean skincare, chosen for island skin and delivered across Mauritius." }
+      "settings": { "tagline": "Korean skincare for island skin, delivered all over Mauritius." }
     }
   },
   "order": ["footer"]
