@@ -32,7 +32,7 @@
   --line: rgba(52, 52, 52, .14);
   --line-strong: rgba(52, 52, 52, .32);
   --focus: var(--c-forest);
-  --error: #8f2d24;         /* functional only: form errors (7.2:1 on white) */
+  --error: #8f2d24;         /* functional only: form errors (8.18:1 on white) */
   --overlay: rgba(28, 33, 8, .38);
 
   /* type */
@@ -136,7 +136,7 @@ table { border-collapse: collapse; }
 .section { padding-block: var(--section); }
 .section--flush-top { padding-top: 0; }
 .section--tight { padding-block: clamp(2.5rem, 1.5rem + 3vw, 4.5rem); }
-.section--wash { background: var(--wash); }
+.section--wash { background: var(--wash); --ink-soft: rgba(52, 52, 52, .88); } /* keeps secondary text above 4.5:1 on Spring */
 .section--frost { background: var(--c-frost); }
 .stack > * + * { margin-top: var(--stack, var(--s-4)); }
 .cluster { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center; }
