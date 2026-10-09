@@ -1,0 +1,119 @@
+{
+  "sections": {
+    "header": {
+      "type": "page-header",
+      "settings": {
+        "eyebrow": "The routine guide",
+        "heading": "Korean beauty, <em>step by step</em>, for island skin",
+        "text": "Korean beauty is a way of caring for skin, not a shelf of products. Gentle ingredients, thin layers, and the habit of returning to it every day.",
+        "center": false
+      }
+    },
+    "intro": {
+      "type": "rich-text",
+      "settings": {
+        "eyebrow": "",
+        "heading": "Why it suits island skin",
+        "text": "<p>It was built for skin that lives with heat and humidity, which is exactly what island skin does. Sun, salt and air conditioning wear the barrier down. The routine builds it back.</p>",
+        "use_page_content": false,
+        "link_label": "",
+        "link_url": "",
+        "wash": false
+      }
+    },
+    "routine": {
+      "type": "routine-steps",
+      "settings": {
+        "eyebrow": "Five steps, in order",
+        "heading": "The routine",
+        "text": "Morning and evening, in this order. Thin layers, patted in, a few seconds between each.",
+        "link_label": "Shop skincare",
+        "link_url": "shopify://collections/skincare",
+        "script": "",
+        "wash": true
+      },
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "name": "Cleanse",
+            "text": "A Korean routine begins clean. A low-foam cleanser lifts sunscreen, salt and the whole day without stripping the oils your skin makes for itself, which is what keeps it from going tight and then oily.",
+            "product": "beplain-mung-bean-ph-balanced-cleansing-foam"
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "name": "Tone",
+            "text": "A toner here is nothing like the alcohol splash you remember. It is a thin layer of water and calming plant extracts that puts moisture back and opens the way for everything after it.",
+            "product": "round-lab-1025-dokdo-toner"
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "name": "Treat",
+            "text": "The serum is where the routine does its real work. Small molecules, high concentration, one job: to hydrate, to brighten, or to calm. On island skin, hydration comes first.",
+            "product": "torriden-dive-in-low-molecular-hyaluronic-acid-serum"
+          }
+        },
+        "step_4": {
+          "type": "step",
+          "settings": {
+            "name": "Moisturise",
+            "text": "A cream seals everything in and supports the barrier that sun, salt and air conditioning wear down. Light in the morning, richer at night.",
+            "product": "dr-althea-345-relief-cream"
+          }
+        },
+        "step_5": {
+          "type": "step",
+          "settings": {
+            "name": "Protect",
+            "text": "Sunscreen every morning, rain or shine, indoors or out. It is the one step that decides how your skin looks in ten years, and Korean formulas make it a pleasure to wear.",
+            "product": "beauty-of-joseon-relief-sun-rice-niacinamide"
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3",
+        "step_4",
+        "step_5"
+      ]
+    },
+    "start": {
+      "type": "product-list",
+      "settings": {
+        "eyebrow": "New to K-beauty?",
+        "heading": "Begin with three steps, not five",
+        "text": "Cleanse, tone, protect. Do that for a month, then add the serum and the cream when it feels natural.",
+        "products": [
+          "beplain-mung-bean-ph-balanced-cleansing-foam",
+          "round-lab-1025-dokdo-toner",
+          "beauty-of-joseon-relief-sun-rice-niacinamide"
+        ],
+        "wash": false
+      }
+    },
+    "auth": {
+      "type": "rich-text",
+      "settings": {
+        "eyebrow": "Why authentic matters",
+        "heading": "The real formula, or nothing",
+        "text": "<p>A lot of Korean beauty in Mauritius arrives in a suitcase, or through a reseller who cannot say where it was kept, for how long, or whether it is the real thing.</p><p>Moana Beauté exists to change that. On every product you see the full ingredient list, so you can check it against the brand's own. And when you have a question, write to us.</p>",
+        "use_page_content": false,
+        "link_label": "Ask us anything",
+        "link_url": "shopify://pages/contact",
+        "wash": false
+      }
+    }
+  },
+  "order": [
+    "header",
+    "intro",
+    "routine",
+    "start",
+    "auth"
+  ]
+}

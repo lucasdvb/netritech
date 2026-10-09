@@ -1,0 +1,38 @@
+<section class="section rich{% if section.settings.wash %} section--wash{% endif %}">
+  <div class="page-width rich__grid{% if section.settings.heading == blank %} rich__grid--solo{% endif %}">
+    {%- if section.settings.heading != blank -%}
+      <div>
+        {%- if section.settings.eyebrow != blank -%}<p class="t-label">{{ section.settings.eyebrow }}</p>{%- endif -%}
+        <h2 class="t-h2 reveal">{{ section.settings.heading }}</h2>
+      </div>
+    {%- endif -%}
+    <div class="rte rich__body reveal" style="--i:1">
+      {%- if section.settings.use_page_content and page.content != blank -%}{{ page.content }}{%- else -%}{{ section.settings.text }}{%- endif -%}
+      {%- if section.settings.link_label != blank -%}<p><a class="btn btn--secondary" href="{{ section.settings.link_url }}">{{ section.settings.link_label }}</a></p>{%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+.rich__grid { display: grid; gap: var(--s-5); }
+.rich__grid > div > * + * { margin-top: var(--s-3); }
+.rich__body { max-width: 40rem; font-size: 1.0625rem; }
+.rich__grid--solo .rich__body { max-width: 46rem; }
+@media (min-width: 990px) { .rich__grid:not(.rich__grid--solo) { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(3rem, 7vw, 8rem); } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Rich text",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Label" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    { "type": "checkbox", "id": "use_page_content", "label": "Use the page's own content when it has some", "default": false },
+    { "type": "text", "id": "link_label", "label": "Button label" },
+    { "type": "url", "id": "link_url", "label": "Button link" },
+    { "type": "checkbox", "id": "wash", "label": "Spring background", "default": false }
+  ],
+  "presets": [{ "name": "Rich text" }]
+}
+{% endschema %}

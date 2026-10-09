@@ -1,0 +1,106 @@
+{
+  "sections": {
+    "header": {
+      "type": "page-header",
+      "settings": {
+        "eyebrow": "Delivery & returns",
+        "heading": "Delivered across the island",
+        "text": "Everything you need to know about getting your order, and what to do if something is not right.",
+        "center": false
+      }
+    },
+    "delivery": {
+      "type": "info-table",
+      "settings": {
+        "eyebrow": "",
+        "heading": "Delivery",
+        "note": "<p>Questions about a delivery? Write to us by email or on WhatsApp.</p>"
+      },
+      "blocks": {
+        "row_1": {
+          "type": "row",
+          "settings": {
+            "label": "Where",
+            "value": "<p>Anywhere in Mauritius.</p>"
+          }
+        },
+        "row_2": {
+          "type": "row",
+          "settings": {
+            "label": "Cost",
+            "value": "<p>Rs 100 per order. Free when your order is above Rs 1,500.</p>"
+          }
+        },
+        "row_3": {
+          "type": "row",
+          "settings": {
+            "label": "When",
+            "value": "<p>Usually 1 to 3 working days after your order is confirmed.</p>"
+          }
+        },
+        "row_4": {
+          "type": "row",
+          "settings": {
+            "label": "Collection",
+            "value": "<p>By arrangement in Mon Gout. Contact us by email or on WhatsApp and we will agree a time.</p>"
+          }
+        },
+        "row_5": {
+          "type": "row",
+          "settings": {
+            "label": "Payment",
+            "value": "<p>By card at checkout. Card payments are processed by MIPS.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "row_1",
+        "row_2",
+        "row_3",
+        "row_4",
+        "row_5"
+      ]
+    },
+    "returns": {
+      "type": "info-table",
+      "settings": {
+        "eyebrow": "",
+        "heading": "Returns",
+        "note": ""
+      },
+      "blocks": {
+        "row_1": {
+          "type": "row",
+          "settings": {
+            "label": "Unopened",
+            "value": "<p>Unopened products in their original packaging can be returned within seven days of delivery. Send us a message with your order number and the reason, and we will arrange it.</p>"
+          }
+        },
+        "row_2": {
+          "type": "row",
+          "settings": {
+            "label": "Opened",
+            "value": "<p>Opened skincare cannot be returned, for hygiene reasons, unless it is faulty or not what you ordered.</p>"
+          }
+        },
+        "row_3": {
+          "type": "row",
+          "settings": {
+            "label": "Refunds",
+            "value": "<p>Once we have the product back and have checked it, we refund you on the card you paid with.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "row_1",
+        "row_2",
+        "row_3"
+      ]
+    }
+  },
+  "order": [
+    "header",
+    "delivery",
+    "returns"
+  ]
+}

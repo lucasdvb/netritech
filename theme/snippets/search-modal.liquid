@@ -1,0 +1,33 @@
+{%- comment -%}
+  Search overlay. A plain GET form to /search (works without JS). theme.js adds predictive results from
+  Shopify's /search/suggest endpoint (section `predictive-search`). Before typing it shows popular routes.
+{%- endcomment -%}
+<div class="search-modal" id="search-modal" role="dialog" aria-modal="true" aria-label="{{ 'search.title' | t }}" tabindex="-1" data-search-modal hidden>
+  <div class="search-modal__panel">
+    <div class="page-width">
+      <form class="search-modal__form" action="{{ routes.search_url }}" method="get" role="search" data-search-form>
+        <input type="hidden" name="options[prefix]" value="last">
+        <label class="sr-only" for="search-input">{{ 'search.label' | t }}</label>
+        {%- render 'icon', name: 'search' -%}
+        <input class="search-modal__input" id="search-input" type="search" name="q" autocomplete="off" spellcheck="false"
+               placeholder="{{ 'search.placeholder' | t }}" role="combobox" aria-expanded="false" aria-controls="predictive-results" aria-autocomplete="list" data-search-input>
+        <button class="icon-btn" type="button" data-search-close>{%- render 'icon', name: 'close' -%}<span class="sr-only">{{ 'general.close' | t }}</span></button>
+      </form>
+      <div class="search-modal__results" id="predictive-results" data-search-results aria-live="polite">
+        <div class="search-modal__start" data-search-start>
+          <p class="t-label">{{ 'search.popular' | t }}</p>
+          <div class="cluster">
+            {%- assign quick = settings.concern_tags | split: ',' -%}
+            {%- for q in quick limit: 6 -%}
+              <a class="pill pill--sm" href="{{ collections['skincare'].url }}/{{ q | strip | handle }}">{{ q | strip }}</a>
+            {%- endfor -%}
+            {%- assign menu = linklists['moana-main'] | default: linklists['main-menu'] -%}
+            {%- for child in menu.links.first.links limit: 4 -%}
+              <a class="pill pill--sm" href="{{ child.url }}">{{ child.title }}</a>
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

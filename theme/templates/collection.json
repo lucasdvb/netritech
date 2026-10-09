@@ -1,0 +1,84 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "blocks": {
+        "sub_1": {
+          "type": "sub",
+          "settings": {
+            "collection": "cleansers",
+            "label": ""
+          }
+        },
+        "sub_2": {
+          "type": "sub",
+          "settings": {
+            "collection": "toners-essences",
+            "label": ""
+          }
+        },
+        "sub_3": {
+          "type": "sub",
+          "settings": {
+            "collection": "serums-ampoules",
+            "label": ""
+          }
+        },
+        "sub_4": {
+          "type": "sub",
+          "settings": {
+            "collection": "moisturisers",
+            "label": ""
+          }
+        },
+        "sub_5": {
+          "type": "sub",
+          "settings": {
+            "collection": "sunscreen",
+            "label": ""
+          }
+        },
+        "sub_6": {
+          "type": "sub",
+          "settings": {
+            "collection": "masks",
+            "label": ""
+          }
+        },
+        "sub_7": {
+          "type": "sub",
+          "settings": {
+            "collection": "eye-care",
+            "label": ""
+          }
+        },
+        "sub_8": {
+          "type": "sub",
+          "settings": {
+            "collection": "lip-care",
+            "label": ""
+          }
+        }
+      },
+      "block_order": [
+        "sub_1",
+        "sub_2",
+        "sub_3",
+        "sub_4",
+        "sub_5",
+        "sub_6",
+        "sub_7",
+        "sub_8"
+      ],
+      "settings": {
+        "per_page": 24,
+        "show_tag_pills": true,
+        "show_label": false,
+        "parent": "skincare"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

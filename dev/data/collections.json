@@ -1,0 +1,309 @@
+[
+ {
+  "handle": "skincare",
+  "title": "Skincare",
+  "description": "<p>Korean skincare for the face: cleansers, toners, serums, moisturisers, sunscreen, masks, eye care and lip care.</p>",
+  "rules": {
+   "type": [
+    "Cleanser",
+    "Cleansing Balm",
+    "Toner",
+    "Serum",
+    "Vitamin C",
+    "Moisturiser",
+    "Sunscreen",
+    "Face Mask",
+    "Eye Cream",
+    "Eye Mask",
+    "Lip Mask",
+    "Lip Serum"
+   ]
+  }
+ },
+ {
+  "handle": "cleansers",
+  "title": "Cleansers",
+  "description": "<p>Cleansers from Moana Beaut\u00e9.</p>",
+  "rules": {
+   "type": [
+    "Cleanser",
+    "Cleansing Balm"
+   ]
+  }
+ },
+ {
+  "handle": "toners-essences",
+  "title": "Toners & Essences",
+  "description": "<p>Toners &amp; Essences from Moana Beaut\u00e9.</p>",
+  "rules": {
+   "type": [
+    "Toner"
+   ]
+  }
+ },
+ {
+  "handle": "serums-ampoules",
+  "title": "Serums & Ampoules",
+  "description": "<p>Serums &amp; Ampoules from Moana Beaut\u00e9.</p>",
+  "rules": {
+   "type": [
+    "Serum",
+    "Vitamin C"
+   ]
+  }
+ },
+ {
+  "handle": "moisturisers",
+  "title": "Moisturisers",
+  "description": "<p>Moisturisers from Moana Beaut\u00e9.</p>",
+  "rules": {
+   "type": [
+    "Moisturiser"
+   ]
+  }
+ },
+ {
+  "handle": "sunscreen",
+  "title": "Sunscreen",
+  "description": "<p>Sunscreen from Moana Beaut\u00e9.</p>",
+  "rules": {
+   "type": [
+    "Sunscreen"
+   ]
+  }
+ },
+ {
+  "handle": "masks",
+  "title": "Masks",
+  "description": "<p>Masks from Moana Beaut\u00e9.</p>",
+  "rules": {
+   "type": [
+    "Face Mask"
+   ]
+  }
+ },
+ {
+  "handle": "eye-care",
+  "title": "Eye Care",
+  "description": "<p>Eye Care from Moana Beaut\u00e9.</p>",
+  "rules": {
+   "type": [
+    "Eye Cream",
+    "Eye Mask"
+   ]
+  }
+ },
+ {
+  "handle": "lip-care",
+  "title": "Lip Care",
+  "description": "<p>Lip Care from Moana Beaut\u00e9.</p>",
+  "rules": {
+   "type": [
+    "Lip Mask",
+    "Lip Serum"
+   ]
+  }
+ },
+ {
+  "handle": "new",
+  "title": "New",
+  "description": "<p>The launch collection: what is new at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "tag": [
+    "New"
+   ]
+  }
+ },
+ {
+  "handle": "makeup",
+  "title": "Makeup",
+  "description": "",
+  "rules": {
+   "none": true
+  }
+ },
+ {
+  "handle": "hair-care",
+  "title": "Hair Care",
+  "description": "",
+  "rules": {
+   "none": true
+  }
+ },
+ {
+  "handle": "body-care",
+  "title": "Body Care",
+  "description": "",
+  "rules": {
+   "none": true
+  }
+ },
+ {
+  "handle": "gifts-sets",
+  "title": "Gifts & Sets",
+  "description": "",
+  "rules": {
+   "none": true
+  }
+ },
+ {
+  "handle": "anua",
+  "title": "Anua",
+  "description": "<p>Anua products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "Anua"
+   ]
+  }
+ },
+ {
+  "handle": "beplain",
+  "title": "Beplain",
+  "description": "<p>Beplain products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "Beplain"
+   ]
+  }
+ },
+ {
+  "handle": "round-lab",
+  "title": "Round Lab",
+  "description": "<p>Round Lab products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "Round Lab"
+   ]
+  }
+ },
+ {
+  "handle": "banila-co",
+  "title": "Banila Co",
+  "description": "<p>Banila Co products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "Banila Co"
+   ]
+  }
+ },
+ {
+  "handle": "beauty-of-joseon",
+  "title": "Beauty of Joseon",
+  "description": "<p>Beauty of Joseon products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "Beauty of Joseon"
+   ]
+  }
+ },
+ {
+  "handle": "abib",
+  "title": "Abib",
+  "description": "<p>Abib products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "Abib"
+   ]
+  }
+ },
+ {
+  "handle": "laneige",
+  "title": "Laneige",
+  "description": "<p>Laneige products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "Laneige"
+   ]
+  }
+ },
+ {
+  "handle": "dr-reju-all",
+  "title": "Dr.Reju-All",
+  "description": "<p>Dr.Reju-All products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "Dr.Reju-All"
+   ]
+  }
+ },
+ {
+  "handle": "biodance",
+  "title": "Biodance",
+  "description": "<p>Biodance products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "Biodance"
+   ]
+  }
+ },
+ {
+  "handle": "centellian24",
+  "title": "Centellian24",
+  "description": "<p>Centellian24 products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "Centellian24"
+   ]
+  }
+ },
+ {
+  "handle": "s-nature",
+  "title": "S.Nature",
+  "description": "<p>S.Nature products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "S.Nature"
+   ]
+  }
+ },
+ {
+  "handle": "celimax",
+  "title": "Celimax",
+  "description": "<p>Celimax products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "Celimax"
+   ]
+  }
+ },
+ {
+  "handle": "dr-althea",
+  "title": "Dr.Althea",
+  "description": "<p>Dr.Althea products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "Dr.Althea"
+   ]
+  }
+ },
+ {
+  "handle": "torriden",
+  "title": "Torriden",
+  "description": "<p>Torriden products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "Torriden"
+   ]
+  }
+ },
+ {
+  "handle": "skin1004",
+  "title": "SKIN1004",
+  "description": "<p>SKIN1004 products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "SKIN1004"
+   ]
+  }
+ },
+ {
+  "handle": "arencia",
+  "title": "Arencia",
+  "description": "<p>Arencia products at Moana Beaut\u00e9.</p>",
+  "rules": {
+   "vendor": [
+    "Arencia"
+   ]
+  }
+ }
+]

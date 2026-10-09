@@ -1,0 +1,51 @@
+{%- assign img = section.settings.image -%}
+<section class="section iwt{% if section.settings.flip %} iwt--flip{% endif %}" aria-labelledby="iwt-{{ section.id }}">
+  <div class="page-width iwt__grid">
+    <div class="iwt__media media rounded reveal-media">
+      {%- if img -%}
+        {{ img | image_url: width: 1400 | image_tag: widths: '480, 640, 800, 1000, 1200, 1400', sizes: '(min-width: 990px) 46vw, 100vw', loading: 'lazy', alt: section.settings.image_alt | default: img.alt }}
+      {%- elsif section.settings.theme_image != blank -%}
+        <img src="{{ section.settings.theme_image | append: '-1200.jpg' | asset_url }}" srcset="{{ section.settings.theme_image | append: '-800.jpg' | asset_url }} 800w, {{ section.settings.theme_image | append: '-1200.jpg' | asset_url }} 1200w" sizes="(min-width: 990px) 46vw, 100vw" width="1200" height="1500" loading="lazy" alt="{{ section.settings.image_alt | escape }}">
+      {%- endif -%}
+    </div>
+    <div class="iwt__copy">
+      {%- if section.settings.eyebrow != blank -%}<p class="t-label reveal">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h2 class="t-h1 reveal" style="--i:1" id="iwt-{{ section.id }}">{{ section.settings.heading }}</h2>
+      {%- if section.settings.text != blank -%}<div class="rte t-soft reveal" style="--i:2">{{ section.settings.text }}</div>{%- endif -%}
+      {%- if section.settings.script != blank -%}<p class="t-script reveal" style="--i:3" aria-hidden="true">{{ section.settings.script }}</p>{%- endif -%}
+      {%- if section.settings.link_label != blank -%}
+        <a class="link-arrow reveal" style="--i:4" href="{{ section.settings.link_url }}">{{ section.settings.link_label }} {% render 'icon', name: 'arrow-right' %}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+.iwt__grid { display: grid; gap: var(--s-7); align-items: center; }
+.iwt__media { aspect-ratio: 4 / 5; }
+.iwt__copy > * + * { margin-top: var(--s-5); }
+.iwt__copy .rte { max-width: 34rem; font-size: var(--fs-lead); line-height: 1.65; }
+@media (min-width: 990px) {
+  .iwt__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(3rem, 7vw, 8rem); }
+  .iwt--flip .iwt__media { order: 2; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Image with text",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "select", "id": "theme_image", "label": "Theme image (when no image is chosen)", "default": "about", "options": [ { "value": "", "label": "None" }, { "value": "about", "label": "Two friends on the beach" } ] },
+    { "type": "text", "id": "image_alt", "label": "Image description (alt text)", "default": "Two women laughing together on a beach in Mauritius" },
+    { "type": "checkbox", "id": "flip", "label": "Image on the right", "default": false },
+    { "type": "text", "id": "eyebrow", "label": "Label", "default": "About Moana Beauté" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "For every woman who lives on an island" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Moana Beauté began with a simple frustration: the Korean skincare everyone talked about online was hard to find in Mauritius, or sold by people who could not say where it came from. So we set out to do it properly. Real products, honest prices, delivery anywhere on the island.</p>" },
+    { "type": "text", "id": "script", "label": "Script accent (Pinyon Script)", "default": "you already belong here" },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "Our story" },
+    { "type": "url", "id": "link_url", "label": "Link" }
+  ],
+  "presets": [{ "name": "Image with text" }]
+}
+{% endschema %}

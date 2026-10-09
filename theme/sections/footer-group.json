@@ -1,0 +1,17 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "shop": { "type": "menu", "settings": { "heading": "Shop", "menu": "moana-footer-shop" } },
+        "help": { "type": "menu", "settings": { "heading": "Help", "menu": "moana-footer-help" } },
+        "contact": { "type": "contact", "settings": { "heading": "Talk to us" } }
+      },
+      "block_order": ["shop", "help", "contact"],
+      "settings": { "tagline": "Authentic Korean skincare, chosen for island skin and delivered across Mauritius." }
+    }
+  },
+  "order": ["footer"]
+}

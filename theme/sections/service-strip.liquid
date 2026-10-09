@@ -1,0 +1,48 @@
+<section class="service-strip" aria-label="{{ section.settings.label | escape }}">
+  <div class="page-width">
+    <ul class="service-strip__list" role="list">
+      {%- for block in section.blocks -%}
+        <li class="service-strip__item" {{ block.shopify_attributes }}>
+          {%- render 'icon', name: block.settings.icon -%}
+          <div>
+            <p class="t-sub">{{ block.settings.title }}</p>
+            {%- if block.settings.text != blank -%}<p class="t-xs t-soft">{{ block.settings.text }}</p>{%- endif -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% stylesheet %}
+.service-strip { border-block: 1px solid var(--line); }
+.service-strip__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.service-strip__item { display: flex; gap: var(--s-3); align-items: flex-start; padding: var(--s-5) var(--s-3) var(--s-5) 0; }
+.service-strip__item svg { width: 24px; height: 24px; flex: none; color: var(--brand); }
+.service-strip__item .t-xs { margin-top: 2px; }
+@media (max-width: 749px) { .service-strip__item:nth-child(n+3) { border-top: 1px solid var(--line); } .service-strip__item:nth-child(even) { padding-left: var(--s-3); border-left: 1px solid var(--line); } }
+@media (min-width: 750px) {
+  .service-strip__list { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .service-strip__item { padding: var(--s-6) var(--s-5); }
+  .service-strip__item + .service-strip__item { border-left: 1px solid var(--line); }
+  .service-strip__item:first-child { padding-left: 0; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Service strip",
+  "settings": [ { "type": "text", "id": "label", "label": "Accessible label", "default": "Why shop with us" } ],
+  "max_blocks": 4,
+  "blocks": [
+    { "type": "item", "name": "Item", "settings": [
+      { "type": "select", "id": "icon", "label": "Icon", "default": "truck", "options": [
+        { "value": "truck", "label": "Delivery" }, { "value": "list", "label": "Ingredients" }, { "value": "card", "label": "Card" }, { "value": "leaf", "label": "Leaf" }, { "value": "chat", "label": "Chat" }, { "value": "check", "label": "Check" }, { "value": "drop", "label": "Drop" }
+      ] },
+      { "type": "text", "id": "title", "label": "Title", "default": "Delivered across Mauritius" },
+      { "type": "text", "id": "text", "label": "Text" }
+    ] }
+  ],
+  "presets": [{ "name": "Service strip" }]
+}
+{% endschema %}

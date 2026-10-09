@@ -1,0 +1,465 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "eyebrow": "Korean skincare · Mauritius",
+        "heading": "Skin care, <em>chosen</em> for island skin",
+        "text": "Authentic Korean formulas for skin that lives with sun, salt and humidity. Every ingredient listed, every price honest, delivered across the island.",
+        "button_label": "Shop skincare",
+        "button_link": "shopify://collections/skincare",
+        "link_label": "Find your routine",
+        "link_url": "shopify://pages/k-beauty",
+        "product": "torriden-dive-in-low-molecular-hyaluronic-acid-serum",
+        "product_label": "Start here",
+        "image_alt": "Dark tropical leaves wet with rain"
+      },
+      "blocks": {
+        "fact_1": {
+          "type": "fact",
+          "settings": {
+            "icon": "truck",
+            "text": "Island-wide delivery"
+          }
+        },
+        "fact_2": {
+          "type": "fact",
+          "settings": {
+            "icon": "list",
+            "text": "Full ingredient lists"
+          }
+        },
+        "fact_3": {
+          "type": "fact",
+          "settings": {
+            "icon": "card",
+            "text": "Pay by card"
+          }
+        }
+      },
+      "block_order": [
+        "fact_1",
+        "fact_2",
+        "fact_3"
+      ]
+    },
+    "service": {
+      "type": "service-strip",
+      "settings": {
+        "label": "Why shop with us"
+      },
+      "blocks": {
+        "item_1": {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "title": "Free delivery above Rs 1,500",
+            "text": "Rs 100 anywhere in Mauritius below that."
+          }
+        },
+        "item_2": {
+          "type": "item",
+          "settings": {
+            "icon": "leaf",
+            "title": "1 to 3 working days",
+            "text": "Or collect in Mon Gout, by arrangement."
+          }
+        },
+        "item_3": {
+          "type": "item",
+          "settings": {
+            "icon": "list",
+            "title": "Every ingredient listed",
+            "text": "The full list is on every product page."
+          }
+        },
+        "item_4": {
+          "type": "item",
+          "settings": {
+            "icon": "chat",
+            "title": "Real people, real answers",
+            "text": "Write to us by email or on WhatsApp."
+          }
+        }
+      },
+      "block_order": [
+        "item_1",
+        "item_2",
+        "item_3",
+        "item_4"
+      ]
+    },
+    "categories": {
+      "type": "category-rail",
+      "settings": {
+        "eyebrow": "Shop by category",
+        "heading": "Every step of the routine"
+      },
+      "blocks": {
+        "category_1": {
+          "type": "category",
+          "settings": {
+            "collection": "cleansers",
+            "label": "",
+            "image": ""
+          }
+        },
+        "category_2": {
+          "type": "category",
+          "settings": {
+            "collection": "toners-essences",
+            "label": "",
+            "image": ""
+          }
+        },
+        "category_3": {
+          "type": "category",
+          "settings": {
+            "collection": "serums-ampoules",
+            "label": "",
+            "image": ""
+          }
+        },
+        "category_4": {
+          "type": "category",
+          "settings": {
+            "collection": "moisturisers",
+            "label": "",
+            "image": ""
+          }
+        },
+        "category_5": {
+          "type": "category",
+          "settings": {
+            "collection": "sunscreen",
+            "label": "",
+            "image": ""
+          }
+        },
+        "category_6": {
+          "type": "category",
+          "settings": {
+            "collection": "masks",
+            "label": "",
+            "image": ""
+          }
+        },
+        "category_7": {
+          "type": "category",
+          "settings": {
+            "collection": "eye-care",
+            "label": "",
+            "image": ""
+          }
+        },
+        "category_8": {
+          "type": "category",
+          "settings": {
+            "collection": "lip-care",
+            "label": "",
+            "image": ""
+          }
+        }
+      },
+      "block_order": [
+        "category_1",
+        "category_2",
+        "category_3",
+        "category_4",
+        "category_5",
+        "category_6",
+        "category_7",
+        "category_8"
+      ]
+    },
+    "launch": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "The launch collection",
+        "heading": "Our first picks. Chosen, not gathered.",
+        "text": "We open with a small, careful range. Each product answers one need, for skin that lives with sun, salt and humidity.",
+        "collection": "new",
+        "link_label": "Shop all",
+        "limit": 8,
+        "wash": false
+      }
+    },
+    "concerns": {
+      "type": "concern-finder",
+      "settings": {
+        "eyebrow": "Shop by concern",
+        "heading": "Start with what your skin is asking for",
+        "text": "Every product is tagged by the concern it treats and the skin it suits, so you can find yours in two taps.",
+        "skin_heading": "Or by skin type",
+        "collection": "skincare"
+      },
+      "blocks": {
+        "concern_1": {
+          "type": "concern",
+          "settings": {
+            "tag": "Hydration",
+            "label": "",
+            "note": "Thirsty, tight or flaky skin"
+          }
+        },
+        "concern_2": {
+          "type": "concern",
+          "settings": {
+            "tag": "Dullness",
+            "label": "",
+            "note": "When skin has lost its glow"
+          }
+        },
+        "concern_3": {
+          "type": "concern",
+          "settings": {
+            "tag": "Dark spots",
+            "label": "",
+            "note": "Marks and uneven tone"
+          }
+        },
+        "concern_4": {
+          "type": "concern",
+          "settings": {
+            "tag": "Breakouts",
+            "label": "",
+            "note": "Skin that breaks out easily"
+          }
+        },
+        "concern_5": {
+          "type": "concern",
+          "settings": {
+            "tag": "Fine lines",
+            "label": "",
+            "note": "Lines and loss of firmness"
+          }
+        },
+        "concern_6": {
+          "type": "concern",
+          "settings": {
+            "tag": "Pores",
+            "label": "",
+            "note": "Visible pores and shine"
+          }
+        },
+        "concern_7": {
+          "type": "concern",
+          "settings": {
+            "tag": "Redness",
+            "label": "",
+            "note": "Skin that reddens easily"
+          }
+        },
+        "concern_8": {
+          "type": "concern",
+          "settings": {
+            "tag": "Sun protection",
+            "label": "",
+            "note": "Daily SPF50+ for the island sun"
+          }
+        },
+        "concern_9": {
+          "type": "concern",
+          "settings": {
+            "tag": "Dark circles",
+            "label": "",
+            "note": "Tired, puffy-looking eyes"
+          }
+        }
+      },
+      "block_order": [
+        "concern_1",
+        "concern_2",
+        "concern_3",
+        "concern_4",
+        "concern_5",
+        "concern_6",
+        "concern_7",
+        "concern_8",
+        "concern_9"
+      ]
+    },
+    "routine": {
+      "type": "routine-steps",
+      "settings": {
+        "eyebrow": "New to K-beauty?",
+        "heading": "Five steps. Ten quiet minutes.",
+        "text": "Cleanse, tone, treat, moisturise, protect. The routine behind Korean skin, taken slowly, with the right product at every step.",
+        "link_label": "Read the routine guide",
+        "link_url": "shopify://pages/k-beauty",
+        "script": "",
+        "wash": true
+      },
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "name": "Cleanse",
+            "text": "A low-foam cleanser lifts sunscreen, salt and the day without stripping the oils your skin makes for itself.",
+            "product": "beplain-mung-bean-ph-balanced-cleansing-foam"
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "name": "Tone",
+            "text": "Nothing like the alcohol splash you remember: a thin layer of water and calming extracts that puts moisture back.",
+            "product": "round-lab-1025-dokdo-toner"
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "name": "Treat",
+            "text": "Where the routine does its real work. One job per serum: hydrate, brighten or calm. On island skin, hydration comes first.",
+            "product": "torriden-dive-in-low-molecular-hyaluronic-acid-serum"
+          }
+        },
+        "step_4": {
+          "type": "step",
+          "settings": {
+            "name": "Moisturise",
+            "text": "A cream seals everything in and supports the barrier that sun, salt and air conditioning wear down.",
+            "product": "dr-althea-345-relief-cream"
+          }
+        },
+        "step_5": {
+          "type": "step",
+          "settings": {
+            "name": "Protect",
+            "text": "Sunscreen every morning, rain or shine. Korean formulas make it a pleasure to wear.",
+            "product": "beauty-of-joseon-relief-sun-rice-niacinamide"
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3",
+        "step_4",
+        "step_5"
+      ]
+    },
+    "brands": {
+      "type": "brand-index",
+      "settings": {
+        "eyebrow": "Our brands",
+        "heading": "Sixteen Korean houses, one careful edit",
+        "text": "",
+        "brands": [
+          "anua",
+          "beplain",
+          "round-lab",
+          "banila-co",
+          "beauty-of-joseon",
+          "abib",
+          "laneige",
+          "dr-reju-all",
+          "biodance",
+          "centellian24",
+          "s-nature",
+          "celimax",
+          "dr-althea",
+          "torriden",
+          "skin1004",
+          "arencia"
+        ],
+        "link_label": "All brands",
+        "link_url": "shopify://pages/brands"
+      }
+    },
+    "story": {
+      "type": "image-with-text",
+      "settings": {
+        "theme_image": "about",
+        "image_alt": "Two women laughing together on a beach in Mauritius",
+        "flip": false,
+        "eyebrow": "About Moana Beauté",
+        "heading": "For every woman who lives on an island",
+        "text": "<p>Moana Beauté began with a simple frustration: the Korean skincare everyone talked about online was hard to find in Mauritius, or sold by people who could not say where it came from.</p><p>So we set out to do it properly. Real products, honest prices, and delivery anywhere on the island.</p>",
+        "script": "you already belong here",
+        "link_label": "Our story",
+        "link_url": "shopify://pages/about"
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "settings": {
+        "eyebrow": "Good to know",
+        "heading": "Questions, answered",
+        "text": "<p>Anything else? <a href=\"/pages/contact\">Write to us</a>.</p>"
+      },
+      "blocks": {
+        "question_1": {
+          "type": "question",
+          "settings": {
+            "question": "How much is delivery?",
+            "answer": "<p>Rs 100 anywhere in Mauritius. Delivery is free when your order is above Rs 1,500.</p>"
+          }
+        },
+        "question_2": {
+          "type": "question",
+          "settings": {
+            "question": "How long does delivery take?",
+            "answer": "<p>Orders usually arrive in 1 to 3 working days.</p>"
+          }
+        },
+        "question_3": {
+          "type": "question",
+          "settings": {
+            "question": "Can I collect my order instead?",
+            "answer": "<p>Yes, in Mon Gout, by arrangement. Write to us by email or on WhatsApp and we will agree a time with you.</p>"
+          }
+        },
+        "question_4": {
+          "type": "question",
+          "settings": {
+            "question": "How do I pay?",
+            "answer": "<p>By card at checkout. Card payments are processed by MIPS, so we never see your full card number.</p>"
+          }
+        },
+        "question_5": {
+          "type": "question",
+          "settings": {
+            "question": "Are the products authentic?",
+            "answer": "<p>Yes. We buy from wholesale suppliers, and every product page shows the full ingredient list, so you can compare it with the brand's own.</p>"
+          }
+        },
+        "question_6": {
+          "type": "question",
+          "settings": {
+            "question": "Can I return a product?",
+            "answer": "<p>Unopened products in their original packaging can be returned within seven days of delivery. Opened skincare cannot be returned for hygiene reasons, unless it is faulty or not what you ordered. See <a href=\"/pages/delivery\">Delivery &amp; returns</a>.</p>"
+          }
+        },
+        "question_7": {
+          "type": "question",
+          "settings": {
+            "question": "Is a new product safe for my skin?",
+            "answer": "<p>We advise a patch test before using any new product. Our product information is not medical advice.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "question_1",
+        "question_2",
+        "question_3",
+        "question_4",
+        "question_5",
+        "question_6",
+        "question_7"
+      ]
+    }
+  },
+  "order": [
+    "hero",
+    "service",
+    "categories",
+    "launch",
+    "concerns",
+    "routine",
+    "brands",
+    "story",
+    "faq"
+  ]
+}

@@ -1,0 +1,70 @@
+{%- comment -%}
+  Brand index: the brands as an editorial list. On desktop, hovering a row floats that brand's packshot beside
+  the cursor (pattern adapted from the GetLayers "Halden" catalogue band). Touch devices see a plain list.
+{%- endcomment -%}
+<section class="section brand-index" aria-labelledby="bi-{{ section.id }}" data-brand-index>
+  <div class="page-width">
+    <div class="section-head">
+      <div class="section-head__text">
+        {%- if section.settings.eyebrow != blank -%}<p class="t-label">{{ section.settings.eyebrow }}</p>{%- endif -%}
+        <h2 class="t-h2" id="bi-{{ section.id }}">{{ section.settings.heading }}</h2>
+        {%- if section.settings.text != blank -%}<p class="t-lead">{{ section.settings.text }}</p>{%- endif -%}
+      </div>
+      {%- if section.settings.link_url != blank -%}
+        <a class="link-arrow" href="{{ section.settings.link_url }}">{{ section.settings.link_label }} {% render 'icon', name: 'arrow-right' %}</a>
+      {%- endif -%}
+    </div>
+    <ul class="brand-index__list" role="list">
+      {%- for b in section.settings.brands -%}
+        {%- assign shot = b.image | default: b.products.first.featured_media.preview_image -%}
+        <li class="reveal" style="--i: {{ forloop.index0 | modulo: 4 }}">
+          <a class="brand-row" href="{{ b.url }}" data-brand-row>
+            <span class="brand-row__name">{{ b.title }}</span>
+            <span class="brand-row__count">{{ 'collections.product_count' | t: count: b.products_count }}</span>
+            {%- if shot -%}
+              <span class="brand-row__shot" aria-hidden="true">{{ shot | image_url: width: 400 | image_tag: widths: '200, 300, 400', sizes: '200px', loading: 'lazy', alt: '' }}</span>
+            {%- endif -%}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% stylesheet %}
+.brand-index__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--gap); border-top: 1px solid var(--line); }
+.brand-row { position: relative; display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); padding: var(--s-4) 0; border-bottom: 1px solid var(--line); }
+.brand-row__name { font: 400 clamp(1.25rem, 1rem + 1.6vw, 2.5rem)/1.1 var(--f-display); transition: color var(--t) var(--ease), transform var(--t) var(--ease); }
+.brand-row__count { flex: none; font-size: var(--fs-xs); color: var(--ink-soft); }
+.brand-row__shot { display: none; }
+@media (max-width: 749px) { .brand-row { flex-direction: column; align-items: flex-start; gap: 2px; padding: var(--s-3) 0; } }
+@media (min-width: 990px) {
+  .brand-index__list { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: var(--s-7); }
+  .brand-row { padding: var(--s-5) 0; }
+}
+@media (hover: hover) and (min-width: 990px) {
+  .brand-row:hover .brand-row__name { color: var(--brand); transform: translateX(6px); }
+  .brand-row__shot {
+    display: block; position: fixed; left: 0; top: 0; z-index: 30; width: 180px; aspect-ratio: 4 / 5; pointer-events: none;
+    border-radius: var(--r); background: var(--tile); overflow: hidden; box-shadow: 0 24px 40px -24px rgba(40,49,6,.45);
+    opacity: 0; transform: translate3d(var(--x, 0), var(--y, 0), 0) scale(.92); transition: opacity var(--t) var(--ease), transform 0s;
+  }
+  .brand-row__shot img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 10%; }
+  .brand-row.is-hover .brand-row__shot { opacity: 1; transform: translate3d(var(--x, 0), var(--y, 0), 0) scale(1); transition: opacity var(--t) var(--ease), transform var(--t) var(--ease-out); }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Brand index",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Label", "default": "Our brands" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Sixteen Korean houses, one careful edit" },
+    { "type": "textarea", "id": "text", "label": "Text" },
+    { "type": "collection_list", "id": "brands", "label": "Brand collections", "limit": 30 },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "All brands" },
+    { "type": "url", "id": "link_url", "label": "Link" }
+  ],
+  "presets": [{ "name": "Brand index" }]
+}
+{% endschema %}

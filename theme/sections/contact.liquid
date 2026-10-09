@@ -1,0 +1,89 @@
+<section class="section section--flush-top contact" aria-labelledby="contact-form-{{ section.id }}">
+  <div class="page-width contact__grid">
+    <div class="contact__details">
+      <ul class="contact__cards" role="list">
+        <li class="contact__card">
+          {% render 'icon', name: 'mail' %}
+          <p class="t-label">{{ 'contact.email' | t }}</p>
+          <a class="link" href="mailto:{{ shop.email }}">{{ shop.email }}</a>
+        </li>
+        {%- if settings.whatsapp_number != blank -%}
+          <li class="contact__card">
+            {% render 'icon', name: 'whatsapp' %}
+            <p class="t-label">{{ 'general.whatsapp' | t }}</p>
+            <a class="link" href="https://wa.me/{{ settings.whatsapp_number }}" target="_blank" rel="noopener">{{ settings.whatsapp_display }}<span class="sr-only"> ({{ 'general.opens_new_window' | t }})</span></a>
+          </li>
+        {%- endif -%}
+        {%- if settings.address_street != blank -%}
+          <li class="contact__card">
+            {% render 'icon', name: 'pin' %}
+            <p class="t-label">{{ 'contact.address' | t }}</p>
+            <p>{{ settings.legal_name }}<br>{{ settings.address_street }}, {{ settings.address_locality }}, {{ 'contact.country' | t }}</p>
+          </li>
+        {%- endif -%}
+      </ul>
+      {%- if section.settings.trade_heading != blank -%}
+        <div class="contact__trade">
+          <h2 class="t-h3">{{ section.settings.trade_heading }}</h2>
+          <div class="rte t-soft">{{ section.settings.trade_text }}</div>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="contact__form-wrap">
+      <h2 class="t-h3" id="contact-form-{{ section.id }}">{{ 'contact.form_heading' | t }}</h2>
+      {%- form 'contact', id: 'contact-form', class: 'contact__form', novalidate: 'novalidate' -%}
+        {%- if form.posted_successfully? -%}
+          <div class="notice notice--success" role="status" tabindex="-1" data-focus-on-load>{% render 'icon', name: 'check' %}<p>{{ 'contact.success' | t }}</p></div>
+        {%- elsif form.errors -%}
+          <div class="notice notice--error" role="alert" tabindex="-1" data-focus-on-load>{% render 'icon', name: 'alert' %}<p>{{ 'contact.error_summary' | t }}</p></div>
+        {%- endif -%}
+        <div class="field">
+          <label class="field__label" for="cf-name">{{ 'contact.name' | t }} <span aria-hidden="true">*</span></label>
+          <input class="input" id="cf-name" type="text" name="contact[name]" autocomplete="name" required value="{{ form.name }}"{% if form.errors contains 'name' %} aria-invalid="true" aria-describedby="cf-name-err"{% endif %}>
+          {%- if form.errors contains 'name' -%}<p class="field__error" id="cf-name-err">{% render 'icon', name: 'alert' %}{{ 'contact.error_name' | t }}</p>{%- endif -%}
+        </div>
+        <div class="field">
+          <label class="field__label" for="cf-email">{{ 'contact.email' | t }} <span aria-hidden="true">*</span></label>
+          <input class="input" id="cf-email" type="email" name="contact[email]" autocomplete="email" required spellcheck="false" value="{{ form.email }}"{% if form.errors contains 'email' %} aria-invalid="true" aria-describedby="cf-email-err"{% endif %}>
+          {%- if form.errors contains 'email' -%}<p class="field__error" id="cf-email-err">{% render 'icon', name: 'alert' %}{{ 'contact.error_email' | t }}</p>{%- endif -%}
+        </div>
+        <div class="field">
+          <label class="field__label" for="cf-phone">{{ 'contact.phone' | t }} <span class="t-soft">({{ 'contact.optional' | t }})</span></label>
+          <input class="input" id="cf-phone" type="tel" name="contact[phone]" autocomplete="tel" value="{{ form.phone }}">
+        </div>
+        <div class="field">
+          <label class="field__label" for="cf-body">{{ 'contact.message' | t }} <span aria-hidden="true">*</span></label>
+          <textarea class="textarea" id="cf-body" name="contact[body]" rows="6" required data-prefill-param="range"{% if form.errors contains 'body' %} aria-invalid="true" aria-describedby="cf-body-err"{% endif %}>{{ form.body }}</textarea>
+          {%- if form.errors contains 'body' -%}<p class="field__error" id="cf-body-err">{% render 'icon', name: 'alert' %}{{ 'contact.error_body' | t }}</p>{%- endif -%}
+        </div>
+        <p class="t-xs t-soft">{{ 'contact.required_note' | t }}</p>
+        <button class="btn" type="submit">{{ 'contact.send' | t }}</button>
+      {%- endform -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+.contact__grid { display: grid; gap: var(--s-7); padding-top: var(--s-7); }
+.contact__cards { display: grid; gap: var(--s-3); }
+.contact__card { display: grid; gap: var(--s-2); padding: var(--s-5); border-radius: var(--r); background: var(--c-frost); }
+.contact__card svg { width: 22px; height: 22px; color: var(--brand); }
+.contact__trade { margin-top: var(--s-7); display: grid; gap: var(--s-3); max-width: 32rem; }
+.contact__form-wrap { display: grid; gap: var(--s-5); align-content: start; }
+.contact__form { display: grid; gap: var(--s-5); }
+.contact__form .btn { justify-self: start; }
+@media (min-width: 750px) { .contact__cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } .contact__cards li:last-child:nth-child(odd) { grid-column: 1 / -1; } }
+@media (min-width: 990px) { .contact__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(3rem, 7vw, 8rem); } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Contact",
+  "settings": [
+    { "type": "text", "id": "trade_heading", "label": "Trade heading", "default": "Brands and distributors" },
+    { "type": "richtext", "id": "trade_text", "label": "Trade text", "default": "<p>Moana Beauté is opening supply accounts for the Mauritian market. If you represent a Korean beauty house or its regional distributor, we would like to talk.</p>" }
+  ],
+  "presets": [{ "name": "Contact" }]
+}
+{% endschema %}

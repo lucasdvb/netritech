@@ -1,0 +1,38 @@
+{%- comment -%}
+  Renders a list of tag links with live product counts, from a comma-separated tag list in theme settings.
+  Params: source (collection to count and link within), tags (comma list), style ('list' | 'pills' | 'drawer'),
+          current (current tag, for aria-current), hide_empty (default true).
+  Links use Shopify's tag route (/collections/<handle>/<tag-handle>), which needs no filter app configuration.
+{%- endcomment -%}
+{%- liquid
+  assign tag_list = tags | split: ','
+  assign hide = true
+  if hide_empty == false
+    assign hide = false
+  endif
+-%}
+{%- for raw in tag_list -%}
+  {%- liquid
+    assign t = raw | strip
+    if t == blank
+      continue
+    endif
+    assign n = 0
+    for p in source.products
+      if p.tags contains t
+        assign n = n | plus: 1
+      endif
+    endfor
+    if hide and n == 0
+      continue
+    endif
+    assign t_handle = t | handle
+    assign href = source.url | append: '/' | append: t_handle
+  -%}
+  {%- case style -%}
+    {%- when 'pills' -%}
+      <a class="pill" href="{{ href }}"{% if current == t_handle %} aria-current="page"{% endif %}>{{ t }} <small>{{ n }}</small></a>
+    {%- else -%}
+      <li><a href="{{ href }}"{% if current == t_handle %} aria-current="page"{% endif %}>{{ t }} <small>{{ n }}</small></a></li>
+  {%- endcase -%}
+{%- endfor -%}

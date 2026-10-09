@@ -1,0 +1,58 @@
+{
+  "sections": {
+    "header": {
+      "type": "page-header",
+      "settings": {
+        "eyebrow": "Our brands",
+        "heading": "The Korean houses we carry",
+        "text": "Choose a brand to see its products. Every one is bought from wholesale suppliers and sold with its full ingredient list.",
+        "center": false
+      }
+    },
+    "brands": {
+      "type": "brand-index",
+      "settings": {
+        "eyebrow": "",
+        "heading": "A to Z",
+        "text": "",
+        "brands": [
+          "abib",
+          "anua",
+          "arencia",
+          "banila-co",
+          "beauty-of-joseon",
+          "beplain",
+          "biodance",
+          "celimax",
+          "centellian24",
+          "dr-althea",
+          "dr-reju-all",
+          "laneige",
+          "round-lab",
+          "s-nature",
+          "skin1004",
+          "torriden"
+        ],
+        "link_label": "",
+        "link_url": ""
+      }
+    },
+    "trade": {
+      "type": "rich-text",
+      "settings": {
+        "eyebrow": "Brands and distributors",
+        "heading": "Supply Moana Beauté",
+        "text": "<p>Moana Beauté is opening supply accounts for the Mauritian market. If you represent a Korean beauty house or its regional distributor, we would like to talk.</p>",
+        "use_page_content": false,
+        "link_label": "Write to us",
+        "link_url": "shopify://pages/contact",
+        "wash": true
+      }
+    }
+  },
+  "order": [
+    "header",
+    "brands",
+    "trade"
+  ]
+}

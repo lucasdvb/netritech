@@ -1,0 +1,123 @@
+{%- liquid
+  assign feat = section.settings.product
+  assign img = section.settings.image
+-%}
+<section class="hero" aria-labelledby="hero-{{ section.id }}">
+  <div class="page-width hero__grid">
+    <div class="hero__copy">
+      {%- if section.settings.eyebrow != blank -%}<p class="t-label reveal" style="--i:0">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h1 class="t-hero hero__title" id="hero-{{ section.id }}">{{ section.settings.heading }}</h1>
+      {%- if section.settings.text != blank -%}<p class="t-lead reveal" style="--i:2">{{ section.settings.text }}</p>{%- endif -%}
+      <div class="hero__actions reveal" style="--i:3">
+        {%- if section.settings.button_label != blank -%}
+          <a class="btn" href="{{ section.settings.button_link | default: routes.all_products_collection_url }}">{{ section.settings.button_label }}</a>
+        {%- endif -%}
+        {%- if section.settings.link_label != blank -%}
+          <a class="link-arrow" href="{{ section.settings.link_url }}">{{ section.settings.link_label }} {% render 'icon', name: 'arrow-right' %}</a>
+        {%- endif -%}
+      </div>
+      {%- if section.blocks.size > 0 -%}
+        <ul class="hero__facts reveal" style="--i:4" role="list">
+          {%- for block in section.blocks -%}
+            <li {{ block.shopify_attributes }}>{% render 'icon', name: block.settings.icon %}<span>{{ block.settings.text }}</span></li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    <div class="hero__visual">
+      <div class="hero__media media rounded">
+        {%- if img -%}
+          {{ img | image_url: width: 1800 | image_tag:
+             widths: '480, 640, 800, 1000, 1200, 1500, 1800',
+             sizes: '(min-width: 990px) 46vw, 100vw',
+             loading: 'eager', fetchpriority: 'high',
+             alt: section.settings.image_alt | default: img.alt }}
+        {%- else -%}
+          <picture>
+            <source type="image/webp" srcset="{{ 'hero-bg-800.webp' | asset_url }} 800w, {{ 'hero-bg-1600.webp' | asset_url }} 1600w" sizes="(min-width: 990px) 46vw, 100vw">
+            <img src="{{ 'hero-bg-1600.jpg' | asset_url }}" srcset="{{ 'hero-bg-800.jpg' | asset_url }} 800w, {{ 'hero-bg-1600.jpg' | asset_url }} 1600w" sizes="(min-width: 990px) 46vw, 100vw" width="1600" height="2000" alt="{{ section.settings.image_alt | escape }}" fetchpriority="high">
+          </picture>
+        {%- endif -%}
+      </div>
+      {%- if feat -%}
+        <a class="hero__product" href="{{ feat.url }}">
+          <span class="hero__product-img">{{ feat.featured_media.preview_image | image_url: width: 240 | image_tag: widths: '120, 180, 240', sizes: '88px', alt: '', loading: 'eager' }}</span>
+          <span class="hero__product-text">
+            <span class="t-label">{{ section.settings.product_label }}</span>
+            <span class="hero__product-name">{{ feat.title }}</span>
+            <span class="t-price">{{ feat.price | money }}</span>
+          </span>
+          <span class="hero__product-arrow">{% render 'icon', name: 'arrow-right' %}</span>
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+.hero { padding-block: clamp(1.5rem, .5rem + 3vw, 3.5rem) var(--section); }
+.hero__grid { display: grid; gap: var(--s-7); align-items: center; }
+.hero__copy > * + * { margin-top: var(--s-5); }
+.hero__title { max-width: 11ch; }
+.hero__title em { font-style: italic; color: var(--brand); }
+.hero__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-4) var(--s-6); padding-top: var(--s-2); }
+.hero__facts { display: flex; flex-wrap: wrap; gap: var(--s-3) var(--s-5); padding-top: var(--s-5); border-top: 1px solid var(--line); max-width: 34rem; }
+.hero__facts li { display: inline-flex; align-items: center; gap: .5rem; font-size: var(--fs-xs); font-weight: 600; color: var(--ink-soft); }
+.hero__facts svg { width: 18px; height: 18px; color: var(--brand); }
+.hero__visual { position: relative; }
+.hero__media { aspect-ratio: 4 / 5; background: var(--c-forest); }
+.hero__media img { object-position: 60% 40%; }
+.hero__product {
+  position: absolute; left: var(--s-4); right: var(--s-4); bottom: var(--s-4);
+  display: grid; grid-template-columns: 72px 1fr auto; align-items: center; gap: var(--s-4);
+  padding: var(--s-3); padding-right: var(--s-4); border-radius: var(--r);
+  background: rgba(255,255,255,.9); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  transition: background-color var(--t) var(--ease), transform var(--t) var(--ease);
+}
+.hero__product:hover { background: #fff; transform: translateY(-2px); }
+.hero__product-img { display: block; aspect-ratio: 1; border-radius: var(--r-sm); background: var(--tile); overflow: hidden; }
+.hero__product-img img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 8%; }
+.hero__product-text { display: grid; gap: 2px; min-width: 0; }
+.hero__product-name { font: 400 1.0625rem/1.25 var(--f-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hero__product-arrow { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; background: var(--c-forest); color: #fff; }
+.hero__product-arrow svg { width: 18px; height: 18px; }
+@media (min-width: 990px) {
+  .hero__grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr); gap: clamp(3rem, 6vw, 7rem); }
+  .hero__media { aspect-ratio: 4 / 5; max-height: calc(100svh - var(--header-h) - 80px); width: 100%; }
+  .hero__product { left: auto; right: var(--s-5); bottom: var(--s-5); width: min(360px, 80%); }
+}
+@media (max-width: 989px) {
+  .hero__media { aspect-ratio: 5 / 6; }
+  .hero__title { max-width: 13ch; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Hero",
+  "tag": "div",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "Portrait, at least 1500 × 1875 px. Leave empty to use the theme's leaf image." },
+    { "type": "text", "id": "image_alt", "label": "Image description (alt text)", "default": "Dark tropical leaves wet with rain" },
+    { "type": "text", "id": "eyebrow", "label": "Label", "default": "Korean skincare · Mauritius" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Skin care, <em>chosen</em> for island skin" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Authentic Korean formulas for skin that lives with sun, salt and humidity. Every ingredient listed, every price honest, delivered across the island." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop skincare" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "text", "id": "link_label", "label": "Secondary link label", "default": "Find your routine" },
+    { "type": "url", "id": "link_url", "label": "Secondary link" },
+    { "type": "product", "id": "product", "label": "Featured product card" },
+    { "type": "text", "id": "product_label", "label": "Featured product label", "default": "Start here" }
+  ],
+  "blocks": [
+    { "type": "fact", "name": "Fact", "limit": 3, "settings": [
+      { "type": "select", "id": "icon", "label": "Icon", "default": "truck", "options": [
+        { "value": "truck", "label": "Delivery" }, { "value": "list", "label": "Ingredients" }, { "value": "card", "label": "Card" }, { "value": "leaf", "label": "Leaf" }, { "value": "check", "label": "Check" }
+      ] },
+      { "type": "text", "id": "text", "label": "Text", "default": "Delivered across Mauritius" }
+    ] }
+  ],
+  "presets": [{ "name": "Hero" }]
+}
+{% endschema %}

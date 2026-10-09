@@ -1,0 +1,307 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign size = product.metafields.custom.size.value
+  assign how = product.metafields.custom.how_to_use.value
+  assign key_list = product.metafields.custom.key_ingredients.value
+  assign full_ing = product.metafields.custom.ingredients.value
+  assign form_id = 'product-form-' | append: section.id
+  assign vendor_handle = product.vendor | handle
+  assign vendor_collection = collections[vendor_handle]
+
+  assign concern_list = settings.concern_tags | split: ','
+  assign skin_list = settings.skin_type_tags | split: ','
+  assign step_list = settings.step_tags | split: ','
+  assign concerns = ''
+  assign skins = ''
+  assign steps = ''
+  for tag in product.tags
+    for c in concern_list
+      assign cc = c | strip
+      if tag == cc
+        assign concerns = concerns | append: tag | append: '|'
+      endif
+    endfor
+    for c in skin_list
+      assign cc = c | strip
+      if tag == cc
+        assign skins = skins | append: tag | append: '|'
+      endif
+    endfor
+    for c in step_list
+      assign cc = c | strip
+      if tag == cc
+        assign steps = steps | append: tag | append: '|'
+      endif
+    endfor
+  endfor
+  assign concerns = concerns | split: '|'
+  assign skins = skins | split: '|'
+  assign steps = steps | split: '|'
+  assign am = false
+  assign pm = false
+  if product.tags contains 'Morning'
+    assign am = true
+  endif
+  if product.tags contains 'Evening'
+    assign pm = true
+  endif
+  assign filter_base = collections['skincare'].url | default: '/collections/all'
+
+  assign threshold_cents = settings.free_shipping_threshold | times: 100
+  assign threshold_money = threshold_cents | money
+  assign wa_text = 'products.whatsapp_prefill' | t: title: product.title
+-%}
+
+<div class="page-width">{%- render 'breadcrumbs' -%}</div>
+
+<section class="pdp" data-product-section data-section-id="{{ section.id }}">
+  <div class="page-width pdp__grid">
+
+    {%- comment -%} Gallery: a vertical stack on desktop, a swipe carousel with a counter on phones. {%- endcomment -%}
+    <div class="pdp__gallery" data-gallery>
+      <ul class="pdp__slides" role="list" data-gallery-track aria-label="{{ 'products.gallery_label' | t: title: product.title | escape }}">
+        {%- for media in product.media -%}
+          {%- if media.media_type != 'image' -%}{%- continue -%}{%- endif -%}
+          {%- liquid
+            assign img_loading = 'lazy'
+            assign img_priority = 'auto'
+            if forloop.first
+              assign img_loading = 'eager'
+              assign img_priority = 'high'
+            endif
+          -%}
+          <li class="pdp__slide" id="media-{{ section.id }}-{{ forloop.index }}">
+            <button class="pdp__zoom media" type="button" data-zoom="{{ media.preview_image | image_url: width: 2000 }}" data-zoom-alt="{{ media.alt | default: product.title | escape }}" aria-label="{{ 'products.zoom' | t: n: forloop.index }}">
+              {{- media.preview_image | image_url: width: 1400 | image_tag:
+                  widths: '400, 600, 800, 1000, 1200, 1400',
+                  sizes: '(min-width: 990px) 52vw, 100vw',
+                  loading: img_loading,
+                  fetchpriority: img_priority,
+                  alt: media.alt | default: product.title
+              -}}
+            </button>
+          </li>
+        {%- else -%}
+          <li class="pdp__slide"><div class="pdp__zoom media">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</div></li>
+        {%- endfor -%}
+      </ul>
+      {%- if product.media.size > 1 -%}
+        <div class="pdp__dots hide-desktop" aria-hidden="true">
+          {%- for media in product.media -%}<span class="pdp__dot{% if forloop.first %} is-active{% endif %}" data-dot></span>{%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="pdp__info">
+      <div class="pdp__sticky">
+        {%- if product.vendor != blank -%}
+          <p class="pdp__vendor">
+            {%- if vendor_collection != blank -%}<a href="{{ vendor_collection.url }}">{{ product.vendor }}</a>{%- else -%}{{ product.vendor }}{%- endif -%}
+          </p>
+        {%- endif -%}
+        <h1 class="t-h2 pdp__title">{{ product.title }}</h1>
+
+        <div class="pdp__pricebar">
+          <div data-price-wrap>{%- render 'price', product: product, variant: current_variant, class: 'pdp__price' -%}</div>
+          {%- if size != blank -%}<span class="pdp__size">{{ size }}</span>{%- endif -%}
+        </div>
+        {%- if cart.taxes_included -%}<p class="t-xs t-soft pdp__tax">{{ 'products.tax_included' | t }}</p>{%- endif -%}
+
+        {%- if product.description != blank -%}
+          <div class="pdp__desc rte">{{ product.description }}</div>
+        {%- endif -%}
+
+        {%- if concerns.size > 0 or skins.size > 0 -%}
+          <dl class="pdp__facts">
+            {%- if concerns.size > 0 -%}
+              <div><dt>{{ 'products.targets' | t }}</dt>
+                <dd class="cluster">{%- for c in concerns -%}<a class="pill pill--sm" href="{{ filter_base }}/{{ c | handle }}">{{ c }}</a>{%- endfor -%}</dd></div>
+            {%- endif -%}
+            {%- if skins.size > 0 -%}
+              <div><dt>{{ 'products.suits' | t }}</dt>
+                <dd class="cluster">{%- for s in skins -%}<a class="pill pill--sm" href="{{ filter_base }}/{{ s | handle }}">{{ s }}</a>{%- endfor -%}</dd></div>
+            {%- endif -%}
+            {%- if steps.size > 0 or am or pm -%}
+              <div><dt>{{ 'products.routine' | t }}</dt>
+                <dd class="pdp__when">
+                  {%- if steps.size > 0 -%}<span>{{ 'products.step_label' | t: step: steps.first }}</span>{%- endif -%}
+                  {%- if am -%}<span>{% render 'icon', name: 'sun' %}{{ 'products.morning' | t }}</span>{%- endif -%}
+                  {%- if pm -%}<span>{% render 'icon', name: 'moon' %}{{ 'products.evening' | t }}</span>{%- endif -%}
+                </dd></div>
+            {%- endif -%}
+          </dl>
+        {%- endif -%}
+
+        {%- form 'product', product, id: form_id, class: 'pdp__form', data-product-form: '', data-main-form: '', novalidate: 'novalidate' -%}
+          {%- unless product.has_only_default_variant -%}
+            {%- for option in product.options_with_values -%}
+              <fieldset class="pdp__option">
+                <legend class="field__label">{{ option.name }}</legend>
+                <div class="cluster">
+                  {%- for value in option.values -%}
+                    <label class="pill pill--option">
+                      <input class="sr-only" type="radio" name="options[{{ option.name | escape }}]" value="{{ value | escape }}"{% if option.selected_value == value %} checked{% endif %} data-option-input>
+                      <span>{{ value }}</span>
+                    </label>
+                  {%- endfor -%}
+                </div>
+              </fieldset>
+            {%- endfor -%}
+            <script type="application/json" data-variants>{{ product.variants | json }}</script>
+          {%- endunless -%}
+          <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
+
+          <div class="pdp__buy">
+            <div class="qty" data-qty>
+              <button type="button" data-qty-minus aria-label="{{ 'products.qty_decrease' | t }}" disabled>{% render 'icon', name: 'minus' %}</button>
+              <label class="sr-only" for="qty-{{ section.id }}">{{ 'products.quantity' | t }}</label>
+              <input id="qty-{{ section.id }}" type="number" name="quantity" value="1" min="1" max="{% if current_variant.inventory_management == 'shopify' and current_variant.inventory_policy == 'deny' %}{{ current_variant.inventory_quantity }}{% else %}99{% endif %}" inputmode="numeric" data-qty-input>
+              <button type="button" data-qty-plus aria-label="{{ 'products.qty_increase' | t }}">{% render 'icon', name: 'plus' %}</button>
+            </div>
+            <button class="btn pdp__add" type="submit" name="add" data-add-button{% unless current_variant.available %} disabled aria-disabled="true"{% endunless %}>
+              <span data-add-label>{% if current_variant.available %}{{ 'products.add_to_cart' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}</span>
+            </button>
+          </div>
+          <div class="notice notice--error" role="alert" data-form-error hidden></div>
+          {%- if form.errors -%}<div class="notice notice--error" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+        {%- endform -%}
+
+        {%- if current_variant.available and current_variant.inventory_management == 'shopify' and current_variant.inventory_quantity <= settings.low_stock_threshold and current_variant.inventory_quantity > 0 -%}
+          <p class="pdp__stock t-xs">{{ 'products.low_stock' | t: count: current_variant.inventory_quantity }}</p>
+        {%- endif -%}
+
+        <ul class="pdp__assure" role="list">
+          <li>{% render 'icon', name: 'truck' %}<span>{% if threshold_cents > 0 %}{{ 'products.free_delivery_above' | t: amount: threshold_money }}{% endif %} {{ 'products.delivery_time' | t }}</span></li>
+          <li>{% render 'icon', name: 'list' %}<span>{{ 'products.assure_ingredients' | t }}</span></li>
+          {%- if settings.whatsapp_number != blank -%}
+            <li>{% render 'icon', name: 'whatsapp' %}<a class="inline-link" href="https://wa.me/{{ settings.whatsapp_number }}?text={{ wa_text | url_encode }}" target="_blank" rel="noopener">{{ 'products.ask_whatsapp' | t }}<span class="sr-only"> ({{ 'general.opens_new_window' | t }})</span></a></li>
+          {%- endif -%}
+        </ul>
+
+        <div class="accordion pdp__acc">
+          {%- if key_list.size > 0 -%}
+            <details class="accordion__item" open>
+              <summary><span>{{ 'products.key_ingredients' | t }}</span><span class="accordion__icon" aria-hidden="true"></span></summary>
+              <div class="accordion__body"><ul class="pdp__keys" role="list">{%- for item in key_list -%}<li>{% render 'icon', name: 'drop' %}{{ item | escape }}</li>{%- endfor -%}</ul></div>
+            </details>
+          {%- endif -%}
+          {%- if how != blank -%}
+            <details class="accordion__item">
+              <summary><span>{{ 'products.how_to_use' | t }}</span><span class="accordion__icon" aria-hidden="true"></span></summary>
+              <div class="accordion__body"><p>{{ how | escape | newline_to_br }}</p></div>
+            </details>
+          {%- endif -%}
+          {%- if full_ing != blank -%}
+            <details class="accordion__item">
+              <summary><span>{{ 'products.full_ingredients' | t }}</span><span class="accordion__icon" aria-hidden="true"></span></summary>
+              <div class="accordion__body"><p class="pdp__inci">{{ full_ing | escape }}</p><p class="t-xs">{{ 'products.ingredients_note' | t }}</p></div>
+            </details>
+          {%- endif -%}
+          <details class="accordion__item">
+            <summary><span>{{ 'products.delivery_returns' | t }}</span><span class="accordion__icon" aria-hidden="true"></span></summary>
+            <div class="accordion__body rte">{{ settings.pdp_delivery_text }}</div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Sticky purchase bar: shown by theme.js once the main Add to cart button leaves the viewport. {%- endcomment -%}
+  {%- if current_variant.available -%}
+    <div class="buybar" data-buybar aria-hidden="true">
+      <div class="page-width buybar__inner">
+        <span class="buybar__img">{{ product.featured_media.preview_image | image_url: width: 120 | image_tag: widths: '60, 120', sizes: '48px', alt: '', loading: 'lazy' }}</span>
+        <span class="buybar__text"><span class="buybar__title">{{ product.title }}</span><span class="t-price">{{ current_variant.price | money }}{% if size != blank %} · {{ size }}{% endif %}</span></span>
+        <button class="btn btn--small buybar__btn" type="submit" form="{{ form_id }}" name="add" tabindex="-1">{{ 'products.add_to_cart' | t }}</button>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <dialog class="lightbox" data-lightbox aria-label="{{ 'products.zoom_dialog' | t }}">
+    <button class="icon-btn lightbox__close" type="button" data-lightbox-close>{% render 'icon', name: 'close' %}<span class="sr-only">{{ 'general.close' | t }}</span></button>
+    <img src="{{ product.featured_media.preview_image | image_url: width: 2000 }}" alt="" width="2000" height="2000" loading="lazy" data-lightbox-img>
+  </dialog>
+
+  <script type="application/ld+json">{{ product | structured_data }}</script>
+</section>
+
+{% stylesheet %}
+.pdp { padding-bottom: var(--section); }
+.pdp__grid { display: grid; gap: var(--s-6); padding-top: var(--s-3); }
+.pdp__slides { display: grid; gap: var(--s-3); }
+.pdp__zoom { display: block; width: 100%; aspect-ratio: 4 / 5; border-radius: var(--r); cursor: zoom-in; }
+.pdp__zoom img { object-fit: contain !important; mix-blend-mode: multiply; padding: 9%; }
+.pdp__dots { display: flex; justify-content: center; gap: 6px; margin-top: var(--s-3); }
+.pdp__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--line-strong); transition: width var(--t) var(--ease), background-color var(--t) var(--ease); }
+.pdp__dot.is-active { width: 20px; border-radius: 3px; background: var(--c-forest); }
+@media (max-width: 989px) {
+  .pdp__slides { grid-auto-flow: column; grid-auto-columns: 100%; gap: var(--s-2); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter); overscroll-behavior-x: contain; }
+  .pdp__slides::-webkit-scrollbar { display: none; }
+  .pdp__slide { scroll-snap-align: center; }
+  .pdp__zoom { aspect-ratio: 1 / 1; }
+  .pdp__slides:has(> :only-child) { overflow: visible; }
+}
+.pdp__vendor { font: 700 var(--fs-label)/1.4 var(--f-body); letter-spacing: .18em; text-transform: uppercase; }
+.pdp__vendor a { color: var(--brand); }
+.pdp__vendor a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.pdp__title { margin-top: var(--s-3); }
+.pdp__pricebar { display: flex; align-items: baseline; gap: var(--s-4); margin-top: var(--s-4); }
+.pdp__price { font-size: 1.25rem; font-weight: 600; }
+.pdp__price .price__was { margin-left: .5rem; font-weight: 400; }
+.pdp__size { padding-left: var(--s-4); border-left: 1px solid var(--line); font-size: var(--fs-small); color: var(--ink-soft); }
+.pdp__tax { margin-top: 2px; }
+.pdp__desc { margin-top: var(--s-5); color: var(--ink-soft); font-size: 1.0625rem; line-height: 1.7; }
+.pdp__facts { display: grid; gap: var(--s-3); margin-top: var(--s-5); padding: var(--s-4) 0; border-block: 1px solid var(--line); }
+.pdp__facts > div { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--s-3); align-items: baseline; }
+.pdp__facts dt { font: 700 var(--fs-label)/2.2 var(--f-body); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+.pdp__facts dd { gap: 6px; }
+.pdp__when { display: flex; flex-wrap: wrap; gap: 6px var(--s-4); font-size: var(--fs-small); font-weight: 600; }
+.pdp__when span { display: inline-flex; align-items: center; gap: .35rem; }
+.pdp__when svg { width: 16px; height: 16px; color: var(--brand); }
+.pdp__form { margin-top: var(--s-5); display: grid; gap: var(--s-4); }
+.pdp__option { border: 0; padding: 0; margin: 0; display: grid; gap: var(--s-2); }
+.pill--option { cursor: pointer; }
+.pill--option:has(input:checked) { background: var(--c-forest); color: #fff; border-color: var(--c-forest); }
+.pill--option:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
+.pdp__buy { display: grid; grid-template-columns: auto 1fr; gap: var(--s-3); }
+.pdp__add { width: 100%; }
+.pdp__stock { margin-top: var(--s-3); color: var(--brand); font-weight: 600; }
+.pdp__assure { display: grid; gap: var(--s-3); margin-top: var(--s-5); padding: var(--s-4); border-radius: var(--r); background: var(--c-frost); }
+.pdp__assure li { display: flex; gap: var(--s-3); align-items: flex-start; font-size: var(--fs-small); line-height: 1.5; }
+.pdp__assure svg { width: 20px; height: 20px; flex: none; color: var(--brand); }
+.pdp__acc { margin-top: var(--s-6); }
+.pdp__keys { display: grid; gap: var(--s-2); }
+.pdp__keys li { display: flex; align-items: center; gap: .6rem; color: var(--ink); font-weight: 500; }
+.pdp__keys svg { width: 16px; height: 16px; color: var(--c-sage); flex: none; }
+.pdp__inci { font-size: var(--fs-small); line-height: 1.75; }
+@media (min-width: 990px) {
+  .pdp__grid { grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); gap: clamp(3rem, 6vw, 7rem); align-items: start; }
+  .pdp__sticky { position: sticky; top: calc(var(--header-h) + var(--s-5)); }
+}
+/* sticky purchase bar */
+.buybar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: rgba(255,255,255,.97); border-top: 1px solid var(--line);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  padding-bottom: env(safe-area-inset-bottom); transform: translateY(105%); transition: transform var(--t-slow) var(--ease);
+}
+.buybar.is-visible { transform: none; }
+.buybar__inner { display: grid; grid-template-columns: 48px 1fr auto; align-items: center; gap: var(--s-3); min-height: 72px; }
+.buybar__img { display: block; aspect-ratio: 1; border-radius: var(--r-xs); background: var(--tile); overflow: hidden; }
+.buybar__img img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 6%; }
+.buybar__text { display: grid; min-width: 0; }
+.buybar__title { font: 400 1rem/1.25 var(--f-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.buybar__btn { min-height: 46px; }
+/* lightbox */
+.lightbox { width: 100vw; height: 100vh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: var(--c-white); }
+.lightbox::backdrop { background: var(--c-white); }
+.lightbox img { width: 100%; height: 100%; object-fit: contain; padding: 4vmin; }
+.lightbox__close { position: fixed; top: 12px; right: 12px; z-index: 2; background: var(--c-frost); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Product",
+  "tag": "div",
+  "settings": []
+}
+{% endschema %}

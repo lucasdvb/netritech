@@ -1,0 +1,37 @@
+<div class="page-width">{%- render 'breadcrumbs' -%}</div>
+<section class="section section--tight">
+  <div class="page-width">
+    <h1 class="t-h1">{{ blog.title }}</h1>
+    {%- paginate blog.articles by 12 -%}
+      {%- if blog.articles.size > 0 -%}
+        <ul class="articles" role="list">
+          {%- for article in blog.articles -%}
+            <li class="reveal">
+              <a class="article-card" href="{{ article.url }}">
+                {%- if article.image -%}<span class="media ratio-4-5 rounded">{{ article.image | image_url: width: 900 | image_tag: widths: '400, 600, 900', sizes: '(min-width: 990px) 30vw, 100vw', loading: 'lazy', alt: article.image.alt | default: '' }}</span>{%- endif -%}
+                <span class="t-xs t-soft">{{ article.published_at | time_tag: format: 'date' }}</span>
+                <span class="t-h3">{{ article.title }}</span>
+                {%- if article.excerpt_or_content != blank -%}<span class="t-soft t-small">{{ article.excerpt_or_content | strip_html | truncatewords: 26 }}</span>{%- endif -%}
+              </a>
+            </li>
+          {%- endfor -%}
+        </ul>
+        {%- render 'pagination', paginate: paginate -%}
+      {%- else -%}
+        <p class="t-lead" style="margin-top: var(--s-5)">{{ 'blog.empty' | t }}</p>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% stylesheet %}
+.articles { display: grid; gap: var(--s-7) var(--gap); margin-top: var(--s-7); }
+.article-card { display: grid; gap: var(--s-3); }
+.article-card:hover .t-h3 { color: var(--brand); }
+@media (min-width: 750px) { .articles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 990px) { .articles { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "Blog", "settings": [] }
+{% endschema %}

@@ -1,0 +1,27 @@
+<section class="section notfound">
+  <div class="page-width notfound__inner">
+    <img class="wave-mark" src="{{ 'logo-mark-dark.svg' | asset_url }}" alt="" width="120" height="36" loading="lazy">
+    <p class="t-label">{{ 'notfound.label' | t }}</p>
+    <h1 class="t-h1">{{ 'notfound.heading' | t }}</h1>
+    <p class="t-lead">{{ 'notfound.text' | t }}</p>
+    <form class="search-page__form" action="{{ routes.search_url }}" method="get" role="search">
+      <label class="sr-only" for="nf-search">{{ 'search.label' | t }}</label>
+      <input class="input" id="nf-search" type="search" name="q" placeholder="{{ 'search.placeholder' | t }}">
+      <button class="btn" type="submit">{{ 'search.submit' | t }}</button>
+    </form>
+    <div class="cluster">
+      <a class="pill" href="{{ collections['skincare'].url }}">{{ 'notfound.shop' | t }}</a>
+      <a class="pill" href="{{ pages['contact'].url | default: '/pages/contact' }}">{{ 'notfound.contact' | t }}</a>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+.notfound__inner { display: grid; justify-items: center; gap: var(--s-5); max-width: 40rem; text-align: center; }
+.notfound__inner .search-page__form { width: 100%; }
+.notfound .wave-mark { width: 96px; }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "404", "settings": [] }
+{% endschema %}

@@ -1,0 +1,179 @@
+{%- liquid
+  assign menu = linklists[section.settings.menu]
+  assign shop_source = section.settings.shop_collection | default: collections['skincare']
+  assign brand_name = settings.brand_name | default: shop.name
+  assign mega_handle = section.settings.mega_item | handle
+-%}
+<header class="site-header" data-header>
+  <div class="page-width header">
+    <div class="header__start">
+      <button class="icon-btn header__burger" type="button" aria-controls="menu-drawer" aria-expanded="false" data-drawer-open="menu-drawer">
+        {%- render 'icon', name: 'menu' -%}<span class="sr-only">{{ 'header.menu' | t }}</span>
+      </button>
+      <nav class="header__nav" aria-label="{{ 'header.primary_nav' | t }}">
+        <ul class="cluster" style="gap:0" role="list">
+          {%- for link in menu.links -%}
+            {%- liquid
+              assign is_mega = false
+              assign link_handle = link.title | handle
+              if link.links.size > 0
+                if link_handle == mega_handle or forloop.first
+                  assign is_mega = true
+                endif
+              endif
+            -%}
+            <li{% if is_mega %} data-mega{% endif %}>
+              {%- if is_mega -%}
+                <button class="nav-link" type="button" aria-expanded="false" aria-controls="mega-{{ forloop.index }}" data-mega-toggle>
+                  {{ link.title }} {% render 'icon', name: 'chevron-down' %}
+                </button>
+                <div class="mega" id="mega-{{ forloop.index }}" data-mega-panel>
+                  <div class="page-width mega__inner">
+                    <div class="mega__col">
+                      <h3 class="t-label">{{ 'header.by_category' | t }}</h3>
+                      <ul role="list">
+                        {%- for child in link.links -%}
+                          <li><a href="{{ child.url }}"{% if child.current %} aria-current="page"{% endif %}>{{ child.title }}{% if child.type == 'collection_link' %} <small>{{ child.object.products_count }}</small>{% endif %}</a></li>
+                        {%- endfor -%}
+                      </ul>
+                      <a class="link-arrow mega__all" href="{{ link.url }}">{{ 'header.shop_all' | t }} {% render 'icon', name: 'arrow-right' %}</a>
+                    </div>
+                    <div class="mega__col">
+                      <h3 class="t-label">{{ 'header.by_concern' | t }}</h3>
+                      <ul role="list">{% render 'tag-counts', source: shop_source, tags: settings.concern_tags %}</ul>
+                    </div>
+                    <div class="mega__col">
+                      <h3 class="t-label">{{ 'header.by_skin_type' | t }}</h3>
+                      <ul role="list">{% render 'tag-counts', source: shop_source, tags: settings.skin_type_tags %}</ul>
+                    </div>
+                    <div class="mega__feature">
+                      {%- for block in section.blocks -%}
+                        {%- liquid
+                          assign card_img = block.settings.image
+                          if card_img == blank and block.settings.collection != blank
+                            assign card_img = block.settings.collection.featured_image | default: block.settings.collection.products.first.featured_media.preview_image
+                          endif
+                        -%}
+                        <a class="mega-card" href="{{ block.settings.link | default: block.settings.collection.url }}" {{ block.shopify_attributes }}>
+                          <span class="media ratio-4-5{% if block.settings.image == blank %} media--contain{% endif %}">
+                            {%- if card_img -%}{{ card_img | image_url: width: 600 | image_tag: widths: '300, 450, 600', sizes: '220px', loading: 'lazy', alt: '' }}{%- endif -%}
+                          </span>
+                          <span class="t-label">{{ block.settings.eyebrow }}</span>
+                          <span class="mega-card__title">{{ block.settings.title }}</span>
+                        </a>
+                      {%- endfor -%}
+                    </div>
+                  </div>
+                </div>
+              {%- else -%}
+                <a class="nav-link" href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+    </div>
+
+    <a class="header__logo" href="{{ routes.root_url }}">
+      {%- if section.settings.logo != blank -%}
+        {{ section.settings.logo | image_url: width: 400 | image_tag: widths: '140, 210, 280, 400', sizes: '140px', alt: brand_name, fetchpriority: 'high', loading: 'eager' }}
+      {%- else -%}
+        <img src="{{ 'logo-lockup-dark.svg' | asset_url }}" alt="{{ brand_name | escape }}" width="785" height="380" fetchpriority="high" decoding="async">
+      {%- endif -%}
+    </a>
+
+    <div class="header__end">
+      <a class="icon-btn" href="{{ routes.search_url }}" data-search-open aria-haspopup="dialog">
+        {%- render 'icon', name: 'search' -%}<span class="sr-only">{{ 'header.search' | t }}</span>
+      </a>
+      {%- if shop.customer_accounts_enabled -%}
+        <a class="icon-btn hide-mobile" href="{{ routes.account_url }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-3.6 4-5.3 7.5-5.3s6.3 1.7 7.5 5.3" stroke-linecap="round"/></svg>
+          <span class="sr-only">{{ 'header.account' | t }}</span>
+        </a>
+      {%- endif -%}
+      <a class="icon-btn header__icon" href="{{ routes.cart_url }}" id="cart-icon" data-cart-open aria-haspopup="dialog">
+        {%- render 'icon', name: 'bag' -%}
+        <span class="sr-only">{{ 'header.cart' | t }}</span>
+        {%- render 'cart-count' -%}
+      </a>
+    </div>
+  </div>
+</header>
+
+{%- comment -%} Phone and tablet menu. The same information as the mega menu, as an accordion. {%- endcomment -%}
+<div class="drawer drawer--left menu-drawer" id="menu-drawer" role="dialog" aria-modal="true" aria-label="{{ 'header.menu' | t }}" tabindex="-1">
+  <div class="drawer__head">
+    <img src="{{ 'logo-lockup-dark.svg' | asset_url }}" alt="" width="785" height="380" style="height:40px;width:auto" loading="lazy">
+    <button class="icon-btn" type="button" data-drawer-close>{%- render 'icon', name: 'close' -%}<span class="sr-only">{{ 'general.close' | t }}</span></button>
+  </div>
+  <div class="drawer__body">
+    <nav class="menu-drawer__nav" aria-label="{{ 'header.primary_nav' | t }}">
+      {%- for link in menu.links -%}
+        {%- if link.links.size > 0 -%}
+          <details{% if forloop.first %} open{% endif %}>
+            <summary class="menu-drawer__link">{{ link.title }} {% render 'icon', name: 'plus' %}</summary>
+            <div class="menu-drawer__sub">
+              <div>
+                <p class="t-label">{{ 'header.by_category' | t }}</p>
+                <ul role="list">
+                  <li><a href="{{ link.url }}">{{ 'header.shop_all' | t }} <small>{{ link.object.products_count }}</small></a></li>
+                  {%- for child in link.links -%}
+                    <li><a href="{{ child.url }}">{{ child.title }}{% if child.type == 'collection_link' %} <small>{{ child.object.products_count }}</small>{% endif %}</a></li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+              <div>
+                <p class="t-label">{{ 'header.by_concern' | t }}</p>
+                <ul role="list">{% render 'tag-counts', source: shop_source, tags: settings.concern_tags %}</ul>
+              </div>
+              <div>
+                <p class="t-label">{{ 'header.by_skin_type' | t }}</p>
+                <ul role="list">{% render 'tag-counts', source: shop_source, tags: settings.skin_type_tags %}</ul>
+              </div>
+            </div>
+          </details>
+        {%- else -%}
+          <a class="menu-drawer__link" href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }} {% render 'icon', name: 'arrow-right' %}</a>
+        {%- endif -%}
+      {%- endfor -%}
+    </nav>
+    <div class="menu-drawer__secondary">
+      {%- for link in linklists[section.settings.secondary_menu].links -%}
+        <a href="{{ link.url }}">{{ link.title }}</a>
+      {%- endfor -%}
+      {%- if settings.whatsapp_number != blank -%}
+        <a href="https://wa.me/{{ settings.whatsapp_number }}" target="_blank" rel="noopener">{{ 'general.whatsapp_us' | t }}{% if settings.whatsapp_display != blank %} · {{ settings.whatsapp_display }}{% endif %}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "shopify-section-header",
+  "enabled_on": { "groups": ["header"] },
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo override", "info": "Leave empty to use the official dark lockup shipped with the theme." },
+    { "type": "link_list", "id": "menu", "label": "Main menu", "default": "main-menu", "info": "The first item with sub-links opens the mega menu." },
+    { "type": "text", "id": "mega_item", "label": "Mega menu item title", "default": "Shop" },
+    { "type": "collection", "id": "shop_collection", "label": "Collection for concern and skin-type links", "info": "Concern and skin-type lists come from Theme settings > Discovery." },
+    { "type": "link_list", "id": "secondary_menu", "label": "Secondary menu (phone menu footer)", "default": "footer" }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Mega menu card",
+      "limit": 2,
+      "settings": [
+        { "type": "text", "id": "eyebrow", "label": "Label", "default": "New in" },
+        { "type": "text", "id": "title", "label": "Title", "default": "The launch collection" },
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "url", "id": "link", "label": "Link (overrides collection)" },
+        { "type": "image_picker", "id": "image", "label": "Image" }
+      ]
+    }
+  ]
+}
+{% endschema %}
