@@ -98,6 +98,7 @@ This environment could not open the storefront: its network policy blocks `moana
    - All files uploaded to the preview theme.
    - Shopify accepted every template and section group. JSON templates are validated against the sections on upload.
    - File checksums on Shopify were compared with the local files: all match. `settings_data.json` is the only exception, because Shopify rewrites that file in its own format.
+   - Fixed after handover (9 Oct): `snippets/structured-data.liquid` had not reached Shopify, which caused "Could not find asset snippets/structured-data.liquid" on every page. Shopify's parser rejects a `}` inside a quoted string within `{{ }}`, and the background upload had dropped the file without reporting an error. The fixed file was uploaded directly, Shopify validated it, and its checksum matches. A second full comparison found no other missing or changed files.
 2. **Against a local preview** (`dev/`): the real theme files, rendered with the real catalogue, with Shopify's storefront endpoints emulated. **40/40 interaction checks pass:**
    - add from a card, then the drawer opens
    - quantity up and down, and remove
