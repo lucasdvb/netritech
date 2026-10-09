@@ -59,7 +59,8 @@ export function checkIn(s, { note = '', keep = true } = {}) {
 export function summarize(s, end = today()) {
   const last = s.end < end ? s.end : end;
   const days = last >= s.start ? range(s.start, last).filter((d) => d >= H.trackingStart()) : [];
-  const scored = days.map((d) => dayScore(d)).filter((x) => x.ratio != null && !H.isOff(x.mode));
+  // Today counts once something is done (as in the week's story), never as a zero first thing.
+  const scored = days.map((d) => dayScore(d)).filter((x) => x.ratio != null && !H.isOff(x.mode) && !(x.date === today() && x.done === 0));
   const focus = s.habitIds.map((id) => H.habit(id)).filter(Boolean).map((h) => {
     const c = H.consistency(h, last, days.length || 1);
     return { habitId: h.id, name: h.name, ratio: c.ratio, done: c.done };

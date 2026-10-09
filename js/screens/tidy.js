@@ -3,6 +3,7 @@
 import * as store from '../data/store.js';
 import * as H from '../domain/habits.js';
 import * as A from '../domain/adapt.js';
+import { statePatch } from '../domain/habit-system.js';
 import { today, addDays } from '../domain/dates.js';
 import { habitColor } from '../domain/taxonomy.js';
 import { html } from '../ui/dom.js';
@@ -55,7 +56,7 @@ export function openTidy(date = today()) {
           const h = H.habit(h0.id);
           const choice = sheet.ui.pick[h.id];
           if (choice === 'archive') ops.push({ store: 'habits', value: { ...h, archived: true } });
-          if (choice === 'pause') ops.push({ store: 'habits', value: { ...h, state: 'paused', stateBeforePause: H.stateOf(h, date), pausedUntil: sheet.ui.until[h.id] || addDays(date, 14) } });
+          if (choice === 'pause') ops.push({ store: 'habits', value: { ...h, ...statePatch(h, 'paused', { until: sheet.ui.until[h.id] || addDays(date, 14) }) } });
           if (choice === 'smaller') {
             const sm = smaller(h);
             ops.push({ store: 'habits', value: { ...h, temp: { ...(sm.target != null ? { target: sm.target, from: h.target } : { tiny: true }), since: date, until: addDays(date, 14) } } });

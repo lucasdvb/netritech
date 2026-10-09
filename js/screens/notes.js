@@ -160,6 +160,8 @@ export function openNote(id) {
       pin: ({ sheet }) => { N.pin(id); hap.tap(); sheet.refresh(); },
       'to-task': async ({ sheet }) => {
         const n = N.note(id);
+        if (!n || sheet.saving) return;
+        sheet.saving = true;
         const T = await import('../domain/tasks.js');
         const lines = n.text.split('\n');
         const t = T.add({ title: N.firstLine(n.text, 120), notes: lines.slice(1).join('\n').trim() });

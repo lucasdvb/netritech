@@ -31,14 +31,16 @@ export function fmt(amount, { cents } = {}) {
     try { formatters.set(key, new Intl.NumberFormat(undefined, { style: 'currency', currency: cur, currencyDisplay: 'narrowSymbol', minimumFractionDigits: dp, maximumFractionDigits: dp })); }
     catch { formatters.set(key, { format: (v) => `${cur} ${v.toFixed(dp)}` }); }
   }
-  return formatters.get(key).format(amount || 0);
+  // Anything under half a cent is nothing at all, never "-$0".
+  return formatters.get(key).format(Math.abs(amount || 0) < 0.005 ? 0 : amount);
 }
 
 export const inMonth = (month = monthKey(today())) => store.all('expenses').filter((e) => monthKey(e.date) === month)
   .sort((a, b) => cmp(b.date, a.date) || cmp(b.createdAt || '', a.createdAt || ''));
 
 export function save({ id, amount, category: cat = 'other', note = '', date = today() }) {
-  const value = Math.round(Number(amount) * 100) / 100;
+  // Rounded to cents in decimal, so 1.005 is 1.01 (binary halves would make it 1.00).
+  const value = Number(`${Math.round(Number(`${Number(amount)}e2`))}e-2`);
   if (!(value > 0)) throw new Error('Enter an amount above zero.');
   const prev = id ? store.get('expenses', id) : null;
   return store.put('expenses', { ...(prev || {}), ...(id ? { id } : {}), amount: value, category: cat, note: note.trim().slice(0, 80), date });

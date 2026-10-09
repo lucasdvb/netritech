@@ -41,7 +41,8 @@ function prefill(which, date) {
     return {
       bedtime: sl?.bedtime || last?.bedtime || p.bedTime || '22:00', wake: sl?.wake || last?.wake || p.wakeTime || '06:00', quality: sl?.quality ?? null,
       energy: mood.energy ?? null, mood: mood.mood ?? null, stress: mood.stress ?? null,
-      weight: w ? Math.round(kgOut(w.kg) * 10) / 10 : null, weighed: !!store.get('weightEntries', date),
+      // Only today's weigh-in fills the field: the last one is a hint, never saved as today's.
+      weight: store.get('weightEntries', date) ? Math.round(kgOut(w.kg) * 10) / 10 : null, lastWeight: w ? Math.round(kgOut(w.kg) * 10) / 10 : null, weighed: !!store.get('weightEntries', date),
     };
   }
   const tm = addDays(date, 1);
@@ -75,7 +76,7 @@ function body(step, s, date) {
     case 'weight': return html`<p class="ritual-note">Optional. After the bathroom, before food or drink.</p>
       <div class="ritual-weight">
         <button type="button" class="icon-btn numpad-step" data-action="r-w" data-d="-1" aria-label="0.1 less">${icon('minus', { size: 20 })}</button>
-        <span class="input-unit input-unit--xl"><input class="tnum" type="number" inputmode="decimal" step="0.1" value="${u.weight ?? ''}" data-input="rf" data-f="weight" aria-label="Weight in ${weightUnit()}" placeholder="0.0"><span>${weightUnit()}</span></span>
+        <span class="input-unit input-unit--xl"><input class="tnum" type="number" inputmode="decimal" step="0.1" value="${u.weight ?? ''}" data-input="rf" data-f="weight" aria-label="Weight in ${weightUnit()}" placeholder="${u.lastWeight ?? '0.0'}"><span>${weightUnit()}</span></span>
         <button type="button" class="icon-btn numpad-step" data-action="r-w" data-d="1" aria-label="0.1 more">${icon('plus', { size: 20 })}</button>
       </div>`;
     case 'three': return html`<ol class="ritual-three">${T.slots(date).map((t, i) => html`<li data-key="r3-${i}">
@@ -144,6 +145,8 @@ export function openRitual(which = 'evening', date = today()) {
     title: which === 'morning' ? 'Morning' : 'Evening',
     size: 'detent',
     ui,
+    // Closing half-way keeps what you said on the step you were on (Skip is the way to leave it out).
+    onClose: () => { if (ui.edited && ui.edited === list[ui.i]) commit(list[ui.i], { ui }, date); },
     render: (s) => {
       const step = list[s.ui.i];
       const last = s.ui.i === list.length - 1;
@@ -161,8 +164,11 @@ export function openRitual(which = 'evening', date = today()) {
       </div>`;
     },
     inputs: {
-      rf: ({ el, value, sheet }) => { sheet.ui[el.dataset.f] = value; if (el.type === 'time') sheet.refresh(); },
-      'r-three': ({ el, value }) => T.setPriority(date, Number(el.dataset.i), value),
+      rf: ({ el, value, sheet }) => { sheet.ui[el.dataset.f] = value; sheet.ui.edited = list[sheet.ui.i]; if (el.type === 'time') sheet.refresh(); },
+      'r-three': ({ el, value }) => {
+      const undo = T.setPriorityUndoable(date, Number(el.dataset.i), value);
+      if (undo) app.toast('Priority cleared', { action: { label: 'Undo', fn: undo } });
+    },
     },
     actions: {
       // The Health Shortcut copies sleep, steps and weight: fill the check-in from it and keep the steps.
@@ -186,8 +192,17 @@ export function openRitual(which = 'evening', date = today()) {
         hap.success();
         sheet.refresh();
       },
-      'r-pick': ({ data, sheet }) => { sheet.ui[data.f] = sheet.ui[data.f] === Number(data.value) ? null : Number(data.value); hap.tap(); sheet.refresh(); },
-      'r-w': ({ data, sheet }) => { const v = Number(sheet.ui.weight) || 0; sheet.ui.weight = Math.round((v + Number(data.d) * 0.1) * 10) / 10; hap.tap(); sheet.refresh(); },
+      'r-pick': ({ data, sheet }) => { sheet.ui[data.f] = sheet.ui[data.f] === Number(data.value) ? null : Number(data.value); sheet.ui.edited = list[sheet.ui.i]; hap.tap(); sheet.refresh(); },
+      'r-w': ({ data, sheet }) => {
+        const v = Number(sheet.ui.weight) || sheet.ui.lastWeight || 0;
+        sheet.ui.weight = Math.round((v + Number(data.d) * 0.1) * 10) / 10;
+        sheet.ui.edited = 'weight';
+        // The field shows the new number even if you'd typed in it.
+        const f = sheet.el.querySelector('[data-f="weight"]');
+        if (f) f.value = String(sheet.ui.weight);
+        hap.tap();
+        sheet.refresh();
+      },
       'r-tick': ({ data, sheet }) => {
         const h = H.habit(data.id);
         if (!h) return;
@@ -205,7 +220,7 @@ export function openRitual(which = 'evening', date = today()) {
         sheet.refresh();
       },
       'r-move': ({ data, sheet }) => { sheet.ui.move = { ...sheet.ui.move, [data.id]: !sheet.ui.move[data.id] }; hap.tap(); sheet.refresh(); },
-      'r-next': ({ sheet }) => { commit(list[sheet.ui.i], sheet, date); go(sheet, 1); },
+      'r-next': ({ sheet }) => { commit(list[sheet.ui.i], sheet, date); sheet.ui.edited = null; go(sheet, 1); },
       'r-skip': ({ sheet }) => go(sheet, 1),
       'r-back': ({ sheet }) => go(sheet, -1),
       'r-finish': ({ sheet }) => { Rt.markRitual(date, which); hap.success(); app.closeSheet(sheet); },
@@ -230,6 +245,7 @@ export function openRitual(which = 'evening', date = today()) {
 function go(sheet, d) {
   const n = sheet.ui.i + d;
   if (n < 0) return;
+  sheet.ui.edited = null;
   sheet.ui.i = n;
   sheet.refresh();
   sheet.el.querySelector('.ritual-q')?.focus({ preventScroll: true });

@@ -3,6 +3,7 @@
 // your plan rather than noted, and next week's three. A finished review, or "See it all", shows
 // every number and question on one page.
 import * as store from '../data/store.js';
+import { saver, applyPatches } from '../ui/save-later.js';
 import * as H from '../domain/habits.js';
 import * as T from '../domain/tasks.js';
 import * as S from '../domain/story.js';
@@ -32,12 +33,9 @@ export function defaultWeek() {
   return cur;
 }
 
-const timers = new Map();
-function saveLater(id, patch) {
-  clearTimeout(timers.get(id));
-  timers.set(id, setTimeout(() => store.put('weeklyReviews', { ...(store.get('weeklyReviews', id) || { id, weekStart: id }), ...patch(store.get('weeklyReviews', id) || {}) }), 400));
-}
-const flush = (ws) => { clearTimeout(timers.get(ws)); };
+const saving = saver((id, patches) => store.put('weeklyReviews', applyPatches(store.get('weeklyReviews', id) || { id, weekStart: id }, patches)), 400);
+const saveLater = (id, patch) => saving.later(id, patch);
+const flush = (ws) => saving.now(ws);
 const reviewOf = (ws) => store.get('weeklyReviews', ws) || { id: ws, weekStart: ws };
 
 // Resolve the week once per visit so completing last week's review doesn't flip the screen to this week.
@@ -200,7 +198,10 @@ export default {
       ${showAll && !r.completedAt ? html`<button type="button" class="link-btn block" data-action="rv-guided">Back to the guided review</button>` : ''}
       ${showAll && r.completedAt ? html`<button type="button" class="link-btn block" data-action="rv-guided">Go through it step by step</button>` : ''}`;
   },
+  // Whatever is still waiting to save goes in when you leave a field or the review.
+  unmount() { saving.now(); },
   async mount(el, { ui }) {
+    el.addEventListener('focusout', () => saving.now());
     // The suggestions for the one change are worked out once per visit, so applying one doesn't reshuffle the list.
     if (!ui.suggestions) {
       const I = await import('../domain/insights.js');

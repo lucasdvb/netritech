@@ -172,7 +172,12 @@ export function goalSheet(existing) {
         if (!form.name?.trim()) { app.toast('Give the goal a name.'); return; }
         const n = (v) => (v === '' || v == null ? null : weight ? kgIn(Number(v)) : Number(v));
         const patch = { name: form.name.trim(), description: form.description || '', category: form.category, deadline: form.deadline || null };
-        if (m) Object.assign(patch, { start: n(form.start), target: n(form.target) });
+        if (m) {
+          const start = n(form.start), target = n(form.target);
+          // A number goal needs its target; the direction follows from start and target.
+          if (target == null || !Number.isFinite(target)) { app.toast('Give the goal a target number.'); return; }
+          Object.assign(patch, { start, target, direction: start != null && Number.isFinite(start) && start !== target ? (target < start ? 'down' : 'up') : existing.direction ?? null });
+        }
         store.put('goals', { ...existing, ...patch });
         hap.tap();
         app.closeSheet(sheet);

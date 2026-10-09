@@ -52,8 +52,10 @@ export function nextStep(exerciseId, target, { excludeWorkoutId, before, unit = 
   if (allTop) {
     if (time) return { kind: 'seconds', seconds: range.high + 5, why: `Every hold reached ${range.high} s last time.` };
     if (topLoad > 0 || e.defaultLoad) {
-      const step = unit === 'lb' ? 5 * LB : 2.5;
-      return { kind: 'load', load: Math.round(((topLoad || e.defaultLoad) + step) * 100) / 100, reps: range.low, why: `Every set reached ${range.high} reps last time.` };
+      // Stepped in your unit and rounded there, so 100 lb goes 105, 110… with no drift.
+      const base = topLoad || e.defaultLoad;
+      const load = unit === 'lb' ? (Math.round(base / LB / 2.5) * 2.5 + 5) * LB : Math.round((base + 2.5) * 100) / 100;
+      return { kind: 'load', load, reps: range.low, why: `Every set reached ${range.high} reps last time.` };
     }
     const h = harder(e);
     if (h) return { kind: 'variation', exerciseId: h.id, reps: range.low, why: `Every set reached ${range.high} reps last time: ready for ${h.name}.` };

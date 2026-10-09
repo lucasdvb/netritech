@@ -59,7 +59,13 @@ export default {
       L.removeItem(params.id, data.id);
       app.toast('Item deleted', { action: { label: 'Undo', fn: () => store.put('lists', before) } });
     },
-    'move': ({ from, to, params }) => L.moveItem(params.id, from, to),
+    // The drag happens among the unticked items; the list itself also holds ticked ones.
+    'move': ({ from, to, params }) => {
+      const items = L.list(params.id)?.items || [];
+      const open = items.filter((i) => !i.done);
+      const a = items.indexOf(open[from]), b = items.indexOf(open[to]);
+      if (a >= 0 && b >= 0) L.moveItem(params.id, a, b);
+    },
     clear: ({ params }) => {
       const before = L.list(params.id);
       L.clearDone(params.id);

@@ -291,6 +291,8 @@ function sessionMenu(workoutId) {
         app.closeSheet(sheet);
       },
       'as-template': async ({ sheet }) => {
+        if (sheet.saving) return;
+        sheet.saving = true;
         const TP = await import('../domain/templates.js');
         const t = TP.fromWorkout(w.id);
         app.closeSheet(sheet);

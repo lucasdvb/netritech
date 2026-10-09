@@ -27,7 +27,7 @@ await step('a full disk: the write is rolled back and reported, and the next one
     await page.locator('[data-action="add-water"]').first().click();
     await page.waitForSelector('.toast--danger');
     const msg = await page.locator('.toast--danger').first().textContent();
-    if (!/couldn’t save|safe/i.test(msg)) throw new Error(`message: ${msg}`);
+    if (!/couldn’t save|wasn’t saved|safe/i.test(msg)) throw new Error(`message: ${msg}`);
     await page.waitForTimeout(300);
     if (await page.locator('.toast--danger').count() !== 1) throw new Error('the same error shown more than once');
     const left = await page.locator('.toast:not(.toast--danger)').allTextContents();

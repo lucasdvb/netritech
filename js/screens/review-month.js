@@ -2,6 +2,7 @@
 // problem, stop · start · continue, who you're becoming, the business numbers) and next month's
 // focus. "See it all" shows everything on one page, as does a finished review.
 import * as store from '../data/store.js';
+import { saver, applyPatches } from '../ui/save-later.js';
 import * as H from '../domain/habits-more.js';
 import * as HS from '../domain/habit-system.js';
 import { monthFacts } from '../domain/review-data.js';
@@ -24,11 +25,8 @@ const STEPS = [
   ['spirit', 'Who you’re becoming', ['spirit']], ['business', 'The business', []], ['focus', 'Next month’s focus', ['focus']],
 ];
 
-const timers = new Map();
-function saveLater(id, patch) {
-  clearTimeout(timers.get(id));
-  timers.set(id, setTimeout(() => store.put('monthlyReviews', { ...(store.get('monthlyReviews', id) || { id }), ...patch(store.get('monthlyReviews', id) || {}) }), 400));
-}
+const saving = saver((id, patches) => store.put('monthlyReviews', applyPatches(store.get('monthlyReviews', id) || { id }, patches)), 400);
+const saveLater = (id, patch) => saving.later(id, patch);
 const monthOf = (params) => (params.month && /^\d{4}-\d{2}$/.test(params.month) ? params.month : monthKey(today()));
 const reviewOf = (m) => store.get('monthlyReviews', m) || { id: m };
 const question = (k) => QUESTIONS.find(([q]) => q === k)[1];
@@ -99,7 +97,7 @@ function full(r, f) {
 
 /** Everything typed on screen, merged into the review. */
 function collect(m) {
-  clearTimeout(timers.get(m));
+  saving.now(m);
   const cur = reviewOf(m);
   const answers = { ...(cur.answers || {}) };
   const biz = { ...(cur.business || {}) };
@@ -129,6 +127,9 @@ export default {
       ${showAll ? full(r, f) : guided(month, r, f, ui)}
       ${showAll ? html`<button type="button" class="link-btn block" data-action="rv-guided">${r.completedAt ? 'Go through it step by step' : 'Back to the guided review'}</button>` : ''}`;
   },
+  // Whatever is still waiting to save goes in when you leave a field or the review.
+  mount(el) { el.addEventListener('focusout', () => saving.now()); },
+  unmount() { saving.now(); },
   inputs: {
     answer: ({ el, value, params }) => {
       saveLater(monthOf(params), (cur) => ({ answers: { ...(cur.answers || {}), [el.dataset.k]: value }, ...(el.dataset.k === 'spirit' ? { spirit: value } : {}) }));

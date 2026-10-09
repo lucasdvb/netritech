@@ -6,10 +6,28 @@ const sameKind = (a, b) => a.nodeType === b.nodeType && (a.nodeType !== 1 || a.t
 // Fields the user has typed into since the last render that matched them.
 // A re-render never overwrites these, so in-flight text can't be lost.
 const dirty = new WeakSet();
+// Choices made in a form that saves later (a select, a checkbox, an open section): a re-render
+// for something else keeps what you chose instead of putting the old choice back.
+const chosen = new WeakSet();
+const opened = new WeakSet();
 if (typeof document !== 'undefined') {
   document.addEventListener('input', (e) => {
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) dirty.add(e.target);
   }, true);
+  document.addEventListener('change', (e) => {
+    const t = e.target;
+    // Saved as it changes: from here the saved value is the truth (trimmed, capped, refused),
+    // and the next render shows it once you've left the field.
+    if (t.dataset?.change) { dirty.delete(t); return; }
+    if (t.tagName === 'SELECT' || (t.tagName === 'INPUT' && (t.type === 'checkbox' || t.type === 'radio'))) chosen.add(t);
+  }, true);
+  document.addEventListener('toggle', (e) => { if (e.target.tagName === 'DETAILS') opened.add(e.target); }, true);
+}
+
+/** Fields whose every keystroke is already handled (data-input) can be redrawn from what was
+ *  saved: after a button acts on them (a ± step, say), they show its result. */
+export function settle(root) {
+  for (const f of root.querySelectorAll('input[data-input], textarea[data-input]')) dirty.delete(f);
 }
 
 const FIELD = new Set(['INPUT', 'TEXTAREA', 'SELECT']);
@@ -80,14 +98,18 @@ function morphNode(a, b) {
 }
 
 function syncAttributes(a, b) {
+  // A section you opened or closed stays that way.
+  const keepOpen = a.tagName === 'DETAILS' && opened.has(a);
   const old = a.attributes;
   for (let i = old.length - 1; i >= 0; i--) {
     const name = old[i].name;
+    if (keepOpen && name === 'open') continue;
     if (!b.hasAttribute(name)) a.removeAttribute(name);
   }
   const next = b.attributes;
   for (let i = 0; i < next.length; i++) {
     const { name, value } = next[i];
+    if (keepOpen && name === 'open') continue;
     if (a.getAttribute(name) !== value) a.setAttribute(name, value);
   }
 }
@@ -100,10 +122,11 @@ function syncFormControl(a, b) {
     return;
   }
   if (a.type === 'checkbox' || a.type === 'radio') {
-    a.checked = b.hasAttribute('checked');
+    if (!chosen.has(a)) a.checked = b.hasAttribute('checked');
     return;
   }
   if (a.tagName === 'SELECT') {
+    if (chosen.has(a)) return;
     queueMicrotask(() => {
       const sel = b.querySelector('option[selected]');
       if (sel && a.value !== sel.value) a.value = sel.value;

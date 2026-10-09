@@ -1,7 +1,7 @@
 import * as store from '../data/store.js';
 import { html, raw, cx } from '../ui/dom.js';
 import { pageHead, toggle, settingRow, segmented } from '../ui/components.js';
-import { kgOut, kgIn, weightUnit, num } from '../ui/format.js';
+import { kgOut, kgIn, weightUnit, fieldNum } from '../ui/format.js';
 import * as hap from '../ui/haptics.js';
 import { requestPermission, permissionState, stats as reminderStats } from '../domain/reminders.js';
 import * as badge from '../ui/badge.js';
@@ -65,9 +65,9 @@ export default {
           ${profileField('Name', 'name')}
           ${profileField('Age', 'age', 'number', { attrs: 'inputmode="numeric" min="10" max="100"' })}
           ${profileField('Height', 'heightCm', 'number', { unit: 'cm', attrs: 'inputmode="numeric"' })}
-          <label class="set-row"><span class="set-text"><span class="set-label">Starting weight</span></span><span class="set-ctl"><input class="input input--inline input--num" type="number" step="0.1" inputmode="decimal" value="${num(kgOut(p.startWeightKg), 1).replace(/,/g, '')}" data-change="start-weight" aria-label="Starting weight"><span class="muted small">${weightUnit()}</span></span></label>
-          ${profileField('Body fat (estimate)', 'startBodyFat', 'number', { unit: '%', attrs: 'step="0.5"' })}
-          ${profileField('Goal body fat', 'goalBodyFat', 'number', { unit: '%', attrs: 'step="0.5"' })}
+          <label class="set-row"><span class="set-text"><span class="set-label">Starting weight</span></span><span class="set-ctl"><input class="input input--inline input--num" type="number" step="0.1" inputmode="decimal" value="${fieldNum(kgOut(p.startWeightKg))}" data-change="start-weight" aria-label="Starting weight"><span class="muted small">${weightUnit()}</span></span></label>
+          ${profileField('Body fat (estimate)', 'startBodyFat', 'number', { unit: '%', attrs: 'step="any"' })}
+          ${profileField('Goal body fat', 'goalBodyFat', 'number', { unit: '%', attrs: 'step="any"' })}
         </div></section>
       <section class="block"><h2 class="set-section">Day</h2>
         <div class="set-list">

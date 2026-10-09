@@ -306,7 +306,10 @@ const view = {
       el.value = '';
       hap.tap();
     },
-    'top3-text': ({ el, value, params }) => T.setPriority(params.date || today(), Number(el.dataset.i), value),
+    'top3-text': ({ el, value, params }) => {
+      const undo = T.setPriorityUndoable(params.date || today(), Number(el.dataset.i), value);
+      if (undo) app.toast('Priority cleared', { action: { label: 'Undo', fn: undo } });
+    },
     win: ({ value, params }) => saveReview(params.date || today(), { win: value.trim() }),
   },
 };

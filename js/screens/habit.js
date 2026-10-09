@@ -273,7 +273,7 @@ function openPause(h) {
         HS.setState(H.habit(h.id), 'paused', { until: sheet.ui.until });
         hap.tap();
         app.closeSheet(sheet);
-        app.toast(`${h.name} paused until ${fmtMD(sheet.ui.until)}.`, { action: { label: 'Undo', fn: () => store.update('habits', h.id, { state: h.state, pausedUntil: h.pausedUntil ?? null }) } });
+        app.toast(`${h.name} paused until ${fmtMD(sheet.ui.until)}.`, { action: { label: 'Undo', fn: () => store.update('habits', h.id, { state: h.state, pausedUntil: h.pausedUntil ?? null, stateBeforePause: h.stateBeforePause ?? null, stateLog: h.stateLog ?? null }) } });
       },
     },
     inputs: { until: ({ value, sheet }) => { if (value && value > t) { sheet.ui.until = value; sheet.refresh(); } } },

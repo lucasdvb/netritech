@@ -103,8 +103,10 @@ export const dayInline = (iso, ref) => { const r = relativeDay(iso, ref); return
 
 export const durationHM = (minutes) => {
   if (minutes == null || !Number.isFinite(minutes)) return '—';
-  const h = Math.floor(minutes / 60);
-  const m = Math.round(minutes % 60);
+  // Rounded once, then split, so 7 h 59.7 min reads 8h 00m (never 7h 60m).
+  const t = Math.round(minutes);
+  const h = Math.floor(t / 60);
+  const m = t % 60;
   return h ? `${h}h ${pad(m)}m` : `${m}m`;
 };
 /** Order two ISO dates or times: their text order is their time order (and faster than localeCompare). */

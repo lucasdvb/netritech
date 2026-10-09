@@ -15,7 +15,7 @@ const OUT = process.argv[3] || './test-shots';
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'];
 
 async function open({ scheme = 'light', demo = 60, device = 'iPhone 14', viewport = null } = {}) {
-  const ctx = await browser.newContext({ ...devices[device], ...(viewport ? { viewport } : {}), colorScheme: scheme, reducedMotion: 'reduce' });
+  const ctx = await browser.newContext({ ...devices[device], ...(viewport ? { viewport } : {}), colorScheme: scheme, reducedMotion: 'reduce', bypassCSP: true }); // axe is injected as an inline script
   const p = await ctx.newPage();
   p.setDefaultTimeout(10000);
   p.on('pageerror', (e) => errors.push(`${scheme}: pageerror: ${e.message}`));

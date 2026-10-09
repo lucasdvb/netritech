@@ -5,7 +5,7 @@ import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty } from '../ui/components.js';
 import { lineChart } from '../ui/charts.js';
-import { num, signed, cmOut, cmIn, lengthUnit, weight as fw, kgOut, weightUnit } from '../ui/format.js';
+import { num, signed, cmOut, cmIn, lengthUnit, weight as fw, kgOut, weightUnit, fieldNum } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { removeWithUndo } from './sheets.js';
@@ -24,7 +24,7 @@ export function openMeasurement(existing = null) {
       <p class="sheet-note">Same time of day, relaxed, tape snug but not tight. Measure at the widest point (navel line for the waist).</p>
       <label class="field"><span class="field-label">Date</span><input class="input" type="date" name="date" value="${date}" max="${today()}"></label>
       <div class="grid-2">${FIELDS.map((f) => html`<label class="field"><span class="field-label">${f.label}${f.optional ? html` <small>optional</small>` : ''}</span>
-        <span class="input-unit"><input name="${f.id}" type="number" inputmode="decimal" step="0.1" min="0" value="${existing?.[f.id] != null ? num(cmOut(existing[f.id]), 1).replace(/,/g, '') : ''}"><span>${lengthUnit()}</span></span></label>`)}</div>
+        <span class="input-unit"><input name="${f.id}" type="number" inputmode="decimal" step="0.1" min="0" value="${existing?.[f.id] != null ? fieldNum(cmOut(existing[f.id])) : ''}"><span>${lengthUnit()}</span></span></label>`)}</div>
       <label class="field"><span class="field-label">Note</span><input class="input" name="note" value="${existing?.note || ''}" placeholder="Optional"></label>
       <div class="btn-row">
         ${existing ? html`<button type="button" class="btn btn--ghost" data-action="del">Delete</button>` : ''}
@@ -54,7 +54,7 @@ function bodyFatSheet() {
       <p class="sheet-note">Every method has an error of several percent. Use one method consistently and watch the direction, not the decimal.</p>
       ${c.navy ? html`<p class="note-card">Your tape estimate (US Navy formula, waist + neck + height) is about <strong>${num(c.navy, 1)}%</strong>.</p>` : ''}
       <div class="grid-2">
-        <label class="field"><span class="field-label">Estimate</span><span class="input-unit"><input name="pct" type="number" inputmode="decimal" step="0.5" min="3" max="60" value="${c.navy ? num(c.navy, 1) : ''}" required><span>%</span></span></label>
+        <label class="field"><span class="field-label">Estimate</span><span class="input-unit"><input name="pct" type="number" inputmode="decimal" step="any" min="3" max="60" value="${fieldNum(c.navy)}" required><span>%</span></span></label>
         <label class="field"><span class="field-label">Date</span><input class="input" type="date" name="date" value="${today()}" max="${today()}"></label>
       </div>
       <label class="field"><span class="field-label">Method</span><select class="input" name="method">

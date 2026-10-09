@@ -220,6 +220,9 @@ export default {
     'quest-no': () => { const undo = Q.decline(Q.offer()); hap.tap(); app.toast('Let it go for this week', { action: { label: 'Undo', fn: undo } }); },
   },
   inputs: {
-    'tm-three': ({ el, value }) => T.setPriority(addDays(today(), 1), Number(el.dataset.i), value),
+    'tm-three': ({ el, value }) => {
+      const undo = T.setPriorityUndoable(addDays(today(), 1), Number(el.dataset.i), value);
+      if (undo) app.toast('Priority cleared', { action: { label: 'Undo', fn: undo } });
+    },
   },
 };

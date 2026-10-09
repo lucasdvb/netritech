@@ -151,6 +151,8 @@ function fail(err, message) {
 
 const SAVE_FAILED = 'Couldn’t save that entry. Your data is still safe. Try again.';
 const DELETE_FAILED = 'Couldn’t delete that. Nothing was lost. Try again.';
+const STORAGE_FULL = 'This device’s storage is full, so that wasn’t saved. Free up some space (or remove old photos), then try again.';
+let failures = 0;
 
 // Queue disk operations; everything queued in the same moment lands in one transaction.
 function enqueue(ops, rollback, message, commit) {
@@ -174,15 +176,22 @@ function drain() {
     for (const g of group) g.commit();
   }, (err) => {
     landing.delete(ops);
+    failures++;
     for (const g of [...group].reverse()) g.rollback();
-    if (!closed) fail(err, group[group.length - 1].message);
+    // A full device won't take it on a second try either, so say so.
+    if (!closed) fail(err, err?.name === 'QuotaExceededError' ? STORAGE_FULL : group[group.length - 1].message);
   });
   writes = Promise.all([writes, landed]);
   return writes;
 }
 
-/** Send anything queued to disk now, and resolve once every write has landed. */
-export const flush = () => drain();
+/** Send anything queued to disk now, and resolve once every write has landed: true when all of
+ *  them did, false when any failed (the failure has already been shown and rolled back). */
+export async function flush() {
+  const before = failures;
+  await drain();
+  return failures === before;
+}
 /** What hasn't reached the disk yet (data/journal.js keeps a copy when the app closes). */
 export const unlanded = () => [...landing, ...pending.map((g) => g.ops)].flat();
 
@@ -309,16 +318,25 @@ export function batch(ops, message = SAVE_FAILED) {
 /** Records from your other devices (sync): each kept only if newer than ours, with no outbox entry. */
 export function adopt(list) {
   const disk = [];
+  const tracked = [];
   for (const { store: s, value: r } of list) {
     const cur = cache[s].get(r.id) || tombs[s].get(r.id);
     if (cur && (cur.updatedAt || '') >= (r.updatedAt || '')) continue;
+    // Tracked like any write: if it doesn't reach the disk, memory goes back to what it replaced
+    // (and sync doesn't move on, so it comes again next time).
+    tracked.push({ w: track(s, r.id, cache[s].get(r.id), tombs[s].get(r.id)), s, r, cur });
     cache[s].delete(r.id);
     tombs[s].delete(r.id);
     (r.deletedAt ? tombs : cache)[s].set(r.id, r);
     disk.push({ store: s, value: r });
     emit(s, [r, cur]);
   }
-  if (disk.length) enqueue(disk, () => {}, SAVE_FAILED, () => {});
+  if (disk.length) {
+    enqueue(disk, () => {
+      for (const t of [...tracked].reverse()) undoWrite(t.w);
+      for (const t of tracked) emit(t.s, [t.r, t.cur]);
+    }, SAVE_FAILED, () => { for (const t of tracked) commitWrite(t.w); });
+  }
   return disk.length;
 }
 

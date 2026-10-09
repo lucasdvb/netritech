@@ -19,6 +19,8 @@ const done = (tx) => new Promise((resolve, reject) => {
   tx.onabort = () => reject(tx.error || new Error('Transaction aborted'));
 });
 
+const abort = (tx) => { try { tx.abort(); } catch { /* already finished */ } };
+
 // Ask the browser to commit now instead of waiting for the next task.
 const commit = (tx) => { try { tx.commit?.(); } catch { /* already committing */ } };
 
@@ -48,8 +50,10 @@ export function open() {
       db.onversionchange = () => { db.close(); closers.forEach((fn) => fn()); };
       resolve(db);
     };
-    r.onerror = () => reject(r.error);
-    r.onblocked = () => reject(new Error('Database upgrade blocked by another tab'));
+    r.onerror = () => { dbp = null; reject(r.error); };
+    // An older copy of the app is still open in another tab or window and holds the old version.
+    // Keep waiting (the upgrade carries on once it closes) and say what to do meanwhile.
+    r.onblocked = () => { try { globalThis.dispatchEvent?.(new globalThis.Event('lifeos:blocked')); } catch { /* no window */ } };
   });
   return dbp;
 }
@@ -76,13 +80,16 @@ export async function write(ops) {
   const db = await open();
   const names = [...new Set(ops.map((o) => o.store))];
   const tx = db.transaction(names, 'readwrite');
-  for (const op of ops) {
-    const s = tx.objectStore(op.store);
-    if ('delete' in op) s.delete(op.delete);
-    else s.put(op.value);
-  }
+  const finished = done(tx);
+  try {
+    for (const op of ops) {
+      const s = tx.objectStore(op.store);
+      if ('delete' in op) s.delete(op.delete);
+      else s.put(op.value);
+    }
+  } catch (err) { abort(tx); finished.catch(() => {}); throw err; }
   commit(tx);
-  return done(tx);
+  return finished;
 }
 
 /** Replaces the full contents of the given stores atomically. data = {store: [records]} */
@@ -90,13 +97,17 @@ export async function replaceAll(data) {
   const db = await open();
   const names = Object.keys(data);
   const tx = db.transaction(names, 'readwrite');
-  for (const name of names) {
-    const s = tx.objectStore(name);
-    s.clear();
-    for (const rec of data[name]) s.put(rec);
-  }
+  const finished = done(tx);
+  // A record the database refuses part-way undoes the whole thing, clears included.
+  try {
+    for (const name of names) {
+      const s = tx.objectStore(name);
+      s.clear();
+      for (const rec of data[name]) s.put(rec);
+    }
+  } catch (err) { abort(tx); finished.catch(() => {}); throw err; }
   commit(tx);
-  return done(tx);
+  return finished;
 }
 
 export async function clearAll() {

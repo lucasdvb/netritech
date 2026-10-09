@@ -128,10 +128,25 @@ export const slots = (date) => Array.from({ length: RANKS }, (_, i) => prioritie
 export function setPriority(date, i, title) {
   const t = (title || '').trim();
   const cur = slots(date)[i];
-  if (!t) { if (cur) store.remove('tasks', cur.id); return null; }
+  // Cleared: a bare priority typed here goes; a task with anything more to it (notes, a repeat,
+  // a project, already done) stays in your tasks and only leaves the Top 3.
+  if (!t) {
+    if (!cur) return null;
+    if (!cur.notes && !cur.repeat && !cur.projectId && !cur.done) store.remove('tasks', cur.id);
+    else store.put('tasks', { ...cur, rank: null });
+    return null;
+  }
   if (cur) return cur.title === t ? cur : store.put('tasks', { ...cur, title: t });
   const maxOrder = all().reduce((m, x) => Math.max(m, x.order ?? 0), 0);
   return store.put('tasks', { id: store.uid(), title: t, notes: '', area: 'work', repeat: null, date, rank: i + 1, done: false, doneAt: null, order: maxOrder + 1 });
+}
+
+/** setPriority that returns an undo when it clears a slot (null otherwise). */
+export function setPriorityUndoable(date, i, title) {
+  const before = slots(date)[i];
+  setPriority(date, i, title);
+  if (!before || (title || '').trim()) return null;
+  return () => store.put('tasks', before);
 }
 
 /** Move the priority in slot `from` to slot `to`; the others shift. */

@@ -46,6 +46,7 @@ export const MODES = {
 };
 
 export const catLabel = (id) => CATEGORIES.find((c) => c.id === id)?.label || id;
-export const catColor = (id) => `var(--c-${id || 'life'})`;
+// Only known categories become colours: the id lands in CSS and markup, so anything else is 'life'.
+export const catColor = (id) => `var(--c-${CATEGORIES.some((c) => c.id === id) ? id : 'life'})`;
 export const habitColor = (h) => catColor(h?.color || h?.category);
 export const sectionLabel = (id) => SECTIONS.find((s) => s.id === id)?.label || id;

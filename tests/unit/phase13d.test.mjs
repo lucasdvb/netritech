@@ -51,7 +51,11 @@ test('next step: heavier once every set reaches the top, else one more rep; hold
   const up = nextStep('row', '8–12', { before: T });
   assert.deepEqual([up.kind, up.load, up.reps], ['load', 12.5, 8]);
   assert.match(up.why, /Every set reached 12/);
-  assert.equal(nextStep('row', '8–12', { before: T, unit: 'lb' }).load, Math.round((10 + 5 * 0.45359237) * 100) / 100, '5 lb in pounds');
+  // In pounds: 10 kg is 22 lb, rounded to the 2.5 lb plate step, then 5 lb more: 27.5 lb.
+  assert.equal(Math.round(nextStep('row', '8–12', { before: T, unit: 'lb' }).load / 0.45359237 * 10) / 10, 27.5, '5 lb in pounds');
+  // And stepping from a round number of pounds stays round, with no drift.
+  session(-2, 'row', [[12, 100 * 0.45359237], [12, 100 * 0.45359237]]);
+  assert.equal(Math.round(nextStep('row', '8–12', { before: T, unit: 'lb' }).load / 0.45359237 * 1000) / 1000, 105);
   assert.equal(stepLabel(up, (kg) => `${kg} kg`), 'Next step: 12.5 kg × 8');
   // Not all at the top: one more rep on the weakest, same weight.
   session(-1, 'row', [[12, 12.5], [10, 12.5], [9, 12.5]]);

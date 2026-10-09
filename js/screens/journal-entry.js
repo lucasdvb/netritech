@@ -6,15 +6,13 @@ import { icon } from '../ui/icons.js';
 import { pageHead, empty } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
 import { PROMPTS, KIND_LABEL } from './journal.js';
+import { saver, applyPatches } from '../ui/save-later.js';
 
-const timers = new Map();
-function saveLater(id, patch) {
-  clearTimeout(timers.get(id));
-  timers.set(id, setTimeout(() => {
-    const cur = store.get('journalEntries', id);
-    if (cur) store.put('journalEntries', { ...cur, ...patch(cur) });
-  }, 350));
-}
+const saving = saver((id, patches) => {
+  const cur = store.get('journalEntries', id);
+  if (cur) store.put('journalEntries', applyPatches(cur, patches));
+});
+const saveLater = (id, patch) => saving.later(id, patch);
 
 export default {
   id: 'journal-entry',
@@ -39,6 +37,7 @@ export default {
   mount(el) {
     el.querySelectorAll('textarea').forEach((t) => { t.style.height = 'auto'; t.style.height = `${t.scrollHeight}px`; });
     el.addEventListener('input', (e) => { if (e.target.tagName === 'TEXTAREA') { e.target.style.height = 'auto'; e.target.style.height = `${e.target.scrollHeight}px`; } });
+    el.addEventListener('focusout', () => saving.now());
   },
   inputs: {
     answer: ({ el, value, params }) => saveLater(params.id, (cur) => ({ answers: { ...(cur.answers || {}), [el.dataset.i]: value } })),
@@ -46,12 +45,13 @@ export default {
   },
   actions: {
     del: ({ params }) => {
-      clearTimeout(timers.get(params.id));
+      saving.cancel(params.id);
       app.replace('reflect/journal');
       deleteWithUndo([{ store: 'journalEntries', id: params.id }], 'Entry deleted');
     },
   },
   unmount(el, { params }) {
+    saving.now(params.id);
     // Remove entries left completely empty.
     setTimeout(() => {
       const j = store.get('journalEntries', params.id);

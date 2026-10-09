@@ -11,6 +11,10 @@ const remember = (id, data) => {
 const W = 1000, HGT = 1000;
 
 /** Monotone cubic (Fritsch–Carlson) path through points [[x,y]...] – no overshoot. */
+/** A colour safe to place in markup: a CSS variable, a hex value or a plain name; else the accent. */
+const COLOR = /^(?:var\(--[a-z0-9-]+\)|#[0-9a-f]{3,8}|[a-z]+)$/i;
+export const safeColor = (c, fallback = 'var(--accent)') => (c && COLOR.test(String(c)) ? c : fallback);
+
 export function smoothPath(pts) {
   if (pts.length < 2) return pts.length ? `M${pts[0][0]},${pts[0][1]}` : '';
   const n = pts.length;
@@ -68,7 +72,8 @@ const runs = (pts) => pts.reduce((acc, p) => {
  * series: [{ values: [number|null], color, area, dashed, width, label }]
  * labels: x-axis labels (same length as values); fmt: value formatter for tooltips/axis.
  */
-export function lineChart({ labels, series, height = 180, fmt = (v) => v, yFmt = axisFmt, yMin, yMax, zero = false, goal, xTicks = 4, tipLabels, empty = 'Not enough data yet' }) {
+export function lineChart({ labels, series: input, height = 180, fmt = (v) => v, yFmt = axisFmt, yMin, yMax, zero = false, goal, xTicks = 4, tipLabels, empty = 'Not enough data yet' }) {
+  const series = input.map((x) => ({ ...x, color: safeColor(x.color), fill: x.fill ? safeColor(x.fill) : x.fill }));
   const all = series.flatMap((s) => s.values).filter((v) => v != null && Number.isFinite(v));
   if (!all.length) return html`<div class="chart chart--empty" style="height:${height}px"><p>${empty}</p></div>`;
   const lo0 = Math.min(...all, goal?.value ?? Infinity), hi0 = Math.max(...all, goal?.value ?? -Infinity);
@@ -138,7 +143,7 @@ export function barChart({ labels, values, height = 150, color = 'var(--accent)'
     <div class="chart-plot">
       ${goal ? html`<span class="chart-goal-bar" style="bottom:${((goal.value / hi) * 100).toFixed(2)}%"><b>${goal.label}</b></span>` : ''}
       <div class="bars">${vals.map((v, i) => html`<span class="bar-col${highlightLast && i === vals.length - 1 ? ' is-last' : ''}${v == null ? ' is-empty' : ''}${goal && goalIsMin && v != null && v >= goal.value ? ' is-hit' : ''}">
-        <i style="height:${v == null ? 0 : Math.max(2, (v / hi) * 100).toFixed(2)}%;${colors?.[i] ? `background:${colors[i]}` : ''}"></i></span>`)}</div>
+        <i style="height:${v == null ? 0 : Math.max(2, (v / hi) * 100).toFixed(2)}%;${colors?.[i] ? `background:${safeColor(colors[i])}` : ''}"></i></span>`)}</div>
       <span class="chart-cursor" hidden></span>
       <div class="chart-tip" hidden></div>
     </div>
@@ -150,7 +155,8 @@ export function barChart({ labels, values, height = 150, color = 'var(--accent)'
 }
 
 /** Small inline trend line. */
-export function sparkline(values, { color = 'var(--accent)', width = 80, height = 28 } = {}) {
+export function sparkline(values, { color: colorIn = 'var(--accent)', width = 80, height = 28 } = {}) {
+  const color = safeColor(colorIn);
   const v = values.filter((x) => x != null);
   if (v.length < 2) return '';
   const lo = Math.min(...v), hi = Math.max(...v);
