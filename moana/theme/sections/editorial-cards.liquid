@@ -23,7 +23,7 @@
               {%- if b.image != blank -%}
                 {{ b.image | image_url: width: 900 | image_tag: widths: '450, 675, 900', sizes: '(min-width: 990px) 30vw, 80vw', loading: 'lazy', alt: '' }}
               {%- elsif p != blank -%}
-                <span class="ed__pack">{{ p.featured_media.preview_image | image_url: width: 700 | image_tag: widths: '350, 525, 700', sizes: '(min-width: 990px) 20vw, 50vw', loading: 'lazy', alt: '' }}</span>
+                <span class="ed__pack">{{ p.featured_media.preview_image | image_url: width: 700 | image_tag: widths: '350, 525, 700', sizes: '(min-width: 990px) 20vw, 50vw', loading: 'lazy', alt: '', class: 'sx-float' }}</span>
               {%- endif -%}
             </a>
             <div class="ed__body">
@@ -54,13 +54,15 @@
   .ed__media--night { background: radial-gradient(120% 90% at 50% 20%, #3a4636 0%, var(--c-night) 70%); }
   .ed__media > img { width: 100%; height: 100%; object-fit: cover; transition: transform 1100ms var(--ease-out); }
   .ed__pack { position: absolute; inset: 8% 25%; display: block; transition: transform 1100ms var(--ease-out); }
+  .ed { view-timeline: --ed block; --sx-tl: --ed; }
+  .ed__card:nth-child(2n) .sx-float { animation-direction: reverse; }
   .ed__pack img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
   .ed__media--night .ed__pack img { mix-blend-mode: normal; filter: drop-shadow(0 18px 24px rgba(0,0,0,.45)); }
   .ed__card:hover .ed__media > img, .ed__card:hover .ed__pack { transform: scale(1.05); }
   .ed__body { display: grid; justify-items: center; gap: var(--s-2); padding-top: var(--s-5); flex: 1; align-content: start; }
-  .ed__label { font: 500 .8125rem/1.3 var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
-  .ed__name { font: 500 clamp(1.0625rem, 1rem + .3vw, 1.25rem)/1.3 var(--f-body); letter-spacing: .04em; text-transform: uppercase; }
-  .ed__text { max-width: 26rem; font-size: .9375rem; line-height: 1.55; color: var(--ink-soft); text-wrap: pretty; }
+  .ed__label { font: var(--w-medium) var(--fs-xs)/1.3 var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+  .ed__name { font: var(--w-medium) var(--fs-md)/var(--lh-snug) var(--f-body); letter-spacing: var(--ls-button); text-transform: uppercase; }
+  .ed__text { max-width: 26rem; font-size: var(--fs-md); line-height: 1.55; color: var(--ink-soft); text-wrap: pretty; }
   .ed__btn { margin-top: auto; min-width: 12rem; }
   .ed__body .ed__text + .ed__btn, .ed__body .ed__name + .ed__btn { margin-top: var(--s-4); }
   .ed .carousel__arrow { top: 30%; }

@@ -91,7 +91,11 @@
     "view_details": "Voir les détails",
     "add_to_wishlist": "Ajouter aux favoris",
     "in_stock": "En stock",
-    "description": "Description du produit"
+    "description": "Description du produit",
+    "eta": "Commandez aujourd'hui, chez vous en général entre le {{ from }} et le {{ to }}.",
+    "next_step": "Complétez votre routine",
+    "next_step_label": "Votre prochaine étape : {{ step }}",
+    "recently_viewed": "Vus récemment"
   },
   "routine": {
     "step_n": "Étape {{ n }}"

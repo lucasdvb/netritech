@@ -21,7 +21,7 @@
   .usp__list { position: relative; display: grid; height: 40px; }
   .usp__item { grid-area: 1 / 1; display: flex; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 400ms var(--ease), transform 400ms var(--ease), visibility 0s linear 400ms; }
   .usp__item.is-active { opacity: 1; visibility: visible; transform: none; transition: opacity 400ms var(--ease), transform 400ms var(--ease); }
-  .usp__link { display: inline-flex; align-items: center; gap: .6rem; font: 500 .8125rem/1.3 var(--f-body); letter-spacing: .02em; color: var(--ink); white-space: nowrap; }
+  .usp__link { display: inline-flex; align-items: center; gap: .6rem; font: var(--w-medium) var(--fs-xs)/1.3 var(--f-body); letter-spacing: .02em; color: var(--ink); white-space: nowrap; }
   a.usp__link:hover span { text-decoration: underline; text-underline-offset: 3px; }
   .usp__link svg { width: 20px; height: 20px; flex: none; }
   @media (min-width: 990px) {

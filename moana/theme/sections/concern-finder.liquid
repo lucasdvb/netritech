@@ -1,7 +1,7 @@
 {%- liquid
   assign source = section.settings.collection | default: collections['skincare']
 -%}
-<section class="section concern" aria-labelledby="cf-{{ section.id }}">
+<section class="section ambient concern" aria-labelledby="cf-{{ section.id }}">
   <div class="page-width concern__grid">
     <div class="concern__intro">
       {%- if section.settings.eyebrow != blank -%}<p class="t-label">{{ section.settings.eyebrow }}</p>{%- endif -%}
@@ -29,7 +29,7 @@
           endif
         -%}
         <li class="reveal" style="--i: {{ forloop.index0 | modulo: 4 }}" {{ block.shopify_attributes }}>
-          <a class="concern-tile" href="{{ source.url }}/{{ t | handle }}">
+          <a class="concern-tile" data-sheen href="{{ source.url }}/{{ t | handle }}">
             <span class="concern-tile__name">{{ block.settings.label | default: t }}</span>
             {%- if block.settings.note != blank -%}<span class="concern-tile__note">{{ block.settings.note }}</span>{%- endif -%}
             <span class="concern-tile__foot">
@@ -55,7 +55,7 @@
 }
 .concern-tile::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--c-spring); transform: translateY(101%); transition: transform var(--t-slow) var(--ease-out); }
 .concern-tile:hover::before, .concern-tile:focus-visible::before { transform: none; }
-.concern-tile__name { font: 400 clamp(1.375rem, 1.1rem + .9vw, 1.875rem)/1.08 var(--f-display); }
+.concern-tile__name { font: var(--type-h3); letter-spacing: var(--ls-tight); }
 .concern-tile__note { font-size: var(--fs-xs); color: var(--ink-soft); line-height: 1.45; }
 .concern-tile__foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; color: var(--ink-soft); }
 .concern-tile__arrow { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: var(--c-white); color: var(--c-forest); transition: background-color var(--t) var(--ease), color var(--t) var(--ease), transform var(--t) var(--ease); }

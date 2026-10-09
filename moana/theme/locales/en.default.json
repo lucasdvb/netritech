@@ -91,7 +91,11 @@
     "view_details": "View product details",
     "add_to_wishlist": "Add to wishlist",
     "in_stock": "In stock",
-    "description": "Product description"
+    "description": "Product description",
+    "eta": "Order today, usually with you {{ from }} to {{ to }}.",
+    "next_step": "Complete your routine",
+    "next_step_label": "Your next step: {{ step }}",
+    "recently_viewed": "Recently viewed"
   },
   "routine": {
     "step_n": "Step {{ n }}"

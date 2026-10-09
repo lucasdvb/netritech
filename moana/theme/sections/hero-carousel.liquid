@@ -34,7 +34,7 @@
                 <div class="wash" aria-hidden="true"><canvas data-wash data-bg="{{ b.wash_bg }}" data-a="#eef1e4" data-b="#d1d9be" data-c="#d6d2bf" data-d="#bcc09b"></canvas></div>
                 {%- if b.product != blank -%}
                   {%- assign p = b.product -%}
-                  <a class="hero-c__float glass" href="{{ p.url }}" tabindex="-1">
+                  <a class="hero-c__float glass" href="{{ p.url }}" tabindex="-1" data-sheen>
                     <span class="hero-c__float-img">{{ p.featured_media.preview_image | image_url: width: 700 | image_tag: widths: '350, 500, 700', sizes: '(min-width: 990px) 22vw, 50vw', loading: 'lazy', alt: p.featured_media.preview_image.alt | default: p.title }}</span>
                     <span class="hero-c__float-meta"><span class="hero-c__float-name">{{ p.title }}</span><span class="hero-c__float-price">{{ p.price | money }}</span></span>
                   </a>
@@ -78,11 +78,11 @@
   .hero-c__slide { display: grid; grid-template-rows: auto auto; background: var(--tile); }
   .hero-c__panel { order: 2; display: grid; place-items: center; padding: var(--s-6) var(--gutter) var(--s-7); text-align: center; }
   .hero-c__copy { display: grid; justify-items: center; gap: var(--s-4); max-width: 36rem; }
-  .hero-c__kicker { font: 700 .75rem/1.4 var(--f-body); letter-spacing: .16em; text-transform: uppercase; color: var(--c-forest); }
-  .hero-c__title { display: grid; gap: .1em; color: var(--ink); }
-  .hero-c__light { font: 400 clamp(2rem, 1.5rem + 2.2vw, 3.5rem)/1 var(--f-display); letter-spacing: -.01em; }
-  .hero-c__bold { font: 800 clamp(1.625rem, 1.2rem + 1.8vw, 2.75rem)/1.05 var(--f-body); letter-spacing: .01em; text-transform: uppercase; }
-  .hero-c__text { font-size: clamp(1rem, .95rem + .25vw, 1.125rem); line-height: 1.6; color: var(--ink-soft); max-width: 32rem; text-wrap: pretty; }
+  .hero-c__kicker { font: var(--w-semibold) var(--fs-xs)/1.4 var(--f-body); letter-spacing: .16em; text-transform: uppercase; color: var(--c-forest); }
+  .hero-c__title { display: grid; gap: var(--s-3); color: var(--ink); }
+  .hero-c__light { font: var(--type-display); letter-spacing: var(--ls-display); }
+  .hero-c__bold { font: var(--w-semibold) var(--fs-h3)/var(--lh-snug) var(--f-body); letter-spacing: var(--ls-label); text-transform: uppercase; }
+  .hero-c__text { font: var(--type-lead); line-height: 1.6; color: var(--ink-soft); max-width: 32rem; text-wrap: pretty; }
   .hero-c__btns { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-4); margin-top: var(--s-2); }
   .hero-c__media { order: 1; position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--c-frost); }
   .hero-c__media > img, .hero-c__media picture img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -98,8 +98,8 @@
   .hero-c__float-img { display: block; aspect-ratio: 1; background: rgba(255,255,255,.55); }
   .hero-c__float-img img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 8%; }
   .hero-c__float-meta { display: flex; justify-content: space-between; gap: var(--s-3); font-size: var(--fs-small); }
-  .hero-c__float-name { font-weight: 500; line-height: 1.35; }
-  .hero-c__float-price { font-weight: 700; white-space: nowrap; }
+  .hero-c__float-name { font-weight: var(--w-medium); line-height: 1.35; }
+  .hero-c__float-price { font-weight: var(--w-semibold); white-space: nowrap; }
   @keyframes float-y { 0%, 100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, calc(-50% - 10px)); } }
 
   /* motion on the active slide (GetLayers: text rises out of a blur, the picture unmasks top-down) */
@@ -121,6 +121,20 @@
     .hero-c .carousel__arrow { top: 50%; }
   }
   @media (prefers-reduced-motion: reduce) { .hero-c__float { animation: none; } }
+
+  /* scroll: as the hero leaves, the picture drifts and slowly zooms, the copy lifts away and the
+     floating product rises a little faster than the page (three depths). */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .hero-c { view-timeline: --hero block; }
+      .hero-c__media > img, .hero-c__media picture img, .hero-c__media .wash { animation: hero-drift linear both; animation-timeline: --hero; animation-range: exit -40vh exit 100%; }
+      .hero-c__copy { animation: hero-lift linear both; animation-timeline: --hero; animation-range: exit -40vh exit 80%; }
+      .hero-c__float { animation: float-y 7s ease-in-out infinite, hero-rise linear both; animation-timeline: auto, --hero; animation-range: normal, exit -40vh exit 100%; }
+      @keyframes hero-drift { to { translate: 0 8%; scale: 1.12; } }
+      @keyframes hero-lift { to { translate: 0 -8%; opacity: .55; } }
+      @keyframes hero-rise { to { translate: 0 -26%; } }
+    }
+  }
 {% endstylesheet %}
 
 {% schema %}

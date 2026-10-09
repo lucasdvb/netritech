@@ -1,6 +1,6 @@
 # Moana Beauté: handover
 
-October 2026 (v3). Store: `moana-beaute.myshopify.com`.
+October 2026 (v4). Store: `moana-beaute.myshopify.com`.
 
 ## Where things are
 
@@ -10,6 +10,34 @@ October 2026 (v3). Store: `moana-beaute.myshopify.com`.
 | Preview link | `https://moana-beaute.myshopify.com/?preview_theme_id=191582306594` (the storefront password may be needed first) |
 | Theme editor | Shopify admin → Online Store → Themes → *Moana Beauté v2 (preview)* → Customize |
 | Code | `moana/` in this repository (branch `claude/eloquent-bardeen-p6n61a`) |
+
+## What changed in v4
+
+The brief: more scroll motion and background life, still elegant; more sales; and a golden-ratio type hierarchy in Raleway.
+
+### Type
+- **Every heading is now Raleway.** The brand book sets Instrument Serif for headlines; this departs from it at the owner's request. It can be reversed (see `DESIGN-SYSTEM.md`).
+- **Sizes step by the golden ratio** (16, 20.4, 25.9, 32.9, 41.9, 53.3, 67.8 px).
+- **Weight carries the hierarchy:** ExtraLight 200 for display, Light 300 for headings and section titles, Regular 400 for body, Medium 500 for interface, SemiBold 600 for buttons, labels and prices. Emphasis is Raleway italic in forest.
+- **Fonts:** Raleway is now one variable file per style (roman and italic, weights 200 to 700), so the whole weight ladder costs one request. Instrument Serif is no longer loaded.
+
+### Motion and background
+Native CSS scroll timelines; no scroll listeners. Reduced motion and older browsers get a still page.
+- **Scroll progress:** a forest hairline across the top.
+- **Hero:** the hero now has depth as you scroll away. The photo drifts and zooms, the copy lifts, and the glass product rises faster.
+- **Story photo:** a gentle parallax.
+- **Packshots:** they float through their category and editorial tiles.
+- **Ambient light:** soft Spring and Linen light pools drift behind the concern finder, brand story, FAQ and page headers.
+- **Routine:** a line fills beside the five steps as you read them, and each number brightens in turn.
+- **Brand ticker** (new section, between the routine and Shop by brand): the brands you stock, in two large rows that slide in opposite directions with the scroll. It reads the brand list from the catalogue.
+- **Pointer sheen:** a soft highlight follows the cursor over glass cards and concern tiles.
+
+### Selling
+Nothing below invents a claim; each uses data the store already has.
+- **Delivery dates:** "Order today, usually with you Mon 12 Oct to Wed 14 Oct". This is the existing 1 to 3 working-day promise turned into real dates: counted in Mauritius time, skipping weekends, and worded "usually" because public holidays and the dispatch cut-off are not known. It appears on product pages and in the bag.
+- **Complete your routine:** on a product page, the next routine step (cleanser → toner → serum → moisturiser → sunscreen → cleanser). It offers the in-stock product that shares the most skin types, with a one-tap add. The order is a setting on the product section.
+- **Recently viewed:** a rail on product pages and the cart, remembered on the shopper's device only.
+- **Fly-to-bag animation:** considered and left out, because the bag drawer opens on every add and would hide it.
 
 ## What changed in v3
 
@@ -116,16 +144,17 @@ Both are linked from the header and from the footer's Shop column.
    - Shopify accepted every template.
 2. **Against the local preview** (`dev/`): the real theme files, the real catalogue, and Shopify's endpoints emulated (cart, including multi-item adds, section rendering, predictive search, filters, recommendations).
    - `node dev/e2e.mjs`: **40/40** (cart drawer, quantities, free-delivery maths, stock cap, sticky bar, recommendations, filters, sort, predictive search, keyboard, focus traps, no overflow, no-JS forms).
+   - `node dev/cro-test.mjs`: **11/11**. Delivery dates on the product page and in the bag, the weekend arithmetic (Friday, Saturday and Monday orders), next-step pick and add, and recently viewed (newest first, current product excluded).
    - `node dev/new-pages-test.mjs`: **11/11**. The quiz builds a five-step routine; Add the whole routine opens the bag with the products; arrow keys don't skip questions; hearts toggle; the header count updates; the wishlist page shows, removes and clears cards; no console errors.
    - `node dev/sweep.mjs`: 22 pages × 10 widths (320–1440). No horizontal overflow, no console errors, every image has alt text and dimensions, one H1 per page, no skipped heading levels, no duplicate ids.
 3. **Lighthouse** (local preview, simulated mobile):
 
    | Page | Perf | A11y | Best practices | SEO | CLS |
    |---|---|---|---|---|---|
-   | Home | 88 | 100 | 100 | 100 | 0 |
-   | Collection | 90 | 100 | 100 | 100 | 0 |
-   | Product | 94 | 100 | 100 | 100 | 0 |
-   | Find my routine | 89 | 100 | 100 | 100 | 0 |
+   | Home | 89–91 | 100 | 100 | 100 | 0 |
+   | Collection | 91 | 100 | 100 | 100 | 0 |
+   | Product | 90 | 100 | 100 | 100 | 0 |
+   | Find my routine | 84 | 100 | 100 | 100 | 0 |
    | Wishlist | 91 | 100 | – | noindex | 0 |
 
    Layout shift was traced to zero on every template:
@@ -152,7 +181,7 @@ Do these on the preview before publishing.
 6. **Delete obsolete files from the preview theme** in the code editor before publishing. The API connector cannot delete theme files, and nothing references these:
    - sections: `about`, `brands`, `delivery`, `featured-launch`, `info-strip`, `kbeauty-auth`, `kbeauty-intro`, `kbeauty-routine`, `kbeauty-start`, `kbeauty-teaser`, `related-products`, `blank`
    - snippets: `brand-card`, `contact-form`, `mark-sprite`, `media-img`, `nav-items`, `product-grid`, `sticky-bar`, `wave`
-   - assets: `shop.css`, `site.css`, `site.js`, `lockup-primary.svg`, `lockup-stacked.svg`, `lockup-white.svg`, `ph-hero-m.svg`, `ph-hero.svg`, `ph-square.svg`, `soon-*.jpg`, `favicon.svg`, `profile-mark-1024.png`
+   - assets: `instrument-serif-*.woff2` (4), `raleway-normal-400-700-*.woff2` (2), `shop.css`, `site.css`, `site.js`, `lockup-primary.svg`, `lockup-stacked.svg`, `lockup-white.svg`, `ph-hero-m.svg`, `ph-hero.svg`, `ph-square.svg`, `soon-*.jpg`, `favicon.svg`, `profile-mark-1024.png`
    - templates: `collection.body-care.json`, `collection.gifts-sets.json`, `collection.hair-care.json`, `collection.makeup.json` (identical to `collection.json`)
    - locales: `en.default.schema.json`
 

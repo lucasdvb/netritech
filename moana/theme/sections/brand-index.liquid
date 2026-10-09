@@ -34,7 +34,7 @@
 {% stylesheet %}
 .brand-index__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--gap); border-top: 1px solid var(--line); }
 .brand-row { position: relative; display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-3); padding: var(--s-4) 0; border-bottom: 1px solid var(--line); }
-.brand-row__name { font: 400 clamp(1.25rem, 1rem + 1.6vw, 2.5rem)/1.1 var(--f-display); transition: color var(--t) var(--ease), transform var(--t) var(--ease); }
+.brand-row__name { font: var(--type-h2); letter-spacing: var(--ls-heading); transition: color var(--t) var(--ease), transform var(--t) var(--ease); }
 .brand-row__count { flex: none; font-size: var(--fs-xs); color: var(--ink-soft); }
 .brand-row__shot { display: none; }
 @media (max-width: 749px) { .brand-row { flex-direction: column; align-items: flex-start; gap: 2px; padding: var(--s-3) 0; } }

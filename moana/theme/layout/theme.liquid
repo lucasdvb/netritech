@@ -9,9 +9,8 @@
   <link rel="icon" href="{{ 'favicon-32.png' | asset_url }}" sizes="32x32">
   <link rel="apple-touch-icon" href="{{ 'apple-touch-icon.png' | asset_url }}">
 
-  {%- comment -%} Only the two faces every page paints above the fold are preloaded. {%- endcomment -%}
-  {{ 'raleway-normal-400-700-latin.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
-  {{ 'instrument-serif-normal-400-latin.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+  {%- comment -%} Only the face every page paints above the fold is preloaded. {%- endcomment -%}
+  {{ 'raleway-200-700-latin.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
   {% render 'fonts' %}
   {{ 'base.css' | asset_url | stylesheet_tag: preload: true }}
   <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
@@ -21,6 +20,7 @@
   {{ content_for_header }}
 </head>
 <body class="template-{{ template.name }}{% if template.suffix != blank %} template-{{ template.name }}--{{ template.suffix | handle }}{% endif %}">
+  <div class="scroll-progress" aria-hidden="true"></div>
   <a class="skip-link" href="#main">{{ 'accessibility.skip_to_content' | t }}</a>
   <div id="a11y-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 
@@ -63,6 +63,7 @@
         contactPrefill: {{ 'contact.prefill' | t: range: '__RANGE__' | json }},
         loading: {{ 'general.loading' | t | json }},
         wishlistAdded: {{ 'wishlist.added' | t | json }},
+        eta: {{ 'products.eta' | t: from: '[from]', to: '[to]' | json }},
         wishlistRemoved: {{ 'wishlist.removed' | t | json }},
         slideN: {{ 'general.slide_n' | t: n: '__N__' | json }},
         readMore: {{ 'collections.read_more' | t | json }},

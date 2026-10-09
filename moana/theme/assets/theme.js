@@ -67,11 +67,13 @@
           n.textContent.split(/(\s+)/).forEach(function (part) {
             if (!part) return;
             if (/^\s+$/.test(part)) { words.push(null); return; }
+            var spaced = words.length > 0 && words[words.length - 1] === null;
             var w = document.createElement('span');
             w.className = 'lw';
             var inner = w;
             wrap.forEach(function (tag) { var c = tag.cloneNode(false); inner.appendChild(c); inner = c; });
             inner.textContent = part;
+            w.spaced = spaced;
             words.push(w);
           });
         } else if (n.nodeType === 1) {
@@ -95,7 +97,8 @@
       var inner = document.createElement('span');
       inner.className = 'line__inner';
       inner.style.setProperty('--li', i);
-      ws.forEach(function (w, j) { if (j) inner.appendChild(document.createTextNode(' ')); inner.appendChild(w); });
+      // keep the original spacing: "first" and "." from <em>first</em>. stay together
+      ws.forEach(function (w, j) { if (j && w.spaced) inner.appendChild(document.createTextNode(' ')); inner.appendChild(w); });
       line.appendChild(inner);
       el.appendChild(line);
     });
@@ -454,6 +457,7 @@
         if (target && src) { target.innerHTML = src.innerHTML; initReveal(target); initLines(target); }
       }
     });
+    paintEta();
   }
   function setCount(n) {
     $$('[data-cart-count]').forEach(function (el) {
@@ -797,6 +801,63 @@
       on(row, 'mousemove', move);
       on(row, 'mouseleave', function () { row.classList.remove('is-hover'); });
     });
+  }
+
+  /* ---------------------------------------------------------------- delivery estimate
+     Turns "1 to 3 working days" into real dates, counted in Mauritius time and skipping weekends.
+     It says "usually" because public holidays and cut-off times are not known to the theme. Without
+     JavaScript the plain sentence stays. */
+  function paintEta(ctx) {
+    var els = $$('[data-eta]', ctx);
+    if (!els.length || !S.eta || !window.Intl) return;
+    var lang = (document.documentElement.lang || 'en').slice(0, 2) === 'fr' ? 'fr-FR' : 'en-GB';
+    var today;
+    try {
+      var p = new Intl.DateTimeFormat('en-CA', { timeZone: 'Indian/Mauritius', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()).split('-');
+      today = Date.UTC(+p[0], +p[1] - 1, +p[2]);
+    } catch (e) { var n = new Date(); today = Date.UTC(n.getFullYear(), n.getMonth(), n.getDate()); }
+    function addWorking(t, days) {
+      var d = new Date(t), added = 0;
+      while (added < days) { d.setUTCDate(d.getUTCDate() + 1); var w = d.getUTCDay(); if (w !== 0 && w !== 6) added++; }
+      return d;
+    }
+    var fmt = new Intl.DateTimeFormat(lang, { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' });
+    function day(d) { return fmt.format(d).replace(/,/g, ''); }
+    var text = S.eta.replace('[from]', day(addWorking(today, 1))).replace('[to]', day(addWorking(today, 3)));
+    els.forEach(function (el) { el.textContent = text; });
+  }
+  paintEta();
+  window.MoanaEta = paintEta;
+
+  /* ---------------------------------------------------------------- recently viewed (device only) */
+  var recentEl = $('[data-recent-view]');
+  if (recentEl) {
+    try {
+      var rh = recentEl.getAttribute('data-recent-view');
+      var recent = JSON.parse(localStorage.getItem('moana:recent') || '[]').filter(function (h) { return h !== rh; });
+      recent.unshift(rh);
+      localStorage.setItem('moana:recent', JSON.stringify(recent.slice(0, 12)));
+    } catch (e) {}
+  }
+
+  /* ---------------------------------------------------------------- pointer sheen
+     One delegated listener, throttled to a frame. It only writes two custom properties on the
+     card under the pointer; the highlight itself moves by transform (see [data-sheen] in base.css). */
+  if (!reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    var sheenEl = null, sheenX = 0, sheenY = 0, sheenQueued = false;
+    on(document, 'pointermove', function (ev) {
+      var el = ev.target.closest && ev.target.closest('[data-sheen]');
+      if (!el) return;
+      sheenEl = el; sheenX = ev.clientX; sheenY = ev.clientY;
+      if (sheenQueued) return;
+      sheenQueued = true;
+      requestAnimationFrame(function () {
+        sheenQueued = false;
+        var r = sheenEl.getBoundingClientRect();
+        sheenEl.style.setProperty('--mx', (sheenX - r.left) + 'px');
+        sheenEl.style.setProperty('--my', (sheenY - r.top) + 'px');
+      });
+    }, { passive: true });
   }
 
   /* ---------------------------------------------------------------- contact form */

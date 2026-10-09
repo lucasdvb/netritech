@@ -17,7 +17,7 @@
     <ol class="routine__steps" role="list">
       {%- for block in section.blocks -%}
         {%- assign p = block.settings.product -%}
-        <li class="step reveal" {{ block.shopify_attributes }}>
+        <li class="step reveal"{% if section.settings.wash %} data-sheen{% endif %} {{ block.shopify_attributes }}>
           <span class="step__num" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
           <div class="step__body">
             <h3 class="t-h3"><span class="sr-only">{{ 'routine.step_n' | t: n: forloop.index }}: </span>{{ block.settings.name }}</h3>
@@ -57,7 +57,7 @@
 .routine__steps { counter-reset: step; }
 .step { display: grid; grid-template-columns: 3.25rem 1fr; gap: var(--s-4); padding-block: var(--s-6); border-top: 1px solid var(--line); }
 .step:last-child { border-bottom: 1px solid var(--line); }
-.step__num { font: 400 2.25rem/1 var(--f-display); color: var(--c-sage); font-variant-numeric: lining-nums; }
+.step__num { font: var(--w-light) var(--fs-2xl)/1 var(--f-body); color: var(--c-sage); font-variant-numeric: lining-nums; }
 .section--wash .step__num { color: var(--c-forest); opacity: .55; }
 .step__body > * + * { margin-top: var(--s-3); }
 .step__body .t-soft { max-width: 36rem; }
@@ -65,7 +65,7 @@
 .step__img { display: block; aspect-ratio: 1; border-radius: var(--r-sm); background: var(--tile); overflow: hidden; }
 .step__img img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 8%; }
 .step__info { display: grid; gap: 2px; min-width: 0; }
-.step__name { font: 400 1.0625rem/1.25 var(--f-display); }
+.step__name { font: var(--w-regular) var(--fs-md)/1.25 var(--f-body); }
 .step__name:hover { color: var(--brand); }
 .step__form .btn { gap: .4rem; }
 .step__form .btn svg { width: 14px; height: 14px; }
@@ -79,7 +79,7 @@
 .routine--glass .step__product { background: rgba(255,255,255,.78); }
 @media (max-width: 749px) {
   .routine--glass .step { grid-template-columns: 1fr; gap: var(--s-2); padding: var(--s-5) var(--s-4); }
-  .routine--glass .step__num { font-size: 1.75rem; }
+  .routine--glass .step__num { font-size: var(--fs-xl); }
   .routine--glass .step__product { grid-template-columns: 64px 1fr auto; gap: var(--s-3); }
 }
 @media (min-width: 990px) {
@@ -87,8 +87,22 @@
   .routine__grid { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(3rem, 7vw, 8rem); align-items: start; }
   .routine__intro { position: sticky; top: calc(var(--header-h) + var(--s-7)); }
   .step { grid-template-columns: 5rem 1fr; padding-block: var(--s-7); }
-  .step__num { font-size: 3rem; }
+  .step__num { font-size: var(--fs-3xl); }
 }
+/* scroll: a hairline beside the steps fills as you read down them, and each step number
+   brightens as its card reaches the middle of the screen. */
+.routine__steps { position: relative; }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .routine__steps::before, .routine__steps::after { content: ""; position: absolute; top: 0; bottom: 0; left: calc(var(--gutter) * -.5); width: 1px; background: var(--line); pointer-events: none; }
+    .routine__steps::after { background: var(--c-forest); transform-origin: 50% 0; scale: 1 0;
+      animation: sx-grow-y linear both; animation-timeline: view(); animation-range: cover 18% contain 100%; }
+    @keyframes sx-grow-y { to { scale: 1 1; } }
+    .section--wash .step__num { animation: step-on linear both; animation-timeline: view(); animation-range: entry 40% cover 45%; }
+    @keyframes step-on { from { opacity: .2; translate: 0 .25em; } to { opacity: .9; translate: 0 0; } }
+  }
+}
+@media (min-width: 990px) { .routine__steps::before, .routine__steps::after { left: calc(clamp(3rem, 7vw, 8rem) * -.5); } }
 {% endstylesheet %}
 
 {% schema %}
