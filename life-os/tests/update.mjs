@@ -1,6 +1,6 @@
 // A phone that already has Life OS gets the new version: the old one opens from the cache, the new
-// one downloads, and it's applied the next time the app opens, even when it finished downloading
-// in a session that's already closed. Mid-session it's offered with Update instead.
+// one downloads and takes over, and the page reloads into it, unless you're typing, when Reload is
+// offered instead. Also from a release older than this update code (the worker does it alone).
 // Serves a copy of the app from a temporary folder so a "new release" can be published.
 import { createRequire } from 'node:module';
 import { createServer } from 'node:http';
@@ -69,21 +69,71 @@ await step('a release that finished downloading in a closed session is applied o
   await p.close();
 });
 
-await step('mid-session, a new release is offered with Update, and Update switches to it', async () => {
+await step('mid-session: idle, the app reloads into the new release by itself', async () => {
   const p = await open();
   await p.waitForFunction(() => document.body.dataset.release === 'r2');
-  await p.waitForTimeout(8500); // past the first moments after opening
-  await p.locator('[data-view="today"]').click({ position: { x: 5, y: 5 } }).catch(() => {});
   await release('r3');
   await p.evaluate(async () => (await navigator.serviceWorker.getRegistration()).update());
-  const btn = p.locator('.toast button', { hasText: 'Update' });
-  await btn.waitFor({ timeout: 20000 });
-  await btn.click();
   await p.waitForFunction(() => document.body.dataset.release === 'r3', null, { timeout: 20000 });
   await p.close();
 });
 
+await step('mid-session while typing: nothing reloads under you; Reload is offered and switches', async () => {
+  const p = await open();
+  await p.waitForFunction(() => document.body.dataset.release === 'r3');
+  await p.evaluate(() => { const i = document.createElement('input'); i.id = 'typing'; i.setAttribute('aria-label', 'typing'); document.body.append(i); i.focus(); });
+  await p.keyboard.type('half a thought');
+  await release('r4');
+  await p.evaluate(async () => (await navigator.serviceWorker.getRegistration()).update());
+  const btn = p.locator('.toast button', { hasText: 'Reload' });
+  await btn.waitFor({ timeout: 20000 });
+  if ((await p.inputValue('#typing')) !== 'half a thought') throw new Error('reloaded while typing');
+  await btn.click();
+  await p.waitForFunction(() => document.body.dataset.release === 'r4', null, { timeout: 20000 });
+  await p.close();
+});
+
 await ctx.close();
+
+// A phone still on a release from before this fix: its own page code can't switch versions, so the
+// new worker must take over by itself, and the old page reloads into the new version.
+await step('a phone on an older release (a8485f38) gets the current one without tapping anything', async () => {
+  const { execSync } = await import('node:child_process');
+  await rm(root, { recursive: true, force: true });
+  const old = await mkdtemp(join(tmpdir(), 'lifeos-old-'));
+  execSync(`git -C "${src}" archive a8485f38 . | tar -x -C "${old}"`);
+  for (const p of ['index.html', 'manifest.webmanifest', 'sw.js', 'css', 'js', 'assets']) await cp(join(old, p), join(root, p), { recursive: true });
+  await rm(old, { recursive: true, force: true });
+  const c = await browser.newContext({ ...devices['iPhone 14'] });
+  c.on('page', (pg) => pg.on('pageerror', (e) => errors.push(`pageerror: ${e.message}`)));
+  const openIn = async () => {
+    const p = await c.newPage();
+    await p.goto(`${base}#/plan/tasks`);
+    await p.waitForFunction(() => window.__lifeos?.ready, null, { timeout: 20000 });
+    return p;
+  };
+  let p = await openIn();
+  await p.waitForFunction(() => navigator.serviceWorker.controller, null, { timeout: 20000 });
+  await p.evaluate(() => window.__lifeos.store.setSettings({ welcomed: true, installDismissed: true }));
+  if (await p.locator('.info-btn').count()) throw new Error('the old release already has the ⓘ');
+  // Deploy the current release over it, as a Netlify drop does.
+  for (const f of ['index.html', 'manifest.webmanifest', 'sw.js', 'css', 'js', 'assets']) await rm(join(root, f), { recursive: true, force: true });
+  for (const f of ['index.html', 'manifest.webmanifest', 'sw.js', 'css', 'js', 'assets']) await cp(join(src, f), join(root, f), { recursive: true });
+  // The app stays open (as it does on a phone); it's brought back to the front, which checks for updates.
+  await p.reload();
+  await p.waitForFunction(() => window.__lifeos?.ready, null, { timeout: 20000 });
+  // The new worker takes over and the page reloads into the new version: the ⓘ is there.
+  await p.waitForSelector('[data-view="tasks"] .info-btn', { timeout: 30000 });
+  const sw = await readFile(join(src, 'sw.js'), 'utf8');
+  const want = `lifeos-${sw.match(/const VERSION = '([^']*)'/)[1]}`;
+  const keys = await p.evaluate(async () => caches.keys());
+  if (!keys.includes(want)) throw new Error(keys.join());
+  // Settings › About names the version running, so you can tell which one you have.
+  await p.evaluate(() => { location.hash = '#/you/settings'; });
+  await p.waitForFunction((v) => document.querySelector('[data-key="sw-version"]')?.textContent === v, want.slice(7), { timeout: 10000 });
+  await c.close();
+});
+
 server.close();
 await rm(root, { recursive: true, force: true });
 await finish();
