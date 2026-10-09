@@ -45,7 +45,7 @@ export function numbers(year) {
   return {
     showedUp: yd.logged,
     sealed: yd.sealed,
-    workouts: store.all('workouts').filter((w) => w.status === 'done' && inYear(w)).length,
+    workouts: store.all('workouts').filter((w) => w.status === 'done' && w.kind !== 'mobility' && inYear(w)).length,
     books: new Set(store.all('readingSessions').filter((r) => r.finished && inYear(r)).map((r) => r.book)).size,
     pages: store.all('journalEntries').filter(inYear).length,
     weight: weights.length > 1 ? weights[weights.length - 1].kg - weights[0].kg : null,

@@ -69,7 +69,7 @@ export function summarize(s, end = today()) {
     days: days.length,
     score: mean(scored.map((x) => x.ratio)),
     sealed: days.filter((d) => store.get('dailyReviews', d)?.sealedAt).length,
-    workouts: F.allWorkouts().filter((w) => w.date >= s.start && w.date <= last).length,
+    workouts: F.trainingWorkouts().filter((w) => w.date >= s.start && w.date <= last).length,
     focus,
     records: setBetween(s.start, last).map((r) => ({ label: r.label, text: r.text, date: r.date })),
     levels: store.all('levelEvents').filter((e) => e.date >= s.start && e.date <= last).map((e) => ({ habitId: e.habitId, level: e.level, date: e.date })),

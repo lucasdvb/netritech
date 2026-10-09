@@ -12,7 +12,7 @@ import { today } from './dates.js';
 
 export const KINDS = {
   workouts: { label: 'Workouts', unit: (n) => `${n} workout${n === 1 ? '' : 's'}`,
-    count: (r, end) => F.allWorkouts().filter((w) => w.date >= r.since && w.date <= end).length },
+    count: (r, end) => F.trainingWorkouts().filter((w) => w.date >= r.since && w.date <= end).length },
   habit: { label: 'Times you do a habit', unit: (n, r) => `${H.habit(r.ref)?.name || 'Habit'} ${n} time${n === 1 ? '' : 's'}`,
     count: (r, end) => { const h = H.habit(r.ref); return h ? completionDays(h, end).filter((d) => d >= r.since).length : 0; } },
   sealed: { label: 'Days sealed', unit: (n) => `${n} day${n === 1 ? '' : 's'} sealed`,

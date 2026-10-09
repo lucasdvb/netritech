@@ -514,6 +514,8 @@ function habitIntent(h, s) {
   const src = h.source || '';
   if (COUNTER_SOURCES[src]) return { kind: 'counter', field: src, delta: count(s.match(new RegExp(`\\b${NUM}\\b`))?.[1]) || 1 };
   if (src.startsWith('rel:')) return { kind: 'relation', person: src.slice(4), type: null, minutes: duration(s) };
+  // A habit with its own workout (Mobility & posture) can still be ticked in a line: "stretched".
+  if (h.templateId && (h.type || 'binary') === 'binary') return { kind: 'habit', habitId: h.id };
   if (src && src !== 'top3') return { kind: 'open', habitId: h.id };
   const numeric = ['numeric', 'duration', 'quantity'].includes(h.type);
   if (numeric) {

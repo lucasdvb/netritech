@@ -28,7 +28,7 @@ function sequence(workoutId) {
   return F.setsOf(workoutId).slice().sort((a, b) => a.order - b.order || a.setIndex - b.setIndex).map((s) => ({ s, e: F.exercise(s.exerciseId) }));
 }
 
-const stepFor = (w, s) => nextStep(s.exerciseId, s.target, { excludeWorkoutId: w.id, before: w.date, unit: weightUnit() });
+const stepFor = (w, s) => w.kind === 'mobility' ? null : nextStep(s.exerciseId, s.target, { excludeWorkoutId: w.id, before: w.date, unit: weightUnit() });
 
 /** What a set will be logged as: what you've entered, or last time's numbers, or the goal. */
 function suggested(w, s, e) {

@@ -16,7 +16,7 @@ await step('everything is preloaded on first launch', async () => {
       upper: store.get('templates', 't-upper').items.map((i) => i.exerciseId), reset: store.get('habits', 'h-morning-reset').checklist,
       mvd: store.all('habits').filter((h) => h.mvd && !h.archived).length };
   });
-  const want = { tasks: 12, templates: 5, goals: 8, mvd: 8 };
+  const want = { tasks: 12, templates: 6, goals: 8, mvd: 8 }; // six workouts: Mobility & posture is one
   for (const [k, v] of Object.entries(want)) if (s[k] !== v) throw new Error(`${k}: ${s[k]} (want ${v})`);
   if (s.habits < 40 || s.exercises < 39 || s.foods < 17) throw new Error(JSON.stringify(s));
   if (!s.archived.includes('h-caffeine') || !s.archived.includes('h-alcohol')) throw new Error('optional habits missing');

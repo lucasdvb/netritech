@@ -43,7 +43,7 @@ export function monthFilm(month) {
   if (best && best.c.ratio >= 0.5) cards.push({ eyebrow: 'Your strongest habit', mid: best.h.name, small: `${best.c.done} of ${Math.round(best.c.expected)} days.` });
   const rec = setBetween(from, end).sort((a, b) => (a.date < b.date ? 1 : -1))[0];
   if (rec) cards.push({ eyebrow: 'A new record', mid: rec.label.replace(/: .*/, ''), accent: rec.text });
-  const sessions = F.allWorkouts().filter((w) => w.date >= from && w.date <= end).length;
+  const sessions = F.trainingWorkouts().filter((w) => w.date >= from && w.date <= end).length;
   if (sessions) cards.push({ eyebrow: 'Training', big: String(sessions), small: sessions === 1 ? 'session' : 'sessions' });
   const w0 = M.weightAvg(addDays(from, -1), 7) ?? M.weightAvg(from, 7);
   const w1 = M.weightAvg(end, 7);

@@ -115,11 +115,8 @@ export function habitsSeed() {
       description: '5–10 minutes. One thing you’re grateful for, one thing you need God’s help with today.' }),
     h({ id: 'h-scripture', name: 'Scripture', section: 'morning', category: 'spirit', icon: 'book-heart', priority: 'core', time: '06:10', goalId: 'g-spirit',
       description: 'A short reading. Longer study happens weekly.' }),
-    h({ id: 'h-mobility', name: 'Mobility & posture', section: 'morning', category: 'posture', icon: 'person-standing', priority: 'core', time: '06:15',
-      mvd: true, mvdLabel: '5-minute mobility', goalId: 'g-posture',
-      description: '10 minutes. Consistency, not perfection.',
-      checklist: ['Chin tucks × 10', 'Wall angels × 10', 'Thoracic extensions × 8–10', 'External rotation (2 kg) × 12–15',
-        'Scapular retractions × 12–15', 'Doorway chest stretch 2 × 30 s', 'Cat-cow × 8', 'Hip-flexor stretch 30 s / side'] }),
+    h({ id: 'h-mobility', ...MOBILITY_HABIT, name: 'Mobility & posture', section: 'morning', category: 'posture', icon: 'person-standing', priority: 'core', time: '06:15',
+      mvd: true, mvdLabel: '5-minute mobility', goalId: 'g-posture' }),
     h({ id: 'h-training', name: 'Training', section: 'morning', category: 'body', icon: 'activity', priority: 'core', affectsScore: true, mvd: true,
       mvdLabel: '10-minute walk', time: '06:30', source: 'workout:any', goalId: 'g-strength',
       description: 'Today’s session from the plan. A walk counts on recovery days.' }),
@@ -306,8 +303,17 @@ const it = (exerciseId, sets, reps, o = {}) => ({ exerciseId, sets, reps, load: 
 // Mon/Thu finisher so calves and core each get 4 sessions a week (spec: calves 2–4, core 3–4).
 const UPPER_FINISHER = [it('e-calf-raise', 3, '15–20'), it('e-plank', 2, '30–45 s')];
 
+/** Mobility & posture is a workout plan; its habit ticks itself when the workout is done. */
+export const MOBILITY_HABIT = { source: 'workout:mobility', templateId: 't-mobility',
+  description: 'The Mobility & posture workout, about 10 minutes. It ticks itself when you finish it. Consistency, not perfection.' };
+export const mobilityTemplate = () => ({ id: 't-mobility', name: 'Mobility & posture', kind: 'mobility', minutes: 10, order: 5,
+  note: 'Every morning, about 10 minutes. Slow and controlled; consistency, not perfection.', items: [
+    it('e-chin-tuck', 1, '10'), it('e-wall-angel', 1, '10'), it('e-thoracic', 1, '8–10'), it('e-ext-rotation', 1, '12–15', { load: 2 }),
+    it('e-scap-retraction', 1, '12–15'), it('e-doorway', 2, '30 s'), it('e-cat-cow', 1, '8'), it('e-hip-flexor', 1, '30 s')] });
+
 export function templatesSeed() {
   return [
+    mobilityTemplate(),
     { id: 't-upper', name: 'Upper body + posture', kind: 'strength', minutes: 55, order: 0,
       note: 'Ends with a short calf and core finisher, so both get 4 sessions a week.', items: [
       it('e-pushup', 4, '6–15'), it('e-pike-pushup', 3, '5–10'), it('e-db-row', 4, '8–15', { load: 10 }),

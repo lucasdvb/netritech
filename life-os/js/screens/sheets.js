@@ -505,7 +505,7 @@ function sourceCta(h) {
 }
 
 /** Route a sourced habit to the place its data comes from. */
-export function openSource(h, date = today()) {
+export async function openSource(h, date = today()) {
   const src = h.source || '';
   if (src === 'water') return openWater(date);
   if (src === 'protein' || src === 'produce') return openFood(date);
@@ -516,6 +516,7 @@ export function openSource(h, date = today()) {
   if (src === 'journal') return app.go('reflect/journal');
   if (src === 'shutdown') return openShutdown(date);
   if (src.startsWith('rel:')) return openRelationship(src.slice(4), date);
+  if (src.startsWith('workout:') && h.templateId) return (await import('./today/open.js')).openHabitOrSource(h, date);
   if (src.startsWith('workout:')) return app.go('plan/training');
   if (src === 'measurements') return app.go('progress/body/measurements');
   if (src === 'photos') return app.go('progress/body/photos');

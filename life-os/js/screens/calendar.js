@@ -22,7 +22,7 @@ export function openDay(date) {
       const n = M.nutrition(date);
       const sl = M.sleep(date);
       const mood = M.mood(date);
-      const ws = F.workoutsOn(date);
+      const ws = F.workoutsOn(date, { mobility: true });
       const j = store.onDate('journalEntries', date);
       const r = M.review(date);
       const facts = [

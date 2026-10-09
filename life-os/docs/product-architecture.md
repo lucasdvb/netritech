@@ -1450,7 +1450,12 @@ Partway through, the owner made automatic sync between devices a must, so it was
   - They live on the exercise, so they show every time you do it: on the workout card, in gym mode and on the exercise page. Tap a photo to see it full size.
   - Add or edit them from the exercise's ⋯ menu (Photos and note), from gym mode, or from the exercise page.
   - Pictures are shrunk to 1400 px and stored as `ex-…` blobs. Like the moodboard, they're always in backups and they sync. Removing one has Undo.
-- **Tested:** `tests/unit/workout-notes.test.mjs` and `tests/workout-notes.mjs`, which covers typing to log, same as last time, warm-ups, add and remove set, the clock across gym mode, leaving, a manual pause and the finish, and the brain dump end to end in light and dark.
+- **Mobility & posture became a workout plan** (`t-mobility`, its own *Mobility* type).
+  - It holds the eight exercises from the old checklist with their sets and reps, external rotation at 2 kg.
+  - The habit stays in the morning with its goal and history. Its checklist is gone: tapping it starts the workout, and finishing the workout ticks it. "Stretched" in Capture still ticks it.
+  - A mobility session doesn't count as training: not for the Training habit, the week's sessions, seasons, rewards or the yearly numbers. It doesn't suggest progression either.
+  - Installed data is converted by the migration `2026-10-mobility-workout`. A day with every checklist item ticked stays done.
+- **Tested:** `tests/unit/workout-notes.test.mjs`, `tests/unit/mobility.test.mjs` and `tests/workout-notes.mjs`, which covers typing to log, same as last time, warm-ups, add and remove set, the clock across gym mode, leaving, a manual pause and the finish, and the brain dump end to end in light and dark.
 
 **Handover audit (October 2026).** A full audit before handover: security, calculations, persistence and every form, then crawlers over every screen and sheet at seven widths. What was found, fixed and proven, and what is still open, is in [`handover-audit.md`](handover-audit.md).
 

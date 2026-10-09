@@ -25,7 +25,7 @@ export function periodFacts(from, to) {
   const waists = store.all('measurements').filter((m) => m.waist && m.date <= end).sort((a, b) => (a.date < b.date ? -1 : 1));
   const waistIn = waists.filter((m) => m.date >= from);
   const waistBefore = waists.filter((m) => m.date < from).pop();
-  const workouts = store.all('workouts').filter((w) => w.status === 'done' && w.date >= from && w.date <= end);
+  const workouts = store.all('workouts').filter((w) => w.status === 'done' && w.kind !== 'mobility' && w.date >= from && w.date <= end);
   const proteinDays = days.filter((d) => M.nutrition(d).protein > 0);
   const proteinHit = proteinDays.filter((d) => M.nutrition(d).protein >= t.proteinHitG).length;
   // Today counts once something is done, never as a zero first thing.
