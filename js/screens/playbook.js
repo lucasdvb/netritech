@@ -4,37 +4,20 @@ import * as store from '../data/store.js';
 import * as H from '../domain/habits.js';
 import * as F from '../domain/fitness.js';
 import * as T from '../domain/tasks.js';
-import { parseHM, fmtHM } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { pageHead, infoBtn, tipText } from '../ui/components.js';
 import { num } from '../ui/format.js';
+import { dayPlanner, dayActions } from './day-planner.js';
 
 const DAY_NAMES = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const PARTS = [['day', 'Day'], ['week', 'Week'], ['routines', 'Routines'], ['training', 'Training'], ['food', 'Food'], ['rules', 'Rules']];
 
-const shift = (hm, mins) => fmtHM(parseHM(hm) + mins);
 const sec = (id, title, body, link, info) => html`<section class="block plan-sec" id="plan-${id}" data-key="plan-${id}">
-  <div class="block-head"><h2 class="block-title">${title}${info ? infoBtn(`plan-${id}`, title) : ''}</h2>${link ? html`<button type="button" class="link-btn" data-action="nav" data-to="${link[0]}">${link[1]}</button>` : ''}</div>
+  <div class="block-head"><h2 class="block-title">${title}${info ? infoBtn(`plan-${id}`, title) : ''}</h2>${Array.isArray(link) ? html`<button type="button" class="link-btn" data-action="nav" data-to="${link[0]}">${link[1]}</button>` : link || ''}</div>
   ${info ? tipText(`plan-${id}`, info) : ''}
   ${body}</section>`;
 const kv = (rows) => html`<dl class="facts plan-facts">${rows.filter(Boolean).map(([k, v]) => html`<div><dt>${k}</dt><dd>${v}</dd></div>`)}</dl>`;
 const notes = (rows) => html`<div class="card plan-notes">${rows.map(([k, v]) => html`<p><strong>${k}</strong> ${v}</p>`)}</div>`;
-
-function daySchedule(p) {
-  const habitTime = (id, fallback) => H.habit(id)?.time || fallback;
-  return [
-    [p.wakeTime, 'Wake · morning reset', 'Out of bed, water, make the bed, outdoor light, no social media for 30 minutes'],
-    [habitTime('h-prayer', shift(p.wakeTime, 5)), 'Prayer & Scripture', '5–10 minutes'],
-    [habitTime('h-mobility', shift(p.wakeTime, 15)), 'Mobility & posture', 'The mobility workout, about 10 minutes'],
-    [p.trainTime, 'Training', 'The session from your weekly plan'],
-    [shift(p.trainTime, 90), 'Breakfast & prep', 'Protein first: 30–40 g'],
-    [p.workStart, 'Work', 'Top 3 before you start · 2–3 deep-work blocks · move every 45–60 min · 20-20-20 for the eyes'],
-    [p.workEnd, 'Shutdown · then people', 'What’s done, what remains, tomorrow’s first priority. Then your fiancée and family'],
-    [p.windDown || shift(p.bedTime, -60), 'Evening routine', 'Kit and clothes ready, tomorrow reviewed, hygiene, short prayer, gratitude'],
-    [shift(p.bedTime, -30), 'Read / quiet', 'Screens down for the last 30 minutes'],
-    [p.bedTime, 'Lights out', '7.5–8.5 hours before the alarm'],
-  ];
-}
 
 function weekRows(p) {
   const habits = H.activeHabits();
@@ -69,8 +52,7 @@ export default {
       <p class="plan-motto">Consistency over intensity · Progress over perfection · Systems over motivation · Health over extreme results</p>
       <nav class="chips plan-jump" aria-label="Jump to">${PARTS.map(([id, label]) => html`<button type="button" class="chip" data-action="jump" data-id="${id}">${label}</button>`)}</nav>
 
-      ${sec('day', 'Your day', html`<ol class="card plan-day">${daySchedule(p).map(([time, what, detail]) => html`<li>
-        <span class="plan-time tnum">${time}</span><span class="plan-what"><strong>${what}</strong><span>${detail}</span></span></li>`)}</ol>`, ['you/settings', 'Change times'])}
+      ${sec('day', 'Your day', dayPlanner(), '', 'Each block is linked to the habit, routine or time behind it. Tap one to change its time, length or name, and that habit, routine and its reminders change with it; Today follows. Drag the handle to move a block: it starts when the one before it ends. Moving wake or lights out can carry the morning or the evening with it.')}
 
       ${sec('week', 'Your week', html`<ul class="card plan-week">${weekRows(p).map((r) => html`<li>
         <span class="plan-dow">${r.name.slice(0, 3)}</span>
@@ -136,6 +118,7 @@ export default {
         <p class="fine-print">A personal planning tool, not medical advice. For eyes, jaw or anything persistent, see a professional.</p>`)}`;
   },
   actions: {
+    ...dayActions,
     jump: ({ data }) => {
       const el = document.getElementById(`plan-${data.id}`);
       if (!el) return;

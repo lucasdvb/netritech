@@ -195,6 +195,8 @@ export default {
       const RANGE = { age: [10, 110], heightCm: [100, 250], startBodyFat: [3, 60], goalBodyFat: [3, 60] };
       if (numeric && (n(value) == null || n(value) < RANGE[k][0] || n(value) > RANGE[k][1])) return;
       if (!numeric && !value.trim()) return;
+      // Your day's times are linked: wake, training, work and lights out move what hangs off them.
+      if (['wakeTime', 'trainTime', 'workStart', 'workEnd', 'bedTime'].includes(k)) { import('../domain/day-blocks.js').then((D) => D.setTime(k, value.trim())); return; }
       store.setProfile({ [k]: numeric ? n(value) : value.trim() });
     },
     steps: ({ value }) => {

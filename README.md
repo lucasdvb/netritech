@@ -124,6 +124,7 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
 - **Areas** (*Progress › Areas*): Health, Mind (reading, learning, meditation), Spirit, Relationships and Work (deep work, shutdown), each a view over the same habits, goals and sessions.
   - **Focus timer** (from Work, the + sheet, or a Today tile): 25, 50 or 90 minutes or your own, with what it's for. A small pill above the tab bar follows you with the time left and pause; when time is up the block counts as a focus block for that day, even if the app was closed. *Finish now* counts the minutes so far; *Stop* counts nothing.
   - **The playbook** (*Plan › Playbook*) is the workbook's Plan & Routines playbook: your day, your week, routines, training templates, food targets and the rules. It is built from your live habits, templates and targets, so editing them updates it.
+  - **Your day** on the playbook is the day as blocks you can change: wake, prayer, mobility, training, work, the evening routine, lights out, and anything you add. Each block is linked to the habit, routine or time behind it, so tapping one to change its time or length changes that habit, routine and its reminders, and Today follows (routines keep their steps in time order). Drag a block's handle to move it: it starts when the one before it ends. Add any habit, routine, training, work or a plain block like *Lunch*; remove one with Undo. Moving wake or lights out can carry the whole morning or evening with it. Settings' wake, training, work and lights-out times are the same links.
   - **You** holds Settings (units, theme, targets, reminders, safety nets), Data and Privacy. Search is a pull down at the top of any place, or / and ⌘K.
 
 ### Preloaded on first launch
@@ -311,7 +312,9 @@ NODE_PATH=$(npm root -g) node tests/resilience.mjs http://localhost:4173/ ./test
 NODE_PATH=$(npm root -g) node tests/workout-notes.mjs http://localhost:4173/ ./test-shots # sets logged by typing, warm-ups, the session
                                                                                     # clock, the brain dump end to end
 NODE_PATH=$(npm root -g) node tests/journey.mjs http://localhost:4173/ ./test-shots  # a whole session through the interface: create,
-                                                                                    # edit, log, reload, delete; tasks, journal, settings
+                                                                                    # edit, log, reload, delete; tasks, journal, settings, ⓘ
+NODE_PATH=$(npm root -g) node tests/day-plan.mjs http://localhost:4173/ ./test-shots # your day: change a block and Today and the
+                                                                                    # reminders follow, carry the morning, drag, add, remove
 NODE_PATH=$(npm root -g) node tests/a11y.mjs http://localhost:4173/ ./test-shots     # axe (WCAG 2.2 AA) on every screen, sheet and
                                                                                     # state, light and dark; a keyboard-only morning
 NODE_PATH=$(npm root -g) node tests/visual.mjs http://localhost:4173/ ./test-shots   # every screen against its baseline in tests/visual
