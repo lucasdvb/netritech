@@ -37,7 +37,7 @@ After changing any file, rebuild the service-worker asset list, then redeploy:
 node tools/build-sw.mjs
 ```
 
-This gives the cache a new version (a unit test fails if you forget). A phone that already has Life OS opens the version it has, downloads the new one in the background, and switches to it the next time the app opens; if the app is already in use, a message offers **Update** instead. So after a deploy, open the app once, close it, and open it again.
+This gives the cache a new version (a unit test fails if you forget). A phone that already has Life OS opens the version it has and looks for a new one in the background, when the app opens and each time it comes back to the front. A new version takes over as soon as it has downloaded, and the app reloads into it; if you're typing, it waits and offers **Reload** instead. This works from any earlier release, because the new offline worker does it by itself. **Settings › About › Version** shows which version is running, and **Check for updates** looks right away.
 
 ---
 

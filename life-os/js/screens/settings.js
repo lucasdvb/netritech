@@ -9,6 +9,7 @@ import * as M from '../domain/metrics-core.js';
 import { focusLimit, focusHabits } from '../domain/habits.js';
 import { today } from '../domain/dates.js';
 import { app } from '../ui/app-api.js';
+import { icon } from '../ui/icons.js';
 
 const n = (v) => (v === '' || v == null || Number.isNaN(Number(v)) ? null : Number(v));
 const DAYS = [[1, 'M'], [2, 'T'], [3, 'W'], [4, 'T'], [5, 'F'], [6, 'S'], [7, 'S']];
@@ -47,6 +48,16 @@ const NETS = [
 ];
 
 const pushOn = () => { try { return !!JSON.parse(localStorage.getItem('lifeos.push'))?.on; } catch { return false; } };
+
+// The version running: the offline copy's name (from sw.js), shown in About.
+let build = '';
+async function readBuild() {
+  try {
+    const key = (await caches.keys()).find((k) => k.startsWith('lifeos-'));
+    const v = key ? key.slice(7) : '';
+    if (v && v !== build) { build = v; app.refresh(); }
+  } catch { /* no offline copy here */ }
+}
 
 export default {
   id: 'settings',
@@ -138,13 +149,24 @@ export default {
         </div></section>
       <section class="block"><h2 class="set-section">About</h2>
         <dl class="facts">
-          <div><dt>Version</dt><dd>1.0 · local-first</dd></div>
+          <div><dt>Version</dt><dd><span class="tnum" data-key="sw-version">${build || '…'}</span></dd></div>
           <div><dt>Habit system</dt><dd>Imported from your Life OS workbook</dd></div>
           <div><dt>Equipment</dt><dd>${p.equipment}</dd></div>
           <div><dt>Food</dt><dd>${p.diet}</dd></div>
-        </dl></section>`;
+        </dl>
+        <div class="btn-row set-update"><button type="button" class="btn btn--soft btn--sm" data-action="check-update">${icon('refresh-cw', { size: 16 })} Check for updates</button></div>
+      </section>`;
   },
+  mount() { readBuild(); },
   actions: {
+    'check-update': async () => {
+      const reg = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration() : null;
+      if (!reg) { app.toast('Updates arrive when Life OS is opened from its web address.'); return; }
+      app.toast('Checking for a new version…');
+      try { await reg.update(); } catch { app.toast('Couldn’t check. Are you online?'); return; }
+      // A new version takes over by itself and the app reloads into it; nothing new means none.
+      setTimeout(() => { if (!reg.installing && !reg.waiting) app.toast(`You have the latest version (${build || 'this one'}).`); }, 2500);
+    },
     'calendar-file': async () => (await import('./calendar-file.js')).openCalendarFile(),
     cues: async () => (await import('./cues.js')).openCues(),
     push: async () => (await import('./push-sheet.js')).openPushSheet({ onDone: () => app.refresh() }),

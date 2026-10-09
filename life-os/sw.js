@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = 'ae2c595216';
+const VERSION = 'e5395d169e';
 const ASSETS = [
   "./",
   "./index.html",
@@ -235,10 +235,15 @@ const ASSETS = [
 
 const CACHE = `lifeos-${VERSION}`;
 
+// A new version takes over as soon as it has downloaded, without waiting for the old page's code to
+// allow it (a page from an older release may not know how). The page reloads into it when nothing
+// is being typed (js/ui/updates.js), and older pages reload on the switch by themselves.
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(ASSETS.map((a) => new Request(a, { cache: 'reload' })))),
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE);
+    await cache.addAll(ASSETS.map((a) => new Request(a, { cache: 'reload' })));
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', (event) => {
@@ -262,8 +267,10 @@ self.addEventListener('fetch', (event) => {
   if (req.mode === 'navigate') {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE);
-      const cached = await cache.match('./index.html');
-      if (cached) return cached;
+      const cached = (await cache.match('./index.html')) || (await cache.match('./'));
+      // A host that redirects /index.html to / (Netlify's pretty URLs) leaves a redirected response,
+      // which a browser refuses for a page load: hand back a clean copy.
+      if (cached) return cached.redirected ? new Response(await cached.blob(), { status: 200, headers: cached.headers }) : cached;
       try { return await fetch(req); } catch { return new Response('Offline', { status: 503 }); }
     })());
     return;
