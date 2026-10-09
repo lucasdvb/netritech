@@ -34,7 +34,7 @@
       "url": {{ shop.url | append: routes.root_url | json }},
       "potentialAction": {
         "@type": "SearchAction",
-        "target": {{ shop.url | append: routes.search_url | append: '?q={search_term_string}' | json }},
+        "target": "{{ shop.url }}{{ routes.search_url }}?q={search_term_string}",
         "query-input": "required name=search_term_string"
       }
     }
@@ -49,7 +49,7 @@
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": {{ 'general.home' | t | json }}, "item": {{ shop.url | append: routes.root_url | json }} }
     {%- if template.name == 'product' -%}
-      {%- assign crumb_collection = collection | default: product.collections.first -%}
+      {%- assign crumb_collection = collection | default: collections['skincare'] -%}
       {%- if crumb_collection -%}
       ,{ "@type": "ListItem", "position": 2, "name": {{ crumb_collection.title | json }}, "item": {{ shop.url | append: crumb_collection.url | json }} }
       ,{ "@type": "ListItem", "position": 3, "name": {{ product.title | json }}, "item": {{ shop.url | append: product.url | json }} }
