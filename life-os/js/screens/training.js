@@ -169,7 +169,7 @@ function planSheet() {
     actions: { new: ({ sheet }) => { app.closeSheet(sheet); newTemplate(); } },
     inputs: {
       plan: ({ el, value }) => store.setProfile({ plan: { ...store.profile().plan, [el.dataset.day]: value || null } }),
-      time: ({ value }) => value && store.setProfile({ trainTime: value }),
+      time: ({ value }) => value && import('../domain/day-blocks.js').then((D) => D.setTime('trainTime', value)),
     },
   });
 }

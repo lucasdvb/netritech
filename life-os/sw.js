@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = '607c84fd7d';
+const VERSION = '38ea10c990';
 const ASSETS = [
   "./",
   "./index.html",
@@ -37,6 +37,7 @@ const ASSETS = [
   "./js/domain/commitments.js",
   "./js/domain/cues.js",
   "./js/domain/dates.js",
+  "./js/domain/day-blocks.js",
   "./js/domain/day-plan.js",
   "./js/domain/day.js",
   "./js/domain/events.js",
@@ -102,6 +103,7 @@ const ASSETS = [
   "./js/screens/cues.js",
   "./js/screens/data.js",
   "./js/screens/dates.js",
+  "./js/screens/day-planner.js",
   "./js/screens/exercise-media-ui.js",
   "./js/screens/exercise-picker.js",
   "./js/screens/exercise.js",
@@ -213,6 +215,7 @@ const ASSETS = [
   "./js/ui/sheet.js",
   "./js/ui/sound.js",
   "./js/ui/swipe.js",
+  "./js/ui/tips.js",
   "./js/ui/toast.js",
   "./js/ui/transitions.js",
   "./js/ui/undo.js",
