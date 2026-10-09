@@ -1,0 +1,25 @@
+{%- comment -%} Params: product, variant (optional), class. Uses the shop's money format (Rs 900). {%- endcomment -%}
+{%- liquid
+  assign v = variant | default: product.selected_or_first_available_variant
+  assign on_sale = false
+  if v.compare_at_price > v.price
+    assign on_sale = true
+  endif
+  assign varies = false
+  if product.price_varies and variant == blank
+    assign varies = true
+  endif
+-%}
+<p class="price t-price {{ class }}" data-price>
+  {%- if on_sale -%}
+    <span class="sr-only">{{ 'products.sale_price' | t }}</span>
+    <span class="price__now">{{ v.price | money }}</span>
+    <span class="sr-only">{{ 'products.regular_price' | t }}</span>
+    <s class="price__was t-soft">{{ v.compare_at_price | money }}</s>
+  {%- elsif varies -%}
+    {%- assign min_price = product.price_min | money -%}
+    {{ 'products.from_price' | t: price: min_price }}
+  {%- else -%}
+    <span class="price__now">{{ v.price | money }}</span>
+  {%- endif -%}
+</p>

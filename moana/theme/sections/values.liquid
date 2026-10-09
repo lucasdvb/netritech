@@ -1,0 +1,39 @@
+<section class="section values" aria-labelledby="val-{{ section.id }}">
+  <div class="page-width">
+    <div class="section-head"><div class="section-head__text">
+      {%- if section.settings.eyebrow != blank -%}<p class="t-label">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h2 class="t-h2" id="val-{{ section.id }}">{{ section.settings.heading }}</h2>
+    </div></div>
+    <ul class="values__list" role="list">
+      {%- for block in section.blocks -%}
+        <li class="values__item reveal" style="--i: {{ forloop.index0 }}" {{ block.shopify_attributes }}>
+          <span class="values__num" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+          <h3 class="t-h3">{{ block.settings.title }}</h3>
+          <p class="t-soft">{{ block.settings.text }}</p>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% stylesheet %}
+.values__list { display: grid; gap: var(--s-3); }
+.values__item { display: grid; gap: var(--s-3); align-content: start; padding: var(--s-6) var(--s-5); border-radius: var(--r); background: var(--c-frost); }
+.values__num { font: 400 1.75rem/1 var(--f-display); color: var(--c-sage); }
+@media (min-width: 750px) { .values__list { grid-template-columns: repeat(3, minmax(0, 1fr)); } .values__item { padding: var(--s-7) var(--s-6); } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Values",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Label" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "What we stand by" }
+  ],
+  "blocks": [ { "type": "value", "name": "Value", "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "Authentic" },
+    { "type": "textarea", "id": "text", "label": "Text" }
+  ] } ],
+  "presets": [{ "name": "Values" }]
+}
+{% endschema %}

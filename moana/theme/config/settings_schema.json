@@ -1,0 +1,113 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Moana Beauté",
+    "theme_version": "2.0.0",
+    "theme_author": "Disruptive Dodo",
+    "theme_documentation_url": "https://moanabeaute.com",
+    "theme_support_url": "https://moanabeaute.com"
+  },
+  {
+    "name": "Business details",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Shown in the footer, contact page and structured data. Use verified details only."
+      },
+      {
+        "type": "text",
+        "id": "brand_name",
+        "label": "Brand name",
+        "default": "Moana Beauté",
+        "info": "Used in page titles. Shopify's store name is still 'My Store': rename it in Settings > General too, because checkout and emails use that one."
+      },
+      {
+        "type": "text",
+        "id": "legal_name",
+        "label": "Legal name",
+        "default": "Moana Beauté Ltée"
+      },
+      {
+        "type": "text",
+        "id": "company_number",
+        "label": "Business registration number (BRN)",
+        "default": "C26237784"
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_number",
+        "label": "WhatsApp number (digits only, with country code)",
+        "default": "23058172020"
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_display",
+        "label": "WhatsApp number as shown",
+        "default": "+230 5817 2020"
+      },
+      {
+        "type": "text",
+        "id": "address_street",
+        "label": "Street",
+        "default": "Plot 15a, Morcellement Royal Garden"
+      },
+      {
+        "type": "text",
+        "id": "address_locality",
+        "label": "Locality",
+        "default": "Mon Gout"
+      }
+    ]
+  },
+  {
+    "name": "Cart and delivery",
+    "settings": [
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Free delivery above (Rs)",
+        "default": 1500,
+        "info": "Must match Settings > Shipping and delivery. Set 0 to hide the progress bar."
+      },
+      {
+        "type": "number",
+        "id": "low_stock_threshold",
+        "label": "Show 'only X left' at or below",
+        "default": 5
+      },
+      {
+        "type": "richtext",
+        "id": "pdp_delivery_text",
+        "label": "Delivery and returns text on product pages",
+        "default": "<p>Rs 100 anywhere in Mauritius, free above Rs 1,500. Usually delivered in 1 to 3 working days, or collect in Mon Gout by arrangement.</p><p>Unopened products in their original packaging can be returned within seven days of delivery. <a href=\"/pages/delivery\">Delivery &amp; returns</a></p>"
+      }
+    ]
+  },
+  {
+    "name": "Discovery",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Comma-separated product tags. They drive the mega menu, the concern shortcuts on collections, the product card benefit line and the facts on product pages. Tags must match the product tags exactly."
+      },
+      {
+        "type": "textarea",
+        "id": "concern_tags",
+        "label": "Concern tags",
+        "default": "Hydration, Dullness, Dark spots, Breakouts, Fine lines, Firmness, Pores, Oil control, Redness, Sun protection, Dark circles, Puffiness, Makeup removal"
+      },
+      {
+        "type": "textarea",
+        "id": "skin_type_tags",
+        "label": "Skin type tags",
+        "default": "All skin types, Dry skin, Oily skin, Combination skin, Sensitive skin, Acne-prone skin, Normal skin"
+      },
+      {
+        "type": "textarea",
+        "id": "step_tags",
+        "label": "Routine step tags",
+        "default": "Cleanse, Tone, Treat, Moisturise, Protect, Mask, Eye care, Lip care"
+      }
+    ]
+  }
+]

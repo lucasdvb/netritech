@@ -1,0 +1,31 @@
+<div class="page-width">{%- render 'breadcrumbs' -%}</div>
+<header class="section section--tight page-header{% if section.settings.center %} page-header--center{% endif %}">
+  <div class="page-width">
+    <div class="page-header__inner">
+      {%- if section.settings.eyebrow != blank -%}<p class="t-label">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h1 class="t-h1">{{ section.settings.heading | default: page.title }}</h1>
+      {%- if section.settings.text != blank -%}<p class="t-lead">{{ section.settings.text }}</p>{%- endif -%}
+    </div>
+  </div>
+</header>
+
+{% stylesheet %}
+.page-header { padding-bottom: 0; }
+.page-header__inner { max-width: 52rem; }
+.page-header__inner > * + * { margin-top: var(--s-4); }
+.page-header--center .page-header__inner { margin-inline: auto; text-align: center; }
+.page-header--center .t-lead { margin-inline: auto; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Page header",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Label" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "info": "Defaults to the page title." },
+    { "type": "textarea", "id": "text", "label": "Lead text" },
+    { "type": "checkbox", "id": "center", "label": "Centre", "default": false }
+  ],
+  "presets": [{ "name": "Page header" }]
+}
+{% endschema %}

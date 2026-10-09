@@ -1,0 +1,43 @@
+{%- liquid
+  assign c = section.settings.collection
+  assign limit = section.settings.limit
+-%}
+<section class="section{% if section.settings.wash %} section--wash{% endif %}" aria-labelledby="fc-{{ section.id }}">
+  <div class="page-width">
+    <div class="section-head">
+      <div class="section-head__text">
+        {%- if section.settings.eyebrow != blank -%}<p class="t-label">{{ section.settings.eyebrow }}</p>{%- endif -%}
+        <h2 class="t-h2" id="fc-{{ section.id }}">{{ section.settings.heading }}</h2>
+        {%- if section.settings.text != blank -%}<p class="t-lead">{{ section.settings.text }}</p>{%- endif -%}
+      </div>
+      {%- if c != blank -%}
+        <a class="link-arrow" href="{{ c.url }}">{{ section.settings.link_label | default: c.title }} {% render 'icon', name: 'arrow-right' %}</a>
+      {%- endif -%}
+    </div>
+    {%- if c != blank and c.products_count > 0 -%}
+      <ul class="product-grid product-grid--4" role="list">
+        {%- for product in c.products limit: limit -%}
+          <li>{%- render 'product-card', product: product, index: forloop.index0 -%}</li>
+        {%- endfor -%}
+      </ul>
+    {%- else -%}
+      <p class="t-soft">{{ 'collections.empty' | t }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured collection",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Label", "default": "The launch collection" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Our first picks" },
+    { "type": "textarea", "id": "text", "label": "Text" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "Shop all" },
+    { "type": "range", "id": "limit", "label": "Products", "min": 2, "max": 16, "step": 1, "default": 8 },
+    { "type": "checkbox", "id": "wash", "label": "Spring background", "default": false }
+  ],
+  "presets": [{ "name": "Featured collection" }]
+}
+{% endschema %}

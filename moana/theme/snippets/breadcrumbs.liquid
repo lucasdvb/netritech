@@ -1,0 +1,28 @@
+{%- comment -%} Visible trail; the matching BreadcrumbList JSON-LD is in structured-data. {%- endcomment -%}
+<nav class="breadcrumbs" aria-label="{{ 'general.breadcrumb' | t }}">
+  <ol role="list">
+    <li><a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a></li>
+    {%- case template.name -%}
+      {%- when 'product' -%}
+        {%- assign crumb_collection = collection | default: collections['skincare'] -%}
+        {%- if crumb_collection -%}<li><a href="{{ crumb_collection.url }}">{{ crumb_collection.title }}</a></li>{%- endif -%}
+        <li><span aria-current="page">{{ product.title }}</span></li>
+      {%- when 'collection' -%}
+        {%- if current_tags -%}
+          <li><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+          <li><span aria-current="page">{{ current_tags | join: ', ' }}</span></li>
+        {%- else -%}
+          <li><span aria-current="page">{{ collection.title }}</span></li>
+        {%- endif -%}
+      {%- when 'page' -%}
+        <li><span aria-current="page">{{ page.title }}</span></li>
+      {%- when 'search' -%}
+        <li><span aria-current="page">{{ 'search.title' | t }}</span></li>
+      {%- when 'blog' -%}
+        <li><span aria-current="page">{{ blog.title }}</span></li>
+      {%- when 'article' -%}
+        <li><a href="{{ blog.url }}">{{ blog.title }}</a></li>
+        <li><span aria-current="page">{{ article.title }}</span></li>
+    {%- endcase -%}
+  </ol>
+</nav>

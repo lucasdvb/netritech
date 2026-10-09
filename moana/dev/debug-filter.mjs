@@ -1,0 +1,12 @@
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require('/opt/node-tools/node_modules/playwright');
+const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+p.on('console', (m) => console.log('console:', m.text()));
+p.on('request', (r) => { if (r.url().includes('collections')) console.log('REQ', r.url()); });
+await p.goto('http://localhost:4100/collections/skincare?filter.p.vendor=Anua&sort_by=price-ascending', { waitUntil: 'networkidle' });
+console.log('links', await p.$$eval('.plp__active a', (as) => as.map((a) => a.className + ' ' + a.getAttribute('href'))));
+await p.locator('.plp__active a.link').click();
+await p.waitForTimeout(1200);
+console.log('url', p.url(), 'cards', await p.locator('.plp__grid .card').count());
+await b.close();

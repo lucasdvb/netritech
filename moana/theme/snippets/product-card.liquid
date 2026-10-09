@@ -1,0 +1,90 @@
+{%- comment -%}
+  Product card.
+  Params: product (required), index (reveal stagger), sizes, eager (bool, first row above the fold),
+          heading (h2|h3, default h3), quick_add (default true).
+  Quick add is a plain POST to /cart/add, so it works with JavaScript off; theme.js turns it into an AJAX add
+  that opens the cart drawer. Products with real options get a link to choose instead.
+{%- endcomment -%}
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign img = product.featured_media.preview_image
+  assign alt_img = product.media[1].preview_image
+  assign img_sizes = sizes | default: '(min-width: 1200px) 22vw, (min-width: 750px) 30vw, 46vw'
+  assign h = heading | default: 'h3'
+  assign show_quick = true
+  if quick_add == false
+    assign show_quick = false
+  endif
+  assign size = product.metafields.custom.size.value
+  assign concern_list = settings.concern_tags | split: ','
+  assign concerns = ''
+  for tag in product.tags
+    for c in concern_list
+      assign c_clean = c | strip
+      if tag == c_clean
+        assign concerns = concerns | append: tag | append: '|'
+      endif
+    endfor
+  endfor
+  assign concerns = concerns | split: '|'
+  assign loading = 'lazy'
+  if eager
+    assign loading = 'eager'
+  endif
+-%}
+<article class="card reveal" style="--i: {{ index | default: 0 | modulo: 4 }}">
+  <div class="card__media{% if alt_img %} has-alt{% endif %}">
+    {%- if img -%}
+      {{- img | image_url: width: 900 | image_tag:
+          widths: '240, 360, 480, 600, 750, 900',
+          sizes: img_sizes,
+          loading: loading,
+          fetchpriority: 'auto',
+          class: 'card__img--main',
+          alt: img.alt | default: product.title
+      -}}
+      {%- if alt_img -%}
+        {{- alt_img | image_url: width: 900 | image_tag: widths: '360, 480, 600, 750, 900', sizes: img_sizes, loading: 'lazy', class: 'card__img--alt', alt: '' -}}
+      {%- endif -%}
+    {%- else -%}
+      {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+    {%- endif -%}
+    <div class="card__badges">
+      {%- unless product.available -%}
+        <span class="tag tag--soldout">{{ 'products.sold_out' | t }}</span>
+      {%- else -%}
+        {%- if variant.compare_at_price > variant.price -%}<span class="tag">{{ 'products.sale' | t }}</span>{%- endif -%}
+      {%- endunless -%}
+    </div>
+    {%- if show_quick and product.available -%}
+      <div class="card__quick">
+        {%- if product.has_only_default_variant -%}
+          {%- form 'product', product, class: 'card__form', data-product-form: '', novalidate: 'novalidate' -%}
+            <input type="hidden" name="id" value="{{ variant.id }}">
+            <input type="hidden" name="quantity" value="1">
+            <button class="btn btn--small" type="submit" name="add" aria-label="{{ 'products.add_named' | t: title: product.title | escape }}">
+              <span class="btn__text">{{ 'products.quick_add' | t }}</span>
+              <span class="btn__icon">{% render 'icon', name: 'plus' %}</span>
+            </button>
+          {%- endform -%}
+        {%- else -%}
+          <a class="btn btn--small" href="{{ product.url }}" aria-label="{{ 'products.choose_named' | t: title: product.title | escape }}">
+            <span class="btn__text">{{ 'products.choose' | t }}</span>
+            <span class="btn__icon">{% render 'icon', name: 'arrow-right' %}</span>
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+  <div class="card__body">
+    {%- if product.vendor != blank -%}<p class="card__vendor">{{ product.vendor }}</p>{%- endif -%}
+    <{{ h }} class="card__title"><a href="{{ product.url }}">{{ product.title }}</a></{{ h }}>
+    {%- if concerns.size > 0 -%}
+      <p class="card__concerns t-xs t-soft">{{ concerns | slice: 0, 2 | join: ' · ' }}</p>
+    {%- endif -%}
+    <div class="card__meta">
+      {%- render 'price', product: product, variant: variant -%}
+      {%- if size != blank -%}<span class="card__size">{{ size }}</span>{%- endif -%}
+    </div>
+  </div>
+</article>

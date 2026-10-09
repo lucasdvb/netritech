@@ -1,0 +1,48 @@
+{%- comment -%}
+  One cart line, shared by the drawer and the cart page. Params: item, index (1-based line number).
+  Quantity changes are plain POSTs to /cart/change (no-JS fallback); theme.js sends them as AJAX instead.
+{%- endcomment -%}
+{%- liquid
+  assign max_qty = 99
+  if item.variant.inventory_management == 'shopify' and item.variant.inventory_policy == 'deny'
+    assign max_qty = item.variant.inventory_quantity
+  endif
+  assign minus_qty = item.quantity | minus: 1
+  assign plus_qty = item.quantity | plus: 1
+-%}
+<li class="cart-line" data-line="{{ index }}" data-key="{{ item.key }}">
+  <a class="cart-line__img" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+    {%- if item.image -%}{{ item.image | image_url: width: 240 | image_tag: widths: '120, 180, 240', sizes: '84px', alt: '', loading: 'lazy' }}{%- endif -%}
+  </a>
+  <div class="cart-line__info">
+    <div class="cart-line__top">
+      <div>
+        {%- if item.vendor != blank -%}<p class="card__vendor">{{ item.vendor }}</p>{%- endif -%}
+        <a class="cart-line__title" href="{{ item.url }}">{{ item.product.title }}</a>
+        {%- unless item.product.has_only_default_variant -%}<p class="cart-line__variant">{{ item.variant.title }}</p>{%- endunless -%}
+        {%- assign item_size = item.product.metafields.custom.size.value -%}
+        {%- if item_size != blank -%}<p class="cart-line__variant">{{ item_size }}</p>{%- endif -%}
+        {%- for discount in item.line_level_discount_allocations -%}<p class="cart-line__variant">{{ discount.discount_application.title }}</p>{%- endfor -%}
+      </div>
+      <p class="cart-line__price t-price">
+        {%- if item.original_line_price != item.final_line_price -%}<s>{{ item.original_line_price | money }}</s>{%- endif -%}
+        {{ item.final_line_price | money }}
+      </p>
+    </div>
+    <div class="cart-line__actions">
+      <div class="qty qty--small" data-line-qty>
+        <a href="{{ routes.cart_change_url }}?line={{ index }}&quantity={{ minus_qty }}" role="button" data-line-change="{{ minus_qty }}" aria-label="{{ 'cart.decrease_named' | t: title: item.product.title | escape }}" class="qty__btn">{% render 'icon', name: 'minus' %}</a>
+        <label class="sr-only" for="line-qty-{{ context | default: "d" }}-{{ index }}">{{ 'cart.quantity_named' | t: title: item.product.title | escape }}</label>
+        <input id="line-qty-{{ context | default: "d" }}-{{ index }}" type="number" min="0" max="{{ max_qty }}" value="{{ item.quantity }}" inputmode="numeric" data-line-input>
+        {%- if item.quantity < max_qty -%}
+          <a href="{{ routes.cart_change_url }}?line={{ index }}&quantity={{ plus_qty }}" role="button" data-line-change="{{ plus_qty }}" aria-label="{{ 'cart.increase_named' | t: title: item.product.title | escape }}" class="qty__btn">{% render 'icon', name: 'plus' %}</a>
+        {%- else -%}
+          <span class="qty__btn is-disabled" aria-hidden="true">{% render 'icon', name: 'plus' %}</span>
+        {%- endif -%}
+      </div>
+      <a class="cart-line__remove" href="{{ item.url_to_remove }}" role="button" data-line-change="0" aria-label="{{ 'cart.remove_named' | t: title: item.product.title | escape }}">{{ 'cart.remove' | t }}</a>
+    </div>
+    {%- if item.quantity >= max_qty and max_qty < 99 -%}<p class="t-xs t-soft">{{ 'cart.max_reached' | t }}</p>{%- endif -%}
+  </div>
+  <div class="cart-line__error notice notice--error" role="alert" data-line-error hidden></div>
+</li>
