@@ -1,6 +1,6 @@
 # Moana Beauté: handover
 
-October 2026. Store: `moana-beaute.myshopify.com`.
+October 2026 (v3). Store: `moana-beaute.myshopify.com`.
 
 ## Where things are
 
@@ -11,191 +11,166 @@ October 2026. Store: `moana-beaute.myshopify.com`.
 | Theme editor | Shopify admin → Online Store → Themes → *Moana Beauté v2 (preview)* → Customize |
 | Code | `moana/` in this repository (branch `claude/eloquent-bardeen-p6n61a`) |
 
-## 1. What was implemented
+## What changed in v3
 
-**Theme (new code, Online Store 2.0)**
-- **Header:** announcement bar with the real delivery terms, and a sticky header that hides as you scroll down and returns as you scroll up.
-- **Mega menu:**
-  - shop by category, with live counts
-  - shop by concern and by skin type, built from the real product tags
-  - two feature cards
-- **Phone menu:** a drawer with the same structure.
-- **Homepage:**
-  - editorial hero with a featured product
-  - service strip
-  - category rail
-  - launch collection grid
-  - shop by concern
-  - the five-step routine, each step with a real product you can add
-  - brand index
-  - brand story
-  - FAQ
-- **Collection pages:**
-  - sub-category pills and concern shortcuts (tag routes, so they need no app)
-  - a filter drawer on Shopify's storefront filters
-  - sorting and filtering that update without a page reload, with browser back working
-  - active filter chips and an empty state
-  - a "coming soon" state with the launch collection for Makeup, Hair Care, Body Care, and Gifts & Sets
-- **Product page:**
-  - gallery: stacked on desktop, swipe with dots on phones, zoom on tap
-  - vendor link, title, price and size, the real description
-  - "Targets", "Suits" and "Routine" facts built from the tags
-  - quantity stepper and add to cart
-  - delivery and WhatsApp reassurance
-  - accordions: key ingredients, how to use as numbered steps, full ingredients, delivery and returns, all from the `custom.*` metafields
-  - a sticky buy bar
-  - Shopify recommendations
-  - product structured data from Shopify's own filter
-- **Cart:**
-  - a drawer and a full cart page, both rendered by Shopify (no prices worked out in JavaScript)
-  - progress towards free delivery (Rs 1,500)
-  - steppers and remove buttons
-  - at most two suggestions
-  - a clear message when stock caps a quantity
-- **Search:** an overlay with Shopify's predictive search (products, collections, pages, suggestions) and new-in products before typing, plus a results page.
-- **Inner pages:**
-  - About, Contact (form), Delivery & returns, Brands, the routine guide, FAQ
-  - 404, collections list, blog and article, password page, gift card
-- **Locales:** English and French (French is published on the store).
-- **Theme settings:** business details, the free-delivery threshold, low-stock threshold, cart suggestions, and the concern / skin-type / routine-step tag lists.
+The brief for v3: get closer to **cultbeauty.co.uk**, speak to Mauritian women shopping for themselves (not suppliers), take Kylie Cosmetics' voice, use GetLayers sections, backgrounds, motion and glass, make the footer near-black, drop WhatsApp, and add pages that make sense for a shop.
 
-**Store data changed (all reversible)**
-- **New menus:** `moana-main`, `moana-footer-shop`, `moana-footer-help`. The existing menus are unchanged.
-- **New page:** `/pages/faq`, published, using the `faq` template. The answers come from your Shopify policies.
-- **SEO:** descriptions set on 6 pages and 11 collections.
-- **Collection intros:** the visible descriptions of the 8 category collections are rewritten (they were "Cleansers from Moana Beauté.").
+**Studied, not guessed.** Cult Beauty was inspected live (homepage, Korean skincare category, a product page, at 1440 px and 390 px, plus its computed CSS) once `www.cultbeauty.co.uk` and `static.thcdn.com` were allowed. Kylie Cosmetics was read for voice. See `RESEARCH.md`.
 
-**Not changed:** the live theme, products, prices, inventory, policies, shipping, payments, checkout, and whether the store is published.
+### Layout, after Cult Beauty
 
-## 2. Design decisions
+- **Header**:
+  - **Bars:** a grey service bar with four promises, then a forest promo bar that rotates two messages.
+  - **Main row:** a real search field on the left, the logo in the centre, and a black **Find my routine** button with Wishlist, Account and Bag on the right.
+  - **Navigation:** centred underneath, with the Skincare mega menu (categories, concerns and skin types with live counts, two cards).
+  - **Scrolling:** the header turns to frosted glass and hides on scroll down.
+  - **Phone:** a drawer with the same content.
+- **Homepage**, in Cult Beauty's order:
+  1. Thin promo strip carousel
+  2. Split hero carousel: a light serif line over a bold uppercase line, a sentence, two square buttons, and the picture beside it. Slide 2 is the GetLayers WebGL wash with a product floating on glass.
+  3. Shop by category tiles
+  4. Tabbed product rails: What's new, Serums, Island sun
+  5. What's new at Moana: editorial cards
+  6. Second promo strip
+  7. In focus: three concern cards
+  8. The five-step routine on the GetLayers wash with glass cards
+  9. Shop by brand tiles
+  10. Shop by concern
+  11. Brand story
+  12. FAQ
+- **Product card**:
+  - a photo with a wishlist heart, the name, and one outlined badge, all from real data (sold out, % off, low stock, or NEW IN for 60 days after publishing)
+  - a bold price and a full-width black **ADD TO BAG**
+- **Collection page**:
+  - a centred uppercase title, the description clamped to two lines with **Read more**, and the item count
+  - sub-category and concern shortcuts
+  - square filter boxes (each opens the filter drawer at that filter) and a square Sort box, on a glass toolbar
+- **Product page**:
+  - brand name large, then the title and **View product details →**
+  - price and size, and the badge
+  - quantity, then a forest-green **ADD TO BAG – Rs X**, then **Add to wishlist**
+  - "In stock | At your door in 1 to 3 working days"
+  - ruled promise rows
+  - a grey band with the description on the left and accordions on the right (key ingredients, how to use, full ingredients, delivery and returns)
+  - "You might also love", and a sticky bar with the green button
+  - the gallery is two-up on desktop and a swipe gallery with dots on phones
+- **Design tokens:**
+  - **Shape:** square corners everywhere, as on Cult Beauty.
+  - **Buttons:** near-black (Pantone Black 3 C).
+  - **Section titles:** quiet, tracked, uppercase Raleway.
+  - **Brand fonts and colours are unchanged.**
 
-See `RESEARCH.md` and `DESIGN-SYSTEM.md`. In short:
+### Copy
 
-- **White everywhere, Spring for one band.**
-  - The previous theme used First Frost grey as the page background, which broke the white-ground rule.
-  - Brand palette only; Sage, Khaki Linen and Spring appear because the guide includes them.
-- **Official logos only.**
-  - The previous theme's horizontal "mark + wordmark" lockup is not in the guide, so it is gone.
-  - Light-on-dark and dark-on-light variants are used as the guide shows.
-- **Taken from Kosas:**
-  - one add button per product card, always visible, with the price inside
-  - tinted image wells that make mismatched pack shots look like one set
-  - a benefit line under each name (here, the real concern tags)
-  - numbered how-to steps
-- **Taken from Kylie:**
-  - the sticky buy bar
-  - the swipe gallery with dots
-  - hero text under the image on phones
-- **Taken from GetLayers:** layouts (split hero, sticky numbered process, ruled trust row, 4/8 FAQ), the edge-wipe hover, the brand list with a floating packshot, the top-drop search panel, the blur-and-rise reveal, and the house easing. Its 3D scenes, preloaders and smooth scrolling were rejected for a shop.
-- **Kept deliberately:** a light mega menu. Concern and skin-type routes are the main way to find products in a 21-SKU K-beauty range.
+- **Voice:** every page and both locales (English and French) are rewritten in Kylie Cosmetics' direct, friendly voice, kept warm and poised as the brand book asks. For example: "What's your skin asking for?", "Add to bag", "Nice! Your delivery is free."
+- **Removed:** the "Supply Moana Beauté" and "Brands and distributors" blocks. The Brands page now asks shoppers which brand to stock next.
+- **No new claims:** product copy paraphrases the real product descriptions. No reviews, bestseller labels, results or discounts were invented.
 
-## 3. Shopify functionality: what was tested, and how
+### GetLayers
 
-This environment could not open the storefront: its network policy blocks `moana-beaute.myshopify.com` and `cdn.shopify.com`. So testing was done in two layers.
+| Piece | GetLayers source | Where |
+|---|---|---|
+| Footer | **Lumora** footer composition (inverted slab, rounded top, three ruled tiers, bleeding wordmark) and the **Clarix** glass sign-up field | Every page |
+| Watercolour wash (WebGL2 gradient) | **Feather** gradient, shader unchanged, tinted to Spring, Khaki Linen and Sage | Hero slide 2, the routine section, the routine finder |
+| Glass | House / Clarix treatment (translucent, 20–24 px blur) | Header on scroll, mega menu, routine steps, floating hero product, routine finder card, collection toolbar |
+| Line reveal | Lumora text engine (each line rises from its own mask, 100 ms apart, 900 ms ease-out) | Section headings, footer |
+| Blur-and-rise and unmask | Dantora / Halden presets | Hero slides, cards, tiles |
 
-1. **Against Shopify itself:**
-   - Theme Check (Shopify's linter): **0 errors**. 2 warnings, both false positives.
-   - All files uploaded to the preview theme.
-   - Shopify accepted every template and section group. JSON templates are validated against the sections on upload.
-   - File checksums on Shopify were compared with the local files: all match. `settings_data.json` is the only exception, because Shopify rewrites that file in its own format.
-   - Fixed after handover (9 Oct): `snippets/structured-data.liquid` had not reached Shopify, which caused "Could not find asset snippets/structured-data.liquid" on every page. Shopify's parser rejects a `}` inside a quoted string within `{{ }}`, and the background upload had dropped the file without reporting an error. The fixed file was uploaded directly, Shopify validated it, and its checksum matches. A second full comparison found no other missing or changed files.
-2. **Against a local preview** (`dev/`): the real theme files, rendered with the real catalogue, with Shopify's storefront endpoints emulated. **40/40 interaction checks pass:**
-   - add from a card, then the drawer opens
-   - quantity up and down, and remove
-   - the free-delivery amount maths, and the unlocked state above Rs 1,500
-   - product-page stepper, and the stock cap at 25
-   - the over-stock error message
-   - the sticky bar appears, hides, and steps aside for the footer
-   - recommendations load
-   - brand filter, price sort, clear all, browser back
-   - predictive search with arrow keys
-   - Escape and focus return
-   - mega menu by keyboard
-   - the phone menu's focus trap
-   - no horizontal scroll
-   - forms post to real Shopify routes, so they work without JavaScript
+The wash only compiles when its section is about to be seen, renders at half resolution and 30 frames a second, pauses off screen, and becomes a still image under reduced motion or on machines without a GPU.
 
-   **Width sweep:** 20 pages × 10 widths (320, 360, 375, 390, 414, 430, 768, 1024, 1280, 1440). No horizontal overflow, no console errors, every image has alt text and dimensions, one H1 per page, no skipped heading levels, no duplicate ids, standalone tap targets at least 24 px.
+### Footer
 
-**Not tested, because the storefront was unreachable:**
-- a real add to cart on Shopify
-- the real checkout (MIPS card payments)
-- Shopify's own predictive-search ranking
-- which filters Search & Discovery actually exposes
-- how the real product photos look in the new image wells
+- **Ground:** **Pantone Black 3 C (#212721)**, the green-black at the dark end of the logo green.
+- **Sign-up:** "The Moana list" uses Shopify's own customer form (no app). It saves the email as a customer who accepts marketing.
 
-These need the live preview check below.
+### WhatsApp removed
 
-## 4. Technical quality
+WhatsApp is gone from the header, footer, contact page, product page, password page, structured data, theme settings and copy. Payment copy no longer names a processor ("Securely at checkout").
 
-- **Lighthouse on the local preview, simulated mobile:**
+### New pages
 
-  | Page | Performance | Accessibility | Best practices | SEO | CLS |
-  |---|---|---|---|---|---|
-  | Home | 95 | 100 | 100 | 100 | 0 |
-  | Collection | 96 | 100 | 100 | 100 | 0 |
-  | Product | 97 | 100 | 100 | 100 | 0 |
+- **Find my routine** (`/pages/routine-finder`):
+  - three questions: skin type, main concern, and three or five steps
+  - it picks one product per step from the real catalogue by its tags, with add-to-bag on each and **Add the whole routine** (one request, then the bag opens)
+  - if nothing in stock fits a step, it says so and links to the category
+  - answers never leave the page
+- **Wishlist** (`/pages/wishlist`):
+  - hearts on every card and the product page save products on the shopper's device (no account or app)
+  - the page shows live cards (price, stock, add to bag) and suggests new-in products when empty
+  - it is `noindex`
 
-  Accessibility is also 100 on the routine guide, cart and contact pages. Performance figures from a local server are only indicative; measure on the real preview with PageSpeed Insights.
-- **Weight:** one CSS file (41 KB) and one deferred JS file (27 KB), no libraries. Self-hosted fonts with `swap`, and only two preloaded. Responsive images with `srcset` and `sizes`; the hero image loads eagerly with high priority and everything below it lazily.
-- **SEO:**
-  - unique titles and descriptions, with fallbacks per template
-  - canonical URLs, Open Graph and Twitter tags, and a 1200×630 sharing image
-  - `noindex` on cart and search
-  - BreadcrumbList structured data on products and collections
-  - Product structured data from Shopify's filter
-  - OnlineStore and WebSite (search action) structured data on the homepage
-  - no FAQPage markup, since Google no longer shows FAQ rich results for shops
-- **Accessibility:**
-  - skip link, landmarks and headings
-  - focus states everywhere
-  - drawers and search trap focus and return it on close
-  - Escape closes everything
-  - live region announcements for cart changes
-  - form errors tied to their fields
-  - reduced-motion support
-  - all text at least 4.5:1 contrast
-- **Bugs found and fixed during QA:**
-  - Empty price filters were sent as "Rs 0–0", so every filtered grid came back empty.
-  - A slower, older filter response could overwrite a newer one.
-  - The collection toolbar overflowed at 320–375 px.
-  - Secondary text was 4.43:1 on Spring.
-  - The card buttons' screen-reader names didn't match their visible words.
+Both are linked from the header and from the footer's Shop column.
 
-## 5. Outstanding issues and actions for the owner
+### Store data changed (all reversible)
 
-1. **Check the preview on real Shopify before publishing.** Do a test order through MIPS on desktop and on a phone. I could not reach the storefront from here.
-2. **Rename the store.** Shopify still calls it "My Store" (Settings → General). Checkout, emails and the browser tab on non-theme pages use that name. The theme uses a "Brand name" setting, so its own pages already say Moana Beauté.
-3. **Add a Returns and refunds policy.** The Terms refer to one, but none exists in Settings → Policies. The returns wording on the site (7 days, unopened, hygiene exception, refund to card) comes from the previous site copy. Please confirm it is your policy, then add it as the Refund policy so it also appears at checkout.
-4. **Delete obsolete files from the preview theme.** Shopify's API connector does not allow deleting theme files. Before publishing, delete these in the theme's code editor (Edit code); nothing references them:
+- **New menu** `moana-nav` (header): New In, Skincare (with sub-categories), Cleansers, Toners & Essences, Serums, Moisturisers, Sunscreen, Brands, Routine guide.
+- **Updated menu** `moana-footer-shop`: adds Find my routine and Wishlist.
+- **New pages:** Find my routine, which has an SEO description, and Wishlist. Both are published, like the FAQ page.
+- **Theme settings:** the WhatsApp fields are removed, and the product-page delivery note is reworded.
+
+## Shopify functionality: what was tested, and how
+
+1. **Against Shopify:**
+   - Theme Check: **0 errors**. 4 warnings, all false positives.
+   - All 108 theme files were compared by MD5 with the repository: **all match**. `settings_data.json` is the only exception, because Shopify rewrites its format; its content was checked line by line.
+   - Shopify accepted every template.
+2. **Against the local preview** (`dev/`): the real theme files, the real catalogue, and Shopify's endpoints emulated (cart, including multi-item adds, section rendering, predictive search, filters, recommendations).
+   - `node dev/e2e.mjs`: **40/40** (cart drawer, quantities, free-delivery maths, stock cap, sticky bar, recommendations, filters, sort, predictive search, keyboard, focus traps, no overflow, no-JS forms).
+   - `node dev/new-pages-test.mjs`: **11/11**. The quiz builds a five-step routine; Add the whole routine opens the bag with the products; arrow keys don't skip questions; hearts toggle; the header count updates; the wishlist page shows, removes and clears cards; no console errors.
+   - `node dev/sweep.mjs`: 22 pages × 10 widths (320–1440). No horizontal overflow, no console errors, every image has alt text and dimensions, one H1 per page, no skipped heading levels, no duplicate ids.
+3. **Lighthouse** (local preview, simulated mobile):
+
+   | Page | Perf | A11y | Best practices | SEO | CLS |
+   |---|---|---|---|---|---|
+   | Home | 88 | 100 | 100 | 100 | 0 |
+   | Collection | 90 | 100 | 100 | 100 | 0 |
+   | Product | 94 | 100 | 100 | 100 | 0 |
+   | Find my routine | 89 | 100 | 100 | 100 | 0 |
+   | Wishlist | 91 | 100 | – | noindex | 0 |
+
+   Layout shift was traced to zero on every template:
+   - metric-matched fallback fonts, so headings don't re-wrap when the web fonts arrive
+   - space reserved for carousel dots and the Read more button
+   - the wishlist decides its state while the page is still parsing
+
+**Not tested, because it needs the real store:**
+- a real add to bag and checkout
+- the payment provider you are about to add
+- which filters Search & Discovery exposes
+- how the real product photos sit on the new white cards
+- the customer form saving a subscriber
+
+Do these on the preview before publishing.
+
+## Outstanding issues and actions for the owner
+
+1. **Check the preview on real Shopify** on a phone and a desktop, and place a test order once the payment provider is connected.
+2. **Payment provider.** Connect the Mauritian processor in Settings → Payments. The theme names no processor, so nothing needs changing in the theme.
+3. **Rename the store.** Shopify still calls it "My Store" (Settings → General). Checkout and emails use that name.
+4. **Add a Returns and refunds policy** in Settings → Policies. The site's returns wording (7 days, unopened, hygiene exception, refund to card) comes from the earlier site copy; please confirm it.
+5. **Customer emails.** The footer sign-up saves subscribers as customers with marketing consent. Shopify Email (free tier) or another email tool can send to them; nothing is sent automatically.
+6. **Delete obsolete files from the preview theme** in the code editor before publishing. The API connector cannot delete theme files, and nothing references these:
    - sections: `about`, `brands`, `delivery`, `featured-launch`, `info-strip`, `kbeauty-auth`, `kbeauty-intro`, `kbeauty-routine`, `kbeauty-start`, `kbeauty-teaser`, `related-products`, `blank`
    - snippets: `brand-card`, `contact-form`, `mark-sprite`, `media-img`, `nav-items`, `product-grid`, `sticky-bar`, `wave`
    - assets: `shop.css`, `site.css`, `site.js`, `lockup-primary.svg`, `lockup-stacked.svg`, `lockup-white.svg`, `ph-hero-m.svg`, `ph-hero.svg`, `ph-square.svg`, `soon-*.jpg`, `favicon.svg`, `profile-mark-1024.png`
+   - templates: `collection.body-care.json`, `collection.gifts-sets.json`, `collection.hair-care.json`, `collection.makeup.json` (identical to `collection.json`)
    - locales: `en.default.schema.json`
-5. **Pantone codes.** The brand guide gives colour names only. Ask Disruptive Dodo for the official hex and Pantone values; the theme uses values sampled from the guide.
-6. **Photography.**
-   - The hero (dark wet leaves) and About (two women on a beach) images are carried over from the previous theme.
-   - The "coming soon" images showed unbranded jars that could read as a Moana product line, so they are no longer used.
-   - Brand-specific editorial photography would lift the homepage most.
-   - Generating new images was not done without your approval.
-7. **Optional, in the Search & Discovery app:**
-   - add Tag filters (concern, skin type) to the filter drawer
-   - set "complementary products" so the cart and product page can say "pairs with" instead of "you may also like"
-8. **Reviews and newsletter.** Not added: there are no genuine reviews yet, and no confirmed email marketing workflow. Both slot in later.
-9. **To see the reference sites and your storefront from this environment:** allow `moana-beaute.myshopify.com`, `cdn.shopify.com` and `www.rhodeskin.com` in the environment's network settings. Rhode could not be studied for that reason.
 
-## 6. Readiness
+   These v2 sections are no longer on the homepage but remain usable in the editor: `hero`, `service-strip`, `category-rail`.
+7. **Photography.** Cult Beauty's homepage runs on campaign photography. The hero currently uses the two photographs from the previous theme, and the category and editorial tiles use product packshots. Brand or lifestyle shots in the editor (each hero slide, category tile and editorial card takes an image) would lift it most. No images were generated.
+8. **Pantone codes.** The brand guide gives colour names only. The footer uses Pantone Black 3 C by request; ask Disruptive Dodo to confirm the other values.
+9. **Optional, in Search & Discovery:** add Tag filters (concern, skin type) so they show as filter boxes on collection pages.
+
+## Readiness
 
 **Not ready to publish yet. Close.**
 
 Verified:
-- The code passes Shopify's linter, was accepted by Shopify, and the uploaded files match their checksums.
-- Every interaction works against an emulation of Shopify's endpoints with the real catalogue.
-- Layouts hold from 320 to 1440 px.
-- Accessibility scores 100.
+- The code passes Shopify's linter, and every file on the preview theme matches the repository.
+- Every interaction works against an emulation of Shopify with the real catalogue.
+- Layouts hold from 320 to 1440 px, with zero layout shift and accessibility 100 on every template.
 
 Before launch:
-1. Review the preview on Shopify (items 1 and 4 above).
-2. Rename the store (item 2).
-3. Publish the refund policy (item 3).
-4. Do one test order with a real card.
+1. Review the preview on Shopify (items 1 and 6).
+2. Connect payments and do one real test order (item 2).
+3. Rename the store and publish the refund policy (items 3 and 4).
