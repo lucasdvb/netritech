@@ -18,7 +18,7 @@
 {% stylesheet %}
   .announce { background: var(--c-forest); color: var(--c-white); }
   .announce__inner { display: grid; min-height: 42px; }
-  .announce__item { grid-area: 1 / 1; display: flex; align-items: center; justify-content: center; padding-block: 8px; text-align: center; font: 500 .8125rem/1.4 var(--f-body); letter-spacing: .08em; text-transform: uppercase;
+  .announce__item { grid-area: 1 / 1; display: flex; align-items: center; justify-content: center; padding-block: 8px; text-align: center; font: var(--w-medium) var(--fs-xs)/1.4 var(--f-body); letter-spacing: .08em; text-transform: uppercase;
     opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity 400ms var(--ease), transform 400ms var(--ease), visibility 0s linear 400ms; }
   .announce__item.is-active { opacity: 1; visibility: visible; transform: none; transition: opacity 400ms var(--ease), transform 400ms var(--ease); }
   .announce a { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,.5); }

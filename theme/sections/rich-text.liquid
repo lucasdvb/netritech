@@ -16,7 +16,7 @@
 {% stylesheet %}
 .rich__grid { display: grid; gap: var(--s-5); }
 .rich__grid > div > * + * { margin-top: var(--s-3); }
-.rich__body { max-width: 40rem; font-size: 1.0625rem; }
+.rich__body { max-width: 40rem; font-size: var(--fs-md); }
 .rich__grid--solo .rich__body { max-width: 46rem; }
 @media (min-width: 990px) { .rich__grid:not(.rich__grid--solo) { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: clamp(3rem, 7vw, 8rem); } }
 {% endstylesheet %}

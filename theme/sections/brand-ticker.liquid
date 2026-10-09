@@ -1,0 +1,59 @@
+{%- comment -%}
+  Brand ticker: the names of the brands we stock, set large in Raleway ExtraLight, in two rows that
+  slide in opposite directions as the page scrolls (a CSS scroll timeline, no loop, no JavaScript).
+  The names come from the live catalogue (shop.vendors) unless a list is typed in the editor.
+  Purely decorative: the "Shop by brand" tiles beside it carry the links, so it is hidden from
+  screen readers. With reduced motion, or in browsers without scroll timelines, it is a still band.
+{%- endcomment -%}
+{%- liquid
+  if section.settings.brands != blank
+    assign names = section.settings.brands | split: ','
+  else
+    assign names = shop.vendors
+  endif
+-%}
+{%- if names.size > 0 -%}
+<div class="ticker{% if section.settings.tint %} ticker--tint{% endif %}" aria-hidden="true">
+  {%- for row in (1..2) -%}
+    <div class="ticker__row ticker__row--{{ row }}">
+      {%- for i in (1..3) -%}
+        {%- for raw in names -%}
+          {%- assign n = raw | strip -%}
+          {%- if n != blank -%}<span class="ticker__item">{{ n }}</span>{%- endif -%}
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+  {%- endfor -%}
+</div>
+{%- endif -%}
+
+{% stylesheet %}
+.ticker { position: relative; display: grid; gap: var(--s-2); padding-block: var(--s-7); overflow: clip; user-select: none; view-timeline: --ticker block; }
+.ticker--tint { background: linear-gradient(180deg, var(--c-white), #f3f5ec 50%, var(--c-white)); }
+.ticker__row { display: flex; width: max-content; white-space: nowrap; }
+.ticker__item { display: inline-flex; align-items: center; padding-inline: .35em; font: var(--w-extralight) clamp(var(--fs-3xl), 1.6rem + 4vw, var(--fs-6xl))/1.1 var(--f-body); letter-spacing: var(--ls-display); color: var(--ink); }
+.ticker__item::after { content: ""; width: .12em; height: .12em; margin-left: .7em; border-radius: 50%; background: var(--c-sage); }
+.ticker__row--2 { margin-left: -30vw; }
+.ticker__row--2 .ticker__item { font-style: italic; font-weight: var(--w-light); color: var(--c-forest); }
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .ticker__row { animation: ticker-l linear both; animation-timeline: --ticker; animation-range: cover; }
+    .ticker__row--2 { animation-name: ticker-r; }
+    @keyframes ticker-l { from { translate: 0 0; } to { translate: -18% 0; } }
+    @keyframes ticker-r { from { translate: -18% 0; } to { translate: 0 0; } }
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Brand ticker",
+  "class": "section-ticker",
+  "settings": [
+    { "type": "paragraph", "content": "Brand names in two large rows that slide as the page scrolls. Decorative: pair it with Shop by brand." },
+    { "type": "text", "id": "brands", "label": "Brands (comma separated)", "info": "Leave empty to use every brand in the catalogue." },
+    { "type": "checkbox", "id": "tint", "label": "Spring tint behind the rows", "default": true }
+  ],
+  "presets": [{ "name": "Brand ticker" }]
+}
+{% endschema %}

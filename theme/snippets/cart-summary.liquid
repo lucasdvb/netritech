@@ -11,6 +11,7 @@
     {%- if cart.taxes_included -%}{{ 'cart.taxes_included' | t }} {% endif -%}
     {{ 'cart.delivery_at_checkout' | t }}
   </p>
+  <p class="cart-summary__eta">{% render 'icon', name: 'truck' %}<span data-eta>{{ 'products.delivery_time' | t }}</span></p>
   <form action="{{ routes.cart_url }}" method="post" class="cart-summary__form">
     <button class="btn" type="submit" name="checkout"{% if cart.item_count == 0 %} disabled{% endif %}>{{ 'cart.checkout' | t }}</button>
   </form>

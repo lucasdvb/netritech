@@ -257,7 +257,7 @@ export function globals({ template, collection = null, product = null, page = nu
     shop: {
       name: 'My Store', email: 'shop@moanabeaute.com', url: 'http://localhost:4100', money_format: 'Rs {{amount_no_decimals}}', customer_accounts_enabled: false,
       policies: [['Privacy policy', 'privacy-policy'], ['Shipping', 'shipping-policy'], ['Terms of service', 'terms-of-service'], ['Contact', 'contact-information']].map(([title, h]) => ({ title, url: `/policies/${h}` })),
-      enabled_payment_types: [], password_message: ''
+      vendors: [...new Set(products.map((p) => p.vendor))].sort(), enabled_payment_types: [], password_message: ''
     },
     request: { locale: { iso_code: lang }, path: url, host: 'localhost' },
     localization: { available_languages: [{ iso_code: 'en', endonym_name: 'English' }, { iso_code: 'fr', endonym_name: 'français' }], language: { iso_code: lang } },

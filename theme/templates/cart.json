@@ -3,9 +3,16 @@
     "main": {
       "type": "main-cart",
       "settings": {}
+    },
+    "recent": {
+      "type": "recently-viewed",
+      "settings": {
+        "limit": 4
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "recent"
   ]
 }

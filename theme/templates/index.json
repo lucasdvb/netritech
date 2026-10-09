@@ -720,6 +720,13 @@
         "question_6",
         "question_7"
       ]
+    },
+    "ticker": {
+      "type": "brand-ticker",
+      "settings": {
+        "brands": "",
+        "tint": true
+      }
     }
   },
   "order": [
@@ -731,6 +738,7 @@
     "promo2",
     "focus",
     "routine",
+    "ticker",
     "brands",
     "concerns",
     "story",

@@ -53,7 +53,7 @@
 
 <div class="page-width">{%- render 'breadcrumbs' -%}</div>
 
-<section class="pdp" data-product-section data-section-id="{{ section.id }}">
+<section class="pdp" data-product-section data-section-id="{{ section.id }}" data-recent-view="{{ product.handle }}">
   <div class="page-width pdp__grid">
 
     {%- comment -%} Gallery: a vertical stack on desktop, a swipe carousel with a counter on phones. {%- endcomment -%}
@@ -168,11 +168,81 @@
             {%- else -%}
               <span>{{ 'products.in_stock' | t }}</span>
             {%- endif -%}
-            <span aria-hidden="true"> | </span><span>{{ 'products.delivery_time' | t }}</span>
+            <span aria-hidden="true"> | </span><span data-eta>{{ 'products.delivery_time' | t }}</span>
           {%- else -%}
             <span>{{ 'products.sold_out' | t }}</span>
           {%- endif -%}
         </p>
+
+        {%- comment -%}
+          Complete your routine: the product's own step tag picks the next step in the routine order
+          (the "Routine step tags" setting), and the in-stock product for that step that shares the most
+          skin-type tags with this one is offered with a one-tap add. Nothing shows when no step fits.
+        {%- endcomment -%}
+        {%- if steps.size > 0 and section.settings.show_next_step -%}
+          {%- liquid
+            assign order = section.settings.routine_order | split: ','
+            assign idx = -1
+            for o in order
+              assign oo = o | strip
+              if oo == steps.first
+                assign idx = forloop.index0
+              endif
+            endfor
+            assign next_step = ''
+            if idx >= 0
+              assign ni = idx | plus: 1
+              if ni >= order.size
+                assign ni = 0
+              endif
+              assign next_step = order[ni] | strip
+            endif
+            assign pick = nil
+            assign best = -1
+            if next_step != ''
+              for cand in collections.all.products
+                if cand.id == product.id or cand.available == false
+                  continue
+                endif
+                unless cand.tags contains next_step
+                  continue
+                endunless
+                assign score = 0
+                for s in skins
+                  if cand.tags contains s
+                    assign score = score | plus: 1
+                  endif
+                endfor
+                if score > best
+                  assign best = score
+                  assign pick = cand
+                endif
+              endfor
+            endif
+          -%}
+          {%- if pick -%}
+            <div class="pdp__next">
+              <p class="t-label">{{ 'products.next_step' | t }}</p>
+              <div class="pdp__next-row">
+                <a class="pdp__next-img" href="{{ pick.url }}" tabindex="-1" aria-hidden="true">
+                  {%- if pick.featured_media -%}{{ pick.featured_media.preview_image | image_url: width: 200 | image_tag: widths: '100, 150, 200', sizes: '72px', loading: 'lazy', alt: '' }}{%- endif -%}
+                </a>
+                <div class="pdp__next-info">
+                  <p class="pdp__next-step">{{ 'products.next_step_label' | t: step: next_step }}</p>
+                  <a class="pdp__next-name" href="{{ pick.url }}">{{ pick.title }}</a>
+                  {%- render 'price', product: pick -%}
+                </div>
+                {%- if pick.has_only_default_variant -%}
+                  {%- form 'product', pick, class: 'pdp__next-form', data-product-form: '', novalidate: 'novalidate' -%}
+                    <input type="hidden" name="id" value="{{ pick.selected_or_first_available_variant.id }}">
+                    <input type="hidden" name="quantity" value="1">
+                    <button class="btn btn--small" type="submit" name="add" aria-label="{{ 'products.add_named' | t: title: pick.title | escape }}">{% render 'icon', name: 'plus' %}<span>{{ 'products.add' | t }}</span></button>
+                  {%- endform -%}
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endif -%}
+        {%- endif -%}
 
         <ul class="pdp__assure" role="list">
           <li>{% render 'icon', name: 'truck' %}<span>{% if threshold_cents > 0 %}{{ 'products.free_delivery_above' | t: amount: threshold_money }}{% endif %} {{ 'products.delivery_time' | t }}</span></li>
@@ -282,18 +352,18 @@
 @media (min-width: 990px) {
   .pdp__slides:has(> :nth-child(2)) { grid-template-columns: 1fr 1fr; }
 }
-.pdp__vendor { font: 500 clamp(1.375rem, 1.2rem + .6vw, 1.75rem)/1.15 var(--f-body); letter-spacing: .02em; text-transform: uppercase; }
+.pdp__vendor { font: var(--w-medium) var(--fs-h3)/var(--lh-snug) var(--f-body); letter-spacing: .06em; text-transform: uppercase; }
 .pdp__vendor a:hover { text-decoration: underline; text-underline-offset: 4px; }
-.pdp__title { margin-top: var(--s-1); font: 400 clamp(1rem, .95rem + .25vw, 1.125rem)/1.45 var(--f-body); color: var(--ink); }
-.pdp__jump { display: inline-flex; align-items: center; gap: .5rem; margin-top: var(--s-4); min-height: 32px; font: 600 1rem/1.2 var(--f-body); }
+.pdp__title { margin-top: var(--s-1); font: var(--type-lead); color: var(--ink); }
+.pdp__jump { display: inline-flex; align-items: center; gap: .5rem; margin-top: var(--s-4); min-height: 32px; font: var(--w-semibold) var(--fs-md)/1.2 var(--f-body); }
 .pdp__jump svg { width: 18px; height: 18px; transition: transform var(--t) var(--ease); }
 .pdp__jump:hover svg { transform: translateX(4px); }
 .pdp__pricebar { display: flex; align-items: baseline; gap: var(--s-4); margin-top: var(--s-4); }
-.pdp__price { font-size: 1.375rem; font-weight: 500; }
+.pdp__price { font-size: var(--fs-lg); font-weight: var(--w-medium); }
 .pdp__price .price__was { margin-left: .5rem; font-weight: 400; }
 .pdp__size { padding-left: var(--s-4); border-left: 1px solid var(--line); font-size: var(--fs-small); color: var(--ink-soft); }
 .pdp__tax { margin-top: 2px; }
-.pdp__badge { margin-top: var(--s-5); min-height: 40px; padding: 0 .75rem; font-size: .8125rem; border-width: 2px; }
+.pdp__badge { margin-top: var(--s-5); min-height: 40px; padding: 0 .75rem; font-size: var(--fs-xs); border-width: 2px; }
 .pdp__form { margin-top: var(--s-6); display: grid; gap: var(--s-4); }
 .pdp__option { border: 0; padding: 0; margin: 0; display: grid; gap: var(--s-2); }
 .pill--option { cursor: pointer; }
@@ -301,37 +371,48 @@
 .pill--option:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
 .pdp__buy { display: grid; grid-template-columns: auto 1fr; gap: var(--s-3); }
 .pdp__buy .qty { height: 60px; }
-.pdp__add { width: 100%; min-height: 60px; font-size: .875rem; }
-.pdp__wish { margin-top: var(--s-3); min-height: 54px; gap: .6rem; text-transform: none; letter-spacing: .01em; font-size: 1rem; font-weight: 500; }
+.pdp__add { width: 100%; min-height: 60px; font-size: var(--fs-sm); }
+.pdp__wish { margin-top: var(--s-3); min-height: 54px; gap: .6rem; text-transform: none; letter-spacing: .01em; font-size: var(--fs-md); font-weight: var(--w-medium); }
 .pdp__wish svg { width: 20px; height: 20px; }
+.pdp__next { margin-top: var(--s-5); padding: var(--s-4); background: linear-gradient(160deg, #f6f8f0, #eef1e4); }
+.pdp__next .t-label { margin-bottom: var(--s-3); }
+.pdp__next-row { display: grid; grid-template-columns: 72px 1fr auto; align-items: center; gap: var(--s-4); }
+.pdp__next-img { display: block; aspect-ratio: 1; background: var(--c-white); }
+.pdp__next-img img { width: 100%; height: 100%; object-fit: contain; padding: 8%; mix-blend-mode: multiply; }
+.pdp__next-info { display: grid; gap: 2px; min-width: 0; }
+.pdp__next-step { font: var(--type-label); letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--c-forest); }
+.pdp__next-name { display: inline-block; padding-block: 3px; font: var(--type-title); line-height: 1.3; }
+.pdp__next-name:hover { color: var(--brand); }
+.pdp__next-form .btn { gap: .4rem; }
+.pdp__next-form .btn svg { width: 14px; height: 14px; }
 .pdp__avail { margin-top: var(--s-3); text-align: center; font-size: var(--fs-small); color: var(--ink-soft); }
-.pdp__stock { color: var(--c-forest); font-weight: 700; }
+.pdp__stock { color: var(--c-forest); font-weight: var(--w-semibold); }
 .pdp__assure { display: grid; margin-top: var(--s-5); border-top: 1px solid var(--line); }
-.pdp__assure li { display: flex; gap: var(--s-4); align-items: center; padding: var(--s-4) 0; border-bottom: 1px solid var(--line); font-size: .9375rem; line-height: 1.5; }
+.pdp__assure li { display: flex; gap: var(--s-4); align-items: center; padding: var(--s-4) 0; border-bottom: 1px solid var(--line); font-size: var(--fs-md); line-height: 1.5; }
 .pdp__assure svg { width: 26px; height: 26px; flex: none; color: var(--ink); }
 .pdp__facts { display: grid; gap: var(--s-3); margin-top: var(--s-5); }
 .pdp__facts > div { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--s-3); align-items: baseline; }
-.pdp__facts dt { font: 700 var(--fs-label)/2.2 var(--f-body); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+.pdp__facts dt { font: var(--w-semibold) var(--fs-label)/2.2 var(--f-body); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
 .pdp__facts dd { gap: 6px; }
-.pdp__when { display: flex; flex-wrap: wrap; gap: 6px var(--s-4); font-size: var(--fs-small); font-weight: 600; }
+.pdp__when { display: flex; flex-wrap: wrap; gap: 6px var(--s-4); font-size: var(--fs-small); font-weight: var(--w-semibold); }
 .pdp__when span { display: inline-flex; align-items: center; gap: .35rem; }
 .pdp__when svg { width: 16px; height: 16px; color: var(--brand); }
 
 /* the grey details band */
 .pdp__details { background: #f3f3f2; padding-block: clamp(3rem, 2rem + 4vw, 5.5rem); scroll-margin-top: var(--header-h); }
 .pdp__details-grid { display: grid; gap: var(--s-7); }
-.pdp__details-title { font: 500 clamp(1.375rem, 1.2rem + .6vw, 1.75rem)/1.2 var(--f-body); margin-bottom: var(--s-5); }
-.pdp__desc { color: var(--ink); font-size: 1rem; line-height: 1.7; max-width: 46rem; }
+.pdp__details-title { font: var(--type-h3); letter-spacing: var(--ls-tight); margin-bottom: var(--s-5); }
+.pdp__desc { color: var(--ink); font-size: var(--fs-md); line-height: 1.7; max-width: 46rem; }
 .pdp__acc { border-top: 0; }
-.pdp__acc .accordion__item > summary { font: 500 1.125rem/1.35 var(--f-body); min-height: 64px; }
+.pdp__acc .accordion__item > summary { font: var(--w-medium) var(--fs-lg)/1.35 var(--f-body); min-height: 64px; }
 .pdp__acc .accordion__item { border-bottom-color: rgba(52,52,52,.12); }
 .pdp__keys { display: grid; gap: var(--s-2); }
-.pdp__keys li { display: flex; align-items: center; gap: .6rem; color: var(--ink); font-weight: 500; }
+.pdp__keys li { display: flex; align-items: center; gap: .6rem; color: var(--ink); font-weight: var(--w-medium); }
 .pdp__keys svg { width: 16px; height: 16px; color: var(--c-sage); flex: none; }
 .pdp__inci { font-size: var(--fs-small); line-height: 1.75; }
 .pdp__steps { display: grid; gap: var(--s-3); }
 .pdp__steps li { display: grid; grid-template-columns: 28px 1fr; gap: var(--s-3); align-items: start; }
-.pdp__steps li > span { width: 28px; height: 28px; display: grid; place-items: center; background: var(--c-night); color: var(--c-white); font: 700 .75rem/1 var(--f-body); }
+.pdp__steps li > span { width: 28px; height: 28px; display: grid; place-items: center; background: var(--c-night); color: var(--c-white); font: var(--w-semibold) var(--fs-xs)/1 var(--f-body); }
 .pdp__steps p { padding-top: 3px; color: var(--ink); }
 @media (min-width: 990px) {
   .pdp__grid { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: clamp(2rem, 3vw, 3.5rem); align-items: start; }
@@ -349,7 +430,7 @@
 .buybar__img { display: block; aspect-ratio: 1; border-radius: var(--r-xs); background: var(--tile); overflow: hidden; }
 .buybar__img img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 6%; }
 .buybar__text { display: grid; min-width: 0; }
-.buybar__title { font: 500 .9375rem/1.3 var(--f-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.buybar__title { font: var(--w-medium) var(--fs-md)/1.3 var(--f-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .buybar__btn { min-height: 52px; }
 @media (min-width: 990px) { .buybar__inner { grid-template-columns: 48px auto auto; justify-content: center; gap: var(--s-5); } .buybar__btn { min-width: 18rem; } }
 /* lightbox */
@@ -363,6 +444,9 @@
 {
   "name": "Product",
   "tag": "div",
-  "settings": []
+  "settings": [
+    { "type": "checkbox", "id": "show_next_step", "label": "Show \"Complete your routine\"", "info": "Offers an in-stock product for the next routine step, picked from the product's step tag.", "default": true },
+    { "type": "text", "id": "routine_order", "label": "Routine order (step tags)", "default": "Cleanse, Tone, Treat, Moisturise, Protect" }
+  ]
 }
 {% endschema %}

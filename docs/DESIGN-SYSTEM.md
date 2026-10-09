@@ -33,26 +33,51 @@ Secondary text is Licorice at 74 % opacity on white (5.49:1) and on First Frost 
 
 The official files are Canva exports: vector lettering, with the wave as an embedded image. `tools/optimise_logo.py` crops the canvas to the logo and replaces the wave's flat colour layer with the identical flat fill under the original mask. Measured against the originals: the wave matches within 2/255, and the lettering paths are kept byte for byte. The theme ships lossless WebP renders of those files (900 px wide, at least 4× the on-screen size). The horizontal "mark beside wordmark" lockup in the previous theme was a redraw that is not in the guide, so it is no longer used.
 
-## Typography
+## Typography (v4: one family, golden ratio)
 
-| Role | Face | Size (fluid) | Line height | Notes |
+At the owner's request every level is now **Raleway** (the brand guide sets Instrument Serif for headlines; this is a deliberate departure, reversible: restore the Instrument Serif files from git history, add their `@font-face` rules back and point `--f-display` at the serif). Hierarchy comes from a golden-ratio size scale and a weight ladder: the bigger the type, the lighter it gets.
+
+**Scale.** Base 16 px. φ = 1.618 for each major step, √φ = 1.272 for the half steps, φ^¼ for the one small-UI step:
+
+| Token | px | Step |
+|---|---|---|
+| `--fs-2xs` | 11.2 | φ^-¾ |
+| `--fs-xs` | 12.6 | φ^-½ |
+| `--fs-sm` | 14.2 | φ^-¼ |
+| `--fs-md` | 16 | base |
+| `--fs-lg` | 20.4 | φ^½ |
+| `--fs-xl` | 25.9 | φ |
+| `--fs-2xl` | 32.9 | φ^1½ |
+| `--fs-3xl` | 41.9 | φ² |
+| `--fs-4xl` | 53.3 | φ^2½ |
+| `--fs-5xl` | 67.8 | φ³ |
+| `--fs-6xl` | 86.2 | φ^3½ |
+
+**Roles** (`--type-*`, CSS `font` shorthands; components use these, never raw sizes). Each fluid role slides one golden step between phone and desktop:
+
+| Role | Weight | Size | Line height | Tracking |
 |---|---|---|---|---|
-| Hero | Instrument Serif 400 | 44 → 96 px | 0.98 | −0.02em; italic word in forest for emphasis |
-| H1 | Instrument Serif 400 | 38 → 68 px | 1.02 | |
-| H2 | Instrument Serif 400 | 32 → 52 px | 1.06 | |
-| H3 | Instrument Serif 400 | 24 → 32 px | 1.14 | Product titles on the product page use H2 size |
-| Card title | Instrument Serif 400 | 19 / 21 px | 1.22 | |
-| Lead | Raleway 400 | 17 → 20 px | 1.6 | max 38rem |
-| Body | Raleway 400 | 16 px | 1.65 | |
-| Label / eyebrow | Raleway 700 | 11 px | 1.4 | uppercase, 0.18em |
-| Buttons | Raleway 700 | 13 px (11 px small) | 1 | uppercase, 0.12em (the guide: "Raleway Bold anchors CTAs") |
-| Accent | Pinyon Script 400 | 32 → 48 px | 1.1 | At most once per page ("you already belong here") |
+| Display (hero, footer) | 200 ExtraLight | 3xl → 5xl | 1.05 | −0.035em |
+| H1 | 300 Light | 2xl → 4xl | 1.12 | −0.022em |
+| H2 | 300 Light | xl → 3xl | 1.12 | −0.022em |
+| H3 | 400 Regular | lg → xl | 1.236 (2/φ) | −0.01em |
+| H4 | 500 Medium | lg | 1.236 | |
+| Lead | 300 Light | md → lg | 1.618 (φ) | |
+| Body | 400 Regular | md | 1.618 | |
+| Interface | 500 Medium | sm | 1.3 | 0.03em |
+| Buttons | 600 SemiBold | sm | 1 | 0.1em, uppercase |
+| Labels | 600 SemiBold | 2xs | 1.4 | 0.16em, uppercase |
+| Price | 600 SemiBold | md | 1.3 | |
+| Numerals (routine steps) | 200 ExtraLight | 3xl | 1 | |
+| Section titles `.t-title` | 300 Light | lg → xl | | 0.14em, uppercase |
 
-Fonts are self-hosted WOFF2 (SIL OFL), latin and latin-ext subsets, `font-display: swap`; only Raleway and Instrument Serif regular are preloaded.
+- Emphasis is **Raleway italic in forest** (same family), never a second typeface.
+- Pinyon Script stays as the rare accent, at most once per page.
+- Fonts: one variable WOFF2 per style (roman and italic, weights 200–700), latin and latin-ext, `font-display: swap`. Only the roman latin file is preloaded.
 
 ## Fallback fonts (no layout shift)
 
-`Instrument Serif Fallback` (Times New Roman / Liberation Serif at `size-adjust: 83%`) and `Raleway Fallback` (Arial / Liberation Sans at `103.2%`) sit second in the stacks, so text keeps its line breaks when the web fonts arrive. Ratios were measured in the browser.
+`Raleway Fallback` (Arial / Liberation Sans at `size-adjust: 103.2%`) sits second in the stack, so text keeps its line breaks when the web font arrives. Ratio measured in the browser; CLS is 0 on every template.
 
 ## Space, shape, layout
 
@@ -61,7 +86,7 @@ Fonts are self-hosted WOFF2 (SIL OFL), latin and latin-ext subsets, `font-displa
 - Radii: **0 everywhere** (v3, after Cult Beauty: square buttons, cards, chips, inputs, filter boxes). The one curve on the site is the footer slab's rounded top (GetLayers Lumora).
 - Hairlines: Licorice at 14 % (32 % for strong). No drop shadows except the mega menu and the floating brand packshot.
 - Product grid: 2 columns under 750 px, 3 to 1199 px, 4 from 1200 px; white image wells at 1:1.04; product rails show 4 across on desktop and peek on phones.
-- Section titles (Cult Beauty's voice): `.t-title`, Raleway 400, uppercase, tracked 0.12em, centred. Editorial headlines stay in Instrument Serif.
+- Section titles (Cult Beauty's voice): `.t-title`, Raleway 300, uppercase, tracked 0.14em, centred.
 
 ## Motion
 
@@ -80,6 +105,15 @@ Fonts are self-hosted WOFF2 (SIL OFL), latin and latin-ext subsets, `font-displa
 - **Carousels**: native scroll-snap (swipe works without script) plus arrows, dots and autoplay that pauses on hover, focus, a background tab, the pause tab and reduced motion. Hero slides rise out of a blur and their pictures settle from 1.06 scale.
 - **WebGL**: the GetLayers *Feather* wash (one fragment shader, WebGL2). Compiled only near the viewport and when idle, half resolution, 30 fps, paused off screen, still frame on software GL or under reduced motion.
 - **Glass**: white at 50–80 % with 20–24 px backdrop blur and an inset highlight; solid fallback where `backdrop-filter` is unsupported.
+- **Scroll-driven motion (v4)**: native CSS scroll timelines (`animation-timeline: view()` / `scroll()`), so it runs off the main thread with no scroll listeners. Only `translate`, `scale` and `opacity` move. Browsers without scroll timelines, and reduced motion, get a still page.
+  - **Scroll progress**: a 2 px forest hairline across the top of the window.
+  - **Hero**: as it leaves, the picture drifts down and zooms to 1.12, the copy lifts and softens, the floating glass product rises faster (three depths).
+  - **Photographs** (`.sx-parallax`): a ±6 % parallax inside their frame.
+  - **Packshots** (`.sx-float`): products float up through their tiles, alternate tiles in the opposite direction (category tiles, editorial cards).
+  - **Ambient light** (`.ambient`): two soft Spring and Linen light pools behind a section (plain radial gradients, no blur filter) that drift at different speeds. On the concern finder, brand story, FAQ and page headers.
+  - **Routine**: a hairline beside the five steps fills as you read down them; each step number brightens as its card reaches the middle.
+  - **Brand ticker**: the stocked brands (from the catalogue) in two large rows, ExtraLight and Light italic, sliding in opposite directions with the scroll. Decorative, hidden from screen readers; the only marquee on the site.
+- **Pointer sheen** (`data-sheen`): a soft highlight follows the cursor across glass cards and concern tiles, moved by transform, mouse and trackpad only.
 - **No preloader, no smooth-scroll hijacking.**
 - `prefers-reduced-motion` removes every transform, blur and clip and shortens transitions to 0.01 ms.
 
