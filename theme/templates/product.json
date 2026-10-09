@@ -1,7 +1,7 @@
 {
   "sections": {
     "main": { "type": "main-product", "settings": {} },
-    "recommendations": { "type": "product-recommendations", "settings": { "eyebrow": "Complete the routine", "heading": "You may also like", "intent": "related", "limit": 4 } }
+    "recommendations": { "type": "product-recommendations", "settings": { "eyebrow": "Complete your routine", "heading": "Pairs well with", "intent": "related", "limit": 4 } }
   },
   "order": ["main", "recommendations"]
 }

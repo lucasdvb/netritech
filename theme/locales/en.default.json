@@ -16,9 +16,9 @@
     "whatsapp_us": "WhatsApp us"
   },
   "meta": {
-    "home_title": "Moana Beauté · Authentic Korean skincare in Mauritius",
-    "home_description": "Authentic Korean skincare chosen for island skin. Full ingredient lists, honest prices, delivered across Mauritius in 1 to 3 working days.",
-    "collection_description": "Shop {{ title }} at Moana Beauté: authentic Korean skincare with full ingredient lists, delivered across Mauritius."
+    "home_title": "Moana Beauté · Korean skincare in Mauritius",
+    "home_description": "Shop the Korean skincare everyone is talking about, picked for island skin. Every ingredient listed, honest prices, and delivery all over Mauritius in 1 to 3 working days.",
+    "collection_description": "Shop {{ title }} at Moana Beauté: Korean skincare with every ingredient listed, delivered all over Mauritius."
   },
   "header": {
     "account": "Account",
@@ -26,7 +26,7 @@
     "by_category": "By category",
     "by_concern": "By concern",
     "by_skin_type": "By skin type",
-    "cart": "Cart",
+    "cart": "Bag",
     "menu": "Menu",
     "primary_nav": "Main",
     "search": "Search",
@@ -34,26 +34,31 @@
   },
   "footer": {
     "brn": "BRN",
-    "language": "Language"
+    "language": "Language",
+    "signup_label": "Your email address",
+    "signup_placeholder": "Your email",
+    "signup_button": "Sign me up",
+    "signup_success": "You're on the list. Welcome to Moana.",
+    "signup_error": "That email does not look right. Try name@example.com."
   },
   "products": {
     "add": "Add",
-    "add_named": "Add {{ title }} to your cart",
-    "add_to_cart": "Add to cart",
-    "ask_whatsapp": "Ask us about this product on WhatsApp",
-    "assure_ingredients": "Full ingredient list below, from the supplier.",
+    "add_named": "Add {{ title }} to your bag",
+    "add_to_cart": "Add to bag",
+    "ask_whatsapp": "Got a question about this one? Ask us on WhatsApp",
+    "assure_ingredients": "Every ingredient is listed below.",
     "choose": "Choose",
     "choose_named": "Choose options for {{ title }}",
     "delivery_returns": "Delivery & returns",
-    "delivery_time": "Delivered in 1 to 3 working days.",
+    "delivery_time": "At your door in 1 to 3 working days.",
     "evening": "Evening",
     "morning": "Morning",
-    "free_delivery_above": "Free delivery above {{ amount }}.",
+    "free_delivery_above": "Free delivery over {{ amount }}.",
     "from_price": "From {{ price }}",
     "full_ingredients": "Full ingredients",
     "gallery_label": "Images of {{ title }}",
     "how_to_use": "How to use",
-    "ingredients_note": "Ingredient lists come from the supplier and can change. Always check the pack, and patch test a new product.",
+    "ingredients_note": "Ingredient lists come from the brand and can change, so always check the pack. Trying something new? Patch test first.",
     "key_ingredients": "Key ingredients",
     "low_stock": {
       "one": "Only {{ count }} left",
@@ -62,7 +67,7 @@
     "qty_decrease": "Decrease quantity",
     "qty_increase": "Increase quantity",
     "quantity": "Quantity",
-    "quick_add": "Add to cart",
+    "quick_add": "Add to bag",
     "regular_price": "Regular price",
     "routine": "Routine",
     "sale": "Sale",
@@ -72,10 +77,10 @@
     "suits": "Suits",
     "targets": "Targets",
     "tax_included": "Taxes included.",
-    "whatsapp_prefill": "Hello Moana Beauté, I have a question about {{ title }}.",
+    "whatsapp_prefill": "Hi Moana Beauté! I have a question about {{ title }}.",
     "zoom": "Enlarge image {{ n }}",
     "zoom_dialog": "Enlarged product image",
-    "add_named_price": "Add {{ title }} to your cart, {{ price }}"
+    "add_named_price": "Add {{ title }} to your bag, {{ price }}"
   },
   "routine": {
     "step_n": "Step {{ n }}"
@@ -88,14 +93,14 @@
     "categories": "Categories",
     "clear_all": "Clear all",
     "concerns": "Concerns",
-    "empty": "Products are on their way.",
+    "empty": "New products are on their way.",
     "filter": "Filter",
     "from": "From (Rs)",
     "to": "To (Rs)",
     "label": "Collection",
     "no_filters": "No filters are set up for this collection yet.",
     "no_match": "Nothing matches those filters",
-    "no_match_text": "Try removing a filter, or browse the whole range.",
+    "no_match_text": "Try taking a filter off, or browse everything.",
     "product_count": {
       "one": "{{ count }} product",
       "other": "{{ count }} products"
@@ -103,42 +108,42 @@
     "refine": "Concern",
     "remove_filter": "Remove filter",
     "show_results": "Show results",
-    "soon_browse": "Browse skincare",
-    "soon_cta": "Ask to be told",
+    "soon_browse": "Shop skincare",
+    "soon_cta": "Tell me when it lands",
     "soon_heading": "{{ title }} is coming soon",
     "soon_label": "Coming soon",
-    "soon_text": "Tell us what you would like to find in this range and you will be the first to know when it arrives.",
+    "soon_text": "Tell us what you'd love to see here and you'll be the first to know when it lands.",
     "sort_by": "Sort by",
-    "meanwhile": "In the meantime, the launch collection"
+    "meanwhile": "In the meantime, shop what just landed"
   },
   "cart": {
     "checkout": "Check out",
-    "count_status": "Items in your cart: {{ count }}",
+    "count_status": "Items in your bag: {{ count }}",
     "decrease_named": "Remove one {{ title }}",
     "delivery_at_checkout": "Delivery is calculated at checkout.",
-    "empty": "Your cart is empty",
-    "empty_cta": "Shop skincare",
-    "empty_text": "Start with a category, or let your skin concern lead the way.",
-    "error_add": "We could not add this to your cart. Please try again.",
-    "error_capped": "We only have so many in stock, so the quantity was lowered.",
-    "error_update": "We could not update your cart. Please try again.",
-    "free_delivery_almost_html": "Add any item to get <strong>free delivery</strong> (orders above {{ threshold }}).",
+    "empty": "Your bag is empty",
+    "empty_cta": "Start shopping",
+    "empty_text": "Not sure where to start? Pick a category, or shop by what your skin needs.",
+    "error_add": "We couldn't add that to your bag. Please try again.",
+    "error_capped": "We only have so many in stock, so we've lowered the quantity.",
+    "error_update": "We couldn't update your bag. Please try again.",
+    "free_delivery_almost_html": "Add one more thing and delivery is <strong>free</strong> (orders over {{ threshold }}).",
     "free_delivery_label": "Progress towards free delivery",
-    "free_delivery_progress_html": "Add more than <strong>{{ remaining }}</strong> to get free delivery.",
-    "free_delivery_unlocked": "Your order gets free delivery.",
+    "free_delivery_progress_html": "You're <strong>{{ remaining }}</strong> away from free delivery.",
+    "free_delivery_unlocked": "Nice! Your delivery is free.",
     "increase_named": "Add one more {{ title }}",
-    "max_reached": "That is all we have in stock.",
+    "max_reached": "That's all we have in stock.",
     "pay_by_card": "Secure card payment at checkout.",
     "quantity_named": "Quantity of {{ title }}",
     "remove": "Remove",
-    "remove_named": "Remove {{ title }} from your cart",
+    "remove_named": "Remove {{ title }} from your bag",
     "subtotal": "Subtotal",
     "summary": "Order summary",
     "taxes_included": "Taxes included.",
-    "title": "Your cart",
-    "toast_added": "Added to your cart",
-    "view_cart": "View cart",
-    "suggestions": "You may also like"
+    "title": "Your bag",
+    "toast_added": "Added to your bag",
+    "view_cart": "View bag",
+    "suggestions": "Pairs well with"
   },
   "search": {
     "collections": "Collections",
@@ -146,12 +151,12 @@
       "one": "{{ count }} result for “{{ terms }}”",
       "other": "{{ count }} results for “{{ terms }}”"
     },
-    "label": "Search the shop",
+    "label": "Search Moana Beauté",
     "no_results": "No results for “{{ terms }}”",
-    "no_results_hint": "Check the spelling, or start from a skin concern:",
+    "no_results_hint": "Check the spelling, or shop by what your skin needs:",
     "no_results_short": "No results",
     "pages": "Pages",
-    "placeholder": "Search products, brands, concerns",
+    "placeholder": "Search products, brands or concerns",
     "popular": "Popular",
     "products": "Products",
     "results_for": "Results for “{{ terms }}”",
@@ -174,17 +179,17 @@
     "name": "Name",
     "optional": "optional",
     "phone": "Phone",
-    "prefill": "Hello Moana Beauté, I am interested in {{ range }}. When will it be available?",
+    "prefill": "Hi Moana Beauté! I'd love to shop {{ range }}. When is it coming?",
     "required_note": "Fields marked * are required.",
     "send": "Send message",
-    "success": "Thank you. We have your message and will answer by email."
+    "success": "Thank you! We've got your message and we'll reply by email."
   },
   "notfound": {
     "contact": "Contact us",
-    "heading": "That page is not here",
+    "heading": "This page isn't here",
     "label": "Page not found",
     "shop": "Shop skincare",
-    "text": "The link may be old, or a letter went astray. Search the shop, or start again from skincare."
+    "text": "The link might be old, or a letter got lost on the way. Search the shop, or start again from skincare."
   },
   "blog": {
     "back": "Back to the journal",
@@ -193,8 +198,8 @@
   "password": {
     "enter": "Enter",
     "field": "Password",
-    "heading": "Something good is on its way",
-    "lead": "Moana Beauté is getting ready to open. Authentic Korean skincare, delivered across Mauritius.",
+    "heading": "Something lovely is on its way",
+    "lead": "Moana Beauté opens soon. Korean skincare for island skin, delivered all over Mauritius.",
     "owner": "Enter with a password",
     "title": "Opening soon",
     "wrong": "That password is not right. Please try again."
@@ -203,7 +208,7 @@
     "expired": "This gift card can no longer be used.",
     "expires": "Valid until {{ date }}",
     "how": "Enter this code at checkout.",
-    "shop": "Go to the shop",
+    "shop": "Start shopping",
     "title": "Your gift card"
   }
 }

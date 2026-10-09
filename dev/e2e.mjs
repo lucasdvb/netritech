@@ -36,7 +36,7 @@ await p.locator('#cart-drawer [data-line-change="2"]').click();
 await p.waitForFunction(() => document.querySelector('#cart-drawer [data-line-input]')?.value === '2', null, { timeout: 4000 });
 const subtotal = await p.locator('#cart-drawer .cart-summary__total').textContent();
 check('quantity + updates the line and subtotal', subtotal.trim() === 'Rs 1,800', subtotal.trim());
-check('free delivery unlocked above Rs 1,500', /free delivery/i.test(await p.locator('#cart-drawer .ship-bar').textContent()) && await p.locator('#cart-drawer .ship-bar.is-done').count() === 1);
+check('free delivery unlocked above Rs 1,500', /free delivery|delivery is free/i.test(await p.locator('#cart-drawer .ship-bar').textContent()) && await p.locator('#cart-drawer .ship-bar.is-done').count() === 1);
 await p.locator('#cart-drawer .cart-line__remove').click();
 await p.waitForSelector('#cart-drawer .cart-empty', { timeout: 4000 });
 check('remove empties the cart and shows the empty state', await p.locator('#cart-drawer .cart-empty').count() === 1);

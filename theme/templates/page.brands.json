@@ -4,8 +4,8 @@
       "type": "page-header",
       "settings": {
         "eyebrow": "Our brands",
-        "heading": "The Korean houses we carry",
-        "text": "Choose a brand to see its products. Every one is bought from wholesale suppliers and sold with its full ingredient list.",
+        "heading": "The Korean brands you <em>love</em>",
+        "text": "Tap a brand to shop it. Every product comes with its full ingredient list.",
         "center": false
       }
     },
@@ -40,11 +40,11 @@
     "trade": {
       "type": "rich-text",
       "settings": {
-        "eyebrow": "Brands and distributors",
-        "heading": "Supply Moana Beauté",
-        "text": "<p>Moana Beauté is opening supply accounts for the Mauritian market. If you represent a Korean beauty house or its regional distributor, we would like to talk.</p>",
+        "eyebrow": "Missing a favourite?",
+        "heading": "Tell us what to stock next",
+        "text": "<p>Is there a Korean brand you can't find in Mauritius? Tell us. Your requests shape what we bring in next.</p>",
         "use_page_content": false,
-        "link_label": "Write to us",
+        "link_label": "Request a brand",
         "link_url": "shopify://pages/contact",
         "wash": true
       }

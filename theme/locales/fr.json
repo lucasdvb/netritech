@@ -16,9 +16,9 @@
     "whatsapp_us": "Écrivez-nous sur WhatsApp"
   },
   "meta": {
-    "home_title": "Moana Beauté · Soins coréens authentiques à Maurice",
-    "home_description": "Des soins coréens authentiques choisis pour les peaux insulaires. Listes d’ingrédients complètes, prix honnêtes, livrés partout à Maurice en 1 à 3 jours ouvrés.",
-    "collection_description": "{{ title }} chez Moana Beauté : soins coréens authentiques, avec la liste complète des ingrédients, livrés partout à Maurice."
+    "home_title": "Moana Beauté · Soins coréens à Maurice",
+    "home_description": "Les soins coréens dont tout le monde parle, choisis pour les peaux insulaires. Tous les ingrédients listés, des prix honnêtes, et la livraison partout à Maurice en 1 à 3 jours ouvrés.",
+    "collection_description": "{{ title }} chez Moana Beauté : soins coréens avec tous les ingrédients listés, livrés partout à Maurice."
   },
   "header": {
     "account": "Compte",
@@ -34,18 +34,23 @@
   },
   "footer": {
     "brn": "BRN",
-    "language": "Langue"
+    "language": "Langue",
+    "signup_label": "Votre adresse e-mail",
+    "signup_placeholder": "Votre e-mail",
+    "signup_button": "Je m’inscris",
+    "signup_success": "C’est fait ! Bienvenue chez Moana.",
+    "signup_error": "Cette adresse ne semble pas correcte. Essayez nom@exemple.com."
   },
   "products": {
     "add": "Ajouter",
     "add_named": "Ajouter {{ title }} au panier",
     "add_to_cart": "Ajouter au panier",
-    "ask_whatsapp": "Une question sur ce produit ? Écrivez-nous sur WhatsApp",
-    "assure_ingredients": "Liste complète des ingrédients ci-dessous, fournie par le fournisseur.",
+    "ask_whatsapp": "Une question sur ce produit ? Demandez-nous sur WhatsApp",
+    "assure_ingredients": "Tous les ingrédients sont listés ci-dessous.",
     "choose": "Choisir",
     "choose_named": "Choisir les options de {{ title }}",
     "delivery_returns": "Livraison et retours",
-    "delivery_time": "Livré en 1 à 3 jours ouvrés.",
+    "delivery_time": "Chez vous en 1 à 3 jours ouvrés.",
     "evening": "Soir",
     "morning": "Matin",
     "free_delivery_above": "Livraison offerte au-delà de {{ amount }}.",
@@ -53,7 +58,7 @@
     "full_ingredients": "Liste complète des ingrédients",
     "gallery_label": "Images de {{ title }}",
     "how_to_use": "Mode d’emploi",
-    "ingredients_note": "Les listes d’ingrédients viennent du fournisseur et peuvent changer. Vérifiez toujours l’emballage et faites un test cutané avant un nouveau produit.",
+    "ingredients_note": "Les listes d’ingrédients viennent de la marque et peuvent changer : vérifiez toujours l’emballage. Nouveau produit ? Faites d’abord un test cutané.",
     "key_ingredients": "Ingrédients clés",
     "low_stock": {
       "one": "Plus que {{ count }} en stock",
@@ -72,7 +77,7 @@
     "suits": "Convient à",
     "targets": "Cible",
     "tax_included": "Taxes incluses.",
-    "whatsapp_prefill": "Bonjour Moana Beauté, j’ai une question sur {{ title }}.",
+    "whatsapp_prefill": "Bonjour Moana Beauté ! J’ai une question sur {{ title }}.",
     "zoom": "Agrandir l’image {{ n }}",
     "zoom_dialog": "Image du produit agrandie",
     "add_named_price": "Ajouter {{ title }} au panier, {{ price }}"
@@ -88,14 +93,14 @@
     "categories": "Catégories",
     "clear_all": "Tout effacer",
     "concerns": "Besoins",
-    "empty": "Les produits arrivent bientôt.",
+    "empty": "De nouveaux produits arrivent bientôt.",
     "filter": "Filtrer",
     "from": "De (Rs)",
     "to": "À (Rs)",
     "label": "Collection",
     "no_filters": "Aucun filtre n’est encore configuré pour cette collection.",
     "no_match": "Aucun produit ne correspond à ces filtres",
-    "no_match_text": "Retirez un filtre ou parcourez toute la gamme.",
+    "no_match_text": "Retirez un filtre, ou parcourez tout.",
     "product_count": {
       "one": "{{ count }} produit",
       "other": "{{ count }} produits"
@@ -104,12 +109,12 @@
     "remove_filter": "Retirer le filtre",
     "show_results": "Voir les résultats",
     "soon_browse": "Voir les soins",
-    "soon_cta": "Être prévenue",
+    "soon_cta": "Prévenez-moi",
     "soon_heading": "{{ title }} arrive bientôt",
     "soon_label": "Bientôt",
-    "soon_text": "Dites-nous ce que vous aimeriez trouver dans cette gamme, et vous serez la première informée de son arrivée.",
+    "soon_text": "Dites-nous ce que vous aimeriez trouver ici, et vous serez la première prévenue.",
     "sort_by": "Trier par",
-    "meanwhile": "En attendant, la collection de lancement"
+    "meanwhile": "En attendant, découvrez les nouveautés"
   },
   "cart": {
     "checkout": "Commander",
@@ -117,15 +122,15 @@
     "decrease_named": "Retirer un {{ title }}",
     "delivery_at_checkout": "La livraison est calculée à la commande.",
     "empty": "Votre panier est vide",
-    "empty_cta": "Voir les soins",
-    "empty_text": "Commencez par une catégorie, ou laissez votre besoin de peau vous guider.",
+    "empty_cta": "Commencer mon shopping",
+    "empty_text": "Pas sûre par où commencer ? Choisissez une catégorie, ou laissez votre peau vous guider.",
     "error_add": "Impossible d’ajouter ce produit au panier. Veuillez réessayer.",
     "error_capped": "Notre stock est limité : la quantité a été réduite.",
     "error_update": "Impossible de mettre à jour votre panier. Veuillez réessayer.",
-    "free_delivery_almost_html": "Ajoutez un article pour profiter de la <strong>livraison offerte</strong> (commandes au-delà de {{ threshold }}).",
+    "free_delivery_almost_html": "Encore un article et la livraison est <strong>offerte</strong> (commandes au-delà de {{ threshold }}).",
     "free_delivery_label": "Progression vers la livraison offerte",
-    "free_delivery_progress_html": "Ajoutez plus de <strong>{{ remaining }}</strong> pour la livraison offerte.",
-    "free_delivery_unlocked": "Votre commande bénéficie de la livraison offerte.",
+    "free_delivery_progress_html": "Plus que <strong>{{ remaining }}</strong> pour la livraison offerte.",
+    "free_delivery_unlocked": "Bonne nouvelle : la livraison est offerte !",
     "increase_named": "Ajouter un {{ title }}",
     "max_reached": "C’est tout notre stock.",
     "pay_by_card": "Paiement sécurisé par carte à la commande.",
@@ -138,7 +143,7 @@
     "title": "Votre panier",
     "toast_added": "Ajouté à votre panier",
     "view_cart": "Voir le panier",
-    "suggestions": "Vous aimerez aussi"
+    "suggestions": "Va très bien avec"
   },
   "search": {
     "collections": "Collections",
@@ -148,7 +153,7 @@
     },
     "label": "Rechercher dans la boutique",
     "no_results": "Aucun résultat pour « {{ terms }} »",
-    "no_results_hint": "Vérifiez l’orthographe, ou partez d’un besoin de peau :",
+    "no_results_hint": "Vérifiez l’orthographe, ou partez de ce dont votre peau a besoin :",
     "no_results_short": "Aucun résultat",
     "pages": "Pages",
     "placeholder": "Produits, marques, besoins",
@@ -174,17 +179,17 @@
     "name": "Nom",
     "optional": "facultatif",
     "phone": "Téléphone",
-    "prefill": "Bonjour Moana Beauté, la gamme {{ range }} m’intéresse. Quand sera-t-elle disponible ?",
+    "prefill": "Bonjour Moana Beauté ! La gamme {{ range }} m’intéresse. Quand arrive-t-elle ?",
     "required_note": "Les champs marqués * sont obligatoires.",
     "send": "Envoyer",
-    "success": "Merci. Nous avons bien reçu votre message et vous répondrons par e-mail."
+    "success": "Merci ! Nous avons bien reçu votre message et vous répondrons par e-mail."
   },
   "notfound": {
     "contact": "Nous contacter",
     "heading": "Cette page n’existe pas",
     "label": "Page introuvable",
     "shop": "Voir les soins",
-    "text": "Le lien est peut-être ancien, ou une lettre s’est égarée. Cherchez dans la boutique, ou repartez des soins."
+    "text": "Le lien est peut-être ancien, ou une lettre s’est perdue en route. Cherchez dans la boutique, ou repartez des soins."
   },
   "blog": {
     "back": "Retour au journal",
@@ -193,8 +198,8 @@
   "password": {
     "enter": "Entrer",
     "field": "Mot de passe",
-    "heading": "Quelque chose de beau se prépare",
-    "lead": "Moana Beauté se prépare à ouvrir. Des soins coréens authentiques, livrés partout à Maurice.",
+    "heading": "Quelque chose de beau arrive",
+    "lead": "Moana Beauté ouvre bientôt. Des soins coréens pour les peaux insulaires, livrés partout à Maurice.",
     "owner": "Entrer avec un mot de passe",
     "title": "Bientôt ouvert",
     "wrong": "Ce mot de passe n’est pas correct. Veuillez réessayer."
@@ -203,7 +208,7 @@
     "expired": "Cette carte cadeau n’est plus utilisable.",
     "expires": "Valable jusqu’au {{ date }}",
     "how": "Saisissez ce code à la commande.",
-    "shop": "Aller à la boutique",
+    "shop": "Commencer mon shopping",
     "title": "Votre carte cadeau"
   }
 }

@@ -3,10 +3,10 @@
     "hero": {
       "type": "hero",
       "settings": {
-        "eyebrow": "Korean skincare · Mauritius",
-        "heading": "Skin care, <em>chosen</em> for island skin",
-        "text": "Authentic Korean formulas for skin that lives with sun, salt and humidity. Every ingredient listed, every price honest, delivered across the island.",
-        "button_label": "Shop skincare",
+        "eyebrow": "K-beauty, delivered in Mauritius",
+        "heading": "Skin that loves <em>island</em> life",
+        "text": "The Korean skincare everyone keeps talking about, picked for sun, salt and humidity. Every ingredient listed, and at your door in 1 to 3 days.",
+        "button_label": "Shop now",
         "button_link": "shopify://collections/skincare",
         "link_label": "Find your routine",
         "link_url": "shopify://pages/k-beauty",
@@ -19,14 +19,14 @@
           "type": "fact",
           "settings": {
             "icon": "truck",
-            "text": "Island-wide delivery"
+            "text": "Delivered island-wide"
           }
         },
         "fact_2": {
           "type": "fact",
           "settings": {
             "icon": "list",
-            "text": "Full ingredient lists"
+            "text": "Every ingredient, listed"
           }
         },
         "fact_3": {
@@ -46,31 +46,31 @@
     "service": {
       "type": "service-strip",
       "settings": {
-        "label": "Why shop with us"
+        "label": "Why you'll love it here"
       },
       "blocks": {
         "item_1": {
           "type": "item",
           "settings": {
             "icon": "truck",
-            "title": "Free delivery above Rs 1,500",
-            "text": "Rs 100 anywhere in Mauritius below that."
+            "title": "Free delivery over Rs 1,500",
+            "text": "Below that, it's Rs 100 anywhere on the island."
           }
         },
         "item_2": {
           "type": "item",
           "settings": {
             "icon": "leaf",
-            "title": "1 to 3 working days",
-            "text": "Or collect in Mon Gout, by arrangement."
+            "title": "At your door in 1 to 3 days",
+            "text": "Working days, that is. Prefer to collect? Mon Gout, just ask."
           }
         },
         "item_3": {
           "type": "item",
           "settings": {
             "icon": "list",
-            "title": "Every ingredient listed",
-            "text": "The full list is on every product page."
+            "title": "Every ingredient, listed",
+            "text": "The full list is on every product page. No guessing."
           }
         },
         "item_4": {
@@ -78,7 +78,7 @@
           "settings": {
             "icon": "chat",
             "title": "Real people, real answers",
-            "text": "Write to us by email or on WhatsApp."
+            "text": "Message us on WhatsApp or by email. A person answers."
           }
         }
       },
@@ -93,7 +93,7 @@
       "type": "category-rail",
       "settings": {
         "eyebrow": "Shop by category",
-        "heading": "Every step of the routine"
+        "heading": "Find your next favourite"
       },
       "blocks": {
         "category_1": {
@@ -175,11 +175,11 @@
     "launch": {
       "type": "featured-collection",
       "settings": {
-        "eyebrow": "The launch collection",
-        "heading": "Our first picks. Chosen, not gathered.",
-        "text": "We open with a small, careful range. Each product answers one need, for skin that lives with sun, salt and humidity.",
+        "eyebrow": "Just landed",
+        "heading": "Our first drop is <em>here</em>",
+        "text": "A small, very edited range to start. Every pick has one job, and every one suits skin that lives with sun, salt and humidity.",
         "collection": "new",
-        "link_label": "Shop all",
+        "link_label": "Shop all new in",
         "limit": 8,
         "wash": false
       }
@@ -188,9 +188,9 @@
       "type": "concern-finder",
       "settings": {
         "eyebrow": "Shop by concern",
-        "heading": "Start with what your skin is asking for",
-        "text": "Every product is tagged by the concern it treats and the skin it suits, so you can find yours in two taps.",
-        "skin_heading": "Or by skin type",
+        "heading": "What's your skin <em>asking</em> for?",
+        "text": "Tap a concern or your skin type and we'll show you what fits. Two taps, done.",
+        "skin_heading": "Or shop by skin type",
         "collection": "skincare"
       },
       "blocks": {
@@ -199,7 +199,7 @@
           "settings": {
             "tag": "Hydration",
             "label": "",
-            "note": "Thirsty, tight or flaky skin"
+            "note": "Thirsty, tight or flaky"
           }
         },
         "concern_2": {
@@ -207,7 +207,7 @@
           "settings": {
             "tag": "Dullness",
             "label": "",
-            "note": "When skin has lost its glow"
+            "note": "Looking a little tired"
           }
         },
         "concern_3": {
@@ -223,7 +223,7 @@
           "settings": {
             "tag": "Breakouts",
             "label": "",
-            "note": "Skin that breaks out easily"
+            "note": "Breaks out easily"
           }
         },
         "concern_5": {
@@ -231,7 +231,7 @@
           "settings": {
             "tag": "Fine lines",
             "label": "",
-            "note": "Lines and loss of firmness"
+            "note": "Lines and less bounce"
           }
         },
         "concern_6": {
@@ -247,7 +247,7 @@
           "settings": {
             "tag": "Redness",
             "label": "",
-            "note": "Skin that reddens easily"
+            "note": "Reddens easily"
           }
         },
         "concern_8": {
@@ -255,7 +255,7 @@
           "settings": {
             "tag": "Sun protection",
             "label": "",
-            "note": "Daily SPF50+ for the island sun"
+            "note": "Daily SPF for the island sun"
           }
         },
         "concern_9": {
@@ -263,7 +263,7 @@
           "settings": {
             "tag": "Dark circles",
             "label": "",
-            "note": "Tired, puffy-looking eyes"
+            "note": "Tired-looking eyes"
           }
         }
       },
@@ -283,8 +283,8 @@
       "type": "routine-steps",
       "settings": {
         "eyebrow": "New to K-beauty?",
-        "heading": "Five steps. Ten quiet minutes.",
-        "text": "Cleanse, tone, treat, moisturise, protect. The routine behind Korean skin, taken slowly, with the right product at every step.",
+        "heading": "Five steps. Ten minutes. <em>All yours.</em>",
+        "text": "Cleanse, tone, treat, moisturise, protect. The famous Korean routine, made easy, with a pick for every step.",
         "link_label": "Read the routine guide",
         "link_url": "shopify://pages/k-beauty",
         "script": "",
@@ -295,7 +295,7 @@
           "type": "step",
           "settings": {
             "name": "Cleanse",
-            "text": "A low-foam cleanser lifts sunscreen, salt and the day without stripping the oils your skin makes for itself.",
+            "text": "A gentle, low-foam cleanser takes off sunscreen, salt and the whole day, without that tight feeling after.",
             "product": "beplain-mung-bean-ph-balanced-cleansing-foam"
           }
         },
@@ -303,7 +303,7 @@
           "type": "step",
           "settings": {
             "name": "Tone",
-            "text": "Nothing like the alcohol splash you remember: a thin layer of water and calming extracts that puts moisture back.",
+            "text": "Forget the alcohol splash you remember. A Korean toner is a thin layer of water and calming extracts that puts moisture back.",
             "product": "round-lab-1025-dokdo-toner"
           }
         },
@@ -311,7 +311,7 @@
           "type": "step",
           "settings": {
             "name": "Treat",
-            "text": "Where the routine does its real work. One job per serum: hydrate, brighten or calm. On island skin, hydration comes first.",
+            "text": "The step that does the heavy lifting. Pick a serum for one job: hydrate, brighten or calm. Island skin? Start with hydration.",
             "product": "torriden-dive-in-low-molecular-hyaluronic-acid-serum"
           }
         },
@@ -319,7 +319,7 @@
           "type": "step",
           "settings": {
             "name": "Moisturise",
-            "text": "A cream seals everything in and supports the barrier that sun, salt and air conditioning wear down.",
+            "text": "Seal it all in. A cream looks after the skin barrier that sun, salt and aircon wear down.",
             "product": "dr-althea-345-relief-cream"
           }
         },
@@ -327,7 +327,7 @@
           "type": "step",
           "settings": {
             "name": "Protect",
-            "text": "Sunscreen every morning, rain or shine. Korean formulas make it a pleasure to wear.",
+            "text": "Sunscreen every morning, rain or shine. The one step you never skip.",
             "product": "beauty-of-joseon-relief-sun-rice-niacinamide"
           }
         }
@@ -344,7 +344,7 @@
       "type": "brand-index",
       "settings": {
         "eyebrow": "Our brands",
-        "heading": "Sixteen Korean houses, one careful edit",
+        "heading": "The Korean brands, <em>hand-picked</em>",
         "text": "",
         "brands": [
           "anua",
@@ -364,7 +364,7 @@
           "skin1004",
           "arencia"
         ],
-        "link_label": "All brands",
+        "link_label": "Shop all brands",
         "link_url": "shopify://pages/brands"
       }
     },
@@ -375,10 +375,10 @@
         "image_alt": "Two women laughing together on a beach in Mauritius",
         "flip": false,
         "eyebrow": "About Moana Beauté",
-        "heading": "For every woman who lives on an island",
-        "text": "<p>Moana Beauté began with a simple frustration: the Korean skincare everyone talked about online was hard to find in Mauritius, or sold by people who could not say where it came from.</p><p>So we set out to do it properly. Real products, honest prices, and delivery anywhere on the island.</p>",
+        "heading": "Made for every woman who calls the island home",
+        "text": "<p>It started with a simple frustration. The Korean skincare everyone was talking about online was hard to find in Mauritius, or sold by people who couldn't say where it came from.</p><p>So we did it properly. Real products, honest prices, every ingredient listed, and delivery anywhere on the island.</p>",
         "script": "you already belong here",
-        "link_label": "Our story",
+        "link_label": "Read our story",
         "link_url": "shopify://pages/about"
       }
     },
@@ -386,57 +386,57 @@
       "type": "faq",
       "settings": {
         "eyebrow": "Good to know",
-        "heading": "Questions, answered",
-        "text": "<p>Anything else? <a href=\"/pages/contact\">Write to us</a>.</p>"
+        "heading": "You asked. We answered.",
+        "text": "<p>Still wondering? <a href=\"/pages/contact\">Message us</a>, we're happy to help.</p>"
       },
       "blocks": {
         "question_1": {
           "type": "question",
           "settings": {
             "question": "How much is delivery?",
-            "answer": "<p>Rs 100 anywhere in Mauritius. Delivery is free when your order is above Rs 1,500.</p>"
+            "answer": "<p>Rs 100 anywhere in Mauritius, and free when your order is over Rs 1,500.</p>"
           }
         },
         "question_2": {
           "type": "question",
           "settings": {
             "question": "How long does delivery take?",
-            "answer": "<p>Orders usually arrive in 1 to 3 working days.</p>"
+            "answer": "<p>Usually 1 to 3 working days.</p>"
           }
         },
         "question_3": {
           "type": "question",
           "settings": {
             "question": "Can I collect my order instead?",
-            "answer": "<p>Yes, in Mon Gout, by arrangement. Write to us by email or on WhatsApp and we will agree a time with you.</p>"
+            "answer": "<p>Yes, in Mon Gout. Message us on WhatsApp or by email and we'll find a time that works for you.</p>"
           }
         },
         "question_4": {
           "type": "question",
           "settings": {
             "question": "How do I pay?",
-            "answer": "<p>By card at checkout. Card payments are processed by MIPS, so we never see your full card number.</p>"
+            "answer": "<p>By card at checkout. Payments go through MIPS, so we never see your full card number.</p>"
           }
         },
         "question_5": {
           "type": "question",
           "settings": {
             "question": "Are the products authentic?",
-            "answer": "<p>Yes. We buy from wholesale suppliers, and every product page shows the full ingredient list, so you can compare it with the brand's own.</p>"
+            "answer": "<p>Always. Every product page shows the full ingredient list, so you can check it against the brand's own.</p>"
           }
         },
         "question_6": {
           "type": "question",
           "settings": {
             "question": "Can I return a product?",
-            "answer": "<p>Unopened products in their original packaging can be returned within seven days of delivery. Opened skincare cannot be returned for hygiene reasons, unless it is faulty or not what you ordered. See <a href=\"/pages/delivery\">Delivery &amp; returns</a>.</p>"
+            "answer": "<p>Yes, if it's unopened and in its original packaging, within seven days of delivery. Opened skincare can't come back for hygiene reasons, unless it's faulty or not what you ordered. All the details are on <a href=\"/pages/delivery\">Delivery &amp; returns</a>.</p>"
           }
         },
         "question_7": {
           "type": "question",
           "settings": {
-            "question": "Is a new product safe for my skin?",
-            "answer": "<p>We advise a patch test before using any new product. Our product information is not medical advice.</p>"
+            "question": "How do I try something new?",
+            "answer": "<p>Patch test first: a little on your inner arm or behind your ear, then wait a day. Our product info is not medical advice.</p>"
           }
         }
       },

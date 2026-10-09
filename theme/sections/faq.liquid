@@ -2,7 +2,7 @@
   <div class="page-width faq__grid">
     <div class="faq__intro">
       {%- if section.settings.eyebrow != blank -%}<p class="t-label">{{ section.settings.eyebrow }}</p>{%- endif -%}
-      <h2 class="t-h2" id="faq-{{ section.id }}">{{ section.settings.heading }}</h2>
+      <h2 class="t-h2" data-lines id="faq-{{ section.id }}">{{ section.settings.heading }}</h2>
       {%- if section.settings.text != blank -%}<div class="rte t-soft">{{ section.settings.text }}</div>{%- endif -%}
     </div>
     <div class="accordion">
@@ -28,7 +28,7 @@
   "name": "FAQ",
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Label", "default": "Good to know" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Questions, answered" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "You asked. We answered." },
     { "type": "richtext", "id": "text", "label": "Text" }
   ],
   "blocks": [
