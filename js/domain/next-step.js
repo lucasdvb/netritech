@@ -25,7 +25,7 @@ function lastSessions(exerciseId, { excludeWorkoutId, before } = {}, n = 3) {
   const out = [];
   for (const w of allWorkouts()) {
     if (w.id === excludeWorkoutId || (before && w.date > before)) continue;
-    const sets = setsOf(w.id).filter((s) => s.exerciseId === exerciseId && s.completed);
+    const sets = setsOf(w.id).filter((s) => s.exerciseId === exerciseId && s.completed && !s.warmup);
     if (!sets.length) continue;
     out.push({ workout: w, sets, perf: performance(w.id, exerciseId) });
     if (out.length === n) break;

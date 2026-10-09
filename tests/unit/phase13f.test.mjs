@@ -2,7 +2,7 @@
 // the year in numbers.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { fresh, store } from './helpers.mjs';
+import { fresh } from './helpers.mjs';
 import { profileSeed, settingsSeed } from '../../js/data/seed.js';
 import * as Y from '../../js/domain/year-review.js';
 

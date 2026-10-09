@@ -60,8 +60,9 @@ await step('next step: last time every set reached the top, so this session star
   });
   const id = await ev(p, async () => (await import('./js/screens/workout-actions.js')).startWorkout('t-upper').id);
   await p.waitForSelector('.ex-card');
-  const rows = await ev(p, (wid) => window.__lifeos.store.all('workoutSets').filter((x) => x.workoutId === wid && x.exerciseId === 'e-db-row').map((x) => [x.reps, x.load]), id);
-  if (!rows.length || rows.some(([r, l]) => r !== 8 || l !== 12.5)) throw new Error(JSON.stringify(rows));
+  // The weight is filled in; the reps are today's aim until you enter them.
+  const rows = await ev(p, (wid) => window.__lifeos.store.all('workoutSets').filter((x) => x.workoutId === wid && x.exerciseId === 'e-db-row').map((x) => [x.reps, x.plan?.reps, x.load]), id);
+  if (!rows.length || rows.some(([r, aim, l]) => r !== null || aim !== 8 || l !== 12.5)) throw new Error(JSON.stringify(rows));
   const card = p.locator('.ex-card', { hasText: 'row' }).first();
   const note = await card.locator('.ex-step').textContent();
   if (!/12\.5 kg × 8/.test(note) || !/Every set reached 15/.test(note)) throw new Error(note);

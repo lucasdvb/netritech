@@ -102,6 +102,7 @@ export const CSV_SETS = {
   sleep: { label: 'Sleep & mood', make: () => toCSV(store.all('sleepEntries').sort(byDate).map((s) => ({ ...s, ...(store.get('moodEntries', s.date) || {}) })), ['date', 'bedtime', 'wake', 'hours', 'quality', 'energy', 'stress', 'mood', 'body']) },
   workouts: { label: 'Workout sets', make: () => toCSV(store.all('workoutSets').filter((s) => s.completed).sort(byDate).map((s) => ({ ...s, workout: store.get('workouts', s.workoutId)?.title, exercise: store.get('exercises', s.exerciseId)?.name })), ['date', 'workout', 'exercise', 'setIndex', 'reps', 'load', 'seconds', 'minutes']) },
   journal: { label: 'Journal', make: () => toCSV(store.all('journalEntries').sort(byDate).map((j) => ({ ...j, answers: Object.values(j.answers || {}).join(' | ') })), ['date', 'kind', 'answers', 'text']) },
+  notes: { label: 'Brain dump', make: () => toCSV(store.all('notes').map((n) => ({ ...n, date: (n.createdAt || '').slice(0, 10) })).sort(byDate), ['date', 'category', 'pinned', 'text']) },
   tasks: { label: 'Tasks', make: () => toCSV(store.all('tasks').sort((a, b) => (a.date || '9999').localeCompare(b.date || '9999')).map((t) => ({ ...t, repeat: t.repeat ? `${t.repeat.kind}:${t.repeat.day}` : '', doneAt: dayAt(t.doneAt) || '' })), ['date', 'title', 'area', 'repeat', 'done', 'doneAt', 'notes']) },
 };
 function byDate(a, b) { return (a.date || '') < (b.date || '') ? -1 : 1; }

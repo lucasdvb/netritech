@@ -247,7 +247,8 @@ await step('limits became settings: four in focus, your own steps target, lb for
   // A session shows loads in lb.
   await ev(p, async () => (await import('./js/screens/workout-actions.js')).startWorkout('t-upper', '2026-10-07'));
   await p.waitForSelector('.ex-card');
-  if (!(await p.locator('.set-unit:text-is("lb")').count())) throw new Error('loads not in lb');
+  // The weight column is headed in lb (or +lb for bodyweight work).
+  if (!(await p.locator('.wset-row--head span', { hasText: /^\+?lb$/ }).count())) throw new Error('loads not in lb');
   await ctx.close();
 });
 

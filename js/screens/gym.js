@@ -9,6 +9,7 @@ import { icon } from '../ui/icons.js';
 import { empty } from '../ui/components.js';
 import { kgOut, kgIn, weightUnit, loadText } from '../ui/format.js';
 import { nextStep, stepLabel } from '../domain/next-step.js';
+import * as Clock from '../domain/session-clock.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 
@@ -39,7 +40,7 @@ function suggested(w, s, e) {
   // The first set of an exercise starts from the next step (13d): heavier, one more rep, or held.
   const step = !before ? stepFor(w, s) : null;
   const next = step && step.kind !== 'variation' ? { reps: step.reps, load: step.load, seconds: step.seconds } : {};
-  const pick = (f) => s[f] ?? before?.[f] ?? next[f] ?? p?.[f] ?? null;
+  const pick = (f) => s[f] ?? before?.[f] ?? next[f] ?? s.plan?.[f] ?? p?.[f] ?? null;
   return {
     reps: e?.metric === 'reps' ? pick('reps') ?? goal ?? 10 : null,
     load: e?.metric === 'reps' ? pick('load') ?? e?.defaultLoad ?? null : null,
@@ -89,7 +90,7 @@ export default {
     return html`<div class="gym" data-key="gym">
       <header class="gym-top">
         <button type="button" class="gym-ghost" data-action="g-list" aria-label="Back to the full session">${icon('chevron-left', { size: 22 })}<span>List</span></button>
-        <p class="gym-meta tnum"><span id="gym-elapsed">${clock(Math.round((Date.now() - new Date(w.startedAt).getTime()) / 1000))}</span> · ${done}/${seq.length} sets</p>
+        <button type="button" class="${cx('gym-meta tnum', !Clock.isRunning(w) && 'is-paused')}" data-action="g-clock" aria-label="${Clock.isRunning(w) ? 'Pause the session clock' : 'Carry on the session clock'}">${icon(Clock.isRunning(w) ? 'pause' : 'play', { size: 14 })}<span id="gym-elapsed">${Clock.clockText(Clock.activeMs(w))}</span> · ${done}/${seq.length}</button>
         <button type="button" class="gym-ghost" data-action="g-finish">Finish</button>
       </header>
       ${lockState === 'unsupported' || lockState === 'failed' ? html`<p class="gym-warn" role="status">${icon('circle-alert', { size: 16 })} This browser can’t keep the screen on. Set Auto-Lock to Never while you train (Settings › Display & Brightness).</p>` : ''}
@@ -114,7 +115,7 @@ export default {
               ${cur.e?.metric === 'time' ? control('Seconds', 'seconds', v.seconds, 5, 's') : cur.e?.metric === 'minutes' ? control('Minutes', 'minutes', v.minutes, 1, 'min') : control('Reps', 'reps', v.reps, 1, cur.e?.unilateral ? 'reps / side' : 'reps')}
               ${cur.e?.metric === 'reps' ? control('Load', 'load', Math.round(kgOut(v.load ?? 0) * 2) / 2, loadStep(cur.e), cur.e?.defaultLoad ? weightUnit() : `${weightUnit()} added`) : ''}
             </div>
-            <button type="button" class="gym-go" data-action="g-done" data-id="${cur.s.id}">${cur.s.completed ? 'Log it again' : `Done · set ${cur.s.setIndex + 1}`}</button>`}
+            <button type="button" class="gym-go" data-action="g-done" data-id="${cur.s.id}">${cur.s.completed ? 'Log it again' : `Log set ${cur.s.setIndex + 1}`}</button>`}
         </div>`}
       ${cur && !allDone ? html`<nav class="gym-nav" aria-label="Sets">
         <button type="button" class="gym-ghost" data-action="g-move" data-d="-1" ${curIdx === 0 ? 'disabled' : ''}>${icon('chevron-left', { size: 20 })} Previous</button>
@@ -123,6 +124,7 @@ export default {
     </div>`;
   },
   mount(el, { params }) {
+    Clock.enter(store, params.id);
     document.documentElement.classList.add('in-gym');
     keepAwake().then(() => app.refresh());
     document.addEventListener('visibilitychange', onVisible);
@@ -131,7 +133,7 @@ export default {
       const w = store.get('workouts', params.id);
       if (!w) return;
       const t = document.getElementById('gym-elapsed');
-      if (t) t.textContent = clock(Math.round((Date.now() - new Date(w.startedAt).getTime()) / 1000));
+      if (t) t.textContent = Clock.clockText(Clock.activeMs(w));
       const left = restLeft(w);
       const r = document.getElementById('gym-rest');
       if (r) r.textContent = clock(left);
@@ -139,7 +141,8 @@ export default {
       if (r && !left) { hap.success(); app.refresh(); }
     }, 250);
   },
-  unmount() {
+  unmount(el, { params } = {}) {
+    if (params?.id) Clock.leave(store, params.id, () => location.hash.includes(`workout/${params.id}`));
     clearInterval(tick);
     document.documentElement.classList.remove('in-gym');
     document.removeEventListener('visibilitychange', onVisible);
@@ -193,6 +196,7 @@ export default {
       app.refresh();
     },
     'g-list': ({ params }) => app.replace(`workout/${params.id}`),
+    'g-clock': ({ params }) => { Clock.toggle(store, params.id); hap.tap(); app.refresh(); },
     'g-finish': async ({ params }) => {
       const sets = F.setsOf(params.id).filter((s) => s.completed).length;
       if (!sets) { app.toast('Log at least one set first.'); return; }

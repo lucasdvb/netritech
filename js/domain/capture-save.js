@@ -4,6 +4,7 @@ import * as store from '../data/store.js';
 import * as H from './habits-more.js';
 import { describe } from './capture.js';
 import * as B from './books.js';
+import { categories as noteCategories } from './notes.js';
 
 const PEOPLE_KINDS = { fiancee: 'Conversation', date: 'Dinner', son: 'Conversation', family: 'Call' };
 const FAITH_HABIT = { prayer: 'h-prayer', scripture: 'h-scripture', gratitude: 'h-gratitude', church: 'h-church', study: 'h-study' };
@@ -81,6 +82,8 @@ function opsFor(i, get, at) {
       const order = store.all('tasks').reduce((m, t) => Math.max(m, t.order ?? 0), 0) + 1;
       return [put('tasks', { id: store.uid(), title: i.title, notes: '', area: i.area || 'life', repeat: null, date: i.date || null, done: false, doneAt: null, order })];
     }
+    // Brain dump: filed under the category asked for while you still have it, else Unsorted.
+    case 'dump': return [put('notes', { id: store.uid(), text: i.text, category: noteCategories().includes(i.category) ? i.category : '', pinned: false })];
     case 'note': return [put('journalEntries', { id: store.uid(), date: d, kind: 'free', answers: {}, text: i.text })];
     case 'win': {
       const r = get('dailyReviews', d) || { id: d, date: d };
@@ -125,6 +128,7 @@ function messageFor(items, ctx) {
   const dsc = describe(i, ctx);
   if (i.kind === 'task') return `Task added · ${i.title}`;
   if (i.kind === 'note') return 'Note saved';
+  if (i.kind === 'dump') return 'Saved to your brain dump';
   if (i.kind === 'win') return 'Win saved';
   if (i.kind === 'skip') return `${dsc.title}: not today`;
   return `${dsc.title} · ${dsc.value}`;

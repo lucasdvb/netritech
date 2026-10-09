@@ -3,7 +3,7 @@
 // future sync can learn about deletions. Date-keyed records also carry `date` ('YYYY-MM-DD',
 // indexed) and `tz`, the time zone they were first written in.
 export const DB_NAME = 'life-os';
-export const DB_VERSION = 8;
+export const DB_VERSION = 9;
 // Version of the built-in habit system (the seed); seed.js brings older installs up to date.
 export const SEED_VERSION = 2;
 /** The newest migration (data/migrations.js). Start-up loads migrations only when it isn't applied. */
@@ -57,7 +57,8 @@ export const STORES = {
   events: { indexes: [] },                   // dates that matter: birthdays, anniversaries, countdowns
   urges: { indexes: ['date'] },              // urges resisted or given in to, for habits you're cutting down or quitting
   experiments: { indexes: [] },              // "try it for 14 days": a habit, what to watch, and the verdict at the end
-  yearlyReviews: { indexes: [] },            // the year in review (id = the year) and the theme word for the next one
+  yearlyReviews: { indexes: [] },
+  notes: { indexes: [] },                    // brain dump: a note's text, its category ('' is Unsorted) and a pin            // the year in review (id = the year) and the theme word for the next one
   daySnapshots: { indexes: [] },             // derived per-day summary (id = date), rebuilt from the logs
   outbox: { indexes: [] },                   // latest change per record ('store:id'), for a future sync
   localBackups: { indexes: [] },             // automatic copies taken before data migrations (last three)

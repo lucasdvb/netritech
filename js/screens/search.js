@@ -23,6 +23,8 @@ function search(q) {
   add('Habits', store.all('habits').filter((h) => hit(h.name, h.description)).map((h) => ({ ic: h.icon, title: h.name, sub: h.archived ? 'Archived' : h.description, to: `plan/habits/${h.id}` })));
   add('Tasks', store.all('tasks').filter((x) => hit(x.title, x.notes)).sort((a, b) => Number(a.done) - Number(b.done) || (a.date || '9999').localeCompare(b.date || '9999'))
     .map((x) => ({ ic: x.done ? 'circle-check' : 'list-todo', title: x.title, sub: `${x.done ? 'Done' : dueLabel(x.date)}${x.repeat ? ` · ${repeatLabel(x.repeat)}` : ''}`, to: 'plan/tasks' })));
+  add('Brain dump', store.all('notes').filter((n) => hit(n.text, n.category)).sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''))
+    .map((n) => ({ ic: 'brain', title: snippet(n.text), sub: n.category || 'Unsorted', to: `plan/notes?open=${n.id}` })));
   add('Goals', store.all('goals').filter((g) => hit(g.name, g.description, ...(g.milestones || []).map((m) => m.title))).map((g) => ({ ic: 'target', title: g.name, sub: g.description, to: `plan/goals/${g.id}` })));
   add('Journal', store.all('journalEntries').filter((j) => hit(j.text, ...Object.values(j.answers || {}))).sort((a, b) => (a.date < b.date ? 1 : -1))
     .map((j) => ({ ic: 'notebook-pen', title: `${relativeDay(j.date)} · ${j.kind}`, sub: snippet([j.text, ...Object.values(j.answers || {})].find((x) => norm(x).includes(t))), to: `reflect/journal/${j.id}` })));
