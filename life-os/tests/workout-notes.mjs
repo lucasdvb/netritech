@@ -205,4 +205,51 @@ await step('categories: rename moves notes, delete sends them to Unsorted', asyn
   await ctx.close();
 });
 
+await step('exercise photos and a note: two at most, shown in the list and gym mode, kept across a reload and in backups', async () => {
+  const { ctx, p } = await at('2026-10-09T06:30:00');
+  const id = await ev(p, async () => (await import('./js/screens/workout-actions.js')).startWorkout('t-upper').id);
+  await p.waitForSelector('.ex-card');
+  const card = p.locator('.ex-card').first();
+  const exId = await ev(p, (wid) => window.__lifeos.store.all('workoutSets').find((s) => s.workoutId === wid && s.order === 0).exerciseId, id);
+  await card.locator('[data-action="ex-menu"]').click();
+  await p.locator('.sheet [data-action="media"]').click();
+  await p.waitForSelector('.exm-editor');
+  // Three pictures picked: two are kept, and it says why.
+  const files = ['assets/icons/icon-192.png', 'assets/icons/apple-touch-icon.png', 'assets/icons/icon-512.png'].map((f) => new URL(`../${f}`, import.meta.url).pathname);
+  await p.locator('.exm-editor input[type="file"]').setInputFiles(files);
+  await p.waitForSelector('.toast:has-text("keeps 2 photos")');
+  await p.waitForFunction((e) => (window.__lifeos.store.get('exercises', e).photos || []).length === 2, exId);
+  if (await p.locator('.exm-editor input[type="file"]').count()) throw new Error('still offers to add a third');
+  await p.fill('.exm-editor textarea[data-change="exm-note"]', '  Seat on 4, grip just outside the shoulders  ');
+  await p.keyboard.press('Escape');
+  await p.waitForFunction((e) => window.__lifeos.store.get('exercises', e).note === 'Seat on 4, grip just outside the shoulders', exId);
+  // On the workout card: both photos, loaded, and the note.
+  await p.waitForFunction(() => [...document.querySelectorAll('.ex-card .exm-thumb img')].filter((i) => i.naturalWidth > 0).length === 2);
+  if (!/Seat on 4/.test(await card.locator('.exm-note').textContent())) throw new Error('note not on the card');
+  await p.screenshot({ path: `${OUT}/wn-exercise-media.png` });
+  // Full size, then gym mode.
+  await card.locator('.exm-thumb').first().click();
+  await p.waitForFunction(() => document.querySelector('.exm-full')?.naturalWidth > 0);
+  await p.keyboard.press('Escape');
+  await p.goto(`${base}#/workout/${id}/gym`);
+  await p.waitForSelector('.gym .exm-note');
+  await p.waitForFunction(() => [...document.querySelectorAll('.gym .exm-thumb img')].filter((i) => i.naturalWidth > 0).length === 2);
+  await p.waitForTimeout(700); // the view transition settles
+  await p.screenshot({ path: `${OUT}/wn-exercise-media-gym.png` });
+  // A backup carries the pictures even without progress photos.
+  const inBackup = await ev(p, async () => { const B = await import('./js/data/backup.js'); const j = await B.buildBackup({ includePhotos: false }); return (j?.data?.photoBlobs || []).filter((b) => b.id.startsWith('ex-')).length; });
+  if (inBackup !== 2) throw new Error(`backup has ${inBackup} exercise photos`);
+  // Reload: still there. Remove one, Undo brings it back.
+  await p.reload();
+  await p.waitForFunction(() => window.__lifeos?.ready);
+  await p.goto(`${base}#/plan/training/exercises/${exId}`);
+  await p.waitForFunction(() => [...document.querySelectorAll('.exm-thumb img')].filter((i) => i.naturalWidth > 0).length === 2);
+  await p.locator('[data-view="exercise"] [data-action="media"]').click();
+  await p.locator('.exm-editor [data-action="exm-del"]').first().click();
+  await p.waitForFunction((e) => window.__lifeos.store.get('exercises', e).photos.length === 1, exId);
+  await p.locator('.toast button', { hasText: 'Undo' }).click();
+  await p.waitForFunction((e) => window.__lifeos.store.get('exercises', e).photos.length === 2, exId);
+  await ctx.close();
+});
+
 await finish();
