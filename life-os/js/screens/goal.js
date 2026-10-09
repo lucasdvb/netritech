@@ -103,7 +103,7 @@ export default {
     'del-m': ({ data, params }) => { const g = store.get('goals', params.id); store.update('goals', g.id, { milestones: g.milestones.filter((m) => m.id !== data.id) }); },
     'add-m': ({ params }) => app.sheet({
       title: 'New milestone',
-      render: () => html`<form class="form" data-submit="save"><input class="input" name="t" placeholder="e.g. 20 strict push-ups" autofocus required><button class="btn btn--primary btn--block" type="submit">Add</button></form>`,
+      render: () => html`<form class="form" data-submit="save"><input class="input" name="t" placeholder="e.g. 20 strict push-ups" autofocus required maxlength="80" aria-label="Milestone"><button class="btn btn--primary btn--block" type="submit">Add</button></form>`,
       actions: { save: ({ form, sheet }) => {
         if (!form.t?.trim()) return;
         const g = store.get('goals', params.id);

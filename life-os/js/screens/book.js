@@ -38,7 +38,7 @@ export default {
         <button type="button" class="btn btn--soft" data-action="set-page">Set page</button>
         <button type="button" class="btn btn--ghost" data-action="finish">Finished</button></div>` : ''}
       <section class="block"><div class="block-head"><h2 class="block-title">Notes</h2></div>
-        <textarea class="input book-notes" rows="4" data-input="notes" placeholder="Ideas worth keeping, quotes, what you’d do differently">${b.notes || ''}</textarea></section>
+        <textarea class="input book-notes" rows="4" data-input="notes" aria-label="Notes on this book" maxlength="4000" placeholder="Ideas worth keeping, quotes, what you’d do differently">${b.notes || ''}</textarea></section>
       ${sessions.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Sessions</h2></div>
         <ul class="list">${sessions.map((r) => html`<li class="row" data-key="${r.id}"><span class="row-main"><span class="row-title">${fmtMD(r.date)}</span>
           <span class="row-sub">${[r.pages ? `${r.pages} pages` : '', r.minutes ? `${r.minutes} min` : ''].filter(Boolean).join(' · ') || 'Logged'}</span></span></li>`)}</ul></section>` : ''}

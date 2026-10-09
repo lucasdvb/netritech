@@ -164,7 +164,7 @@ export function openFood(date = today()) {
         <details class="disclosure" ${s.ui.open ? raw('open') : ''}>
           <summary>Custom entry</summary>
           <form class="form" data-submit="custom">
-            <input class="input" name="name" placeholder="What did you eat?" autocomplete="off">
+            <input class="input" name="name" placeholder="What did you eat?" autocomplete="off" maxlength="60" aria-label="What you ate">
             <div class="grid-2">
               <label class="field"><span class="field-label">Protein</span><span class="input-unit"><input name="protein" type="number" inputmode="decimal" step="any" min="0"><span>g</span></span></label>
               <label class="field"><span class="field-label">Calories</span><span class="input-unit"><input name="kcal" type="number" inputmode="numeric" min="0"><span>kcal</span></span></label>

@@ -57,8 +57,8 @@ export const STORES = {
   events: { indexes: [] },                   // dates that matter: birthdays, anniversaries, countdowns
   urges: { indexes: ['date'] },              // urges resisted or given in to, for habits you're cutting down or quitting
   experiments: { indexes: [] },              // "try it for 14 days": a habit, what to watch, and the verdict at the end
-  yearlyReviews: { indexes: [] },
-  notes: { indexes: [] },                    // brain dump: a note's text, its category ('' is Unsorted) and a pin            // the year in review (id = the year) and the theme word for the next one
+  yearlyReviews: { indexes: [] },            // the year in review (id = the year) and the theme word for the next one
+  notes: { indexes: [] },                    // brain dump: a note's text, its category ('' is Unsorted) and a pin
   daySnapshots: { indexes: [] },             // derived per-day summary (id = date), rebuilt from the logs
   outbox: { indexes: [] },                   // latest change per record ('store:id'), for a future sync
   localBackups: { indexes: [] },             // automatic copies taken before data migrations (last three)

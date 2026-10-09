@@ -109,7 +109,7 @@ function openMoneySettings() {
             <button type="button" class="drag-handle" data-drag aria-label="Move ${c.label}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>
             <input class="input et-input" value="${c.label}" data-change="cat-name" data-id="${c.id}" maxlength="24" aria-label="Category name">
             <button type="button" class="icon-btn icon-btn--sm" data-action="cat-del" data-id="${c.id}" aria-label="Remove ${c.label}"${cfg.categories.length <= 1 ? ' disabled' : ''}>${icon('x', { size: 16 })}</button></li>`)}</ol>
-          <input class="input block-tight" data-change="cat-add" placeholder="Add a category" maxlength="24" enterkeyhint="done"></div>
+          <input class="input block-tight" data-change="cat-add" placeholder="Add a category" maxlength="24" enterkeyhint="done" aria-label="Add a category"></div>
         <p class="field-hint">Entries keep their category if you remove it; they show as “Other”.</p>
       </div>`;
     },
