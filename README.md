@@ -172,7 +172,10 @@ The **app-icon badge** shows how much of today's plan is still open and updates 
 - **Restore:** you can merge (keeps the newer version of each record) or replace everything (asks you to confirm first). Either way, what's on the device is kept as a safety copy first, so a restore can be taken back from *Safety copies*. An invalid file is rejected and nothing changes.
 - **CSV:** export weight, measurements, habits, nutrition, water, steps, sleep, workouts and journal for spreadsheets.
 - **Sample data:** opt-in, clearly labelled and removable in one tap. Every sample record carries `demo: true` and never overwrites a real entry.
-- **Erase:** You → Data → *Erase everything on this device* (asks twice).
+- **Erase:** You → Data → *Erase everything on this device* (asks twice). Sync is turned off first, so the fresh start never replaces your records on your other devices.
+- **Brain dump:** Plan → Brain dump keeps notes by category; they're in backups, sync and the CSV export.
+
+**Security.** The app runs only its own code: a Content Security Policy (`index.html`) allows scripts from this site alone, so even a damaged or hostile record can't run anything. Everything you type is shown as text, and colours or categories that reach markup are checked against known values. A backup is checked in full before anything changes, and a restore that fails part-way changes nothing. CSV cells that a spreadsheet would treat as formulas are exported as text.
 
 Nothing in the app is a medical claim:
 
@@ -303,6 +306,10 @@ NODE_PATH=$(npm root -g) node tests/phase12.mjs http://localhost:4173/ ./test-sh
 NODE_PATH=$(npm root -g) node tests/resilience.mjs http://localhost:4173/ ./test-shots # a full disk, a backup of every store,
                                                                                     # another window taking over, a v5 upgrade,
                                                                                     # damaged records, storage blocked
+NODE_PATH=$(npm root -g) node tests/workout-notes.mjs http://localhost:4173/ ./test-shots # sets logged by typing, warm-ups, the session
+                                                                                    # clock, the brain dump end to end
+NODE_PATH=$(npm root -g) node tests/journey.mjs http://localhost:4173/ ./test-shots  # a whole session through the interface: create,
+                                                                                    # edit, log, reload, delete; tasks, journal, settings
 NODE_PATH=$(npm root -g) node tests/a11y.mjs http://localhost:4173/ ./test-shots     # axe (WCAG 2.2 AA) on every screen, sheet and
                                                                                     # state, light and dark; a keyboard-only morning
 NODE_PATH=$(npm root -g) node tests/visual.mjs http://localhost:4173/ ./test-shots   # every screen against its baseline in tests/visual

@@ -12,7 +12,7 @@ import * as store from '../data/store.js';
 const itemRow = (i, sortable) => html`<li class="${cx('li-row', i.done && 'is-done')}" data-key="${i.id}">
   ${sortable ? html`<button type="button" class="drag-handle" data-drag aria-label="Move ${i.text}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>` : ''}
   ${check(i.done, { action: 'tick', data: { id: i.id }, label: `${i.text}${i.done ? ', ticked' : ''}`, cls: 'check--sm' })}
-  <input class="li-text" value="${i.text}" data-change="text" data-id="${i.id}" maxlength="120" aria-label="Item">
+  <input class="li-text" value="${i.text}" data-change="text" data-id="${i.id}" maxlength="120" aria-label="Item: ${i.text}">
   <button type="button" class="icon-btn icon-btn--sm li-del" data-action="del" data-id="${i.id}" aria-label="Delete ${i.text}">${icon('x', { size: 16 })}</button>
 </li>`;
 

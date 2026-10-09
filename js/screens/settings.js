@@ -189,7 +189,9 @@ export default {
     profile: ({ el, value }) => {
       const k = el.dataset.k;
       const numeric = ['age', 'heightCm', 'startBodyFat', 'goalBodyFat'].includes(k);
-      if (numeric && n(value) == null) return;
+      // Numbers outside what a person can be are refused; the field goes back to what's saved.
+      const RANGE = { age: [10, 110], heightCm: [100, 250], startBodyFat: [3, 60], goalBodyFat: [3, 60] };
+      if (numeric && (n(value) == null || n(value) < RANGE[k][0] || n(value) > RANGE[k][1])) return;
       if (!numeric && !value.trim()) return;
       store.setProfile({ [k]: numeric ? n(value) : value.trim() });
     },
@@ -199,7 +201,7 @@ export default {
       const t = Math.round(v / 100) * 100;
       store.update('habits', 'h-steps', { target: t, min: Math.round(t * 0.9 / 100) * 100, ramp: null });
     },
-    'start-weight': ({ value }) => { const kg = kgIn(n(value)); if (kg) store.setProfile({ startWeightKg: Math.round(kg * 10) / 10 }); },
+    'start-weight': ({ value }) => { const kg = kgIn(n(value)); if (kg >= 20 && kg <= 400) store.setProfile({ startWeightKg: Math.round(kg * 10) / 10 }); },
     target: ({ el, value }) => {
       const v = n(value);
       if (v == null || v <= 0) return;
