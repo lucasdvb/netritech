@@ -4,8 +4,8 @@
       "type": "page-header",
       "settings": {
         "eyebrow": "About Moana Beauté",
-        "heading": "For every woman who lives on an <em>island</em>",
-        "text": "Authentic Korean skincare, chosen by hand and delivered across Mauritius.",
+        "heading": "Made for every woman who calls the <em>island</em> home",
+        "text": "Korean skincare, picked by hand and delivered all over Mauritius.",
         "center": false
       }
     },
@@ -16,8 +16,8 @@
         "image_alt": "Two women laughing together on a beach in Mauritius",
         "flip": false,
         "eyebrow": "",
-        "heading": "Where it began",
-        "text": "<p>Moana Beauté began with a simple frustration. The Korean skincare everyone was talking about online was either impossible to find in Mauritius, or sold by people who could not say where it came from.</p><p>So we registered a company in Mon Gout and set out to do it properly. Real products, honest prices, and delivery anywhere on the island.</p><p>We are small and we are new. That is why we chose every product by hand, so there is nothing to decode. Each one was chosen for skin that lives with sun, salt and humidity.</p>",
+        "heading": "How it started",
+        "text": "<p>It started with a simple frustration. The Korean skincare everyone was talking about online was either impossible to find in Mauritius, or sold by people who couldn't say where it came from.</p><p>So we set up in Mon Gout and did it properly. Real products, honest prices, and delivery anywhere on the island.</p><p>We're small and we're new, and we like it that way. Every product is picked by hand, for skin that lives with sun, salt and humidity. Nothing to decode, nothing you don't need.</p>",
         "script": "you already belong here",
         "link_label": "",
         "link_url": ""
@@ -27,28 +27,28 @@
       "type": "values",
       "settings": {
         "eyebrow": "",
-        "heading": "What we stand by"
+        "heading": "What we promise you"
       },
       "blocks": {
         "value_1": {
           "type": "value",
           "settings": {
             "title": "Authentic",
-            "text": "The real product, with its full ingredient list on its page. If we are not sure about a product, we do not sell it."
+            "text": "The real product, with its full ingredient list on its page. If we're not sure about something, we don't sell it."
           }
         },
         "value_2": {
           "type": "value",
           "settings": {
             "title": "Affordable",
-            "text": "Korean beauty is not priced like luxury in Korea. It should not be here either."
+            "text": "In Korea, great skincare isn't priced like luxury. It shouldn't be here either."
           }
         },
         "value_3": {
           "type": "value",
           "settings": {
             "title": "For all of us",
-            "text": "Every skin tone, every budget, on every part of the island, in a climate that never cools down."
+            "text": "Every skin tone, every budget, every corner of the island. You already belong here."
           }
         }
       },
@@ -61,11 +61,11 @@
     "shop": {
       "type": "featured-collection",
       "settings": {
-        "eyebrow": "The launch collection",
-        "heading": "Begin with our first picks",
+        "eyebrow": "Just landed",
+        "heading": "Start with our first drop",
         "text": "",
         "collection": "new",
-        "link_label": "Shop all",
+        "link_label": "Shop all new in",
         "limit": 4,
         "wash": false
       }

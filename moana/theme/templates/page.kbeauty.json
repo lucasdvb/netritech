@@ -4,8 +4,8 @@
       "type": "page-header",
       "settings": {
         "eyebrow": "The routine guide",
-        "heading": "Korean beauty, <em>step by step</em>, for island skin",
-        "text": "Korean beauty is a way of caring for skin, not a shelf of products. Gentle ingredients, thin layers, and the habit of returning to it every day.",
+        "heading": "Your K-beauty routine, <em>step by step</em>",
+        "text": "K-beauty isn't a shelf full of products. It's a ritual: gentle formulas, thin layers, and a few minutes for you, every day.",
         "center": false
       }
     },
@@ -13,8 +13,8 @@
       "type": "rich-text",
       "settings": {
         "eyebrow": "",
-        "heading": "Why it suits island skin",
-        "text": "<p>It was built for skin that lives with heat and humidity, which is exactly what island skin does. Sun, salt and air conditioning wear the barrier down. The routine builds it back.</p>",
+        "heading": "Why island skin loves it",
+        "text": "<p>It was made for heat and humidity, which is island life in a sentence. Sun, salt and aircon wear your skin barrier down. This routine is all about building it back.</p>",
         "use_page_content": false,
         "link_label": "",
         "link_url": "",
@@ -26,8 +26,8 @@
       "settings": {
         "eyebrow": "Five steps, in order",
         "heading": "The routine",
-        "text": "Morning and evening, in this order. Thin layers, patted in, a few seconds between each.",
-        "link_label": "Shop skincare",
+        "text": "Morning and night, in this order. Thin layers, patted in, a few seconds between each.",
+        "link_label": "Shop the routine",
         "link_url": "shopify://collections/skincare",
         "script": "",
         "wash": true
@@ -37,7 +37,7 @@
           "type": "step",
           "settings": {
             "name": "Cleanse",
-            "text": "A Korean routine begins clean. A low-foam cleanser lifts sunscreen, salt and the whole day without stripping the oils your skin makes for itself, which is what keeps it from going tight and then oily.",
+            "text": "Start clean. A gentle, low-foam cleanser takes off sunscreen, salt and the whole day without stripping your skin, so it doesn't feel tight and then turn oily.",
             "product": "beplain-mung-bean-ph-balanced-cleansing-foam"
           }
         },
@@ -45,7 +45,7 @@
           "type": "step",
           "settings": {
             "name": "Tone",
-            "text": "A toner here is nothing like the alcohol splash you remember. It is a thin layer of water and calming plant extracts that puts moisture back and opens the way for everything after it.",
+            "text": "Forget the alcohol splash you remember. A Korean toner is a thin layer of water and calming plant extracts that puts moisture back and preps your skin for everything after it.",
             "product": "round-lab-1025-dokdo-toner"
           }
         },
@@ -53,7 +53,7 @@
           "type": "step",
           "settings": {
             "name": "Treat",
-            "text": "The serum is where the routine does its real work. Small molecules, high concentration, one job: to hydrate, to brighten, or to calm. On island skin, hydration comes first.",
+            "text": "This is the step that does the heavy lifting. Pick a serum for one job: hydrate, brighten or calm. Island skin? Start with hydration.",
             "product": "torriden-dive-in-low-molecular-hyaluronic-acid-serum"
           }
         },
@@ -61,7 +61,7 @@
           "type": "step",
           "settings": {
             "name": "Moisturise",
-            "text": "A cream seals everything in and supports the barrier that sun, salt and air conditioning wear down. Light in the morning, richer at night.",
+            "text": "Seal it all in. A cream looks after the skin barrier that sun, salt and aircon wear down. Go light in the morning and richer at night.",
             "product": "dr-althea-345-relief-cream"
           }
         },
@@ -69,7 +69,7 @@
           "type": "step",
           "settings": {
             "name": "Protect",
-            "text": "Sunscreen every morning, rain or shine, indoors or out. It is the one step that decides how your skin looks in ten years, and Korean formulas make it a pleasure to wear.",
+            "text": "Sunscreen every morning, rain or shine, indoors or out. If you only do one step, make it this one.",
             "product": "beauty-of-joseon-relief-sun-rice-niacinamide"
           }
         }
@@ -86,8 +86,8 @@
       "type": "product-list",
       "settings": {
         "eyebrow": "New to K-beauty?",
-        "heading": "Begin with three steps, not five",
-        "text": "Cleanse, tone, protect. Do that for a month, then add the serum and the cream when it feels natural.",
+        "heading": "Start with three steps, not five",
+        "text": "Cleanse, tone, protect. Do that for a month, then add a serum and a cream when you're ready.",
         "products": [
           "beplain-mung-bean-ph-balanced-cleansing-foam",
           "round-lab-1025-dokdo-toner",
@@ -99,9 +99,9 @@
     "auth": {
       "type": "rich-text",
       "settings": {
-        "eyebrow": "Why authentic matters",
+        "eyebrow": "Why the real thing matters",
         "heading": "The real formula, or nothing",
-        "text": "<p>A lot of Korean beauty in Mauritius arrives in a suitcase, or through a reseller who cannot say where it was kept, for how long, or whether it is the real thing.</p><p>Moana Beauté exists to change that. On every product you see the full ingredient list, so you can check it against the brand's own. And when you have a question, write to us.</p>",
+        "text": "<p>A lot of K-beauty in Mauritius arrives in a suitcase, or through someone who can't say where it was kept, for how long, or whether it's the real thing.</p><p>We're here to change that. Every product shows its full ingredient list, so you can check it against the brand's own. And if you have a question, just ask.</p>",
         "use_page_content": false,
         "link_label": "Ask us anything",
         "link_url": "shopify://pages/contact",

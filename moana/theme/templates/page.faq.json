@@ -4,7 +4,7 @@
       "type": "page-header",
       "settings": {
         "eyebrow": "Help",
-        "heading": "Frequently asked questions",
+        "heading": "You asked. We <em>answered</em>.",
         "text": "",
         "center": false
       }
@@ -21,28 +21,28 @@
           "type": "question",
           "settings": {
             "question": "How much is delivery?",
-            "answer": "<p>Rs 100 anywhere in Mauritius. Delivery is free when your order is above Rs 1,500.</p>"
+            "answer": "<p>Rs 100 anywhere in Mauritius, and free when your order is over Rs 1,500.</p>"
           }
         },
         "question_2": {
           "type": "question",
           "settings": {
             "question": "How long does delivery take?",
-            "answer": "<p>Orders usually arrive in 1 to 3 working days.</p>"
+            "answer": "<p>Usually 1 to 3 working days.</p>"
           }
         },
         "question_3": {
           "type": "question",
           "settings": {
             "question": "Can I collect my order instead?",
-            "answer": "<p>Yes, in Mon Gout, by arrangement. Write to us by email or on WhatsApp and we will agree a time with you.</p>"
+            "answer": "<p>Yes, in Mon Gout. Message us on WhatsApp or by email and we'll find a time that works for you.</p>"
           }
         },
         "question_4": {
           "type": "question",
           "settings": {
             "question": "How do I pay?",
-            "answer": "<p>By card at checkout. Card payments are processed by MIPS, so we never see your full card number.</p>"
+            "answer": "<p>By card at checkout. Payments go through MIPS, so we never see your full card number.</p>"
           }
         }
       },
@@ -65,21 +65,21 @@
           "type": "question",
           "settings": {
             "question": "Are the products authentic?",
-            "answer": "<p>Yes. We buy from wholesale suppliers, and every product page shows the full ingredient list, so you can compare it with the brand's own.</p>"
+            "answer": "<p>Always. Every product page shows the full ingredient list, so you can check it against the brand's own.</p>"
           }
         },
         "question_2": {
           "type": "question",
           "settings": {
-            "question": "Is a new product safe for my skin?",
-            "answer": "<p>We advise a patch test before using any new product. Our product information is not medical advice.</p>"
+            "question": "How do I try something new?",
+            "answer": "<p>Patch test first: a little on your inner arm or behind your ear, then wait a day. Our product info is not medical advice.</p>"
           }
         },
         "question_3": {
           "type": "question",
           "settings": {
             "question": "Where do the ingredient lists come from?",
-            "answer": "<p>From the supplier. If anything looks different from the pack you receive, tell us.</p>"
+            "answer": "<p>From the brand's own packaging information. If anything looks different from the pack you receive, tell us.</p>"
           }
         }
       },
@@ -101,7 +101,7 @@
           "type": "question",
           "settings": {
             "question": "Can I return a product?",
-            "answer": "<p>Unopened products in their original packaging can be returned within seven days of delivery. Opened skincare cannot be returned for hygiene reasons, unless it is faulty or not what you ordered. See <a href=\"/pages/delivery\">Delivery &amp; returns</a>.</p>"
+            "answer": "<p>Yes, if it's unopened and in its original packaging, within seven days of delivery. Opened skincare can't come back for hygiene reasons, unless it's faulty or not what you ordered. All the details are on <a href=\"/pages/delivery\">Delivery &amp; returns</a>.</p>"
           }
         }
       },

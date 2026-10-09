@@ -53,6 +53,62 @@
   }
   initReveal();
 
+  /* ---------------------------------------------------------------- line reveal (GetLayers Lumora text engine)
+     Headings marked [data-lines] are split into their rendered lines; each line rises out of its own mask,
+     100ms apart, over 900ms on easeOutCubic. The mask is padded so descenders are never cropped. The text stays
+     in the DOM in reading order, so screen readers and crawlers see one ordinary heading. */
+  function splitLines(el) {
+    if (el.dataset.linesDone) return;
+    el.dataset.linesDone = '1';
+    var words = [];
+    (function walk(node, wrap) {
+      Array.prototype.slice.call(node.childNodes).forEach(function (n) {
+        if (n.nodeType === 3) {
+          n.textContent.split(/(\s+)/).forEach(function (part) {
+            if (!part) return;
+            if (/^\s+$/.test(part)) { words.push(null); return; }
+            var w = document.createElement('span');
+            w.className = 'lw';
+            var inner = w;
+            wrap.forEach(function (tag) { var c = tag.cloneNode(false); inner.appendChild(c); inner = c; });
+            inner.textContent = part;
+            words.push(w);
+          });
+        } else if (n.nodeType === 1) {
+          walk(n, wrap.concat([n]));
+        }
+      });
+    })(el, []);
+    el.textContent = '';
+    words.forEach(function (w) { el.appendChild(w || document.createTextNode(' ')); });
+    var lines = [], top = null;
+    words.forEach(function (w) {
+      if (!w) return;
+      var t = w.offsetTop;
+      if (top === null || Math.abs(t - top) > 4) { lines.push([]); top = t; }
+      lines[lines.length - 1].push(w);
+    });
+    el.textContent = '';
+    lines.forEach(function (ws, i) {
+      var line = document.createElement('span');
+      line.className = 'line';
+      var inner = document.createElement('span');
+      inner.className = 'line__inner';
+      inner.style.setProperty('--li', i);
+      ws.forEach(function (w, j) { if (j) inner.appendChild(document.createTextNode(' ')); inner.appendChild(w); });
+      line.appendChild(inner);
+      el.appendChild(line);
+    });
+    el.classList.add('has-lines');
+    if (revealIO) revealIO.observe(el); else el.classList.add('is-in');
+  }
+  function initLines(ctx) {
+    if (reduceMotion || !revealIO) return;
+    var run = function () { $$('[data-lines]', ctx).forEach(splitLines); };
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(run); else run();
+  }
+  initLines();
+
   /* ---------------------------------------------------------------- overlay, drawers, focus trap */
   var overlay = $('[data-overlay]');
   var openStack = [];
@@ -187,7 +243,7 @@
       } else {
         var target = document.getElementById('shopify-section-' + id);
         var src = doc.getElementById('shopify-section-' + id) || doc.body;
-        if (target && src) { target.innerHTML = src.innerHTML; initReveal(target); }
+        if (target && src) { target.innerHTML = src.innerHTML; initReveal(target); initLines(target); }
       }
     });
   }
@@ -385,7 +441,7 @@
       io.disconnect();
       fetch(url).then(function (r) { return r.text(); }).then(function (html) {
         var fresh = $('[data-recommendations]', parseHTML(html));
-        if (fresh && fresh.innerHTML.trim()) { el.innerHTML = fresh.innerHTML; initReveal(el); }
+        if (fresh && fresh.innerHTML.trim()) { el.innerHTML = fresh.innerHTML; initReveal(el); initLines(el); }
       });
     }, { rootMargin: '400px 0px' });
     io.observe(el);
@@ -465,7 +521,7 @@
         var freshCount = $('.plp__filter-btn', doc), curCount = $('.plp__filter-btn', rootEl);
         if (freshCount && curCount) curCount.innerHTML = freshCount.innerHTML;
         rootEl.removeAttribute('aria-busy');
-        initReveal(rootEl);
+        initReveal(rootEl); initLines(rootEl);
         var status = $('[data-results] [role="status"]', rootEl);
         if (status) announce(status.textContent);
       })
@@ -536,5 +592,5 @@
   }
 
   /* ---------------------------------------------------------------- theme editor */
-  document.addEventListener('shopify:section:load', function (ev) { initReveal(ev.target); initProduct(ev.target); $$('.reveal', ev.target).forEach(function (el) { el.classList.add('is-in'); }); });
+  document.addEventListener('shopify:section:load', function (ev) { initReveal(ev.target); initLines(ev.target); initProduct(ev.target); $$('.reveal', ev.target).forEach(function (el) { el.classList.add('is-in'); }); });
 })();

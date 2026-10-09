@@ -1,0 +1,20 @@
+// Element screenshot: node dev/shoot-el.mjs <path> <width> <selector> [out]
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require('/opt/node-tools/node_modules/playwright');
+const [,, url = '/', width = '1440', sel = 'body', out] = process.argv;
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: Number(width), height: Number(width) < 700 ? 844 : 900 }, deviceScaleFactor: 1 });
+const errors = [];
+p.on('pageerror', (e) => errors.push(e.message));
+p.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+await p.goto('http://localhost:4100' + url, { waitUntil: 'networkidle' });
+await p.evaluate(async () => { for (let y = 0; y < document.body.scrollHeight; y += 400) { window.scrollTo(0, y); await new Promise(r => setTimeout(r, 60)); } });
+await p.evaluate(() => document.querySelectorAll('.reveal,.reveal-media').forEach(e => e.classList.add('is-in')));
+const el = p.locator(sel).first();
+await el.scrollIntoViewIfNeeded();
+await p.waitForTimeout(1500);
+const file = out || `dev/out/el-${sel.replace(/[^a-z0-9]+/gi, '_')}-${width}.png`;
+await el.screenshot({ path: file });
+console.log(file, errors.length ? 'ERRORS: ' + errors.join(' | ') : 'no errors');
+await b.close();
