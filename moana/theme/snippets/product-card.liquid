@@ -56,25 +56,6 @@
         {%- if variant.compare_at_price > variant.price -%}<span class="tag">{{ 'products.sale' | t }}</span>{%- endif -%}
       {%- endunless -%}
     </div>
-    {%- if show_quick and product.available -%}
-      <div class="card__quick">
-        {%- if product.has_only_default_variant -%}
-          {%- form 'product', product, class: 'card__form', data-product-form: '', novalidate: 'novalidate' -%}
-            <input type="hidden" name="id" value="{{ variant.id }}">
-            <input type="hidden" name="quantity" value="1">
-            <button class="btn btn--small" type="submit" name="add" aria-label="{{ 'products.add_named' | t: title: product.title | escape }}">
-              <span class="btn__text">{{ 'products.quick_add' | t }}</span>
-              <span class="btn__icon">{% render 'icon', name: 'plus' %}</span>
-            </button>
-          {%- endform -%}
-        {%- else -%}
-          <a class="btn btn--small" href="{{ product.url }}" aria-label="{{ 'products.choose_named' | t: title: product.title | escape }}">
-            <span class="btn__text">{{ 'products.choose' | t }}</span>
-            <span class="btn__icon">{% render 'icon', name: 'arrow-right' %}</span>
-          </a>
-        {%- endif -%}
-      </div>
-    {%- endif -%}
   </div>
   <div class="card__body">
     {%- if product.vendor != blank -%}<p class="card__vendor">{{ product.vendor }}</p>{%- endif -%}
@@ -82,9 +63,27 @@
     {%- if concerns.size > 0 -%}
       <p class="card__concerns t-xs t-soft">{{ concerns | slice: 0, 2 | join: ' · ' }}</p>
     {%- endif -%}
-    <div class="card__meta">
-      {%- render 'price', product: product, variant: variant -%}
-      {%- if size != blank -%}<span class="card__size">{{ size }}</span>{%- endif -%}
-    </div>
+    {%- if size != blank -%}<p class="card__size">{{ size }}</p>{%- endif -%}
+  </div>
+  {%- comment -%}
+    The price lives in the button (pattern from Kosas): one clear action per card, always visible, never over the photo.
+  {%- endcomment -%}
+  <div class="card__buy">
+    {%- assign price_label = variant.price | money -%}
+    {%- if product.price_varies -%}{%- assign price_label = 'products.from_price' | t: price: price_label -%}{%- endif -%}
+    {%- if show_quick and product.available and product.has_only_default_variant -%}
+      {%- form 'product', product, class: 'card__form', data-product-form: '', novalidate: 'novalidate' -%}
+        <input type="hidden" name="id" value="{{ variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button class="btn btn--secondary btn--small card__btn" type="submit" name="add" aria-label="{{ 'products.add_named_price' | t: title: product.title, price: price_label | escape }}">
+          <span><span class="hide-mobile">{{ 'products.add_to_cart' | t }}</span><span class="hide-desktop">{{ 'products.add' | t }}</span></span>
+          <span class="card__btn-price">{%- if variant.compare_at_price > variant.price -%}<s>{{ variant.compare_at_price | money }}</s> {% endif -%}{{ price_label }}</span>
+        </button>
+      {%- endform -%}
+    {%- elsif product.available -%}
+      <a class="btn btn--secondary btn--small card__btn" href="{{ product.url }}" aria-label="{{ 'products.choose_named' | t: title: product.title | escape }}"><span>{{ 'products.choose' | t }}</span><span class="card__btn-price">{{ price_label }}</span></a>
+    {%- else -%}
+      <span class="btn btn--secondary btn--small card__btn" aria-disabled="true"><span>{{ 'products.sold_out' | t }}</span><span class="card__btn-price">{{ price_label }}</span></span>
+    {%- endif -%}
   </div>
 </article>

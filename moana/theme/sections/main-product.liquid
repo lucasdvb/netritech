@@ -188,7 +188,14 @@
           {%- if how != blank -%}
             <details class="accordion__item">
               <summary><span>{{ 'products.how_to_use' | t }}</span><span class="accordion__icon" aria-hidden="true"></span></summary>
-              <div class="accordion__body"><p>{{ how | escape | newline_to_br }}</p></div>
+              {%- assign how_steps = how | strip | replace: '. ', '.|' | split: '|' -%}
+              <div class="accordion__body">
+                {%- if how_steps.size > 1 -%}
+                  <ol class="pdp__steps" role="list">{%- for step in how_steps -%}<li><span aria-hidden="true">{{ forloop.index }}</span><p>{{ step | escape }}</p></li>{%- endfor -%}</ol>
+                {%- else -%}
+                  <p>{{ how | escape | newline_to_br }}</p>
+                {%- endif -%}
+              </div>
             </details>
           {%- endif -%}
           {%- if full_ing != blank -%}
@@ -274,6 +281,10 @@
 .pdp__keys li { display: flex; align-items: center; gap: .6rem; color: var(--ink); font-weight: 500; }
 .pdp__keys svg { width: 16px; height: 16px; color: var(--c-sage); flex: none; }
 .pdp__inci { font-size: var(--fs-small); line-height: 1.75; }
+.pdp__steps { display: grid; gap: var(--s-3); }
+.pdp__steps li { display: grid; grid-template-columns: 28px 1fr; gap: var(--s-3); align-items: start; }
+.pdp__steps li > span { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--c-spring); color: var(--c-forest); font: 700 .75rem/1 var(--f-body); }
+.pdp__steps p { padding-top: 3px; color: var(--ink); }
 @media (min-width: 990px) {
   .pdp__grid { grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); gap: clamp(3rem, 6vw, 7rem); align-items: start; }
   .pdp__sticky { position: sticky; top: calc(var(--header-h) + var(--s-5)); }

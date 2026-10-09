@@ -229,7 +229,16 @@
 .plp__tools { display: flex; align-items: center; gap: var(--s-2); }
 .plp__filter-btn svg { width: 18px; height: 18px; flex: none; }
 .plp__toolbar > p { white-space: nowrap; }
-@media (max-width: 749px) { .plp__sort-select { max-width: 11.5rem; padding-right: 2.25rem; background-position: right .75rem center; } .plp__toolbar { gap: var(--s-2); } }
+@media (max-width: 599px) {
+  .plp__toolbar { flex-wrap: wrap; gap: var(--s-2); }
+  .plp__toolbar > p { width: 100%; }
+  .plp__tools { width: 100%; }
+  .plp__filter-btn { flex: 1; justify-content: center; }
+  .plp__sort { flex: 1.3; min-width: 0; }
+  .plp__sort-select { width: 100%; min-width: 0; max-width: 100%; padding-right: 2.25rem; background-position: right .75rem center; text-overflow: ellipsis; }
+  .plp__tools { min-width: 0; }
+  .plp__filter-btn { padding: 0 .75rem; }
+}
 .plp__sort-select { min-height: 40px; width: auto; border-radius: var(--r-pill); font-size: var(--fs-small); font-weight: 500; padding-left: 1rem; }
 .plp__active { margin-bottom: var(--s-5); gap: var(--s-2); }
 .plp__active .pill svg { width: 12px; height: 12px; }

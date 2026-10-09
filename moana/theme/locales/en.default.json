@@ -74,7 +74,8 @@
     "tax_included": "Taxes included.",
     "whatsapp_prefill": "Hello Moana Beauté, I have a question about {{ title }}.",
     "zoom": "Enlarge image {{ n }}",
-    "zoom_dialog": "Enlarged product image"
+    "zoom_dialog": "Enlarged product image",
+    "add_named_price": "Add {{ title }} to your cart, {{ price }}"
   },
   "routine": {
     "step_n": "Step {{ n }}"
@@ -136,7 +137,8 @@
     "taxes_included": "Taxes included.",
     "title": "Your cart",
     "toast_added": "Added to your cart",
-    "view_cart": "View cart"
+    "view_cart": "View cart",
+    "suggestions": "You may also like"
   },
   "search": {
     "collections": "Collections",
@@ -156,7 +158,8 @@
     "submit": "Search",
     "suggestions": "Suggestions",
     "title": "Search",
-    "view_all": "See all results for “{{ terms }}”"
+    "view_all": "See all results for “{{ terms }}”",
+    "new_in": "New in"
   },
   "contact": {
     "address": "Registered address",

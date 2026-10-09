@@ -74,7 +74,8 @@
     "tax_included": "Taxes incluses.",
     "whatsapp_prefill": "Bonjour Moana Beauté, j’ai une question sur {{ title }}.",
     "zoom": "Agrandir l’image {{ n }}",
-    "zoom_dialog": "Image du produit agrandie"
+    "zoom_dialog": "Image du produit agrandie",
+    "add_named_price": "Ajouter {{ title }} au panier, {{ price }}"
   },
   "routine": {
     "step_n": "Étape {{ n }}"
@@ -136,7 +137,8 @@
     "taxes_included": "Taxes incluses.",
     "title": "Votre panier",
     "toast_added": "Ajouté à votre panier",
-    "view_cart": "Voir le panier"
+    "view_cart": "Voir le panier",
+    "suggestions": "Vous aimerez aussi"
   },
   "search": {
     "collections": "Collections",
@@ -156,7 +158,8 @@
     "submit": "Rechercher",
     "suggestions": "Suggestions",
     "title": "Recherche",
-    "view_all": "Voir tous les résultats pour « {{ terms }} »"
+    "view_all": "Voir tous les résultats pour « {{ terms }} »",
+    "new_in": "Nouveautés"
   },
   "contact": {
     "address": "Adresse du siège",

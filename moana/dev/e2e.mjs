@@ -22,8 +22,7 @@ await fetch(BASE + '/cart/clear');
 let p = await page(1440);
 await p.goto(BASE + '/collections/skincare', { waitUntil: 'networkidle' });
 const firstCard = p.locator('.card').first();
-await firstCard.hover();
-await firstCard.locator('.card__quick button').click();
+await firstCard.locator('.card__buy button').click();
 await p.waitForSelector('#cart-drawer.is-open', { timeout: 4000 });
 check('quick add opens the cart drawer', await p.locator('#cart-drawer.is-open').count() === 1);
 check('drawer lists the added product', (await p.locator('#cart-drawer .cart-line').count()) === 1);
@@ -61,7 +60,7 @@ check('active filter chip shown', await p.locator('.plp__active .pill.is-active'
 await p.selectOption('[data-sort-select]', 'price-ascending');
 await p.waitForFunction(() => location.search.includes('sort_by=price-ascending'), null, { timeout: 4000 });
 await p.waitForTimeout(300);
-const prices = await p.$$eval('.plp__grid .price__now', (els) => els.map((e) => Number(e.textContent.replace(/[^0-9]/g, ''))));
+const prices = await p.$$eval('.plp__grid .card__btn-price', (els) => els.map((e) => Number(e.textContent.replace(/[^0-9]/g, ''))));
 check('sort by price ascending orders the grid', prices.length === 3 && prices.every((v, i) => i === 0 || prices[i - 1] <= v), prices.join(','));
 await p.locator('.plp__active a.link').click();
 await p.waitForFunction(() => document.querySelectorAll('.plp__grid .card').length === 21, null, { timeout: 4000 }).catch(() => {});
@@ -136,7 +135,7 @@ const overflow = await p.evaluate(() => document.documentElement.scrollWidth - i
 check('no horizontal scroll at 390px', overflow <= 0, String(overflow));
 
 /* 8. no-JS fallbacks: forms post to real Shopify routes */
-check('quick add is a real form posting to /cart/add', await p.$eval('.card__form', (f) => f.getAttribute('action') === '/cart/add' && f.method === 'post'));
+check('card add button is a real form posting to /cart/add', await p.$eval('.card__form', (f) => f.getAttribute('action') === '/cart/add' && f.method === 'post'));
 
 await b.close();
 const failed = results.filter((r) => !r.ok);

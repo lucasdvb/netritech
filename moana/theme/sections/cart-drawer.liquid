@@ -17,6 +17,25 @@
           {%- render 'cart-line', item: item, index: forloop.index, context: 'drawer' -%}
         {%- endfor -%}
       </ul>
+      {%- comment -%} At most two suggestions, never a carousel: the drawer's job is checkout. {%- endcomment -%}
+      {%- assign suggest_source = settings.cart_suggestions | default: collections['new'] -%}
+      {%- assign in_cart = cart.items | map: 'product_id' | join: ',' | prepend: ',' | append: ',' -%}
+      {%- capture suggestions -%}
+        {%- assign shown = 0 -%}
+        {%- for p in suggest_source.products -%}
+          {%- assign pid = p.id | prepend: ',' | append: ',' -%}
+          {%- if in_cart contains pid or p.available == false -%}{%- continue -%}{%- endif -%}
+          {%- render 'mini-product', product: p -%}
+          {%- assign shown = shown | plus: 1 -%}
+          {%- if shown >= 2 -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- if suggestions != blank -%}
+        <div class="cart-suggest">
+          <p class="t-label">{{ 'cart.suggestions' | t }}</p>
+          <ul class="mini-list" role="list">{{ suggestions }}</ul>
+        </div>
+      {%- endif -%}
     </div>
     <div class="drawer__foot cart-drawer__foot">
       {%- render 'cart-summary' -%}
