@@ -666,3 +666,5 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 .focus-for { text-align: center; color: var(--text-2); font-size: var(--text-body); font-weight: var(--weight-medium); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
 .focus-own { width: 7.5em; height: 40px; }
 .focus-own input { height: 40px; }
+.set-update { margin-top: var(--s3); justify-content: flex-start; }
+.set-update .btn { flex: 0 0 auto; }
