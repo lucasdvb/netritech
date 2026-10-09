@@ -4,7 +4,7 @@
 import * as store from '../data/store.js';
 import * as F from './fitness-core.js';
 
-export const KINDS = [{ id: 'strength', label: 'Strength' }, { id: 'cardio', label: 'Cardio' }, { id: 'recovery', label: 'Recovery' }];
+export const KINDS = [{ id: 'strength', label: 'Strength' }, { id: 'cardio', label: 'Cardio' }, { id: 'recovery', label: 'Recovery' }, { id: 'mobility', label: 'Mobility' }];
 /** Rest between sets when a workout doesn't set its own (seconds), by exercise category. */
 export const REST_BY_CATEGORY = { core: 45, calves: 60, mobility: 30, posture: 30, cardio: 0 };
 export const restDefault = (e) => (e && REST_BY_CATEGORY[e.category] != null ? REST_BY_CATEGORY[e.category] : 90);

@@ -130,9 +130,9 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
 Your whole system from the Life OS spec and workbook is there on day one. Nothing needs typing in:
 
 - **Profile and day:** 35, 180 cm, 76 kg, ~25% → 15% body fat, wake 06:00, train 06:30, work 10:00–20:00, lights out 22:00.
-- **Habits:** 41 habits across the 8 pillars, each with a tiny version, all on autopilot until you choose your three (the optional ones wait in Later), and the 8 Minimum-day essentials. Morning reset, mobility and evening routine are one-tick checklists.
+- **Habits:** 41 habits across the 8 pillars, each with a tiny version, all on autopilot until you choose your three (the optional ones wait in Later), and the 8 Minimum-day essentials. Morning reset and the evening routine are one-tick checklists. Mobility & posture is a workout (below); its habit ticks itself when you finish it.
   - Caffeine cutoff and alcohol-free days are included but archived, because the spec says to track them only if they apply. A task asks you to decide.
-- **Training:** the Mon–Sun split with five templates (upper + posture, lower + calves + core, walk + mobility, cardio, 20-minute minimum) and about 40 exercises with progressions.
+- **Training:** the Mon–Sun split with six workouts (upper + posture, lower + calves + core, walk + mobility, cardio, 20-minute minimum, and the 10-minute Mobility & posture) and about 40 exercises with progressions. Mobility sessions don't count as training.
   - Upper days end with a short calf and core finisher, so both reach the spec's 3–4 sessions a week.
 - **Tasks:**
   - one-off: book an eye-specialist follow-up, book a dental / orthodontic assessment, set up the desk, turn on reminders, and the caffeine and alcohol decisions;
@@ -176,7 +176,7 @@ The **app-icon badge** shows how much of today's plan is still open and updates 
 - **Brain dump:** Plan → Brain dump keeps notes by category; they're in backups, sync and the CSV export.
 - **Exercise photos and notes:** up to two photos and a note per exercise (⋯ › Photos and note). They're always in backups, like the moodboard.
 
-**Security.** The app runs only its own code: a Content Security Policy (`index.html`) allows scripts from this site alone, so even a damaged or hostile record can't run anything. Everything you type is shown as text, and colours or categories that reach markup are checked against known values. A backup is checked in full before anything changes, and a restore that fails part-way changes nothing. CSV cells that a spreadsheet would treat as formulas are exported as text.
+**Security.** The app runs only its own code: a Content Security Policy (`index.html`) allows scripts from this site alone (plus the one-line theme script, allowed by its hash; change that script and its hash in the policy together), so even a damaged or hostile record can't run anything. Everything you type is shown as text, and colours or categories that reach markup are checked against known values. A backup is checked in full before anything changes, and a restore that fails part-way changes nothing. CSV cells that a spreadsheet would treat as formulas are exported as text.
 
 Nothing in the app is a medical claim:
 

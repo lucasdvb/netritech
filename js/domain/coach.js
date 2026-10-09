@@ -217,7 +217,7 @@ export function weeklyInsights(weekStart = startOfWeek(today())) {
   const mob = habit('h-mobility');
   if (mob) {
     const n = days.filter((d) => isDone(mob, d)).length;
-    if (days.length) out.push({ id: 'posture', area: 'Posture', text: `Posture routine done ${n} of ${days.length} days.` });
+    if (days.length) out.push({ id: 'posture', area: 'Posture', text: `Mobility & posture done ${n} of ${days.length} days.` });
   }
   const mind = days.reduce((a, d) => a + M.mindMinutes(d), 0);
   if (mind) out.push({ id: 'mind', area: 'Mind', text: `${num(mind)} minutes of reading and learning logged.` });

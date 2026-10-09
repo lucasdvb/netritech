@@ -101,7 +101,7 @@ export function weekStats(date = today()) {
 
 function computeWeekStats(date) {
   const from = startOfWeek(date), to = endOfWeek(date);
-  const ws = store.all('workouts').filter((w) => w.status === 'done' && w.date >= from && w.date <= to);
+  const ws = store.all('workouts').filter((w) => w.status === 'done' && w.kind !== 'mobility' && w.date >= from && w.date <= to);
   let calfSessions = 0, coreSessions = 0, calfReps = 0, calfVolume = 0, minutes = 0;
   for (const w of ws) {
     minutes += Number(w.minutes) || 0;

@@ -430,7 +430,7 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 .tpl-list { display: flex; flex-direction: column; gap: 8px; }
 .tpl-item { width: 100%; display: grid; grid-template-columns: 1fr auto; text-align: left; padding: 16px 16px 16px 18px; border-radius: var(--r-lg); background: var(--surface); gap: 2px 12px; }
 .tpl-item.is-suggested { background: var(--accent); color: var(--on-accent); }
-.tpl-item.is-suggested .tpl-meta { color: rgba(255, 255, 255, .72); }
+.tpl-item.is-suggested .tpl-meta { color: var(--on-accent); }
 .tpl-item.is-suggested .tpl-go { background: #fff; color: var(--accent); }
 .tpl-name { font-size: var(--text-body); font-weight: var(--weight-semibold); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); }
 .tpl-meta { font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-3); grid-row: 2; }

@@ -24,7 +24,7 @@ function daySchedule(p) {
   return [
     [p.wakeTime, 'Wake · morning reset', 'Out of bed, water, make the bed, outdoor light, no social media for 30 minutes'],
     [habitTime('h-prayer', shift(p.wakeTime, 5)), 'Prayer & Scripture', '5–10 minutes'],
-    [habitTime('h-mobility', shift(p.wakeTime, 15)), 'Mobility & posture', '10 minutes, one tick for the whole routine'],
+    [habitTime('h-mobility', shift(p.wakeTime, 15)), 'Mobility & posture', 'The mobility workout, about 10 minutes'],
     [p.trainTime, 'Training', 'The session from your weekly plan'],
     [shift(p.trainTime, 90), 'Breakfast & prep', 'Protein first: 30–40 g'],
     [p.workStart, 'Work', 'Top 3 before you start · 2–3 deep-work blocks · move every 45–60 min · 20-20-20 for the eyes'],
@@ -60,7 +60,8 @@ export default {
     const habits = H.activeHabits();
     const mvd = habits.filter((h) => h.mvd);
     const three = H.focusHabits();
-    const routines = ['h-morning-reset', 'h-mobility', 'h-evening'].map((id) => H.habit(id)).filter((h) => h && !h.archived);
+    // Mobility & posture is a workout plan now: it's under Training, not here.
+    const routines = ['h-morning-reset', 'h-mobility', 'h-evening'].map((id) => H.habit(id)).filter((h) => h && !h.archived && h.checklist?.length);
     const tpls = F.templates();
     return html`
       ${pageHead({ title: 'Your plan', back: { to: 'plan', label: 'Plan' }, sub: 'The playbook behind the ticks. Edit any habit, template or target and this page follows.' })}

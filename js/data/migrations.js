@@ -6,6 +6,7 @@ import * as store from './store.js';
 import { BACKUP_STORES, DB_VERSION } from './schema.js';
 import { TINY_VERSIONS, BACKUPS } from './tiny-versions.js';
 import { defaultRoutines } from '../domain/routines.js';
+import { MOBILITY_HABIT, mobilityTemplate, exercisesSeed } from './seed.js';
 
 /** Each run() returns store.batch ops; it must leave already-migrated data unchanged. */
 export const MIGRATIONS = [
@@ -56,6 +57,32 @@ export const MIGRATIONS = [
     id: '2026-10-backups',
     about: 'backup plans for training, reading, meditation and the evening routine',
     run: () => store.all('habits').filter((h) => BACKUPS[h.id] && !h.backup).map((h) => ({ store: 'habits', value: { ...h, backup: BACKUPS[h.id] } })),
+  },
+  {
+    id: '2026-10-mobility-workout',
+    about: 'Mobility & posture becomes a workout plan',
+    // The checklist becomes a workout you log like any other; the habit stays (with its history,
+    // goal and place in the morning) and ticks itself when that workout is done.
+    run: () => {
+      const ops = [];
+      const tpl = mobilityTemplate();
+      if (!store.get('templates', tpl.id)) {
+        ops.push({ store: 'templates', value: tpl });
+        const seeds = new Map(exercisesSeed().map((e) => [e.id, e]));
+        for (const it of tpl.items) if (!store.get('exercises', it.exerciseId) && seeds.has(it.exerciseId)) ops.push({ store: 'exercises', value: seeds.get(it.exerciseId) });
+      }
+      const h = store.get('habits', 'h-mobility');
+      if (h && !h.templateId) {
+        const list = h.checklist || [];
+        // A day with every item ticked was done, and stays done without the checklist.
+        for (const l of store.all('habitLogs')) {
+          if (l.habitId !== h.id || l.value === 1 || !list.length || !l.checklist) continue;
+          if (list.every((_, i) => l.checklist[i])) ops.push({ store: 'habitLogs', value: { ...l, value: 1, completed: true } });
+        }
+        ops.push({ store: 'habits', value: { ...h, ...MOBILITY_HABIT, checklist: [], description: h.description && !/Consistency, not perfection\.$/.test(h.description) ? h.description : MOBILITY_HABIT.description } });
+      }
+      return ops;
+    },
   },
 ];
 

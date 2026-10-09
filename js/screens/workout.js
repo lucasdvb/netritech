@@ -85,7 +85,8 @@ function exerciseCard(w, g, progress) {
   const prevSets = prev ? F.setsOf(prev.workout.id).filter((s) => s.exerciseId === prev.exerciseId && s.completed) : [];
   const row = progress?.rows.find((r) => r.exerciseId === e.id);
   const family = e.family ? F.exercises().filter((x) => x.family === e.family) : [];
-  const step = w.status === 'active' ? nextStep(e.id, g.sets[0].target, { excludeWorkoutId: w.id, before: w.date, unit: weightUnit() }) : null;
+  // Mobility is about doing it, not doing more: no progression suggested.
+  const step = w.status === 'active' && w.kind !== 'mobility' ? nextStep(e.id, g.sets[0].target, { excludeWorkoutId: w.id, before: w.date, unit: weightUnit() }) : null;
   return html`<section class="ex-card" data-key="ex-${g.sets[0].id}">
     <header class="ex-head">
       <button type="button" class="drag-handle" data-drag aria-label="Move ${e.name}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>
@@ -285,7 +286,7 @@ function sessionMenu(workoutId) {
     render: () => html`<form class="form" data-submit="save">
       <label class="field"><span class="field-label">Name</span><input class="input" name="title" value="${w.title}"></label>
       <label class="field"><span class="field-label">Date</span><input class="input" type="date" name="date" value="${w.date}" max="${today()}"></label>
-      <label class="field"><span class="field-label">Type</span><select class="input" name="kind">${['strength', 'cardio', 'recovery'].map((k) => html`<option value="${k}" ${raw(w.kind === k ? 'selected' : '')}>${k[0].toUpperCase() + k.slice(1)}</option>`)}</select></label>
+      <label class="field"><span class="field-label">Type</span><select class="input" name="kind">${['strength', 'cardio', 'recovery', 'mobility'].map((k) => html`<option value="${k}" ${raw(w.kind === k ? 'selected' : '')}>${k[0].toUpperCase() + k.slice(1)}</option>`)}</select></label>
       <button type="submit" class="btn btn--primary btn--block">Save</button>
       ${F.setsOf(w.id).length ? html`<button type="button" class="btn btn--soft btn--block" data-action="as-template">${icon('copy', { size: 16 })} Save as a workout</button>` : ''}
       <button type="button" class="btn btn--ghost btn--block btn--danger-text" data-action="discard">${w.status === 'active' ? 'Discard session' : 'Delete session'}</button>

@@ -252,4 +252,27 @@ await step('exercise photos and a note: two at most, shown in the list and gym m
   await ctx.close();
 });
 
+await step('Mobility & posture is a workout: tapped on Today it starts, finishing it ticks the habit, and it isn’t training', async () => {
+  const { ctx, p } = await at('2026-10-09T06:20:00');
+  await p.goto(`${base}#/today`);
+  await p.locator('button.rstep-main[data-id="h-mobility"]').click();
+  await p.waitForFunction(() => /#\/workout\//.test(location.hash));
+  await p.waitForSelector('.ex-card');
+  if ((await p.textContent('.page-title')).trim() !== 'Mobility & posture' || (await p.locator('.ex-card').count()) !== 8) throw new Error('not the mobility workout');
+  if (await p.locator('.ex-step').count()) throw new Error('mobility suggests progression');
+  const wid = await ev(p, () => location.hash.split('/')[2]);
+  const first = p.locator('.ex-card').first().locator('.wset-row:not(.wset-row--head)').first().locator('.set-in').last();
+  await first.fill('10');
+  await first.press('Tab');
+  await p.locator('[data-action="finish"]').click();
+  await p.locator('.sheet [data-action="done"]').click();
+  await p.waitForSelector('.sheet-wrap', { state: 'detached' });
+  const r = await ev(p, async (w) => {
+    const H = await import('./js/domain/habits.js'); const D = await import('./js/domain/dates.js');
+    return { kind: window.__lifeos.store.get('workouts', w).kind, mob: H.isDone(H.habit('h-mobility'), D.today()), training: H.isDone(H.habit('h-training'), D.today()) };
+  }, wid);
+  if (r.kind !== 'mobility' || !r.mob || r.training) throw new Error(JSON.stringify(r));
+  await ctx.close();
+});
+
 await finish();

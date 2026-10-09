@@ -28,7 +28,7 @@ export function startWorkout(templateId, date = today()) {
       const prevSets = prev ? F.setsOf(prev.workout.id).filter((s) => s.exerciseId === prev.exerciseId && s.completed) : [];
       const sets = lighter ? Math.max(2, it.sets - 1) : it.sets;
       // The next step (13d): heavier when every set reached the top of the range, else one more rep.
-      const step = lighter ? null : nextStep(it.exerciseId, it.reps, { before: date, unit: weightUnit() });
+      const step = lighter || tpl.kind === 'mobility' ? null : nextStep(it.exerciseId, it.reps, { before: date, unit: weightUnit() });
       const high = parseRange(it.reps)?.high ?? Infinity;
       for (let i = 0; i < sets; i++) {
         const last = prevSets[i] || prevSets[prevSets.length - 1];
