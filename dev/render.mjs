@@ -37,7 +37,7 @@ export const products = rawProducts.map((p, idx) => {
     options: [v.title]
   };
   return {
-    id: Number(p.id.split('/').pop()), title: p.title, handle: p.handle, vendor: p.vendor, type: p.productType, tags: p.tags,
+    id: Number(p.id.split('/').pop()), published_at: '2026-10-08T09:55:26Z', created_at: '2026-10-08T09:55:24Z', title: p.title, handle: p.handle, vendor: p.vendor, type: p.productType, tags: p.tags,
     description: p.descriptionHtml, content: p.descriptionHtml, url: `/products/${p.handle}`, price: variant.price, price_min: variant.price,
     price_max: variant.price, price_varies: false, available: variant.available, compare_at_price: variant.compare_at_price,
     featured_media: media[0], featured_image: media[0], media, images: media, metafields: { custom: mf },
@@ -66,8 +66,8 @@ for (const c of rawCollections) {
 }
 collections.all = buildCollection({ handle: 'all', title: 'Products', description: '' }, products);
 
-const pages = Object.fromEntries(['about', 'contact', 'k-beauty', 'delivery', 'brands', 'faq'].map((h) => [h, {
-  handle: h, url: `/pages/${h}`, content: '', title: { about: 'About', contact: 'Contact', 'k-beauty': 'K-Beauty', delivery: 'Delivery & Returns', brands: 'Brands', faq: 'FAQ' }[h]
+const pages = Object.fromEntries(['about', 'contact', 'k-beauty', 'delivery', 'brands', 'faq', 'routine-finder', 'wishlist'].map((h) => [h, {
+  handle: h, url: `/pages/${h}`, content: '', title: { about: 'About', contact: 'Contact', 'k-beauty': 'K-Beauty', delivery: 'Delivery & Returns', brands: 'Brands', faq: 'FAQ', 'routine-finder': 'Find my routine', wishlist: 'Wishlist' }[h]
 }]));
 
 function link(title, url, children = []) {
@@ -80,6 +80,7 @@ const catLinks = ['cleansers', 'toners-essences', 'serums-ampoules', 'moisturise
 export const linklists = {
   'moana-main': { links: [link('Shop', '/collections/skincare', catLinks), link('Brands', '/pages/brands'), link('The routine', '/pages/k-beauty'), link('About', '/pages/about')] },
   'main-menu': { links: [link('Skincare', '/collections/skincare', catLinks)] },
+  'moana-nav': { links: [link('New In', '/collections/new'), link('Skincare', '/collections/skincare', catLinks), link('Cleansers', '/collections/cleansers'), link('Toners & Essences', '/collections/toners-essences'), link('Serums', '/collections/serums-ampoules'), link('Moisturisers', '/collections/moisturisers'), link('Sunscreen', '/collections/sunscreen'), link('Brands', '/pages/brands'), link('Routine guide', '/pages/k-beauty')] },
   'moana-footer-help': { links: [link('Delivery & returns', '/pages/delivery'), link('FAQ', '/pages/faq'), link('Contact', '/pages/contact')] },
   footer: { links: [link('Delivery & returns', '/pages/delivery'), link('FAQ', '/pages/faq'), link('Contact', '/pages/contact'), link('Privacy policy', '/policies/privacy-policy'), link('Terms of service', '/policies/terms-of-service')] },
   'moana-footer-shop': { links: [link('All skincare', '/collections/skincare'), link('New', '/collections/new'), link('Brands', '/pages/brands'), link('The routine guide', '/pages/k-beauty'), link('About us', '/pages/about')] }

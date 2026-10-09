@@ -187,6 +187,214 @@
     onScroll();
   }
 
+  /* ---------------------------------------------------------------- rotating bars (service bar on phones, promo bar) */
+  function rotator(rootEl, itemSel, when) {
+    var items = $$(itemSel, rootEl);
+    if (items.length < 2 || reduceMotion) return;
+    var i = 0, paused = false;
+    on(rootEl, 'mouseenter', function () { paused = true; });
+    on(rootEl, 'mouseleave', function () { paused = false; });
+    on(rootEl, 'focusin', function () { paused = true; });
+    on(rootEl, 'focusout', function () { paused = false; });
+    setInterval(function () {
+      if (paused || document.hidden || (when && !when())) return;
+      items[i].classList.remove('is-active');
+      i = (i + 1) % items.length;
+      items[i].classList.add('is-active');
+    }, 4500);
+  }
+  $$('[data-usp]').forEach(function (el) { rotator(el, '.usp__item', function () { return window.innerWidth < 990; }); });
+  $$('[data-rotator]').forEach(function (el) { rotator(el, '.announce__item'); });
+
+  /* ---------------------------------------------------------------- header search field opens the predictive search */
+  $$('[data-search-trigger]').forEach(function (input) {
+    // opens on click or on the first keystroke (not on focus, so focus returning here on close does not reopen it)
+    var hand = function () {
+      var m = $('[data-search-modal]');
+      if (!m) return;
+      var mi = $('[data-search-input]', m);
+      openPanel(m, input);
+      if (mi) { mi.value = input.value; if (input.value) mi.dispatchEvent(new Event('input')); }
+      input.value = '';
+    };
+    on(input, 'click', hand);
+    on(input, 'input', hand);
+  });
+
+  /* ---------------------------------------------------------------- wishlist (kept on this device, no account needed) */
+  var WL_KEY = 'moana:wishlist';
+  function wlRead() { try { return JSON.parse(localStorage.getItem(WL_KEY) || '[]'); } catch (e) { return []; } }
+  function wlWrite(list) { try { localStorage.setItem(WL_KEY, JSON.stringify(list)); } catch (e) {} }
+  function wlPaint() {
+    var list = wlRead();
+    $$('[data-wishlist-toggle]').forEach(function (b) {
+      var on_ = list.indexOf(b.getAttribute('data-wishlist-toggle')) > -1;
+      b.setAttribute('aria-pressed', on_ ? 'true' : 'false');
+    });
+    $$('[data-wishlist-count]').forEach(function (c) { c.textContent = list.length; c.hidden = !list.length; });
+  }
+  document.addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-wishlist-toggle]');
+    if (!b) return;
+    ev.preventDefault();
+    var h = b.getAttribute('data-wishlist-toggle'), list = wlRead(), idx = list.indexOf(h);
+    if (idx > -1) { list.splice(idx, 1); announce(S.wishlistRemoved || ''); }
+    else { list.unshift(h); announce(S.wishlistAdded || ''); b.classList.remove('is-popped'); void b.offsetWidth; b.classList.add('is-popped'); }
+    wlWrite(list.slice(0, 60));
+    wlPaint();
+    document.dispatchEvent(new CustomEvent('wishlist:change'));
+  });
+  wlPaint();
+  window.MoanaWishlist = { read: wlRead, write: wlWrite, paint: wlPaint };
+
+  /* ---------------------------------------------------------------- carousels
+     One mechanic for every slider (hero, promo strip, product rails, editorial cards): a native scroll-snap
+     track, so touch swipe and trackpads work with no script; this adds the arrows, the dots, and an optional
+     autoplay that pauses on hover, on focus, in a background tab, on the pause button and under reduced motion. */
+  function initCarousel(rootEl) {
+    if (rootEl._carousel) return;
+    rootEl._carousel = true;
+    var track = $('[data-carousel-track]', rootEl);
+    if (!track) return;
+    var slides = Array.prototype.slice.call(track.children);
+    var prev = $('[data-carousel-prev]', rootEl), next = $('[data-carousel-next]', rootEl);
+    var dotsWrap = $('[data-carousel-dots]', rootEl);
+    var pauseBtn = $('[data-carousel-pause]', rootEl);
+    var auto = parseInt(rootEl.getAttribute('data-autoplay') || '0', 10);
+    var current = 0, dots = [];
+
+    function perView() { return Math.max(1, Math.round(track.clientWidth / (slides[0].getBoundingClientRect().width || 1))); }
+    function pages() { return Math.max(1, slides.length - perView() + 1); }
+    function go(i, smooth) {
+      var n = pages();
+      current = (i + n) % n;
+      track.scrollTo({ left: slides[current].offsetLeft - track.offsetLeft - (parseFloat(getComputedStyle(track).paddingLeft) || 0), behavior: smooth === false || reduceMotion ? 'auto' : 'smooth' });
+    }
+    function buildDots() {
+      if (!dotsWrap) return;
+      var n = pages();
+      if (dots.length === n) return;
+      dotsWrap.innerHTML = '';
+      dots = [];
+      for (var i = 0; i < n; i++) {
+        var d = document.createElement('button');
+        d.type = 'button';
+        d.className = 'carousel__dot';
+        d.setAttribute('aria-label', (S.slideN || 'Slide __N__').replace('__N__', i + 1));
+        (function (k) { d.addEventListener('click', function () { go(k); restart(); }); })(i);
+        dotsWrap.appendChild(d);
+        dots.push(d);
+      }
+      dotsWrap.hidden = n < 2;
+    }
+    function sync() {
+      var x = track.scrollLeft, best = 0, bestD = Infinity;
+      slides.forEach(function (s, i) { var dd = Math.abs(s.offsetLeft - track.offsetLeft - x); if (dd < bestD) { bestD = dd; best = i; } });
+      current = Math.min(best, pages() - 1);
+      dots.forEach(function (d, i) { d.setAttribute('aria-current', i === current ? 'true' : 'false'); });
+      slides.forEach(function (s, i) {
+        var vis = i >= current && i < current + perView();
+        s.classList.toggle('is-active', vis);
+        if (s.hasAttribute('data-slide')) s.setAttribute('aria-hidden', vis ? 'false' : 'true');
+        $$('a, button, input', s).forEach(function (f) { if (s.hasAttribute('data-slide')) { if (vis) f.removeAttribute('tabindex'); else f.setAttribute('tabindex', '-1'); } });
+      });
+      var n = pages();
+      if (prev) prev.disabled = !auto && current === 0;
+      if (next) next.disabled = !auto && current >= n - 1;
+      rootEl.classList.toggle('is-static', n < 2);
+    }
+    on(prev, 'click', function () { go(current - 1); restart(); });
+    on(next, 'click', function () { go(current + 1); restart(); });
+    on(track, 'scroll', debounce(sync, 60), { passive: true });
+    on(window, 'resize', debounce(function () { buildDots(); sync(); }, 150));
+    on(rootEl, 'keydown', function (ev) {
+      if (ev.target.closest('input, textarea')) return;
+      if (ev.key === 'ArrowRight') { ev.preventDefault(); go(current + 1); restart(); }
+      if (ev.key === 'ArrowLeft') { ev.preventDefault(); go(current - 1); restart(); }
+    });
+
+    var timer = null, hold = false, stopped = reduceMotion;
+    function tick() { if (!hold && !stopped && !document.hidden) go(current + 1); }
+    function restart() { if (!auto) return; clearInterval(timer); if (!stopped) timer = setInterval(tick, auto); }
+    if (auto) {
+      on(rootEl, 'mouseenter', function () { hold = true; });
+      on(rootEl, 'mouseleave', function () { hold = false; });
+      on(rootEl, 'focusin', function () { hold = true; });
+      on(rootEl, 'focusout', function (ev) { if (!rootEl.contains(ev.relatedTarget)) hold = false; });
+      if (pauseBtn) {
+        var paint = function () { pauseBtn.setAttribute('aria-pressed', stopped ? 'true' : 'false'); pauseBtn.classList.toggle('is-paused', stopped); };
+        on(pauseBtn, 'click', function () { stopped = !stopped; paint(); restart(); });
+        paint();
+      }
+      restart();
+    } else if (pauseBtn) { pauseBtn.hidden = true; }
+    buildDots();
+    sync();
+  }
+  function initCarousels(ctx) { $$('[data-carousel]', ctx).forEach(initCarousel); }
+  initCarousels();
+
+  /* ---------------------------------------------------------------- collection: read more, filter boxes */
+  function initReadMore(ctx) {
+    $$('[data-readmore]', ctx).forEach(function (w) {
+      var text = w.firstElementChild, btn = $('.plp__more', w);
+      if (!text || !btn) return;
+      // the button's space is reserved in the markup (visibility only), so showing it never shifts the page
+      if (text.scrollHeight <= text.clientHeight + 2) return;
+      btn.removeAttribute('data-pending');
+      btn.onclick = function () {
+        var open = w.classList.toggle('is-clamped') === false;
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        btn.textContent = open ? (S.readLess || btn.textContent) : (S.readMore || btn.textContent);
+      };
+    });
+  }
+  initReadMore();
+  document.addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-filter-focus]');
+    if (!b) return;
+    var i = parseInt(b.getAttribute('data-filter-focus'), 10);
+    setTimeout(function () {
+      var items = $$('[data-filter-drawer] .accordion__item');
+      if (!items[i]) return;
+      items[i].open = true;
+      var sum = $('summary', items[i]);
+      if (sum) { sum.focus(); items[i].scrollIntoView({ block: 'nearest' }); }
+    }, 60);
+  });
+
+  /* ---------------------------------------------------------------- tabs (product carousels) */
+  function initTabs(ctx) {
+    $$('[data-tabs]', ctx).forEach(function (wrap) {
+      if (wrap._tabs) return;
+      wrap._tabs = true;
+      var tabs = $$('[role="tab"]', wrap);
+      function select(t, focus) {
+        tabs.forEach(function (x) {
+          var sel = x === t;
+          x.setAttribute('aria-selected', sel ? 'true' : 'false');
+          x.tabIndex = sel ? 0 : -1;
+          var panel = document.getElementById(x.getAttribute('aria-controls'));
+          if (panel) {
+            panel.hidden = !sel;
+            if (sel) { initCarousels(panel); $$('.reveal:not(.is-in)', panel).forEach(function (r) { r.classList.add('is-in'); }); }
+          }
+        });
+        if (focus) t.focus();
+      }
+      tabs.forEach(function (t, i) {
+        on(t, 'click', function () { select(t); });
+        on(t, 'keydown', function (ev) {
+          var k = ev.key, j = i;
+          if (k === 'ArrowRight') j = (i + 1) % tabs.length; else if (k === 'ArrowLeft') j = (i - 1 + tabs.length) % tabs.length;
+          else if (k === 'Home') j = 0; else if (k === 'End') j = tabs.length - 1; else return;
+          ev.preventDefault(); select(tabs[j], true);
+        });
+      });
+    });
+  }
+  initTabs();
+
   /* ---------------------------------------------------------------- mega menu */
   var megaHoverTimer;
   function closeMega(except) {
@@ -298,6 +506,15 @@
       .catch(function (err) { showFormError(form, (err && err.message) || S.addError); })
       .then(function () { btns.forEach(function (b) { setBusy(b, false); }); });
   });
+
+  // shared with page scripts (routine finder: "add the whole routine")
+  window.MoanaCart = {
+    sections: cartSections,
+    afterAdd: function (sections, opener) {
+      renderCartSections(sections);
+      return refreshCount().then(function () { announce(S.added); if (cartDrawer) openPanel(cartDrawer, opener); else toast(S.added); });
+    }
+  };
 
   function changeLine(lineEl, qty) {
     var line = parseInt(lineEl.getAttribute('data-line'), 10);
@@ -521,8 +738,8 @@
         var freshCount = $('.plp__filter-btn', doc), curCount = $('.plp__filter-btn', rootEl);
         if (freshCount && curCount) curCount.innerHTML = freshCount.innerHTML;
         rootEl.removeAttribute('aria-busy');
-        initReveal(rootEl); initLines(rootEl);
-        var status = $('[data-results] [role="status"]', rootEl);
+        initReveal(rootEl); initLines(rootEl); initReadMore(rootEl);
+        var status = $('.plp__count', rootEl);
         if (status) announce(status.textContent);
       })
       .catch(function (err) { if (err && err.name === 'AbortError') return; window.location.href = url; });
@@ -592,5 +809,5 @@
   }
 
   /* ---------------------------------------------------------------- theme editor */
-  document.addEventListener('shopify:section:load', function (ev) { initReveal(ev.target); initLines(ev.target); initProduct(ev.target); $$('.reveal', ev.target).forEach(function (el) { el.classList.add('is-in'); }); });
+  document.addEventListener('shopify:section:load', function (ev) { initReveal(ev.target); initLines(ev.target); initCarousels(ev.target); initTabs(ev.target); initProduct(ev.target); $$('.reveal', ev.target).forEach(function (el) { el.classList.add('is-in'); }); });
 })();

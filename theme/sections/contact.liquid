@@ -7,13 +7,6 @@
           <p class="t-label">{{ 'contact.email' | t }}</p>
           <a class="link" href="mailto:{{ shop.email }}">{{ shop.email }}</a>
         </li>
-        {%- if settings.whatsapp_number != blank -%}
-          <li class="contact__card">
-            {% render 'icon', name: 'whatsapp' %}
-            <p class="t-label">{{ 'general.whatsapp' | t }}</p>
-            <a class="link" href="https://wa.me/{{ settings.whatsapp_number }}" target="_blank" rel="noopener">{{ settings.whatsapp_display }}<span class="sr-only"> ({{ 'general.opens_new_window' | t }})</span></a>
-          </li>
-        {%- endif -%}
         {%- if settings.address_street != blank -%}
           <li class="contact__card">
             {% render 'icon', name: 'pin' %}

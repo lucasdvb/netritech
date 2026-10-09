@@ -13,6 +13,9 @@
         assign meta_desc = 'meta.collection_description' | t: title: collection.title
       endif
   endcase
+  if meta_desc == blank
+    assign meta_desc = 'meta.home_description' | t
+  endif
   assign og_type = 'website'
   if template.name == 'product'
     assign og_type = 'product'
@@ -29,7 +32,7 @@
 {%- if meta_desc != blank %}
 <meta name="description" content="{{ meta_desc | escape }}">
 {%- endif %}
-{%- if template.name == 'search' or template.name == 'cart' or template contains 'customers' %}
+{%- if template.name == 'search' or template.name == 'cart' or template contains 'customers' or template.suffix == 'wishlist' %}
 <meta name="robots" content="noindex, follow">
 {%- endif %}
 <meta property="og:site_name" content="{{ site_name | escape }}">

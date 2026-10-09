@@ -1,0 +1,75 @@
+{%- comment -%}
+  Thin promo strip carousel (Cult Beauty's "A welcome treat" / "Next day delivery" bands): a short picture on the
+  left, a bold title, one line and a text link on the right, on a warm light ground.
+  A slide's picture is an uploaded image or up to three product packshots set side by side.
+{%- endcomment -%}
+<section class="promo-s" aria-roledescription="carousel" aria-label="{{ section.settings.label | escape }}">
+  <div class="carousel" data-carousel{% if section.blocks.size > 1 %} data-autoplay="6000"{% endif %}>
+    <div class="carousel__track" data-carousel-track>
+      {%- for block in section.blocks -%}
+        {%- assign b = block.settings -%}
+        <div class="promo-s__slide{% if forloop.first %} is-active{% endif %}" data-slide role="group" aria-roledescription="slide" aria-label="{{ forloop.index }} / {{ forloop.length }}" {{ block.shopify_attributes }}>
+          <div class="promo-s__media">
+            {%- if b.image != blank -%}
+              {{ b.image | image_url: width: 1200 | image_tag: widths: '400, 800, 1200', sizes: '(min-width: 750px) 50vw, 40vw', loading: 'lazy', alt: '' }}
+            {%- else -%}
+              <span class="promo-s__packs">
+                {%- for p in b.products limit: 3 -%}
+                  <span class="promo-s__pack" style="--k: {{ forloop.index0 }}">{{ p.featured_media.preview_image | image_url: width: 400 | image_tag: widths: '200, 300, 400', sizes: '160px', loading: 'lazy', alt: '' }}</span>
+                {%- endfor -%}
+              </span>
+            {%- endif -%}
+          </div>
+          <div class="promo-s__copy">
+            <p class="promo-s__title">{{ b.title }}</p>
+            {%- if b.text != blank -%}<p class="promo-s__text">{{ b.text }}</p>{%- endif -%}
+            {%- if b.link_label != blank -%}<a class="promo-s__link" href="{{ b.link }}">{{ b.link_label }}</a>{%- endif -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+    {%- if section.blocks.size > 1 -%}
+      <button class="carousel__arrow carousel__arrow--prev" type="button" data-carousel-prev>{% render 'icon', name: 'chevron-left' %}<span class="sr-only">{{ 'general.prev_slide' | t }}</span></button>
+      <button class="carousel__arrow carousel__arrow--next" type="button" data-carousel-next>{% render 'icon', name: 'chevron-right' %}<span class="sr-only">{{ 'general.next_slide' | t }}</span></button>
+      <div class="carousel__dots" data-carousel-dots role="group" aria-label="{{ 'general.slides' | t }}"></div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .promo-s { padding-bottom: var(--s-2); }
+  .promo-s__slide { display: grid; grid-template-columns: 38% 1fr; min-height: 132px; background: #f6f3ee; }
+  .promo-s__slide:nth-child(even) { background: var(--c-spring); }
+  .promo-s__media { position: relative; overflow: hidden; background: rgba(209,217,190,.45); }
+  .promo-s__media > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .promo-s__packs { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; gap: 0; padding: 10px 6% 0; }
+  .promo-s__pack { display: block; width: 34%; aspect-ratio: 1; margin-inline: -3%; transform: translateY(calc(var(--k) * -6%)) rotate(calc((var(--k) - 1) * 6deg)); transition: transform 700ms var(--ease-out); }
+  .promo-s__slide.is-active .promo-s__pack { transform: translateY(calc(var(--k) * -6% - 4%)) rotate(calc((var(--k) - 1) * 4deg)); }
+  .promo-s__pack img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+  .promo-s__copy { display: grid; align-content: center; gap: .35rem; padding: var(--s-4) var(--s-7) var(--s-4) var(--s-5); }
+  .promo-s__title { font: 800 clamp(1rem, .85rem + .8vw, 1.5rem)/1.15 var(--f-body); letter-spacing: .01em; text-transform: uppercase; }
+  .promo-s__text { font-size: clamp(.8125rem, .78rem + .2vw, .9375rem); line-height: 1.45; color: var(--ink-soft); max-width: 34rem; }
+  .promo-s__link { justify-self: start; font: 600 .8125rem/1 var(--f-body); letter-spacing: .06em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 4px; padding-block: 6px; }
+  .promo-s__link:hover { text-decoration-thickness: 2px; }
+  @media (min-width: 750px) { .promo-s__slide { grid-template-columns: 1fr 1fr; min-height: 144px; } .promo-s__copy { padding-left: var(--s-6); } }
+  @media (max-width: 749px) { .promo-s__text { display: none; } .promo-s__copy { padding-right: 44px; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Promo strip",
+  "settings": [ { "type": "text", "id": "label", "label": "Accessible name", "default": "Offers and news" } ],
+  "max_blocks": 4,
+  "blocks": [
+    { "type": "slide", "name": "Slide", "settings": [
+      { "type": "text", "id": "title", "label": "Title", "default": "Free delivery over Rs 1,500" },
+      { "type": "textarea", "id": "text", "label": "Text" },
+      { "type": "text", "id": "link_label", "label": "Link label", "default": "Shop now" },
+      { "type": "url", "id": "link", "label": "Link" },
+      { "type": "image_picker", "id": "image", "label": "Image" },
+      { "type": "product_list", "id": "products", "label": "Or: products to show (up to 3)", "limit": 3 }
+    ] }
+  ],
+  "presets": [{ "name": "Promo strip", "blocks": [{ "type": "slide" }] }]
+}
+{% endschema %}

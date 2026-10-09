@@ -12,8 +12,13 @@
     "opens_new_window": "s’ouvre dans une nouvelle fenêtre",
     "page_n": "Page {{ page }}",
     "pagination": "Pagination",
-    "whatsapp": "WhatsApp",
-    "whatsapp_us": "Écrivez-nous sur WhatsApp"
+    "slide_n": "Aller à la diapositive {{ n }}",
+    "pause": "Mettre le diaporama en pause",
+    "play": "Lancer le diaporama",
+    "slides": "Diapositives",
+    "prev_slide": "Précédent",
+    "next_slide": "Suivant",
+    "shop_now": "Découvrir"
   },
   "meta": {
     "home_title": "Moana Beauté · Soins coréens à Maurice",
@@ -30,7 +35,8 @@
     "menu": "Menu",
     "primary_nav": "Principal",
     "search": "Rechercher",
-    "shop_all": "Tout voir"
+    "shop_all": "Tout voir",
+    "wishlist": "Favoris"
   },
   "footer": {
     "brn": "BRN",
@@ -45,7 +51,6 @@
     "add": "Ajouter",
     "add_named": "Ajouter {{ title }} au panier",
     "add_to_cart": "Ajouter au panier",
-    "ask_whatsapp": "Une question sur ce produit ? Demandez-nous sur WhatsApp",
     "assure_ingredients": "Tous les ingrédients sont listés ci-dessous.",
     "choose": "Choisir",
     "choose_named": "Choisir les options de {{ title }}",
@@ -77,10 +82,16 @@
     "suits": "Convient à",
     "targets": "Cible",
     "tax_included": "Taxes incluses.",
-    "whatsapp_prefill": "Bonjour Moana Beauté ! J’ai une question sur {{ title }}.",
     "zoom": "Agrandir l’image {{ n }}",
     "zoom_dialog": "Image du produit agrandie",
-    "add_named_price": "Ajouter {{ title }} au panier, {{ price }}"
+    "add_named_price": "Ajouter {{ title }} au panier, {{ price }}",
+    "ask_question": "Une question sur ce produit ? Demandez-nous",
+    "percent_off": "-{{ pct }} %",
+    "new_in": "Nouveau",
+    "view_details": "Voir les détails",
+    "add_to_wishlist": "Ajouter aux favoris",
+    "in_stock": "En stock",
+    "description": "Description du produit"
   },
   "routine": {
     "step_n": "Étape {{ n }}"
@@ -114,7 +125,11 @@
     "soon_label": "Bientôt",
     "soon_text": "Dites-nous ce que vous aimeriez trouver ici, et vous serez la première prévenue.",
     "sort_by": "Trier par",
-    "meanwhile": "En attendant, découvrez les nouveautés"
+    "meanwhile": "En attendant, découvrez les nouveautés",
+    "read_more": "Lire la suite",
+    "read_less": "Réduire",
+    "more_filters": "Plus de filtres",
+    "sort_short": "Trier"
   },
   "cart": {
     "checkout": "Commander",
@@ -133,7 +148,7 @@
     "free_delivery_unlocked": "Bonne nouvelle : la livraison est offerte !",
     "increase_named": "Ajouter un {{ title }}",
     "max_reached": "C’est tout notre stock.",
-    "pay_by_card": "Paiement sécurisé par carte à la commande.",
+    "pay_by_card": "Paiement sécurisé.",
     "quantity_named": "Quantité de {{ title }}",
     "remove": "Retirer",
     "remove_named": "Retirer {{ title }} du panier",
@@ -143,7 +158,7 @@
     "title": "Votre panier",
     "toast_added": "Ajouté à votre panier",
     "view_cart": "Voir le panier",
-    "suggestions": "Va très bien avec"
+    "suggestions": "Vous aimerez aussi"
   },
   "search": {
     "collections": "Collections",
@@ -210,5 +225,38 @@
     "how": "Saisissez ce code à la commande.",
     "shop": "Commencer mon shopping",
     "title": "Votre carte cadeau"
+  },
+  "wishlist": {
+    "added": "Ajouté à vos favoris",
+    "removed": "Retiré de vos favoris",
+    "save": "Ajouter {{ title }} à vos favoris",
+    "title": "Vos favoris",
+    "empty": "Rien pour l’instant",
+    "empty_text": "Touchez le cœur d’un produit que vous aimez : il vous attendra ici, sur cet appareil.",
+    "clear": "Vider les favoris",
+    "count": {
+      "one": "{{ count }} favori",
+      "other": "{{ count }} favoris"
+    },
+    "note": "Vos favoris sont enregistrés sur cet appareil uniquement."
+  },
+  "finder": {
+    "note": "Vos réponses restent sur cette page. Rien n’est enregistré ni envoyé.",
+    "q_skin": "Comment décririez-vous votre peau ?",
+    "q_concern": "Sur quoi aimeriez-vous agir en priorité ?",
+    "q_steps": "Combien de temps avez-vous ?",
+    "steps_3": "Rester simple",
+    "steps_3_note": "Trois étapes : nettoyer, tonifier, protéger",
+    "steps_5": "Le rituel complet",
+    "steps_5_note": "Cinq étapes : nettoyer, tonifier, traiter, hydrater, protéger",
+    "done": "Voir ma routine",
+    "result_label": "Votre routine",
+    "result_title": "Votre routine en {{ n }} étapes pour : {{ concern }}",
+    "none": "Rien en stock ne correspond à cette étape pour le moment. Parcourez plutôt la catégorie.",
+    "add_all": "Ajouter toute la routine",
+    "see_all": "Tout voir pour ce besoin",
+    "restart": "Recommencer",
+    "added": "Routine ajoutée au panier",
+    "noscript": "Activez JavaScript pour le quiz, ou partez d’un besoin :"
   }
 }

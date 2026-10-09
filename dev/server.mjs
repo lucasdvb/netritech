@@ -7,7 +7,7 @@ import path from 'node:path';
 import { THEME, products, productByHandle, collections, globals, renderPage, renderSection, createEngine, money } from './render.mjs';
 
 const PORT = Number(process.env.PORT || 4100);
-const PAGE_TEMPLATES = { about: 'page.about', contact: 'page.contact', 'k-beauty': 'page.kbeauty', delivery: 'page.delivery', brands: 'page.brands', faq: 'page.faq' };
+const PAGE_TEMPLATES = { about: 'page.about', contact: 'page.contact', 'k-beauty': 'page.kbeauty', delivery: 'page.delivery', brands: 'page.brands', faq: 'page.faq', 'routine-finder': 'page.routine-finder', wishlist: 'page.wishlist' };
 const readJSON = (p) => JSON.parse(fs.readFileSync(path.join(THEME, p), 'utf8').replace(/^\/\*[\s\S]*?\*\/\s*/, ''));
 
 /* ------------------------------------------------------------------ cart */
@@ -121,6 +121,24 @@ http.createServer(async (req, res) => {
     if (p === '/cart.js') return send(res, 200, JSON.stringify(cartJSON()), 'application/json');
     if (p === '/cart/add.js' || p === '/cart/add') {
       const body = parseBody(req, await readBody(req));
+      // Shopify also accepts { items: [{ id, quantity }] } and answers { items: [...] }
+      if (Array.isArray(body.items)) {
+        const added = [];
+        for (const it of body.items) {
+          const pi = products.find((x) => String(x.variants[0].id) === String(it.id));
+          if (!pi) return send(res, 404, JSON.stringify({ status: 404, message: 'Cart Error', description: 'Cannot find variant' }), 'application/json');
+          const li = lines.find((l) => l.handle === pi.handle);
+          if (li) li.qty += Number(it.quantity || 1); else lines.push({ handle: pi.handle, qty: Number(it.quantity || 1) });
+          added.push({ id: pi.variants[0].id, quantity: Number(it.quantity || 1), title: pi.title });
+        }
+        const out = { items: added };
+        if (body.sections) {
+          const g = globals({ template: body.sections_url === '/cart' ? 'cart' : 'index', cart: cartObj(), lang });
+          out.sections = {};
+          for (const s of [].concat(body.sections)) out.sections[s] = await sectionHTML(s, g);
+        }
+        return send(res, 200, JSON.stringify(out), 'application/json');
+      }
       const pr = products.find((x) => String(x.variants[0].id) === String(body.id));
       if (!pr) return send(res, 404, JSON.stringify({ status: 404, message: 'Cart Error', description: 'Cannot find variant' }), 'application/json');
       const qty = Math.max(1, Number(body.quantity || 1));
@@ -202,6 +220,11 @@ http.createServer(async (req, res) => {
     } else if (p === '/password') { template = 'password'; g = globals({ template, cart, lang, url: p }); }
     if (!g) g = globals({ template: '404', cart, lang, url: p });
 
+    if (template === 'product' && u.searchParams.get('view') === 'card') {
+      const engine = createEngine();
+      const all = g.getAll ? g.getAll() : g;
+      return send(res, 200, await engine.parseAndRender("{%- render 'product-card', product: product, heading: 'h2' -%}", all, { globals: g.__globals || all }));
+    }
     const sid = u.searchParams.get('section_id');
     if (sid) return send(res, 200, await sectionHTML(sid, g));
     return send(res, template === '404' ? 404 : 200, await renderPage(template, g));

@@ -1,0 +1,6 @@
+{
+  "sections": {
+    "main": { "type": "wishlist", "settings": { "suggest_heading": "Need ideas? Start here", "collection": "new" } }
+  },
+  "order": ["main"]
+}

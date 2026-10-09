@@ -14,7 +14,7 @@
       "settings": {
         "eyebrow": "",
         "heading": "Delivery",
-        "note": "<p>Question about a delivery? Message us on WhatsApp or by email.</p>"
+        "note": "<p>Question about a delivery? Email us or use the contact form.</p>"
       },
       "blocks": {
         "row_1": {
@@ -42,14 +42,14 @@
           "type": "row",
           "settings": {
             "label": "Collection",
-            "value": "<p>In Mon Gout, by arrangement. Message us on WhatsApp or by email and we'll find a time.</p>"
+            "value": "<p>In Mon Gout, by arrangement. Email us and we'll find a time.</p>"
           }
         },
         "row_5": {
           "type": "row",
           "settings": {
             "label": "Payment",
-            "value": "<p>By card at checkout. Payments go through MIPS.</p>"
+            "value": "<p>Securely at checkout.</p>"
           }
         }
       },

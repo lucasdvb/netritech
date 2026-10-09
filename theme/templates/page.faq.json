@@ -35,14 +35,14 @@
           "type": "question",
           "settings": {
             "question": "Can I collect my order instead?",
-            "answer": "<p>Yes, in Mon Gout. Message us on WhatsApp or by email and we'll find a time that works for you.</p>"
+            "answer": "<p>Yes, in Mon Gout. Email us or use the contact form and we'll find a time that works for you.</p>"
           }
         },
         "question_4": {
           "type": "question",
           "settings": {
             "question": "How do I pay?",
-            "answer": "<p>By card at checkout. Payments go through MIPS, so we never see your full card number.</p>"
+            "answer": "<p>Securely at checkout. Your card details go straight to our payment provider, so we never see your full card number.</p>"
           }
         }
       },

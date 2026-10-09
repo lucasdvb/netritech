@@ -35,18 +35,6 @@
       },
       {
         "type": "text",
-        "id": "whatsapp_number",
-        "label": "WhatsApp number (digits only, with country code)",
-        "default": "23058172020"
-      },
-      {
-        "type": "text",
-        "id": "whatsapp_display",
-        "label": "WhatsApp number as shown",
-        "default": "+230 5817 2020"
-      },
-      {
-        "type": "text",
         "id": "address_street",
         "label": "Street",
         "default": "Plot 15a, Morcellement Royal Garden"
