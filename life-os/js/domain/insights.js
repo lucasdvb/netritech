@@ -101,7 +101,7 @@ function sleepLink(date) {
   const h = H.habit('h-lights-out');
   if (!h || h.archived) return [];
   const bed = parseHM(store.profile()?.bedTime || '22:00');
-  const at = fmtHM(bed - 30);
+  const at = fmtHM((bed - 30 + 1440) % 1440);
   if (h.reminder && parseHM(h.reminder) <= bed - 30) return [];
   return [{ id: 'sleep-link', area: 'Sleep', weight: (b - a) * 2,
     title: 'Short nights cost you the next day',
