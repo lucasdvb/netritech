@@ -1,0 +1,80 @@
+{
+  "sections": {
+    "header": {
+      "type": "page-header",
+      "settings": {
+        "eyebrow": "About Moana Beauté",
+        "heading": "For every woman who lives on an <em>island</em>",
+        "text": "Authentic Korean skincare, chosen by hand and delivered across Mauritius.",
+        "center": false
+      }
+    },
+    "story": {
+      "type": "image-with-text",
+      "settings": {
+        "theme_image": "about",
+        "image_alt": "Two women laughing together on a beach in Mauritius",
+        "flip": false,
+        "eyebrow": "",
+        "heading": "Where it began",
+        "text": "<p>Moana Beauté began with a simple frustration. The Korean skincare everyone was talking about online was either impossible to find in Mauritius, or sold by people who could not say where it came from.</p><p>So we registered a company in Mon Gout and set out to do it properly. Real products, honest prices, and delivery anywhere on the island.</p><p>We are small and we are new. That is why we chose every product by hand, so there is nothing to decode. Each one was chosen for skin that lives with sun, salt and humidity.</p>",
+        "script": "you already belong here",
+        "link_label": "",
+        "link_url": ""
+      }
+    },
+    "values": {
+      "type": "values",
+      "settings": {
+        "eyebrow": "",
+        "heading": "What we stand by"
+      },
+      "blocks": {
+        "value_1": {
+          "type": "value",
+          "settings": {
+            "title": "Authentic",
+            "text": "The real product, with its full ingredient list on its page. If we are not sure about a product, we do not sell it."
+          }
+        },
+        "value_2": {
+          "type": "value",
+          "settings": {
+            "title": "Affordable",
+            "text": "Korean beauty is not priced like luxury in Korea. It should not be here either."
+          }
+        },
+        "value_3": {
+          "type": "value",
+          "settings": {
+            "title": "For all of us",
+            "text": "Every skin tone, every budget, on every part of the island, in a climate that never cools down."
+          }
+        }
+      },
+      "block_order": [
+        "value_1",
+        "value_2",
+        "value_3"
+      ]
+    },
+    "shop": {
+      "type": "featured-collection",
+      "settings": {
+        "eyebrow": "The launch collection",
+        "heading": "Begin with our first picks",
+        "text": "",
+        "collection": "new",
+        "link_label": "Shop all",
+        "limit": 4,
+        "wash": false
+      }
+    }
+  },
+  "order": [
+    "header",
+    "story",
+    "values",
+    "shop"
+  ]
+}

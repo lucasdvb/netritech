@@ -1,0 +1,95 @@
+<section class="section routine{% if section.settings.wash %} section--wash{% endif %}" aria-labelledby="rt-{{ section.id }}">
+  <div class="page-width routine__grid">
+    <div class="routine__intro">
+      {%- if section.settings.eyebrow != blank -%}<p class="t-label">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h2 class="t-h1" id="rt-{{ section.id }}">{{ section.settings.heading }}</h2>
+      {%- if section.settings.text != blank -%}<p class="t-lead">{{ section.settings.text }}</p>{%- endif -%}
+      {%- if section.settings.link_label != blank -%}
+        <a class="btn btn--secondary" href="{{ section.settings.link_url }}">{{ section.settings.link_label }}</a>
+      {%- endif -%}
+      {%- if section.settings.script != blank -%}<p class="t-script" aria-hidden="true">{{ section.settings.script }}</p>{%- endif -%}
+    </div>
+    <ol class="routine__steps" role="list">
+      {%- for block in section.blocks -%}
+        {%- assign p = block.settings.product -%}
+        <li class="step reveal" {{ block.shopify_attributes }}>
+          <span class="step__num" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+          <div class="step__body">
+            <h3 class="t-h3"><span class="sr-only">{{ 'routine.step_n' | t: n: forloop.index }}: </span>{{ block.settings.name }}</h3>
+            {%- if block.settings.text != blank -%}<p class="t-soft">{{ block.settings.text }}</p>{%- endif -%}
+            {%- if p != blank -%}
+              <div class="step__product">
+                <a class="step__img" href="{{ p.url }}" tabindex="-1" aria-hidden="true">
+                  {{- p.featured_media.preview_image | image_url: width: 240 | image_tag: widths: '120, 180, 240', sizes: '84px', loading: 'lazy', alt: '' -}}
+                </a>
+                <div class="step__info">
+                  <p class="card__vendor">{{ p.vendor }}</p>
+                  <a class="step__name" href="{{ p.url }}">{{ p.title }}</a>
+                  {%- render 'price', product: p -%}
+                </div>
+                {%- if p.available and p.has_only_default_variant -%}
+                  {%- form 'product', p, class: 'step__form', data-product-form: '', novalidate: 'novalidate' -%}
+                    <input type="hidden" name="id" value="{{ p.selected_or_first_available_variant.id }}">
+                    <input type="hidden" name="quantity" value="1">
+                    <button class="btn btn--small" type="submit" name="add" aria-label="{{ 'products.add_named' | t: title: p.title | escape }}">{% render 'icon', name: 'plus' %}<span class="hide-mobile">{{ 'products.add' | t }}</span></button>
+                  {%- endform -%}
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ol>
+  </div>
+</section>
+
+{% stylesheet %}
+.routine__grid { display: grid; gap: var(--s-7); }
+.routine__intro > * + * { margin-top: var(--s-5); }
+.routine__intro .t-script { margin-top: var(--s-6); }
+.routine__steps { counter-reset: step; }
+.step { display: grid; grid-template-columns: 3.25rem 1fr; gap: var(--s-4); padding-block: var(--s-6); border-top: 1px solid var(--line); }
+.step:last-child { border-bottom: 1px solid var(--line); }
+.step__num { font: 400 2.25rem/1 var(--f-display); color: var(--c-sage); font-variant-numeric: lining-nums; }
+.section--wash .step__num { color: var(--c-forest); opacity: .55; }
+.step__body > * + * { margin-top: var(--s-3); }
+.step__body .t-soft { max-width: 36rem; }
+.step__product { display: grid; grid-template-columns: 72px 1fr auto; align-items: center; gap: var(--s-4); margin-top: var(--s-5) !important; padding: var(--s-3); border-radius: var(--r); background: var(--c-white); }
+.step__img { display: block; aspect-ratio: 1; border-radius: var(--r-sm); background: var(--tile); overflow: hidden; }
+.step__img img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 8%; }
+.step__info { display: grid; gap: 2px; min-width: 0; }
+.step__name { font: 400 1.0625rem/1.25 var(--f-display); }
+.step__name:hover { color: var(--brand); }
+.step__form .btn { gap: .4rem; }
+.step__form .btn svg { width: 14px; height: 14px; }
+@media (max-width: 749px) { .step__form .btn { width: 44px; min-height: 44px; padding: 0; border-radius: 50%; } }
+@media (min-width: 990px) {
+  .routine__grid { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(3rem, 7vw, 8rem); align-items: start; }
+  .routine__intro { position: sticky; top: calc(var(--header-h) + var(--s-7)); }
+  .step { grid-template-columns: 5rem 1fr; padding-block: var(--s-7); }
+  .step__num { font-size: 3rem; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Routine steps",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Label", "default": "New to K-beauty?" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Five steps. Ten quiet minutes." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Cleanse, tone, treat, moisturise, protect. The routine behind Korean skin, taken slowly, with the right product at every step." },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "Read the routine guide" },
+    { "type": "url", "id": "link_url", "label": "Link" },
+    { "type": "text", "id": "script", "label": "Script accent (Pinyon Script)", "info": "Use once per page at most." },
+    { "type": "checkbox", "id": "wash", "label": "Spring background", "default": true }
+  ],
+  "blocks": [
+    { "type": "step", "name": "Step", "settings": [
+      { "type": "text", "id": "name", "label": "Step name", "default": "Cleanse" },
+      { "type": "textarea", "id": "text", "label": "Text" },
+      { "type": "product", "id": "product", "label": "Product" }
+    ] }
+  ],
+  "presets": [{ "name": "Routine steps" }]
+}
+{% endschema %}

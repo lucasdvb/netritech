@@ -1,0 +1,35 @@
+{%- if section.blocks.size > 0 -%}
+<div class="announce" role="region" aria-label="{{ 'header.announcement' | t }}">
+  <div class="page-width announce__inner">
+    {%- for block in section.blocks -%}
+      <p class="announce__item" {{ block.shopify_attributes }}>
+        {%- if block.settings.link != blank -%}
+          <a href="{{ block.settings.link }}">{{ block.settings.text }}</a>
+        {%- else -%}
+          {{ block.settings.text }}
+        {%- endif -%}
+      </p>
+    {%- endfor -%}
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "enabled_on": { "groups": ["header"] },
+  "max_blocks": 3,
+  "settings": [],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Message",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Free delivery across Mauritius above Rs 1,500" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Announcement bar", "blocks": [{ "type": "message" }] }]
+}
+{% endschema %}

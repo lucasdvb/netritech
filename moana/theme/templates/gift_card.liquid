@@ -1,0 +1,30 @@
+{%- layout none -%}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>{{ 'gift_card.title' | t }} · {{ settings.brand_name | default: shop.name }}</title>
+  {% render 'fonts' %}
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+  {{ content_for_header }}
+</head>
+<body>
+  <main class="section">
+    <div class="page-width page-width--narrow center stack" style="--stack: var(--s-5)">
+      <img src="{{ 'logo-lockup-dark.webp' | asset_url }}" alt="{{ settings.brand_name | default: shop.name | escape }}" width="900" height="436" style="width:180px;height:auto;margin-inline:auto">
+      <h1 class="t-h1">{{ 'gift_card.title' | t }}</h1>
+      <p class="t-h3">{{ gift_card.balance | money }}</p>
+      {%- if gift_card.expired or gift_card.enabled == false -%}
+        <p class="notice notice--error" style="justify-content:center">{{ 'gift_card.expired' | t }}</p>
+      {%- else -%}
+        <p class="t-soft">{{ 'gift_card.how' | t }}</p>
+        <p class="t-h3" style="font-family: var(--f-body); letter-spacing: .12em">{{ gift_card.code | format_code }}</p>
+        {%- if gift_card.expires_on -%}{%- assign gc_date = gift_card.expires_on | date: '%d %B %Y' -%}<p class="t-small t-soft">{{ 'gift_card.expires' | t: date: gc_date }}</p>{%- endif -%}
+      {%- endif -%}
+      <p><a class="btn" href="{{ shop.url }}">{{ 'gift_card.shop' | t }}</a></p>
+    </div>
+  </main>
+</body>
+</html>

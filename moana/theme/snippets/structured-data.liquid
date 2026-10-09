@@ -1,0 +1,65 @@
+{%- comment -%}
+  Site-level JSON-LD. Product JSON-LD comes from Shopify's own `structured_data` filter in main-product,
+  so it is never duplicated here. Only verified business facts (Shopify contact policy) go in.
+{%- endcomment -%}
+{%- assign site_name = settings.brand_name | default: shop.name -%}
+{%- if template.name == 'index' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "OnlineStore",
+      "@id": {{ routes.root_url | prepend: shop.url | append: '#organization' | json }},
+      "name": {{ site_name | json }},
+      {%- if settings.legal_name != blank %}"legalName": {{ settings.legal_name | json }},{% endif %}
+      "url": {{ shop.url | append: routes.root_url | json }},
+      "logo": {{ 'logo-lockup-dark.webp' | asset_url | prepend: 'https:' | json }},
+      "email": {{ shop.email | json }},
+      {%- if settings.whatsapp_number != blank %}"telephone": {{ settings.whatsapp_number | prepend: '+' | json }},{% endif %}
+      {%- if settings.address_locality != blank %}
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": {{ settings.address_street | json }},
+        "addressLocality": {{ settings.address_locality | json }},
+        "addressCountry": "MU"
+      },
+      {%- endif %}
+      "areaServed": { "@type": "Country", "name": "Mauritius" },
+      "currenciesAccepted": {{ cart.currency.iso_code | json }}
+    },
+    {
+      "@type": "WebSite",
+      "name": {{ site_name | json }},
+      "url": {{ shop.url | append: routes.root_url | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {{ shop.url | append: routes.search_url | append: '?q={search_term_string}' | json }},
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ]
+}
+</script>
+{%- elsif template.name == 'product' or template.name == 'collection' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": {{ 'general.home' | t | json }}, "item": {{ shop.url | append: routes.root_url | json }} }
+    {%- if template.name == 'product' -%}
+      {%- assign crumb_collection = collection | default: product.collections.first -%}
+      {%- if crumb_collection -%}
+      ,{ "@type": "ListItem", "position": 2, "name": {{ crumb_collection.title | json }}, "item": {{ shop.url | append: crumb_collection.url | json }} }
+      ,{ "@type": "ListItem", "position": 3, "name": {{ product.title | json }}, "item": {{ shop.url | append: product.url | json }} }
+      {%- else -%}
+      ,{ "@type": "ListItem", "position": 2, "name": {{ product.title | json }}, "item": {{ shop.url | append: product.url | json }} }
+      {%- endif -%}
+    {%- else -%}
+      ,{ "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ shop.url | append: collection.url | json }} }
+    {%- endif -%}
+  ]
+}
+</script>
+{%- endif -%}

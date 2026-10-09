@@ -1,0 +1,28 @@
+<div class="page-width">{%- render 'breadcrumbs' -%}</div>
+<section class="section section--tight">
+  <div class="page-width">
+    <h1 class="t-h1">{{ 'collections.all_collections' | t }}</h1>
+    <ul class="list-collections" role="list">
+      {%- for c in collections -%}
+        {%- if c.all_products_count == 0 or c.handle == 'frontpage' -%}{%- continue -%}{%- endif -%}
+        {%- assign shot = c.image | default: c.products.first.featured_media.preview_image -%}
+        <li class="reveal" style="--i: {{ forloop.index0 | modulo: 4 }}">
+          <a class="cat-tile" href="{{ c.url }}">
+            <span class="cat-tile__media media media--contain" style="border-radius: var(--r)">{%- if shot -%}{{ shot | image_url: width: 600 | image_tag: widths: '300, 450, 600', sizes: '(min-width: 990px) 22vw, 46vw', loading: 'lazy', alt: '' }}{%- endif -%}</span>
+            <span class="cat-tile__name">{{ c.title }}</span>
+            <span class="cat-tile__count">{{ 'collections.product_count' | t: count: c.all_products_count }}</span>
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% stylesheet %}
+.list-collections { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-6) var(--gap); margin-top: var(--s-7); }
+@media (min-width: 990px) { .list-collections { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "Collections list", "settings": [] }
+{% endschema %}

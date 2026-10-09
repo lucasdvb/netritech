@@ -1,0 +1,25 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "blocks": {
+        "m1": { "type": "message", "settings": { "text": "Free delivery across Mauritius on orders above Rs 1,500", "link": "shopify://pages/delivery" } },
+        "m2": { "type": "message", "settings": { "text": "Delivered in 1 to 3 working days · Pay by card at checkout", "link": "" } }
+      },
+      "block_order": ["m1", "m2"],
+      "settings": {}
+    },
+    "header": {
+      "type": "header",
+      "blocks": {
+        "f1": { "type": "feature", "settings": { "eyebrow": "New in", "title": "The launch collection", "collection": "new", "link": "", "image": "" } },
+        "f2": { "type": "feature", "settings": { "eyebrow": "The routine guide", "title": "Korean skincare, step by step", "collection": "skincare", "link": "shopify://pages/k-beauty", "image": "" } }
+      },
+      "block_order": ["f1", "f2"],
+      "settings": { "menu": "moana-main", "mega_item": "Shop", "shop_collection": "skincare", "secondary_menu": "moana-footer-help" }
+    }
+  },
+  "order": ["announcement", "header"]
+}

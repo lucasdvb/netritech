@@ -1,0 +1,46 @@
+<section class="section cart-page" data-cart-page>
+  <div class="page-width">
+    <h1 class="t-h1">{{ 'cart.title' | t }}</h1>
+    {%- if cart.item_count > 0 -%}
+      <div class="cart-page__grid">
+        <div>
+          {%- render 'free-shipping-bar' -%}
+          <ul class="cart-lines" role="list">
+            {%- for item in cart.items -%}
+              {%- render 'cart-line', item: item, index: forloop.index, context: 'page' -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+        <aside class="cart-page__summary" aria-label="{{ 'cart.summary' | t }}">
+          {%- render 'cart-summary' -%}
+          <ul class="cart-page__assure" role="list">
+            <li>{% render 'icon', name: 'truck' %}{{ 'products.delivery_time' | t }}</li>
+            <li>{% render 'icon', name: 'card' %}{{ 'cart.pay_by_card' | t }}</li>
+          </ul>
+        </aside>
+      </div>
+    {%- else -%}
+      <div class="cart-empty cart-page__empty">
+        <p class="t-h3">{{ 'cart.empty' | t }}</p>
+        <p class="t-soft">{{ 'cart.empty_text' | t }}</p>
+        <a class="btn" href="{{ collections['skincare'].url | default: routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t }}</a>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+.cart-page .t-h1 { margin-bottom: var(--s-7); }
+.cart-page__grid { display: grid; gap: var(--s-7); }
+.cart-page__summary { align-self: start; padding: var(--s-6); border-radius: var(--r); background: var(--c-frost); }
+.cart-page__assure { display: grid; gap: var(--s-3); margin-top: var(--s-5); padding-top: var(--s-5); border-top: 1px solid var(--line); font-size: var(--fs-xs); color: var(--ink-soft); }
+.cart-page__assure li { display: flex; gap: .6rem; align-items: center; }
+.cart-page__assure svg { width: 18px; height: 18px; color: var(--brand); }
+.cart-page .cart-line { grid-template-columns: 112px 1fr; }
+.cart-page__empty { padding-top: 0; }
+@media (min-width: 990px) { .cart-page__grid { grid-template-columns: minmax(0, 1fr) 380px; gap: clamp(3rem, 6vw, 6rem); } .cart-page__summary { position: sticky; top: calc(var(--header-h) + var(--s-5)); } }
+{% endstylesheet %}
+
+{% schema %}
+{ "name": "Cart", "settings": [] }
+{% endschema %}

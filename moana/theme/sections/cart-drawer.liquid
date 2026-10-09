@@ -1,0 +1,64 @@
+{%- comment -%}
+  Cart drawer. Rendered in the layout and re-rendered through the Section Rendering API after every cart change
+  (theme.js asks /cart/add.js and /cart/change.js for `sections: cart-drawer`), so the markup here is the single
+  source of truth: no prices are ever computed in JavaScript.
+{%- endcomment -%}
+<div class="drawer cart-drawer" id="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-drawer-title" tabindex="-1" data-cart-drawer>
+  <div class="drawer__head">
+    <h2 class="drawer__title" id="cart-drawer-title">{{ 'cart.title' | t }}{% if cart.item_count > 0 %} <span class="t-soft cart-drawer__n">({{ cart.item_count }})</span>{% endif %}</h2>
+    <button class="icon-btn" type="button" data-drawer-close>{%- render 'icon', name: 'close' -%}<span class="sr-only">{{ 'general.close' | t }}</span></button>
+  </div>
+
+  {%- if cart.item_count > 0 -%}
+    <div class="drawer__body cart-drawer__body">
+      {%- render 'free-shipping-bar' -%}
+      <ul class="cart-lines" role="list">
+        {%- for item in cart.items -%}
+          {%- render 'cart-line', item: item, index: forloop.index, context: 'drawer' -%}
+        {%- endfor -%}
+      </ul>
+      {%- comment -%} At most two suggestions, never a carousel: the drawer's job is checkout. {%- endcomment -%}
+      {%- assign suggest_source = settings.cart_suggestions | default: collections['new'] -%}
+      {%- assign in_cart = cart.items | map: 'product_id' | join: ',' | prepend: ',' | append: ',' -%}
+      {%- capture suggestions -%}
+        {%- assign shown = 0 -%}
+        {%- for p in suggest_source.products -%}
+          {%- assign pid = p.id | prepend: ',' | append: ',' -%}
+          {%- if in_cart contains pid or p.available == false -%}{%- continue -%}{%- endif -%}
+          {%- render 'mini-product', product: p -%}
+          {%- assign shown = shown | plus: 1 -%}
+          {%- if shown >= 2 -%}{%- break -%}{%- endif -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+      {%- if suggestions != blank -%}
+        <div class="cart-suggest">
+          <p class="t-label">{{ 'cart.suggestions' | t }}</p>
+          <ul class="mini-list" role="list">{{ suggestions }}</ul>
+        </div>
+      {%- endif -%}
+    </div>
+    <div class="drawer__foot cart-drawer__foot">
+      {%- render 'cart-summary' -%}
+    </div>
+  {%- else -%}
+    <div class="drawer__body cart-empty">
+      <p class="t-h3">{{ 'cart.empty' | t }}</p>
+      <p class="t-soft">{{ 'cart.empty_text' | t }}</p>
+      <a class="btn" href="{{ collections['skincare'].url | default: routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t }}</a>
+      {%- assign menu = linklists['moana-main'] | default: linklists['main-menu'] -%}
+      {%- if menu.links.first.links.size > 0 -%}
+        <div class="cart-empty__cats">
+          <p class="t-label">{{ 'header.by_category' | t }}</p>
+          <div class="cluster">
+            {%- for child in menu.links.first.links -%}<a class="pill pill--sm" href="{{ child.url }}">{{ child.title }}</a>{%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+</div>
+
+
+{% schema %}
+{ "name": "Cart drawer", "settings": [] }
+{% endschema %}

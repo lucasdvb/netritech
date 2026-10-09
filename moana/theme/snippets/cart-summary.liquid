@@ -1,0 +1,20 @@
+{%- comment -%} Subtotal, discounts and checkout. Shared by the drawer and the cart page. {%- endcomment -%}
+<div class="cart-summary">
+  {%- for discount in cart.cart_level_discount_applications -%}
+    <div class="cart-summary__row t-small"><span>{{ discount.title }}</span><span>−{{ discount.total_allocated_amount | money }}</span></div>
+  {%- endfor -%}
+  <div class="cart-summary__row">
+    <span class="t-sub">{{ 'cart.subtotal' | t }}</span>
+    <span class="cart-summary__total">{{ cart.total_price | money }}</span>
+  </div>
+  <p class="cart-summary__note">
+    {%- if cart.taxes_included -%}{{ 'cart.taxes_included' | t }} {% endif -%}
+    {{ 'cart.delivery_at_checkout' | t }}
+  </p>
+  <form action="{{ routes.cart_url }}" method="post" class="cart-summary__form">
+    <button class="btn" type="submit" name="checkout"{% if cart.item_count == 0 %} disabled{% endif %}>{{ 'cart.checkout' | t }}</button>
+  </form>
+  {%- if template.name != 'cart' -%}
+    <a class="link cart-summary__secondary" href="{{ routes.cart_url }}">{{ 'cart.view_cart' | t }}</a>
+  {%- endif -%}
+</div>

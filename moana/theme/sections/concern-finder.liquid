@@ -1,0 +1,91 @@
+{%- liquid
+  assign source = section.settings.collection | default: collections['skincare']
+-%}
+<section class="section concern" aria-labelledby="cf-{{ section.id }}">
+  <div class="page-width concern__grid">
+    <div class="concern__intro">
+      {%- if section.settings.eyebrow != blank -%}<p class="t-label">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h2 class="t-h2" id="cf-{{ section.id }}">{{ section.settings.heading }}</h2>
+      {%- if section.settings.text != blank -%}<p class="t-lead">{{ section.settings.text }}</p>{%- endif -%}
+      <div class="concern__types">
+        <p class="t-label" id="skin-{{ section.id }}">{{ section.settings.skin_heading }}</p>
+        <div class="cluster" role="group" aria-labelledby="skin-{{ section.id }}">
+          {%- render 'tag-counts', source: source, tags: settings.skin_type_tags, style: 'pills' -%}
+        </div>
+      </div>
+    </div>
+    <ul class="concern__list" role="list">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign t = block.settings.tag | strip
+          assign n = 0
+          for p in source.products
+            if p.tags contains t
+              assign n = n | plus: 1
+            endif
+          endfor
+          if n == 0
+            continue
+          endif
+        -%}
+        <li class="reveal" style="--i: {{ forloop.index0 | modulo: 4 }}" {{ block.shopify_attributes }}>
+          <a class="concern-tile" href="{{ source.url }}/{{ t | handle }}">
+            <span class="concern-tile__name">{{ block.settings.label | default: t }}</span>
+            {%- if block.settings.note != blank -%}<span class="concern-tile__note">{{ block.settings.note }}</span>{%- endif -%}
+            <span class="concern-tile__foot">
+              <span class="t-xs">{{ 'collections.product_count' | t: count: n }}</span>
+              <span class="concern-tile__arrow">{% render 'icon', name: 'arrow-right' %}</span>
+            </span>
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% stylesheet %}
+.concern__grid { display: grid; gap: var(--s-7); }
+.concern__intro > * + * { margin-top: var(--s-4); }
+.concern__types { padding-top: var(--s-4); }
+.concern__types .cluster { margin-top: var(--s-3); gap: var(--s-2); }
+.concern__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-2); }
+.concern-tile {
+  position: relative; display: flex; flex-direction: column; gap: var(--s-2); min-height: 168px; height: 100%;
+  padding: var(--s-5) var(--s-4) var(--s-4); border-radius: var(--r); background: var(--c-frost); overflow: hidden; isolation: isolate;
+}
+.concern-tile::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--c-spring); transform: translateY(101%); transition: transform var(--t-slow) var(--ease-out); }
+.concern-tile:hover::before, .concern-tile:focus-visible::before { transform: none; }
+.concern-tile__name { font: 400 clamp(1.375rem, 1.1rem + .9vw, 1.875rem)/1.08 var(--f-display); }
+.concern-tile__note { font-size: var(--fs-xs); color: var(--ink-soft); line-height: 1.45; }
+.concern-tile__foot { margin-top: auto; display: flex; align-items: center; justify-content: space-between; color: var(--ink-soft); }
+.concern-tile__arrow { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: var(--c-white); color: var(--c-forest); transition: background-color var(--t) var(--ease), color var(--t) var(--ease), transform var(--t) var(--ease); }
+.concern-tile__arrow svg { width: 16px; height: 16px; }
+.concern-tile:hover .concern-tile__arrow { background: var(--c-forest); color: #fff; transform: translateX(2px); }
+@media (min-width: 750px) { .concern__list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); } }
+@media (min-width: 990px) {
+  .concern__grid { grid-template-columns: minmax(0, .9fr) minmax(0, 1.6fr); gap: clamp(3rem, 6vw, 6rem); align-items: start; }
+  .concern__intro { position: sticky; top: calc(var(--header-h) + var(--s-6)); }
+  .concern-tile { min-height: 200px; padding: var(--s-6) var(--s-5) var(--s-5); }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Shop by concern",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Label", "default": "Shop by concern" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Start with what your skin is asking for" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Every product is tagged by the concern it treats and the skin it suits, so you can find yours in two taps." },
+    { "type": "text", "id": "skin_heading", "label": "Skin type label", "default": "Or by skin type" },
+    { "type": "collection", "id": "collection", "label": "Collection to filter" }
+  ],
+  "blocks": [
+    { "type": "concern", "name": "Concern", "settings": [
+      { "type": "text", "id": "tag", "label": "Product tag", "default": "Hydration" },
+      { "type": "text", "id": "label", "label": "Label override" },
+      { "type": "text", "id": "note", "label": "Short note" }
+    ] }
+  ],
+  "presets": [{ "name": "Shop by concern" }]
+}
+{% endschema %}
