@@ -6,6 +6,7 @@ import * as H from './habits.js';
 import { planHabits } from './scoring.js';
 import { UNDATED, historyStores } from './history.js';
 import * as R from './routines.js';
+import { statePatch } from './habit-system.js';
 import { today, dayAt, addDays, diffDays, range } from './dates.js';
 
 export const FORTNIGHT = 14;
@@ -121,7 +122,7 @@ export function accept(p, date = today()) {
   if (p.kind === 'shrink' && p.to != null) store.put('habits', { ...h, temp: { target: p.to, from: p.from, until: addDays(date, p.weeks * 7), since: date } });
   else if (p.kind === 'shrink' && p.tiny) store.put('habits', { ...h, temp: { tiny: true, until: addDays(date, p.weeks * 7), since: date } });
   else if (p.kind === 'grow') store.put('habits', { ...h, target: p.to, min: h.min != null && h.min >= h.target ? p.to : h.min });
-  else if (p.kind === 'pause') store.put('habits', { ...h, state: 'paused', stateBeforePause: H.stateOf(h, date), pausedUntil: addDays(date, FORTNIGHT) });
+  else if (p.kind === 'pause') store.put('habits', { ...h, ...statePatch(h, 'paused', { until: addDays(date, FORTNIGHT) }) });
   markSuggested(p.habitId, date);
   return () => store.put('habits', before);
 }

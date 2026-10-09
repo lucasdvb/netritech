@@ -16,7 +16,7 @@ import { graduationDue, graduate } from './habit-system.js';
 import { accept } from './adapt.js';
 import { saveReview } from './day.js';
 import { today, addDays, diffDays, range, weekday, fmtDay, fmtHM, parseHM } from './dates.js';
-import { num, pct } from '../ui/format.js';
+import { num, pct, kgOut, weightUnit } from '../ui/format.js';
 
 const QUIET_DAYS = 14;
 const mean = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
@@ -157,7 +157,7 @@ function weightStall(date) {
   const to = t.kcal - 150;
   return [{ id: 'weight-stall', area: 'Body', weight: 1,
     title: 'Weight has been flat for two weeks',
-    detail: `7-day average ${num(now7, 1)} kg, against ${num(then7, 1)} kg two weeks ago, with ${logged} weigh-ins. A small cut restarts it; a crash diet doesn’t.`,
+    detail: `7-day average ${num(kgOut(now7), 1)} ${weightUnit()}, against ${num(kgOut(then7), 1)} ${weightUnit()} two weeks ago, with ${logged} weigh-ins. A small cut restarts it; a crash diet doesn’t.`,
     action: { label: `Lower the calorie target to ${num(to)} kcal`, done: `Calorie target is now ${num(to)} kcal.`,
       apply: () => { const before = s.targets; store.setSettings({ targets: { ...before, kcal: to, kcalMin: before.kcalMin != null ? before.kcalMin - 150 : before.kcalMin, kcalMax: before.kcalMax != null ? before.kcalMax - 150 : before.kcalMax } });
         return () => store.setSettings({ targets: before }); } } }];
@@ -308,8 +308,8 @@ function unmark(id) { const items = { ...record() }; delete items[id]; store.put
 
 /** Insights worth showing on a date: acted on or set aside ones stay quiet for two weeks. */
 // Writing in the journal, or anything else no rule reads, doesn't run the rules again.
-const READS = ['habits', 'habitLogs', 'routines', 'routineRuns', 'dailyReviews', 'sleepEntries', 'moodEntries', 'weightEntries', 'nutritionLogs',
-  'stepLogs', 'workouts', 'workoutSets', 'templates', 'goals', 'settings', 'profile', 'meta'];
+const READS = [...new Set([...H.DATA_STORES.filter((s) => s !== 'journalEntries'), 'routines', 'routineRuns', 'dailyReviews', 'sleepEntries', 'moodEntries', 'weightEntries', 'nutritionLogs',
+  'stepLogs', 'workouts', 'workoutSets', 'templates', 'goals', 'settings', 'profile', 'meta'])];
 export function insights(date = today(), { limit = Infinity } = {}) {
   return store.memo(`insights:${date}`, READS, () => compute(date), `${found.date === date}:${engines.length}`).slice(0, limit);
 }

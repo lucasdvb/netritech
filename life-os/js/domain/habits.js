@@ -108,7 +108,7 @@ export function displayTarget(h, date, mode = dayMode(date)) {
 
 export function isDone(h, date, mode = dayMode(date)) {
   // A limit is kept while the day stays within it; a day with nothing logged was kept.
-  if (isLimit(h)) return (log(h.id, date)?.value || 0) <= limitOf(h);
+  if (isLimit(h)) return date <= today() && (log(h.id, date)?.value || 0) <= limitOf(h);
   const l = log(h.id, date);
   const v = value(h, date);
   if (h.type === 'binary' || h.type === 'check') return v === 1;
@@ -126,12 +126,15 @@ export function progress(h, date, mode = dayMode(date)) {
 }
 
 /* ---------- scheduling ---------- */
-export function periodDone(h, date) {
+/** Times done in the week (or month) of `date`, counting days up to `through` (and never
+ *  past today). Judging a day uses only the days before it, so a later log never changes it. */
+export function periodDone(h, date, through = today()) {
   const k = h.schedule?.kind;
   const from = k === 'perMonth' ? startOfMonth(date) : startOfWeek(date);
   const to = k === 'perMonth' ? endOfMonth(date) : endOfWeek(date);
+  const last = through < today() ? through : today();
   let n = 0;
-  for (const d of range(from, to)) if (d <= today() && started(h, d) && isDone(h, d)) n++;
+  for (const d of range(from, to)) if (d <= last && started(h, d) && isDone(h, d)) n++;
   return n;
 }
 
@@ -178,7 +181,7 @@ export function dueOn(h, date, mode = dayMode(date)) {
   const s = h.schedule || { kind: 'daily' };
   if (s.kind === 'daily' || s.kind === 'weekdays') return isScheduledDay(h, date);
   if (isDone(h, date)) return true;
-  if (s.kind === 'perWeek' || s.kind === 'perMonth') return periodDone(h, date) < periodNeed(h, date);
+  if (s.kind === 'perWeek' || s.kind === 'perMonth') return periodDone(h, date, addDays(date, -1)) < periodNeed(h, date);
   if (s.kind === 'interval') {
     const last = lastDoneBefore(h, date);
     if (!last) return diffDays(date, startOf(h)) % (s.every || 7) === 0 || diffDays(date, startOf(h)) >= (s.every || 7);
@@ -212,7 +215,7 @@ function computeConsistency(h, end, days) {
   if (last === t && !counts(h, t)) last = addDays(t, -1);
   const first = [addDays(end, -(days - 1)), startOf(h)].sort().pop();
   if (last < first) return { done: 0, expected: 0, ratio: null };
-  const span = range(first, last).filter((d) => !isOff(dayMode(d)) && !isReserve(h, d));
+  const span = range(first, last).filter((d) => !isOff(dayMode(d)) && !isReserve(h, d) && !pausedOn(h, d));
   const s = h.schedule || { kind: 'daily' };
   const done = span.filter((d) => counts(h, d)).length;
   let expected;
@@ -232,7 +235,8 @@ function computeConsistency(h, end, days) {
 export function dots(h, end = today(), n = 7) {
   return lastNDays(end, n).map((d) => {
     if (!started(h, d)) return { date: d, state: 'off' };
-    if (isOff(dayMode(d)) || isReserve(h, d)) return { date: d, state: 'rest' };
+    if (d > today()) return { date: d, state: 'future' };
+    if (isOff(dayMode(d)) || isReserve(h, d) || pausedOn(h, d)) return { date: d, state: 'rest' };
     if (isDone(h, d)) return { date: d, state: 'done' };
     if (isTiny(h, d)) return { date: d, state: 'tiny' };
     if (d === today()) return { date: d, state: 'today' };
@@ -352,12 +356,22 @@ export const focusLimit = () => { const n = Number(store.settings().focusLimit);
 /** "three": the focus count as a word, for "Your three" and "Choose your three". */
 export const focusWord = () => WORDS[focusLimit()];
 
-/** A habit's state on a date. A pause ends by itself on its end date. */
+/** A habit's state on a date. A pause ends by itself on its end date. With a state history
+ *  (stateLog, kept from when a habit's state is changed), a past day reads the state it had then,
+ *  so pausing or moving a habit today never rewrites earlier days. */
 export function stateOf(h, date = today()) {
+  const log = h.stateLog;
+  if (log?.length && date < today()) {
+    let e = null;
+    for (const x of log) if (x.from <= date) e = x;
+    if (e) return e.state === 'paused' && e.until && date >= e.until ? e.before || 'autopilot' : e.state;
+  }
   const s = h.state || 'autopilot';
   if (s === 'paused' && h.pausedUntil && date >= h.pausedUntil) return h.stateBeforePause || 'autopilot';
   return s;
 }
+/** Paused on that day: nothing was expected, so it neither counts nor breaks a run. */
+export const pausedOn = (h, date) => stateOf(h, date) === 'paused';
 export const inState = (state, date = today()) => activeHabits().filter((h) => stateOf(h, date) === state);
 // In your order (Habits › Arrange); inState keeps the overall habit order.
 export const focusHabits = (date = today()) => inState('focus', date);
@@ -371,9 +385,13 @@ export function periodsOf(h, from, to) {
   const s = h.schedule || { kind: 'daily' };
   const t = today();
   const out = [];
-  const usable = (d) => started(h, d) && !isOff(dayMode(d));
+  const usable = (d) => started(h, d) && !isOff(dayMode(d)) && !pausedOn(h, d);
   if (s.kind === 'perWeek' || s.kind === 'perMonth' || s.kind === 'interval') {
-    let p = s.kind === 'perWeek' ? startOfWeek(from) : s.kind === 'perMonth' ? startOfMonth(from) : from;
+    // Intervals are counted from the habit's start, so the windows don't move from day to day.
+    const every = s.every || 7;
+    const anchor = startOf(h);
+    let p = s.kind === 'perWeek' ? startOfWeek(from) : s.kind === 'perMonth' ? startOfMonth(from)
+      : from > anchor ? addDays(anchor, Math.floor(diffDays(from, anchor) / every) * every) : from;
     while (p <= to) {
       const end = s.kind === 'perWeek' ? endOfWeek(p) : s.kind === 'perMonth' ? endOfMonth(p) : addDays(p, (s.every || 7) - 1);
       const days = range(p, end > to ? to : end).filter(usable);

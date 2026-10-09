@@ -7,6 +7,9 @@ const numFmt = (d) => {
 };
 
 export const num = (n, d = 0) => (n == null || !Number.isFinite(Number(n)) ? '—' : numFmt(d).format(Number(n)));
+/** A number for an input's value: always a dot decimal, never grouped, empty when there's none.
+ *  (Number fields can't read "72,5" or "1,200", which is what num() gives in many locales.) */
+export const fieldNum = (n, d = 1) => (n == null || n === '' || !Number.isFinite(Number(n)) ? '' : String(Math.round(Number(n) * 10 ** d) / 10 ** d));
 export const pct = (r) => (r == null ? '—' : `${Math.round(r * 100)}%`);
 export const signed = (n, d = 1, unit = '') => {
   if (n == null || !Number.isFinite(n)) return '—';

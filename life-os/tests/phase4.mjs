@@ -138,7 +138,7 @@ await step('backup + merge restore', async () => {
 await step('csv export', async () => {
   await go('#/more/data', '[data-view="data"]');
   const [dl] = await Promise.all([page.waitForEvent('download'), page.locator('[data-action="csv"][data-k="weight"]').click()]);
-  const csv = readFileSync(await dl.path(), 'utf8');
+  const csv = readFileSync(await dl.path(), 'utf8').replace(/^\ufeff/, ''); // the byte-order mark is for spreadsheets
   if (!csv.startsWith('date,kg,note')) throw new Error('csv header ' + csv.slice(0, 30));
 });
 

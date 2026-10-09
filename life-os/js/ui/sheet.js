@@ -74,6 +74,9 @@ export function close(s = top()) {
   if (!s) return;
   const i = stack.indexOf(s);
   if (i < 0) return;
+  // A field still being edited saves first (its change event needs the sheet to find its
+  // handler): Escape, a drag down or a tap outside don't take the focus away on their own.
+  if (s.el.contains(document.activeElement)) document.activeElement.blur();
   stack.splice(i, 1);
   s.el.classList.remove('is-open');
   s.el.classList.add('is-closing');

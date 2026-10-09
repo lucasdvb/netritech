@@ -37,6 +37,7 @@ const CORS = {
 const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', ...CORS } });
 const bad = (error, status = 400) => json({ error }, status);
 
+const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?Z$/;
 const HEX64 = /^[0-9a-f]{64}$/;
 const KEY = /^[A-Za-z0-9_-]{16,64}$/;
 
@@ -71,8 +72,9 @@ async function admit(db, env, space, auth) {
 async function sync(req, env) {
   const len = Number(req.headers.get('content-length') || 0);
   if (len > MAX_BODY) return bad('Too much at once.', 413);
+  // Measured as it arrives too: a request sent in chunks has no length up front.
   let body;
-  try { body = await req.json(); } catch { return bad('Not JSON.'); }
+  try { const text = await req.text(); if (text.length > MAX_BODY) return bad('Too much at once.', 413); body = JSON.parse(text); } catch { return bad('Not JSON.'); }
   const { space, auth, dev = null, since = 0, push = [] } = body || {};
   if (!HEX64.test(space || '') || !HEX64.test(auth || '')) return bad('Missing or malformed key.');
   if (!Number.isInteger(since) || since < 0 || !Array.isArray(push) || push.length > 2000) return bad('Malformed request.');
@@ -83,8 +85,12 @@ async function sync(req, env) {
   const a = await admit(db, env, space, auth);
   if (a.error) return bad(a.error, a.status);
   const stmts = [];
+  // A timestamp from the future would pin a record so nothing could ever replace it.
+  const soon = new Date(Date.now() + 86400000).toISOString();
   for (const it of push) {
     if (!it || !KEY.test(it.k || '') || typeof it.ts !== 'string' || it.ts.length > 40 || typeof it.d !== 'string' || it.d.length > MAX_ITEM) return bad('Malformed record.');
+    // A timestamp that isn't one, or is from the future, would pin the record forever: set aside.
+    if (!ISO.test(it.ts) || it.ts > soon) continue;
     // Newer wins: drop an older copy, then insert (ignored if a newer copy is still there). The
     // fresh row takes the next number, so it's seen by every device that looked before.
     stmts.push(db.prepare('DELETE FROM items WHERE space = ? AND k = ? AND ts < ?').bind(space, it.k, it.ts));

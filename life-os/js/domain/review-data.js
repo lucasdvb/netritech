@@ -5,7 +5,8 @@ import * as M from './metrics.js';
 import * as F from './fitness.js';
 import { habit, isDone, started, activeHabits, stateOf, consistency } from './habits.js';
 import { dayScore } from './scoring.js';
-import { range, today, addDays, endOfWeek, startOfMonth, endOfMonth } from './dates.js';
+import { range, today, addDays, endOfWeek, startOfMonth, endOfMonth, durationHM } from './dates.js';
+import { kgOut, weightUnit } from '../ui/format.js';
 
 const avgOf = (vals) => { const v = vals.filter((x) => x != null && x > 0); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
 const daysDone = (id, days) => { const h = habit(id); return h ? days.filter((d) => started(h, d) && isDone(h, d)).length : 0; };
@@ -27,7 +28,8 @@ export function periodFacts(from, to) {
   const workouts = store.all('workouts').filter((w) => w.status === 'done' && w.date >= from && w.date <= end);
   const proteinDays = days.filter((d) => M.nutrition(d).protein > 0);
   const proteinHit = proteinDays.filter((d) => M.nutrition(d).protein >= t.proteinHitG).length;
-  const scores = days.map((d) => dayScore(d).ratio).filter((r) => r != null);
+  // Today counts once something is done, never as a zero first thing.
+  const scores = days.map((d) => dayScore(d)).filter((x) => x.ratio != null && !(x.date === today() && x.done === 0)).map((x) => x.ratio);
   const reviews = days.map((d) => M.review(d)).filter(Boolean);
   const pri = days.flatMap((d) => priorities(d));
   const priSet = pri.length;
@@ -79,10 +81,10 @@ export function weekHighlights(weekStart) {
   }
   if (f.sleep.avg != null) {
     if (f.sleep.short >= 3) slip.push({ ic: 'bed', text: `${f.sleep.short} nights under ${t.sleepMinH ?? 7} h` });
-    else if (f.sleep.avg >= (t.sleepMinH ?? 7)) well.push({ ic: 'bed', text: `Sleep averaged ${Math.floor(f.sleep.avg)}h ${String(Math.round((f.sleep.avg % 1) * 60)).padStart(2, '0')}m` });
+    else if (f.sleep.avg >= (t.sleepMinH ?? 7)) well.push({ ic: 'bed', text: `Sleep averaged ${durationHM(f.sleep.avg * 60)}` });
   }
   if (f.protein.logged >= 3) (f.protein.hitDays / f.protein.logged >= 0.7 ? well : slip).push({ ic: 'beef', text: `Protein on target ${f.protein.hitDays} of ${f.protein.logged} logged days` });
-  if (f.weight.change != null && Math.abs(f.weight.change) >= 0.1) (f.weight.change < 0 ? well : slip).push({ ic: 'scale', text: `Weight ${f.weight.change < 0 ? 'down' : 'up'} ${Math.abs(f.weight.change).toFixed(1)} kg (7-day average)` });
+  if (f.weight.change != null && Math.abs(f.weight.change) >= 0.1) (f.weight.change < 0 ? well : slip).push({ ic: 'scale', text: `Weight ${f.weight.change < 0 ? 'down' : 'up'} ${Math.abs(kgOut(f.weight.change)).toFixed(1)} ${weightUnit()} (7-day average)` });
   if (f.priorities.set >= 3) (f.priorities.done / f.priorities.set >= 0.7 ? well : slip).push({ ic: 'list-checks', text: `${f.priorities.done} of ${f.priorities.set} priorities done` });
   if (f.wins.length) well.push({ ic: 'star', text: `Your wins: ${f.wins.slice(0, 3).map((w) => w.text).join(' · ')}` });
   return { well: well.slice(0, 5), slip: slip.slice(0, 5) };

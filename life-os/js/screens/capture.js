@@ -144,6 +144,9 @@ export function openCapture(initial = '') {
 }
 
 async function commit(items, sheet, ctx) {
+  // A second tap (or Enter) while the first is still on its way logs nothing twice.
+  if (sheet.ui.saving) return;
+  sheet.ui.saving = true;
   const { save } = await import('../domain/capture-save.js');
   const res = save(items, ctx);
   remember(sheet.ui.text, items);

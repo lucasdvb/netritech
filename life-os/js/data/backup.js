@@ -27,6 +27,11 @@ export async function buildBackup({ includePhotos = false } = {}) {
   return { app: APP_ID, kind: 'backup', schema: DB_VERSION, exportedAt: new Date().toISOString(), includesPhotos: includePhotos, counts, data };
 }
 
+// Ids are what the database keys on: a non-empty string or a number, nothing else.
+const validId = (id) => (typeof id === 'string' && id.length > 0 && id.length <= 200) || (typeof id === 'number' && Number.isFinite(id));
+// Photos travel as image data, never as a link to fetch from somewhere.
+const PHOTO = /^data:image\/(?:jpeg|png|webp|gif|heic|avif);base64,/;
+
 /** Validates a parsed backup and returns counts, or throws a readable error. */
 export function inspect(json) {
   if (!json || json.app !== APP_ID || !json.data || typeof json.data !== 'object') throw new Error('This file isn’t a Life OS backup.');
@@ -35,14 +40,15 @@ export function inspect(json) {
   for (const [k, v] of Object.entries(json.data)) {
     if (!STORES[k]) continue;
     if (!Array.isArray(v)) throw new Error(`The “${k}” section of this backup is damaged.`);
-    if (v.some((r) => !r || typeof r !== 'object' || !r.id)) throw new Error(`Some “${k}” records in this backup are missing their ids.`);
+    if (v.some((r) => !r || typeof r !== 'object' || Array.isArray(r) || !validId(r.id))) throw new Error(`Some “${k}” records in this backup are missing their ids.`);
+    if (k === 'photoBlobs' && v.some((r) => !PHOTO.test(String(r.dataUrl || '')))) throw new Error('Some photos in this backup are damaged.');
     counts[k] = v.length;
   }
   return { counts, exportedAt: json.exportedAt, includesPhotos: !!json.includesPhotos };
 }
 
 /** mode 'replace' wipes current data first; 'merge' keeps the newer version of each record. */
-export async function restore(json, mode = 'replace') {
+export async function restore(json, mode = 'replace', onWritten) {
   inspect(json);
   await store.flush();
   const incoming = {};
@@ -75,6 +81,7 @@ export async function restore(json, mode = 'replace') {
     if (photoBlobs) photoBlobs.forEach((p) => ops.push({ store: 'photoBlobs', value: p }));
     await store.disk().write(ops);
   }
+  onWritten?.();
   await store.reload();
   // Older backups catch up with any data migrations they predate.
   const { runMigrations } = await import('./migrations.js');
@@ -84,12 +91,15 @@ export async function restore(json, mode = 'replace') {
 /* ---------- CSV ---------- */
 const csvCell = (v) => {
   if (v == null) return '';
-  const s = typeof v === 'object' ? JSON.stringify(v) : String(v);
-  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  let s = typeof v === 'object' ? JSON.stringify(v) : String(v);
+  // Text that a spreadsheet would run as a formula (=, +, -, @) is kept as text.
+  if (typeof v === 'string' && /^[=+\-@\t\r]/.test(s)) s = `'${s}`;
+  return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 };
+/** CSV with a byte-order mark, so spreadsheets read accents and symbols as UTF-8. */
 export function toCSV(rows, columns) {
   const cols = columns || [...new Set(rows.flatMap((r) => Object.keys(r)))];
-  return [cols.join(','), ...rows.map((r) => cols.map((c) => csvCell(r[c])).join(','))].join('\n');
+  return `\ufeff${[cols.join(','), ...rows.map((r) => cols.map((c) => csvCell(r[c])).join(','))].join('\r\n')}`;
 }
 
 export const CSV_SETS = {

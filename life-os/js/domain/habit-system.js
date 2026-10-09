@@ -17,7 +17,12 @@ export function newHabit(overrides = {}) {
 }
 
 /** The fields that move a habit into a state, or null when the three focus slots are full. */
-export function statePatch(h, state, { until = null, focusCount = focusHabits().length } = {}) {
+export function statePatch(h, state, opts = {}) {
+  const patch = basePatch(h, state, opts);
+  return patch && { ...patch, stateLog: logState(h, patch) };
+}
+
+function basePatch(h, state, { until = null, focusCount = focusHabits().length } = {}) {
   const now = stateOf(h);
   if (state === 'focus') {
     if (now !== 'focus' && focusCount >= focusLimit()) return null;
@@ -31,6 +36,17 @@ export function statePatch(h, state, { until = null, focusCount = focusHabits().
   return { state, pausedUntil: null };
 }
 
+/** The habit's dated state history with today's change on the end. A habit without one starts
+ *  it with the state it had until now, from the beginning. A second change on the same day
+ *  replaces the first. Kept to the last 60 changes. */
+function logState(h, patch) {
+  const t = today();
+  const log = h.stateLog?.length ? [...h.stateLog] : [{ from: '0000-01-01', state: stateOf(h, addDays(t, -1)) }];
+  const entry = { from: t, state: patch.state, ...(patch.state === 'paused' ? { until: patch.pausedUntil, before: patch.stateBeforePause } : {}) };
+  if (log[log.length - 1].from === t) log[log.length - 1] = entry; else log.push(entry);
+  return log.slice(-60);
+}
+
 export function setState(h, state, opts) {
   const patch = statePatch(h, state, opts);
   return patch ? store.update('habits', h.id, patch) : null;
@@ -40,7 +56,7 @@ export function setState(h, state, opts) {
 export function graduate(h) {
   const next = queue().find((q) => q.id !== h.id) || null;
   const ops = [{ store: 'habits', value: { ...h, ...statePatch(h, 'autopilot'), graduatedAt: today() } }];
-  if (next) ops.push({ store: 'habits', value: { ...next, state: 'focus', focusSince: today(), pausedUntil: null } });
+  if (next) ops.push({ store: 'habits', value: { ...next, ...statePatch(next, 'focus', { focusCount: 0 }) } });
   store.batch(ops);
   return next;
 }

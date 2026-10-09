@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = 'd6e4ed988d';
+const VERSION = 'b263bfae63';
 const ASSETS = [
   "./",
   "./index.html",
@@ -184,6 +184,7 @@ const ASSETS = [
   "./js/screens/you.js",
   "./js/sync/crypto.js",
   "./js/sync/engine.js",
+  "./js/theme-boot.js",
   "./js/ui/app-api.js",
   "./js/ui/badge.js",
   "./js/ui/charts.js",
@@ -207,6 +208,7 @@ const ASSETS = [
   "./js/ui/patch.js",
   "./js/ui/reorder.js",
   "./js/ui/router.js",
+  "./js/ui/save-later.js",
   "./js/ui/sheet.js",
   "./js/ui/sound.js",
   "./js/ui/swipe.js",
@@ -288,7 +290,9 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const target = event.notification.data?.url || './#/today';
+  // Only ever a page of this app: a push can't send you anywhere else.
+  let target = './#/today';
+  try { const u = new URL(event.notification.data?.url || target, self.location.href); if (u.origin === self.location.origin) target = u.href; } catch { /* keep Today */ }
   event.waitUntil((async () => {
     const all = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     for (const c of all) {

@@ -52,7 +52,7 @@ export function openTask(id = null, defaults = {}) {
       const custom = u.date && !opts.some(([, d]) => d === u.date);
       return html`<div class="form task-form">
         <label class="field"><span class="field-label">Task</span>
-          <input class="input" data-input="title" value="${u.title}" placeholder="What needs doing?" maxlength="140" enterkeyhint="done" autofocus>
+          <input class="input" data-input="title" data-enter="save" value="${u.title}" placeholder="What needs doing?" maxlength="140" enterkeyhint="done" autofocus aria-label="Task">
           ${u.error ? html`<span class="field-error" role="alert">${u.error}</span>` : ''}</label>
         <div class="field"><span class="field-label">When</span>
           <div class="chips">${opts.map(([label, d]) => html`<button type="button" class="${cx('chip', u.date === d && 'is-active')}" aria-pressed="${u.date === d}" data-action="when" data-date="${d}">${label}</button>`)}</div>
