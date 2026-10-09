@@ -14,7 +14,8 @@ export function phase(now = new Date()) {
   const work = parseHM(p.workStart || '10:00');
   const end = parseHM(p.workEnd || '20:00');
   const bed = parseHM(p.bedTime || '22:00');
-  if (m >= bed || m < wake - 120) return 'night';
+  // Lights out can be after midnight (00:30): night then runs from it to two hours before waking.
+  if (bed > wake ? m >= bed || m < wake - 120 : m >= bed && m < wake - 120) return 'night';
   if (m < work) return 'morning';
   if (m < end) return 'work';
   return 'evening';

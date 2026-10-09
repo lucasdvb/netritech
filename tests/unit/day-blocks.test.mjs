@@ -7,6 +7,7 @@ import { setDayEnd } from '../../js/domain/dates.js';
 import { profileSeed, settingsSeed, habitsSeed } from '../../js/data/seed.js';
 import { defaultRoutines } from '../../js/domain/routines.js';
 import * as D from '../../js/domain/day-blocks.js';
+import { phase } from '../../js/domain/day-plan.js';
 
 setDayEnd('03:00');
 const start = () => fresh({ profile: [profileSeed()], settings: [settingsSeed()], habits: habitsSeed(),
@@ -160,4 +161,25 @@ test('a time changed in Settings moves what it’s linked to, as its block would
   D.setTime('bedTime', '23:00');
   assert.equal(habit('h-lights-out').name, 'Lights out by 23:00');
   assert.equal(habit('h-evening').time, '21:00', 'without carry, only lights out moves');
+});
+
+test('a routine as a block: its window is the block, and Undo restores it', async () => {
+  await start();
+  store.put('routines', { id: 'r-x', name: 'Lunch walk', order: 3, steps: [], window: { from: '12:00', to: '12:30' } });
+  const { id, undo } = D.add({ kind: 'routine', ref: 'r-x', time: '13:00', mins: 45 });
+  assert.deepEqual(store.get('routines', 'r-x').window, { from: '13:00', to: '13:45' });
+  assert.equal(D.block(id).mins, 45);
+  undo();
+  assert.deepEqual(store.get('routines', 'r-x').window, { from: '12:00', to: '12:30' });
+});
+
+test('lights out after midnight: last in the day, carries the evening, and only the small hours are night', async () => {
+  await start();
+  D.edit('b-bed', { time: '00:30' }, { carry: true });
+  const l = D.blocks();
+  assert.equal(l[l.length - 1].id, 'b-bed');
+  assert.equal(habit('h-evening').time, '23:30');
+  assert.equal(at('b-quiet').time, '00:00');
+  const part = (hm) => phase(new Date(`2026-10-09T${hm}:00`));
+  assert.deepEqual(['07:00', '12:00', '21:00', '23:45', '01:00', '05:00'].map(part), ['morning', 'work', 'evening', 'evening', 'night', 'morning']);
 });
