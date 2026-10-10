@@ -1,6 +1,6 @@
 // Focus timer: one block of deep work at a time (25, 50 or 90 minutes, or your own). It lives in
 // settings, so it survives closing the app; a finished block counts as a focus block for the day
-// it started, with its minutes.
+// it started, with its minutes. A block started for a task adds its minutes to the task's time taken.
 import * as store from '../data/store.js';
 import { reviewOf, saveReview } from './day.js';
 import { dayOf } from './dates.js';
@@ -18,9 +18,9 @@ export function remaining(t = current(), now = Date.now()) {
   return Math.max(0, end - at);
 }
 
-export function start(minutes = 25, label = '') {
+export function start(minutes = 25, label = '', taskId = null) {
   const m = Math.max(5, Math.min(180, Math.round(minutes)));
-  store.setSettings({ focus: { startedAt: new Date().toISOString(), minutes: m, label: label.trim().slice(0, 60), pausedAt: null, pausedMs: 0 } });
+  store.setSettings({ focus: { startedAt: new Date().toISOString(), minutes: m, label: label.trim().slice(0, 60), taskId: taskId || null, pausedAt: null, pausedMs: 0 } });
   return current();
 }
 
@@ -51,6 +51,9 @@ export function finish({ early = false, now = Date.now() } = {}) {
   const date = dayOf(new Date(t.startedAt));
   const r = reviewOf(date);
   saveReview(date, { deepWork: (r.deepWork || 0) + 1, focusMinutes: (r.focusMinutes || 0) + done });
+  // A block for a task counts towards the time it took (estimates.js learns from it).
+  const task = t.taskId && store.get('tasks', t.taskId);
+  if (task) store.put('tasks', { ...task, spent: (Number(task.spent) || 0) + done });
   store.setSettings({ focus: null });
   return { date, minutes: done, label: t.label, blocks: (r.deepWork || 0) + 1 };
 }

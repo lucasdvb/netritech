@@ -1,4 +1,5 @@
 import * as store from '../data/store.js';
+import * as SU from '../domain/supplements.js';
 import * as M from '../domain/metrics.js';
 import * as F from '../domain/fitness.js';
 import * as H from '../domain/habits.js';
@@ -129,6 +130,18 @@ function measureCard() {
   </div>`;
 }
 
+/** Supplements & medication: today's doses left, and anything running low. */
+function supplementsLink() {
+  const doses = SU.doses(today());
+  const left = doses.filter((x) => !x.taken).length;
+  const low = SU.all().filter(SU.runningLow);
+  return html`<a class="card card--link sort-cta" href="#/progress/body/supplements" data-action="nav" data-to="progress/body/supplements" data-key="supplements-link">
+    <span class="sort-cta-text"><span class="section-label">${icon('pill', { size: 13 })} Supplements & medication</span>
+      <span class="card-title">${doses.length ? (left ? `${left} of ${doses.length} to take today` : 'All taken today') : 'What you take, and when to reorder'}</span>
+      ${low.length ? html`<span class="row-sub">Running low: ${low.map((x) => x.name).join(', ')}</span>` : ''}</span>
+    ${icon('chevron-right', { size: 18 })}</a>`;
+}
+
 export default {
   id: 'body',
   title: 'Body',
@@ -150,6 +163,7 @@ export default {
             </div>
           </div>
           ${sleepStepsCard()}
+          ${supplementsLink()}
         </div>
       </div>`;
   },

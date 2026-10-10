@@ -17,7 +17,10 @@ const DAY_ENDS = [['00:00', 'Midnight'], ['01:00', '01:00'], ['02:00', '02:00'],
 const NOTIFS = [
   ['morning', 'Morning check-in', 'time'], ['workout', 'Workout', 'time'], ['water', 'Water', 'every'], ['movement', 'Movement breaks (work hours)', 'every'],
   ['eyes', 'Visual breaks (work hours)', 'every'], ['evening', 'Close the day', 'time'], ['weeklyReview', 'Weekly review (Sunday)', 'time'], ['habits', 'Habit reminders (per habit)', null],
+  ['supplements', 'Supplements & medication (their times)', null],
 ];
+// Supplement and medication reminders are on unless you turn them off (they only exist once you add one).
+const isOn = (nt, k) => (k === 'supplements' ? nt[k]?.on !== false : !!nt[k]?.on);
 
 const profileField = (label, key, type = 'text', opts = {}) => {
   const p = store.profile();
@@ -129,6 +132,7 @@ export default {
         <div class="set-list">
           ${settingRow('Theme', segmented([{ id: 'system', label: 'System' }, { id: 'light', label: 'Light' }, { id: 'dark', label: 'Dark' }], s.theme, { action: 'theme', name: 'Theme', cls: 'seg--compact' }))}
           ${settingRow('Show explanations', toggle(s.showTips === true, { action: 'tips', label: 'Show explanations' }), { hint: 'Keep the text behind every ⓘ open. Off, tap an ⓘ to read one.', key: 'tips' })}
+          ${settingRow('Morning briefing on Today', toggle(s.briefing !== false, { action: 'briefing', label: 'Morning briefing on Today' }), { hint: 'Until noon: the kind of day, your calendar, training, the first task, your energy peak and anything due.', key: 'briefing' })}
           ${settingRow('Haptics', toggle(s.haptics !== false, { action: 'haptics', label: 'Haptics' }), { hint: 'Subtle taps where the device supports them.' })}
           ${settingRow('Sound', toggle(s.sound === true, { action: 'sound', label: 'Sound' }), { hint: 'Soft sounds made on the phone for completions, moments and sealing the day. Off by default.', key: 'sound' })}
           ${settingRow('Race against', segmented([{ id: 'four', label: 'A month ago' }, { id: 'best', label: 'Best week' }, { id: 'last', label: 'Last week' }], s.ghost || 'four', { action: 'ghost', name: 'Race against', cls: 'seg--compact' }), { hint: 'Your past self at the same point of the week, on Review. A quiet marker, never an alarm.', key: 'ghost' })}
@@ -147,7 +151,7 @@ export default {
           ${settingRow('Reminders', toggle(nt.enabled, { action: 'notif-master', label: 'Reminders' }), { hint: perm === 'granted' ? 'System notifications allowed' : perm === 'denied' ? 'Notifications are blocked in system settings — in-app only' : 'In-app, plus system notifications if you allow them' })}
           ${nt.enabled ? NOTIFS.map(([k, label, kind]) => settingRow(label, html`${kind === 'time' && nt[k]?.on ? html`<input class="input input--inline" type="time" value="${nt[k].time}" data-change="notif-time" data-k="${k}" aria-label="${label} time">` : ''}
             ${kind === 'every' && nt[k]?.on ? html`<select class="input input--inline" data-change="notif-every" data-k="${k}" aria-label="${label} interval">${(k === 'eyes' ? [20, 30, 45] : k === 'water' ? [90, 120, 180] : [45, 50, 60]).map((m) => html`<option value="${m}" ${raw(nt[k].every === m ? 'selected' : '')}>every ${m} min</option>`)}</select>` : ''}
-            ${toggle(nt[k]?.on, { action: 'notif', data: { k }, label })}`, { key: `n-${k}`, hint: rs[k]?.note || '' })) : ''}
+            ${toggle(isOn(nt, k), { action: 'notif', data: { k }, label })}`, { key: `n-${k}`, hint: rs[k]?.note || '' })) : ''}
         </div></section>
       <details class="block set-advanced" data-key="advanced"><summary class="set-section">Advanced</summary>
         <h3 class="set-sub">Reminders when Life OS is closed</h3>
@@ -225,6 +229,7 @@ export default {
       const over = focusHabits().length - n;
       if (over > 0) app.toast(`${over} more in focus than the new limit. Choose which to keep.`, { action: { label: 'Choose', fn: () => app.go('plan/habits/sort') } });
     },
+    briefing: () => store.setSettings({ briefing: store.settings().briefing === false }),
     haptics: () => { const v = store.settings().haptics === false; store.setSettings({ haptics: v }); hap.setEnabled(v); },
     'notif-master': async () => {
       const nt = store.settings().notifications;
@@ -233,7 +238,7 @@ export default {
     },
     notif: ({ data }) => {
       const nt = store.settings().notifications;
-      store.setSettings({ notifications: { ...nt, [data.k]: { ...(nt[data.k] || {}), on: !nt[data.k]?.on, since: new Date().toISOString() } } });
+      store.setSettings({ notifications: { ...nt, [data.k]: { ...(nt[data.k] || {}), on: !isOn(nt, data.k), since: new Date().toISOString() } } });
     },
   },
   inputs: {

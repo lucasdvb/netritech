@@ -555,6 +555,8 @@ async function boot() {
   import('./ui/gestures.js').then((m) => m.attachPullToSearch({ enabled: () => current?.route.depth === 0, onSearch: () => app.search() })).catch(() => {});
   import('./domain/reminders.js').then((r) => r.start()).catch((err) => console.warn(err));
   store.complete().then(() => import('./domain/snapshots.js')).then((m) => m.start()).catch((err) => console.warn(err));
+  // Your calendar refreshes; bills coming due and supplements running low put their task on your list.
+  store.complete().then(() => import('./domain/housekeeping.js')).then((m) => m.start()).catch((err) => console.warn(err));
   import('./ui/badge.js').then((m) => m.start()).catch(() => {});
   // The optional sound palette: a soft tick for completions (off unless chosen in Settings).
   Promise.all([import('./ui/sound.js'), import('./ui/haptics.js')]).then(([m, h]) => h.onPlay((n) => { if (n === 'success' || n === 'commit') m.play('tick'); })).catch(() => {});

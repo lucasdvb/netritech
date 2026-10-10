@@ -2,6 +2,7 @@
 // "Long day", "Short day", "Saturday"), and the next two weeks, where any date can follow another
 // plan or be adjusted on its own. The day planner below edits whichever plan or date is chosen here.
 import * as P from '../domain/day-plans.js';
+import { planGuard } from '../domain/sleep-regularity.js';
 import * as F from '../domain/fitness-core.js';
 import * as store from '../data/store.js';
 import { today, addDays, weekday, fmtDayShort, fmtMD, relativeDay } from '../domain/dates.js';
@@ -47,10 +48,12 @@ export function daysSection() {
   const w = P.week();
   const list = P.plans();
   const ft = P.freeTime(t);
+  const guard = list.length > 1 ? planGuard() : null;
   return html`<div class="days" data-key="days">
     <ol class="days-week" aria-label="The plan each weekday follows">${[1, 2, 3, 4, 5, 6, 7].map((d) => html`<li>
       <button type="button" class="${cx('dw-day', !t.date && w[d] === t.plan && 'is-on', weekday(today()) === d && 'is-today')}" data-action="dp-weekday" data-wd="${d}" aria-label="${DAYS[d].slice(0, -1)}: ${P.nameOf(w[d])}. Change">
         <span class="dw-dow">${DOW[d]}</span><span class="dw-plan">${P.nameOf(w[d])}</span></button></li>`)}</ol>
+    ${guard ? html`<p class="notice notice--warn days-guard" data-key="days-guard">${icon('moon', { size: 16 })}<span>${guard.line}</span></p>` : ''}
     <div class="chips days-plans" role="group" aria-label="Your plans">
       ${list.map((p) => html`<button type="button" class="${cx('chip', !t.date && t.plan === p.id && 'is-active')}" data-action="dp-pick" data-id="${p.id}" aria-pressed="${!t.date && t.plan === p.id}">${p.name}</button>`)}
       <button type="button" class="chip chip--add" data-action="dp-new">${icon('plus', { size: 14 })} New plan</button>

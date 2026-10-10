@@ -1,6 +1,7 @@
 // The add/edit task sheet, loaded the first time you open a task.
 import * as T from '../domain/tasks-more.js';
 import * as P from '../domain/projects.js';
+import * as ES from '../domain/estimates.js';
 import { CATEGORIES, catColor } from '../domain/taxonomy.js';
 import { today, addDays, weekday, fromISO } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
@@ -31,6 +32,9 @@ export function openTask(id = null, defaults = {}) {
     mday: cur?.repeat?.kind === 'monthly' ? cur.repeat.day : null,
     every: cur?.repeat?.kind === 'daily' ? cur.repeat.n || 1 : 1,
     projectId: cur ? cur.projectId || null : defaults.projectId || null,
+    time: cur?.time || defaults.time || '',
+    estimate: cur?.estimate ?? '',
+    spent: cur?.spent ?? '',
     error: '',
   };
   const repeatOf = () => {
@@ -57,7 +61,13 @@ export function openTask(id = null, defaults = {}) {
         <div class="field"><span class="field-label">When</span>
           <div class="chips">${opts.map(([label, d]) => html`<button type="button" class="${cx('chip', u.date === d && 'is-active')}" aria-pressed="${u.date === d}" data-action="when" data-date="${d}">${label}</button>`)}</div>
           <input class="input input--date" type="date" value="${u.date}" data-change="date" aria-label="Pick a date">
-          ${custom ? html`<span class="field-hint">${T.dueLabel(u.date)}</span>` : ''}</div>
+          ${custom ? html`<span class="field-hint">${T.dueLabel(u.date)}</span>` : ''}
+          ${u.date ? html`<label class="task-time"><span class="field-label">At <small>optional: puts it in Your day</small></span><input class="input" type="time" value="${u.time}" data-change="time" aria-label="At what time"></label>` : ''}</div>
+        <div class="grid-2">
+          <label class="field"><span class="field-label">Estimate <small>min</small></span><input class="input" type="number" inputmode="numeric" min="1" max="960" step="5" value="${u.estimate}" data-input="estimate" placeholder="30"></label>
+          ${cur ? html`<label class="field"><span class="field-label">Took <small>min</small></span><input class="input" type="number" inputmode="numeric" min="0" max="960" step="5" value="${u.spent}" data-input="spent" placeholder="${cur.spent ? '' : 'When done'}"></label>` : html`<span></span>`}
+        </div>
+        ${ES.realisticLine(u.estimate) ? html`<p class="field-hint" data-key="est-line">${ES.realisticLine(u.estimate)}</p>` : u.estimate ? '' : html`<p class="field-hint">With an estimate, and the time it took (focus blocks for it count by themselves), your estimates correct themselves.</p>`}
         <div class="field"><span class="field-label">Repeat</span>
           <div class="chips" role="group" aria-label="Repeat">${T.REPEATS.map((r) => html`<button type="button" class="${cx('chip', u.repeat === r.id && 'is-active')}" aria-pressed="${u.repeat === r.id}" data-action="repeat" data-value="${r.id}">${r.label}</button>`)}</div>
           ${u.repeat === 'daily' ? html`<select class="input" data-change="every" aria-label="How often">${[1, 2, 3, 4, 5, 6, 7, 10, 14, 21, 30, 60, 90].map((n) => html`<option value="${n}" ${u.every === n ? 'selected' : ''}>${n === 1 ? 'Every day' : `Every ${n} days`}</option>`)}</select>` : ''}
@@ -86,9 +96,12 @@ export function openTask(id = null, defaults = {}) {
       date: ({ sheet, value }) => { sheet.ui.date = value || ''; sheet.refresh(); },
       mday: ({ sheet, value }) => { sheet.ui.mday = Number(value); sheet.refresh(); },
       every: ({ sheet, value }) => { sheet.ui.every = Number(value) || 1; sheet.refresh(); },
+      time: ({ sheet, value }) => { sheet.ui.time = /^\d{2}:\d{2}$/.test(value) ? value : ''; },
+      estimate: ({ sheet, value }) => { const had = !!ES.realisticLine(sheet.ui.estimate); sheet.ui.estimate = value; if (had !== !!ES.realisticLine(value)) sheet.refresh(); },
+      spent: ({ sheet, value }) => { sheet.ui.spent = value; },
     },
     actions: {
-      when: ({ sheet, data }) => { sheet.ui.date = data.date || ''; sheet.refresh(); },
+      when: ({ sheet, data }) => { sheet.ui.date = data.date || ''; if (!sheet.ui.date) sheet.ui.time = ''; sheet.refresh(); },
       repeat: ({ sheet, data }) => { sheet.ui.repeat = data.value; sheet.refresh(); },
       rday: ({ sheet, data }) => {
         const v = Number(data.v);
@@ -108,8 +121,9 @@ export function openTask(id = null, defaults = {}) {
         let date = u.date || null;
         if (repeat && (!date || T.firstDate(repeat, date) !== date)) date = T.firstDate(repeat, date && date > today() ? date : today());
         const notes = (sheet.el.querySelector('textarea[data-input="notes"]')?.value ?? u.notes).trim();
-        if (cur) T.save(cur.id, { title, notes, area: u.area, date, repeat, projectId: u.projectId || null });
-        else T.add({ title, notes, area: u.area, date, repeat, projectId: u.projectId });
+        const extra = { time: date && u.time ? u.time : null, estimate: ES.cleanMinutes(u.estimate), spent: ES.cleanMinutes(u.spent) };
+        if (cur) T.save(cur.id, { title, notes, area: u.area, date, repeat, projectId: u.projectId || null, ...extra });
+        else { const t = T.add({ title, notes, area: u.area, date, repeat, projectId: u.projectId }); if (t) T.save(t.id, extra); }
         hap.success();
         app.closeSheet(sheet);
         if (!cur) app.toast(`Added · ${T.dueLabel(date).toLowerCase() === 'anytime' ? 'anytime' : T.dueLabel(date).toLowerCase()}`, { icon: 'check' });

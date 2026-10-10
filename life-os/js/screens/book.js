@@ -1,6 +1,7 @@
 // A book: where you are, your pace and when you'll finish at it, the sessions, and your notes.
 import * as store from '../data/store.js';
 import * as B from '../domain/books.js';
+import * as TK from '../domain/takeaways.js';
 import { fmtMD, fmtMDY, today } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
@@ -39,6 +40,11 @@ export default {
         <button type="button" class="btn btn--ghost" data-action="finish">Finished</button></div>` : ''}
       <section class="block"><div class="block-head"><h2 class="block-title">Notes</h2></div>
         <textarea class="input book-notes" rows="4" data-input="notes" aria-label="Notes on this book" maxlength="4000" placeholder="Ideas worth keeping, quotes, what you’d do differently">${b.notes || ''}</textarea></section>
+      <section class="block" data-key="book-takeaways"><div class="block-head"><h2 class="block-title">Takeaways</h2>
+          <button type="button" class="link-btn" data-action="bk-takeaway">${icon('plus', { size: 14 })} Keep one</button></div>
+        ${TK.fromSource(`book:${b.id}`).length ? html`<ul class="list">${TK.fromSource(`book:${b.id}`).map((t) => html`<li data-key="bt-${t.id}"><div class="row row--static"><span class="row-main"><span class="row-title">${t.text}</span>
+            <span class="row-sub">${t.retired ? 'Retired' : `Comes back ${fmtMD(t.due)}`}</span></span></div></li>`)}</ul>`
+          : html`<p class="muted small">The idea from this book you want to live by. It comes back in your morning check-in, just as you’d forget it.</p>`}</section>
       ${sessions.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Sessions</h2></div>
         <ul class="list">${sessions.map((r) => html`<li class="row" data-key="${r.id}"><span class="row-main"><span class="row-title">${fmtMD(r.date)}</span>
           <span class="row-sub">${[r.pages ? `${r.pages} pages` : '', r.minutes ? `${r.minutes} min` : ''].filter(Boolean).join(' · ') || 'Logged'}</span></span></li>`)}</ul></section>` : ''}
@@ -56,6 +62,10 @@ export default {
   },
   actions: {
     edit: ({ params }) => bookSheet(B.book(params.id)),
+    'bk-takeaway': async ({ params }) => {
+      const b = B.book(params.id);
+      (await import('./takeaways.js')).openTakeaway({ source: `book:${b.id}`, sourceLabel: b.title });
+    },
     'log-pages': async ({ params }) => {
       const b = B.book(params.id);
       const { openNumpad } = await import('../ui/numpad.js');

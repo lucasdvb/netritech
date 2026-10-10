@@ -22,6 +22,9 @@ const settleFor = (habitId, date) => { const r = R.routineOf(habitId); if (r) R.
 
 export const actions = {
   ...taskActions,
+  'gap-fill': async ({ data }) => (await import('./gaps.js')).openGap(data.from, data.mins),
+  'brief-done': async () => { (await import('./briefing.js')).dismiss(); hap.tap(); },
+  'tk-answer': async (ctx) => (await import('../takeaways.js')).takeawayActions['tk-answer'](ctx),
   'setup-later': () => { store.setSettings({ welcomed: true }); hap.tap(); app.toast('Set up your days any time from You.'); },
   'task-new': ({ params }) => openTask(null, { date: params.date || today() }),
   'task-today': ({ data }) => { T.save(data.id, { date: today() }); hap.tap(); },

@@ -12,6 +12,7 @@ import { trainingCall } from '../../domain/day-plan.js';
 import { minutesOfDay, fmtHM, today } from '../../domain/dates.js';
 import { html, cx, dataAttrs } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
+import { extraRows, freeGaps, gapRow, allDay } from './gaps.js';
 
 const act = (label, name, data = {}) => ({ label, act: name, data });
 
@@ -54,8 +55,10 @@ export function dayBlock(date, ui, now = new Date()) {
   const list = P.blocksOn(date);
   if (!list.length) return '';
   const at = D.dayMinutes(fmtHM(minutesOfDay(now)));
-  const rows = list.map((b) => {
-    const s = stateOf(b, date);
+  // Your calendar's events and the tasks you gave a time go in among the plan's blocks.
+  const all = [...list.map((b) => ({ b, s: stateOf(b, date) })), ...extraRows(date)]
+    .map((x, i) => ({ ...x, i })).sort((x, y) => D.dayMinutes(x.b.time) - D.dayMinutes(y.b.time) || x.i - y.i);
+  const rows = all.map(({ b, s }) => {
     const from = D.dayMinutes(b.time);
     const to = from + Math.max(b.mins, 1);
     // Blocks without a tick of their own (work, breakfast) are done once their time has passed.
@@ -70,6 +73,8 @@ export function dayBlock(date, ui, now = new Date()) {
   const shown = ui.dayAll ? rows : rows.filter((r) => !behind.includes(r));
   const doneN = rows.filter((r) => r.done && r.s.done !== null).length;
   const countable = rows.filter((r) => r.s.done !== null).length;
+  const gaps = freeGaps(date).slice(0, 4);
+  const dayEvents = allDay(date);
   let lineDrawn = false;
   const line = (r) => {
     if (lineDrawn || D.dayMinutes(r.b.time) <= at) return '';
@@ -80,13 +85,14 @@ export function dayBlock(date, ui, now = new Date()) {
     <div class="block-head"><h2 class="block-title">Your day${P.inUse() ? html`<span class="ds-plan"> · ${P.on(date).name}</span>` : ''}</h2>
       <span class="block-meta tnum">${countable ? `${doneN} of ${countable}` : ''}</span>
       <button type="button" class="link-btn" data-action="nav" data-to="plan/playbook">Edit</button></div>
+    ${dayEvents.length ? html`<p class="ds-allday">${icon('calendar', { size: 14 })} ${dayEvents.map((e) => e.title).join(' · ')}</p>` : ''}
     <ol class="ds-list">
       ${behind.length ? html`<li class="ds-fold" data-key="ds-fold"><button type="button" class="link-btn" data-action="day-all" aria-expanded="${!!ui.dayAll}">${ui.dayAll ? 'Hide what’s done' : `${behind.length} done earlier · show`}</button></li>` : ''}
       ${shown.map((r) => {
         const i = rows.indexOf(r);
         const isCur = i === cur;
         const a = r.s.action;
-        return html`${line(r)}<li class="${cx('ds-row', r.done && 'is-done', isCur && 'is-current', r.s.rest && 'is-rest')}" data-key="ds-${r.b.id}">
+        return html`${line(r)}<li class="${cx('ds-row', r.done && 'is-done', isCur && 'is-current', r.s.rest && 'is-rest', r.b.kind === 'event' && 'is-event', r.b.kind === 'task' && 'is-task')}" data-key="ds-${r.b.id}">
           <span class="ds-time tnum">${r.b.time}</span>
           <span class="ds-mark" aria-hidden="true">${r.done ? icon('check', { size: 14, stroke: 2.4 }) : ''}</span>
           <span class="ds-text"><span class="ds-title">${r.b.title}</span>${isCur && (r.s.sub || r.b.detail) ? html`<span class="ds-sub">${r.s.sub || r.b.detail}</span>` : ''}</span>
@@ -95,5 +101,6 @@ export function dayBlock(date, ui, now = new Date()) {
       })}
       ${lineDrawn ? '' : html`<li class="ds-now" aria-hidden="true" data-key="ds-now"><span class="tnum">${fmtHM(minutesOfDay(now))}</span></li>`}
     </ol>
+    ${gaps.length ? html`<ol class="ds-list ds-gaps" aria-label="Free time">${gaps.map(gapRow)}</ol>` : ''}
   </section>`;
 }

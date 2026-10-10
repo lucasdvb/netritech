@@ -8,7 +8,9 @@ import * as F from './fitness-core.js';
 import { LINKED } from './reminder-rules.js';
 import * as P from './day-plans.js';
 import { ritualDone, sealedAt } from './rituals.js';
-import { today, addDays, parseHM, startOfWeek } from './dates.js';
+import { today, addDays, parseHM, startOfWeek, weekday } from './dates.js';
+import * as SU from './supplements.js';
+import { remindersPaused } from './trips.js';
 
 const DAYS_AHEAD = 14;
 
@@ -63,6 +65,29 @@ export function pushPlan(base, date = today()) {
     }
   }
 
+  // Supplements and medication: one a day per time you take something.
+  if (nt.supplements?.on !== false) {
+    const byTime = new Map();
+    for (const x of SU.all()) for (const t of x.times) byTime.set(t, [...(byTime.get(t) || []), x]);
+    for (const [t, list] of byTime) {
+      const med = list.some((x) => x.kind === 'medication');
+      add(true, `supp:t${t.replace(':', '')}`, t, med ? 'Medication' : 'Supplements', list.map((x) => `${x.name}${x.dose ? ` (${x.dose})` : ''}`).join(', ').slice(0, 150), 'progress/body/supplements');
+      if (med) items[items.length - 1].medication = true;
+    }
+  }
+
+  // A trip that pauses reminders: everything but medication is sent only on the other days.
+  const paused = days.filter((d) => remindersPaused(d));
+  if (paused.length) {
+    for (const it of items) {
+      if (it.medication) continue;
+      const base = it.dates || days.filter((d) => !it.days || it.days.includes(weekday(d)));
+      it.dates = base.filter((d) => !paused.includes(d));
+      delete it.days;
+    }
+  }
+  for (const it of items) delete it.medication;
+
   // Done today, so not sent: the rituals, the training, the week's review and each habit.
   const done = [];
   const ids = (k) => items.filter((it) => it.id === k || it.id.startsWith(`${k}:t`)).map((it) => it.id);
@@ -70,6 +95,7 @@ export function pushPlan(base, date = today()) {
   if (ritualDone(date, 'morning') || (morning && H.isDone(morning, date))) done.push(...ids('morning'));
   if (ritualDone(date, 'evening') || sealedAt(date)) done.push(...ids('evening'));
   if (store.get('weeklyReviews', startOfWeek(date))?.completedAt) done.push('week');
+  for (const it of items) if (it.id.startsWith('supp:t') && SU.dueAt(`${it.id.slice(6, 8)}:${it.id.slice(8, 10)}`, date).length === 0) done.push(it.id);
   const training = H.habit(LINKED.workout);
   if (training && H.isDone(training, date)) done.push(`train-${date}`);
   for (const it of items) if (it.id.startsWith('habit:') && H.isDone(H.habit(it.id.slice(6).split(':')[0]), date)) done.push(it.id);

@@ -31,12 +31,14 @@ const summaryBlock = (sum) => html`<dl class="facts facts--plain">
   <div><dt>Plates</dt><dd>${sum.levels.length || '—'}</dd></div>
 </dl>`;
 
-export function openNewSeason() {
+/** A new season; `prefill` ({ name, intention, habitIds }) comes from the life wheel's weakest area. */
+export function openNewSeason(prefill = {}) {
   // Your focus three, or (when nothing is in focus yet) the three the habit system would suggest.
   const focus = (H.focusHabits().length ? H.focusHabits() : suggestFocus(3)).map((h) => h.id);
   const start = S.nextStart();
   const mon = startOfWeek(today());
-  const ui = { name: '', intention: '', ids: focus.slice(0, 3), start };
+  const ids = prefill.habitIds?.length ? [...prefill.habitIds, ...focus.filter((id) => !prefill.habitIds.includes(id))].slice(0, 3) : focus.slice(0, 3);
+  const ui = { name: prefill.name || '', intention: prefill.intention || '', ids, start };
   app.sheet({
     title: 'A new season',
     size: 'detent',

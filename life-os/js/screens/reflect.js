@@ -16,6 +16,8 @@ import { filmMonths, monthFilm } from '../domain/film.js';
 import { memoryCard, experimentBlock, experimentActions } from './experiment-ui.js';
 export { memoryCard, experimentBlock };
 import { due as dueYear, review as yearReview } from '../domain/year-review.js';
+import * as WH from '../domain/wheel.js';
+import * as DC from '../domain/decisions.js';
 
 const PROMPTS = {
   morning: ['What matters most today?', 'What would make today a good day?', 'What could get in the way, and what will you do about it?'],
@@ -101,6 +103,12 @@ export function reviewsDue() {
     items.push({ to: `reflect/review/year/${yr}`, ic: 'sparkles', title: `Your ${yr}`, done: !!rv?.completedAt,
       sub: rv?.completedAt ? (rv.word ? `Done · ${yr + 1}: ${rv.word}` : 'Done') : `The year in numbers, three questions, one word for ${yr + 1}` });
   }
+  // The quarterly life wheel, and decisions whose three months are up.
+  const wq = WH.quarterOf(t);
+  const wc = WH.check(wq);
+  items.push({ to: 'reflect/wheel', ic: 'compass', title: `Life wheel · ${wq.replace('-', ' ')}`, done: WH.complete(wc),
+    sub: WH.complete(wc) ? `Done · weakest: ${WH.weakest(wq)?.label}` : 'Eight areas, 1 to 10, about two minutes. Once a quarter' });
+  for (const d of DC.dueForReview(t).slice(0, 2)) items.push({ to: `reflect/decisions/${d.id}`, ic: 'scale', title: `Decision review · ${d.title}`, done: false, sub: `Decided ${fmtMD(d.date)}: how did it turn out?` });
   const rowBody = (it) => html`<span class="${cx('row-ic', it.done && 'row-ic--done')}">${icon(it.done ? 'check' : it.ic, { size: 18 })}</span>
     <span class="row-main"><span class="row-title">${it.title}</span><span class="row-sub">${it.sub}</span></span>
     <span class="row-chev">${icon('chevron-right', { size: 18 })}</span>`;

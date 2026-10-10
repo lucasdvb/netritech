@@ -45,6 +45,8 @@ npx wrangler deploy
 
 Deleting the database deletes everything on the server; your devices keep their own copies.
 
+**Calendar subscriptions (version 3).** `POST /calendar` lets a device that syncs with this server read a calendar subscription link (iCloud, Google, Outlook) that a web page can't read directly. It checks the sync key like `/sync`, accepts public `https://` links only, passes the calendar text back and keeps nothing. Redeploy the Worker (paste the new `worker.js`) to get it; devices fall back to reading the link directly, or to importing a calendar file, without it.
+
 ## Or let Claude deploy it
 
 With an API token in the environment as `CLOUDFLARE_API_TOKEN` (the "Edit Cloudflare Workers"

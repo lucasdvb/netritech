@@ -2,6 +2,7 @@
 // screens, one question each, about a minute in all; every step can be skipped. The steps that
 // appear depend on the day (no "habits left" screen when nothing is left).
 import * as store from '../data/store.js';
+import { forMorning } from './takeaways.js';
 import * as H from './habits.js';
 import * as T from './tasks.js';
 import * as R from './routines.js';
@@ -20,7 +21,8 @@ export function openHabits(date) {
 export const unfinished = (date) => T.open().filter((t) => t.date && t.date <= date);
 
 export function steps(which, date) {
-  if (which === 'morning') return ['sleep', 'feel', 'weight', 'three', 'start'];
+  // A takeaway that's due comes back between your three and the start of the day (takeaways.js).
+  if (which === 'morning') return ['sleep', 'feel', 'weight', 'three', ...(forMorning(date) ? ['recall'] : []), 'start'];
   return [
     ...(openHabits(date).length ? ['habits'] : []),
     'win',

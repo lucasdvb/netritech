@@ -78,7 +78,8 @@ await step('Reflect opens ready to write: one tap, typing saves itself, mood is 
   await p.locator('.mood-chip', { hasText: 'Good' }).click();
   await p.waitForFunction(() => window.__lifeos.store.onDate('journalEntries', '2026-10-07').find((j) => j.kind === 'free')?.mood === 4);
   await p.waitForSelector('.mood-chip.is-on');
-  if ((await p.locator('[data-key="reviews"] .row').count()) !== 3) throw new Error('day, week and month reviews');
+  // Day, week and month reviews, and the quarterly life wheel.
+  if ((await p.locator('[data-key="reviews"] .row').count()) !== 4 || !(await p.textContent('[data-key="reviews"]')).includes('Life wheel')) throw new Error('day, week, month reviews and the life wheel');
   await p.screenshot({ path: `${OUT}/p8-reflect.png`, fullPage: true });
   await ctx.close();
 });

@@ -1,4 +1,6 @@
 import * as store from '../data/store.js';
+import { regularity, planGuard } from '../domain/sleep-regularity.js';
+import '../domain/day-plans.js'; // the full day-plan rules, so the guard sees every plan
 import * as M from '../domain/metrics.js';
 import { today, lastNDays, fmtMD, fmtDayShort, relativeDay, parseHM, fmtHM, durationHM } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
@@ -30,6 +32,9 @@ export default {
     const wakes = last14.map((e) => parseHM(e.wake)).filter((x) => x != null);
     const bedSd = sd(beds), wakeSd = sd(wakes);
     const onTarget = last14.filter((e) => e.hours >= t.sleepMinH).length;
+    // Regularity over both bed and wake times, and your day plans' wake times (sleep-regularity.js).
+    const reg = regularity();
+    const guard = planGuard();
     const consistencyText = bedSd == null ? 'Needs a few more nights' : bedSd <= 30 ? 'Very consistent' : bedSd <= 60 ? 'Fairly consistent' : 'Bedtime varies a lot';
     return html`
       ${pageHead({ title: 'Sleep', back: { to: 'progress/body', label: 'Body' }, actions: html`<button type="button" class="btn btn--soft btn--sm" data-action="checkin">Log night</button>` })}
@@ -45,7 +50,8 @@ export default {
       <section class="block">
         <div class="block-head"><h2 class="block-title">Consistency</h2></div>
         <div class="card">
-          <p class="card-lead"><strong>${consistencyText}.</strong> A steady bedtime matters more than any single night.</p>
+          <p class="card-lead">${reg ? reg.line : html`<strong>${consistencyText}.</strong> A steady bedtime matters more than any single night.`}</p>
+          ${guard ? html`<p class="notice notice--warn">${guard.line}</p>` : ''}
           <dl class="facts facts--plain">
             <div><dt>Typical bedtime</dt><dd class="tnum">${beds.length ? fmtHM(Math.round(M.avg(beds))) : '—'}${bedSd != null ? ` · ±${Math.round(bedSd)} min` : ''}</dd></div>
             <div><dt>Typical wake</dt><dd class="tnum">${wakes.length ? fmtHM(Math.round(M.avg(wakes))) : '—'}${wakeSd != null ? ` · ±${Math.round(wakeSd)} min` : ''}</dd></div>

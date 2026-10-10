@@ -13,6 +13,8 @@ import { icon } from '../ui/icons.js';
 import { pageHead, empty } from '../ui/components.js';
 import { plateCard } from './records.js';
 import * as C from '../domain/commitments.js';
+import * as HT from '../domain/habit-timeline.js';
+import { bar } from '../ui/controls.js';
 import { lineChart, barChart, heatmap } from '../ui/charts.js';
 import { habitValue, habitTarget, pct, num, plural } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
@@ -89,6 +91,13 @@ function weekStrip(h) {
     <i class="dot dot--${d.state}" aria-hidden="true"></i><b aria-hidden="true">${fmtDayLetter(d.date)}</b></li>`)}</ol>`;
 }
 
+/** The honest timeline for a habit you're building: the day you're on, against the usual two months. */
+const timelineCard = (t) => html`<section class="card habit-timeline" data-key="timeline">
+  <p class="section-label">Building it</p><p class="card-title tnum">${HT.label(t)}</p>
+  ${bar(t.share, { label: 'Of the usual time to automatic' })}
+  <p class="muted">${t.line}</p>
+  <p class="muted small">Habits take a median of about 66 days to feel automatic, most between two and five months, and a missed day doesn’t reset it (Lally et al. 2010; Singh et al. 2024). Not 21.</p></section>`;
+
 export default {
   id: 'habit',
   title: ({ params }) => H.habit(params.id)?.name || 'Habit',
@@ -138,6 +147,7 @@ export default {
       ${h.description ? html`<p class="lead">${h.description}</p>` : ''}
       ${h.archived ? html`<div class="notice">${icon('archive', { size: 16 })} Archived. History is kept. <button type="button" class="link-btn" data-action="restore">Restore</button></div>` : ''}
       ${graduationCard(h)}
+      ${st === 'focus' && HT.timeline(h) ? timelineCard(HT.timeline(h)) : ''}
 
       <section class="run-card" data-key="run" aria-label="Run">
         <div class="run-main">

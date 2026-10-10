@@ -24,12 +24,12 @@ export function lines(date = today()) {
   const o = planOn(date);
   const p = o.profile || store.profile();
   const trip = TR.on(date);
-  if (trip) out.push({ ic: 'map', text: `${trip.name}${trip.where && trip.where !== trip.name ? ` · ${trip.where}` : ''}: day ${Math.max(1, Math.round((Date.parse(date) - Date.parse(trip.from)) / 864e5) + 1)} of ${TR.nights(trip) + 1}.`, to: `plan/trips/${trip.id}` });
+  if (trip) out.push({ ic: 'map', text: `${trip.name}${trip.where && trip.where !== trip.name ? ` · ${trip.where}` : ''}: day ${Math.max(1, Math.round((Date.parse(date) - Date.parse(trip.from)) / 864e5) + 1)} of ${TR.nights(trip) + 1}.`, to: 'plan/trips' });
   else {
     const soon = TR.upcoming(date).find((t) => t.from > date && t.from <= addDays(date, 2));
-    if (soon) out.push({ ic: 'map', text: `${soon.name} starts ${soon.from === addDays(date, 1) ? 'tomorrow' : 'in two days'}.`, to: `plan/trips/${soon.id}` });
+    if (soon) out.push({ ic: 'map', text: `${soon.name} starts ${soon.from === addDays(date, 1) ? 'tomorrow' : 'in two days'}.`, to: 'plan/trips' });
   }
-  out.push({ ic: 'sunrise', text: `${o.base ? '' : `${o.name}: `}up at ${p.wakeTime || '—'}${o.work ? `, work ${p.workStart}–${p.workEnd}` : ''}, lights out ${p.bedTime || '—'}.`, to: 'plan/playbook' });
+  out.push({ ic: 'sunrise', text: `${o.base ? 'Up' : `${o.name}: up`} at ${p.wakeTime || '—'}${o.work ? `, work ${p.workStart}–${p.workEnd}` : ''}, lights out ${p.bedTime || '—'}.`, to: 'plan/playbook' });
   const events = ICS.on(date);
   if (events.length) {
     const timed = events.filter((e) => !e.allDay);
@@ -50,10 +50,10 @@ export function lines(date = today()) {
   const doses = SU.doses(date).filter((x) => !x.taken);
   if (doses.length) {
     const morning = doses.filter((x) => x.time < '12:00');
-    if (morning.length) out.push({ ic: 'pill', text: `${morning.map((x) => x.s.name).slice(0, 3).join(', ')}${morning.length > 3 ? '…' : ''} this morning.`, to: 'body/supplements' });
+    if (morning.length) out.push({ ic: 'pill', text: `${morning.map((x) => x.s.name).slice(0, 3).join(', ')}${morning.length > 3 ? '…' : ''} this morning.`, to: 'progress/body/supplements' });
   }
   const low = SU.all().filter(SU.runningLow);
-  if (low.length) out.push({ ic: 'pill', text: `Running low: ${low.map((s) => s.name).slice(0, 2).join(', ')}.`, to: 'body/supplements' });
+  if (low.length) out.push({ ic: 'pill', text: `Running low: ${low.map((s) => s.name).slice(0, 2).join(', ')}.`, to: 'progress/body/supplements' });
   const dec = DC.dueForReview(date);
   if (dec.length) out.push({ ic: 'scale', text: `Review a decision from three months ago: ${dec[0].title}`, to: `reflect/decisions/${dec[0].id}` });
   return out;

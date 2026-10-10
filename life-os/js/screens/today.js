@@ -97,6 +97,13 @@ let soon = null;
 const loadSoon = () => { if (!soon && store.all('events').length) import('./today/upcoming.js').then((m) => { soon = m; app.refresh(); }).catch(() => {}); };
 
 /** The moodboard's pictures come from the device store, after the first frame. */
+// The morning briefing (today/briefing.js), loaded only before noon.
+let brief = null;
+let briefLoading = false;
+const loadBrief = () => {
+  if (!briefLoading) { briefLoading = true; import('./today/briefing.js').then((m) => { brief = m; app.refresh(); }).catch(() => { briefLoading = false; }); }
+  return '';
+};
 // A fresh install opens with the 5-minute setup offered first (until it's done or put off).
 const setupCard = () => {
   const s = store.settings();
@@ -116,7 +123,7 @@ const ACTIONS = [
   'wchip', 'counter', 'more-today', 'day-all', 'unfold', 'skip', 'unskip', 'plan',
   'focus-later', 'edit-today', 'pick-day', 'add-water', 'open-checkin', 'ritual', 'open-shutdown', 'log-steps',
   'log-food', 'log-weight', 'pin-workout', 'pin-journal', 'pin-focus', 'pin-money', 'pin-reading', 'pin-meditation',
-  'start-workout', 'set-mode', 'mode', 'go-today', 'top3-check', 'setup-later',
+  'start-workout', 'set-mode', 'mode', 'go-today', 'top3-check', 'setup-later', 'gap-fill', 'brief-done', 'tk-answer',
 ];
 const INPUTS = [
   'task-add', 'top3-text', 'win',
@@ -162,9 +169,11 @@ const view = {
     const catchUp = isToday && nets ? netCards.catchUpBlock(nets.catchUp(date), ui) : '';
     const tidy = isToday && nets && [7, 1].includes(weekday(date)) ? netCards.tidyBlock(nets.tidyDue(date)) : '';
     const setup = isToday ? setupCard() : '';
+    const briefing = isToday && !setup && new Date().getHours() < 12 ? (brief ? brief.briefingBlock(date) : loadBrief()) : '';
     return html`<div class="today" data-phase="${ph}" data-mode="${mode}">
       ${header(date, ph, mode, isToday)}
       ${setup ? html`<div class="today-setup" data-key="b-setup">${setup}</div>` : ''}
+      ${briefing ? html`<div class="today-brief" data-key="b-brief">${briefing}</div>` : ''}
       <div class="today-grid">
         <div class="today-col today-col--now">
           <div class="tblock" data-key="b-now" style="order:0">${nowCard(date, isToday, ui)}</div>

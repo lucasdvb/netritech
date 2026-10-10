@@ -1,6 +1,10 @@
 // Plan: what you're building. Tomorrow and this week first, then five groups, one list each:
 // Habits & routines, Goals, Training, Tasks & notes, and Life.
 import * as store from '../data/store.js';
+import * as ICS from '../domain/ics-import.js';
+import * as BL from '../domain/bills.js';
+import * as W from '../domain/wealth.js';
+import * as TR from '../domain/trips.js';
 import * as H from '../domain/habits-more.js';
 import * as G from '../domain/goals.js';
 import * as T from '../domain/tasks.js';
@@ -141,6 +145,7 @@ function tasksGroup() {
   const notes = N.notes();
   return group('tasks', 'Tasks & notes', html`
     ${linkRow('plan/tasks', 'list-todo', 'Tasks', `${open.length} open${overdue.length ? ` · ${overdue.length} overdue` : ''}`)}
+    ${linkRow('plan/calendar', 'calendar', 'Your calendar', ICS.calendars().length ? `${ICS.calendars().map((c) => c.name).join(' · ')} · in Your day` : 'Meetings from iPhone, Google or Outlook in Your day')}
     ${linkRow('plan/lists', 'list-checks', 'Lists', lists.length ? lists.slice(0, 3).map((l) => l.name).join(' · ') : 'Groceries, packing, ideas')}
     ${linkRow('plan/notes', 'brain', 'Brain dump', notes.length ? `${notes.length} note${notes.length === 1 ? '' : 's'}${notes[0] ? ` · ${N.firstLine(notes[0].text)}` : ''}` : 'Get it out of your head, sort it later')}`);
 }
@@ -151,8 +156,14 @@ function lifeGroup() {
   const soon = E.sorted().find((x) => x.in >= 0);
   const reading = B.byStatus('reading').slice(0, 2);
   const mb = (store.settings().moodboard || []).length;
+  const dueBill = BL.upcoming(7)[0];
+  const trip = TR.upcoming()[0];
   return group('life', 'Life', html`
     ${linkRow('plan/money', 'wallet', 'Money', spent.count ? `${$.fmt(spent.total, { cents: 0 })} this month${spent.budget ? ` · ${spent.left >= 0 ? `${$.fmt(spent.left, { cents: 0 })} left` : `${$.fmt(-spent.left, { cents: 0 })} over`}` : ''}` : 'What you spend, against a budget')}
+    ${linkRow('plan/money/bills', 'receipt', 'Bills & subscriptions', dueBill ? `${dueBill.name} ${BL.daysTo(dueBill) <= 0 ? 'due now' : `due in ${BL.daysTo(dueBill)} day${BL.daysTo(dueBill) === 1 ? '' : 's'}`}` : BL.all().length ? `${$.fmt(BL.monthly().total, { cents: 0 })} a month` : 'What’s due, and nothing renews by surprise')}
+    ${linkRow('plan/money/worth', 'piggy-bank', 'Net worth & savings', W.accounts().length ? $.fmt(W.netWorth().net, { cents: 0 }) : 'What you own minus what you owe, and your savings goals')}
+    ${linkRow('plan/meals', 'chef-hat', 'Meals', 'This week’s meals, and the grocery list they make')}
+    ${linkRow('plan/trips', 'map', 'Trips', trip ? `${trip.name} · ${trip.from <= today() ? 'now' : `from ${trip.from.slice(5).replace('-', '/')}`}` : 'Your days, packing and travel while away')}
     ${linkRow('plan/dates', 'calendar-heart', 'Dates', soon ? `${E.label(soon)} · ${E.inWords(soon.in).toLowerCase()}` : 'Birthdays, anniversaries, countdowns')}
     ${reading.map(bookRow)}
     ${linkRow('plan/books', 'book-open', 'Books', reading.length ? '' : 'Add the book you’re reading; “read 20 pages” moves it along')}

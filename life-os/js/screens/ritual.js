@@ -16,6 +16,8 @@ import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { check, scale10 } from '../ui/components.js';
 import { holdButton, attachHold } from '../ui/hold.js';
+import * as TK from '../domain/takeaways.js';
+import { takeawayCard, takeawayActions } from './takeaways.js';
 import { kgIn, kgOut, weightUnit } from '../ui/format.js';
 
 const QUESTIONS = {
@@ -23,6 +25,7 @@ const QUESTIONS = {
   feel: 'How do you feel?',
   weight: 'Weigh-in',
   three: 'Your three for today',
+  recall: 'Remember this?',
   start: 'Ready',
   habits: 'Anything left?',
   win: 'One win from today',
@@ -82,6 +85,11 @@ function body(step, s, date) {
     case 'three': return html`<ol class="ritual-three">${T.slots(date).map((t, i) => html`<li data-key="r3-${i}">
         <span class="ritual-n tnum">${i + 1}</span>
         <input class="input" value="${t?.title || ''}" data-change="r-three" data-i="${i}" placeholder="${['The one that matters most', 'Second', 'Third'][i]}" aria-label="Priority ${i + 1}" enterkeyhint="next"></li>`)}</ol>`;
+    case 'recall': {
+      const t = TK.one(s.ui.recallId) || TK.forMorning(date);
+      if (t) s.ui.recallId = t.id;
+      return t ? takeawayCard(t, { compact: true }) : html`<p class="ritual-note">Nothing to recall today.</p>`;
+    }
     case 'start': {
       const a = nextAction(date);
       return html`<p class="ritual-note">${a.id === 'done' ? 'Nothing needs you right now.' : 'First up:'}</p>
@@ -222,6 +230,8 @@ export function openRitual(which = 'evening', date = today()) {
       'r-move': ({ data, sheet }) => { sheet.ui.move = { ...sheet.ui.move, [data.id]: !sheet.ui.move[data.id] }; hap.tap(); sheet.refresh(); },
       'r-next': ({ sheet }) => { commit(list[sheet.ui.i], sheet, date); sheet.ui.edited = null; go(sheet, 1); },
       'r-skip': ({ sheet }) => go(sheet, 1),
+      // A takeaway answered moves the check-in on.
+      'tk-answer': (ctx) => { takeawayActions['tk-answer'](ctx); go(ctx.sheet, 1); },
       'r-back': ({ sheet }) => go(sheet, -1),
       'r-finish': ({ sheet }) => { Rt.markRitual(date, which); hap.success(); app.closeSheet(sheet); },
       'r-close': ({ sheet }) => app.closeSheet(sheet),
