@@ -19,7 +19,7 @@
           {%- form 'customer', id: 'footer-signup', class: 'footer__form', novalidate: 'novalidate' -%}
             <input type="hidden" name="contact[tags]" value="newsletter">
             {%- if form.posted_successfully? -%}
-              <p class="footer__form-msg footer__form-msg--ok" role="status" tabindex="-1" data-focus-on-load>{% render 'icon', name: 'check' %}{{ 'footer.signup_success' | t }}</p>
+              <p class="footer__form-msg footer__form-msg--ok" role="status" tabindex="-1" data-focus-on-load>{% render 'icon', name: 'check' %}{% if settings.kreol %}{{ 'kreol.signup_success' | t }}{% else %}{{ 'footer.signup_success' | t }}{% endif %}</p>
             {%- else -%}
               <label class="sr-only" for="footer-email">{{ 'footer.signup_label' | t }}</label>
               <div class="glass-field{% if form.errors %} is-invalid{% endif %}">

@@ -6,7 +6,7 @@ const { chromium } = require('/opt/node-tools/node_modules/playwright');
 const B = 'http://localhost:4100';
 const PAGES = ['/', '/collections/skincare', '/collections/skincare/hydration', '/collections/cleansers', '/collections/anua', '/collections/makeup',
   '/products/round-lab-1025-dokdo-cleanser', '/products/abib-collagen-eye-patch-jericho-rose-jelly', '/cart', '/search?q=serum', '/search?q=zzzz',
-  '/pages/about', '/pages/contact', '/pages/delivery', '/pages/brands', '/pages/k-beauty', '/pages/faq', '/pages/routine-finder', '/pages/wishlist', '/collections', '/nope', '/password'];
+  '/pages/about', '/pages/contact', '/pages/delivery', '/pages/brands', '/pages/k-beauty', '/pages/faq', '/pages/routine-finder', '/pages/wishlist', '/pages/skin-diary', '/pages/rewards', '/collections', '/nope', '/password'];
 const WIDTHS = (process.env.WIDTHS || '320,360,375,390,414,430,768,1024,1280,1440').split(',').map(Number);
 const b = await chromium.launch();
 let problems = 0;

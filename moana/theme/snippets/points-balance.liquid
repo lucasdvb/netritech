@@ -1,0 +1,9 @@
+{%- comment -%}
+  The signed-in customer's points balance, read from the customer metafield named in
+  Theme settings > Moana rewards (namespace.key, default moana.points). Outputs a number, or nothing.
+{%- endcomment -%}
+{%- if customer and settings.rewards_enabled -%}
+  {%- assign mf = settings.rewards_metafield | default: 'moana.points' | split: '.' -%}
+  {%- assign raw = customer.metafields[mf[0]][mf[1]].value | default: customer.metafields[mf[0]][mf[1]] -%}
+  {%- if raw != blank -%}{{ raw | plus: 0 }}{%- endif -%}
+{%- endif -%}

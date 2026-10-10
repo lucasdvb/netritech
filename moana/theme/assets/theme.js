@@ -425,6 +425,32 @@
     on(panel, 'keydown', function (ev) { if (ev.key === 'Escape') { closeMega(); btn.focus(); } });
     on(li, 'focusout', function (ev) { if (!li.contains(ev.relatedTarget)) closeMega(); });
   });
+  // hover preview: the link under the pointer (or keyboard focus) shows its photo and one line in the feature area
+  $$('[data-mega-panel]').forEach(function (panel) {
+    var feat = $('[data-mega-feature]', panel);
+    if (!feat) return;
+    var imgs = [$('[data-pv-a]', feat), $('[data-pv-b]', feat)], cur = 0, leaveT, lastSrc = '';
+    var title = $('[data-pv-title]', feat), text = $('[data-pv-text]', feat);
+    function show(a) {
+      clearTimeout(leaveT);
+      var src = a.getAttribute('data-preview-img');
+      title.textContent = a.getAttribute('data-preview-title') || '';
+      text.textContent = a.getAttribute('data-preview-text') || '';
+      feat.classList.add('is-previewing');
+      if (src === lastSrc) return;
+      lastSrc = src;
+      var next = imgs[1 - cur];
+      next.onload = function () { imgs[cur].classList.remove('is-on'); next.classList.add('is-on'); cur = 1 - cur; };
+      next.src = src;
+    }
+    function hide() { leaveT = setTimeout(function () { feat.classList.remove('is-previewing'); }, 160); }
+    $$('[data-preview-img]', panel).forEach(function (a) {
+      on(a, 'mouseenter', function () { show(a); });
+      on(a, 'focus', function () { show(a); });
+      on(a, 'mouseleave', hide);
+      on(a, 'blur', hide);
+    });
+  });
   document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') closeMega(); });
   document.addEventListener('click', function (ev) { if (!ev.target.closest('[data-mega]')) closeMega(); });
 
@@ -437,8 +463,23 @@
     if (pid) ids.push(pid);
     return ids;
   }
+  /* a small celebration: a light shimmer and a ring of sparks from the element's leading icon.
+     Used when free delivery unlocks, a diary session is complete, or a reward is within reach. */
+  function celebrate(el) {
+    if (!el || reduceMotion) return;
+    el.classList.remove('is-celebrating'); void el.offsetWidth; el.classList.add('is-celebrating');
+    var burst = document.createElement('span');
+    burst.className = 'sparks'; burst.setAttribute('aria-hidden', 'true');
+    for (var k = 0; k < 8; k++) { var s = document.createElement('i'); s.style.setProperty('--a', (k * 45) + 'deg'); burst.appendChild(s); }
+    var anchor = el.querySelector('svg') || el;
+    anchor.parentNode.insertBefore(burst, anchor.nextSibling);
+    setTimeout(function () { burst.remove(); el.classList.remove('is-celebrating'); }, 1400);
+  }
+  window.MoanaCelebrate = celebrate;
+
   function renderCartSections(sections) {
     if (!sections) return;
+    var wasFree = !!document.querySelector('.ship-bar.is-done');
     Object.keys(sections).forEach(function (id) {
       var html = sections[id];
       if (!html) return;
@@ -458,6 +499,8 @@
       }
     });
     paintEta();
+    var bar = document.querySelector('[data-cart-drawer] .ship-bar.is-done') || document.querySelector('.ship-bar.is-done');
+    if (bar && !wasFree) setTimeout(function () { celebrate(bar); }, 450);
   }
   function setCount(n) {
     $$('[data-cart-count]').forEach(function (el) {
@@ -865,6 +908,189 @@
       recent.unshift(rh);
       localStorage.setItem('moana:recent', JSON.stringify(recent.slice(0, 12)));
     } catch (e) {}
+  }
+
+  /* ---------------------------------------------------------------- morning / evening switch
+     [data-ampm] (snippets/ampm-toggle.liquid) sets data-mode and fires "ampm:change". The routine section
+     opens on evening after 5pm Mauritius time, re-tints to dusk, swaps its copy and shows the right steps. */
+  function mauritiusHour() {
+    try { return +new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hourCycle: 'h23', timeZone: 'Indian/Mauritius' }).format(new Date()); }
+    catch (e) { return new Date().getHours(); }
+  }
+  window.MoanaIsEvening = function () { var h = mauritiusHour(); return h >= 17 || h < 4; };
+  function setAmpm(el, mode, byUser) {
+    el.setAttribute('data-mode', mode);
+    $$('[data-ampm-value]', el).forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-ampm-value') === mode)); });
+    el.dispatchEvent(new CustomEvent('ampm:change', { bubbles: true, detail: { mode: mode, user: !!byUser } }));
+  }
+  window.MoanaAmpm = setAmpm;
+  $$('[data-ampm]').forEach(function (el) {
+    $$('[data-ampm-value]', el).forEach(function (b) {
+      on(b, 'click', function () { if (el.getAttribute('data-mode') !== b.getAttribute('data-ampm-value')) setAmpm(el, b.getAttribute('data-ampm-value'), true); });
+    });
+  });
+  var DAY = { bg: '#f6f8f0', a: '#eef1e4', b: '#d1d9be', c: '#d6d2bf', d: '#bcc09b' };
+  var DUSK = { bg: '#20271f', a: '#2a3229', b: '#3b4734', c: '#323a2e', d: '#56634a' };
+  $$('[data-routine-ampm]').forEach(function (sec) {
+    var sw = $('[data-ampm]', sec), tpl = $('template[data-routine-copy]', sec);
+    var h = $('h2', sec), txt = $('[data-routine-text]', sec), wash = $('canvas[data-wash]', sec);
+    if (!sw) return;
+    function copy(sel) { var n = tpl && tpl.content.querySelector(sel); return n ? n.innerHTML : null; }
+    function apply(mode, animate) {
+      var pm = mode === 'pm';
+      sec.classList.toggle('is-evening', pm);
+      if (wash) {
+        var p = pm ? DUSK : DAY;
+        wash.dataset.bg = p.bg; wash.dataset.a = p.a; wash.dataset.b = p.b; wash.dataset.c = p.c; wash.dataset.d = p.d;
+        wash.dispatchEvent(new CustomEvent('wash:tint', { detail: p }));
+      }
+      $$('.step', sec).forEach(function (st) {
+        var w = st.getAttribute('data-when') || 'both', show = w === 'both' || w === mode;
+        if (show && st.hidden) {
+          st.hidden = false;
+          if (animate && !reduceMotion) { st.classList.add('is-entering'); setTimeout(function () { st.classList.remove('is-entering'); }, 600); }
+        } else if (!show && !st.hidden) {
+          if (animate && !reduceMotion) { st.classList.add('is-leaving'); setTimeout(function () { st.hidden = true; st.classList.remove('is-leaving'); }, 260); }
+          else st.hidden = true;
+        }
+      });
+      var nh = copy(pm ? '[data-pm-heading]' : '[data-am-heading]'), nt = copy(pm ? '[data-pm-text]' : '[data-am-text]');
+      if (h && nh !== null) {
+        var wasIn = h.classList.contains('is-in');
+        h.innerHTML = nh;
+        delete h.dataset.linesDone;
+        h.classList.remove('is-in');
+        if (!reduceMotion && revealIO) {
+          splitLines(h);
+          if (wasIn || animate) requestAnimationFrame(function () { requestAnimationFrame(function () { h.classList.add('is-in'); }); });
+          else revealIO.observe(h);
+        }
+      }
+      if (txt && nt !== null) txt.innerHTML = nt;
+    }
+    on(sec, 'ampm:change', function (ev) { apply(ev.detail.mode, ev.detail.user); });
+    if (window.MoanaIsEvening()) setAmpm(sw, 'pm', false);
+  });
+
+  /* the dock's Routine shortcut opens her skin diary once she has one */
+  try {
+    var dg = JSON.parse(localStorage.getItem('moana:diary') || 'null');
+    if (dg && dg.routine && Object.keys(dg.routine).length) {
+      $$('[data-dock] a[href$="pages/routine-finder"]').forEach(function (a) { a.href = a.getAttribute('href').replace('routine-finder', 'skin-diary'); });
+    }
+  } catch (e) {}
+
+  /* ---------------------------------------------------------------- phones: long-press a product card
+     Holding a card for half a second opens a small glass sheet: save, quick view, add to bag. A scroll or a
+     drag cancels it, and the tap that ends a long-press never opens the product. */
+  var coarse = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+  if (coarse) {
+    var lp = null, lpT = null, lpPress = null, lpStart = null, lpFired = false;
+    var lpBuild = function () {
+      if (lp) return lp;
+      lp = document.createElement('dialog');
+      lp.className = 'lp';
+      lp.setAttribute('aria-label', S.lpLabel || '');
+      lp.innerHTML = '<div class="lp__panel"><p class="lp__title" data-lp-title></p><div class="lp__actions" data-lp-actions></div></div>';
+      document.body.appendChild(lp);
+      on(lp, 'click', function (ev) { if (ev.target === lp) lpClose(); });
+      on(lp, 'cancel', function (ev) { ev.preventDefault(); lpClose(); });
+      return lp;
+    };
+    var lpClose = function () {
+      if (!lp || !lp.open) return;
+      lp.classList.remove('is-open');
+      setTimeout(function () { lp.close(); }, reduceMotion ? 0 : 220);
+    };
+    var lpOpen = function (card) {
+      lpBuild();
+      var heart = $('[data-wishlist-toggle]', card), quick = $('[data-quick-view]', card), form = $('form[data-product-form]', card), link = $('.card__title a', card);
+      $('[data-lp-title]', lp).textContent = link ? link.textContent.trim() : '';
+      var acts = $('[data-lp-actions]', lp);
+      acts.innerHTML = '';
+      var add = function (label, icon, fn) {
+        var b = document.createElement('button'); b.type = 'button'; b.className = 'lp__btn';
+        b.innerHTML = icon + '<span>' + label + '</span>';
+        on(b, 'click', function () { lpClose(); setTimeout(fn, 60); });
+        acts.appendChild(b);
+      };
+      var ICON = function (p) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">' + p + '</svg>'; };
+      if (heart) {
+        var saved = heart.getAttribute('aria-pressed') === 'true';
+        add(saved ? S.lpUnsave : S.lpSave, ICON('<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z" stroke-linejoin="round"/>'), function () { heart.click(); });
+      }
+      if (quick) add(S.lpQuick, ICON('<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" stroke-linejoin="round"/><circle cx="12" cy="12" r="2.8"/>'), function () { qvOpen(quick.getAttribute('data-quick-view'), quick); });
+      if (form) add(S.lpAdd, ICON('<path d="M5.5 8.5h13l-1 11.5h-11z" stroke-linejoin="round"/><path d="M9 8.5V7a3 3 0 0 1 6 0v1.5"/>'), function () { var btn = $('[type="submit"]', form); if (form.requestSubmit) form.requestSubmit(btn); else btn.click(); });
+      else if (link) add(S.lpView, ICON('<path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/>'), function () { window.location.href = link.href; });
+      lp.showModal();
+      requestAnimationFrame(function () { lp.classList.add('is-open'); });
+      if (navigator.vibrate) { try { navigator.vibrate(10); } catch (e) {} }
+    };
+    var lpCancel = function () { clearTimeout(lpT); clearTimeout(lpPress); lpT = null; $$('.card.is-pressing').forEach(function (c) { c.classList.remove('is-pressing'); }); };
+    on(document, 'touchstart', function (ev) {
+      var card = ev.target.closest && ev.target.closest('.card');
+      if (!card || ev.target.closest('button, form, input') || ev.touches.length > 1) return;
+      lpFired = false;
+      lpStart = { x: ev.touches[0].clientX, y: ev.touches[0].clientY };
+      lpPress = setTimeout(function () { card.classList.add('is-pressing'); }, 120);
+      lpT = setTimeout(function () { lpFired = true; lpCancel(); lpOpen(card); setTimeout(function () { lpFired = false; }, 700); }, 480);
+    }, { passive: true });
+    on(document, 'touchmove', function (ev) {
+      if (!lpT || !lpStart) return;
+      if (Math.hypot(ev.touches[0].clientX - lpStart.x, ev.touches[0].clientY - lpStart.y) > 10) lpCancel();
+    }, { passive: true });
+    on(document, 'touchend', lpCancel, { passive: true });
+    on(document, 'touchcancel', lpCancel, { passive: true });
+    // the click that ends a long-press must neither open the product nor land on the new sheet's backdrop
+    on(document, 'click', function (ev) {
+      if (lpFired) { ev.preventDefault(); ev.stopPropagation(); lpFired = false; }
+    }, true);
+    on(document, 'contextmenu', function (ev) { if (ev.target.closest && ev.target.closest('.card')) ev.preventDefault(); });
+  }
+
+  /* ---------------------------------------------------------------- phones: pull to refresh
+     At the very top of a page, pulling down draws a ring around the Moana wave mark (the official mark,
+     only faded and scaled evenly); pull past the line and let go to reload. The browser's own pull-to-refresh
+     is switched off on phones (overscroll-behavior), so there is exactly one. */
+  if (coarse && window.innerWidth < 750) {
+    var ptr = null, ptrY = null, ptrD = 0, LIMIT = 86;
+    var ptrBuild = function () {
+      if (ptr) return ptr;
+      ptr = document.createElement('div');
+      ptr.className = 'ptr'; ptr.setAttribute('aria-hidden', 'true');
+      ptr.innerHTML = '<span class="ptr__disc"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="21" pathLength="100"/></svg><img src="' + (S.logoMark || '') + '" alt="" width="480" height="151"></span><span class="ptr__label">' + (S.ptr || '') + '</span>';
+      document.body.appendChild(ptr);
+      return ptr;
+    };
+    var ptrBlocked = function (t) { return openStack.length || document.querySelector('dialog[open]') || (t.closest && t.closest('[data-carousel-track], .rail, .viewer, .qv, .lp, input, textarea, select')); };
+    on(document, 'touchstart', function (ev) {
+      ptrY = (window.scrollY <= 0 && ev.touches.length === 1 && !ptrBlocked(ev.target)) ? ev.touches[0].clientY : null;
+      ptrD = 0;
+    }, { passive: true });
+    on(document, 'touchmove', function (ev) {
+      if (ptrY === null) return;
+      var dy = ev.touches[0].clientY - ptrY;
+      if (dy <= 0 || window.scrollY > 0) { if (ptr) ptr.style.setProperty('--pull', 0); ptrD = 0; return; }
+      ptrBuild();
+      ptrD = Math.min(130, dy * .5);
+      ptr.classList.remove('is-back');
+      ptr.style.setProperty('--pull', ptrD.toFixed(1));
+      ptr.style.setProperty('--k', Math.min(1, ptrD / LIMIT).toFixed(3));
+      ptr.classList.toggle('is-armed', ptrD >= LIMIT);
+    }, { passive: true });
+    on(document, 'touchend', function () {
+      if (!ptr || ptrY === null) return;
+      ptrY = null;
+      if (ptrD >= LIMIT) {
+        ptr.classList.add('is-loading');
+        setTimeout(function () { window.location.reload(); }, 380);
+      } else {
+        ptr.classList.add('is-back');
+        ptr.style.setProperty('--pull', 0);
+        ptr.style.setProperty('--k', 0);
+      }
+      ptrD = 0;
+    }, { passive: true });
   }
 
   /* ---------------------------------------------------------------- quick view

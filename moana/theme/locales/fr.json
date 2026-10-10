@@ -105,10 +105,14 @@
     "quick_view_named": "Aperçu : {{ title }}",
     "quick_view_dialog": "Aperçu du produit",
     "full_details": "Voir tous les détails",
-    "gallery_dialog": "Photos du produit"
+    "gallery_dialog": "Photos du produit",
+    "remove_from_wishlist": "Retirer des favoris",
+    "quick_actions": "Actions rapides",
+    "pull_refresh": "Relâchez pour actualiser"
   },
   "routine": {
-    "step_n": "Étape {{ n }}"
+    "step_n": "Étape {{ n }}",
+    "ampm_label": "Routine du matin ou du soir"
   },
   "collections": {
     "active_filters": "Filtres actifs",
@@ -271,7 +275,15 @@
     "see_all": "Tout voir pour ce besoin",
     "restart": "Recommencer",
     "added": "Routine ajoutée au panier",
-    "noscript": "Activez JavaScript pour le quiz, ou partez d’un besoin :"
+    "noscript": "Activez JavaScript pour le quiz, ou partez d’un besoin :",
+    "q_budget": "Quel budget pour toute la routine ?",
+    "budget_any": "Sans limite",
+    "budget_upto": "Jusqu'à {{ amount }}",
+    "budget_estimate": "Votre routine coûterait environ {{ amount }}",
+    "budget_note": "Nous choisissons le meilleur produit qui rentre dans votre budget.",
+    "total": "Total de la routine : {{ amount }}",
+    "over_budget": "C'est le plus proche de votre budget avec ce que nous avons en stock.",
+    "save_diary": "Enregistrer dans mon journal de peau"
   },
   "forecast": {
     "label": "Météo de la peau",
@@ -292,5 +304,63 @@
     "tip_humid": "{{ h }} % d'humidité : misez sur la légèreté. Les gels et les essences aqueuses tiennent mieux que les crèmes riches.",
     "tip_dry": "Air plus sec aujourd'hui ({{ h }} %) : ajoutez une lotion ou une essence hydratante avant votre crème.",
     "source": "Données météo : Open-Meteo.com"
+  },
+  "kreol": {
+    "greeting_am": "Bonzour",
+    "greeting_pm": "Bonswar",
+    "added": "Mersi ! Ajouté au panier.",
+    "no_worries": "Pa bizin traka.",
+    "signup_success": "Mersi ! Vous êtes sur la liste. Bienvenue chez Moana.",
+    "welcome": "Byenvini"
+  },
+  "diary": {
+    "title": "Mon journal de peau",
+    "good_am": "Bonjour",
+    "good_pm": "Bonsoir",
+    "streak_label": {
+      "one": "jour d'affilée",
+      "other": "jours d'affilée"
+    },
+    "progress": "[done] sur [total]",
+    "done_am": "Routine du matin terminée. À ce soir.",
+    "done_pm": "Routine du soir terminée. Bonne nuit.",
+    "feel_q": "Comment est votre peau aujourd'hui ?",
+    "calendar": "Les quatre dernières semaines",
+    "edit": "Modifier ma routine",
+    "none": "Pas dans ma routine",
+    "empty_title": "Créons votre journal.",
+    "empty_text": "Cochez votre routine matin et soir, gardez votre série et notez l'état de votre peau. Tout reste sur ce téléphone.",
+    "use_quiz": "Utiliser ma routine du quiz",
+    "find": "Trouver ma routine",
+    "build": "La composer moi-même",
+    "privacy": "Votre journal reste sur cet appareil. Rien n'est envoyé.",
+    "reorder": "Racheter",
+    "step_choose": "Votre {{ step }}",
+    "day_label": "[date] : matin [am], soir [pm]",
+    "yes": "fait",
+    "no": "pas fait",
+    "noscript": "Le journal de peau a besoin de JavaScript.",
+    "link": "Mon journal de peau"
+  },
+  "rewards": {
+    "title": "Moana rewards",
+    "lead": "Des points à chaque commande, des cadeaux quand vous les atteignez. Tout simplement.",
+    "how": "Comment ça marche",
+    "step1_title": "Rejoindre",
+    "step1_text": "Créez votre compte Moana. Une minute suffit.",
+    "step2_title": "Cumuler",
+    "step2_text": "{{ rate }} points pour chaque Rs 100 dépensées.",
+    "step3_title": "Se faire plaisir",
+    "step3_text": "{{ threshold }} points = {{ value }} sur votre prochaine commande.",
+    "balance": "Vos points",
+    "to_next": "Encore {{ n }} pour votre prochain {{ value }}",
+    "ready": "Une récompense de {{ value }} vous attend.",
+    "join": "Créer mon compte",
+    "sign_in": "Se connecter",
+    "guest": "Connectez-vous pour voir vos points.",
+    "earn_line": "Gagnez {{ n }} points Moana",
+    "cart_line": "Cette commande rapporte environ {{ n }} points",
+    "learn": "Comment fonctionnent les récompenses",
+    "header": "{{ n }} pts"
   }
 }

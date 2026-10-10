@@ -28,7 +28,7 @@
     <div class="rf__card glass" data-finder data-sheen>
       <form class="rf__form" data-finder-form novalidate>
         <fieldset class="rf__step is-current" data-q="skin">
-          <legend class="rf__q"><span class="rf__n">1/3</span>{{ 'finder.q_skin' | t }}</legend>
+          <legend class="rf__q"><span class="rf__n">1/4</span>{{ 'finder.q_skin' | t }}</legend>
           <div class="rf__opts">
             {%- for raw in skin_list -%}{%- assign t = raw | strip -%}
               <label class="rf__opt" style="--k: {{ forloop.index0 }}"><input type="radio" name="skin" value="{{ t | escape }}"{% if forloop.first %} required{% endif %}><span>{{ t }}{% render 'finder-desc', lines: desc_lines, tag: t %}</span></label>
@@ -36,7 +36,7 @@
           </div>
         </fieldset>
         <fieldset class="rf__step" data-q="concern">
-          <legend class="rf__q"><span class="rf__n">2/3</span>{{ 'finder.q_concern' | t }}</legend>
+          <legend class="rf__q"><span class="rf__n">2/4</span>{{ 'finder.q_concern' | t }}</legend>
           <div class="rf__opts">
             {%- for raw in concern_list -%}{%- assign t = raw | strip -%}
               {%- comment -%} only offer concerns that at least one product answers {%- endcomment -%}
@@ -47,10 +47,23 @@
           </div>
         </fieldset>
         <fieldset class="rf__step" data-q="steps">
-          <legend class="rf__q"><span class="rf__n">3/3</span>{{ 'finder.q_steps' | t }}</legend>
+          <legend class="rf__q"><span class="rf__n">3/4</span>{{ 'finder.q_steps' | t }}</legend>
           <div class="rf__opts rf__opts--wide">
             <label class="rf__opt" style="--k: 0"><input type="radio" name="steps" value="3"><span>{{ 'finder.steps_3' | t }}<small>{{ 'finder.steps_3_note' | t }}</small></span></label>
             <label class="rf__opt" style="--k: 1"><input type="radio" name="steps" value="5"><span>{{ 'finder.steps_5' | t }}<small>{{ 'finder.steps_5_note' | t }}</small></span></label>
+          </div>
+        </fieldset>
+        <fieldset class="rf__step" data-q="budget">
+          <legend class="rf__q"><span class="rf__n">4/4</span>{{ 'finder.q_budget' | t }}</legend>
+          {%- comment -%} stops in rupees; the last stop means no limit {%- endcomment -%}
+          <div class="rf__budget" data-budget data-stops="2000,3000,4000,5000,6000,0"
+            data-any="{{ 'finder.budget_any' | t | escape }}" data-upto="{{ 'finder.budget_upto' | t: amount: '[amount]' | escape }}"
+            data-estimate="{{ 'finder.budget_estimate' | t: amount: '[amount]' | escape }}">
+            <output class="rf__budget-value" for="rf-budget-{{ section.id }}" data-budget-value>{{ 'finder.budget_any' | t }}</output>
+            <input class="rf__range" type="range" id="rf-budget-{{ section.id }}" name="budget" min="0" max="5" step="1" value="5" aria-describedby="rf-budget-note-{{ section.id }}">
+            <div class="rf__ticks" aria-hidden="true"><span>Rs 2k</span><span>3k</span><span>4k</span><span>5k</span><span>6k</span><span>∞</span></div>
+            <p class="rf__estimate" data-budget-estimate aria-live="polite">&nbsp;</p>
+            <p class="t-xs t-soft" id="rf-budget-note-{{ section.id }}">{{ 'finder.budget_note' | t }}</p>
           </div>
         </fieldset>
         <div class="rf__nav">
@@ -63,9 +76,11 @@
       <div class="rf__result" data-finder-result hidden tabindex="-1">
         <p class="t-label">{{ 'finder.result_label' | t }}</p>
         <h2 class="rf__result-title" data-finder-title></h2>
+        <p class="rf__total" data-finder-total></p>
         <ol class="rf__list" role="list" data-finder-list></ol>
         <div class="rf__actions">
           <button class="btn btn--brand" type="button" data-finder-addall>{{ 'finder.add_all' | t }}</button>
+          <a class="btn btn--secondary" href="{{ routes.root_url }}pages/skin-diary" data-finder-diary>{{ 'finder.save_diary' | t }}</a>
           <a class="btn btn--secondary" href="#" data-finder-more>{{ 'finder.see_all' | t }}</a>
           <button class="rf__restart" type="button" data-finder-restart>{{ 'finder.restart' | t }}</button>
         </div>
@@ -85,18 +100,21 @@
 {
   "steps": [{%- for raw in step_list limit: 5 -%}{{ raw | strip | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],
   "collectionUrl": {{ source.url | json }},
+  "moneyFormat": {{ shop.money_format | json }},
   "strings": {
     "title": {{ 'finder.result_title' | t: n: '__N__', concern: '__C__' | json }},
     "none": {{ 'finder.none' | t | json }},
     "add": {{ 'products.add_to_cart' | t | json }},
     "added": {{ 'finder.added' | t | json }},
-    "stepLabel": {{ 'routine.step_n' | t: n: '__N__' | json }}
+    "stepLabel": {{ 'routine.step_n' | t: n: '__N__' | json }},
+    "total": {{ 'finder.total' | t: amount: '__A__' | json }},
+    "over": {{ 'finder.over_budget' | t | json }}
   },
   "products": [
     {%- for p in source.products -%}
       {%- assign v = p.selected_or_first_available_variant -%}
       {"handle": {{ p.handle | json }}, "title": {{ p.title | json }}, "url": {{ p.url | json }}, "vendor": {{ p.vendor | json }},
-       "price": {{ p.price | money | json }}, "available": {{ p.available | json }}, "variant": {{ v.id | json }}, "single": {{ p.has_only_default_variant | json }},
+       "price": {{ p.price | money | json }}, "cents": {{ p.price | json }}, "available": {{ p.available | json }}, "variant": {{ v.id | json }}, "single": {{ p.has_only_default_variant | json }},
        "image": {{ p.featured_media.preview_image | image_url: width: 240 | json }}, "tags": {{ p.tags | json }}}{%- unless forloop.last -%},{%- endunless -%}
     {%- endfor -%}
   ]
@@ -170,6 +188,20 @@
   .rf__note { max-width: 36rem; }
   @media (max-width: 749px) { .rf__item { grid-template-columns: 56px 1fr; } .rf__item .rf__buy { grid-column: 1 / -1; } .rf__item .btn { width: 100%; } }
   @media (prefers-reduced-motion: reduce) { .rf__step.is-current .rf__q, .rf__step.is-current .rf__opt, .rf__step.is-leaving, .rf__item { animation: none; } }
+  /* budget slider */
+  .rf__budget { display: grid; gap: var(--s-3); max-width: 40rem; }
+  .rf__budget-value { font: var(--type-numeral); font-size: var(--fs-2xl); letter-spacing: var(--ls-display); font-variant-numeric: lining-nums; }
+  .rf__range { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; background: transparent; cursor: pointer; }
+  .rf__range::-webkit-slider-runnable-track { height: 2px; background: linear-gradient(90deg, var(--c-night) var(--fill, 100%), rgba(33,39,33,.18) var(--fill, 100%)); }
+  .rf__range::-moz-range-track { height: 2px; background: rgba(33,39,33,.18); }
+  .rf__range::-moz-range-progress { height: 2px; background: var(--c-night); }
+  .rf__range::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -13px; border-radius: 50%; background: var(--c-white); border: 2px solid var(--c-night); box-shadow: 0 6px 16px -6px rgba(33,39,33,.45); transition: scale 200ms var(--ease); }
+  .rf__range::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: var(--c-white); border: 2px solid var(--c-night); }
+  .rf__range:active::-webkit-slider-thumb { scale: 1.15; }
+  .rf__range:focus-visible { outline: 2px solid var(--c-forest); outline-offset: 4px; }
+  .rf__ticks { display: flex; justify-content: space-between; margin-top: -6px; font: var(--type-label); letter-spacing: .06em; color: var(--ink-soft); font-variant-numeric: lining-nums; }
+  .rf__estimate { font: var(--type-lead); min-height: 1.7em; }
+  .rf__total { font: var(--type-ui); color: var(--c-forest); font-variant-numeric: lining-nums; }
 {% endstylesheet %}
 
 {% schema %}

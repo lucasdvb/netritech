@@ -754,6 +754,77 @@ html.scroll-lock, html.scroll-lock body { overflow: hidden; }
 }
 @media (prefers-reduced-motion: reduce) { .viewer { transition: none; } .viewer.is-open .viewer__slide img { animation: none; } }
 
+/* ---------- morning / evening switch (snippets/ampm-toggle.liquid) ---------- */
+.ampm { position: relative; isolation: isolate; display: inline-grid; grid-template-columns: 1fr 1fr; padding: 4px; border: 1px solid rgba(33, 39, 33, .16);
+  background: rgba(255, 255, 255, .55); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+.ampm__btn { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; gap: .5rem; min-height: 44px; padding: 0 1.1rem;
+  font: var(--type-ui); letter-spacing: var(--ls-ui); color: var(--ink-soft); transition: color 400ms var(--ease); }
+.ampm__btn svg { width: 18px; height: 18px; transition: rotate 600ms var(--ease-out), scale 400ms var(--ease); }
+.ampm__btn[aria-pressed="true"] { color: var(--c-white); }
+.ampm__btn[aria-pressed="true"] svg { rotate: 45deg; scale: 1.1; }
+.ampm__btn[data-ampm-value="pm"][aria-pressed="true"] svg { rotate: -20deg; }
+.ampm__thumb { position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); background: var(--c-night); transition: translate 500ms cubic-bezier(.34, 1.3, .64, 1), background-color 500ms var(--ease); }
+.ampm[data-mode="pm"] .ampm__thumb { translate: 100% 0; background: #3b4734; }
+.is-evening .ampm { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .2); }
+.is-evening .ampm__btn { color: rgba(255, 255, 255, .7); }
+.is-evening .ampm__btn[aria-pressed="true"] { color: var(--c-white); }
+@media (prefers-reduced-motion: reduce) { .ampm__thumb, .ampm__btn svg { transition: none; } }
+
+/* ---------- phones: long-press quick actions and pull to refresh (theme.js) ---------- */
+@media (hover: none) and (pointer: coarse) {
+  .card .card__media img { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+  .card .card__media { transition: scale 300ms var(--ease); }
+  .card.is-pressing .card__media { scale: .96; }
+}
+.lp { width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; }
+.lp::backdrop { background: rgba(33, 39, 33, 0); transition: background-color 260ms var(--ease); }
+.lp.is-open::backdrop { background: rgba(33, 39, 33, .3); }
+.lp__panel { position: absolute; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); padding: var(--s-4) var(--s-4) var(--s-3);
+  background: rgba(255, 255, 255, .86); border: 1px solid rgba(255, 255, 255, .9); -webkit-backdrop-filter: blur(24px) saturate(1.5); backdrop-filter: blur(24px) saturate(1.5);
+  box-shadow: 0 30px 70px -30px rgba(33, 39, 33, .5); translate: 0 calc(100% + 24px); transition: translate 360ms cubic-bezier(.2, 1.1, .3, 1); }
+.lp.is-open .lp__panel { translate: 0 0; }
+.lp__title { padding: 0 var(--s-2) var(--s-3); font: var(--type-title); font-weight: var(--w-medium); border-bottom: 1px solid var(--line); }
+.lp__actions { display: grid; }
+.lp__btn { display: flex; align-items: center; gap: var(--s-3); min-height: 54px; padding: 0 var(--s-2); font: var(--type-ui); font-size: var(--fs-md); color: var(--ink); text-align: left; border-bottom: 1px solid var(--line); }
+.lp__btn:last-child { border-bottom: 0; }
+.lp__btn svg { width: 22px; height: 22px; flex: none; color: var(--c-forest); }
+.lp__btn:active { background: rgba(33, 39, 33, .05); }
+
+@media (hover: none) and (pointer: coarse) and (max-width: 749px) { html, body { overscroll-behavior-y: contain; } }
+.ptr { --pull: 0; --k: 0; position: fixed; z-index: 140; left: 50%; top: 0; display: grid; justify-items: center; gap: 6px; pointer-events: none;
+  translate: -50% calc(var(--pull) * 1px - 64px); opacity: calc(var(--k) * 1.2); }
+.ptr.is-back { transition: translate 360ms var(--ease), opacity 260ms var(--ease); }
+.ptr__disc { position: relative; display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: rgba(255, 255, 255, .92); box-shadow: 0 10px 30px -12px rgba(33, 39, 33, .4); }
+.ptr__disc svg { position: absolute; inset: 0; width: 100%; height: 100%; rotate: -90deg; }
+.ptr__disc circle { fill: none; stroke: var(--c-forest); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: calc(100 - var(--k) * 100); }
+.ptr__disc img { width: 30px; height: auto; scale: calc(.7 + var(--k) * .3); }
+.ptr__label { padding: 5px 10px; background: rgba(255, 255, 255, .94); box-shadow: 0 8px 20px -12px rgba(33, 39, 33, .4); font: var(--type-label); letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--c-forest); opacity: 0; transition: opacity 200ms var(--ease); }
+.ptr.is-armed .ptr__label { opacity: 1; }
+.ptr.is-armed .ptr__disc { animation: ptr-pop 300ms cubic-bezier(.34, 1.56, .64, 1); }
+.ptr.is-loading .ptr__disc svg { animation: ptr-spin 900ms linear infinite; }
+.ptr.is-loading .ptr__disc circle { stroke-dashoffset: 70; }
+@keyframes ptr-pop { 50% { scale: 1.1; } }
+@keyframes ptr-spin { to { rotate: 270deg; } }
+
+/* Moana rewards: the "earn N points" line on product pages and in the bag */
+.points-line { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; margin-top: var(--s-2); font: var(--type-small); color: var(--c-forest); font-variant-numeric: lining-nums; }
+.points-line svg { width: 16px; height: 16px; flex: none; }
+.points-line a { text-decoration: underline; text-underline-offset: 3px; color: var(--ink-soft); }
+
+/* Kreol touches: the Kreol word carries a touch more weight than the English around it */
+.kreol { font-weight: var(--w-semibold); color: var(--c-forest); }
+
+/* ---------- celebration (theme.js celebrate()) ---------- */
+.is-celebrating { position: relative; }
+.ship-bar.is-celebrating .ship-bar__fill { position: relative; overflow: hidden; }
+.ship-bar.is-celebrating .ship-bar__fill::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, .85) 50%, transparent 80%); translate: -100% 0; animation: shimmer 1100ms var(--ease) 1; }
+@keyframes shimmer { to { translate: 100% 0; } }
+.sparks { position: relative; display: inline-block; width: 0; height: 0; vertical-align: middle; pointer-events: none; }
+.sparks i { position: absolute; left: -9px; top: 0; width: 4px; height: 4px; margin: -2px; border-radius: 50%; background: var(--c-forest); opacity: 0;
+  animation: spark 900ms cubic-bezier(.2, .6, .3, 1) forwards; }
+.sparks i:nth-child(2n) { background: var(--c-sage); width: 3px; height: 3px; }
+@keyframes spark { 0% { opacity: 0; transform: rotate(var(--a)) translateY(-4px); } 20% { opacity: 1; } 100% { opacity: 0; transform: rotate(var(--a)) translateY(-22px); } }
+
 /* ---------- water ripple (assets/ripple.js) ---------- */
 canvas.ripple { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 600ms var(--ease); }
 canvas.ripple.is-on { opacity: 1; transition-duration: 160ms; }

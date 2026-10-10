@@ -6,7 +6,7 @@
 {%- liquid
   assign shop_url = collections['skincare'].url | default: routes.all_products_collection_url
   assign here = template.name
-  if template.suffix == 'routine-finder'
+  if template.suffix == 'routine-finder' or template.suffix == 'skin-diary'
     assign here = 'routine'
   elsif template.suffix == 'wishlist'
     assign here = 'wishlist'

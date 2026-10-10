@@ -163,7 +163,8 @@ await fetch(B + '/cart/clear');
   ok(await p.evaluate(() => document.querySelector('.rf canvas[data-wash]').dataset.bg) === '#f8f6f0', 'wash re-tinted for the answer (Dry skin: linen)');
   await p.click('.rf__step.is-current .rf__opt:nth-child(1)'); await p.waitForTimeout(700);
   await p.click('.rf__step.is-current .rf__opt:nth-child(2)'); await p.waitForTimeout(900);
-  ok(await p.isVisible('[data-finder-result]'), 'result shows after three taps');
+  await p.click('[data-finder-next]'); await p.waitForTimeout(900); // budget step, no limit
+  ok(await p.isVisible('[data-finder-result]'), 'result shows after three taps and the budget');
   ok(await p.$$eval('.rf__item', (x) => x.length) === 5, 'five-step routine built');
   await p.context().close();
 }

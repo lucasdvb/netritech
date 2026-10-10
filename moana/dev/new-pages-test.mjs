@@ -9,6 +9,8 @@ await p.goto('http://localhost:4100/pages/routine-finder', { waitUntil: 'network
 await p.click('.rf__opt:has-text("Oily skin")'); await p.waitForTimeout(500);
 await p.click('.rf__opt:has-text("Breakouts")'); await p.waitForTimeout(500);
 await p.click('.rf__opt:has-text("The full ritual")'); await p.waitForTimeout(800);
+// fourth question: budget (left at no limit)
+await p.click('[data-finder-next]'); await p.waitForTimeout(800);
 const items = await p.$$eval('.rf__item', (els) => els.map((e) => e.innerText.replace(/\n+/g, ' | ')));
 console.log(await p.textContent('[data-finder-title]')); console.log(items.join('\n'));
 check('quiz builds a 5-step routine', items.length === 5);

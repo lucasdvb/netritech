@@ -7,7 +7,7 @@ import path from 'node:path';
 import { THEME, products, productByHandle, collections, globals, renderPage, renderSection, createEngine, money } from './render.mjs';
 
 const PORT = Number(process.env.PORT || 4100);
-const PAGE_TEMPLATES = { about: 'page.about', contact: 'page.contact', 'k-beauty': 'page.kbeauty', delivery: 'page.delivery', brands: 'page.brands', faq: 'page.faq', 'routine-finder': 'page.routine-finder', wishlist: 'page.wishlist' };
+const PAGE_TEMPLATES = { about: 'page.about', contact: 'page.contact', 'k-beauty': 'page.kbeauty', delivery: 'page.delivery', brands: 'page.brands', faq: 'page.faq', 'routine-finder': 'page.routine-finder', wishlist: 'page.wishlist', 'skin-diary': 'page.skin-diary', rewards: 'page.rewards' };
 const readJSON = (p) => JSON.parse(fs.readFileSync(path.join(THEME, p), 'utf8').replace(/^\/\*[\s\S]*?\*\/\s*/, ''));
 
 /* ------------------------------------------------------------------ cart */
@@ -199,26 +199,26 @@ http.createServer(async (req, res) => {
     /* pages */
     let template = '404', g;
     const parts = p.split('/').filter(Boolean);
-    if (p === '/') { template = 'index'; g = globals({ template, cart, lang, url: p }); }
+    if (p === '/') { template = 'index'; g = globals({ template, cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') }); }
     else if (parts[0] === 'collections' && parts[1]) {
       const col = collections[parts[1]];
       if (col) {
         const tag = parts[2] || null;
         const filtered = applyFilters(col, { raw: u.search, path: p, tag });
         template = col.handle === 'skincare' ? 'collection.skincare' : 'collection';
-        g = globals({ template, collection: filtered, currentTags: tag ? [col.all_tags.find((t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-') === tag) || tag] : null, cart, lang, url: p });
+        g = globals({ template, collection: filtered, currentTags: tag ? [col.all_tags.find((t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-') === tag) || tag] : null, cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') });
       }
-    } else if (parts[0] === 'collections') { template = 'list-collections'; g = globals({ template, cart, lang, url: p }); }
-    else if (parts[0] === 'products' && productByHandle[parts[1]]) { template = 'product'; g = globals({ template, product: productByHandle[parts[1]], cart, lang, url: p }); }
-    else if (parts[0] === 'pages' && PAGE_TEMPLATES[parts[1]]) { template = PAGE_TEMPLATES[parts[1]]; g = globals({ template, page: { title: parts[1], handle: parts[1], content: '' }, cart, lang, url: p }); }
-    else if (p === '/cart') { template = 'cart'; g = globals({ template, cart, lang, url: p }); }
+    } else if (parts[0] === 'collections') { template = 'list-collections'; g = globals({ template, cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') }); }
+    else if (parts[0] === 'products' && productByHandle[parts[1]]) { template = 'product'; g = globals({ template, product: productByHandle[parts[1]], cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') }); }
+    else if (parts[0] === 'pages' && PAGE_TEMPLATES[parts[1]]) { template = PAGE_TEMPLATES[parts[1]]; g = globals({ template, page: { title: parts[1], handle: parts[1], content: '' }, cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') }); }
+    else if (p === '/cart') { template = 'cart'; g = globals({ template, cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') }); }
     else if (p === '/search') {
       template = 'search';
       const q = (u.searchParams.get('q') || '').trim();
       const results = q ? products.filter((x) => (x.title + ' ' + x.vendor + ' ' + x.tags.join(' ')).toLowerCase().includes(q.toLowerCase())).map((x) => ({ ...x, object_type: 'product' })) : [];
-      g = globals({ template, cart, lang, url: p, search: { performed: !!q, terms: q, results, results_count: results.length } });
-    } else if (p === '/password') { template = 'password'; g = globals({ template, cart, lang, url: p }); }
-    if (!g) g = globals({ template: '404', cart, lang, url: p });
+      g = globals({ template, cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : ''), search: { performed: !!q, terms: q, results, results_count: results.length } });
+    } else if (p === '/password') { template = 'password'; g = globals({ template, cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') }); }
+    if (!g) g = globals({ template: '404', cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') });
 
     if (template === 'product' && u.searchParams.get('view')) {
       // alternate product templates (?view=card, ?view=quick): templates/product.<view>.liquid, layout none
