@@ -577,8 +577,11 @@
         btns.forEach(function (b) { setBusy(b, false); });
         confirmAdded(submitter);
         if (qv && form.closest('.qv')) qvClose(true);
+        // inside the routine pop-up she stays on her results: the button confirms and the bag count updates
+        var inQuiz = qp && form.closest('.qp');
         return refreshCount().then(function () {
           announce(S.added);
+          if (inQuiz) return;
           if (cartDrawer) openPanel(cartDrawer, submitter); else toast(S.added);
         });
       })
@@ -593,6 +596,8 @@
       renderCartSections(sections);
       markNewLines((items || []).map(function (it) { return it.key; }));
       confirmAdded(opener);
+      // the whole routine added from the pop-up: the pop-up gives way to the bag
+      if (qp && opener && opener.closest && opener.closest('.qp')) qpClose(true);
       return refreshCount().then(function () { announce(S.added); if (cartDrawer) openPanel(cartDrawer, opener); else toast(S.added); });
     }
   };
@@ -1152,6 +1157,102 @@
     qvOpen(b.getAttribute('data-quick-view'), b);
   });
   window.MoanaQuickView = { open: qvOpen, close: qvClose };
+
+  /* ---------------------------------------------------------------- Find my routine pop-up
+     Off unless Theme settings > Find my routine pop-up is on, or the address carries ?quiz_popup=1 (preview).
+     The clock starts at her first scroll and runs for the whole visit, across pages. When the delay has passed,
+     the quiz opens in a glass panel (a bottom sheet on phones), never over another panel, the menu or a field
+     she is typing in. Closing it (button, Escape, a click outside) keeps it away for the set number of days;
+     a routine saved on this device keeps it away for good; it shows at most once a visit. The quiz is the
+     routine-finder section itself, fetched ahead through the Section Rendering API with its two scripts. */
+  var qp = null;
+  function qpClose(now) {
+    if (!qp || !qp.open) return;
+    try { localStorage.setItem('moana:quiz-popup', String(Date.now())); } catch (e) {}
+    var done = function () { qp.classList.remove('is-open', 'is-closing'); qp.close(); document.documentElement.classList.remove('qp-open'); };
+    if (now || reduceMotion) { done(); return; }
+    qp.classList.add('is-closing');
+    setTimeout(done, 240);
+  }
+  (function () {
+    var cfg = $('[data-quiz-popup]');
+    if (!cfg || !window.fetch || !window.Promise || typeof HTMLDialogElement !== 'function') return;
+    var preview = /[?&]quiz_popup=1(&|$)/.test(location.search);
+    if (cfg.getAttribute('data-enabled') !== 'true' && !preview) return;
+    var get = function (st, k) { try { return window[st].getItem(k); } catch (e) { return null; } };
+    var set = function (st, k, v) { try { window[st].setItem(k, v); } catch (e) {} };
+    var delay = (parseInt(cfg.getAttribute('data-delay'), 10) || 10) * 1000;
+    var days = parseInt(cfg.getAttribute('data-days'), 10) || 14;
+    if (!preview) {
+      if (get('localStorage', 'moana:routine')) return;
+      if (Date.now() - (+get('localStorage', 'moana:quiz-popup') || 0) < days * 864e5) return;
+      if (get('sessionStorage', 'moana:quiz-popup-shown')) return;
+    }
+    var html = null, ready = null, timer = null, failed = false;
+    function script(src) {
+      return new Promise(function (ok, fail) {
+        if (!src || $('script[src="' + src + '"]')) return ok();
+        var el = document.createElement('script');
+        el.src = src; el.onload = ok; el.onerror = fail;
+        document.head.appendChild(el);
+      });
+    }
+    function prefetch() {
+      ready = ready || Promise.all([
+        fetch(cfg.getAttribute('data-src')).then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }),
+        script(cfg.getAttribute('data-wash')), script(cfg.getAttribute('data-js'))
+      ]).then(function (res) { html = res[0]; }).catch(function () { failed = true; clearTimeout(timer); });
+    }
+    function busy() {
+      var a = document.activeElement;
+      return openStack.length || $('dialog[open]') || $('.mega.is-open') || document.hidden || (a && a.matches && a.matches('input, textarea, select, [contenteditable]'));
+    }
+    function attempt() {
+      if (failed) return;
+      if (!html || busy()) { timer = setTimeout(attempt, 1500); return; }
+      show();
+    }
+    function show() {
+      qp = document.createElement('dialog');
+      qp.className = 'qp';
+      qp.innerHTML = '<div class="qp__panel" data-qp-panel><button class="icon-btn qp__close" type="button" data-qp-close autofocus>' + CLOSE +
+        '<span class="sr-only">' + (S.close || 'Close') + '</span></button><div class="qp__body"></div></div>';
+      var body = $('.qp__body', qp);
+      body.innerHTML = html;
+      // one h1 a page: the quiz heading becomes the dialog's h2
+      var h = $('h1', body);
+      if (h) {
+        var h2 = document.createElement('h2');
+        h2.className = h.className; h2.id = h.id; h2.innerHTML = h.innerHTML;
+        h.parentNode.replaceChild(h2, h);
+        if (h2.id) qp.setAttribute('aria-labelledby', h2.id);
+      }
+      document.body.appendChild(qp);
+      on($('[data-qp-close]', qp), 'click', function () { qpClose(); });
+      on(qp, 'click', function (ev) { if (ev.target === qp) qpClose(); });
+      on(qp, 'cancel', function (ev) { ev.preventDefault(); qpClose(); });
+      set('sessionStorage', 'moana:quiz-popup-shown', '1');
+      qp.showModal();
+      document.documentElement.classList.add('qp-open');
+      requestAnimationFrame(function () { qp.classList.add('is-open'); });
+      var stage = $('[data-finder-stage]', qp);
+      if (window.MoanaFinder && stage) window.MoanaFinder.init(stage);
+      // the wash, the reveals and the sheen pick the new markup up as they do in the theme editor
+      var section = $('.shopify-section', body) || body;
+      section.dispatchEvent(new CustomEvent('shopify:section:load', { bubbles: true }));
+    }
+    function begin() {
+      window.removeEventListener('scroll', begin);
+      var start = +get('sessionStorage', 'moana:quiz-popup-start');
+      if (!start) { start = Date.now(); set('sessionStorage', 'moana:quiz-popup-start', String(start)); }
+      prefetch();
+      timer = setTimeout(attempt, Math.max(0, start + delay - Date.now()));
+    }
+    // she already scrolled earlier in this visit: the clock keeps running from then
+    if (get('sessionStorage', 'moana:quiz-popup-start')) begin();
+    else window.addEventListener('scroll', begin, { passive: true });
+  })();
+  window.MoanaQuizPopup = { close: qpClose };
 
   /* ---------------------------------------------------------------- card to product morph (View Transitions)
      Navigating from a product card, the card's photo glides and grows into the product page's main photo;

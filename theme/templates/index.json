@@ -1,45 +1,5 @@
 {
   "sections": {
-    "welcome": {
-      "type": "promo-strip",
-      "blocks": {
-        "w1": {
-          "type": "slide",
-          "settings": {
-            "title": "Welcome to Moana",
-            "text": "Korean skincare picked for island skin, with every ingredient listed and delivery all over Mauritius.",
-            "link_label": "Shop new in",
-            "link": "shopify://collections/new",
-            "products": [
-              "round-lab-1025-dokdo-toner",
-              "anua-niacinamide-10-txa-4-serum",
-              "beauty-of-joseon-relief-sun-rice-niacinamide"
-            ]
-          }
-        },
-        "w2": {
-          "type": "slide",
-          "settings": {
-            "title": "New to K-beauty?",
-            "text": "Answer three quick questions and we'll put your routine together.",
-            "link_label": "Find my routine",
-            "link": "shopify://pages/routine-finder",
-            "products": [
-              "beplain-mung-bean-ph-balanced-cleansing-foam",
-              "torriden-dive-in-low-molecular-hyaluronic-acid-serum",
-              "s-nature-aqua-squalane-moisturizing-cream"
-            ]
-          }
-        }
-      },
-      "block_order": [
-        "w1",
-        "w2"
-      ],
-      "settings": {
-        "label": "Welcome"
-      }
-    },
     "hero": {
       "type": "hero-carousel",
       "blocks": {
@@ -294,96 +254,6 @@
       ],
       "settings": {
         "heading": "What's new at Moana?",
-        "outline": false
-      }
-    },
-    "promo2": {
-      "type": "promo-strip",
-      "blocks": {
-        "d1": {
-          "type": "slide",
-          "settings": {
-            "title": "Free delivery over Rs 1,500",
-            "text": "Below that, it's Rs 100 anywhere on the island. At your door in 1 to 3 working days.",
-            "link_label": "Delivery & returns",
-            "link": "shopify://pages/delivery",
-            "products": [
-              "skin1004-madagascar-centella-hyalu-cica-water-fit-sun-serum",
-              "centellian24-madeca-cream-time-reverse",
-              "abib-collagen-eye-patch-jericho-rose-jelly"
-            ]
-          }
-        },
-        "d2": {
-          "type": "slide",
-          "settings": {
-            "title": "Every ingredient, listed",
-            "text": "The full ingredient list is on every product page, so you can check it against the brand's own.",
-            "link_label": "Why the real thing matters",
-            "link": "shopify://pages/k-beauty",
-            "products": [
-              "celimax-the-vita-a-retinal-shot-tightening-booster",
-              "arencia-vitamin-c-booster-shot",
-              "dr-reju-all-advanced-pdrn-rejuvenating-lip-serum"
-            ]
-          }
-        }
-      },
-      "block_order": [
-        "d1",
-        "d2"
-      ],
-      "settings": {
-        "label": "Good to know"
-      }
-    },
-    "focus": {
-      "type": "editorial-cards",
-      "blocks": {
-        "f0": {
-          "type": "card",
-          "settings": {
-            "label": "Thirsty skin",
-            "name": "Hydration",
-            "text": "Five kinds of hyaluronic acid in a light, watery serum. A long drink, never sticky.",
-            "button": "Shop hydration",
-            "link": "/collections/skincare/hydration",
-            "product": "torriden-dive-in-low-molecular-hyaluronic-acid-serum",
-            "tint": "spring"
-          }
-        },
-        "f1": {
-          "type": "card",
-          "settings": {
-            "label": "Calm it down",
-            "name": "Redness",
-            "text": "10% azelaic acid to calm redness and help settle breakouts and the marks they leave.",
-            "button": "Shop redness",
-            "link": "/collections/skincare/redness",
-            "product": "anua-azelaic-acid-10-hyaluron-redness-soothing-serum",
-            "tint": "linen"
-          }
-        },
-        "f2": {
-          "type": "card",
-          "settings": {
-            "label": "Island sun",
-            "name": "Sun protection",
-            "text": "A sunscreen that feels like a serum. SPF50+ PA++++, no white cast, gone in seconds.",
-            "button": "Shop SPF",
-            "link": "shopify://collections/sunscreen",
-            "product": "skin1004-madagascar-centella-hyalu-cica-water-fit-sun-serum",
-            "tint": "sage"
-          }
-        }
-      },
-      "block_order": [
-        "f0",
-        "f1",
-        "f2"
-      ],
-      "settings": {
-        "heading": "In focus",
         "outline": true
       }
     },
@@ -747,19 +617,16 @@
     }
   },
   "order": [
-    "welcome",
     "hero",
     "categories",
-    "forecast",
     "tabs",
-    "just",
-    "promo2",
-    "focus",
     "routine",
+    "just",
     "ticker",
     "brands",
     "concerns",
     "story",
+    "forecast",
     "faq"
   ]
 }

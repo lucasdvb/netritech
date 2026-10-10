@@ -1,6 +1,6 @@
 # Moana Beauté: handover
 
-October 2026 (v6). Store: `moana-beaute.myshopify.com`.
+October 2026 (v7). Store: `moana-beaute.myshopify.com`.
 
 ## Where things are
 
@@ -10,6 +10,48 @@ October 2026 (v6). Store: `moana-beaute.myshopify.com`.
 | Preview link | `https://moana-beaute.myshopify.com/?preview_theme_id=191582306594` (the storefront password may be needed first) |
 | Theme editor | Shopify admin → Online Store → Themes → *Moana Beauté v2 (preview)* → Customize |
 | Code | `moana/` in this repository (branch `claude/eloquent-bardeen-p6n61a`) |
+
+## v7: the minimal, premium pass (October 2026)
+
+Asked for: fewer things competing for attention above the fold, more white space everywhere, and the routine quiz as a pop-up that is built but switched off.
+
+**Removed**
+- The announcement bar and the trust (USP) bar above the logo (header group). The sections still exist and can be re-added in the editor.
+- From the homepage: the welcome strip under the menu ("Find my routine"), the second promo strip and the focus strip.
+
+**Header**
+- 72 px on phones, 104 px on desktop. The search field is a hairline underline instead of a box.
+- "Find my routine" is a quiet forest text link instead of a black button. The navigation is in small tracked capitals with more space between items.
+
+**White space**
+- Section rhythm `--section` is now 72 → 152 px.
+- All section titles sit on one gap, `--title-gap` (32 → 64 px).
+- Product grids have wider gutters, especially between rows.
+
+**Pages**
+- **Hero.** It now fills most of the first screen (480 → 736 px), on a white ground. The second button is outlined, and the bold line is a small tracked caption. Its scroll effects only start once the hero begins to leave the screen.
+- **Collection.** The product count sits under the title. Sub-categories are tracked text tabs on a hairline. Concerns are soft chips without borders. The filter and sort bar is borderless on a single hairline.
+- **Product cards.** "Add to bag" is a hairline outline that fills on hover. Badges ("New in", "Only 3 left") are a tracked word, not a box.
+- **Product page.** Wider space between the gallery and the details, and a lighter wishlist button.
+- **Other cards.** Contact, cart summary, values and concern tiles use the lighter tile grey. The search page has room above its title.
+- **Ambient glow.** The soft background pools can no longer show a hard edge on short sections.
+
+**Find my routine pop-up (built, OFF)**
+- **Switching it on.** Theme settings → *Find my routine pop-up* → *Show the routine pop-up*. There are also settings for the delay (default 10 s) and the days before it can return after she closes it (default 14).
+- **Previewing while off.** Add `?quiz_popup=1` to any address.
+- **When it shows.**
+  - The clock starts at her first scroll and keeps running across pages for the whole visit.
+  - It waits while the bag, menu, search, quick view or any other panel is open, or while she is typing.
+  - It never shows on the quiz page, the bag or the password page, nor to anyone with a routine already saved on the device.
+  - It shows at most once a visit.
+  - Closing it (×, Escape, a click outside) keeps it away for the set number of days.
+- **What's inside.** It is the real quiz: the routine-finder section is fetched with the Section Rendering API (`/?section_id=routine-finder`, the section's default settings) along with its two scripts.
+- **Adding from it.** Adding one product keeps her on her results; the button confirms and the bag count updates. "Add the whole routine" closes the pop-up and opens the bag.
+- **Layout.** A glass panel on desktop, a bottom sheet on phones.
+- **Code.** `snippets/quiz-popup.liquid` and the "Find my routine pop-up" block in `assets/theme.js`; `assets/routine-finder.js` now exposes `MoanaFinder.init(section)`.
+- **Tests.** `dev/popup-test.mjs` has 25 checks.
+
+**Copy fix:** the quiz's privacy line now reads "Your answers stay on this device. Nothing is sent anywhere." The old line said nothing is saved, which stopped being true once the quiz began saving the routine for the skin diary.
 
 ## Footer v2 (October 2026)
 

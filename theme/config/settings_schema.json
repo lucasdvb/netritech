@@ -117,6 +117,42 @@
     ]
   },
   {
+    "name": "Find my routine pop-up",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Offers the routine quiz in a pop-up once a shopper has been browsing for a little while. It never shows on the quiz page itself, to someone who already has a routine saved, or again for a while after she closes it. Preview it without switching it on by adding ?quiz_popup=1 to any page address."
+      },
+      {
+        "type": "checkbox",
+        "id": "quiz_popup_enabled",
+        "label": "Show the routine pop-up",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "quiz_popup_delay",
+        "label": "Seconds of browsing before it appears",
+        "min": 5,
+        "max": 60,
+        "step": 5,
+        "unit": "s",
+        "default": 10,
+        "info": "Counted from her first scroll, so it never interrupts a page she has only just opened."
+      },
+      {
+        "type": "range",
+        "id": "quiz_popup_days",
+        "label": "Days before it can show again after she closes it",
+        "min": 1,
+        "max": 60,
+        "step": 1,
+        "unit": "d",
+        "default": 14
+      }
+    ]
+  },
+  {
     "name": "Moana rewards",
     "settings": [
       {

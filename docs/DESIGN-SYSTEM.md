@@ -84,7 +84,9 @@ At the owner's request every level is now **Raleway** (the brand guide sets Inst
 ## Space, shape, layout
 
 - 4 px base: 4, 8, 12, 16, 24, 32, 48, 64, 96, 128.
-- Section rhythm `--section`: 56 → 104 px. Page width 1440 px; gutters 16 → 48 px.
+- Section rhythm `--section`: 72 → 152 px (v7: the white space is part of the product). `.section--tight` 56 → 112 px. Page width 1440 px; gutters 16 → 48 px.
+- Section titles sit `--title-gap` (32 → 64 px) above their content, everywhere. Grid gaps `--gap` 16 → 36 px.
+- Quiet by default (v7): one solid button per view at most. Card "Add to bag" is a hairline outline that fills on hover; badges are tracked words, not boxes; the header CTA is a text link; collection sub-categories are text tabs on a hairline.
 - Radii: **0 everywhere** (v3, after Cult Beauty: square buttons, cards, chips, inputs, filter boxes). The one curve on the site is the footer slab's rounded top (GetLayers Lumora).
 - Hairlines: Licorice at 14 % (32 % for strong). No drop shadows except the mega menu and the floating brand packshot.
 - Product grid: 2 columns under 750 px, 3 to 1199 px, 4 from 1200 px; white image wells at 1:1.04; product rails show 4 across on desktop and peek on phones.

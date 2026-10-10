@@ -43,7 +43,7 @@
 </section>
 
 {% stylesheet %}
-  .ed .t-title { margin-bottom: clamp(1.5rem, 1rem + 2vw, 3rem); }
+  .ed .t-title { margin-bottom: var(--title-gap); }
   .ed__track { grid-auto-columns: calc((100% - 2 * 2.5rem) / 3); gap: 2.5rem; }
   @media (max-width: 989px) { .ed__track { grid-auto-columns: 78%; gap: 1rem; } }
   .ed__card { display: flex; flex-direction: column; text-align: center; }

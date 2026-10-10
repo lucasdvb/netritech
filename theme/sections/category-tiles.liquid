@@ -28,7 +28,7 @@
 </section>
 
 {% stylesheet %}
-  .cat-t .t-title { margin-bottom: clamp(1.5rem, 1rem + 2vw, 3rem); }
+  .cat-t .t-title { margin-bottom: var(--title-gap); }
   .cat-t__track { grid-auto-columns: calc((100% - 5 * 1.5rem) / 6); gap: 1.5rem; }
   @media (max-width: 989px) { .cat-t__track { grid-auto-columns: calc((100% - 2 * 1rem) / 3.3); gap: 1rem; } }
   @media (max-width: 749px) { .cat-t__track { grid-auto-columns: 44%; } }

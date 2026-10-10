@@ -76,7 +76,7 @@
 {% stylesheet %}
   .wl__ghost span { display: block; aspect-ratio: 1 / 1.04; margin-bottom: 11rem; background: linear-gradient(90deg, #f4f4f4, #fafafa, #f4f4f4); background-size: 200% 100%; animation: wl-shimmer 1.4s linear infinite; }
   @keyframes wl-shimmer { to { background-position: -200% 0; } }
-  .wl__head { display: grid; justify-items: center; gap: var(--s-2); margin-bottom: clamp(1.5rem, 1rem + 2vw, 3rem); }
+  .wl__head { display: grid; justify-items: center; gap: var(--s-2); margin-bottom: var(--title-gap); }
   .wl__foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--s-3); margin-top: var(--s-7); padding-top: var(--s-4); border-top: 1px solid var(--line); }
   .wl__clear { font-size: var(--fs-small); font-weight: var(--w-semibold); text-decoration: underline; text-underline-offset: 3px; min-height: 44px; }
   .wl__empty { display: grid; justify-items: center; text-align: center; gap: var(--s-3); }

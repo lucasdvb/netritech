@@ -21,7 +21,6 @@
 
 <section class="plp" data-collection data-section-id="{{ section.id }}">
   <header class="page-width plp__head">
-    <p class="plp__count t-small t-soft">{{ 'collections.product_count' | t: count: collection.products_count }}</p>
     <div class="plp__title-wrap">
       {%- if current_tags -%}
         <p class="plp__parent">{{ collection.title }}</p>
@@ -29,6 +28,7 @@
       {%- else -%}
         <h1 class="plp__title">{{ collection.title }}</h1>
       {%- endif -%}
+      <p class="plp__count">{{ 'collections.product_count' | t: count: collection.products_count }}</p>
       {%- if collection.description != blank and current_tags == blank -%}
         <div class="plp__desc is-clamped" data-readmore>
           <div class="plp__desc-text" id="plp-desc-{{ section.id }}">{{ collection.description }}</div>
@@ -81,7 +81,7 @@
   {%- if show_subs or section.settings.show_tag_pills -%}
     <div class="page-width plp__routes">
       {%- if show_subs and section.blocks.size > 0 -%}
-        <nav class="pill-row" aria-label="{{ 'collections.categories' | t }}">
+        <nav class="pill-row plp__subs" aria-label="{{ 'collections.categories' | t }}">
           <a class="pill" href="{{ parent.url }}"{% if collection.handle == parent.handle and current_tags == blank %} aria-current="page"{% endif %}>{{ 'collections.all' | t }} <small>{{ parent.all_products_count }}</small></a>
           {%- for block in section.blocks -%}
             {%- assign sub = block.settings.collection -%}
@@ -226,11 +226,11 @@
 
 {% stylesheet %}
 .plp { padding-bottom: var(--section); }
-.plp__head { position: relative; padding-block: var(--s-4) var(--s-6); text-align: center; }
-.plp__count { text-align: right; margin-bottom: var(--s-4); }
-.plp__title-wrap { display: grid; justify-items: center; gap: var(--s-3); }
+.plp__head { position: relative; padding-block: clamp(2rem, 1rem + 3vw, 4.5rem) clamp(2.5rem, 1.5rem + 3vw, 4.5rem); text-align: center; }
+.plp__title-wrap { display: grid; justify-items: center; gap: var(--s-4); }
 .plp__parent { font: var(--w-medium) var(--fs-xs)/1.3 var(--f-body); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
 .plp__title { font: var(--w-extralight) var(--fs-h2)/var(--lh-heading) var(--f-body); letter-spacing: .1em; text-transform: uppercase; text-wrap: balance; }
+.plp__count { font: var(--type-label); letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--ink-soft); font-variant-numeric: lining-nums; }
 .plp__desc { max-width: 48rem; display: grid; justify-items: center; gap: var(--s-2); }
 .plp__desc-text { font-size: var(--fs-md); line-height: 1.65; color: var(--ink-soft); letter-spacing: .02em; }
 .plp__desc.is-clamped .plp__desc-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -238,27 +238,37 @@
 .no-js .plp__desc.is-clamped .plp__desc-text { display: block; }
 .plp__more { font-weight: var(--w-semibold); font-size: var(--fs-small); min-height: 40px; letter-spacing: .04em; }
 .plp__more:hover { text-decoration: underline; text-underline-offset: 3px; }
-.plp__routes { display: grid; gap: var(--s-3); margin-bottom: var(--s-5); }
+/* quiet routes: sub-categories as tracked text tabs on a hairline, concerns as soft chips */
+.plp__routes { display: grid; gap: var(--s-5); margin-bottom: var(--s-6); }
+.plp__subs { gap: clamp(1.5rem, 1rem + 1.6vw, 2.75rem); border-bottom: 1px solid var(--line); padding-bottom: 0; }
+.plp__subs .pill { position: relative; min-height: 48px; padding: 0; border: 0; background: none; font: var(--w-medium) var(--fs-xs)/1 var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+.plp__subs .pill small { display: none; }
+.plp__subs .pill::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--ink); scale: 0 1; transition: scale var(--t) var(--ease); }
+.plp__subs .pill:hover { background: none; color: var(--ink); }
+.plp__subs .pill[aria-current="page"] { background: none; color: var(--ink); }
+.plp__subs .pill[aria-current="page"]::after, .plp__subs .pill:hover::after { scale: 1 1; }
+.plp__tags .pill { min-height: 36px; padding: 0 .95rem; border-color: transparent; background: var(--tile); font-size: var(--fs-sm); }
+.plp__tags .pill:hover { border-color: var(--line-strong); background: var(--c-white); }
+.plp__tags .pill[aria-current="page"], .plp__tags .pill.is-active { background: var(--c-forest); border-color: var(--c-forest); }
 .plp__routes .pill-row { margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter); }
 .plp__routes .pill-row, .plp__routes .pill-row { justify-content: flex-start; }
 .plp__tags { align-items: center; }
 .plp__tags-label { flex: none; padding-right: var(--s-2); }
 .plp__toolbar {
   position: sticky; top: var(--header-h); z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
-  padding-block: var(--s-3); margin-bottom: var(--s-6);
+  padding-block: var(--s-2); margin-bottom: clamp(2rem, 1.2rem + 2.4vw, 3.5rem); border-bottom: 1px solid var(--line);
   background: rgba(255,255,255,.82); -webkit-backdrop-filter: saturate(1.5) blur(16px); backdrop-filter: saturate(1.5) blur(16px);
 }
 .plp__filters { display: flex; gap: var(--s-3); min-width: 0; }
-.plp__fbox { display: inline-flex; align-items: center; justify-content: space-between; gap: var(--s-4); min-width: 12.5rem; height: 48px; padding: 0 .9rem; border: 1px solid var(--line); background: var(--c-white); font: var(--w-semibold) var(--fs-sm)/1 var(--f-body); color: var(--ink); transition: border-color var(--t-fast) var(--ease); }
-.plp__fbox:hover { border-color: var(--ink); }
+.plp__fbox { display: inline-flex; align-items: center; justify-content: space-between; gap: var(--s-4); min-width: 11rem; height: 48px; padding: 0 .9rem; border: 1px solid transparent; background: var(--c-white); font: var(--w-semibold) var(--fs-sm)/1 var(--f-body); color: var(--ink); transition: border-color var(--t-fast) var(--ease); }
+.plp__fbox:hover { border-color: var(--line-strong); }
 .plp__fbox svg { width: 16px; height: 16px; flex: none; }
 .plp__filter-btn { min-width: 0; justify-content: center; gap: .5rem; }
-.plp__sort { flex: none; display: flex; align-items: center; height: 48px; border: 1px solid var(--line); background: var(--c-white); }
-.plp__sort:hover { border-color: var(--ink); }
+.plp__sort { flex: none; display: flex; align-items: center; height: 48px; border: 1px solid transparent; background: var(--c-white); }
+.plp__sort:hover { border-color: var(--line-strong); }
 .plp__sort-label { padding-left: .9rem; font: var(--w-semibold) var(--fs-sm)/1 var(--f-body); white-space: nowrap; }
 .plp__sort-select { min-height: 46px; width: auto; border: 0; font-size: var(--fs-sm); font-weight: var(--w-medium); padding-left: .6rem; background-color: transparent; }
 @media (max-width: 749px) {
-  .plp__count { text-align: center; margin-bottom: var(--s-2); }
   .plp__filters { flex: 1; }
   .plp__filter-btn { flex: 1; }
   .plp__sort { flex: 1.3; min-width: 0; }
@@ -284,7 +294,7 @@
 .filter-price { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-3); }
 .filter-form__foot { display: grid; grid-template-columns: 1fr 1.4fr; gap: var(--s-3); }
 .filter-form__foot .btn { padding-inline: 1rem; }
-@media (min-width: 990px) { .plp__head { padding-block: var(--s-6) var(--s-7); } .plp__routes .pill-row { margin-inline: 0; padding-inline: 0; flex-wrap: wrap; overflow: visible; } }
+@media (min-width: 990px) { .plp__routes .pill-row { margin-inline: 0; padding-inline: 0; flex-wrap: wrap; overflow: visible; justify-content: center; } .plp__tags-label { flex-basis: 100%; text-align: center; padding: 0 0 var(--s-1); } }
 {% endstylesheet %}
 
 {% schema %}

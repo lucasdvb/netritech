@@ -1,0 +1,15 @@
+{%- comment -%}
+  Find my routine pop-up: settings only. theme.js reads them, starts the clock at the shopper's first scroll and,
+  once the delay has passed, fetches the routine-finder section (Section Rendering API) into a glass panel.
+  Off by default (Theme settings > Find my routine pop-up); ?quiz_popup=1 previews it while it is off.
+  Not output on the quiz page itself, the bag or the password page.
+{%- endcomment -%}
+{%- unless template.suffix == 'routine-finder' or template.name == 'cart' or template.name == 'password' -%}
+  <template data-quiz-popup
+    data-enabled="{{ settings.quiz_popup_enabled }}"
+    data-delay="{{ settings.quiz_popup_delay }}"
+    data-days="{{ settings.quiz_popup_days }}"
+    data-src="{{ routes.root_url | append: '?section_id=routine-finder' }}"
+    data-js="{{ 'routine-finder.js' | asset_url }}"
+    data-wash="{{ 'wash.js' | asset_url }}"></template>
+{%- endunless -%}
