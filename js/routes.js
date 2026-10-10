@@ -30,6 +30,7 @@ export const ROUTES = [
   { path: 'plan/training/workouts/:id', tab: 'plan', depth: 2, load: v('template') },
   { path: 'plan/training/exercises/:id', tab: 'plan', depth: 3, load: v('exercise') },
   { path: 'plan/training/exercises', tab: 'plan', depth: 2, load: v('exercises') },
+  { path: 'plan/training/programmes', tab: 'plan', depth: 2, load: v('programmes') },
   { path: 'plan/training', tab: 'plan', depth: 1, load: v('training') },
   { path: 'plan/playbook', tab: 'plan', depth: 1, load: v('playbook') },
   { path: 'plan/moodboard', tab: 'plan', depth: 1, load: v('moodboard') },
@@ -68,6 +69,7 @@ export const ROUTES = [
   { path: 'reflect/insights', tab: 'review', depth: 1, load: v('insights') },
 
   { path: 'you/settings', tab: 'you', depth: 1, load: v('settings') },
+  { path: 'you/setup', tab: 'you', depth: 1, load: v('setup') },
   { path: 'you/reminders', tab: 'you', depth: 1, load: v('reminders') },
   { path: 'you/data', tab: 'you', depth: 1, load: v('data') },
   { path: 'you/privacy', tab: 'you', depth: 1, load: v('privacy') },

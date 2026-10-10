@@ -16,7 +16,7 @@ const SCREENS = [
   ['Your plan', 'plan/playbook', 'scroll-text', 'your day schedule playbook routines rules'], ['Goals', 'plan/goals', 'target', ''],
   ['Projects', 'plan/projects', 'layers', ''], ['Tasks', 'plan/tasks', 'list-todo', 'to do todo chores'], ['Lists', 'plan/lists', 'list-checks', 'shopping packing groceries checklist'],
   ['Brain dump', 'plan/notes', 'brain', 'notes ideas'], ['Training', 'plan/training', 'dumbbell', 'workouts gym sessions plan'],
-  ['Exercises', 'plan/training/exercises', 'activity', 'lifts movements'], ['Books', 'plan/books', 'book-open', 'reading'],
+  ['Exercises', 'plan/training/exercises', 'activity', 'lifts movements'], ['Programmes', 'plan/training/programmes', 'trophy', 'training programme push pull legs upper lower full body minimum home dumbbells plan'], ['Books', 'plan/books', 'book-open', 'reading'],
   ['Money', 'plan/money', 'wallet', 'spending spent budget expenses'], ['Dates', 'plan/dates', 'calendar-heart', 'birthdays anniversaries countdown events'],
   ['Moodboard', 'plan/moodboard', 'image', 'pictures images'], ['Commitments', 'plan/commitments', 'hand', 'pledges'], ['Rewards', 'plan/rewards', 'trophy', ''],
   ['Body', 'progress/body', 'activity', 'health'], ['Weight', 'progress/body/weight', 'scale', 'weigh-in scale'],
@@ -29,6 +29,7 @@ const SCREENS = [
   ['Spirit', 'progress/areas/spirit', 'church', 'faith prayer scripture'], ['Relationships', 'progress/areas/relationships', 'heart', 'family people'],
   ['Work', 'progress/areas/work', 'briefcase', 'deep work focus'], ['Settings', 'you/settings', 'settings', 'preferences options'], ['Reminders', 'you/reminders', 'bell', 'notifications alerts times timeline'],
   ['Data & backup', 'you/data', 'database', 'export import backup restore csv'], ['Privacy', 'you/privacy', 'shield-check', ''], ['Sync', 'you/sync', 'refresh-cw', 'devices server'],
+  ['Set up your days', 'you/setup', 'sparkles', 'setup start onboarding wizard begin first time'],
 ];
 // Every setting, by the label it has in Settings.
 const SETTINGS = ['Name', 'Age', 'Height', 'Wake', 'Training', 'Work starts', 'Work ends', 'Lights out', 'My day ends at', 'Work days', 'Habits in focus',

@@ -178,7 +178,9 @@ dd .explain { display: inline; }
 @media (prefers-color-scheme: dark) { :root[data-theme='system'] .seg-btn[aria-selected='true'], :root[data-theme='system'] .seg-btn[aria-checked='true'], :root[data-theme='system'] .chip.is-active { background: var(--text); color: var(--text-inv); } }
 .seg--wrap { flex-wrap: wrap; background: none !important; padding: 0; gap: 6px; }
 .seg--wrap .seg-btn { flex: none; background: var(--surface-2); --text-3: var(--text-2); min-height: 40px; }
-.seg--wrap .seg-btn[aria-selected='true'] { background: var(--ink); color: var(--on-ink); }
+.seg--wrap .seg-btn[aria-selected='true'], .seg--wrap .seg-btn[aria-checked='true'], .seg--wrap .seg-btn[aria-pressed='true'] { background: var(--ink); color: var(--on-ink); font-weight: var(--weight-semibold); }
+:root[data-theme='dark'] .seg--wrap .seg-btn[aria-pressed='true'] { background: var(--text); color: var(--text-inv); }
+@media (prefers-color-scheme: dark) { :root[data-theme='system'] .seg--wrap .seg-btn[aria-pressed='true'] { background: var(--text); color: var(--text-inv); } }
 
 /* ---------- chips ---------- */
 .chip {
