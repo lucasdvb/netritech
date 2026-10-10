@@ -15,7 +15,10 @@ dd .explain { display: inline; }
 
 /* ---------- page head ---------- */
 .page-head { padding: calc(var(--s5) + 4px) 0 var(--s5); }
-.page-head--child { padding-top: var(--s3); }
+.page-head--child { padding-top: 0; }
+/* Back stays put while the page scrolls: a sticky bar of its own, so it's always one tap away. */
+.back-bar { position: sticky; top: calc(var(--safe-top) + 8px); z-index: 20; height: 46px; margin-top: var(--s3); pointer-events: none; }
+.back-bar .back-btn { pointer-events: auto; box-shadow: var(--shadow-md); }
 .page-head-row { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s4); }
 .page-title { font-size: var(--text-h1); font-weight: var(--weight-semibold); line-height: var(--leading-h1); letter-spacing: var(--tracking-h1); }
 .page-head--child .page-title { font-size: var(--text-h1); margin-top: var(--s4); }
@@ -371,6 +374,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
   animation: toast-in 280ms var(--spring-snappy) both;
 }
 .toast.is-leaving { animation: toast-out 200ms var(--ease-standard) both; }
+/* Swipe a message away: it follows the finger, then flies off the way it was pushed. */
+.toast { touch-action: none; user-select: none; -webkit-user-select: none; transition: transform 220ms var(--spring-snappy), opacity 220ms var(--ease-standard); }
+.toast.is-dragging { transition: none; }
+.toast.is-swiped { animation: none; transition: transform 180ms var(--ease-standard), opacity 180ms var(--ease-standard); }
 .toast--danger { background: var(--danger); color: #fff; }
 .toast-ic { display: grid; place-items: center; color: currentColor; }
 .toast-msg { flex: 1; padding-right: 8px; }

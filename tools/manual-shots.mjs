@@ -255,14 +255,13 @@ flow('a-today', async () => {
   await ev(p, () => window.scrollTo(0, 0));
   const a = await screen(p, 'a-today-1', [
     { sel: '.logbar [data-action="capture"]', n: 1, at: 'tl', pad: 3, radius: 24 },
-    { sel: '.logbar-mic', n: 2, at: 'tr', pad: 3, radius: 24 },
-    { sel: '.now', n: 3, at: 'tr', pad: 4, radius: 26 },
-    { sel: '.you-btn', n: 4, at: 'bl', pad: 3, radius: 24 },
+    { sel: '.now', n: 2, at: 'tr', pad: 4, radius: 26 },
+    { sel: '.you-btn', n: 3, at: 'bl', pad: 3, radius: 24 },
   ]);
   const b = await screen(p, 'a-today-2', [
-    { sel: '.pins--quick', n: 5, at: 'tr', pad: 4 },
-    { sel: '.ds-row.is-current', n: 6, at: 'tr', pad: 4 },
-    { sel: '.tab--capture', n: 7, at: 'tr', pad: 3, radius: 30, fixed: true },
+    { sel: '.pins--quick', n: 4, at: 'tr', pad: 4 },
+    { sel: '.ds-row.is-current', n: 5, at: 'tr', pad: 4 },
+    { sel: '.tab--capture', n: 6, at: 'tr', pad: 3, radius: 30, fixed: true },
   ]);
   await pair('a-today', [a, b], ['Today, top', 'Today: quick row and Your day']);
   await ctx.close();

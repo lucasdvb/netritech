@@ -102,7 +102,7 @@ export default {
         : html`<div class="${cx('gym-card', resting && 'is-resting')}" data-key="card-${cur.s.id}">
           <p class="gym-eyebrow">Exercise ${exIndex + 1} of ${exCount} · set ${cur.s.setIndex + 1} of ${setsOfEx.length}${cur.s.target ? ` · goal ${cur.s.target}` : ''}</p>
           <p class="gym-name">${cur.e?.name || 'Exercise'}</p>
-          ${cur.e ? html`${mediaLine(cur.e, { tone: 'gym' })}<button type="button" class="gym-ghost gym-media-link" data-action="g-media" data-ex="${cur.e.id}">${icon('image-plus', { size: 16 })} ${cur.e.photos?.length || cur.e.note ? 'Edit photos and note' : 'Add a photo or note'}</button>` : ''}
+          ${cur.e ? html`${mediaLine(cur.e, { tone: 'gym' })}<button type="button" class="gym-ghost gym-media-link" data-action="g-media" data-ex="${cur.e.id}">${icon('image-plus', { size: 16 })} ${cur.e.photos?.length || cur.e.note ? 'Edit pictures and note' : 'Add a picture or note'}</button>` : ''}
           ${!resting && cur.s.setIndex === 0 && !cur.s.completed && stepFor(w, cur.s) ? html`<p class="gym-step-note" data-key="step-${cur.s.exerciseId}"><b>${stepLabel(stepFor(w, cur.s), loadText)}</b> · ${stepFor(w, cur.s).why}</p>` : ''}
           ${resting ? html`<div class="gym-rest" aria-live="polite">
               <p class="gym-rest-label">Rest</p>

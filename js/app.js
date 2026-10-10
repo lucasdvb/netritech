@@ -294,7 +294,6 @@ const globalActions = {
   'nav': ({ data }) => app.go(data.to),
   'open-search': () => app.search(),
   capture: async () => (await import('./screens/capture.js')).openCapture(),
-  'capture-listen': async () => (await import('./screens/capture.js')).openCapture('', { listen: true }),
   you: async () => (await import('./screens/you.js')).openYou(),
   // Any number with data-action="explain": how it was worked out, with your numbers in the sum.
   explain: async ({ data }) => (await import('./screens/explain.js')).openExplain(data.what, data),
