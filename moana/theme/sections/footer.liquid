@@ -86,6 +86,9 @@
           {%- endform -%}
         {%- endif -%}
       </div>
+      {%- if section.settings.credit_label != blank -%}
+        <p class="footer__credit"><a class="footer__link" href="{{ section.settings.credit_url | default: 'https://www.disruptivedodo.mu' }}" target="_blank" rel="noopener"><span>{{ section.settings.credit_label }}</span></a></p>
+      {%- endif -%}
     </div>
   </div>
   {%- if section.settings.watermark != blank -%}
@@ -163,6 +166,8 @@
   .footer__legal { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-5); }
   .footer__legal ul { display: flex; flex-wrap: wrap; gap: 0 var(--s-5); }
   .footer__legal .footer__link { font-size: var(--fs-xs); min-height: 28px; }
+  .footer__credit { flex-basis: 100%; }
+  .footer__credit .footer__link { font-size: var(--fs-xs); min-height: 28px; letter-spacing: .04em; }
   .footer__lang { display: inline-flex; align-items: center; gap: var(--s-2); }
   .footer__lang button { min-height: 36px; padding: 0 .9rem; border: 1px solid rgba(223,224,219,.3); border-radius: var(--r-pill); color: var(--c-mist); font-size: var(--fs-xs); font-weight: var(--w-semibold); transition: border-color var(--t-fast) var(--ease); }
   .footer__lang button:hover { border-color: var(--c-mist); }
@@ -187,7 +192,9 @@
     { "type": "inline_richtext", "id": "signup_heading", "label": "Sign-up heading", "default": "New drops, restocks and routines, <em>first</em>." },
     { "type": "text", "id": "signup_note", "label": "Sign-up note", "default": "One email when there is something worth knowing. Unsubscribe any time." },
     { "type": "textarea", "id": "tagline", "label": "Tagline", "default": "Korean skincare for island skin, delivered all over Mauritius." },
-    { "type": "text", "id": "watermark", "label": "Background word", "default": "Moana", "info": "Decorative only. Leave empty to hide." }
+    { "type": "text", "id": "watermark", "label": "Background word", "default": "Moana", "info": "Decorative only. Leave empty to hide." },
+    { "type": "text", "id": "credit_label", "label": "Credit line", "default": "Built by Disruptive Dodo", "info": "Shown at the very bottom. Leave empty to hide." },
+    { "type": "url", "id": "credit_url", "label": "Credit link", "default": "https://www.disruptivedodo.mu" }
   ],
   "blocks": [
     { "type": "menu", "name": "Menu column", "settings": [
