@@ -1,0 +1,59 @@
+{%- comment -%}
+  Recently viewed: the last products this shopper opened, remembered on this device only
+  (theme.js records each product page in localStorage under moana:recent). The cards are the
+  live product cards (/products/<handle>?view=card), so price, stock and add to bag are current.
+  The section is hidden until there is something to show, and it sits below the fold, so it never shifts the page.
+{%- endcomment -%}
+<section class="section recent" aria-labelledby="rv-{{ section.id }}" data-recent hidden
+  data-limit="{{ section.settings.limit }}"{% if product %} data-exclude="{{ product.handle }}"{% endif %}>
+  <div class="page-width">
+    <h2 class="t-title recent__title" id="rv-{{ section.id }}">{% if section.settings.heading != blank %}{{ section.settings.heading }}{% else %}{{ 'products.recently_viewed' | t }}{% endif %}</h2>
+    <ul class="product-grid product-grid--4" role="list" data-recent-grid></ul>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.querySelector('[data-recent]');
+    if (!root) return;
+    var list = [];
+    try { list = JSON.parse(localStorage.getItem('moana:recent') || '[]'); } catch (e) {}
+    var skip = root.getAttribute('data-exclude');
+    list = list.filter(function (h) { return h && h !== skip; }).slice(0, parseInt(root.getAttribute('data-limit'), 10) || 4);
+    if (!list.length) return;
+    var base = {{ routes.root_url | json }}.replace(/\/$/, '');
+    function load() {
+      Promise.all(list.map(function (h) {
+        return fetch(base + '/products/' + encodeURIComponent(h) + '?view=card')
+          .then(function (r) { return r.ok ? r.text() : ''; }).catch(function () { return ''; });
+      })).then(function (cards) {
+        cards = cards.filter(Boolean);
+        if (!cards.length) return;
+        root.querySelector('[data-recent-grid]').innerHTML = cards.map(function (c) { return '<li>' + c + '</li>'; }).join('');
+        root.hidden = false;
+        root.querySelectorAll('.reveal').forEach(function (r) { r.classList.add('is-in'); });
+        if (window.MoanaWishlist) window.MoanaWishlist.paint();
+      });
+    }
+    // fetch only when the shopper scrolls near it
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: '600px 0px' });
+      io.observe(root.parentElement);
+    } else { load(); }
+  })();
+</script>
+
+{% stylesheet %}
+  .recent__title { margin-bottom: clamp(1.5rem, 1rem + 2vw, 3rem); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Recently viewed",
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "info": "Leave empty for \"Recently viewed\"." },
+    { "type": "range", "id": "limit", "label": "Products", "min": 2, "max": 8, "step": 1, "default": 4 }
+  ],
+  "presets": [{ "name": "Recently viewed" }]
+}
+{% endschema %}

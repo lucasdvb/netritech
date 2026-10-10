@@ -1,0 +1,52 @@
+{%- comment -%} Brand tiles (the row of brand squares under Cult Beauty's TRENDING): a packshot tile and the brand name. {%- endcomment -%}
+<section class="section section--tight bt" aria-labelledby="bt-{{ section.id }}">
+  <div class="page-width">
+    <h2 class="t-title" id="bt-{{ section.id }}">{{ section.settings.heading }}</h2>
+    <div class="carousel" data-carousel>
+      <ul class="carousel__track bt__track" data-carousel-track role="list">
+        {%- for block in section.blocks -%}
+          {%- assign c = block.settings.collection -%}
+          {%- if c == blank -%}{%- continue -%}{%- endif -%}
+          <li class="reveal" style="--i: {{ forloop.index0 }}" {{ block.shopify_attributes }}>
+            <a class="bt__tile" href="{{ c.url }}">
+              <span class="bt__img">{%- assign img = c.featured_image | default: c.products.first.featured_media.preview_image -%}{%- if img -%}{{ img | image_url: width: 400 | image_tag: widths: '200, 300, 400', sizes: '(min-width: 990px) 14vw, 40vw', loading: 'lazy', alt: '' }}{%- endif -%}</span>
+              <span class="bt__name">{{ c.title }}</span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+      <button class="carousel__arrow carousel__arrow--prev" type="button" data-carousel-prev>{% render 'icon', name: 'chevron-left' %}<span class="sr-only">{{ 'general.prev_slide' | t }}</span></button>
+      <button class="carousel__arrow carousel__arrow--next" type="button" data-carousel-next>{% render 'icon', name: 'chevron-right' %}<span class="sr-only">{{ 'general.next_slide' | t }}</span></button>
+    </div>
+    {%- if section.settings.link_label != blank -%}<p class="bt__all"><a class="btn btn--secondary" href="{{ section.settings.link }}">{{ section.settings.link_label }}</a></p>{%- endif -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .bt .t-title { margin-bottom: clamp(1.5rem, 1rem + 2vw, 3rem); }
+  .bt__track { grid-auto-columns: calc((100% - 5 * 1.5rem) / 6); gap: 1.5rem; }
+  @media (max-width: 989px) { .bt__track { grid-auto-columns: calc((100% - 2 * 1rem) / 3.3); gap: 1rem; } }
+  @media (max-width: 749px) { .bt__track { grid-auto-columns: 40%; } }
+  .bt__tile { display: grid; gap: var(--s-3); text-align: center; }
+  .bt__img { display: block; aspect-ratio: 1; overflow: hidden; background: linear-gradient(160deg, #fafaf7, #f0efe8); }
+  .bt__img img { width: 100%; height: 100%; object-fit: contain; padding: 14%; mix-blend-mode: multiply; transition: transform 900ms var(--ease-out); }
+  .bt__tile:hover .bt__img img { transform: scale(1.07) rotate(-2deg); }
+  .bt__name { font: var(--w-medium) var(--fs-sm)/1.3 var(--f-body); letter-spacing: .06em; text-transform: uppercase; }
+  .bt__tile:hover .bt__name { text-decoration: underline; text-underline-offset: 4px; }
+  .bt__all { display: flex; justify-content: center; margin-top: var(--s-6); }
+  .bt .carousel__arrow { top: 40%; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Brand tiles",
+  "settings": [
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Shop by brand" },
+    { "type": "text", "id": "link_label", "label": "Button label", "default": "All brands" },
+    { "type": "url", "id": "link", "label": "Button link" }
+  ],
+  "max_blocks": 16,
+  "blocks": [ { "type": "brand", "name": "Brand", "settings": [ { "type": "collection", "id": "collection", "label": "Brand collection" } ] } ],
+  "presets": [{ "name": "Brand tiles" }]
+}
+{% endschema %}

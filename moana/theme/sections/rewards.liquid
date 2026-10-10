@@ -1,0 +1,129 @@
+{%- comment -%}
+  Moana rewards page. The programme's numbers come from Theme settings > Moana rewards. Signed in, she sees
+  her balance (customer metafield) counting up and a ring to her next reward; signed out, how it works and
+  a join button. The theme only shows points: Shopify Flow or a loyalty app adds them (handover notes).
+{%- endcomment -%}
+{%- liquid
+  assign rate = settings.rewards_rate | default: 10
+  assign threshold = settings.rewards_threshold | default: 500
+  assign value = settings.rewards_value
+  capture balance
+    render 'points-balance'
+  endcapture
+  assign balance = balance | strip
+  if customer and balance == blank
+    assign balance = '0'
+  endif
+-%}
+<section class="rw" aria-labelledby="rw-{{ section.id }}">
+  <div class="wash" aria-hidden="true"><canvas data-wash data-bg="#f6f8f0" data-a="#eef1e4" data-b="#d1d9be" data-c="#d6d2bf" data-d="#bcc09b"></canvas></div>
+  <div class="page-width rw__grid">
+    <div class="rw__intro">
+      <p class="t-label">{% if settings.kreol %}<span lang="mfe">{% if customer %}{{ 'kreol.greeting_am' | t }}{% if customer.first_name != blank %}, {{ customer.first_name }}{% endif %}{% else %}{{ 'kreol.welcome' | t }}{% endif %}</span>{% else %}{{ 'rewards.title' | t }}{% endif %}</p>
+      <h1 class="t-h1" id="rw-{{ section.id }}" data-lines>{% if section.settings.heading != blank %}{{ section.settings.heading }}{% else %}{{ 'rewards.title' | t }}{% endif %}</h1>
+      <p class="t-lead">{{ 'rewards.lead' | t }}</p>
+    </div>
+
+    <div class="rw__card glass" data-sheen>
+      {%- if customer -%}
+        {%- liquid
+          assign b = balance | plus: 0
+          assign into = b | modulo: threshold
+          assign left = threshold | minus: into
+          assign ready = false
+          if b >= threshold
+            assign ready = true
+          endif
+          assign pct = into | times: 100 | divided_by: threshold
+        -%}
+        <div class="rw__balance" data-rw-balance data-points="{{ b }}" data-pct="{{ pct }}">
+          <svg class="rw__ring" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="54" pathLength="100" class="rw__track"/><circle cx="60" cy="60" r="54" pathLength="100" class="rw__fill" data-rw-fill/></svg>
+          <p class="rw__num"><span data-rw-num>{{ b }}</span></p>
+          <p class="t-label">{{ 'rewards.balance' | t }}</p>
+        </div>
+        <p class="rw__next" data-rw-next>{% if ready %}{% render 'icon', name: 'sparkle' %}{{ 'rewards.ready' | t: value: value }}{% else %}{{ 'rewards.to_next' | t: n: left, value: value }}{% endif %}</p>
+      {%- else -%}
+        <p class="rw__guest">{{ 'rewards.guest' | t }}</p>
+        <div class="rw__actions">
+          <a class="btn" href="{{ routes.account_register_url | default: routes.account_login_url }}">{{ 'rewards.join' | t }}</a>
+          <a class="btn btn--secondary" href="{{ routes.account_login_url }}">{{ 'rewards.sign_in' | t }}</a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="page-width rw__how">
+    <h2 class="t-title">{{ 'rewards.how' | t }}</h2>
+    <ol class="rw__steps" role="list">
+      <li class="reveal" style="--i: 0"><span class="rw__n" aria-hidden="true">01</span><h3>{{ 'rewards.step1_title' | t }}</h3><p class="t-soft">{{ 'rewards.step1_text' | t }}</p></li>
+      <li class="reveal" style="--i: 1"><span class="rw__n" aria-hidden="true">02</span><h3>{{ 'rewards.step2_title' | t }}</h3><p class="t-soft">{{ 'rewards.step2_text' | t: rate: rate }}</p></li>
+      <li class="reveal" style="--i: 2"><span class="rw__n" aria-hidden="true">03</span><h3>{{ 'rewards.step3_title' | t }}</h3><p class="t-soft">{{ 'rewards.step3_text' | t: threshold: threshold, value: value }}</p></li>
+    </ol>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var box = document.querySelector('[data-rw-balance]');
+    if (!box) return;
+    var to = +box.getAttribute('data-points'), pct = +box.getAttribute('data-pct');
+    var num = box.querySelector('[data-rw-num]'), fill = box.querySelector('[data-rw-fill]');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function finish() {
+      num.textContent = to.toLocaleString('en-US');
+      if (to >= {{ threshold | json }} && window.MoanaCelebrate) window.MoanaCelebrate(document.querySelector('[data-rw-next]'));
+    }
+    if (reduce) { fill.style.strokeDashoffset = 100 - pct; return finish(); }
+    var go = function () {
+      var t0 = performance.now();
+      fill.style.strokeDashoffset = 100 - pct;
+      (function step(now) {
+        var k = Math.min(1, (now - t0) / 1200), e = 1 - Math.pow(1 - k, 3);
+        num.textContent = Math.round(to * e).toLocaleString('en-US');
+        if (k < 1) requestAnimationFrame(step); else finish();
+      })(t0);
+    };
+    if (document.readyState === 'complete') setTimeout(go, 200); else window.addEventListener('load', function () { setTimeout(go, 200); });
+  })();
+</script>
+<script src="{{ 'wash.js' | asset_url }}" defer></script>
+
+{% stylesheet %}
+  .rw { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(2.5rem, 2rem + 4vw, 6rem) var(--section); }
+  .rw .wash { z-index: -1; }
+  .rw__grid { display: grid; gap: var(--s-6); align-items: center; }
+  .rw__intro > * + * { margin-top: var(--s-4); }
+  .rw__card { display: grid; justify-items: center; gap: var(--s-4); padding: clamp(1.5rem, 1rem + 2vw, 3rem); text-align: center; }
+  .rw__balance { position: relative; display: grid; place-items: center; width: min(240px, 70vw); aspect-ratio: 1; }
+  .rw__balance > * { grid-area: 1 / 1; }
+  .rw__ring { width: 100%; height: 100%; rotate: -90deg; }
+  .rw__ring circle { fill: none; stroke-width: 3; }
+  .rw__track { stroke: rgba(33, 39, 33, .12); }
+  .rw__fill { stroke: var(--c-forest); stroke-linecap: round; stroke-dasharray: 100; stroke-dashoffset: 100; transition: stroke-dashoffset 1200ms var(--ease-out); }
+  .rw__num { font: var(--type-numeral); font-size: var(--fs-4xl); letter-spacing: var(--ls-display); font-variant-numeric: lining-nums tabular-nums; margin-top: -1.2rem; }
+  .rw__balance .t-label { margin-top: 3.4rem; }
+  .rw__next { display: inline-flex; align-items: center; gap: .5rem; font: var(--type-lead); }
+  .rw__next svg { width: 20px; height: 20px; color: var(--c-forest); }
+  .rw__guest { font: var(--type-lead); }
+  .rw__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-2); }
+  .rw__how { margin-top: var(--section); }
+  .rw__how .t-title { margin-bottom: clamp(1.5rem, 1rem + 2vw, 3rem); }
+  .rw__steps { display: grid; gap: var(--s-5); }
+  .rw__steps li { display: grid; gap: var(--s-2); padding-top: var(--s-4); border-top: 1px solid var(--line); }
+  .rw__steps h3 { font: var(--type-h3); letter-spacing: var(--ls-tight); }
+  .rw__n { font: var(--type-numeral); font-size: var(--fs-2xl); color: var(--c-sage); font-variant-numeric: lining-nums; }
+  @media (min-width: 750px) { .rw__steps { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-6); } }
+  @media (min-width: 990px) { .rw__grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: clamp(3rem, 6vw, 7rem); } }
+  @media (prefers-reduced-motion: reduce) { .rw__fill { transition: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Moana rewards",
+  "settings": [
+    { "type": "paragraph", "content": "The numbers come from Theme settings > Moana rewards." },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Glow, <em>rewarded</em>" }
+  ],
+  "presets": [{ "name": "Moana rewards" }]
+}
+{% endschema %}

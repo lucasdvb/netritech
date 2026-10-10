@@ -60,7 +60,7 @@ check('active filter chip shown', await p.locator('.plp__active .pill.is-active'
 await p.selectOption('[data-sort-select]', 'price-ascending');
 await p.waitForFunction(() => location.search.includes('sort_by=price-ascending'), null, { timeout: 4000 });
 await p.waitForTimeout(300);
-const prices = await p.$$eval('.plp__grid .card__btn-price', (els) => els.map((e) => Number(e.textContent.replace(/[^0-9]/g, ''))));
+const prices = await p.$$eval('.plp__grid .card__price', (els) => els.map((e) => Number(e.textContent.replace(/[^0-9]/g, ''))));
 check('sort by price ascending orders the grid', prices.length === 3 && prices.every((v, i) => i === 0 || prices[i - 1] <= v), prices.join(','));
 await p.locator('.plp__active a.link').click();
 await p.waitForFunction(() => document.querySelectorAll('.plp__grid .card').length === 21, null, { timeout: 4000 }).catch(() => {});
@@ -100,7 +100,7 @@ check('no console errors on product page', p._errors.length === 0, p._errors.joi
 /* 5. predictive search */
 p = await page(1440);
 await p.goto(BASE + '/', { waitUntil: 'networkidle' });
-await p.locator('[data-search-open]').click();
+await p.locator('#header-search').click();
 await p.waitForSelector('#search-modal.is-open');
 await p.waitForTimeout(100);
 check('search opens with the input focused', await p.evaluate(() => document.activeElement?.id === 'search-input'));
@@ -110,7 +110,7 @@ check('predictive results list products', (await p.locator('.predictive__product
 await p.keyboard.press('ArrowDown');
 check('arrow down moves into the results', await p.evaluate(() => document.activeElement?.getAttribute('role') === 'option'));
 await p.keyboard.press('Escape'); await p.waitForTimeout(600);
-check('Escape closes search and returns focus to the trigger', await p.evaluate(() => document.activeElement?.matches('[data-search-open]')));
+check('Escape closes search and returns focus to the trigger', await p.evaluate(() => document.activeElement?.matches('[data-search-open], [data-search-trigger]')));
 
 /* 6. mega menu by keyboard */
 await p.locator('[data-mega-toggle]').focus();

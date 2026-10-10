@@ -11,6 +11,11 @@
     {%- if cart.taxes_included -%}{{ 'cart.taxes_included' | t }} {% endif -%}
     {{ 'cart.delivery_at_checkout' | t }}
   </p>
+  {%- if settings.rewards_enabled and cart.item_count > 0 -%}
+    {%- assign pts = cart.total_price | times: settings.rewards_rate | divided_by: 10000 -%}
+    {%- if pts > 0 -%}<p class="points-line">{% render 'icon', name: 'sparkle' %}<span>{{ 'rewards.cart_line' | t: n: pts }}</span></p>{%- endif -%}
+  {%- endif -%}
+  <p class="cart-summary__eta">{% render 'icon', name: 'truck' %}<span data-eta>{{ 'products.delivery_time' | t }}</span></p>
   <form action="{{ routes.cart_url }}" method="post" class="cart-summary__form">
     <button class="btn" type="submit" name="checkout"{% if cart.item_count == 0 %} disabled{% endif %}>{{ 'cart.checkout' | t }}</button>
   </form>

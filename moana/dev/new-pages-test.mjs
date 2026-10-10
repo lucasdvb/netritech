@@ -1,0 +1,38 @@
+// Interaction checks for the routine finder and the wishlist: node dev/new-pages-test.mjs
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const { chromium } = require('/opt/node-tools/node_modules/playwright');
+const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+const errs = []; p.on('pageerror', (e) => errs.push(e.message)); p.on('console', (m) => { if (m.type() === 'error') errs.push(m.text()); });
+let pass = 0, fail = 0; const check = (n, ok) => { console.log((ok ? 'PASS  ' : 'FAIL  ') + n); ok ? pass++ : fail++; };
+await p.goto('http://localhost:4100/pages/routine-finder', { waitUntil: 'networkidle' });
+await p.click('.rf__opt:has-text("Oily skin")'); await p.waitForTimeout(500);
+await p.click('.rf__opt:has-text("Breakouts")'); await p.waitForTimeout(500);
+await p.click('.rf__opt:has-text("The full ritual")'); await p.waitForTimeout(800);
+// fourth question: budget (left at no limit)
+await p.click('[data-finder-next]'); await p.waitForTimeout(800);
+const items = await p.$$eval('.rf__item', (els) => els.map((e) => e.innerText.replace(/\n+/g, ' | ')));
+console.log(await p.textContent('[data-finder-title]')); console.log(items.join('\n'));
+check('quiz builds a 5-step routine', items.length === 5);
+check('every step found a product', items.every((t) => /Rs/.test(t)));
+await p.click('[data-finder-addall]'); await p.waitForTimeout(1500);
+check('add the whole routine opens the bag', (await p.locator('#cart-drawer.is-open').count()) === 1);
+check('bag holds the routine', (await p.locator('#cart-drawer .cart-line').count()) >= 4);
+await p.screenshot({ path: 'dev/out/rf-result.png' });
+await p.goto('http://localhost:4100/pages/routine-finder', { waitUntil: 'networkidle' });
+await p.focus('input[name=skin]'); await p.keyboard.press('ArrowRight'); await p.waitForTimeout(500);
+check('arrow keys do not skip a question', (await p.locator('.rf__step.is-current[data-q=skin]').count()) === 1);
+await p.goto('http://localhost:4100/collections/skincare', { waitUntil: 'networkidle' });
+const hearts = p.locator('[data-wishlist-toggle]'); await hearts.nth(0).click(); await hearts.nth(2).click();
+check('hearts toggle', (await p.locator('[data-wishlist-toggle][aria-pressed=true]').count()) === 2);
+await p.setViewportSize({ width: 1440, height: 900 });
+check('header wishlist count', (await p.textContent('[data-wishlist-count]')).trim() === '2');
+await p.goto('http://localhost:4100/pages/wishlist', { waitUntil: 'networkidle' }); await p.waitForTimeout(800);
+check('wishlist page shows the saved cards', (await p.locator('[data-wl-grid] .card').count()) === 2);
+await p.locator('[data-wl-grid] [data-wishlist-toggle]').first().click(); await p.waitForTimeout(300);
+check('un-hearting removes the card', (await p.locator('[data-wl-grid] .card').count()) === 1);
+await p.click('[data-wl-clear]'); await p.waitForTimeout(300);
+check('clear empties the wishlist', (await p.locator('[data-wl-empty]:not([hidden])').count()) === 1);
+check('no console errors', errs.length === 0); if (errs.length) console.log(errs);
+console.log(`\n${pass}/${pass + fail} passed`);
+await b.close();

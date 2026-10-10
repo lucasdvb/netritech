@@ -1,7 +1,7 @@
 {%- assign img = section.settings.image -%}
-<section class="section iwt{% if section.settings.flip %} iwt--flip{% endif %}" aria-labelledby="iwt-{{ section.id }}">
+<section class="section ambient{% unless section.settings.flip %} ambient--right{% endunless %} iwt{% if section.settings.flip %} iwt--flip{% endif %}" aria-labelledby="iwt-{{ section.id }}">
   <div class="page-width iwt__grid">
-    <div class="iwt__media media rounded reveal-media">
+    <div class="iwt__media media rounded reveal-media sx-parallax" data-ripple>
       {%- if img -%}
         {{ img | image_url: width: 1400 | image_tag: widths: '480, 640, 800, 1000, 1200, 1400', sizes: '(min-width: 990px) 46vw, 100vw', loading: 'lazy', alt: section.settings.image_alt | default: img.alt }}
       {%- elsif section.settings.theme_image != blank -%}
@@ -19,6 +19,8 @@
     </div>
   </div>
 </section>
+
+<script src="{{ 'ripple.js' | asset_url }}" defer></script>
 
 {% stylesheet %}
 .iwt__grid { display: grid; gap: var(--s-7); align-items: center; }

@@ -5,13 +5,40 @@
     "footer": {
       "type": "footer",
       "blocks": {
-        "shop": { "type": "menu", "settings": { "heading": "Shop", "menu": "moana-footer-shop" } },
-        "help": { "type": "menu", "settings": { "heading": "Help", "menu": "moana-footer-help" } },
-        "contact": { "type": "contact", "settings": { "heading": "Talk to us" } }
+        "shop": {
+          "type": "menu",
+          "settings": {
+            "heading": "Shop",
+            "menu": "moana-footer-shop"
+          }
+        },
+        "help": {
+          "type": "menu",
+          "settings": {
+            "heading": "Help",
+            "menu": "moana-footer-help"
+          }
+        },
+        "contact": {
+          "type": "contact",
+          "settings": {
+            "heading": "Talk to us"
+          }
+        }
       },
-      "block_order": ["shop", "help", "contact"],
-      "settings": { "tagline": "Korean skincare for island skin, delivered all over Mauritius." }
+      "block_order": [
+        "shop",
+        "help",
+        "contact"
+      ],
+      "settings": {
+        "tagline": "Korean skincare for island skin, delivered all over Mauritius.",
+        "credit_label": "Built by Disruptive Dodo",
+        "credit_url": "https://www.disruptivedodo.mu"
+      }
     }
   },
-  "order": ["footer"]
+  "order": [
+    "footer"
+  ]
 }

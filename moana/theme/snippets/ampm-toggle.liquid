@@ -1,0 +1,11 @@
+{%- comment -%}
+  Morning / evening switch: a sun and a moon on a sliding glass thumb. theme.js wires every [data-ampm]:
+  it sets data-mode ("am" or "pm") on the element and fires an "ampm:change" event that the
+  routine section and the skin diary listen to. Params: mode ("am" | "pm", default am).
+{%- endcomment -%}
+{%- assign m = mode | default: 'am' -%}
+<div class="ampm" role="group" aria-label="{{ 'routine.ampm_label' | t }}" data-ampm data-mode="{{ m }}">
+  <button type="button" class="ampm__btn" data-ampm-value="am" aria-pressed="{% if m == 'am' %}true{% else %}false{% endif %}">{% render 'icon', name: 'sun' %}<span>{{ 'products.morning' | t }}</span></button>
+  <button type="button" class="ampm__btn" data-ampm-value="pm" aria-pressed="{% if m == 'pm' %}true{% else %}false{% endif %}">{% render 'icon', name: 'moon' %}<span>{{ 'products.evening' | t }}</span></button>
+  <span class="ampm__thumb" aria-hidden="true"></span>
+</div>

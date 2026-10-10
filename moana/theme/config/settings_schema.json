@@ -35,18 +35,6 @@
       },
       {
         "type": "text",
-        "id": "whatsapp_number",
-        "label": "WhatsApp number (digits only, with country code)",
-        "default": "23058172020"
-      },
-      {
-        "type": "text",
-        "id": "whatsapp_display",
-        "label": "WhatsApp number as shown",
-        "default": "+230 5817 2020"
-      },
-      {
-        "type": "text",
         "id": "address_street",
         "label": "Street",
         "default": "Plot 15a, Morcellement Royal Garden"
@@ -113,6 +101,65 @@
         "id": "step_tags",
         "label": "Routine step tags",
         "default": "Cleanse, Tone, Treat, Moisturise, Protect, Mask, Eye care, Lip care"
+      }
+    ]
+  },
+  {
+    "name": "Voice",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "kreol",
+        "label": "Kreol touches",
+        "default": true,
+        "info": "A few warm Mauritian Kreol words: Bonzour / Bonswar greetings, Mersi when something is added, Pa bizin traka in empty states, Byenvini on welcome screens. Check the wording with your team before launch."
+      }
+    ]
+  },
+  {
+    "name": "Moana rewards",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Shows points on product pages, in the bag, in the header and on the Rewards page. The theme only displays points: they are added by Shopify Flow or a loyalty app writing to the customer metafield below (see the handover notes). Confirm the numbers before launch."
+      },
+      {
+        "type": "checkbox",
+        "id": "rewards_enabled",
+        "label": "Show Moana rewards",
+        "default": false
+      },
+      {
+        "type": "range",
+        "id": "rewards_rate",
+        "label": "Points per Rs 100 spent",
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "default": 10
+      },
+      {
+        "type": "number",
+        "id": "rewards_threshold",
+        "label": "Points for one reward",
+        "default": 500
+      },
+      {
+        "type": "text",
+        "id": "rewards_value",
+        "label": "What one reward is worth",
+        "default": "Rs 250 off"
+      },
+      {
+        "type": "text",
+        "id": "rewards_metafield",
+        "label": "Points balance (customer metafield, namespace.key)",
+        "default": "moana.points"
+      },
+      {
+        "type": "page",
+        "id": "rewards_page",
+        "label": "Rewards page"
       }
     ]
   }

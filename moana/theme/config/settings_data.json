@@ -3,15 +3,20 @@
     "brand_name": "Moana Beauté",
     "legal_name": "Moana Beauté Ltée",
     "company_number": "C26237784",
-    "whatsapp_number": "23058172020",
-    "whatsapp_display": "+230 5817 2020",
     "address_street": "Plot 15a, Morcellement Royal Garden",
     "address_locality": "Mon Gout",
     "free_shipping_threshold": 1500,
     "low_stock_threshold": 5,
-    "pdp_delivery_text": "<p>Rs 100 anywhere in Mauritius, free above Rs 1,500. Usually delivered in 1 to 3 working days, or collect in Mon Gout by arrangement.</p><p>Unopened products in their original packaging can be returned within seven days of delivery. <a href=\"/pages/delivery\">Delivery &amp; returns</a></p>",
+    "pdp_delivery_text": "<p>Rs 100 anywhere in Mauritius, and free over Rs 1,500. Usually at your door in 1 to 3 working days, or collect in Mon Gout by arrangement.</p><p>Unopened products in their original packaging can come back within seven days of delivery. <a href=\"/pages/delivery\">Delivery &amp; returns</a></p>",
     "concern_tags": "Hydration, Dullness, Dark spots, Breakouts, Fine lines, Firmness, Pores, Oil control, Redness, Sun protection, Dark circles, Puffiness, Makeup removal",
     "skin_type_tags": "All skin types, Dry skin, Oily skin, Combination skin, Sensitive skin, Acne-prone skin, Normal skin",
-    "step_tags": "Cleanse, Tone, Treat, Moisturise, Protect, Mask, Eye care, Lip care"
+    "step_tags": "Cleanse, Tone, Treat, Moisturise, Protect, Mask, Eye care, Lip care",
+    "kreol": true,
+    "rewards_enabled": true,
+    "rewards_rate": 10,
+    "rewards_threshold": 500,
+    "rewards_value": "Rs 250 off",
+    "rewards_metafield": "moana.points",
+    "rewards_page": "rewards"
   }
 }

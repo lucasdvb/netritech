@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "main": {
+      "type": "skin-diary",
+      "settings": {
+        "collection": "skincare",
+        "morning_only": "Protect",
+        "feels": "Calm, Glowing, Dry, Oily, Breakout, Sensitive"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

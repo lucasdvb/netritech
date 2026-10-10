@@ -1,3 +1,9 @@
+{%- comment -%}
+  Header, laid out after Cult Beauty: a real search field on the left, the logo in the centre, and a
+  "Find my routine" button, wishlist, account and bag on the right; the category navigation sits centred
+  underneath. Once the page scrolls it turns to frosted glass (GetLayers House treatment) and tucks away on
+  scroll down.
+{%- endcomment -%}
 {%- liquid
   assign menu = linklists[section.settings.menu]
   assign shop_source = section.settings.shop_collection | default: collections['skincare']
@@ -10,68 +16,15 @@
       <button class="icon-btn header__burger" type="button" aria-controls="menu-drawer" aria-expanded="false" data-drawer-open="menu-drawer">
         {%- render 'icon', name: 'menu' -%}<span class="sr-only">{{ 'header.menu' | t }}</span>
       </button>
-      <nav class="header__nav" aria-label="{{ 'header.primary_nav' | t }}">
-        <ul class="cluster" style="gap:0" role="list">
-          {%- for link in menu.links -%}
-            {%- liquid
-              assign is_mega = false
-              assign link_handle = link.title | handle
-              if link.links.size > 0
-                if link_handle == mega_handle or forloop.first
-                  assign is_mega = true
-                endif
-              endif
-            -%}
-            <li{% if is_mega %} data-mega{% endif %}>
-              {%- if is_mega -%}
-                <button class="nav-link" type="button" aria-expanded="false" aria-controls="mega-{{ forloop.index }}" data-mega-toggle>
-                  {{ link.title }} {% render 'icon', name: 'chevron-down' %}
-                </button>
-                <div class="mega" id="mega-{{ forloop.index }}" data-mega-panel>
-                  <div class="page-width mega__inner">
-                    <div class="mega__col">
-                      <h3 class="t-label">{{ 'header.by_category' | t }}</h3>
-                      <ul role="list">
-                        {%- for child in link.links -%}
-                          <li><a href="{{ child.url }}"{% if child.current %} aria-current="page"{% endif %}>{{ child.title }}{% if child.type == 'collection_link' %} <small>{{ child.object.products_count }}</small>{% endif %}</a></li>
-                        {%- endfor -%}
-                      </ul>
-                      <a class="link-arrow mega__all" href="{{ link.url }}">{{ 'header.shop_all' | t }} {% render 'icon', name: 'arrow-right' %}</a>
-                    </div>
-                    <div class="mega__col">
-                      <h3 class="t-label">{{ 'header.by_concern' | t }}</h3>
-                      <ul role="list">{% render 'tag-counts', source: shop_source, tags: settings.concern_tags %}</ul>
-                    </div>
-                    <div class="mega__col">
-                      <h3 class="t-label">{{ 'header.by_skin_type' | t }}</h3>
-                      <ul role="list">{% render 'tag-counts', source: shop_source, tags: settings.skin_type_tags %}</ul>
-                    </div>
-                    <div class="mega__feature">
-                      {%- for block in section.blocks -%}
-                        {%- liquid
-                          assign card_img = block.settings.image
-                          if card_img == blank and block.settings.collection != blank
-                            assign card_img = block.settings.collection.featured_image | default: block.settings.collection.products.first.featured_media.preview_image
-                          endif
-                        -%}
-                        <a class="mega-card" href="{{ block.settings.link | default: block.settings.collection.url }}" {{ block.shopify_attributes }}>
-                          <span class="media ratio-4-5{% if block.settings.image == blank %} media--contain{% endif %}">
-                            {%- if card_img -%}{{ card_img | image_url: width: 600 | image_tag: widths: '300, 450, 600', sizes: '220px', loading: 'lazy', alt: '' }}{%- endif -%}
-                          </span>
-                          <span class="t-label">{{ block.settings.eyebrow }}</span>
-                          <span class="mega-card__title">{{ block.settings.title }}</span>
-                        </a>
-                      {%- endfor -%}
-                    </div>
-                  </div>
-                </div>
-              {%- else -%}
-                <a class="nav-link" href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
-              {%- endif -%}
-            </li>
-          {%- endfor -%}
-        </ul>
-      </nav>
+      <a class="icon-btn header__search-icon" href="{{ routes.search_url }}" data-search-open aria-haspopup="dialog">
+        {%- render 'icon', name: 'search' -%}<span class="sr-only">{{ 'header.search' | t }}</span>
+      </a>
+      <form class="header__search" action="{{ routes.search_url }}" method="get" role="search">
+        <label class="sr-only" for="header-search">{{ 'search.label' | t }}</label>
+        <input class="header__search-input" id="header-search" type="search" name="q" autocomplete="off" placeholder="{{ 'search.placeholder' | t }}" data-search-trigger>
+        <input type="hidden" name="options[prefix]" value="last">
+        <button class="header__search-btn" type="submit">{%- render 'icon', name: 'search' -%}<span class="sr-only">{{ 'search.submit' | t }}</span></button>
+      </form>
     </div>
 
     <a class="header__logo" href="{{ routes.root_url }}">
@@ -83,22 +36,107 @@
     </a>
 
     <div class="header__end">
-      <a class="icon-btn" href="{{ routes.search_url }}" data-search-open aria-haspopup="dialog">
-        {%- render 'icon', name: 'search' -%}<span class="sr-only">{{ 'header.search' | t }}</span>
+      {%- if section.settings.cta_label != blank and section.settings.cta_link != blank -%}
+        <a class="header__cta" href="{{ section.settings.cta_link }}">{% render 'icon', name: 'sparkle' %}<span>{{ section.settings.cta_label }}</span></a>
+      {%- endif -%}
+      <a class="header__action hide-mobile-sm" href="{{ routes.root_url }}pages/wishlist" data-wishlist-link>
+        {%- render 'icon', name: 'heart' -%}<span class="header__action-label">{{ 'header.wishlist' | t }}</span>
+        <span class="header__badge" data-wishlist-count hidden></span>
       </a>
       {%- if shop.customer_accounts_enabled -%}
-        <a class="icon-btn hide-mobile" href="{{ routes.account_url }}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-3.6 4-5.3 7.5-5.3s6.3 1.7 7.5 5.3" stroke-linecap="round"/></svg>
-          <span class="sr-only">{{ 'header.account' | t }}</span>
+        <a class="header__action" href="{{ routes.account_url }}">
+          {%- render 'icon', name: 'user' -%}<span class="header__action-label">{{ 'header.account' | t }}</span>
         </a>
+        {%- capture pts_now -%}{%- render 'points-balance' -%}{%- endcapture -%}
+        {%- assign pts_now = pts_now | strip -%}
+        {%- if pts_now != blank -%}
+          <a class="header__points hide-mobile-sm" href="{{ settings.rewards_page.url | default: '/pages/rewards' }}">{% render 'icon', name: 'sparkle' %}{{ 'rewards.header' | t: n: pts_now }}</a>
+        {%- endif -%}
       {%- endif -%}
-      <a class="icon-btn header__icon" href="{{ routes.cart_url }}" id="cart-icon" data-cart-open aria-haspopup="dialog">
-        {%- render 'icon', name: 'bag' -%}
-        <span class="sr-only">{{ 'header.cart' | t }}</span>
+      <a class="header__action header__icon" href="{{ routes.cart_url }}" id="cart-icon" data-cart-open aria-haspopup="dialog">
+        {%- render 'icon', name: 'bag' -%}<span class="header__action-label">{{ 'header.cart' | t }}</span>
         {%- render 'cart-count' -%}
       </a>
     </div>
   </div>
+
+  <nav class="header__nav" aria-label="{{ 'header.primary_nav' | t }}">
+    <ul class="header__nav-list" role="list">
+      {%- for link in menu.links -%}
+        {%- liquid
+          assign is_mega = false
+          assign link_handle = link.title | handle
+          if link.links.size > 0 and link_handle == mega_handle
+            assign is_mega = true
+          endif
+        -%}
+        <li{% if is_mega %} data-mega{% endif %}>
+          {%- if is_mega -%}
+            <button class="nav-link" type="button" aria-expanded="false" aria-controls="mega-{{ forloop.index }}" data-mega-toggle>
+              {{ link.title }} {% render 'icon', name: 'chevron-down' %}
+            </button>
+            <div class="mega" id="mega-{{ forloop.index }}" data-mega-panel>
+              <div class="page-width mega__inner">
+                <div class="mega__col">
+                  <h3 class="mega__title">{{ 'header.by_category' | t }}</h3>
+                  <ul role="list">
+                    <li><a href="{{ link.url }}">{{ 'header.shop_all' | t }} <small>{{ link.object.products_count }}</small></a></li>
+                    {%- for child in link.links -%}
+                      {%- liquid
+                        assign pv_img = nil
+                        assign pv_text = ''
+                        if child.type == 'collection_link'
+                          assign pv_img = child.object.featured_image | default: child.object.products.first.featured_media.preview_image
+                          assign pv_text = child.object.description | strip_html | strip_newlines | truncatewords: 14
+                          if pv_text == blank
+                            assign pv_text = 'collections.product_count' | t: count: child.object.products_count
+                          endif
+                        endif
+                      -%}
+                      <li><a href="{{ child.url }}"{% if child.current %} aria-current="page"{% endif %}{% if pv_img %} data-preview-img="{{ pv_img | image_url: width: 600 }}" data-preview-title="{{ child.title | escape }}" data-preview-text="{{ pv_text | escape }}"{% endif %}>{{ child.title }}{% if child.type == 'collection_link' %} <small>{{ child.object.products_count }}</small>{% endif %}</a></li>
+                    {%- endfor -%}
+                  </ul>
+                </div>
+                <div class="mega__col">
+                  <h3 class="mega__title">{{ 'header.by_concern' | t }}</h3>
+                  <ul role="list">{% render 'tag-counts', source: shop_source, tags: settings.concern_tags, preview: true %}</ul>
+                </div>
+                <div class="mega__col">
+                  <h3 class="mega__title">{{ 'header.by_skin_type' | t }}</h3>
+                  <ul role="list">{% render 'tag-counts', source: shop_source, tags: settings.skin_type_tags, preview: true %}</ul>
+                </div>
+                <div class="mega__feature" data-mega-feature>
+                  {%- comment -%} hover preview: a photo and one line for the link under the pointer, crossfaded over the cards (theme.js) {%- endcomment -%}
+                  <div class="mega-preview" aria-hidden="true">
+                    <span class="mega-preview__img"><img alt="" width="600" height="600" data-pv-a><img alt="" width="600" height="600" data-pv-b></span>
+                    <span class="mega-preview__title" data-pv-title></span>
+                    <span class="mega-preview__text" data-pv-text></span>
+                  </div>
+                  {%- for block in section.blocks -%}
+                    {%- liquid
+                      assign card_img = block.settings.image
+                      if card_img == blank and block.settings.collection != blank
+                        assign card_img = block.settings.collection.featured_image | default: block.settings.collection.products.first.featured_media.preview_image
+                      endif
+                    -%}
+                    <a class="mega-card" href="{{ block.settings.link | default: block.settings.collection.url }}" {{ block.shopify_attributes }}>
+                      <span class="media ratio-1{% if block.settings.image == blank %} media--contain{% endif %}">
+                        {%- if card_img -%}{{ card_img | image_url: width: 600 | image_tag: widths: '300, 450, 600', sizes: '220px', loading: 'lazy', alt: '' }}{%- endif -%}
+                      </span>
+                      <span class="mega-card__eyebrow">{{ block.settings.eyebrow }}</span>
+                      <span class="mega-card__title">{{ block.settings.title }}</span>
+                    </a>
+                  {%- endfor -%}
+                </div>
+              </div>
+            </div>
+          {%- else -%}
+            <a class="nav-link" href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title }}</a>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </nav>
 </header>
 
 {%- comment -%} Phone and tablet menu. The same information as the mega menu, as an accordion. {%- endcomment -%}
@@ -108,14 +146,18 @@
     <button class="icon-btn" type="button" data-drawer-close>{%- render 'icon', name: 'close' -%}<span class="sr-only">{{ 'general.close' | t }}</span></button>
   </div>
   <div class="drawer__body">
+    {%- if section.settings.cta_label != blank and section.settings.cta_link != blank -%}
+      <a class="btn btn--full menu-drawer__cta" href="{{ section.settings.cta_link }}">{% render 'icon', name: 'sparkle' %}{{ section.settings.cta_label }}</a>
+    {%- endif -%}
     <nav class="menu-drawer__nav" aria-label="{{ 'header.primary_nav' | t }}">
       {%- for link in menu.links -%}
-        {%- if link.links.size > 0 -%}
-          <details{% if forloop.first %} open{% endif %}>
+        {%- assign link_handle = link.title | handle -%}
+        {%- if link.links.size > 0 and link_handle == mega_handle -%}
+          <details open>
             <summary class="menu-drawer__link">{{ link.title }} {% render 'icon', name: 'plus' %}</summary>
             <div class="menu-drawer__sub">
               <div>
-                <p class="t-label">{{ 'header.by_category' | t }}</p>
+                <p class="mega__title">{{ 'header.by_category' | t }}</p>
                 <ul role="list">
                   <li><a href="{{ link.url }}">{{ 'header.shop_all' | t }} <small>{{ link.object.products_count }}</small></a></li>
                   {%- for child in link.links -%}
@@ -124,11 +166,11 @@
                 </ul>
               </div>
               <div>
-                <p class="t-label">{{ 'header.by_concern' | t }}</p>
+                <p class="mega__title">{{ 'header.by_concern' | t }}</p>
                 <ul role="list">{% render 'tag-counts', source: shop_source, tags: settings.concern_tags %}</ul>
               </div>
               <div>
-                <p class="t-label">{{ 'header.by_skin_type' | t }}</p>
+                <p class="mega__title">{{ 'header.by_skin_type' | t }}</p>
                 <ul role="list">{% render 'tag-counts', source: shop_source, tags: settings.skin_type_tags %}</ul>
               </div>
             </div>
@@ -139,15 +181,134 @@
       {%- endfor -%}
     </nav>
     <div class="menu-drawer__secondary">
+      <a href="{{ routes.root_url }}pages/wishlist">{% render 'icon', name: 'heart' %}{{ 'header.wishlist' | t }}</a>
+      {%- if shop.customer_accounts_enabled -%}<a href="{{ routes.account_url }}">{% render 'icon', name: 'user' %}{{ 'header.account' | t }}</a>{%- endif -%}
       {%- for link in linklists[section.settings.secondary_menu].links -%}
         <a href="{{ link.url }}">{{ link.title }}</a>
       {%- endfor -%}
-      {%- if settings.whatsapp_number != blank -%}
-        <a href="https://wa.me/{{ settings.whatsapp_number }}" target="_blank" rel="noopener">{{ 'general.whatsapp_us' | t }}{% if settings.whatsapp_display != blank %} · {{ settings.whatsapp_display }}{% endif %}</a>
-      {%- endif -%}
     </div>
   </div>
 </div>
+
+{% stylesheet %}
+  .site-header {
+    position: sticky; top: 0; z-index: 60; background: var(--c-white);
+    transition: background-color var(--t) var(--ease), box-shadow var(--t) var(--ease), transform var(--t-slow) var(--ease-out);
+  }
+  /* frosted glass once the page moves under it */
+  .site-header.is-scrolled {
+    background: rgba(255, 255, 255, .8);
+    -webkit-backdrop-filter: saturate(1.6) blur(20px); backdrop-filter: saturate(1.6) blur(20px);
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .site-header.is-hidden { transform: translateY(-100%); }
+  .header { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: var(--s-3); height: 64px; }
+  .header__start, .header__end { display: flex; align-items: center; gap: 0; min-width: 0; }
+  .header__end { justify-content: flex-end; }
+  .header__burger { margin-left: -10px; }
+  .header__logo { display: block; line-height: 0; }
+  .header__logo img { width: auto; height: 46px; }
+
+  .header__search { display: none; position: relative; width: 100%; max-width: 30rem; }
+  .header__search-input {
+    width: 100%; height: 46px; padding: 0 3rem 0 .9rem; border: 1px solid var(--ink); border-radius: 0; background: var(--c-white);
+    font-size: var(--fs-md); color: var(--ink); -webkit-appearance: none; appearance: none;
+  }
+  .header__search-input::placeholder { color: rgba(52,52,52,.72); }
+  .header__search-input::-webkit-search-cancel-button { display: none; }
+  .header__search-input:focus-visible { outline: 2px solid var(--c-forest); outline-offset: 1px; }
+  .header__search-btn { position: absolute; right: 0; top: 0; width: 46px; height: 46px; display: grid; place-items: center; }
+  .header__search-btn svg { width: 22px; height: 22px; }
+
+  .header__cta {
+    display: none; position: relative; align-items: center; gap: .5rem; height: 42px; margin-right: var(--s-2); padding: 0 1rem;
+    background: var(--c-night); color: var(--c-white); font: var(--w-semibold) var(--fs-xs)/1 var(--f-body); letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+    overflow: hidden; isolation: isolate;
+  }
+  .header__cta::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--c-forest); transform: translateX(-101%); transition: transform var(--t) var(--ease); }
+  @media (hover: hover) { .header__cta:hover::before { transform: none; } }
+  .header__cta svg { width: 16px; height: 16px; }
+  .header__action { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .45rem; min-width: 44px; height: 44px; padding: 0 8px; font: var(--w-medium) var(--fs-sm)/1 var(--f-body); letter-spacing: .03em; color: var(--ink); }
+  .header__action svg { width: 22px; height: 22px; flex: none; }
+  .header__action-label { display: none; }
+  .header__points { display: inline-flex; align-items: center; gap: .3rem; height: 32px; padding: 0 .7rem; border: 1px solid var(--line-strong); font: var(--type-label); letter-spacing: .06em; color: var(--c-forest); font-variant-numeric: lining-nums; }
+  .header__points svg { width: 14px; height: 14px; }
+  @media (hover: hover) { .header__action:hover .header__action-label { text-decoration: underline; text-underline-offset: 4px; } }
+  .header__badge { position: absolute; top: 3px; left: 22px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--c-forest); color: var(--c-white); font: 700 10px/18px var(--f-body); text-align: center; }
+  .header__icon .cart-count { top: 2px; right: auto; left: 20px; }
+  @media (max-width: 420px) { .hide-mobile-sm { display: none !important; } .header__action { padding: 0 4px; min-width: 40px; } }
+
+  .header__nav { display: none; }
+  @media (min-width: 990px) {
+    .header { height: 84px; }
+    .header__logo img { height: 60px; }
+    .header__burger, .header__search-icon { display: none; }
+    .header__search { display: block; }
+    .header__cta { display: inline-flex; }
+    .header__nav { display: block; position: relative; }
+    .header__nav-list { display: flex; justify-content: center; flex-wrap: wrap; gap: 0 var(--s-1); padding-bottom: 6px; }
+  }
+  @media (min-width: 1280px) { .header__action-label { display: inline; } }
+
+  .nav-link {
+    position: relative; display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 12px;
+    font: var(--w-medium) var(--fs-sm)/1 var(--f-body); letter-spacing: .03em; color: var(--ink); white-space: nowrap;
+  }
+  .nav-link::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 6px; height: 1.5px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform var(--t) var(--ease); }
+  .nav-link:hover::after, .nav-link[aria-expanded="true"]::after, .nav-link[aria-current="page"]::after { transform: scaleX(1); transform-origin: left; }
+  .nav-link svg { width: 12px; height: 12px; transition: transform var(--t) var(--ease); }
+  .nav-link[aria-expanded="true"] svg { transform: rotate(180deg); }
+
+  .mega {
+    position: absolute; left: 0; right: 0; top: 100%; background: rgba(255,255,255,.9); border-top: 1px solid var(--line);
+    -webkit-backdrop-filter: saturate(1.6) blur(24px); backdrop-filter: saturate(1.6) blur(24px);
+    opacity: 0; visibility: hidden; transform: translateY(-6px);
+    transition: opacity var(--t) var(--ease), transform var(--t) var(--ease), visibility 0s linear var(--t);
+    box-shadow: 0 30px 50px -40px rgba(33,39,33,.45);
+  }
+  .mega.is-open { opacity: 1; visibility: visible; transform: none; transition: opacity var(--t) var(--ease), transform var(--t) var(--ease); }
+  .mega__inner { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 1.4fr); gap: var(--s-7); padding-block: var(--s-6) var(--s-7); }
+  .mega__title { font: var(--w-semibold) var(--fs-xs)/1.4 var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: var(--ink); margin-bottom: var(--s-3); }
+  .mega__col li + li { margin-top: 2px; }
+  .mega__col a { display: inline-flex; align-items: baseline; gap: .45rem; padding: 5px 0; font-size: var(--fs-md); color: var(--ink); }
+  .mega__col a small { font-size: var(--fs-xs); color: var(--ink-soft); }
+  .mega__col a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .mega__feature { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-4); }
+  .mega-card { display: grid; gap: var(--s-2); align-content: start; }
+  .mega-card .media img { transition: transform var(--t-slow) var(--ease-out); }
+  .mega-card:hover .media img { transform: scale(1.04); }
+  .mega-card__eyebrow { font: var(--w-semibold) var(--fs-2xs)/1.3 var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+  .mega-card__title { font: var(--w-regular) var(--fs-lg)/1.2 var(--f-body); }
+  .mega__feature { position: relative; }
+  .mega-card { transition: opacity 300ms var(--ease); }
+  .mega-preview { position: absolute; inset: 0; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto 1fr; column-gap: var(--s-5); row-gap: var(--s-2); align-content: start;
+    opacity: 0; pointer-events: none; transition: opacity 300ms var(--ease); }
+  .mega-preview__img { position: relative; grid-row: 1 / 4; aspect-ratio: 1; overflow: hidden; background: linear-gradient(160deg, #f3f5ec, var(--c-spring)); }
+  .mega-preview__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 10%; mix-blend-mode: multiply; opacity: 0; scale: 1.04; transition: opacity 360ms var(--ease), scale 700ms var(--ease-out); }
+  .mega-preview__img img.is-on { opacity: 1; scale: 1; }
+  .mega-preview__title { align-self: end; padding-top: var(--s-6); font: var(--type-h3); letter-spacing: var(--ls-tight); }
+  .mega-preview__text { font: var(--type-small); color: var(--ink-soft); max-width: 22rem; }
+  .mega__feature.is-previewing .mega-preview { opacity: 1; }
+  .mega__feature.is-previewing .mega-card { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) { .mega-preview, .mega-card, .mega-preview__img img { transition: none; } }
+
+  .menu-drawer .drawer__body { padding: 0; }
+  .menu-drawer__cta { margin: var(--s-4) var(--s-5) 0; width: calc(100% - 2 * var(--s-5)); }
+  .menu-drawer__nav { padding: var(--s-2) var(--s-5) var(--s-6); }
+  .menu-drawer__link { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 56px; border-bottom: 1px solid var(--line); font: var(--w-medium) var(--fs-md)/1.2 var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--ink); text-align: left; }
+  .menu-drawer__link svg { width: 18px; height: 18px; }
+  .menu-drawer details > summary { list-style: none; cursor: pointer; }
+  .menu-drawer details > summary::-webkit-details-marker { display: none; }
+  .menu-drawer details[open] > summary svg { transform: rotate(45deg); }
+  .menu-drawer details > summary svg { transition: transform var(--t) var(--ease); }
+  .menu-drawer__sub { padding: var(--s-4) 0 var(--s-5); display: grid; gap: var(--s-5); border-bottom: 1px solid var(--line); }
+  .menu-drawer__sub ul { display: grid; gap: 2px; }
+  .menu-drawer__sub a { display: flex; justify-content: space-between; align-items: center; min-height: 40px; font-size: var(--fs-md); }
+  .menu-drawer__sub a small { color: var(--ink-soft); font-size: var(--fs-xs); }
+  .menu-drawer__secondary { display: grid; gap: var(--s-1); padding: var(--s-4) var(--s-5) var(--s-6); border-top: 1px solid var(--line); background: var(--c-frost); }
+  .menu-drawer__secondary a { display: flex; align-items: center; gap: .6rem; min-height: 40px; font-size: var(--fs-small); font-weight: var(--w-semibold); }
+  .menu-drawer__secondary svg { width: 18px; height: 18px; }
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -156,9 +317,11 @@
   "enabled_on": { "groups": ["header"] },
   "settings": [
     { "type": "image_picker", "id": "logo", "label": "Logo override", "info": "Leave empty to use the official dark lockup shipped with the theme." },
-    { "type": "link_list", "id": "menu", "label": "Main menu", "default": "main-menu", "info": "The first item with sub-links opens the mega menu." },
-    { "type": "text", "id": "mega_item", "label": "Mega menu item title", "default": "Shop" },
+    { "type": "link_list", "id": "menu", "label": "Main menu", "default": "main-menu" },
+    { "type": "text", "id": "mega_item", "label": "Menu item that opens the mega menu", "default": "Skincare" },
     { "type": "collection", "id": "shop_collection", "label": "Collection for concern and skin-type links", "info": "Concern and skin-type lists come from Theme settings > Discovery." },
+    { "type": "text", "id": "cta_label", "label": "Button label", "default": "Find my routine" },
+    { "type": "url", "id": "cta_link", "label": "Button link" },
     { "type": "link_list", "id": "secondary_menu", "label": "Secondary menu (phone menu footer)", "default": "footer" }
   ],
   "blocks": [
@@ -168,7 +331,7 @@
       "limit": 2,
       "settings": [
         { "type": "text", "id": "eyebrow", "label": "Label", "default": "New in" },
-        { "type": "text", "id": "title", "label": "Title", "default": "The launch collection" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Fresh drops, all in one place" },
         { "type": "collection", "id": "collection", "label": "Collection" },
         { "type": "url", "id": "link", "label": "Link (overrides collection)" },
         { "type": "image_picker", "id": "image", "label": "Image" }

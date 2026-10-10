@@ -29,6 +29,11 @@ export const products = rawProducts.map((p, idx) => {
     img.preview_image = img; img.media_type = 'image'; img.id = idx * 10 + i;
     return img;
   });
+  // the first product gets two extra placeholder photos, so galleries and swipes can be tested locally
+  if (idx === 0) for (let i = media.length; i < 3; i++) {
+    const img = imageObj(`/__img/${p.handle}/${i}.svg`, p.title, 1200, 1200, `${p.handle}:${i}`);
+    img.preview_image = img; img.media_type = 'image'; img.id = idx * 10 + i; media.push(img);
+  }
   const v = p.variants.nodes[0];
   const variant = {
     id: Number(v.id.split('/').pop()), title: v.title, sku: v.sku, price: Math.round(Number(v.price) * 100),
@@ -37,7 +42,7 @@ export const products = rawProducts.map((p, idx) => {
     options: [v.title]
   };
   return {
-    id: Number(p.id.split('/').pop()), title: p.title, handle: p.handle, vendor: p.vendor, type: p.productType, tags: p.tags,
+    id: Number(p.id.split('/').pop()), published_at: '2026-10-08T09:55:26Z', created_at: '2026-10-08T09:55:24Z', title: p.title, handle: p.handle, vendor: p.vendor, type: p.productType, tags: p.tags,
     description: p.descriptionHtml, content: p.descriptionHtml, url: `/products/${p.handle}`, price: variant.price, price_min: variant.price,
     price_max: variant.price, price_varies: false, available: variant.available, compare_at_price: variant.compare_at_price,
     featured_media: media[0], featured_image: media[0], media, images: media, metafields: { custom: mf },
@@ -66,8 +71,8 @@ for (const c of rawCollections) {
 }
 collections.all = buildCollection({ handle: 'all', title: 'Products', description: '' }, products);
 
-const pages = Object.fromEntries(['about', 'contact', 'k-beauty', 'delivery', 'brands', 'faq'].map((h) => [h, {
-  handle: h, url: `/pages/${h}`, content: '', title: { about: 'About', contact: 'Contact', 'k-beauty': 'K-Beauty', delivery: 'Delivery & Returns', brands: 'Brands', faq: 'FAQ' }[h]
+const pages = Object.fromEntries(['about', 'contact', 'k-beauty', 'delivery', 'brands', 'faq', 'routine-finder', 'wishlist', 'skin-diary', 'rewards'].map((h) => [h, {
+  handle: h, url: `/pages/${h}`, content: '', title: { about: 'About', contact: 'Contact', 'k-beauty': 'K-Beauty', delivery: 'Delivery & Returns', brands: 'Brands', faq: 'FAQ', 'routine-finder': 'Find my routine', wishlist: 'Wishlist', 'skin-diary': 'My skin diary', rewards: 'Moana rewards' }[h]
 }]));
 
 function link(title, url, children = []) {
@@ -80,9 +85,10 @@ const catLinks = ['cleansers', 'toners-essences', 'serums-ampoules', 'moisturise
 export const linklists = {
   'moana-main': { links: [link('Shop', '/collections/skincare', catLinks), link('Brands', '/pages/brands'), link('The routine', '/pages/k-beauty'), link('About', '/pages/about')] },
   'main-menu': { links: [link('Skincare', '/collections/skincare', catLinks)] },
+  'moana-nav': { links: [link('New In', '/collections/new'), link('Skincare', '/collections/skincare', catLinks), link('Cleansers', '/collections/cleansers'), link('Toners & Essences', '/collections/toners-essences'), link('Serums', '/collections/serums-ampoules'), link('Moisturisers', '/collections/moisturisers'), link('Sunscreen', '/collections/sunscreen'), link('Brands', '/pages/brands'), link('Routine guide', '/pages/k-beauty')] },
   'moana-footer-help': { links: [link('Delivery & returns', '/pages/delivery'), link('FAQ', '/pages/faq'), link('Contact', '/pages/contact')] },
   footer: { links: [link('Delivery & returns', '/pages/delivery'), link('FAQ', '/pages/faq'), link('Contact', '/pages/contact'), link('Privacy policy', '/policies/privacy-policy'), link('Terms of service', '/policies/terms-of-service')] },
-  'moana-footer-shop': { links: [link('All skincare', '/collections/skincare'), link('New', '/collections/new'), link('Brands', '/pages/brands'), link('The routine guide', '/pages/k-beauty'), link('About us', '/pages/about')] }
+  'moana-footer-shop': { links: [link('All skincare', '/collections/skincare'), link('New in', '/collections/new'), link('Brands', '/pages/brands'), link('Find my routine', '/pages/routine-finder'), link('My skin diary', '/pages/skin-diary'), link('The routine guide', '/pages/k-beauty'), link('Wishlist', '/pages/wishlist'), link('Moana rewards', '/pages/rewards'), link('About us', '/pages/about')] }
 };
 
 /* ------------------------------------------------------------------ locale + money */
@@ -252,15 +258,17 @@ export function globals({ template, collection = null, product = null, page = nu
   const settings = readJSON('config/settings_data.json').current;
   return {
     settings, collections, linklists, pages, product, collection, page, cart, search,
+    // ?dev_customer=1 renders as a signed-in customer with a points balance (rewards testing)
+    customer: /dev_customer=1/.test(url) ? { first_name: 'Aisha', email: 'aisha@example.com', metafields: { moana: { points: { value: /dev_points=(\d+)/.test(url) ? Number(url.match(/dev_points=(\d+)/)[1]) : 340 } } } } : null,
     current_tags: currentTags, current_page: 1,
     shop: {
-      name: 'My Store', email: 'shop@moanabeaute.com', url: 'http://localhost:4100', money_format: 'Rs {{amount_no_decimals}}', customer_accounts_enabled: false,
+      name: 'My Store', email: 'shop@moanabeaute.com', url: 'http://localhost:4100', money_format: 'Rs {{amount_no_decimals}}', customer_accounts_enabled: /dev_customer=1/.test(url),
       policies: [['Privacy policy', 'privacy-policy'], ['Shipping', 'shipping-policy'], ['Terms of service', 'terms-of-service'], ['Contact', 'contact-information']].map(([title, h]) => ({ title, url: `/policies/${h}` })),
-      enabled_payment_types: [], password_message: ''
+      vendors: [...new Set(products.map((p) => p.vendor))].sort(), enabled_payment_types: [], password_message: ''
     },
     request: { locale: { iso_code: lang }, path: url, host: 'localhost' },
     localization: { available_languages: [{ iso_code: 'en', endonym_name: 'English' }, { iso_code: 'fr', endonym_name: 'français' }], language: { iso_code: lang } },
-    routes: { root_url: '/', cart_url: '/cart', cart_add_url: '/cart/add', cart_change_url: '/cart/change', cart_update_url: '/cart/update', search_url: '/search', predictive_search_url: '/search/suggest', product_recommendations_url: '/recommendations/products', all_products_collection_url: '/collections/all', account_url: '/account', collections_url: '/collections' },
+    routes: { root_url: '/', cart_url: '/cart', cart_add_url: '/cart/add', cart_change_url: '/cart/change', cart_update_url: '/cart/update', search_url: '/search', predictive_search_url: '/search/suggest', product_recommendations_url: '/recommendations/products', all_products_collection_url: '/collections/all', account_url: '/account', account_login_url: '/account/login', account_register_url: '/account/register', collections_url: '/collections' },
     template: { name: template.split('.')[0], suffix: template.split('.')[1] || null, toString() { return template; } },
     canonical_url: 'http://localhost:4100' + url, page_title: product?.title || collection?.title || page?.title || 'Moana Beauté',
     page_description: product?.seo?.description || '', page_image: product?.featured_media || null, content_for_header: '',

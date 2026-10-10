@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "finder": {
+      "type": "routine-finder",
+      "settings": {
+        "eyebrow": "Find my routine",
+        "heading": "Your routine, <em>in 60 seconds</em>",
+        "text": "Three quick questions and we'll pick a product for every step, from what's actually in stock. No sign-up, no email, just your routine.",
+        "collection": "skincare",
+        "descriptions": "All skin types: Not sure? Start here\nDry skin: Feels tight, can flake\nOily skin: Shiny by midday\nCombination skin: Oily T-zone, drier cheeks\nSensitive skin: Reacts or stings easily\nAcne-prone skin: Breaks out easily\nNormal skin: Comfortable most days\nHydration: Tight, thirsty or flaky\nDullness: Looking a little tired\nDark spots: Marks and uneven tone\nBreakouts: Spots that come and go\nFine lines: Lines and less bounce\nFirmness: Less bounce than before\nPores: Visible pores and shine\nOil control: Shine that won't quit\nRedness: Flushes or reddens easily\nSun protection: Daily SPF for island sun\nDark circles: Tired-looking eyes\nPuffiness: Morning puffiness\nMakeup removal: Takes it all off"
+      }
+    }
+  },
+  "order": [
+    "finder"
+  ]
+}

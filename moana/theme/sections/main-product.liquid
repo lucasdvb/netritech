@@ -49,12 +49,11 @@
 
   assign threshold_cents = settings.free_shipping_threshold | times: 100
   assign threshold_money = threshold_cents | money
-  assign wa_text = 'products.whatsapp_prefill' | t: title: product.title
 -%}
 
 <div class="page-width">{%- render 'breadcrumbs' -%}</div>
 
-<section class="pdp" data-product-section data-section-id="{{ section.id }}">
+<section class="pdp" data-product-section data-section-id="{{ section.id }}" data-recent-view="{{ product.handle }}">
   <div class="page-width pdp__grid">
 
     {%- comment -%} Gallery: a vertical stack on desktop, a swipe carousel with a counter on phones. {%- endcomment -%}
@@ -99,38 +98,36 @@
             {%- if vendor_collection != blank -%}<a href="{{ vendor_collection.url }}">{{ product.vendor }}</a>{%- else -%}{{ product.vendor }}{%- endif -%}
           </p>
         {%- endif -%}
-        <h1 class="t-h2 pdp__title">{{ product.title }}</h1>
+        <h1 class="pdp__title">{{ product.title }}</h1>
+        <a class="pdp__jump" href="#pdp-details-{{ section.id }}">{{ 'products.view_details' | t }} {% render 'icon', name: 'arrow-right' %}</a>
 
         <div class="pdp__pricebar">
           <div data-price-wrap>{%- render 'price', product: product, variant: current_variant, class: 'pdp__price' -%}</div>
           {%- if size != blank -%}<span class="pdp__size">{{ size }}</span>{%- endif -%}
         </div>
         {%- if cart.taxes_included -%}<p class="t-xs t-soft pdp__tax">{{ 'products.tax_included' | t }}</p>{%- endif -%}
-
-        {%- if product.description != blank -%}
-          <div class="pdp__desc rte">{{ product.description }}</div>
+        {%- if settings.rewards_enabled -%}
+          {%- assign pts = current_variant.price | times: settings.rewards_rate | divided_by: 10000 -%}
+          {%- if pts > 0 -%}
+            <p class="points-line">{% render 'icon', name: 'sparkle' %}<span>{{ 'rewards.earn_line' | t: n: pts }}</span> <a href="{{ settings.rewards_page.url | default: '/pages/rewards' }}">{{ 'rewards.learn' | t }}</a></p>
+          {%- endif -%}
         {%- endif -%}
 
-        {%- if concerns.size > 0 or skins.size > 0 -%}
-          <dl class="pdp__facts">
-            {%- if concerns.size > 0 -%}
-              <div><dt>{{ 'products.targets' | t }}</dt>
-                <dd class="cluster">{%- for c in concerns -%}<a class="pill pill--sm" href="{{ filter_base }}/{{ c | handle }}">{{ c }}</a>{%- endfor -%}</dd></div>
-            {%- endif -%}
-            {%- if skins.size > 0 -%}
-              <div><dt>{{ 'products.suits' | t }}</dt>
-                <dd class="cluster">{%- for s in skins -%}<a class="pill pill--sm" href="{{ filter_base }}/{{ s | handle }}">{{ s }}</a>{%- endfor -%}</dd></div>
-            {%- endif -%}
-            {%- if steps.size > 0 or am or pm -%}
-              <div><dt>{{ 'products.routine' | t }}</dt>
-                <dd class="pdp__when">
-                  {%- if steps.size > 0 -%}<span>{{ 'products.step_label' | t: step: steps.first }}</span>{%- endif -%}
-                  {%- if am -%}<span>{% render 'icon', name: 'sun' %}{{ 'products.morning' | t }}</span>{%- endif -%}
-                  {%- if pm -%}<span>{% render 'icon', name: 'moon' %}{{ 'products.evening' | t }}</span>{%- endif -%}
-                </dd></div>
-            {%- endif -%}
-          </dl>
-        {%- endif -%}
+        {%- liquid
+          assign pdp_badge = ''
+          if current_variant.compare_at_price > current_variant.price
+            assign pct = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price
+            assign pdp_badge = 'products.percent_off' | t: pct: pct
+          else
+            assign now_s = 'now' | date: '%s' | plus: 0
+            assign pub_s = product.published_at | default: product.created_at | date: '%s' | plus: 0
+            assign age = now_s | minus: pub_s
+            if age < 5184000
+              assign pdp_badge = 'products.new_in' | t
+            endif
+          endif
+        -%}
+        {%- if pdp_badge != blank -%}<p class="badge pdp__badge">{{ pdp_badge }}</p>{%- endif -%}
 
         {%- form 'product', product, id: form_id, class: 'pdp__form', data-product-form: '', data-main-form: '', novalidate: 'novalidate' -%}
           {%- unless product.has_only_default_variant -%}
@@ -158,57 +155,168 @@
               <input id="qty-{{ section.id }}" type="number" name="quantity" value="1" min="1" max="{% if current_variant.inventory_management == 'shopify' and current_variant.inventory_policy == 'deny' %}{{ current_variant.inventory_quantity }}{% else %}99{% endif %}" inputmode="numeric" data-qty-input>
               <button type="button" data-qty-plus aria-label="{{ 'products.qty_increase' | t }}">{% render 'icon', name: 'plus' %}</button>
             </div>
-            <button class="btn pdp__add" type="submit" name="add" data-add-button{% unless current_variant.available %} disabled aria-disabled="true"{% endunless %}>
-              <span data-add-label>{% if current_variant.available %}{{ 'products.add_to_cart' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}</span>
+            <button class="btn btn--brand pdp__add" type="submit" name="add" data-add-button{% unless current_variant.available %} disabled aria-disabled="true"{% endunless %}>
+              <span data-add-label>{% if current_variant.available %}{{ 'products.add_to_cart' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}</span>{% if current_variant.available %}<span class="pdp__add-price" aria-hidden="true">&nbsp;–&nbsp;{{ current_variant.price | money }}</span>{% endif %}
             </button>
           </div>
           <div class="notice notice--error" role="alert" data-form-error hidden></div>
           {%- if form.errors -%}<div class="notice notice--error" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
         {%- endform -%}
 
-        {%- if current_variant.available and current_variant.inventory_management == 'shopify' and current_variant.inventory_quantity <= settings.low_stock_threshold and current_variant.inventory_quantity > 0 -%}
-          <p class="pdp__stock t-xs">{{ 'products.low_stock' | t: count: current_variant.inventory_quantity }}</p>
+        <button class="btn btn--secondary btn--full pdp__wish" type="button" data-wishlist-toggle="{{ product.handle }}" aria-pressed="false">
+          {%- render 'icon', name: 'heart' -%}<span>{{ 'products.add_to_wishlist' | t }}</span>
+        </button>
+
+        <p class="pdp__avail">
+          {%- if current_variant.available -%}
+            {%- if current_variant.inventory_management == 'shopify' and current_variant.inventory_quantity <= settings.low_stock_threshold and current_variant.inventory_quantity > 0 -%}
+              <span class="pdp__stock">{{ 'products.low_stock' | t: count: current_variant.inventory_quantity }}</span>
+            {%- else -%}
+              <span>{{ 'products.in_stock' | t }}</span>
+            {%- endif -%}
+            <span aria-hidden="true"> | </span><span data-eta>{{ 'products.delivery_time' | t }}</span>
+          {%- else -%}
+            <span>{{ 'products.sold_out' | t }}</span>
+          {%- endif -%}
+        </p>
+
+        {%- comment -%}
+          Complete your routine: the product's own step tag picks the next step in the routine order
+          (the "Routine step tags" setting), and the in-stock product for that step that shares the most
+          skin-type tags with this one is offered with a one-tap add. Nothing shows when no step fits.
+        {%- endcomment -%}
+        {%- if steps.size > 0 and section.settings.show_next_step -%}
+          {%- liquid
+            assign order = section.settings.routine_order | split: ','
+            assign idx = -1
+            for o in order
+              assign oo = o | strip
+              if oo == steps.first
+                assign idx = forloop.index0
+              endif
+            endfor
+            assign next_step = ''
+            if idx >= 0
+              assign ni = idx | plus: 1
+              if ni >= order.size
+                assign ni = 0
+              endif
+              assign next_step = order[ni] | strip
+            endif
+            assign pick = nil
+            assign best = -1
+            if next_step != ''
+              for cand in collections.all.products
+                if cand.id == product.id or cand.available == false
+                  continue
+                endif
+                unless cand.tags contains next_step
+                  continue
+                endunless
+                assign score = 0
+                for s in skins
+                  if cand.tags contains s
+                    assign score = score | plus: 1
+                  endif
+                endfor
+                if score > best
+                  assign best = score
+                  assign pick = cand
+                endif
+              endfor
+            endif
+          -%}
+          {%- if pick -%}
+            <div class="pdp__next">
+              <p class="t-label">{{ 'products.next_step' | t }}</p>
+              <div class="pdp__next-row">
+                <a class="pdp__next-img" href="{{ pick.url }}" tabindex="-1" aria-hidden="true">
+                  {%- if pick.featured_media -%}{{ pick.featured_media.preview_image | image_url: width: 200 | image_tag: widths: '100, 150, 200', sizes: '72px', loading: 'lazy', alt: '' }}{%- endif -%}
+                </a>
+                <div class="pdp__next-info">
+                  <p class="pdp__next-step">{{ 'products.next_step_label' | t: step: next_step }}</p>
+                  <a class="pdp__next-name" href="{{ pick.url }}">{{ pick.title }}</a>
+                  {%- render 'price', product: pick -%}
+                </div>
+                {%- if pick.has_only_default_variant -%}
+                  {%- form 'product', pick, class: 'pdp__next-form', data-product-form: '', novalidate: 'novalidate' -%}
+                    <input type="hidden" name="id" value="{{ pick.selected_or_first_available_variant.id }}">
+                    <input type="hidden" name="quantity" value="1">
+                    <button class="btn btn--small" type="submit" name="add" aria-label="{{ 'products.add_named' | t: title: pick.title | escape }}">{% render 'icon', name: 'plus' %}<span>{{ 'products.add' | t }}</span></button>
+                  {%- endform -%}
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endif -%}
         {%- endif -%}
 
         <ul class="pdp__assure" role="list">
           <li>{% render 'icon', name: 'truck' %}<span>{% if threshold_cents > 0 %}{{ 'products.free_delivery_above' | t: amount: threshold_money }}{% endif %} {{ 'products.delivery_time' | t }}</span></li>
           <li>{% render 'icon', name: 'list' %}<span>{{ 'products.assure_ingredients' | t }}</span></li>
-          {%- if settings.whatsapp_number != blank -%}
-            <li>{% render 'icon', name: 'whatsapp' %}<a class="inline-link" href="https://wa.me/{{ settings.whatsapp_number }}?text={{ wa_text | url_encode }}" target="_blank" rel="noopener">{{ 'products.ask_whatsapp' | t }}<span class="sr-only"> ({{ 'general.opens_new_window' | t }})</span></a></li>
-          {%- endif -%}
+          <li>{% render 'icon', name: 'mail' %}<a class="inline-link" href="{{ routes.root_url }}pages/contact">{{ 'products.ask_question' | t }}</a></li>
         </ul>
 
-        <div class="accordion pdp__acc">
-          {%- if key_list.size > 0 -%}
-            <details class="accordion__item" open>
-              <summary><span>{{ 'products.key_ingredients' | t }}</span><span class="accordion__icon" aria-hidden="true"></span></summary>
-              <div class="accordion__body"><ul class="pdp__keys" role="list">{%- for item in key_list -%}<li>{% render 'icon', name: 'drop' %}{{ item | escape }}</li>{%- endfor -%}</ul></div>
-            </details>
-          {%- endif -%}
-          {%- if how != blank -%}
-            <details class="accordion__item">
-              <summary><span>{{ 'products.how_to_use' | t }}</span><span class="accordion__icon" aria-hidden="true"></span></summary>
-              {%- assign how_steps = how | strip | replace: '. ', '.|' | split: '|' -%}
-              <div class="accordion__body">
-                {%- if how_steps.size > 1 -%}
-                  <ol class="pdp__steps" role="list">{%- for step in how_steps -%}<li><span aria-hidden="true">{{ forloop.index }}</span><p>{{ step | escape }}</p></li>{%- endfor -%}</ol>
-                {%- else -%}
-                  <p>{{ how | escape | newline_to_br }}</p>
-                {%- endif -%}
-              </div>
-            </details>
-          {%- endif -%}
-          {%- if full_ing != blank -%}
-            <details class="accordion__item">
-              <summary><span>{{ 'products.full_ingredients' | t }}</span><span class="accordion__icon" aria-hidden="true"></span></summary>
-              <div class="accordion__body"><p class="pdp__inci">{{ full_ing | escape }}</p><p class="t-xs">{{ 'products.ingredients_note' | t }}</p></div>
-            </details>
-          {%- endif -%}
-          <details class="accordion__item">
-            <summary><span>{{ 'products.delivery_returns' | t }}</span><span class="accordion__icon" aria-hidden="true"></span></summary>
-            <div class="accordion__body rte">{{ settings.pdp_delivery_text }}</div>
+        {%- if concerns.size > 0 or skins.size > 0 -%}
+          <dl class="pdp__facts">
+            {%- if concerns.size > 0 -%}
+              <div><dt>{{ 'products.targets' | t }}</dt>
+                <dd class="cluster">{%- for c in concerns -%}<a class="pill pill--sm" href="{{ filter_base }}/{{ c | handle }}">{{ c }}</a>{%- endfor -%}</dd></div>
+            {%- endif -%}
+            {%- if skins.size > 0 -%}
+              <div><dt>{{ 'products.suits' | t }}</dt>
+                <dd class="cluster">{%- for s in skins -%}<a class="pill pill--sm" href="{{ filter_base }}/{{ s | handle }}">{{ s }}</a>{%- endfor -%}</dd></div>
+            {%- endif -%}
+            {%- if steps.size > 0 or am or pm -%}
+              <div><dt>{{ 'products.routine' | t }}</dt>
+                <dd class="pdp__when">
+                  {%- if steps.size > 0 -%}<span>{{ 'products.step_label' | t: step: steps.first }}</span>{%- endif -%}
+                  {%- if am -%}<span>{% render 'icon', name: 'sun' %}{{ 'products.morning' | t }}</span>{%- endif -%}
+                  {%- if pm -%}<span>{% render 'icon', name: 'moon' %}{{ 'products.evening' | t }}</span>{%- endif -%}
+                </dd></div>
+            {%- endif -%}
+          </dl>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  {%- comment -%} Cult Beauty's grey details band: the description on the left, the accordions on the right. {%- endcomment -%}
+  <div class="pdp__details" id="pdp-details-{{ section.id }}">
+    <div class="page-width pdp__details-grid">
+      <div class="pdp__about">
+        <h2 class="pdp__details-title">{{ 'products.description' | t }}</h2>
+        {%- if product.description != blank -%}<div class="rte pdp__desc">{{ product.description }}</div>{%- endif -%}
+      </div>
+      <div class="accordion pdp__acc">
+        {%- if key_list.size > 0 -%}
+          <details class="accordion__item" open>
+            <summary><span>{{ 'products.key_ingredients' | t }}</span><span class="accordion__icon" aria-hidden="true"></span></summary>
+            <div class="accordion__body"><ul class="pdp__keys" role="list">{%- for item in key_list -%}<li>{% render 'icon', name: 'drop' %}{{ item | escape }}</li>{%- endfor -%}</ul></div>
           </details>
-        </div>
+        {%- endif -%}
+        {%- if how != blank -%}
+          <details class="accordion__item">
+            <summary><span>{{ 'products.how_to_use' | t }}</span><span class="accordion__icon" aria-hidden="true"></span></summary>
+            {%- assign how_steps = how | strip | replace: '. ', '.|' | split: '|' -%}
+            <div class="accordion__body">
+              {%- if how_steps.size > 1 -%}
+                <ol class="pdp__steps" role="list">{%- for step in how_steps -%}<li><span aria-hidden="true">{{ forloop.index }}</span><p>{{ step | escape }}</p></li>{%- endfor -%}</ol>
+              {%- else -%}
+                <p>{{ how | escape | newline_to_br }}</p>
+              {%- endif -%}
+            </div>
+          </details>
+        {%- endif -%}
+        {%- if full_ing != blank -%}
+          <details class="accordion__item">
+            <summary><span>{{ 'products.full_ingredients' | t }}</span><span class="accordion__icon" aria-hidden="true"></span></summary>
+            <div class="accordion__body"><p class="pdp__inci">{{ full_ing | escape }}</p><p class="t-xs">{{ 'products.ingredients_note' | t }}</p></div>
+          </details>
+        {%- endif -%}
+        <details class="accordion__item">
+          <summary><span>{{ 'products.delivery_returns' | t }}</span><span class="accordion__icon" aria-hidden="true"></span></summary>
+          <div class="accordion__body rte">{{ settings.pdp_delivery_text }}</div>
+        </details>
       </div>
     </div>
   </div>
@@ -219,75 +327,100 @@
       <div class="page-width buybar__inner">
         <span class="buybar__img">{{ product.featured_media.preview_image | image_url: width: 120 | image_tag: widths: '60, 120', sizes: '48px', alt: '', loading: 'lazy' }}</span>
         <span class="buybar__text"><span class="buybar__title">{{ product.title }}</span><span class="t-price">{{ current_variant.price | money }}{% if size != blank %} · {{ size }}{% endif %}</span></span>
-        <button class="btn btn--small buybar__btn" type="submit" form="{{ form_id }}" name="add" tabindex="-1">{{ 'products.add_to_cart' | t }}</button>
+        <button class="btn btn--brand buybar__btn" type="submit" form="{{ form_id }}" name="add" tabindex="-1">{{ 'products.add_to_cart' | t }}<span class="hide-mobile">&nbsp;–&nbsp;{{ current_variant.price | money }}</span></button>
       </div>
     </div>
   {%- endif -%}
 
-  <dialog class="lightbox" data-lightbox aria-label="{{ 'products.zoom_dialog' | t }}">
-    <button class="icon-btn lightbox__close" type="button" data-lightbox-close>{% render 'icon', name: 'close' %}<span class="sr-only">{{ 'general.close' | t }}</span></button>
-    <img src="{{ product.featured_media.preview_image | image_url: width: 2000 }}" alt="" width="2000" height="2000" loading="lazy" data-lightbox-img>
-  </dialog>
+  <script src="{{ 'viewer.js' | asset_url }}" defer></script>
 
   <script type="application/ld+json">{{ product | structured_data }}</script>
 </section>
 
 {% stylesheet %}
-.pdp { padding-bottom: var(--section); }
-.pdp__grid { display: grid; gap: var(--s-6); padding-top: var(--s-3); }
-.pdp__slides { display: grid; gap: var(--s-3); }
-.pdp__zoom { display: block; width: 100%; aspect-ratio: 4 / 5; border-radius: var(--r); cursor: zoom-in; }
-.pdp__zoom img { object-fit: contain !important; mix-blend-mode: multiply; padding: 9%; }
+.pdp { padding-bottom: 0; }
+.pdp__grid { display: grid; gap: var(--s-6); padding-top: var(--s-3); padding-bottom: var(--section); }
+.pdp__slides { display: grid; gap: var(--s-4); }
+.pdp__zoom { display: block; width: 100%; aspect-ratio: 1 / 1; cursor: zoom-in; background: var(--c-white); }
+.pdp__zoom img { object-fit: contain !important; mix-blend-mode: multiply; padding: 6%; }
 .pdp__dots { display: flex; justify-content: center; gap: 6px; margin-top: var(--s-3); }
-.pdp__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--line-strong); transition: width var(--t) var(--ease), background-color var(--t) var(--ease); }
-.pdp__dot.is-active { width: 20px; border-radius: 3px; background: var(--c-forest); }
+.pdp__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); transition: background-color var(--t) var(--ease), transform var(--t) var(--ease); }
+.pdp__dot.is-active { background: var(--c-night); transform: scale(1.15); }
 @media (max-width: 989px) {
   .pdp__slides { grid-auto-flow: column; grid-auto-columns: 100%; gap: var(--s-2); overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter); overscroll-behavior-x: contain; }
   .pdp__slides::-webkit-scrollbar { display: none; }
   .pdp__slide { scroll-snap-align: center; }
-  .pdp__zoom { aspect-ratio: 1 / 1; }
   .pdp__slides:has(> :only-child) { overflow: visible; }
 }
-.pdp__vendor { font: 700 var(--fs-label)/1.4 var(--f-body); letter-spacing: .18em; text-transform: uppercase; }
-.pdp__vendor a { color: var(--brand); }
-.pdp__vendor a:hover { text-decoration: underline; text-underline-offset: 3px; }
-.pdp__title { margin-top: var(--s-3); }
+@media (min-width: 990px) {
+  .pdp__slides:has(> :nth-child(2)) { grid-template-columns: 1fr 1fr; }
+}
+.pdp__vendor { font: var(--w-medium) var(--fs-h3)/var(--lh-snug) var(--f-body); letter-spacing: .06em; text-transform: uppercase; }
+.pdp__vendor a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.pdp__title { margin-top: var(--s-1); font: var(--type-lead); color: var(--ink); }
+.pdp__jump { display: inline-flex; align-items: center; gap: .5rem; margin-top: var(--s-4); min-height: 32px; font: var(--w-semibold) var(--fs-md)/1.2 var(--f-body); }
+.pdp__jump svg { width: 18px; height: 18px; transition: transform var(--t) var(--ease); }
+.pdp__jump:hover svg { transform: translateX(4px); }
 .pdp__pricebar { display: flex; align-items: baseline; gap: var(--s-4); margin-top: var(--s-4); }
-.pdp__price { font-size: 1.25rem; font-weight: 600; }
+.pdp__price { font-size: var(--fs-lg); font-weight: var(--w-medium); }
 .pdp__price .price__was { margin-left: .5rem; font-weight: 400; }
 .pdp__size { padding-left: var(--s-4); border-left: 1px solid var(--line); font-size: var(--fs-small); color: var(--ink-soft); }
 .pdp__tax { margin-top: 2px; }
-.pdp__desc { margin-top: var(--s-5); color: var(--ink-soft); font-size: 1.0625rem; line-height: 1.7; }
-.pdp__facts { display: grid; gap: var(--s-3); margin-top: var(--s-5); padding: var(--s-4) 0; border-block: 1px solid var(--line); }
-.pdp__facts > div { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--s-3); align-items: baseline; }
-.pdp__facts dt { font: 700 var(--fs-label)/2.2 var(--f-body); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
-.pdp__facts dd { gap: 6px; }
-.pdp__when { display: flex; flex-wrap: wrap; gap: 6px var(--s-4); font-size: var(--fs-small); font-weight: 600; }
-.pdp__when span { display: inline-flex; align-items: center; gap: .35rem; }
-.pdp__when svg { width: 16px; height: 16px; color: var(--brand); }
-.pdp__form { margin-top: var(--s-5); display: grid; gap: var(--s-4); }
+.pdp__badge { margin-top: var(--s-5); min-height: 40px; padding: 0 .75rem; font-size: var(--fs-xs); border-width: 2px; }
+.pdp__form { margin-top: var(--s-6); display: grid; gap: var(--s-4); }
 .pdp__option { border: 0; padding: 0; margin: 0; display: grid; gap: var(--s-2); }
 .pill--option { cursor: pointer; }
-.pill--option:has(input:checked) { background: var(--c-forest); color: #fff; border-color: var(--c-forest); }
+.pill--option:has(input:checked) { background: var(--c-night); color: #fff; border-color: var(--c-night); }
 .pill--option:has(input:focus-visible) { outline: 2px solid var(--focus); outline-offset: 2px; }
 .pdp__buy { display: grid; grid-template-columns: auto 1fr; gap: var(--s-3); }
-.pdp__add { width: 100%; }
-.pdp__stock { margin-top: var(--s-3); color: var(--brand); font-weight: 600; }
-.pdp__assure { display: grid; gap: var(--s-3); margin-top: var(--s-5); padding: var(--s-4); border-radius: var(--r); background: var(--c-frost); }
-.pdp__assure li { display: flex; gap: var(--s-3); align-items: flex-start; font-size: var(--fs-small); line-height: 1.5; }
-.pdp__assure svg { width: 20px; height: 20px; flex: none; color: var(--brand); }
-.pdp__acc { margin-top: var(--s-6); }
+.pdp__buy .qty { height: 60px; }
+.pdp__add { width: 100%; min-height: 60px; font-size: var(--fs-sm); }
+.pdp__wish { margin-top: var(--s-3); min-height: 54px; gap: .6rem; text-transform: none; letter-spacing: .01em; font-size: var(--fs-md); font-weight: var(--w-medium); }
+.pdp__wish svg { width: 20px; height: 20px; }
+.pdp__next { margin-top: var(--s-5); padding: var(--s-4); background: linear-gradient(160deg, #f6f8f0, #eef1e4); }
+.pdp__next .t-label { margin-bottom: var(--s-3); }
+.pdp__next-row { display: grid; grid-template-columns: 72px 1fr auto; align-items: center; gap: var(--s-4); }
+.pdp__next-img { display: block; aspect-ratio: 1; background: var(--c-white); }
+.pdp__next-img img { width: 100%; height: 100%; object-fit: contain; padding: 8%; mix-blend-mode: multiply; }
+.pdp__next-info { display: grid; gap: 2px; min-width: 0; }
+.pdp__next-step { font: var(--type-label); letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--c-forest); }
+.pdp__next-name { display: inline-block; padding-block: 3px; font: var(--type-title); line-height: 1.3; }
+.pdp__next-name:hover { color: var(--brand); }
+.pdp__next-form .btn { gap: .4rem; }
+.pdp__next-form .btn svg { width: 14px; height: 14px; }
+.pdp__avail { margin-top: var(--s-3); text-align: center; font-size: var(--fs-small); color: var(--ink-soft); }
+.pdp__stock { color: var(--c-forest); font-weight: var(--w-semibold); }
+.pdp__assure { display: grid; margin-top: var(--s-5); border-top: 1px solid var(--line); }
+.pdp__assure li { display: flex; gap: var(--s-4); align-items: center; padding: var(--s-4) 0; border-bottom: 1px solid var(--line); font-size: var(--fs-md); line-height: 1.5; }
+.pdp__assure svg { width: 26px; height: 26px; flex: none; color: var(--ink); }
+.pdp__facts { display: grid; gap: var(--s-3); margin-top: var(--s-5); }
+.pdp__facts > div { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--s-3); align-items: baseline; }
+.pdp__facts dt { font: var(--w-semibold) var(--fs-label)/2.2 var(--f-body); letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+.pdp__facts dd { gap: 6px; }
+.pdp__when { display: flex; flex-wrap: wrap; gap: 6px var(--s-4); font-size: var(--fs-small); font-weight: var(--w-semibold); }
+.pdp__when span { display: inline-flex; align-items: center; gap: .35rem; }
+.pdp__when svg { width: 16px; height: 16px; color: var(--brand); }
+
+/* the grey details band */
+.pdp__details { background: #f3f3f2; padding-block: clamp(3rem, 2rem + 4vw, 5.5rem); scroll-margin-top: var(--header-h); }
+.pdp__details-grid { display: grid; gap: var(--s-7); }
+.pdp__details-title { font: var(--type-h3); letter-spacing: var(--ls-tight); margin-bottom: var(--s-5); }
+.pdp__desc { color: var(--ink); font-size: var(--fs-md); line-height: 1.7; max-width: 46rem; }
+.pdp__acc { border-top: 0; }
+.pdp__acc .accordion__item > summary { font: var(--w-medium) var(--fs-lg)/1.35 var(--f-body); min-height: 64px; }
+.pdp__acc .accordion__item { border-bottom-color: rgba(52,52,52,.12); }
 .pdp__keys { display: grid; gap: var(--s-2); }
-.pdp__keys li { display: flex; align-items: center; gap: .6rem; color: var(--ink); font-weight: 500; }
+.pdp__keys li { display: flex; align-items: center; gap: .6rem; color: var(--ink); font-weight: var(--w-medium); }
 .pdp__keys svg { width: 16px; height: 16px; color: var(--c-sage); flex: none; }
 .pdp__inci { font-size: var(--fs-small); line-height: 1.75; }
 .pdp__steps { display: grid; gap: var(--s-3); }
 .pdp__steps li { display: grid; grid-template-columns: 28px 1fr; gap: var(--s-3); align-items: start; }
-.pdp__steps li > span { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--c-spring); color: var(--c-forest); font: 700 .75rem/1 var(--f-body); }
+.pdp__steps li > span { width: 28px; height: 28px; display: grid; place-items: center; background: var(--c-night); color: var(--c-white); font: var(--w-semibold) var(--fs-xs)/1 var(--f-body); }
 .pdp__steps p { padding-top: 3px; color: var(--ink); }
 @media (min-width: 990px) {
-  .pdp__grid { grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); gap: clamp(3rem, 6vw, 7rem); align-items: start; }
+  .pdp__grid { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: clamp(2rem, 3vw, 3.5rem); align-items: start; }
   .pdp__sticky { position: sticky; top: calc(var(--header-h) + var(--s-5)); }
+  .pdp__details-grid { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: clamp(2rem, 6vw, 7rem); }
 }
 /* sticky purchase bar */
 .buybar {
@@ -300,19 +433,18 @@
 .buybar__img { display: block; aspect-ratio: 1; border-radius: var(--r-xs); background: var(--tile); overflow: hidden; }
 .buybar__img img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 6%; }
 .buybar__text { display: grid; min-width: 0; }
-.buybar__title { font: 400 1rem/1.25 var(--f-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.buybar__btn { min-height: 46px; }
-/* lightbox */
-.lightbox { width: 100vw; height: 100vh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: var(--c-white); }
-.lightbox::backdrop { background: var(--c-white); }
-.lightbox img { width: 100%; height: 100%; object-fit: contain; padding: 4vmin; }
-.lightbox__close { position: fixed; top: 12px; right: 12px; z-index: 2; background: var(--c-frost); }
+.buybar__title { font: var(--w-medium) var(--fs-md)/1.3 var(--f-body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.buybar__btn { min-height: 52px; }
+@media (min-width: 990px) { .buybar__inner { grid-template-columns: 48px auto auto; justify-content: center; gap: var(--s-5); } .buybar__btn { min-width: 18rem; } }
 {% endstylesheet %}
 
 {% schema %}
 {
   "name": "Product",
   "tag": "div",
-  "settings": []
+  "settings": [
+    { "type": "checkbox", "id": "show_next_step", "label": "Show \"Complete your routine\"", "info": "Offers an in-stock product for the next routine step, picked from the product's step tag.", "default": true },
+    { "type": "text", "id": "routine_order", "label": "Routine order (step tags)", "default": "Cleanse, Tone, Treat, Moisturise, Protect" }
+  ]
 }
 {% endschema %}

@@ -1,187 +1,551 @@
 {
   "sections": {
-    "hero": {
-      "type": "hero",
-      "settings": {
-        "eyebrow": "K-beauty, delivered in Mauritius",
-        "heading": "Skin that loves <em>island</em> life",
-        "text": "The Korean skincare everyone keeps talking about, picked for sun, salt and humidity. Every ingredient listed, and at your door in 1 to 3 days.",
-        "button_label": "Shop now",
-        "button_link": "shopify://collections/skincare",
-        "link_label": "Find your routine",
-        "link_url": "shopify://pages/k-beauty",
-        "product": "torriden-dive-in-low-molecular-hyaluronic-acid-serum",
-        "product_label": "Start here",
-        "image_alt": "Dark tropical leaves wet with rain"
-      },
+    "welcome": {
+      "type": "promo-strip",
       "blocks": {
-        "fact_1": {
-          "type": "fact",
+        "w1": {
+          "type": "slide",
           "settings": {
-            "icon": "truck",
-            "text": "Delivered island-wide"
+            "title": "Welcome to Moana",
+            "text": "Korean skincare picked for island skin, with every ingredient listed and delivery all over Mauritius.",
+            "link_label": "Shop new in",
+            "link": "shopify://collections/new",
+            "products": [
+              "round-lab-1025-dokdo-toner",
+              "anua-niacinamide-10-txa-4-serum",
+              "beauty-of-joseon-relief-sun-rice-niacinamide"
+            ]
           }
         },
-        "fact_2": {
-          "type": "fact",
+        "w2": {
+          "type": "slide",
           "settings": {
-            "icon": "list",
-            "text": "Every ingredient, listed"
-          }
-        },
-        "fact_3": {
-          "type": "fact",
-          "settings": {
-            "icon": "card",
-            "text": "Pay by card"
+            "title": "New to K-beauty?",
+            "text": "Answer three quick questions and we'll put your routine together.",
+            "link_label": "Find my routine",
+            "link": "shopify://pages/routine-finder",
+            "products": [
+              "beplain-mung-bean-ph-balanced-cleansing-foam",
+              "torriden-dive-in-low-molecular-hyaluronic-acid-serum",
+              "s-nature-aqua-squalane-moisturizing-cream"
+            ]
           }
         }
       },
       "block_order": [
-        "fact_1",
-        "fact_2",
-        "fact_3"
-      ]
+        "w1",
+        "w2"
+      ],
+      "settings": {
+        "label": "Welcome"
+      }
     },
-    "service": {
-      "type": "service-strip",
-      "settings": {
-        "label": "Why you'll love it here"
-      },
+    "hero": {
+      "type": "hero-carousel",
       "blocks": {
-        "item_1": {
-          "type": "item",
+        "s1": {
+          "type": "slide",
           "settings": {
-            "icon": "truck",
-            "title": "Free delivery over Rs 1,500",
-            "text": "Below that, it's Rs 100 anywhere on the island."
+            "kicker": "K-beauty, delivered in Mauritius",
+            "light": "Skin that loves island life",
+            "bold": "The first drop is here",
+            "text": "The Korean skincare everyone keeps talking about, picked for sun, salt and humidity. Every ingredient listed.",
+            "btn1_label": "Shop new in",
+            "btn1_link": "shopify://collections/new",
+            "btn2_label": "Find my routine",
+            "btn2_link": "shopify://pages/routine-finder",
+            "media": "theme",
+            "theme_image": "hero-bg",
+            "image_alt": "Dark tropical leaves wet with rain",
+            "wash_bg": "#f6f8f0",
+            "flip": false
           }
         },
-        "item_2": {
-          "type": "item",
+        "s2": {
+          "type": "slide",
           "settings": {
-            "icon": "leaf",
-            "title": "At your door in 1 to 3 days",
-            "text": "Working days, that is. Prefer to collect? Mon Gout, just ask."
+            "kicker": "",
+            "light": "Island-proof",
+            "bold": "SPF, every single morning",
+            "text": "Light, no white cast, SPF50+ PA++++. The one step you never skip under the island sun.",
+            "btn1_label": "Shop sunscreen",
+            "btn1_link": "shopify://collections/sunscreen",
+            "btn2_label": "",
+            "btn2_link": "",
+            "media": "wash",
+            "product": "beauty-of-joseon-relief-sun-rice-niacinamide",
+            "wash_bg": "#f6f8f0",
+            "flip": false
           }
         },
-        "item_3": {
-          "type": "item",
+        "s3": {
+          "type": "slide",
           "settings": {
-            "icon": "list",
-            "title": "Every ingredient, listed",
-            "text": "The full list is on every product page. No guessing."
-          }
-        },
-        "item_4": {
-          "type": "item",
-          "settings": {
-            "icon": "chat",
-            "title": "Real people, real answers",
-            "text": "Message us on WhatsApp or by email. A person answers."
+            "kicker": "",
+            "light": "Made for every woman",
+            "bold": "who calls the island home",
+            "text": "Small, new and picky on purpose. Every product chosen by hand, with nothing to decode.",
+            "btn1_label": "Our story",
+            "btn1_link": "shopify://pages/about",
+            "btn2_label": "Shop skincare",
+            "btn2_link": "shopify://collections/skincare",
+            "media": "theme",
+            "theme_image": "about",
+            "image_alt": "Two women laughing together on a beach in Mauritius",
+            "wash_bg": "#f6f8f0",
+            "flip": false
           }
         }
       },
       "block_order": [
-        "item_1",
-        "item_2",
-        "item_3",
-        "item_4"
-      ]
+        "s1",
+        "s2",
+        "s3"
+      ],
+      "settings": {
+        "label": "Highlights",
+        "autoplay": 7
+      }
     },
     "categories": {
-      "type": "category-rail",
-      "settings": {
-        "eyebrow": "Shop by category",
-        "heading": "Find your next favourite"
-      },
+      "type": "category-tiles",
       "blocks": {
-        "category_1": {
-          "type": "category",
+        "c0": {
+          "type": "tile",
           "settings": {
-            "collection": "cleansers",
-            "label": "",
-            "image": ""
+            "collection": "cleansers"
           }
         },
-        "category_2": {
-          "type": "category",
+        "c1": {
+          "type": "tile",
           "settings": {
-            "collection": "toners-essences",
-            "label": "",
-            "image": ""
+            "collection": "toners-essences"
           }
         },
-        "category_3": {
-          "type": "category",
+        "c2": {
+          "type": "tile",
           "settings": {
-            "collection": "serums-ampoules",
-            "label": "",
-            "image": ""
+            "collection": "serums-ampoules"
           }
         },
-        "category_4": {
-          "type": "category",
+        "c3": {
+          "type": "tile",
           "settings": {
-            "collection": "moisturisers",
-            "label": "",
-            "image": ""
+            "collection": "moisturisers"
           }
         },
-        "category_5": {
-          "type": "category",
+        "c4": {
+          "type": "tile",
           "settings": {
-            "collection": "sunscreen",
-            "label": "",
-            "image": ""
+            "collection": "sunscreen"
           }
         },
-        "category_6": {
-          "type": "category",
+        "c5": {
+          "type": "tile",
           "settings": {
-            "collection": "masks",
-            "label": "",
-            "image": ""
+            "collection": "masks"
           }
         },
-        "category_7": {
-          "type": "category",
+        "c6": {
+          "type": "tile",
           "settings": {
-            "collection": "eye-care",
-            "label": "",
-            "image": ""
+            "collection": "eye-care"
           }
         },
-        "category_8": {
-          "type": "category",
+        "c7": {
+          "type": "tile",
           "settings": {
-            "collection": "lip-care",
-            "label": "",
-            "image": ""
+            "collection": "lip-care"
           }
         }
       },
       "block_order": [
-        "category_1",
-        "category_2",
-        "category_3",
-        "category_4",
-        "category_5",
-        "category_6",
-        "category_7",
-        "category_8"
+        "c0",
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5",
+        "c6",
+        "c7"
+      ],
+      "settings": {
+        "heading": "Shop by category"
+      }
+    },
+    "tabs": {
+      "type": "product-tabs",
+      "blocks": {
+        "t1": {
+          "type": "tab",
+          "settings": {
+            "title": "What's new",
+            "collection": "new",
+            "limit": 12,
+            "link_label": "Shop all new in"
+          }
+        },
+        "t2": {
+          "type": "tab",
+          "settings": {
+            "title": "Serums",
+            "collection": "serums-ampoules",
+            "limit": 12,
+            "link_label": "Shop serums"
+          }
+        },
+        "t3": {
+          "type": "tab",
+          "settings": {
+            "title": "Island sun",
+            "collection": "sunscreen",
+            "limit": 12,
+            "link_label": "Shop sunscreen"
+          }
+        }
+      },
+      "block_order": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "settings": {
+        "label": "Shop the edit",
+        "heading": ""
+      }
+    },
+    "just": {
+      "type": "editorial-cards",
+      "blocks": {
+        "j0": {
+          "type": "card",
+          "settings": {
+            "label": "Just landed",
+            "name": "Anua",
+            "text": "A watery serum with 10% niacinamide and 4% tranexamic acid, for dark spots and uneven tone.",
+            "button": "Shop now",
+            "product": "anua-niacinamide-10-txa-4-serum",
+            "tint": "linen"
+          }
+        },
+        "j1": {
+          "type": "card",
+          "settings": {
+            "label": "Just landed",
+            "name": "Round Lab",
+            "text": "A watery toner with deep sea water minerals. Unscented, soft and kind to sensitive skin.",
+            "button": "Shop now",
+            "product": "round-lab-1025-dokdo-toner",
+            "tint": "spring"
+          }
+        },
+        "j2": {
+          "type": "card",
+          "settings": {
+            "label": "Just landed",
+            "name": "Dr.Althea",
+            "text": "A light gel-cream for skin that breaks out or turns red easily. Fragrance-free.",
+            "button": "Shop now",
+            "product": "dr-althea-345-relief-cream",
+            "tint": "sage"
+          }
+        },
+        "j3": {
+          "type": "card",
+          "settings": {
+            "label": "Just landed",
+            "name": "Banila Co",
+            "text": "Melts into an oil and lifts off makeup and sunscreen, even the stubborn kind.",
+            "button": "Shop now",
+            "product": "banila-co-clean-it-zero-original-cleansing-balm",
+            "tint": "linen"
+          }
+        },
+        "j4": {
+          "type": "card",
+          "settings": {
+            "label": "Just landed",
+            "name": "Biodance",
+            "text": "A jelly sheet mask that turns clear as it works. By morning: plump, dewy-looking skin.",
+            "button": "Shop now",
+            "product": "biodance-bio-collagen-real-deep-mask",
+            "tint": "spring"
+          }
+        },
+        "j5": {
+          "type": "card",
+          "settings": {
+            "label": "Just landed",
+            "name": "Laneige",
+            "text": "The well-known overnight lip mask in a mini. Small enough for any bag.",
+            "button": "Shop now",
+            "product": "laneige-lip-sleeping-mask-berry-mini",
+            "tint": "sage"
+          }
+        }
+      },
+      "block_order": [
+        "j0",
+        "j1",
+        "j2",
+        "j3",
+        "j4",
+        "j5"
+      ],
+      "settings": {
+        "heading": "What's new at Moana?",
+        "outline": false
+      }
+    },
+    "promo2": {
+      "type": "promo-strip",
+      "blocks": {
+        "d1": {
+          "type": "slide",
+          "settings": {
+            "title": "Free delivery over Rs 1,500",
+            "text": "Below that, it's Rs 100 anywhere on the island. At your door in 1 to 3 working days.",
+            "link_label": "Delivery & returns",
+            "link": "shopify://pages/delivery",
+            "products": [
+              "skin1004-madagascar-centella-hyalu-cica-water-fit-sun-serum",
+              "centellian24-madeca-cream-time-reverse",
+              "abib-collagen-eye-patch-jericho-rose-jelly"
+            ]
+          }
+        },
+        "d2": {
+          "type": "slide",
+          "settings": {
+            "title": "Every ingredient, listed",
+            "text": "The full ingredient list is on every product page, so you can check it against the brand's own.",
+            "link_label": "Why the real thing matters",
+            "link": "shopify://pages/k-beauty",
+            "products": [
+              "celimax-the-vita-a-retinal-shot-tightening-booster",
+              "arencia-vitamin-c-booster-shot",
+              "dr-reju-all-advanced-pdrn-rejuvenating-lip-serum"
+            ]
+          }
+        }
+      },
+      "block_order": [
+        "d1",
+        "d2"
+      ],
+      "settings": {
+        "label": "Good to know"
+      }
+    },
+    "focus": {
+      "type": "editorial-cards",
+      "blocks": {
+        "f0": {
+          "type": "card",
+          "settings": {
+            "label": "Thirsty skin",
+            "name": "Hydration",
+            "text": "Five kinds of hyaluronic acid in a light, watery serum. A long drink, never sticky.",
+            "button": "Shop hydration",
+            "link": "/collections/skincare/hydration",
+            "product": "torriden-dive-in-low-molecular-hyaluronic-acid-serum",
+            "tint": "spring"
+          }
+        },
+        "f1": {
+          "type": "card",
+          "settings": {
+            "label": "Calm it down",
+            "name": "Redness",
+            "text": "10% azelaic acid to calm redness and help settle breakouts and the marks they leave.",
+            "button": "Shop redness",
+            "link": "/collections/skincare/redness",
+            "product": "anua-azelaic-acid-10-hyaluron-redness-soothing-serum",
+            "tint": "linen"
+          }
+        },
+        "f2": {
+          "type": "card",
+          "settings": {
+            "label": "Island sun",
+            "name": "Sun protection",
+            "text": "A sunscreen that feels like a serum. SPF50+ PA++++, no white cast, gone in seconds.",
+            "button": "Shop SPF",
+            "link": "shopify://collections/sunscreen",
+            "product": "skin1004-madagascar-centella-hyalu-cica-water-fit-sun-serum",
+            "tint": "sage"
+          }
+        }
+      },
+      "block_order": [
+        "f0",
+        "f1",
+        "f2"
+      ],
+      "settings": {
+        "heading": "In focus",
+        "outline": true
+      }
+    },
+    "routine": {
+      "type": "routine-steps",
+      "settings": {
+        "eyebrow": "New to K-beauty?",
+        "heading": "Five steps. Ten minutes. <em>All yours.</em>",
+        "text": "Cleanse, tone, treat, moisturise, protect. The famous Korean routine, made easy, with a pick for every step.",
+        "link_label": "Read the routine guide",
+        "link_url": "shopify://pages/k-beauty",
+        "script": "",
+        "wash": true,
+        "ampm": true,
+        "evening_heading": "Four steps tonight. <em>Then sleep.</em>",
+        "evening_text": "Cleanse, tone, treat, moisturise. Your sunscreen takes the night off."
+      },
+      "blocks": {
+        "step_1": {
+          "type": "step",
+          "settings": {
+            "name": "Cleanse",
+            "text": "A gentle, low-foam cleanser takes off sunscreen, salt and the whole day, without that tight feeling after.",
+            "product": "beplain-mung-bean-ph-balanced-cleansing-foam"
+          }
+        },
+        "step_2": {
+          "type": "step",
+          "settings": {
+            "name": "Tone",
+            "text": "Forget the alcohol splash you remember. A Korean toner is a thin layer of water and calming extracts that puts moisture back.",
+            "product": "round-lab-1025-dokdo-toner"
+          }
+        },
+        "step_3": {
+          "type": "step",
+          "settings": {
+            "name": "Treat",
+            "text": "The step that does the heavy lifting. Pick a serum for one job: hydrate, brighten or calm. Island skin? Start with hydration.",
+            "product": "torriden-dive-in-low-molecular-hyaluronic-acid-serum"
+          }
+        },
+        "step_4": {
+          "type": "step",
+          "settings": {
+            "name": "Moisturise",
+            "text": "Seal it all in. A cream looks after the skin barrier that sun, salt and aircon wear down.",
+            "product": "dr-althea-345-relief-cream"
+          }
+        },
+        "step_5": {
+          "type": "step",
+          "settings": {
+            "name": "Protect",
+            "text": "Sunscreen every morning, rain or shine. The one step you never skip.",
+            "product": "beauty-of-joseon-relief-sun-rice-niacinamide",
+            "when": "am"
+          }
+        }
+      },
+      "block_order": [
+        "step_1",
+        "step_2",
+        "step_3",
+        "step_4",
+        "step_5"
       ]
     },
-    "launch": {
-      "type": "featured-collection",
+    "brands": {
+      "type": "brand-tiles",
+      "blocks": {
+        "b0": {
+          "type": "brand",
+          "settings": {
+            "collection": "anua"
+          }
+        },
+        "b1": {
+          "type": "brand",
+          "settings": {
+            "collection": "beauty-of-joseon"
+          }
+        },
+        "b2": {
+          "type": "brand",
+          "settings": {
+            "collection": "round-lab"
+          }
+        },
+        "b3": {
+          "type": "brand",
+          "settings": {
+            "collection": "dr-althea"
+          }
+        },
+        "b4": {
+          "type": "brand",
+          "settings": {
+            "collection": "torriden"
+          }
+        },
+        "b5": {
+          "type": "brand",
+          "settings": {
+            "collection": "skin1004"
+          }
+        },
+        "b6": {
+          "type": "brand",
+          "settings": {
+            "collection": "banila-co"
+          }
+        },
+        "b7": {
+          "type": "brand",
+          "settings": {
+            "collection": "laneige"
+          }
+        },
+        "b8": {
+          "type": "brand",
+          "settings": {
+            "collection": "biodance"
+          }
+        },
+        "b9": {
+          "type": "brand",
+          "settings": {
+            "collection": "beplain"
+          }
+        },
+        "b10": {
+          "type": "brand",
+          "settings": {
+            "collection": "abib"
+          }
+        },
+        "b11": {
+          "type": "brand",
+          "settings": {
+            "collection": "celimax"
+          }
+        }
+      },
+      "block_order": [
+        "b0",
+        "b1",
+        "b2",
+        "b3",
+        "b4",
+        "b5",
+        "b6",
+        "b7",
+        "b8",
+        "b9",
+        "b10",
+        "b11"
+      ],
       "settings": {
-        "eyebrow": "Just landed",
-        "heading": "Our first drop is <em>here</em>",
-        "text": "A small, very edited range to start. Every pick has one job, and every one suits skin that lives with sun, salt and humidity.",
-        "collection": "new",
-        "link_label": "Shop all new in",
-        "limit": 8,
-        "wash": false
+        "heading": "Shop by brand",
+        "link_label": "All brands",
+        "link": "shopify://pages/brands"
       }
     },
     "concerns": {
@@ -279,95 +643,6 @@
         "concern_9"
       ]
     },
-    "routine": {
-      "type": "routine-steps",
-      "settings": {
-        "eyebrow": "New to K-beauty?",
-        "heading": "Five steps. Ten minutes. <em>All yours.</em>",
-        "text": "Cleanse, tone, treat, moisturise, protect. The famous Korean routine, made easy, with a pick for every step.",
-        "link_label": "Read the routine guide",
-        "link_url": "shopify://pages/k-beauty",
-        "script": "",
-        "wash": true
-      },
-      "blocks": {
-        "step_1": {
-          "type": "step",
-          "settings": {
-            "name": "Cleanse",
-            "text": "A gentle, low-foam cleanser takes off sunscreen, salt and the whole day, without that tight feeling after.",
-            "product": "beplain-mung-bean-ph-balanced-cleansing-foam"
-          }
-        },
-        "step_2": {
-          "type": "step",
-          "settings": {
-            "name": "Tone",
-            "text": "Forget the alcohol splash you remember. A Korean toner is a thin layer of water and calming extracts that puts moisture back.",
-            "product": "round-lab-1025-dokdo-toner"
-          }
-        },
-        "step_3": {
-          "type": "step",
-          "settings": {
-            "name": "Treat",
-            "text": "The step that does the heavy lifting. Pick a serum for one job: hydrate, brighten or calm. Island skin? Start with hydration.",
-            "product": "torriden-dive-in-low-molecular-hyaluronic-acid-serum"
-          }
-        },
-        "step_4": {
-          "type": "step",
-          "settings": {
-            "name": "Moisturise",
-            "text": "Seal it all in. A cream looks after the skin barrier that sun, salt and aircon wear down.",
-            "product": "dr-althea-345-relief-cream"
-          }
-        },
-        "step_5": {
-          "type": "step",
-          "settings": {
-            "name": "Protect",
-            "text": "Sunscreen every morning, rain or shine. The one step you never skip.",
-            "product": "beauty-of-joseon-relief-sun-rice-niacinamide"
-          }
-        }
-      },
-      "block_order": [
-        "step_1",
-        "step_2",
-        "step_3",
-        "step_4",
-        "step_5"
-      ]
-    },
-    "brands": {
-      "type": "brand-index",
-      "settings": {
-        "eyebrow": "Our brands",
-        "heading": "The Korean brands, <em>hand-picked</em>",
-        "text": "",
-        "brands": [
-          "anua",
-          "beplain",
-          "round-lab",
-          "banila-co",
-          "beauty-of-joseon",
-          "abib",
-          "laneige",
-          "dr-reju-all",
-          "biodance",
-          "centellian24",
-          "s-nature",
-          "celimax",
-          "dr-althea",
-          "torriden",
-          "skin1004",
-          "arencia"
-        ],
-        "link_label": "Shop all brands",
-        "link_url": "shopify://pages/brands"
-      }
-    },
     "story": {
       "type": "image-with-text",
       "settings": {
@@ -408,14 +683,14 @@
           "type": "question",
           "settings": {
             "question": "Can I collect my order instead?",
-            "answer": "<p>Yes, in Mon Gout. Message us on WhatsApp or by email and we'll find a time that works for you.</p>"
+            "answer": "<p>Yes, in Mon Gout. Email us or use the contact form and we'll find a time that works for you.</p>"
           }
         },
         "question_4": {
           "type": "question",
           "settings": {
             "question": "How do I pay?",
-            "answer": "<p>By card at checkout. Payments go through MIPS, so we never see your full card number.</p>"
+            "answer": "<p>Securely at checkout. Your card details go straight to our payment provider, so we never see your full card number.</p>"
           }
         },
         "question_5": {
@@ -449,16 +724,41 @@
         "question_6",
         "question_7"
       ]
+    },
+    "ticker": {
+      "type": "brand-ticker",
+      "settings": {
+        "brands": "",
+        "tint": true
+      }
+    },
+    "forecast": {
+      "type": "island-forecast",
+      "settings": {
+        "place": "Port Louis",
+        "lat": "-20.16",
+        "lon": "57.50",
+        "api_key": "",
+        "link1_label": "Shop sunscreen",
+        "link1_url": "shopify://collections/sunscreen",
+        "link2_label": "Light moisturisers",
+        "link2_url": "shopify://collections/moisturisers"
+      }
     }
   },
   "order": [
+    "welcome",
     "hero",
-    "service",
     "categories",
-    "launch",
-    "concerns",
+    "forecast",
+    "tabs",
+    "just",
+    "promo2",
+    "focus",
     "routine",
+    "ticker",
     "brands",
+    "concerns",
     "story",
     "faq"
   ]

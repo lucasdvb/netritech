@@ -1,0 +1,21 @@
+{%- comment -%}
+  Phone dock: an app-style bar of five shortcuts within thumb reach (Home, Shop, Routine, Wishlist, Bag),
+  on glass. Phones only (under 750px). It slides away while she scrolls down and comes back on the way
+  up, like the header, and steps aside for the product page's sticky Add to bag bar (theme.js).
+{%- endcomment -%}
+{%- liquid
+  assign shop_url = collections['skincare'].url | default: routes.all_products_collection_url
+  assign here = template.name
+  if template.suffix == 'routine-finder' or template.suffix == 'skin-diary'
+    assign here = 'routine'
+  elsif template.suffix == 'wishlist'
+    assign here = 'wishlist'
+  endif
+-%}
+<nav class="dock" aria-label="{{ 'header.dock' | t }}" data-dock>
+  <a class="dock__item" href="{{ routes.root_url }}"{% if here == 'index' %} aria-current="page"{% endif %}>{% render 'icon', name: 'home' %}<span>{{ 'header.home' | t }}</span></a>
+  <a class="dock__item" href="{{ shop_url }}"{% if here == 'collection' or here == 'list-collections' or here == 'product' %} aria-current="page"{% endif %}>{% render 'icon', name: 'grid' %}<span>{{ 'header.shop' | t }}</span></a>
+  <a class="dock__item" href="{{ routes.root_url }}pages/routine-finder"{% if here == 'routine' %} aria-current="page"{% endif %}>{% render 'icon', name: 'sparkle' %}<span>{{ 'header.routine' | t }}</span></a>
+  <a class="dock__item" href="{{ routes.root_url }}pages/wishlist"{% if here == 'wishlist' %} aria-current="page"{% endif %}>{% render 'icon', name: 'heart' %}<span>{{ 'header.wishlist' | t }}</span><b class="dock__badge" data-wishlist-count hidden></b></a>
+  <a class="dock__item" href="{{ routes.cart_url }}" data-cart-open aria-haspopup="dialog"{% if here == 'cart' %} aria-current="page"{% endif %}>{% render 'icon', name: 'bag' %}<span>{{ 'header.cart' | t }}</span><b class="dock__badge" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</b></a>
+</nav>

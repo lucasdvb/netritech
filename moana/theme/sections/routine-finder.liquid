@@ -1,0 +1,219 @@
+{%- comment -%}
+  Find my routine: a three-question quiz (skin type, main concern, how many steps) that builds a routine from the
+  real catalogue. Moana's answer to Cult Beauty's "Ask Cult".
+
+  Every product's tags are written into the page as JSON; routine-finder.js scores them (concern match, skin-type
+  match, the right routine step) and shows one product per step with a real add-to-bag form, plus "add the whole
+  routine". Nothing is invented: if no product fits a step, that step says so and links to the category.
+  Without JavaScript the page still offers the concern and skin-type shortcuts.
+  Background: the GetLayers "Feather" wash (WebGL); the quiz sits on it as frosted glass.
+{%- endcomment -%}
+{%- liquid
+  assign source = section.settings.collection | default: collections['skincare']
+  assign skin_list = settings.skin_type_tags | split: ','
+  assign concern_list = settings.concern_tags | split: ','
+  assign step_list = settings.step_tags | split: ','
+  assign desc_lines = section.settings.descriptions | newline_to_br | split: '<br />'
+-%}
+<section class="rf" aria-labelledby="rf-{{ section.id }}" data-finder-stage>
+  <div class="wash" aria-hidden="true"><canvas data-wash data-bg="#f6f8f0" data-a="#eef1e4" data-b="#d1d9be" data-c="#d6d2bf" data-d="#bcc09b"></canvas></div>
+  <div class="page-width rf__grid">
+    <div class="rf__intro">
+      {%- if section.settings.eyebrow != blank -%}<p class="t-label">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h1 class="t-h1" id="rf-{{ section.id }}">{{ section.settings.heading }}</h1>
+      {%- if section.settings.text != blank -%}<p class="t-lead">{{ section.settings.text }}</p>{%- endif -%}
+      <p class="rf__note t-xs t-soft">{{ 'finder.note' | t }}</p>
+    </div>
+
+    <div class="rf__card glass" data-finder data-sheen>
+      <form class="rf__form" data-finder-form novalidate>
+        <fieldset class="rf__step is-current" data-q="skin">
+          <legend class="rf__q"><span class="rf__n">1/4</span>{{ 'finder.q_skin' | t }}</legend>
+          <div class="rf__opts">
+            {%- for raw in skin_list -%}{%- assign t = raw | strip -%}
+              <label class="rf__opt" style="--k: {{ forloop.index0 }}"><input type="radio" name="skin" value="{{ t | escape }}"{% if forloop.first %} required{% endif %}><span>{{ t }}{% render 'finder-desc', lines: desc_lines, tag: t %}</span></label>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+        <fieldset class="rf__step" data-q="concern">
+          <legend class="rf__q"><span class="rf__n">2/4</span>{{ 'finder.q_concern' | t }}</legend>
+          <div class="rf__opts">
+            {%- for raw in concern_list -%}{%- assign t = raw | strip -%}
+              {%- comment -%} only offer concerns that at least one product answers {%- endcomment -%}
+              {%- assign has = false -%}
+              {%- for p in source.products -%}{%- if p.tags contains t -%}{%- assign has = true -%}{%- break -%}{%- endif -%}{%- endfor -%}
+              {%- if has -%}<label class="rf__opt" style="--k: {{ forloop.index0 }}"><input type="radio" name="concern" value="{{ t | escape }}"><span>{{ t }}{% render 'finder-desc', lines: desc_lines, tag: t %}</span></label>{%- endif -%}
+            {%- endfor -%}
+          </div>
+        </fieldset>
+        <fieldset class="rf__step" data-q="steps">
+          <legend class="rf__q"><span class="rf__n">3/4</span>{{ 'finder.q_steps' | t }}</legend>
+          <div class="rf__opts rf__opts--wide">
+            <label class="rf__opt" style="--k: 0"><input type="radio" name="steps" value="3"><span>{{ 'finder.steps_3' | t }}<small>{{ 'finder.steps_3_note' | t }}</small></span></label>
+            <label class="rf__opt" style="--k: 1"><input type="radio" name="steps" value="5"><span>{{ 'finder.steps_5' | t }}<small>{{ 'finder.steps_5_note' | t }}</small></span></label>
+          </div>
+        </fieldset>
+        <fieldset class="rf__step" data-q="budget">
+          <legend class="rf__q"><span class="rf__n">4/4</span>{{ 'finder.q_budget' | t }}</legend>
+          {%- comment -%} stops in rupees; the last stop means no limit {%- endcomment -%}
+          <div class="rf__budget" data-budget data-stops="2000,3000,4000,5000,6000,0"
+            data-any="{{ 'finder.budget_any' | t | escape }}" data-upto="{{ 'finder.budget_upto' | t: amount: '[amount]' | escape }}"
+            data-estimate="{{ 'finder.budget_estimate' | t: amount: '[amount]' | escape }}">
+            <output class="rf__budget-value" for="rf-budget-{{ section.id }}" data-budget-value>{{ 'finder.budget_any' | t }}</output>
+            <input class="rf__range" type="range" id="rf-budget-{{ section.id }}" name="budget" min="0" max="5" step="1" value="5" aria-describedby="rf-budget-note-{{ section.id }}">
+            <div class="rf__ticks" aria-hidden="true"><span>Rs 2k</span><span>3k</span><span>4k</span><span>5k</span><span>6k</span><span>∞</span></div>
+            <p class="rf__estimate" data-budget-estimate aria-live="polite">&nbsp;</p>
+            <p class="t-xs t-soft" id="rf-budget-note-{{ section.id }}">{{ 'finder.budget_note' | t }}</p>
+          </div>
+        </fieldset>
+        <div class="rf__nav">
+          <button class="btn btn--secondary" type="button" data-finder-back hidden>{{ 'general.previous' | t }}</button>
+          <p class="rf__progress" aria-hidden="true"><span data-finder-bar></span></p>
+          <button class="btn" type="button" data-finder-next disabled data-next-label="{{ 'general.next' | t }}" data-done-label="{{ 'finder.done' | t }}">{{ 'general.next' | t }}</button>
+        </div>
+      </form>
+
+      <div class="rf__result" data-finder-result hidden tabindex="-1">
+        <p class="t-label">{{ 'finder.result_label' | t }}</p>
+        <h2 class="rf__result-title" data-finder-title></h2>
+        <p class="rf__total" data-finder-total></p>
+        <ol class="rf__list" role="list" data-finder-list></ol>
+        <div class="rf__actions">
+          <button class="btn btn--brand" type="button" data-finder-addall>{{ 'finder.add_all' | t }}</button>
+          <a class="btn btn--secondary" href="{{ routes.root_url }}pages/skin-diary" data-finder-diary>{{ 'finder.save_diary' | t }}</a>
+          <a class="btn btn--secondary" href="#" data-finder-more>{{ 'finder.see_all' | t }}</a>
+          <button class="rf__restart" type="button" data-finder-restart>{{ 'finder.restart' | t }}</button>
+        </div>
+      </div>
+
+      <noscript>
+        <div class="rf__noscript">
+          <p>{{ 'finder.noscript' | t }}</p>
+          <div class="cluster">{%- render 'tag-counts', source: source, tags: settings.concern_tags, style: 'pills' -%}</div>
+        </div>
+      </noscript>
+    </div>
+  </div>
+</section>
+
+<script type="application/json" data-finder-data>
+{
+  "steps": [{%- for raw in step_list limit: 5 -%}{{ raw | strip | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],
+  "collectionUrl": {{ source.url | json }},
+  "moneyFormat": {{ shop.money_format | json }},
+  "strings": {
+    "title": {{ 'finder.result_title' | t: n: '__N__', concern: '__C__' | json }},
+    "none": {{ 'finder.none' | t | json }},
+    "add": {{ 'products.add_to_cart' | t | json }},
+    "added": {{ 'finder.added' | t | json }},
+    "stepLabel": {{ 'routine.step_n' | t: n: '__N__' | json }},
+    "total": {{ 'finder.total' | t: amount: '__A__' | json }},
+    "over": {{ 'finder.over_budget' | t | json }}
+  },
+  "products": [
+    {%- for p in source.products -%}
+      {%- assign v = p.selected_or_first_available_variant -%}
+      {"handle": {{ p.handle | json }}, "title": {{ p.title | json }}, "url": {{ p.url | json }}, "vendor": {{ p.vendor | json }},
+       "price": {{ p.price | money | json }}, "cents": {{ p.price | json }}, "available": {{ p.available | json }}, "variant": {{ v.id | json }}, "single": {{ p.has_only_default_variant | json }},
+       "image": {{ p.featured_media.preview_image | image_url: width: 240 | json }}, "tags": {{ p.tags | json }}}{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+<script src="{{ 'wash.js' | asset_url }}" defer></script>
+<script src="{{ 'routine-finder.js' | asset_url }}" defer></script>
+
+{% stylesheet %}
+  /* Full-screen quiz: one question per screen on the wash, big answer tiles with a one-line description,
+     a progress line, and the wash shifting colour with each answer (routine-finder.js). */
+  .rf { position: relative; isolation: isolate; overflow: hidden; display: grid; align-items: center; min-height: calc(100dvh - var(--header-h, 0px)); padding-block: clamp(2rem, 1.5rem + 3vw, 4.5rem); }
+  .rf .wash { z-index: -1; }
+  .rf__grid { display: grid; gap: var(--s-6); width: 100%; max-width: 1120px; }
+  .rf__intro { display: grid; gap: var(--s-3); max-width: 44rem; transition: opacity 400ms var(--ease), translate 400ms var(--ease); }
+  .rf__intro .t-h1 { font: var(--type-h2); letter-spacing: var(--ls-heading); }
+  .rf.is-started .rf__intro { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .rf__card { padding: clamp(1.25rem, .8rem + 2.4vw, 3rem); }
+  .rf__step { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .js .rf__step:not(.is-current) { display: none; }
+  .rf__step.is-current .rf__q { animation: rf-in 560ms var(--ease) both; }
+  .rf__step.is-leaving { animation: rf-out 220ms var(--ease) both; }
+  @keyframes rf-in { from { opacity: 0; translate: 0 18px; filter: blur(6px); } to { opacity: 1; translate: 0 0; filter: none; } }
+  @keyframes rf-out { to { opacity: 0; translate: 0 -12px; } }
+  .rf__q { display: grid; gap: var(--s-3); margin-bottom: var(--s-6); font: var(--w-extralight) var(--fs-h1)/var(--lh-heading) var(--f-body); letter-spacing: var(--ls-heading); text-wrap: balance; }
+  .rf__n { font: var(--type-label); letter-spacing: var(--ls-label); font-variant-numeric: lining-nums; color: var(--c-forest); }
+  .rf__opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-2); }
+  .rf__opts--wide { grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 750px) { .rf__opts { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--s-3); } .rf__opts--wide { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1100px) { .rf__opts:not(.rf__opts--wide) { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .rf__opt { position: relative; }
+  .rf__step.is-current .rf__opt { animation: rf-in 520ms var(--ease) both; animation-delay: calc(120ms + var(--k, 0) * 40ms); }
+  .rf__opt input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; z-index: 1; }
+  .rf__opt span {
+    position: relative; display: grid; align-content: start; gap: 6px; height: 100%; min-height: 104px; padding: var(--s-4) var(--s-4) var(--s-5);
+    border: 1px solid rgba(33, 39, 33, .16); background: rgba(255, 255, 255, .62);
+    -webkit-backdrop-filter: blur(16px) saturate(1.3); backdrop-filter: blur(16px) saturate(1.3);
+    font: var(--w-medium) var(--fs-lg)/1.2 var(--f-body); letter-spacing: var(--ls-tight); color: var(--ink);
+    transition: background-color var(--t) var(--ease), color var(--t) var(--ease), border-color var(--t) var(--ease), translate var(--t) var(--ease), box-shadow var(--t) var(--ease);
+  }
+  .rf__opt span small { font: var(--type-small); letter-spacing: 0; color: var(--ink-soft); }
+  .rf__opt span::after {
+    content: ""; position: absolute; top: 12px; right: 12px; width: 20px; height: 20px; border-radius: 50%; border: 1px solid rgba(33, 39, 33, .3);
+    background: center / 12px no-repeat; transition: background-color var(--t) var(--ease), border-color var(--t) var(--ease), scale var(--t) cubic-bezier(.34, 1.56, .64, 1);
+  }
+  @media (hover: hover) { .rf__opt:hover span { background: rgba(255, 255, 255, .9); border-color: rgba(33, 39, 33, .4); translate: 0 -2px; box-shadow: 0 18px 40px -28px rgba(33, 39, 33, .45); } }
+  .rf__opt input:checked + span { background: var(--c-night); border-color: var(--c-night); color: var(--c-white); }
+  .rf__opt input:checked + span small { color: rgba(255, 255, 255, .78); }
+  .rf__opt input:checked + span::after { border-color: var(--c-white); background-color: var(--c-white); scale: 1.1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23212721' stroke-width='3'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+  .rf__opt input:focus-visible + span { outline: 2px solid var(--c-forest); outline-offset: 2px; }
+  @media (max-width: 749px) { .rf__opt span { min-height: 92px; padding: var(--s-3) var(--s-3) var(--s-4); font-size: var(--fs-md); } .rf__opt span::after { top: 8px; right: 8px; width: 16px; height: 16px; } }
+  .rf__nav { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); margin-top: var(--s-6); }
+  .rf__progress { flex: 1; height: 2px; background: rgba(33,39,33,.15); }
+  .rf__progress span { display: block; height: 100%; width: 33%; background: var(--c-night); transition: width var(--t-slow) var(--ease); }
+  .rf__result:focus { outline: none; }
+  .rf__result > * + * { margin-top: var(--s-4); }
+  .rf__result-title { font: var(--w-extralight) var(--fs-h1)/var(--lh-heading) var(--f-body); letter-spacing: var(--ls-heading); }
+  .rf__list { display: grid; gap: var(--s-2); }
+  .rf__item { display: grid; grid-template-columns: 72px 1fr auto; gap: var(--s-4); align-items: center; padding: var(--s-3); background: rgba(255,255,255,.8); animation: rf-in 600ms var(--ease) both; animation-delay: calc(var(--k) * 110ms); }
+  .rf__img { display: block; aspect-ratio: 1; background: var(--c-white); }
+  .rf__img img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 6%; }
+  .rf__step-name { font: var(--w-semibold) var(--fs-2xs)/1.3 var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: var(--c-forest); }
+  .rf__name { display: block; font-size: var(--fs-md); line-height: 1.4; }
+  .rf__name:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .rf__price { font-weight: var(--w-semibold); font-size: var(--fs-small); }
+  .rf__item .btn { min-height: 40px; padding: 0 1rem; font-size: var(--fs-2xs); }
+  .rf__none { grid-column: 2 / -1; font-size: var(--fs-small); color: var(--ink-soft); }
+  .rf__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); padding-top: var(--s-3); }
+  .rf__restart { font-size: var(--fs-small); font-weight: var(--w-semibold); text-decoration: underline; text-underline-offset: 3px; min-height: 44px; }
+  .rf__note { max-width: 36rem; }
+  @media (max-width: 749px) { .rf__item { grid-template-columns: 56px 1fr; } .rf__item .rf__buy { grid-column: 1 / -1; } .rf__item .btn { width: 100%; } }
+  @media (prefers-reduced-motion: reduce) { .rf__step.is-current .rf__q, .rf__step.is-current .rf__opt, .rf__step.is-leaving, .rf__item { animation: none; } }
+  /* budget slider */
+  .rf__budget { display: grid; gap: var(--s-3); max-width: 40rem; }
+  .rf__budget-value { font: var(--type-numeral); font-size: var(--fs-2xl); letter-spacing: var(--ls-display); font-variant-numeric: lining-nums; }
+  .rf__range { -webkit-appearance: none; appearance: none; width: 100%; height: 44px; background: transparent; cursor: pointer; }
+  .rf__range::-webkit-slider-runnable-track { height: 2px; background: linear-gradient(90deg, var(--c-night) var(--fill, 100%), rgba(33,39,33,.18) var(--fill, 100%)); }
+  .rf__range::-moz-range-track { height: 2px; background: rgba(33,39,33,.18); }
+  .rf__range::-moz-range-progress { height: 2px; background: var(--c-night); }
+  .rf__range::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -13px; border-radius: 50%; background: var(--c-white); border: 2px solid var(--c-night); box-shadow: 0 6px 16px -6px rgba(33,39,33,.45); transition: scale 200ms var(--ease); }
+  .rf__range::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: var(--c-white); border: 2px solid var(--c-night); }
+  .rf__range:active::-webkit-slider-thumb { scale: 1.15; }
+  .rf__range:focus-visible { outline: 2px solid var(--c-forest); outline-offset: 4px; }
+  .rf__ticks { display: flex; justify-content: space-between; margin-top: -6px; font: var(--type-label); letter-spacing: .06em; color: var(--ink-soft); font-variant-numeric: lining-nums; }
+  .rf__estimate { font: var(--type-lead); min-height: 1.7em; }
+  .rf__total { font: var(--type-ui); color: var(--c-forest); font-variant-numeric: lining-nums; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Routine finder",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Label", "default": "Find my routine" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Your routine, <em>in 60 seconds</em>" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Three quick questions and we'll pick a product for every step, from what's actually in stock." },
+    { "type": "collection", "id": "collection", "label": "Products to choose from", "info": "Defaults to Skincare. Uses Theme settings > Discovery for the tags." },
+    { "type": "textarea", "id": "descriptions", "label": "Answer descriptions", "info": "One per line, as Tag: description. Shown under each answer tile.", "default": "All skin types: Not sure? Start here\nDry skin: Feels tight, can flake\nOily skin: Shiny by midday\nCombination skin: Oily T-zone, drier cheeks\nSensitive skin: Reacts or stings easily\nAcne-prone skin: Breaks out easily\nNormal skin: Comfortable most days\nHydration: Tight, thirsty or flaky\nDullness: Looking a little tired\nDark spots: Marks and uneven tone\nBreakouts: Spots that come and go\nFine lines: Lines and less bounce\nFirmness: Less bounce than before\nPores: Visible pores and shine\nOil control: Shine that won't quit\nRedness: Flushes or reddens easily\nSun protection: Daily SPF for island sun\nDark circles: Tired-looking eyes\nPuffiness: Morning puffiness\nMakeup removal: Takes it all off" }
+  ],
+  "presets": [{ "name": "Routine finder" }]
+}
+{% endschema %}

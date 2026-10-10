@@ -7,7 +7,7 @@ import path from 'node:path';
 import { THEME, products, productByHandle, collections, globals, renderPage, renderSection, createEngine, money } from './render.mjs';
 
 const PORT = Number(process.env.PORT || 4100);
-const PAGE_TEMPLATES = { about: 'page.about', contact: 'page.contact', 'k-beauty': 'page.kbeauty', delivery: 'page.delivery', brands: 'page.brands', faq: 'page.faq' };
+const PAGE_TEMPLATES = { about: 'page.about', contact: 'page.contact', 'k-beauty': 'page.kbeauty', delivery: 'page.delivery', brands: 'page.brands', faq: 'page.faq', 'routine-finder': 'page.routine-finder', wishlist: 'page.wishlist', 'skin-diary': 'page.skin-diary', rewards: 'page.rewards' };
 const readJSON = (p) => JSON.parse(fs.readFileSync(path.join(THEME, p), 'utf8').replace(/^\/\*[\s\S]*?\*\/\s*/, ''));
 
 /* ------------------------------------------------------------------ cart */
@@ -121,6 +121,24 @@ http.createServer(async (req, res) => {
     if (p === '/cart.js') return send(res, 200, JSON.stringify(cartJSON()), 'application/json');
     if (p === '/cart/add.js' || p === '/cart/add') {
       const body = parseBody(req, await readBody(req));
+      // Shopify also accepts { items: [{ id, quantity }] } and answers { items: [...] }
+      if (Array.isArray(body.items)) {
+        const added = [];
+        for (const it of body.items) {
+          const pi = products.find((x) => String(x.variants[0].id) === String(it.id));
+          if (!pi) return send(res, 404, JSON.stringify({ status: 404, message: 'Cart Error', description: 'Cannot find variant' }), 'application/json');
+          const li = lines.find((l) => l.handle === pi.handle);
+          if (li) li.qty += Number(it.quantity || 1); else lines.push({ handle: pi.handle, qty: Number(it.quantity || 1) });
+          added.push({ id: pi.variants[0].id, key: `${pi.variants[0].id}:${lines.findIndex((l) => l.handle === pi.handle)}`, quantity: Number(it.quantity || 1), title: pi.title });
+        }
+        const out = { items: added };
+        if (body.sections) {
+          const g = globals({ template: body.sections_url === '/cart' ? 'cart' : 'index', cart: cartObj(), lang });
+          out.sections = {};
+          for (const s of [].concat(body.sections)) out.sections[s] = await sectionHTML(s, g);
+        }
+        return send(res, 200, JSON.stringify(out), 'application/json');
+      }
       const pr = products.find((x) => String(x.variants[0].id) === String(body.id));
       if (!pr) return send(res, 404, JSON.stringify({ status: 404, message: 'Cart Error', description: 'Cannot find variant' }), 'application/json');
       const qty = Math.max(1, Number(body.quantity || 1));
@@ -131,7 +149,7 @@ http.createServer(async (req, res) => {
       }
       if (line) line.qty += qty; else lines.push({ handle: pr.handle, qty });
       if (p === '/cart/add') { res.writeHead(302, { Location: '/cart' }); return res.end(); }
-      const out = { id: pr.variants[0].id, quantity: qty, title: pr.title };
+      const out = { id: pr.variants[0].id, key: `${pr.variants[0].id}:${lines.findIndex((l) => l.handle === pr.handle)}`, quantity: qty, title: pr.title };
       if (body.sections) {
         const g = globals({ template: body.sections_url === '/cart' ? 'cart' : 'index', cart: cartObj(), lang });
         out.sections = {};
@@ -181,27 +199,37 @@ http.createServer(async (req, res) => {
     /* pages */
     let template = '404', g;
     const parts = p.split('/').filter(Boolean);
-    if (p === '/') { template = 'index'; g = globals({ template, cart, lang, url: p }); }
+    if (p === '/') { template = 'index'; g = globals({ template, cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') }); }
     else if (parts[0] === 'collections' && parts[1]) {
       const col = collections[parts[1]];
       if (col) {
         const tag = parts[2] || null;
         const filtered = applyFilters(col, { raw: u.search, path: p, tag });
         template = col.handle === 'skincare' ? 'collection.skincare' : 'collection';
-        g = globals({ template, collection: filtered, currentTags: tag ? [col.all_tags.find((t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-') === tag) || tag] : null, cart, lang, url: p });
+        g = globals({ template, collection: filtered, currentTags: tag ? [col.all_tags.find((t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-') === tag) || tag] : null, cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') });
       }
-    } else if (parts[0] === 'collections') { template = 'list-collections'; g = globals({ template, cart, lang, url: p }); }
-    else if (parts[0] === 'products' && productByHandle[parts[1]]) { template = 'product'; g = globals({ template, product: productByHandle[parts[1]], cart, lang, url: p }); }
-    else if (parts[0] === 'pages' && PAGE_TEMPLATES[parts[1]]) { template = PAGE_TEMPLATES[parts[1]]; g = globals({ template, page: { title: parts[1], handle: parts[1], content: '' }, cart, lang, url: p }); }
-    else if (p === '/cart') { template = 'cart'; g = globals({ template, cart, lang, url: p }); }
+    } else if (parts[0] === 'collections') { template = 'list-collections'; g = globals({ template, cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') }); }
+    else if (parts[0] === 'products' && productByHandle[parts[1]]) { template = 'product'; g = globals({ template, product: productByHandle[parts[1]], cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') }); }
+    else if (parts[0] === 'pages' && PAGE_TEMPLATES[parts[1]]) { template = PAGE_TEMPLATES[parts[1]]; g = globals({ template, page: { title: parts[1], handle: parts[1], content: '' }, cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') }); }
+    else if (p === '/cart') { template = 'cart'; g = globals({ template, cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') }); }
     else if (p === '/search') {
       template = 'search';
       const q = (u.searchParams.get('q') || '').trim();
       const results = q ? products.filter((x) => (x.title + ' ' + x.vendor + ' ' + x.tags.join(' ')).toLowerCase().includes(q.toLowerCase())).map((x) => ({ ...x, object_type: 'product' })) : [];
-      g = globals({ template, cart, lang, url: p, search: { performed: !!q, terms: q, results, results_count: results.length } });
-    } else if (p === '/password') { template = 'password'; g = globals({ template, cart, lang, url: p }); }
-    if (!g) g = globals({ template: '404', cart, lang, url: p });
+      g = globals({ template, cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : ''), search: { performed: !!q, terms: q, results, results_count: results.length } });
+    } else if (p === '/password') { template = 'password'; g = globals({ template, cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') }); }
+    if (!g) g = globals({ template: '404', cart, lang, url: p + (/dev_customer/.test(u.search) ? u.search : '') });
 
+    if (template === 'product' && u.searchParams.get('view')) {
+      // alternate product templates (?view=card, ?view=quick): templates/product.<view>.liquid, layout none
+      const view = u.searchParams.get('view').replace(/[^a-z0-9_-]/gi, '');
+      const file = path.join(THEME, 'templates', `product.${view}.liquid`);
+      if (!fs.existsSync(file)) return send(res, 404, 'no such view');
+      const engine = createEngine();
+      const all = g.getAll ? g.getAll() : g;
+      const src = fs.readFileSync(file, 'utf8').replace(/\{%-?\s*layout none\s*-?%\}/, '');
+      return send(res, 200, await engine.parseAndRender(src, all, { globals: g.__globals || all }));
+    }
     const sid = u.searchParams.get('section_id');
     if (sid) return send(res, 200, await sectionHTML(sid, g));
     return send(res, template === '404' ? 404 : 200, await renderPage(template, g));
