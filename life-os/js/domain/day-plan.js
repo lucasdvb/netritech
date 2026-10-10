@@ -43,6 +43,9 @@ export function trainingCall(date = today()) {
   if (mode === 'minimum') return { kind: 'minimum', template: F.template('t-recovery'), title: '10-minute walk', reason: 'Minimum day: basic movement is enough.' };
   if (!tpl) return { kind: 'rest', template: F.template('t-recovery'), title: 'Recovery', reason: 'Rest day in your plan. A walk or mobility is ideal.' };
   if (tpl.kind !== 'strength') return { kind: 'planned', template: tpl, title: tpl.name, reason: 'From your weekly plan.' };
+  // A deload week (deload.js), read straight off the profile so Today doesn't load its rules.
+  const dl = store.profile()?.deload;
+  if (dl && dl.from <= date && date <= dl.to) return { kind: 'deload', template: tpl, title: `${tpl.name} · deload`, reason: `Deload week until ${dl.to.slice(5).replace('-', '/')}: half the sets, 10% lighter, three or more reps left on each.` };
   if (sleep != null && sleep < (t.sleepLowH ?? 6)) {
     return { kind: 'recovery', template: F.template('t-recovery'), title: 'Recovery or a lighter session', reason: `Slept ${num(sleep, 1)} h. A walk and mobility, or two easy sets per move.` };
   }

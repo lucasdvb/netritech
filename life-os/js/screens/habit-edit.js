@@ -45,6 +45,7 @@ function clean(d, before) {
   const out = { ...d, name: d.name.trim(), anchor: (d.anchor || '').trim() || null, tiny, mvdLabel: null, mvdMin: null, checklist: d.checklist.map((x) => x.trim()).filter(Boolean) };
   if (!out.checklist.length) out.checklist = null;
   out.why = (d.why || '').trim() || null;
+  out.bundle = (d.bundle || '').trim().slice(0, 60) || null;
   out.backup = (d.backup?.then || '').trim() ? { when: (d.backup.when || '').trim() || null, then: d.backup.then.trim() } : null;
   out.stretch = d.stretch && ((d.stretch.label || '').trim() || d.stretch.min != null) ? { label: (d.stretch.label || '').trim() || null, min: d.stretch.min ?? null } : null;
   if (out.type === 'rating') { out.target = 10; out.unit = ''; }
@@ -189,6 +190,9 @@ export function openHabitEditor(target, { focus } = {}) {
             <label class="field"><span class="field-label">…then</span><input class="input" value="${d.backup?.then || ''}" data-input="backup" data-k="then" placeholder="20 minutes at home" maxlength="80"></label>
           </div>
           <p class="field-hint">Shown when you go to mark it “not today”.</p>
+          <label class="field"><span class="field-label">Pair it with <small>something you only enjoy while doing it</small></span>
+            <input class="input" value="${d.bundle || ''}" data-input="f" data-f="bundle" placeholder="Your favourite podcast" maxlength="60"></label>
+          <p class="field-hint">Temptation bundling: keep a treat for this habit only (a podcast, a show, an audiobook) and it pulls you to it. It shows with the habit’s reminder${d.id === 'h-training' ? ' and in gym mode' : ''}.</p>
         </section>
 
         <section class="ed-group">
