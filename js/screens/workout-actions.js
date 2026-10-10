@@ -8,6 +8,11 @@ import { today, fmtDay } from '../domain/dates.js';
 import { trainingCall } from '../domain/coach.js';
 import { nextStep, parseRange } from '../domain/next-step.js';
 import { weightUnit } from '../ui/format.js';
+import * as DL from '../domain/deload.js';
+import { lighter as lighterBy } from '../domain/effort.js';
+
+/** A load in a deload week: 10% lighter, rounded to what you can load. */
+const deloaded = (kg, on) => (on && Number(kg) > 0 ? lighterBy(Number(kg), DL.LOAD_SHARE, weightUnit()) : kg);
 
 /** Start a workout from a template. From Today it opens in gym mode ({ gym: true }): big buttons, one set at a time. */
 export function startWorkout(templateId, date = today(), { gym = false } = {}) {
@@ -16,10 +21,13 @@ export function startWorkout(templateId, date = today(), { gym = false } = {}) {
   const tpl = F.template(templateId);
   const call = trainingCall(date);
   const lighter = tpl && call.kind === 'lighter' && call.template?.id === tpl.id;
+  // A deload week (deload.js): half the sets, 10% lighter, no progression.
+  const deload = tpl?.kind === 'strength' && DL.active(date);
   const w = store.put('workouts', {
     date, templateId: tpl?.id || null, title: tpl?.name || 'Workout', kind: tpl?.kind || 'strength',
     status: 'active', startedAt: new Date().toISOString(), notes: '', difficulty: null, rpe: null, activeMs: 0, runningSince: new Date().toISOString(),
-    adjusted: lighter ? `Lighter today: one set fewer per exercise. ${call.reason}` : null,
+    adjusted: deload ? 'Deload week: half the sets, 10% lighter. Stop each set with three or more reps in the tank.'
+      : lighter ? `Lighter today: one set fewer per exercise. ${call.reason}` : null,
   });
   if (tpl) {
     const ops = [];
@@ -27,16 +35,16 @@ export function startWorkout(templateId, date = today(), { gym = false } = {}) {
       const e = F.exercise(it.exerciseId);
       const prev = F.previousPerformance(it.exerciseId, { before: date });
       const prevSets = prev ? F.setsOf(prev.workout.id).filter((s) => s.exerciseId === prev.exerciseId && s.completed) : [];
-      const sets = lighter ? Math.max(2, it.sets - 1) : it.sets;
+      const sets = deload ? DL.deloadSets(it.sets) : lighter ? Math.max(2, it.sets - 1) : it.sets;
       // The next step (13d): heavier when every set reached the top of the range, else one more rep.
-      const step = lighter || tpl.kind === 'mobility' ? null : nextStep(it.exerciseId, it.reps, { before: date, unit: weightUnit() });
+      const step = lighter || deload || tpl.kind === 'mobility' ? null : nextStep(it.exerciseId, it.reps, { before: date, unit: weightUnit() });
       const high = parseRange(it.reps)?.high ?? Infinity;
       for (let i = 0; i < sets; i++) {
         const last = prevSets[i] || prevSets[prevSets.length - 1];
         const p = !last || !step ? last
           : step.kind === 'load' ? { ...last, load: step.load, reps: step.reps }
             // One more rep (or 5 more seconds), up to the top of the range; past it once every set got there.
-            : step.kind === 'reps' ? { ...last, reps: Math.max(Number(last.reps) || 0, Math.min(step.reps > high ? Infinity : high, (Number(last.reps) || 0) + 1)) }
+            : step.kind === 'reps' ? { ...last, reps: Math.max(Number(last.reps) || 0, Math.min(step.reps > high ? Infinity : high, (Number(last.reps) || 0) + (step.add || 1))) }
               : step.kind === 'seconds' ? { ...last, seconds: Math.max(Number(last.seconds) || 0, Math.min(step.seconds > high ? step.seconds : high, (Number(last.seconds) || 0) + 5)) }
                 : last;
         ops.push({ store: 'workoutSets', value: {
@@ -44,7 +52,7 @@ export function startWorkout(templateId, date = today(), { gym = false } = {}) {
           // Today's suggestion waits as a placeholder: entering the reps (or the time) is what logs a set.
           target: it.reps, reps: null, seconds: null, minutes: null,
           plan: { reps: e?.metric === 'reps' ? (p?.reps ?? null) : null, seconds: e?.metric === 'time' ? (p?.seconds ?? null) : null, minutes: e?.metric === 'minutes' ? (p?.minutes ?? null) : null },
-          load: p?.load ?? it.load ?? e?.defaultLoad ?? null, rest: it.rest ?? null, completed: false,
+          load: deloaded(p?.load ?? it.load ?? e?.defaultLoad ?? null, deload), rest: it.rest ?? null, completed: false,
         } });
       }
     });

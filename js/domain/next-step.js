@@ -5,7 +5,11 @@
 // - after two sessions in a row without progress, still below the top → hold the weight and make
 //   every rep clean.
 // Double progression, the standard way to progress within a rep range.
+// With effort logged (reps left in the tank, effort.js) it autoregulates: every set at the top with
+// three or more to spare → a double step; three or more to spare below the top → two more reps;
+// below the range with nothing left → 5% lighter, then build back. In a deload week it says so.
 import * as store from '../data/store.js';
+import { avgRir, stepLoad, lighter } from './effort.js';
 import { exercise, allWorkouts, setsOf } from './fitness-core.js';
 import { performance, compare } from './fitness.js';
 
@@ -49,17 +53,29 @@ export function nextStep(exerciseId, target, { excludeWorkoutId, before, unit = 
   const vals = last.sets.map((s) => Number(time ? s.seconds : s.reps) || 0);
   const topLoad = Math.max(...last.sets.map((s) => Number(s.load) || 0));
   const allTop = vals.every((v) => v >= range.high);
+  const rir = avgRir(last.sets);
+  const spare = rir != null && rir >= 3;
   if (allTop) {
     if (time) return { kind: 'seconds', seconds: range.high + 5, why: `Every hold reached ${range.high} s last time.` };
     if (topLoad > 0 || e.defaultLoad) {
       // Stepped in your unit and rounded there, so 100 lb goes 105, 110… with no drift.
       const base = topLoad || e.defaultLoad;
+      if (spare) return { kind: 'load', load: stepLoad(base, 2, unit), reps: range.low, why: `Every set at ${range.high} with 3+ reps to spare: a bigger step.` };
       const load = unit === 'lb' ? (Math.round(base / LB / 2.5) * 2.5 + 5) * LB : Math.round((base + 2.5) * 100) / 100;
       return { kind: 'load', load, reps: range.low, why: `Every set reached ${range.high} reps last time.` };
     }
     const h = harder(e);
     if (h) return { kind: 'variation', exerciseId: h.id, reps: range.low, why: `Every set reached ${range.high} reps last time: ready for ${h.name}.` };
     return { kind: 'reps', reps: Math.max(...vals) + 1, why: `Every set reached ${range.high} reps last time.` };
+  }
+  // Below the range with nothing left in the tank: the weight is too heavy for now.
+  const lastSet = last.sets[last.sets.length - 1];
+  if (!time && topLoad > 0 && lastSet?.rir === 0 && Math.min(...vals) < range.low) {
+    return { kind: 'load', load: lighter(topLoad, 0.05, unit), reps: range.low, why: 'Below the range with nothing left: 5% lighter, then build back up.' };
+  }
+  // Plenty left on every set: the reps can climb faster.
+  if (!time && spare && last.sets.every((s) => s.rir != null && s.rir >= 3)) {
+    return { kind: 'reps', add: 2, reps: Math.min(range.high, Math.min(...vals) + 2), load: topLoad || null, why: 'Lots left in the tank: two more reps.' };
   }
   // Two sessions in a row without progress: hold, and own the reps before adding more.
   const stalled = (a, b) => a && b && ['maintained', 'declined'].includes(compare(a.perf, b.perf)?.verdict);

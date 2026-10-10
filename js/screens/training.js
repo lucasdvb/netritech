@@ -1,5 +1,6 @@
 import * as store from '../data/store.js';
 import { programmeCard } from './programmes.js';
+import * as DL from '../domain/deload.js';
 import * as F from '../domain/fitness.js';
 import * as H from '../domain/habits.js';
 import * as M from '../domain/metrics.js';
@@ -102,6 +103,7 @@ export default {
             <button type="button" class="btn btn--soft" data-action="choose">Other session</button>
             ${call.template && call.kind !== 'done' ? html`<button type="button" class="btn btn--primary" data-action="start" data-id="${call.template.id}">${icon('play', { size: 16 })} Start</button>` : ''}
           </div></div>`}
+      ${deloadCard()}
       <section class="block"><div class="block-head"><h2 class="block-title">This week</h2><button type="button" class="link-btn" data-action="plan">Edit plan</button></div>
         ${weekStrip()}
         <p class="quiet-line">${weekLine(w)}</p>
@@ -124,6 +126,12 @@ export default {
       </section>`;
   },
   actions: {
+    'dl-start': () => {
+      const undo = DL.start(DL.signal()?.why || '');
+      app.toast(`Deload week until ${fmtMD(DL.active().to)}`, { icon: 'check', action: { label: 'Undo', fn: undo } });
+    },
+    'dl-snooze': () => { const undo = DL.snooze(); app.toast('Asked again in two weeks at the earliest.', { action: { label: 'Undo', fn: undo } }); },
+    'dl-end': () => { const undo = DL.end(); app.toast('Back to normal training from today.', { action: { label: 'Undo', fn: undo } }); },
     start: ({ data }) => startWorkout(data.id, today()),
     choose: () => openStartSheet(today()),
     plan: () => planSheet(),
@@ -138,6 +146,24 @@ function weekLine(w) {
 }
 
 /** Your workouts: tap to edit, drag to reorder, or make a new one. */
+/** The lighter week: suggested when training stops paying off (deload.js), or the one you're in. */
+function deloadCard() {
+  const on = DL.active();
+  if (on) {
+    return html`<div class="block card deload-card" data-key="deload">
+      <p class="section-label">Deload week</p><p class="card-title">Until ${fmtMD(on.to)}: half the sets, 10% lighter</p>
+      <p class="muted">Stop each set with three or more reps in the tank. Sessions you start this week are set up that way; progression picks up again after it.</p>
+      <div class="btn-row"><button type="button" class="btn btn--ghost btn--sm" data-action="dl-end">End it now</button></div></div>`;
+  }
+  const sig = DL.signal();
+  if (!sig) return '';
+  return html`<div class="block card deload-card" data-key="deload">
+    <p class="section-label">Time for a lighter week?</p><p class="card-title">${sig.why}</p>
+    <p class="muted">A deload week (half the sets, 10% lighter) lets fatigue clear, and strength usually comes back higher.</p>
+    <div class="btn-row"><button type="button" class="btn btn--soft btn--sm" data-action="dl-snooze">Not now</button>
+      <button type="button" class="btn btn--primary btn--sm" data-action="dl-start">Start a lighter week</button></div></div>`;
+}
+
 function workoutsBlock() {
   const list = F.templates();
   return html`<section class="block"><div class="block-head"><h2 class="block-title">Your workouts</h2>

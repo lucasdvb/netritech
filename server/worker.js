@@ -15,7 +15,7 @@
 // that turned them on, its push address and the times, titles and words of its reminders, plus
 // which were done today so they aren't sent. Nothing else, and no history.
 
-const VERSION = 2;
+const VERSION = 3;
 const PAGE = 400;                 // records per answer when a device catches up
 const MAX_ITEM = 2_600_000;       // an encrypted record (base64): D1 rows stop at 2 MB of data
 const MAX_BODY = 40_000_000;
@@ -273,6 +273,34 @@ async function push(req, env) {
   return json({ ok: true, on: true, count: clean.items.length });
 }
 
+/**
+ * POST /calendar { space, auth, url } reads a calendar subscription (.ics) for a device of this
+ * space and passes it back as it is: most calendars don't let a web page read them directly. The
+ * server keeps nothing; the calendar's text passes through once per refresh.
+ */
+const MAX_ICS = 4_000_000;
+async function calendar(req, env) {
+  let body;
+  try { body = await req.json(); } catch { return bad('Not JSON.'); }
+  const { space, auth, url } = body || {};
+  if (!HEX64.test(space || '') || !HEX64.test(auth || '')) return bad('Missing or malformed key.');
+  let u;
+  try { u = new URL(String(url || '').replace(/^webcal:/i, 'https:')); } catch { return bad('That isn’t a calendar link.'); }
+  if (u.protocol !== 'https:' || ['localhost', '127.0.0.1'].includes(u.hostname) || /^(10|127|169\.254|172\.(1[6-9]|2\d|3[01])|192\.168)\./.test(u.hostname)) return bad('A calendar link has to be a public https:// address.');
+  const db = env.DB;
+  if (!db) return bad('The server has no database bound as DB.', 500);
+  await ensure(db);
+  const a = await admit(db, env, space, auth);
+  if (a.error) return bad(a.error, a.status);
+  let res;
+  try { res = await fetch(u.toString(), { headers: { accept: 'text/calendar, */*' }, redirect: 'follow', cf: { cacheTtl: 0 } }); } catch { return bad('Couldn’t reach that calendar.', 502); }
+  if (!res.ok) return bad(`The calendar answered ${res.status}. Check the link is the calendar’s public or secret address.`, 502);
+  const text = await res.text();
+  if (text.length > MAX_ICS) return bad('That calendar is too large to read.', 413);
+  if (!/BEGIN:VCALENDAR/.test(text)) return bad('That link isn’t a calendar (.ics).', 422);
+  return json({ ics: text });
+}
+
 export default {
   async fetch(req, env) {
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
@@ -286,6 +314,7 @@ export default {
         return json({ key: (await vapid(env.DB)).pub });
       }
       if (req.method === 'POST' && pathname === '/push') return await push(req, env);
+      if (req.method === 'POST' && pathname === '/calendar') return await calendar(req, env);
       return bad('Not found.', 404);
     } catch (err) {
       console.error(err);

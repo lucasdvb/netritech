@@ -1,4 +1,5 @@
 import * as F from '../domain/fitness.js';
+import { bestE1rm } from '../domain/effort.js';
 import { fmtMD, relativeDay } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
 import { pageHead, empty } from '../ui/components.js';
@@ -21,6 +22,8 @@ export default {
     const isTime = e.metric === 'time', isMin = e.metric === 'minutes';
     const primary = hist.map((h) => (isTime ? h.perf.topSeconds : isMin ? h.perf.minutes : h.perf.totalReps));
     const load = hist.map((h) => (h.perf.topLoad ? kgOut(h.perf.topLoad) : null));
+    // Estimated max per session (Epley, counting reps left in the tank when you logged them).
+    const est = hist.map((h) => { const v = bestE1rm(F.setsOf(h.workout.id).filter((x) => x.exerciseId === e.id)); return v ? Math.round(kgOut(v) * 2) / 2 : null; });
     return html`
       ${pageHead({ title: e.name, eyebrow: F.categoryLabel(e.category), back: { to: 'plan/training/exercises', label: 'Exercises' },
         actions: html`<button type="button" class="btn btn--soft btn--sm" data-action="edit">Edit</button>` })}
@@ -36,8 +39,9 @@ export default {
       <section class="block"><div class="block-head"><h2 class="block-title">${isTime ? 'Best hold per session' : isMin ? 'Minutes per session' : 'Total reps per session'}</h2></div>
         <div class="card">${lineChart({ labels, series: [{ values: primary, color: 'var(--chart-1)', fill: 'var(--accent)', area: true, label: isTime ? 'Hold' : isMin ? 'Minutes' : 'Reps', marks: true }], fmt: (v) => (isTime ? `${num(v)} s` : isMin ? `${num(v)} min` : `${num(v)} reps`), zero: true, empty: 'Log this exercise twice to see a trend.' })}</div>
       </section>
-      ${load.some((x) => x) ? html`<section class="block"><div class="block-head"><h2 class="block-title">Load</h2></div>
-        <div class="card">${lineChart({ labels, series: [{ values: load, color: 'var(--c-posture)', label: 'Top load', marks: true }], fmt: (v) => `${num(v, 1)} ${weightUnit()}`, zero: true })}</div></section>` : ''}
+      ${load.some((x) => x) ? html`<section class="block"><div class="block-head"><h2 class="block-title">Load and estimated max</h2></div>
+        <div class="card">${lineChart({ labels, series: [{ values: load, color: 'var(--c-posture)', label: 'Top load', marks: true }, ...(est.some((x) => x) ? [{ values: est, color: 'var(--chart-1)', label: 'Estimated max', dashed: true, marks: true }] : [])], fmt: (v) => `${num(v, 1)} ${weightUnit()}`, zero: true })}
+          ${est.some((x) => x) ? html`<p class="muted small">Estimated max: what one rep at your limit would be, from your best set each session (reps left in the tank count, when you log them in gym mode).</p>` : ''}</div></section>` : ''}
       ${family.length > 1 ? html`<section class="block"><div class="block-head"><h2 class="block-title">Progression path</h2></div>
         <ol class="ladder">${family.map((f) => html`<li class="${f.id === e.id ? 'is-current' : ''}"><span class="tnum">${f.level}</span>${f.name}</li>`)}</ol></section>` : ''}
       <section class="block"><div class="block-head"><h2 class="block-title">Sessions</h2></div>

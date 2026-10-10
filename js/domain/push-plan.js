@@ -41,7 +41,7 @@ export function pushPlan(base, date = today()) {
       const d = addDays(date, i);
       const tpl = F.plannedTemplate(d);
       const o = P.on(d);
-      if (tpl && o.train) add(true, `train-${d}`, o.cat('workout', nt.workout.time) || o.profile.trainTime, `Training at ${o.profile.trainTime || nt.workout.time}`, tpl.name, 'today', { dates: [d] });
+      if (tpl && o.train) add(true, `train-${d}`, o.cat('workout', nt.workout.time) || o.profile.trainTime, `Training at ${o.profile.trainTime || nt.workout.time}`, `${tpl.name}${H.habit(LINKED.workout)?.bundle ? ` · with ${H.habit(LINKED.workout).bundle}` : ''}`, 'today', { dates: [d] });
     }
   }
   if (nt.habits?.on) {
@@ -50,7 +50,7 @@ export function pushPlan(base, date = today()) {
       if (!h.reminder || linked.has(h.id) || H.feelsAutomatic(h) || ['paused', 'queue'].includes(H.stateOf(h, date))) continue;
       const s = h.schedule || {};
       const tiny = H.tinyOf(h);
-      const body = h.description || (tiny?.label ? `Even just: ${tiny.label}` : 'Still open for today.');
+      const body = `${h.description || (tiny?.label ? `Even just: ${tiny.label}` : 'Still open for today.')}${h.bundle ? ` With ${h.bundle}.` : ''}`;
       // Daily and weekday habits repeat by weekday; anything else is sent on the days it's due.
       const when = s.kind === 'daily' || !s.kind ? {} : s.kind === 'weekdays' ? { days: s.days }
         : { dates: Array.from({ length: DAYS_AHEAD }, (_, i) => addDays(date, i)).filter((d) => H.dueOn(h, d)) };

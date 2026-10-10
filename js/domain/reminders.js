@@ -62,7 +62,9 @@ export function candidates(now) {
   };
   const tpl = F.plannedTemplate(d);
   if (!ritualDone(d, 'morning')) at('morning', o.cat('morning', nt.morning?.time), LINKED.morning, 'Morning check-in', 'One minute: sleep, how you feel, your three.', './#/today');
-  if (tpl && o.train) at('workout', o.cat('workout', nt.workout?.time), LINKED.workout, `Training at ${p.trainTime}`, tpl.name, './#/plan/training');
+  // Temptation bundling: the pairing you keep for training rides along with its reminder.
+  const pair = (id) => habit(id)?.bundle;
+  if (tpl && o.train) at('workout', o.cat('workout', nt.workout?.time), LINKED.workout, `Training at ${p.trainTime}`, `${tpl.name}${pair(LINKED.workout) ? ` · with ${pair(LINKED.workout)}` : ''}`, './#/plan/training');
   if (!ritualDone(d, 'evening') && !sealedAt(d)) at('evening', o.cat('evening', nt.evening?.time), LINKED.evening, 'Close the day', 'What’s left, one win, tomorrow’s first task. Then seal the day.', './#/today');
   if (weekday(d) === 7) at('weeklyReview', nt.weeklyReview?.time, LINKED.weeklyReview, 'Weekly review', 'About three minutes. One change for next week.', './#/reflect/review/week');
 
@@ -96,7 +98,7 @@ export function candidates(now) {
       const rem = o.reminder(h);
       const tm = parseHM(rem);
       if (m < tm || m > tm + 90 || !dueOn(h, d) || isDone(h, d)) continue;
-      out.push({ cat: 'habits', key: `habit:${h.id}`, habitId: h.id, title: h.name, body: h.description || 'Still open for today.', url: `./#/habits/${h.id}`, time: rem });
+      out.push({ cat: 'habits', key: `habit:${h.id}`, habitId: h.id, title: h.name, body: `${h.description || 'Still open for today.'}${h.bundle ? ` With ${h.bundle}.` : ''}`, url: `./#/habits/${h.id}`, time: rem });
     }
   }
   return out;

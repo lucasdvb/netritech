@@ -1523,6 +1523,15 @@ Partway through, the owner made automatic sync between devices a must, so it was
 - **Budgets:** the precache budget now measures the compressed download (section 16.2).
 - **Tested:** `tests/setup.mjs`, `tests/unit/programmes-setup.test.mjs`.
 
+**Phase B: training that adjusts itself (October 2026).**
+- **Effort per set** (`domain/effort.js`): `rir` (reps in reserve, 0–4) on a set, set in gym mode with one tap. `e1rm` is Epley with reps + RIR; `adjustNext` moves the rest of an exercise's sets when one is logged (4+ left inside the range: a step heavier; 0 left below it: 5% lighter), written onto those sets with an `adjusted` reason and undone with the set.
+- **Autoregulated next step** (`domain/next-step.js`): every set at the top with average RIR ≥ 3 → a double step; RIR ≥ 3 on every set below the top → two more reps (`add: 2`, which session start applies); the last set at RIR 0 below the range → 5% lighter. Without effort logged, everything is as before.
+- **Automatic deload** (`domain/deload.js`): `signal` (two lifts stalled over three sessions on estimated max, poor sleep and energy while training, or six hard weeks since the last deload; not within 14 days of one or of *Not now*), `start`/`end`/`snooze` on `profile.deload`/`deloadSnoozed`. Session start halves the sets, takes 10% off and skips progression; `trainingCall` reads the profile directly so Today stays light.
+- **Temptation bundling** (`habit.bundle`): a field in the habit editor; in the habit's in-app and server reminders, and at the top of gym mode for training (Milkman, Minson & Volpp 2014).
+- **Estimated max** on the exercise page, dashed beside the top load.
+- **Tested:** `tests/effort.mjs`, `tests/unit/effort-deload.test.mjs`.
+- The domain modules for phases C–E (`estimates`, `energy`, `sleep-regularity`, `ics-import`, `briefing`, `bills`, `wealth`, `supplements`, `meal-plan`, `trips`, `takeaways`, `decisions`, `wheel`, `habit-timeline`) are in with their unit tests (`tests/unit/life-tools.test.mjs`); their screens follow in those phases.
+
 **Handover audit (October 2026).** A full audit before handover: security, calculations, persistence and every form, then crawlers over every screen and sheet at seven widths. What was found, fixed and proven, and what is still open, is in [`handover-audit.md`](handover-audit.md).
 
 **Left out on purpose:** points and pets, money stakes, "21 days" countdowns, willpower budgets, more default notifications, a barcode food database, a timeline planner. Each is either unsupported by the evidence or adds weight without value.
