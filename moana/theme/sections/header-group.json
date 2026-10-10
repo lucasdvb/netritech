@@ -2,35 +2,45 @@
   "type": "header",
   "name": "Header group",
   "sections": {
-    "usp": {
-      "type": "usp-bar",
-      "blocks": {
-        "u1": { "type": "usp", "settings": { "icon": "truck", "text": "At your door in 1 to 3 working days", "link": "shopify://pages/delivery" } },
-        "u2": { "type": "usp", "settings": { "icon": "gift", "text": "Free delivery over Rs 1,500", "link": "shopify://pages/delivery" } },
-        "u3": { "type": "usp", "settings": { "icon": "list", "text": "Every ingredient, listed", "link": "" } },
-        "u4": { "type": "usp", "settings": { "icon": "mail", "text": "Join the Moana list for first dibs", "link": "#footer-signup" } }
-      },
-      "block_order": ["u1", "u2", "u3", "u4"],
-      "settings": {}
-    },
-    "announcement": {
-      "type": "announcement-bar",
-      "blocks": {
-        "m1": { "type": "message", "settings": { "text": "New to K-beauty? Find your routine in 60 seconds", "link": "shopify://pages/routine-finder" } },
-        "m2": { "type": "message", "settings": { "text": "Free delivery all over Mauritius over Rs 1,500", "link": "shopify://pages/delivery" } }
-      },
-      "block_order": ["m1", "m2"],
-      "settings": {}
-    },
     "header": {
       "type": "header",
       "blocks": {
-        "f1": { "type": "feature", "settings": { "eyebrow": "New in", "title": "Fresh drops, all in one place", "collection": "new", "link": "", "image": "" } },
-        "f2": { "type": "feature", "settings": { "eyebrow": "New to K-beauty?", "title": "Your routine, step by step", "collection": "skincare", "link": "shopify://pages/k-beauty", "image": "" } }
+        "f1": {
+          "type": "feature",
+          "settings": {
+            "eyebrow": "New in",
+            "title": "Fresh drops, all in one place",
+            "collection": "new",
+            "link": "",
+            "image": ""
+          }
+        },
+        "f2": {
+          "type": "feature",
+          "settings": {
+            "eyebrow": "New to K-beauty?",
+            "title": "Your routine, step by step",
+            "collection": "skincare",
+            "link": "shopify://pages/k-beauty",
+            "image": ""
+          }
+        }
       },
-      "block_order": ["f1", "f2"],
-      "settings": { "menu": "moana-nav", "mega_item": "Skincare", "shop_collection": "skincare", "cta_label": "Find my routine", "cta_link": "shopify://pages/routine-finder", "secondary_menu": "moana-footer-help" }
+      "block_order": [
+        "f1",
+        "f2"
+      ],
+      "settings": {
+        "menu": "moana-nav",
+        "mega_item": "Skincare",
+        "shop_collection": "skincare",
+        "cta_label": "Find my routine",
+        "cta_link": "shopify://pages/routine-finder",
+        "secondary_menu": "moana-footer-help"
+      }
     }
   },
-  "order": ["usp", "announcement", "header"]
+  "order": [
+    "header"
+  ]
 }

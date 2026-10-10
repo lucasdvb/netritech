@@ -43,7 +43,7 @@
 {%- endpaginate -%}
 
 {% stylesheet %}
-.search-page__head { display: grid; gap: var(--s-4); margin-bottom: var(--s-7); max-width: 48rem; }
+.search-page__head { display: grid; gap: var(--s-5); padding-top: clamp(1.5rem, .8rem + 2.4vw, 4rem); margin-bottom: clamp(2.5rem, 1.5rem + 3vw, 4.5rem); max-width: 48rem; }
 .search-page__form { display: grid; grid-template-columns: 1fr auto; gap: var(--s-2); }
 .search-page__others { margin-top: var(--s-8); display: grid; gap: var(--s-3); }
 .search-page__others ul { display: grid; gap: var(--s-2); }
