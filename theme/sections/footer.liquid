@@ -1,7 +1,7 @@
 {%- comment -%}
-  Footer. Built on the GetLayers "Lumora" footer composition (inverted slab with rounded top corners,
-  three rule-separated tiers, and a brand word bleeding off the bottom edge), with the Clarix glass
-  sign-up group. Ground: Pantone Black 3 C, the green-black at the dark end of the logo green.
+  Footer. Built on the GetLayers "Artist" footer composition: a quiet column row, the brand word set
+  edge to edge at full width, and a hairline bar. Minimal and bold, on a green-black ground
+  (--c-abyss: Pantone Black 3 C deepened towards black).
   The sign-up is Shopify's own customer form (no app): it saves the email as a customer who accepts marketing.
 {%- endcomment -%}
 {%- liquid
@@ -9,45 +9,41 @@
 -%}
 <footer class="site-footer">
   <div class="page-width footer__shell">
-    {%- if section.settings.show_signup -%}
-      <div class="footer__cta">
-        <div class="footer__cta-text">
-          {%- if section.settings.signup_eyebrow != blank -%}<p class="footer__eyebrow">{{ section.settings.signup_eyebrow }}</p>{%- endif -%}
-          <h2 class="footer__cta-heading" data-lines>{{ section.settings.signup_heading }}</h2>
-        </div>
-        <div class="footer__signup">
-          {%- form 'customer', id: 'footer-signup', class: 'footer__form', novalidate: 'novalidate' -%}
-            <input type="hidden" name="contact[tags]" value="newsletter">
-            {%- if form.posted_successfully? -%}
-              <p class="footer__form-msg footer__form-msg--ok" role="status" tabindex="-1" data-focus-on-load>{% render 'icon', name: 'check' %}{% if settings.kreol %}{{ 'kreol.signup_success' | t }}{% else %}{{ 'footer.signup_success' | t }}{% endif %}</p>
-            {%- else -%}
-              <label class="sr-only" for="footer-email">{{ 'footer.signup_label' | t }}</label>
-              <div class="glass-field{% if form.errors %} is-invalid{% endif %}">
-                <input class="glass-field__input" id="footer-email" type="email" name="contact[email]" autocomplete="email" autocapitalize="off" spellcheck="false" required
-                  placeholder="{{ 'footer.signup_placeholder' | t }}" value="{{ form.email }}"
-                  {% if form.errors %}aria-invalid="true" aria-describedby="footer-email-err"{% else %}aria-describedby="footer-email-note"{% endif %}>
-                <button class="glass-field__btn" type="submit">{{ 'footer.signup_button' | t }}{% render 'icon', name: 'arrow-right' %}</button>
-              </div>
-              {%- if form.errors -%}
-                <p class="footer__form-msg footer__form-msg--error" id="footer-email-err">{% render 'icon', name: 'alert' %}{{ 'footer.signup_error' | t }}</p>
-              {%- else -%}
-                <p class="footer__form-note" id="footer-email-note">{{ section.settings.signup_note }}</p>
-              {%- endif -%}
-            {%- endif -%}
-          {%- endform -%}
-        </div>
-      </div>
-    {%- endif -%}
-
-    <div class="footer__cols">
+    {%- comment -%} register 1: brand column (5) facing three quiet link columns (2 | 2 | 3) {%- endcomment -%}
+    <div class="footer__row">
       <div class="footer__brand">
         <a href="{{ routes.root_url }}" class="footer__logo"><img src="{{ 'logo-lockup-light.webp' | asset_url }}" alt="{{ brand_name | escape }}" width="900" height="436" loading="lazy"></a>
-        {%- if section.settings.tagline != blank -%}<p>{{ section.settings.tagline }}</p>{%- endif -%}
+        {%- if section.settings.tagline != blank -%}<p class="footer__tagline">{{ section.settings.tagline }}</p>{%- endif -%}
+
+        {%- if section.settings.show_signup -%}
+          <div class="footer__signup">
+            {%- if section.settings.signup_eyebrow != blank -%}<p class="footer__label" id="footer-signup-label">{{ section.settings.signup_eyebrow }}</p>{%- endif -%}
+            {%- form 'customer', id: 'footer-signup', class: 'footer__form', novalidate: 'novalidate' -%}
+              <input type="hidden" name="contact[tags]" value="newsletter">
+              {%- if form.posted_successfully? -%}
+                <p class="footer__form-msg footer__form-msg--ok" role="status" tabindex="-1" data-focus-on-load>{% render 'icon', name: 'check' %}{% if settings.kreol %}{{ 'kreol.signup_success' | t }}{% else %}{{ 'footer.signup_success' | t }}{% endif %}</p>
+              {%- else -%}
+                <label class="sr-only" for="footer-email">{{ 'footer.signup_label' | t }}</label>
+                <div class="line-field{% if form.errors %} is-invalid{% endif %}">
+                  <input class="line-field__input" id="footer-email" type="email" name="contact[email]" autocomplete="email" autocapitalize="off" spellcheck="false" required
+                    placeholder="{{ 'footer.signup_placeholder' | t }}" value="{{ form.email }}"
+                    {% if form.errors %}aria-invalid="true" aria-describedby="footer-email-err"{% else %}aria-describedby="footer-email-note"{% endif %}>
+                  <button class="line-field__btn" type="submit">{{ 'footer.signup_button' | t }}{% render 'icon', name: 'arrow-right' %}</button>
+                </div>
+                {%- if form.errors -%}
+                  <p class="footer__form-msg footer__form-msg--error" id="footer-email-err">{% render 'icon', name: 'alert' %}{{ 'footer.signup_error' | t }}</p>
+                {%- else -%}
+                  <p class="footer__form-note" id="footer-email-note">{{ section.settings.signup_note }}</p>
+                {%- endif -%}
+              {%- endif -%}
+            {%- endform -%}
+          </div>
+        {%- endif -%}
       </div>
 
       {%- for block in section.blocks -%}
-        <nav class="footer__col" aria-labelledby="footer-h-{{ block.id }}" {{ block.shopify_attributes }}>
-          <h2 id="footer-h-{{ block.id }}">{{ block.settings.heading }}</h2>
+        <nav class="footer__col footer__col--{{ block.type }}" aria-labelledby="footer-h-{{ block.id }}" {{ block.shopify_attributes }}>
+          <h2 class="footer__label" id="footer-h-{{ block.id }}">{{ block.settings.heading }}</h2>
           {%- case block.type -%}
             {%- when 'menu' -%}
               <ul role="list">
@@ -57,9 +53,9 @@
               </ul>
             {%- when 'contact' -%}
               <ul class="footer__contact" role="list">
-                <li><a class="footer__link" href="mailto:{{ shop.email }}">{% render 'icon', name: 'mail' %}<span>{{ shop.email }}</span></a></li>
+                <li><a class="footer__link" href="mailto:{{ shop.email }}"><span>{{ shop.email }}</span></a></li>
                 {%- if settings.address_street != blank -%}
-                  <li class="footer__addr">{% render 'icon', name: 'pin' %}<span>{{ settings.address_street }}, {{ settings.address_locality }}</span></li>
+                  <li class="footer__addr"><span>{{ settings.address_street }}, {{ settings.address_locality }}</span></li>
                 {%- endif -%}
               </ul>
           {%- endcase -%}
@@ -67,6 +63,21 @@
       {%- endfor -%}
     </div>
 
+    {%- comment -%}
+      register 2: the brand word, set edge to edge. Its size is worked out from the column width
+      (container query units), so it always fits the full width and is never cropped. Each letter
+      rises out of its own mask when the footer arrives. Decorative: hidden from assistive tech.
+    {%- endcomment -%}
+    {%- if section.settings.watermark != blank -%}
+      <div class="footer__word reveal" aria-hidden="true">
+        <p class="footer__word-text">
+          {%- assign letters = section.settings.watermark | upcase | split: '' -%}
+          {%- for l in letters -%}<span style="--l: {{ forloop.index0 }}">{{ l }}</span>{%- endfor -%}
+        </p>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} register 3: a hairline bar, copyright left, legal, language and credit right {%- endcomment -%}
     <div class="footer__bottom">
       <p>&copy; {{ 'now' | date: '%Y' }} {{ settings.legal_name | default: brand_name }}{% if settings.company_number != blank %} · {{ 'footer.brn' | t }} {{ settings.company_number }}{% endif %}</p>
       <div class="footer__legal">
@@ -85,101 +96,87 @@
             {%- endfor -%}
           {%- endform -%}
         {%- endif -%}
+        {%- if section.settings.credit_label != blank -%}
+          <p class="footer__credit"><a class="footer__link" href="{{ section.settings.credit_url | default: 'https://www.disruptivedodo.mu' }}" target="_blank" rel="noopener"><span>{{ section.settings.credit_label }}</span></a></p>
+        {%- endif -%}
       </div>
-      {%- if section.settings.credit_label != blank -%}
-        <p class="footer__credit"><a class="footer__link" href="{{ section.settings.credit_url | default: 'https://www.disruptivedodo.mu' }}" target="_blank" rel="noopener"><span>{{ section.settings.credit_label }}</span></a></p>
-      {%- endif -%}
     </div>
   </div>
-  {%- if section.settings.watermark != blank -%}
-    <p class="footer__watermark" aria-hidden="true" data-text="{{ section.settings.watermark | escape }}"></p>
-  {%- endif -%}
 </footer>
 
 {% stylesheet %}
-  .site-footer {
-    position: relative; overflow: hidden; margin-top: var(--s-6);
-    background: var(--c-night); color: var(--c-mist);
-    border-radius: clamp(20px, 1rem + 1.5vw, 36px) clamp(20px, 1rem + 1.5vw, 36px) 0 0;
-  }
-  .footer__shell { position: relative; z-index: 1; padding-top: clamp(3.5rem, 2rem + 5vw, 6rem); }
+  /* Footer v2: GetLayers "Artist" footer composition, minimal and bold. Three registers on a
+     green-black ground: a quiet 5 | 2 | 2 | 3 column row, the brand word at full width, a hairline bar.
+     Ground: --c-abyss, Pantone Black 3 C deepened towards black. Square, like the rest of the site. */
+  .site-footer { position: relative; margin-top: var(--s-6); background: var(--c-abyss); color: var(--c-mist); }
+  .footer__shell { padding-top: clamp(4rem, 2.5rem + 5vw, 7rem); }
 
-  /* tier 1: the sign-up row */
-  .footer__cta { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--s-6); padding-bottom: clamp(3rem, 2rem + 3vw, 4.5rem); border-bottom: 1px solid rgba(223,224,219,.12); }
-  @media (min-width: 990px) { .footer__cta { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: end; gap: var(--s-8); } }
-  .footer__eyebrow { font: var(--w-semibold) var(--fs-label)/1.4 var(--f-body); letter-spacing: .18em; text-transform: uppercase; color: var(--c-sage); margin-bottom: var(--s-4); }
-  .footer__cta-heading { max-width: 16ch; font: var(--type-display); letter-spacing: var(--ls-display); color: var(--c-white); text-wrap: balance; }
-  .footer__cta-heading em { font-style: italic; color: var(--c-spring); }
+  .footer__row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-7) var(--s-5); }
+  .footer__brand, .footer__col--contact { grid-column: 1 / -1; }
+  @media (min-width: 990px) {
+    .footer__row { grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--s-6); }
+    .footer__brand { grid-column: span 5; padding-right: var(--s-7); }
+    .footer__col { grid-column: span 2; }
+    .footer__col--contact { grid-column: span 3; }
+  }
+  .footer__logo { display: inline-block; }
+  .footer__logo img { width: 132px; height: auto; }
+  .footer__tagline { margin-top: var(--s-5); max-width: 28ch; font: italic var(--w-light) var(--fs-xl)/1.3 var(--f-body); letter-spacing: var(--ls-tight); color: rgba(223, 224, 219, .78); }
+  .footer__label { font: var(--type-label); letter-spacing: var(--ls-label); text-transform: uppercase; color: rgba(223, 224, 219, .55); margin-bottom: var(--s-4); }
 
-  /* Clarix glass input group: a frosted pill with the submit attached */
-  .glass-field {
-    display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: var(--r-pill);
-    background: rgba(255,255,255,.06); border: 1px solid rgba(223,224,219,.18);
-    -webkit-backdrop-filter: blur(16px) saturate(1.2); backdrop-filter: blur(16px) saturate(1.2);
-    transition: border-color var(--t) var(--ease), background-color var(--t) var(--ease);
-  }
-  .glass-field:focus-within { border-color: var(--c-spring); background: rgba(255,255,255,.09); }
-  .glass-field.is-invalid { border-color: #e7a59c; }
-  .glass-field__input { flex: 1; min-width: 0; min-height: 48px; padding: 0 1rem; border: 0; background: none; color: var(--c-white); font-size: var(--fs-md); }
-  .glass-field__input::placeholder { color: rgba(223,224,219,.62); }
-  .glass-field__input:focus-visible { outline: none; }
-  .glass-field__btn {
-    position: relative; display: inline-flex; align-items: center; gap: .5rem; min-height: 48px; padding: 0 1.4rem; border-radius: var(--r-pill);
-    background: var(--c-spring); color: var(--c-night); font: var(--w-semibold) var(--fs-xs)/1 var(--f-body); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap;
-    overflow: hidden; isolation: isolate;
-  }
-  .glass-field__btn::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--c-white); transform: translateY(101%); transition: transform var(--t) var(--ease); }
-  @media (hover: hover) { .glass-field__btn:hover::before { transform: none; } }
-  .glass-field__btn svg { width: 16px; height: 16px; transition: transform var(--t) var(--ease); }
-  .glass-field__btn:hover svg { transform: translateX(3px); }
-  .glass-field__btn:focus-visible { outline: 2px solid var(--c-white); outline-offset: 2px; }
-  .footer__form-note { margin-top: var(--s-3); padding-left: 1rem; font-size: var(--fs-xs); color: rgba(223,224,219,.72); }
-  .footer__form-msg { display: flex; gap: .5rem; align-items: flex-start; margin-top: var(--s-3); font-size: var(--fs-small); font-weight: var(--w-semibold); }
+  /* sign-up: a single hairline, the size of the words is the affordance */
+  .footer__signup { margin-top: var(--s-7); max-width: 26rem; }
+  .line-field { display: flex; align-items: center; gap: var(--s-3); border-bottom: 1px solid rgba(223, 224, 219, .35); transition: border-color var(--t) var(--ease); }
+  .line-field:focus-within { border-color: var(--c-white); }
+  .line-field.is-invalid { border-color: #e7a59c; }
+  .line-field__input { flex: 1; min-width: 0; min-height: 52px; padding: 0; border: 0; background: none; color: var(--c-white); font: var(--type-lead); }
+  .line-field__input::placeholder { color: rgba(223, 224, 219, .5); }
+  .line-field__input:focus-visible { outline: none; }
+  .line-field__btn { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; color: var(--c-white); font: var(--type-button); letter-spacing: var(--ls-button); text-transform: uppercase; white-space: nowrap; }
+  .line-field__btn svg { width: 16px; height: 16px; transition: translate var(--t) var(--ease); }
+  .line-field__btn:hover svg { translate: 4px 0; }
+  .line-field__btn:focus-visible { outline: 2px solid var(--c-white); outline-offset: 4px; }
+  .footer__form-note { margin-top: var(--s-3); font-size: var(--fs-xs); color: rgba(223, 224, 219, .62); }
+  .footer__form-msg { display: flex; gap: .5rem; align-items: flex-start; margin-top: var(--s-3); font: var(--type-ui); }
   .footer__form-msg svg { width: 18px; height: 18px; flex: none; margin-top: 1px; }
-  .footer__form-msg--ok { margin-top: 0; padding: 1rem 1.25rem; border-radius: var(--r-pill); background: rgba(209,217,190,.12); color: var(--c-spring); }
+  .footer__form-msg--ok { margin-top: 0; color: var(--c-spring); }
   .footer__form-msg--error { color: #f0b8b0; }
 
-  /* tier 2: brand + link columns */
-  .footer__cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-7) var(--s-5); padding-block: clamp(3rem, 2rem + 3vw, 4.5rem); }
-  .footer__brand, .footer__col:has(.footer__contact) { grid-column: 1 / -1; }
-  @media (min-width: 990px) { .footer__cols { grid-template-columns: 1.3fr repeat(3, minmax(0, 1fr)); gap: var(--s-6); } .footer__brand, .footer__col:has(.footer__contact) { grid-column: auto; } }
-  .footer__logo { display: inline-block; }
-  .footer__brand img { width: 156px; height: auto; }
-  .footer__brand p { margin-top: var(--s-5); max-width: 22rem; color: rgba(223,224,219,.8); font-size: var(--fs-md); line-height: 1.65; }
-  .footer__col h2 { font: var(--w-semibold) var(--fs-label)/1.4 var(--f-body); letter-spacing: .18em; text-transform: uppercase; color: var(--c-sage); margin-bottom: var(--s-4); }
-  .footer__col li + li { margin-top: .3rem; }
-  /* link motion from the Lumora footer: the label slides 4px and comes up to full strength */
-  .footer__link { display: inline-flex; align-items: flex-start; gap: .6rem; min-height: 32px; padding-block: 4px; color: var(--c-mist); font-size: var(--fs-md); }
-  .footer__link > span { display: inline-block; opacity: .82; transition: transform var(--t) cubic-bezier(.34, 1.4, .64, 1), opacity var(--t-fast) var(--ease); }
-  @media (hover: hover) { .footer__link:hover > span { transform: translateX(4px); opacity: 1; } }
+  .footer__col li + li { margin-top: .25rem; }
+  .footer__link { display: inline-flex; align-items: flex-start; min-height: 32px; padding-block: 4px; color: var(--c-mist); font-size: var(--fs-md); }
+  .footer__link > span { display: inline-block; opacity: .82; transition: translate var(--t) cubic-bezier(.34, 1.4, .64, 1), opacity var(--t-fast) var(--ease); }
+  @media (hover: hover) { .footer__link:hover > span { translate: 4px 0; opacity: 1; } }
   .footer__link[aria-current="page"] > span { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
-  .footer__contact svg, .footer__addr svg { width: 18px; height: 18px; flex: none; margin-top: 3px; color: var(--c-sage); }
-  .footer__addr { display: flex; gap: .6rem; padding-block: 4px; font-size: var(--fs-md); color: rgba(223,224,219,.82); }
   .footer__contact .footer__link > span { word-break: break-word; }
+  .footer__addr { padding-block: 4px; font-size: var(--fs-md); line-height: 1.5; color: rgba(223, 224, 219, .75); }
 
-  /* tier 3: legal bar */
+  /* the brand word: full width, fitted, never cropped */
+  .footer__word { container-type: inline-size; margin-top: clamp(4rem, 2.5rem + 5vw, 7rem); }
+  .footer__word-text {
+    display: flex; justify-content: space-between; width: 100%;
+    font: var(--w-bold) calc(100cqw / 3.70)/.78 var(--f-body); letter-spacing: 0; color: var(--c-mist);
+    font-variant-ligatures: none; white-space: nowrap; overflow: hidden; padding-top: .04em;
+  }
+  .footer__word-text span { display: inline-block; }
+  /* Raleway Bold's M sits .062em inside its box: pull it out so the ink is flush with the left edge */
+  .footer__word-text span:first-child { margin-left: -.062em; }
+  .js .footer__word.reveal { opacity: 1; filter: none; transform: none; }
+  .js .footer__word-text span { translate: 0 105%; transition: translate 1100ms cubic-bezier(.16, 1, .3, 1); transition-delay: calc(var(--l) * 70ms); }
+  .js .footer__word.is-in .footer__word-text span { translate: 0 0; }
+  @media (prefers-reduced-motion: reduce) { .js .footer__word-text span { translate: none; transition: none; } }
+
   .footer__bottom {
     display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3) var(--s-5);
-    padding-block: var(--s-5) calc(clamp(4.5rem, 3rem + 7vw, 10rem) + env(safe-area-inset-bottom));
-    border-top: 1px solid rgba(223,224,219,.12); font-size: var(--fs-xs); color: rgba(223,224,219,.74);
+    margin-top: clamp(1.5rem, 1rem + 1.5vw, 2.5rem); padding-block: var(--s-5) calc(var(--s-6) + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(223, 224, 219, .16); font-size: var(--fs-xs); color: rgba(223, 224, 219, .7);
   }
   .footer__legal { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2) var(--s-5); }
   .footer__legal ul { display: flex; flex-wrap: wrap; gap: 0 var(--s-5); }
-  .footer__legal .footer__link { font-size: var(--fs-xs); min-height: 28px; }
-  .footer__credit { flex-basis: 100%; }
-  .footer__credit .footer__link { font-size: var(--fs-xs); min-height: 28px; letter-spacing: .04em; }
+  .footer__legal .footer__link, .footer__credit .footer__link { font-size: var(--fs-xs); min-height: 28px; }
+  .footer__credit .footer__link { letter-spacing: .04em; }
   .footer__lang { display: inline-flex; align-items: center; gap: var(--s-2); }
-  .footer__lang button { min-height: 36px; padding: 0 .9rem; border: 1px solid rgba(223,224,219,.3); border-radius: var(--r-pill); color: var(--c-mist); font-size: var(--fs-xs); font-weight: var(--w-semibold); transition: border-color var(--t-fast) var(--ease); }
+  .footer__lang button { min-height: 36px; padding: 0 .9rem; border: 1px solid rgba(223, 224, 219, .3); color: var(--c-mist); font-size: var(--fs-xs); font-weight: var(--w-semibold); transition: border-color var(--t-fast) var(--ease); }
   .footer__lang button:hover { border-color: var(--c-mist); }
-
-  /* the brand word bleeding off the bottom edge: a texture, not a heading */
-  /* decorative wordmark, drawn from CSS so it is not read or contrast-checked as text */
-  .footer__watermark::before { content: attr(data-text); }
-  .footer__watermark {
-    position: absolute; left: 50%; bottom: -.24em; z-index: 0; transform: translateX(-50%);
-    font: var(--w-extralight) clamp(6rem, 2rem + 22vw, 22rem)/.8 var(--f-body); letter-spacing: -.05em; white-space: nowrap;
-    color: rgba(223,224,219,.06); pointer-events: none; user-select: none;
-  }
 {% endstylesheet %}
 
 {% schema %}
@@ -189,10 +186,9 @@
   "settings": [
     { "type": "checkbox", "id": "show_signup", "label": "Show email sign-up", "default": true },
     { "type": "text", "id": "signup_eyebrow", "label": "Sign-up label", "default": "The Moana list" },
-    { "type": "inline_richtext", "id": "signup_heading", "label": "Sign-up heading", "default": "New drops, restocks and routines, <em>first</em>." },
     { "type": "text", "id": "signup_note", "label": "Sign-up note", "default": "One email when there is something worth knowing. Unsubscribe any time." },
     { "type": "textarea", "id": "tagline", "label": "Tagline", "default": "Korean skincare for island skin, delivered all over Mauritius." },
-    { "type": "text", "id": "watermark", "label": "Background word", "default": "Moana", "info": "Decorative only. Leave empty to hide." },
+    { "type": "text", "id": "watermark", "label": "Footer word", "default": "Moana", "info": "Set in capitals across the full width. Decorative only. Leave empty to hide." },
     { "type": "text", "id": "credit_label", "label": "Credit line", "default": "Built by Disruptive Dodo", "info": "Shown at the very bottom. Leave empty to hide." },
     { "type": "url", "id": "credit_url", "label": "Credit link", "info": "Empty links to www.disruptivedodo.mu." }
   ],
