@@ -1,7 +1,8 @@
 {%- comment -%}
   Renders a list of tag links with live product counts, from a comma-separated tag list in theme settings.
   Params: source (collection to count and link within), tags (comma list), style ('list' | 'pills' | 'drawer'),
-          current (current tag, for aria-current), hide_empty (default true).
+          current (current tag, for aria-current), hide_empty (default true),
+          preview (true in the mega menu: adds a photo, name and count for the hover preview).
   Links use Shopify's tag route (/collections/<handle>/<tag-handle>), which needs no filter app configuration.
 {%- endcomment -%}
 {%- liquid
@@ -18,9 +19,13 @@
       continue
     endif
     assign n = 0
+    assign first = nil
     for p in source.products
       if p.tags contains t
         assign n = n | plus: 1
+        if first == nil
+          assign first = p
+        endif
       endif
     endfor
     if hide and n == 0
@@ -33,6 +38,6 @@
     {%- when 'pills' -%}
       <a class="pill" href="{{ href }}"{% if current == t_handle %} aria-current="page"{% endif %}>{{ t }} <small>{{ n }}</small></a>
     {%- else -%}
-      <li><a href="{{ href }}"{% if current == t_handle %} aria-current="page"{% endif %}>{{ t }} <small>{{ n }}</small></a></li>
+      <li><a href="{{ href }}"{% if current == t_handle %} aria-current="page"{% endif %}{% if preview and first %} data-preview-img="{{ first.featured_media.preview_image | image_url: width: 600 }}" data-preview-title="{{ t | escape }}" data-preview-text="{{ 'collections.product_count' | t: count: n | escape }}"{% endif %}>{{ t }} <small>{{ n }}</small></a></li>
   {%- endcase -%}
 {%- endfor -%}

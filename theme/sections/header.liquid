@@ -47,6 +47,11 @@
         <a class="header__action" href="{{ routes.account_url }}">
           {%- render 'icon', name: 'user' -%}<span class="header__action-label">{{ 'header.account' | t }}</span>
         </a>
+        {%- capture pts_now -%}{%- render 'points-balance' -%}{%- endcapture -%}
+        {%- assign pts_now = pts_now | strip -%}
+        {%- if pts_now != blank -%}
+          <a class="header__points hide-mobile-sm" href="{{ settings.rewards_page.url | default: '/pages/rewards' }}">{% render 'icon', name: 'sparkle' %}{{ 'rewards.header' | t: n: pts_now }}</a>
+        {%- endif -%}
       {%- endif -%}
       <a class="header__action header__icon" href="{{ routes.cart_url }}" id="cart-icon" data-cart-open aria-haspopup="dialog">
         {%- render 'icon', name: 'bag' -%}<span class="header__action-label">{{ 'header.cart' | t }}</span>
@@ -77,19 +82,36 @@
                   <ul role="list">
                     <li><a href="{{ link.url }}">{{ 'header.shop_all' | t }} <small>{{ link.object.products_count }}</small></a></li>
                     {%- for child in link.links -%}
-                      <li><a href="{{ child.url }}"{% if child.current %} aria-current="page"{% endif %}>{{ child.title }}{% if child.type == 'collection_link' %} <small>{{ child.object.products_count }}</small>{% endif %}</a></li>
+                      {%- liquid
+                        assign pv_img = nil
+                        assign pv_text = ''
+                        if child.type == 'collection_link'
+                          assign pv_img = child.object.featured_image | default: child.object.products.first.featured_media.preview_image
+                          assign pv_text = child.object.description | strip_html | strip_newlines | truncatewords: 14
+                          if pv_text == blank
+                            assign pv_text = 'collections.product_count' | t: count: child.object.products_count
+                          endif
+                        endif
+                      -%}
+                      <li><a href="{{ child.url }}"{% if child.current %} aria-current="page"{% endif %}{% if pv_img %} data-preview-img="{{ pv_img | image_url: width: 600 }}" data-preview-title="{{ child.title | escape }}" data-preview-text="{{ pv_text | escape }}"{% endif %}>{{ child.title }}{% if child.type == 'collection_link' %} <small>{{ child.object.products_count }}</small>{% endif %}</a></li>
                     {%- endfor -%}
                   </ul>
                 </div>
                 <div class="mega__col">
                   <h3 class="mega__title">{{ 'header.by_concern' | t }}</h3>
-                  <ul role="list">{% render 'tag-counts', source: shop_source, tags: settings.concern_tags %}</ul>
+                  <ul role="list">{% render 'tag-counts', source: shop_source, tags: settings.concern_tags, preview: true %}</ul>
                 </div>
                 <div class="mega__col">
                   <h3 class="mega__title">{{ 'header.by_skin_type' | t }}</h3>
-                  <ul role="list">{% render 'tag-counts', source: shop_source, tags: settings.skin_type_tags %}</ul>
+                  <ul role="list">{% render 'tag-counts', source: shop_source, tags: settings.skin_type_tags, preview: true %}</ul>
                 </div>
-                <div class="mega__feature">
+                <div class="mega__feature" data-mega-feature>
+                  {%- comment -%} hover preview: a photo and one line for the link under the pointer, crossfaded over the cards (theme.js) {%- endcomment -%}
+                  <div class="mega-preview" aria-hidden="true">
+                    <span class="mega-preview__img"><img alt="" width="600" height="600" data-pv-a><img alt="" width="600" height="600" data-pv-b></span>
+                    <span class="mega-preview__title" data-pv-title></span>
+                    <span class="mega-preview__text" data-pv-text></span>
+                  </div>
                   {%- for block in section.blocks -%}
                     {%- liquid
                       assign card_img = block.settings.image
@@ -209,6 +231,8 @@
   .header__action { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: .45rem; min-width: 44px; height: 44px; padding: 0 8px; font: var(--w-medium) var(--fs-sm)/1 var(--f-body); letter-spacing: .03em; color: var(--ink); }
   .header__action svg { width: 22px; height: 22px; flex: none; }
   .header__action-label { display: none; }
+  .header__points { display: inline-flex; align-items: center; gap: .3rem; height: 32px; padding: 0 .7rem; border: 1px solid var(--line-strong); font: var(--type-label); letter-spacing: .06em; color: var(--c-forest); font-variant-numeric: lining-nums; }
+  .header__points svg { width: 14px; height: 14px; }
   @media (hover: hover) { .header__action:hover .header__action-label { text-decoration: underline; text-underline-offset: 4px; } }
   .header__badge { position: absolute; top: 3px; left: 22px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--c-forest); color: var(--c-white); font: 700 10px/18px var(--f-body); text-align: center; }
   .header__icon .cart-count { top: 2px; right: auto; left: 20px; }
@@ -255,6 +279,18 @@
   .mega-card:hover .media img { transform: scale(1.04); }
   .mega-card__eyebrow { font: var(--w-semibold) var(--fs-2xs)/1.3 var(--f-body); letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
   .mega-card__title { font: var(--w-regular) var(--fs-lg)/1.2 var(--f-body); }
+  .mega__feature { position: relative; }
+  .mega-card { transition: opacity 300ms var(--ease); }
+  .mega-preview { position: absolute; inset: 0; z-index: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto 1fr; column-gap: var(--s-5); row-gap: var(--s-2); align-content: start;
+    opacity: 0; pointer-events: none; transition: opacity 300ms var(--ease); }
+  .mega-preview__img { position: relative; grid-row: 1 / 4; aspect-ratio: 1; overflow: hidden; background: linear-gradient(160deg, #f3f5ec, var(--c-spring)); }
+  .mega-preview__img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 10%; mix-blend-mode: multiply; opacity: 0; scale: 1.04; transition: opacity 360ms var(--ease), scale 700ms var(--ease-out); }
+  .mega-preview__img img.is-on { opacity: 1; scale: 1; }
+  .mega-preview__title { align-self: end; padding-top: var(--s-6); font: var(--type-h3); letter-spacing: var(--ls-tight); }
+  .mega-preview__text { font: var(--type-small); color: var(--ink-soft); max-width: 22rem; }
+  .mega__feature.is-previewing .mega-preview { opacity: 1; }
+  .mega__feature.is-previewing .mega-card { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) { .mega-preview, .mega-card, .mega-preview__img img { transition: none; } }
 
   .menu-drawer .drawer__body { padding: 0; }
   .menu-drawer__cta { margin: var(--s-4) var(--s-5) 0; width: calc(100% - 2 * var(--s-5)); }

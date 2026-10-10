@@ -1,6 +1,6 @@
 # Moana Beauté: handover
 
-October 2026 (v5). Store: `moana-beaute.myshopify.com`.
+October 2026 (v6). Store: `moana-beaute.myshopify.com`.
 
 ## Where things are
 
@@ -10,6 +10,38 @@ October 2026 (v5). Store: `moana-beaute.myshopify.com`.
 | Preview link | `https://moana-beaute.myshopify.com/?preview_theme_id=191582306594` (the storefront password may be needed first) |
 | Theme editor | Shopify admin → Online Store → Themes → *Moana Beauté v2 (preview)* → Customize |
 | Code | `moana/` in this repository (branch `claude/eloquent-bardeen-p6n61a`) |
+
+## What changed in v6 (ideas 1, 17, 26, 33, 38, 41, 43, 44, 45)
+
+1. **My skin diary** (`/pages/skin-diary`, new page):
+   - **Checklist:** her routine as a morning and evening list she ticks off. The evening list leaves out sunscreen.
+   - **Streak and history:** a "days in a row" streak, the last four weeks as a calendar, and a one-tap "how does my skin feel" log.
+   - **Setting it up:** the routine comes from the quiz (Save to my skin diary) or she builds it from the catalogue.
+   - **Storage:** everything stays on her phone (localStorage); nothing is sent anywhere.
+   - **Shortcuts:** once she has a diary, the phone dock's Routine button opens it.
+2. **Moana rewards** (`/pages/rewards`, new page):
+   - **Where points show:** "Earn N Moana points" on product pages, "This order earns about N points" in the bag, a points chip in the header when signed in, and her balance on the Rewards page as a ring that counts up to her next reward.
+   - **My proposed numbers:** 10 points per Rs 100, 500 points = Rs 250 off (about 5% back). These are a proposal for you to confirm or change in Theme settings → Moana rewards. Rewards can be switched off there too.
+   - **How points get added:** the theme only *shows* points. They are read from the customer field **Moana points** (`moana.points`, now defined in Settings → Custom data → Customers). Two ways to fill it:
+     1. **Shopify Flow** (free). Create a workflow: trigger *Order paid*, action *Update customer metafield* `moana.points`, value = current points + (order subtotal ÷ 100 × 10), rounded down. Redeem by giving the customer a discount code when she reaches 500, and subtract 500.
+     2. **A loyalty app** (Smile, Joy, Rivo and others) that writes the balance to the same field, or swap the field name in Theme settings.
+3. **Budget slider** in Find my routine: a fourth question (Rs 2k to Rs 6k, or no limit).
+   - The estimate updates live as she drags.
+   - The quiz then swaps in cheaper picks that cost the least fit until the routine fits, and shows the total.
+   - It says so honestly when the shelf can't get under the budget.
+4. **Kreol touches** (Theme settings → Voice, on by default):
+   - **Where:** Bonzour / Bonswar greetings (skin diary, Rewards), "Mersi! Added to your bag.", "Pa bizin traka." in empty bags, "Byenvini" on welcome screens, and "Mersi!" on the sign-up confirmation.
+   - **Before launch:** have the team check the wording.
+5. **Morning / evening switch** on the routine section (home and K-beauty guide):
+   - **What changes:** the section re-tints to dusk, the evening copy swaps in, and sunscreen steps out.
+   - **When:** it opens on evening after 5pm Mauritius time.
+   - **Settings:** each step has a "When" setting (morning, evening or both).
+6. **Mega menu previews:** hovering a category, concern or skin type crossfades a product photo, the name and a line (description or product count) into the menu's feature area.
+7. **Celebrations:** a light shimmer and a ring of sparks when free delivery unlocks, when a diary session is complete, and when a reward is waiting.
+8. **Long-press on phones:** hold a product card for half a second for Save, Quick view and Add to bag. The press never opens the product.
+9. **Pull to refresh on phones:** at the top of any page, pull down to draw a ring around the Moana wave mark (shown as supplied, only faded and scaled evenly), then let go to reload. The browser's own pull-to-refresh is switched off on phones so there is only one.
+
+**Store data changed (reversible):** two pages (My skin diary, Moana rewards), both added to the footer Shop menu; a customer metafield definition `moana.points`.
 
 ## What changed in v5 (UI and UX)
 
@@ -167,6 +199,7 @@ Both are linked from the header and from the footer's Shop column.
    - Shopify accepted every template.
 2. **Against the local preview** (`dev/`): the real theme files, the real catalogue, and Shopify's endpoints emulated (cart, including multi-item adds, section rendering, predictive search, filters, recommendations).
    - `node dev/e2e.mjs`: **40/40** (cart drawer, quantities, free-delivery maths, stock cap, sticky bar, recommendations, filters, sort, predictive search, keyboard, focus traps, no overflow, no-JS forms).
+   - `node dev/batch3-test.mjs`: **49/49**. Budget slider (label, live estimate, routine within budget, hand-off to the diary); skin diary (empty state, Byenvini, building, Bonzour/Bonswar, ticking, celebration, streak and calendar, feelings, evening list, opening on evening, dock shortcut); routine morning/evening (steps, dusk, copy, wash tint, opening on evening); mega previews; free-delivery celebration; rewards (guest, earning rule, signed-in count-up, ready message, header chip, product points); long-press actions; pull to refresh (arms, reloads, springs back); Kreol empty bag.
    - `node dev/ux-test.mjs`: **41/41**. Dock (shows, current page, hides and returns, opens the bag, hidden on desktop); add-to-bag morph, count roll and new line; quick view (hover pill, content, Escape, add and hand-off to the bag); view-transition wiring; gallery (open, arrows, swipe, zoom in and out, thumbnails, drag-down close, focus return); forecast with a simulated Open-Meteo reply and offline; quiz (descriptions, full height, intro, wash tint, result); ripple (built on hover, runs, fades, off under reduced motion).
    - `node dev/cro-test.mjs`: **11/11**. Delivery dates on the product page and in the bag, the weekend arithmetic (Friday, Saturday and Monday orders), next-step pick and add, and recently viewed (newest first, current product excluded).
    - `node dev/new-pages-test.mjs`: **11/11**. The quiz builds a five-step routine; Add the whole routine opens the bag with the products; arrow keys don't skip questions; hearts toggle; the header count updates; the wishlist page shows, removes and clears cards; no console errors.
@@ -175,10 +208,12 @@ Both are linked from the header and from the footer's Shop column.
 
    | Page | Perf | A11y | Best practices | SEO | CLS |
    |---|---|---|---|---|---|
-   | Home | 87–91 | 100 | 100 | 100 | 0 |
+   | Home | 87–89 | 100 | 100 | 100 | 0 |
+   | Skin diary | 87 | 100 | 100 | 100 | 0 |
+   | Rewards | 87 | 100 | 100 | 100 | 0 |
    | Collection | 87 | 100 | 100 | 100 | 0 |
-   | Product | 92 | 100 | 100 | 100 | 0 |
-   | Find my routine | 91–92 | 100 | 100 | 100 | 0 |
+   | Product | 96 | 100 | 100 | 100 | 0 |
+   | Find my routine | 87 | 100 | 100 | 100 | 0 |
    | Wishlist | 91 | 100 | – | noindex | 0 |
 
    Layout shift was traced to zero on every template:

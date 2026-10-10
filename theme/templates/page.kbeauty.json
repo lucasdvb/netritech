@@ -30,7 +30,10 @@
         "link_label": "Shop the routine",
         "link_url": "shopify://collections/skincare",
         "script": "",
-        "wash": true
+        "wash": true,
+        "ampm": true,
+        "evening_heading": "The evening routine",
+        "evening_text": "At night, the same order without sunscreen. Thin layers, patted in, a few seconds between each."
       },
       "blocks": {
         "step_1": {
@@ -70,7 +73,8 @@
           "settings": {
             "name": "Protect",
             "text": "Sunscreen every morning, rain or shine, indoors or out. If you only do one step, make it this one.",
-            "product": "beauty-of-joseon-relief-sun-rice-niacinamide"
+            "product": "beauty-of-joseon-relief-sun-rice-niacinamide",
+            "when": "am"
           }
         }
       },

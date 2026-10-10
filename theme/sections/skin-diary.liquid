@@ -1,0 +1,219 @@
+{%- comment -%}
+  My skin diary: her routine as a morning and evening checklist, a streak, the last four weeks at a glance,
+  a one-tap "how does my skin feel" log, and a routine editor. Everything lives in this browser
+  (localStorage "moana:diary"); nothing is sent anywhere. The routine can come from the routine finder
+  ("Save to my skin diary"), or she builds it here from the products in the catalogue.
+  Script: assets/skin-diary.js. Greeting: Bonzour / Bonswar when Kreol touches are on (Theme settings > Voice).
+{%- endcomment -%}
+{%- liquid
+  assign source = section.settings.collection | default: collections['skincare']
+  assign step_list = settings.step_tags | split: ','
+  assign am_only = section.settings.morning_only | split: ','
+  assign feels = section.settings.feels | split: ','
+-%}
+<section class="sd" aria-labelledby="sd-{{ section.id }}" data-diary>
+  <div class="wash" aria-hidden="true"><canvas data-wash data-bg="#f6f8f0" data-a="#eef1e4" data-b="#d1d9be" data-c="#d6d2bf" data-d="#bcc09b"></canvas></div>
+  <div class="page-width sd__wrap">
+    <header class="sd__head">
+      <p class="t-label">{{ 'diary.title' | t }}</p>
+      <h1 class="sd__hello" id="sd-{{ section.id }}">
+        {%- if settings.kreol -%}
+          <span class="sd__kreol" lang="mfe" data-greet-am>{{ 'kreol.greeting_am' | t }}</span><span class="sd__kreol" lang="mfe" data-greet-pm hidden>{{ 'kreol.greeting_pm' | t }}</span>
+          <span class="sd__sub" data-greet-sub-am>{{ 'diary.good_am' | t }}</span><span class="sd__sub" data-greet-sub-pm hidden>{{ 'diary.good_pm' | t }}</span>
+        {%- else -%}
+          <span data-greet-am>{{ 'diary.good_am' | t }}</span><span data-greet-pm hidden>{{ 'diary.good_pm' | t }}</span>
+        {%- endif -%}
+      </h1>
+      <p class="sd__date" data-diary-date>&nbsp;</p>
+    </header>
+
+    <div class="sd__empty glass" data-diary-empty hidden>
+      <p class="sd__empty-title">{% if settings.kreol %}<span class="kreol" lang="mfe">{{ 'kreol.welcome' | t }}.</span> {% endif %}{{ 'diary.empty_title' | t }}</p>
+      <p class="t-soft">{{ 'diary.empty_text' | t }}</p>
+      <div class="sd__empty-actions">
+        <button class="btn" type="button" data-diary-use-quiz hidden>{{ 'diary.use_quiz' | t }}</button>
+        <a class="btn" href="{{ routes.root_url }}pages/routine-finder" data-diary-find>{{ 'diary.find' | t }}</a>
+        <button class="btn btn--secondary" type="button" data-diary-build>{{ 'diary.build' | t }}</button>
+      </div>
+    </div>
+
+    <div class="sd__grid" data-diary-main hidden>
+      <div class="sd__today">
+        {%- render 'ampm-toggle' -%}
+        <div class="sd__card glass" data-sheen>
+          <div class="sd__bar" aria-hidden="true"><span data-diary-bar></span></div>
+          <p class="sd__count" data-diary-count aria-live="polite"></p>
+          <ul class="sd__list" role="list" data-diary-list></ul>
+          <p class="sd__done" data-diary-done hidden>{% render 'icon', name: 'check' %}<span data-diary-done-text></span></p>
+        </div>
+
+        <div class="sd__feel">
+          <p class="t-label" id="sd-feel-{{ section.id }}">{{ 'diary.feel_q' | t }}</p>
+          <div class="cluster" role="group" aria-labelledby="sd-feel-{{ section.id }}" data-diary-feels>
+            {%- for raw in feels -%}{%- assign f = raw | strip -%}{%- if f != blank -%}
+              <button class="pill" type="button" aria-pressed="false" data-feel="{{ f | escape }}">{{ f }}</button>
+            {%- endif -%}{%- endfor -%}
+          </div>
+        </div>
+      </div>
+
+      <aside class="sd__side">
+        <div class="sd__streak glass">
+          <p class="sd__streak-num"><span data-diary-streak>0</span></p>
+          <p class="sd__streak-label" data-diary-streak-label data-one="{{ 'diary.streak_label.one' | t | escape }}" data-other="{{ 'diary.streak_label.other' | t | escape }}">{{ 'diary.streak_label.other' | t }}</p>
+          <p class="t-label sd__cal-title">{{ 'diary.calendar' | t }}</p>
+          <ol class="sd__cal" role="list" data-diary-cal></ol>
+          <p class="sd__legend"><span class="sd__dot sd__dot--am"></span>{{ 'products.morning' | t }} <span class="sd__dot sd__dot--pm"></span>{{ 'products.evening' | t }}</p>
+        </div>
+      </aside>
+    </div>
+
+    <script>
+      /* decide empty or full while the page is still parsing, and hold room for the checklist,
+         so nothing jumps when skin-diary.js fills it in */
+      (function () {
+        var n = 0, am = true;
+        try {
+          var d = JSON.parse(localStorage.getItem('moana:diary') || 'null');
+          if (d && d.routine) n = Object.keys(d.routine).filter(function (k) { return d.routine[k]; }).length;
+          var h = +new Intl.DateTimeFormat('en-GB', { hour: 'numeric', hourCycle: 'h23', timeZone: 'Indian/Mauritius' }).format(new Date());
+          am = !(h >= 17 || h < 4);
+          if (!am && d && d.routine && d.routine.Protect) n -= 1;
+        } catch (e) {}
+        document.querySelector(n > 0 ? '[data-diary-main]' : '[data-diary-empty]').hidden = false;
+        var list = document.querySelector('[data-diary-list]');
+        if (list) list.style.minHeight = (n * 81) + 'px';
+      })();
+    </script>
+
+    <details class="sd__edit" data-diary-editor>
+      <summary class="btn btn--secondary">{{ 'diary.edit' | t }}</summary>
+      <div class="sd__edit-grid" data-diary-selects></div>
+    </details>
+
+    <p class="sd__privacy t-xs t-soft">{{ 'diary.privacy' | t }}</p>
+    <noscript><p class="sd__privacy">{{ 'diary.noscript' | t }}</p></noscript>
+  </div>
+</section>
+
+<script type="application/json" data-diary-data>
+{
+  "steps": [{%- for raw in step_list limit: 5 -%}{{ raw | strip | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],
+  "amOnly": [{%- for raw in am_only -%}{{ raw | strip | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],
+  "strings": {
+    "progress": {{ 'diary.progress' | t | json }},
+    "doneAm": {{ 'diary.done_am' | t | json }},
+    "donePm": {{ 'diary.done_pm' | t | json }},
+    "none": {{ 'diary.none' | t | json }},
+    "choose": {{ 'diary.step_choose' | t: step: '[step]' | json }},
+    "reorder": {{ 'diary.reorder' | t | json }},
+    "day": {{ 'diary.day_label' | t | json }},
+    "yes": {{ 'diary.yes' | t | json }},
+    "no": {{ 'diary.no' | t | json }}
+  },
+  "products": [
+    {%- for p in source.products -%}
+      {"handle": {{ p.handle | json }}, "title": {{ p.title | json }}, "vendor": {{ p.vendor | json }}, "url": {{ p.url | json }},
+       "image": {{ p.featured_media.preview_image | image_url: width: 160 | json }}, "tags": {{ p.tags | json }}}{%- unless forloop.last -%},{%- endunless -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+<script src="{{ 'wash.js' | asset_url }}" defer></script>
+<script src="{{ 'skin-diary.js' | asset_url }}" defer></script>
+
+{% stylesheet %}
+  .sd { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(2rem, 1.5rem + 3vw, 4.5rem) var(--section); min-height: calc(100dvh - var(--header-h, 0px)); transition: color 600ms var(--ease); }
+  .sd .wash { z-index: -1; }
+  .sd__wrap { display: grid; gap: var(--s-6); max-width: 1120px; }
+  .sd__head { display: grid; gap: var(--s-2); }
+  .sd__hello { display: grid; gap: var(--s-1); font: var(--type-display); letter-spacing: var(--ls-display); }
+  .sd__kreol { font-style: italic; color: var(--c-forest); padding-right: .06em; }
+  .sd__sub { font: var(--type-lead); letter-spacing: 0; color: var(--ink-soft); }
+  .sd__date { font: var(--type-ui); color: var(--ink-soft); }
+  .sd__empty { display: grid; gap: var(--s-4); padding: clamp(1.5rem, 1rem + 2vw, 3rem); max-width: 44rem; }
+  .sd__empty-title { font: var(--type-h2); letter-spacing: var(--ls-heading); }
+  .sd__empty-actions { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .sd__grid { display: grid; gap: var(--s-6); align-items: start; }
+  .sd__today { display: grid; gap: var(--s-5); min-width: 0; }
+  .sd__card { padding: clamp(1rem, .7rem + 1.5vw, 2rem); display: grid; gap: var(--s-3); }
+  .sd__bar { height: 2px; background: rgba(33, 39, 33, .14); }
+  .sd__bar span { display: block; height: 100%; width: 0; background: var(--c-forest); transition: width 600ms var(--ease-out); }
+  .sd__count { min-height: 1.4em; font: var(--type-label); letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--c-forest); font-variant-numeric: lining-nums; }
+  .sd__list { display: grid; }
+  .sd__item { display: grid; grid-template-columns: auto 56px minmax(0, 1fr); align-items: center; gap: var(--s-3); padding-block: var(--s-3); border-top: 1px solid var(--line); }
+  .sd__check { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid rgba(33, 39, 33, .35); background: rgba(255, 255, 255, .7); color: var(--c-white); transition: background-color 300ms var(--ease), border-color 300ms var(--ease), scale 300ms cubic-bezier(.34, 1.56, .64, 1); }
+  .sd__check svg { width: 22px; height: 22px; }
+  .sd__check svg path { stroke-dasharray: 24; stroke-dashoffset: 24; transition: stroke-dashoffset 360ms var(--ease) 80ms; }
+  .sd__check[aria-pressed="true"] { background: var(--c-forest); border-color: var(--c-forest); scale: 1.06; }
+  .sd__check[aria-pressed="true"] svg path { stroke-dashoffset: 0; }
+  .sd__img { display: block; aspect-ratio: 1; background: var(--c-white); }
+  .sd__img img { width: 100%; height: 100%; object-fit: contain; padding: 8%; mix-blend-mode: multiply; }
+  .sd__info { display: grid; gap: 2px; min-width: 0; }
+  .sd__step { font: var(--type-label); letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--c-forest); }
+  .sd__name { font: var(--type-title); line-height: 1.35; transition: color 300ms var(--ease); }
+  .sd__item.is-done .sd__name { color: var(--ink-soft); }
+  .sd__reorder { justify-self: start; font: var(--type-small); text-decoration: underline; text-underline-offset: 3px; color: var(--ink-soft); padding-block: 2px; }
+  .sd__done { display: flex; align-items: center; gap: var(--s-2); padding-top: var(--s-2); font: var(--type-lead); color: var(--c-forest); }
+  .sd__done svg { width: 22px; height: 22px; flex: none; }
+  .sd__feel { display: grid; gap: var(--s-3); }
+  .sd__feel .pill[aria-pressed="true"] { background: var(--c-night); border-color: var(--c-night); color: var(--c-white); }
+  .sd__streak { display: grid; gap: var(--s-2); padding: clamp(1rem, .7rem + 1.5vw, 2rem); }
+  .sd__streak-num { font: var(--w-extralight) var(--fs-5xl)/1 var(--f-body); letter-spacing: var(--ls-display); font-variant-numeric: lining-nums; }
+  .sd__streak-num span { display: inline-block; }
+  .sd__streak-num span.is-bumped { animation: count-roll 520ms cubic-bezier(.34, 1.56, .64, 1); }
+  .sd__streak-label { font: var(--type-ui); color: var(--ink-soft); }
+  .sd__cal-title { margin-top: var(--s-4); }
+  .sd__cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; aspect-ratio: 7 / 4.12; }
+  .sd__day { position: relative; display: grid; place-items: center; aspect-ratio: 1; background: rgba(255, 255, 255, .55); font: var(--w-medium) var(--fs-2xs)/1 var(--f-body); color: var(--ink-soft); font-variant-numeric: lining-nums; }
+  .sd__day.is-today { outline: 1.5px solid var(--c-night); outline-offset: -1.5px; color: var(--ink); }
+  .sd__day.is-full { background: var(--c-forest); color: var(--c-white); }
+  .sd__day.is-half { background: linear-gradient(135deg, #d1d9be 50%, rgba(255,255,255,.55) 50%); color: var(--ink); }
+  .sd__day.is-half.is-pm { background: linear-gradient(135deg, rgba(255,255,255,.55) 50%, #abb086 50%); }
+  .sd__legend { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-2); font: var(--type-small); color: var(--ink-soft); }
+  .sd__dot { display: inline-block; width: 10px; height: 10px; }
+  .sd__dot--am { background: #d1d9be; }
+  .sd__dot--pm { background: #abb086; margin-left: var(--s-2); }
+  .sd__edit > summary { list-style: none; cursor: pointer; justify-self: start; display: inline-flex; }
+  .sd__edit > summary::-webkit-details-marker { display: none; }
+  .sd__edit-grid { display: grid; gap: var(--s-3); margin-top: var(--s-4); padding: var(--s-5); background: rgba(255, 255, 255, .7); }
+  .sd__edit-grid label { display: grid; gap: 4px; font: var(--type-label); letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--c-forest); }
+  .sd__edit-grid select { min-height: 48px; padding: 0 var(--s-3); border: 1px solid var(--line-strong); background: var(--c-white); font: var(--type-body); text-transform: none; letter-spacing: 0; color: var(--ink); }
+  .sd__privacy { max-width: 40rem; }
+  @media (min-width: 750px) { .sd__edit-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 990px) { .sd__grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(2rem, 4vw, 4rem); } .sd__side { position: sticky; top: calc(var(--header-h) + 2rem); } .sd__edit-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+  /* evening: the diary dims to dusk with the switch */
+  .sd.is-evening { color: var(--c-white); }
+  .sd.is-evening .sd__sub, .sd.is-evening .sd__date, .sd.is-evening .t-soft, .sd.is-evening .sd__streak-label, .sd.is-evening .sd__legend, .sd.is-evening .sd__reorder { color: rgba(255, 255, 255, .75); }
+  .sd.is-evening .sd__kreol, .sd.is-evening .sd__count, .sd.is-evening .sd__step, .sd.is-evening .sd__done, .sd.is-evening .t-label { color: #d1d9be; }
+  .sd.is-evening .glass { background: rgba(33, 39, 33, .45); border-color: rgba(255, 255, 255, .14); }
+  .sd.is-evening .sd__item { border-color: rgba(255, 255, 255, .12); }
+  .sd.is-evening .sd__item.is-done .sd__name { color: rgba(255, 255, 255, .6); }
+  .sd.is-evening .sd__check { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .4); }
+  .sd.is-evening .sd__check[aria-pressed="true"] { background: #d1d9be; border-color: #d1d9be; color: var(--c-night); }
+  .sd.is-evening .sd__bar { background: rgba(255, 255, 255, .16); }
+  .sd.is-evening .sd__bar span { background: #d1d9be; }
+  .sd.is-evening .sd__day { background: rgba(255, 255, 255, .08); color: rgba(255, 255, 255, .7); }
+  .sd.is-evening .sd__day.is-today { outline-color: var(--c-white); color: var(--c-white); }
+  .sd.is-evening .sd__day.is-full { background: #d1d9be; color: var(--c-night); }
+  .sd.is-evening .sd__day.is-half { background: linear-gradient(135deg, #d1d9be 50%, rgba(255,255,255,.08) 50%); color: var(--c-night); }
+  .sd.is-evening .sd__day.is-half.is-pm { background: linear-gradient(135deg, rgba(255,255,255,.08) 50%, #abb086 50%); color: var(--c-white); }
+  .sd.is-evening h1, .sd.is-evening .sd__empty-title { color: var(--c-white); }
+  .sd.is-evening .pill { color: var(--c-white); border-color: rgba(255, 255, 255, .4); background: transparent; }
+  .sd.is-evening .pill[aria-pressed="true"] { background: #d1d9be; border-color: #d1d9be; color: var(--c-night); }
+  .sd.is-evening .btn--secondary { --btn-line: rgba(255, 255, 255, .7); color: var(--c-white); background: transparent; }
+  @media (prefers-reduced-motion: reduce) { .sd__check, .sd__check svg path, .sd__bar span { transition: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Skin diary",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Products to choose from", "info": "Defaults to Skincare. Steps come from Theme settings > Discovery." },
+    { "type": "text", "id": "morning_only", "label": "Morning-only steps", "default": "Protect", "info": "Comma separated. These steps are left out of the evening checklist." },
+    { "type": "text", "id": "feels", "label": "Skin feelings", "default": "Calm, Glowing, Dry, Oily, Breakout, Sensitive", "info": "Comma separated. One tap a day." }
+  ],
+  "presets": [{ "name": "Skin diary" }]
+}
+{% endschema %}

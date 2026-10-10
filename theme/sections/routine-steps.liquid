@@ -1,4 +1,4 @@
-<section class="section routine{% if section.settings.wash %} section--wash routine--glass{% endif %}" aria-labelledby="rt-{{ section.id }}">
+<section class="section routine{% if section.settings.wash %} section--wash routine--glass{% endif %}" aria-labelledby="rt-{{ section.id }}"{% if section.settings.ampm %} data-routine-ampm{% endif %}>
   {%- if section.settings.wash -%}
     {%- comment -%} GetLayers "Feather" wash, tinted to Spring, Khaki Linen and Sage. The steps sit on it as glass. {%- endcomment -%}
     <div class="wash" aria-hidden="true"><canvas data-wash data-bg="#f6f8f0" data-a="#eef1e4" data-b="#d1d9be" data-c="#d6d2bf" data-d="#bcc09b"></canvas></div>
@@ -8,7 +8,15 @@
     <div class="routine__intro">
       {%- if section.settings.eyebrow != blank -%}<p class="t-label">{{ section.settings.eyebrow }}</p>{%- endif -%}
       <h2 class="t-h1" data-lines id="rt-{{ section.id }}">{{ section.settings.heading }}</h2>
-      {%- if section.settings.text != blank -%}<p class="t-lead">{{ section.settings.text }}</p>{%- endif -%}
+      {%- if section.settings.text != blank -%}<p class="t-lead" data-routine-text>{{ section.settings.text }}</p>{%- endif -%}
+      {%- if section.settings.ampm -%}
+        {%- comment -%} the evening copy, swapped in by theme.js when the switch says evening {%- endcomment -%}
+        <template data-routine-copy>
+          <span data-am-heading>{{ section.settings.heading }}</span><span data-pm-heading>{{ section.settings.evening_heading | default: section.settings.heading }}</span>
+          <span data-am-text>{{ section.settings.text }}</span><span data-pm-text>{{ section.settings.evening_text | default: section.settings.text }}</span>
+        </template>
+        {%- render 'ampm-toggle' -%}
+      {%- endif -%}
       {%- if section.settings.link_label != blank -%}
         <a class="btn btn--secondary" href="{{ section.settings.link_url }}">{{ section.settings.link_label }}</a>
       {%- endif -%}
@@ -17,10 +25,11 @@
     <ol class="routine__steps" role="list">
       {%- for block in section.blocks -%}
         {%- assign p = block.settings.product -%}
-        <li class="step reveal"{% if section.settings.wash %} data-sheen{% endif %} {{ block.shopify_attributes }}>
-          <span class="step__num" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+        {%- assign when = block.settings.when | default: 'both' -%}
+        <li class="step reveal"{% if section.settings.wash %} data-sheen{% endif %} data-when="{{ when }}"{% if section.settings.ampm and when == 'pm' %} hidden{% endif %} {{ block.shopify_attributes }}>
+          <span class="step__num" aria-hidden="true"></span>
           <div class="step__body">
-            <h3 class="t-h3"><span class="sr-only">{{ 'routine.step_n' | t: n: forloop.index }}: </span>{{ block.settings.name }}</h3>
+            <h3 class="t-h3">{{ block.settings.name }}</h3>
             {%- if block.settings.text != blank -%}<p class="t-soft">{{ block.settings.text }}</p>{%- endif -%}
             {%- if p != blank -%}
               <div class="step__product">
@@ -55,6 +64,8 @@
 .routine__intro > * + * { margin-top: var(--s-5); }
 .routine__intro .t-script { margin-top: var(--s-6); }
 .routine__steps { counter-reset: step; }
+.step:not([hidden]) { counter-increment: step; }
+.step__num::before { content: counter(step, decimal-leading-zero); }
 .step { display: grid; grid-template-columns: 3.25rem 1fr; gap: var(--s-4); padding-block: var(--s-6); border-top: 1px solid var(--line); }
 .step:last-child { border-bottom: 1px solid var(--line); }
 .step__num { font: var(--w-light) var(--fs-2xl)/1 var(--f-body); color: var(--c-sage); font-variant-numeric: lining-nums; }
@@ -103,6 +114,28 @@
   }
 }
 @media (min-width: 990px) { .routine__steps::before, .routine__steps::after { left: calc(clamp(3rem, 7vw, 8rem) * -.5); } }
+/* morning / evening: the switch re-tints the section to dusk, steps that belong to the other half of
+   the day step out (sunscreen sleeps at night), and the heading swaps (theme.js). */
+.routine .ampm { margin-top: var(--s-5); }
+.routine, .routine .step, .routine .step__product, .routine .t-soft, .routine .t-lead, .routine .step__num { transition: color 600ms var(--ease), background-color 600ms var(--ease), border-color 600ms var(--ease); }
+.step.is-leaving { opacity: 0; translate: 0 -8px; transition: opacity 260ms var(--ease), translate 260ms var(--ease); }
+.step.is-entering { animation: step-enter 520ms var(--ease) both; }
+@keyframes step-enter { from { opacity: 0; translate: 0 12px; } to { opacity: 1; translate: 0 0; } }
+.routine.is-evening { color: var(--c-white); background-color: #262d26; }
+.routine.is-evening h2, .routine.is-evening h3, .routine.is-evening .t-h1, .routine.is-evening .t-h3 { color: var(--c-white); transition: color 600ms var(--ease); }
+.routine.is-evening .t-lead, .routine.is-evening .t-soft { color: rgba(255, 255, 255, .78); }
+.routine.is-evening .t-label { color: var(--c-mist); }
+.routine.is-evening em { color: #d1d9be; }
+.routine.is-evening .btn--secondary { --btn-line: rgba(255, 255, 255, .7); color: var(--c-white); background: transparent; }
+.routine--glass.is-evening .step { background: rgba(33, 39, 33, .42); border-color: rgba(255, 255, 255, .14); box-shadow: 0 1px 0 rgba(255,255,255,.08) inset, 0 24px 60px -40px rgba(0,0,0,.6); }
+.routine.is-evening .step__product { background: rgba(255, 255, 255, .08); }
+.routine.is-evening .step__name, .routine.is-evening .price { color: var(--c-white); }
+.routine.is-evening .card__vendor { color: var(--c-mist); }
+.routine.is-evening .step__num { color: #d1d9be; opacity: .9; }
+.routine.is-evening .step__img { background: rgba(255, 255, 255, .9); }
+.routine.is-evening .routine__steps::before { background: rgba(255, 255, 255, .16); }
+.routine.is-evening .routine__steps::after { background: #d1d9be; }
+@media (prefers-reduced-motion: reduce) { .step.is-entering { animation: none; } }
 {% endstylesheet %}
 
 {% schema %}
@@ -115,13 +148,17 @@
     { "type": "text", "id": "link_label", "label": "Link label", "default": "Read the routine guide" },
     { "type": "url", "id": "link_url", "label": "Link" },
     { "type": "text", "id": "script", "label": "Script accent (Pinyon Script)", "info": "Use once per page at most." },
-    { "type": "checkbox", "id": "wash", "label": "Watercolour wash background with glass steps", "default": true }
+    { "type": "checkbox", "id": "wash", "label": "Watercolour wash background with glass steps", "default": true },
+    { "type": "checkbox", "id": "ampm", "label": "Morning / evening switch", "info": "Opens on evening after 5pm Mauritius time. Steps set to Morning or Evening show only then.", "default": true },
+    { "type": "inline_richtext", "id": "evening_heading", "label": "Evening heading", "default": "Four steps tonight. <em>Then sleep.</em>" },
+    { "type": "textarea", "id": "evening_text", "label": "Evening text", "default": "Cleanse, tone, treat, moisturise. Your sunscreen takes the night off." }
   ],
   "blocks": [
     { "type": "step", "name": "Step", "settings": [
       { "type": "text", "id": "name", "label": "Step name", "default": "Cleanse" },
       { "type": "textarea", "id": "text", "label": "Text" },
-      { "type": "product", "id": "product", "label": "Product" }
+      { "type": "product", "id": "product", "label": "Product" },
+      { "type": "select", "id": "when", "label": "When", "default": "both", "options": [ { "value": "both", "label": "Morning and evening" }, { "value": "am", "label": "Morning only" }, { "value": "pm", "label": "Evening only" } ] }
     ] }
   ],
   "presets": [{ "name": "Routine steps" }]

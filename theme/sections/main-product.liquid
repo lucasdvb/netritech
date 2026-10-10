@@ -106,6 +106,12 @@
           {%- if size != blank -%}<span class="pdp__size">{{ size }}</span>{%- endif -%}
         </div>
         {%- if cart.taxes_included -%}<p class="t-xs t-soft pdp__tax">{{ 'products.tax_included' | t }}</p>{%- endif -%}
+        {%- if settings.rewards_enabled -%}
+          {%- assign pts = current_variant.price | times: settings.rewards_rate | divided_by: 10000 -%}
+          {%- if pts > 0 -%}
+            <p class="points-line">{% render 'icon', name: 'sparkle' %}<span>{{ 'rewards.earn_line' | t: n: pts }}</span> <a href="{{ settings.rewards_page.url | default: '/pages/rewards' }}">{{ 'rewards.learn' | t }}</a></p>
+          {%- endif -%}
+        {%- endif -%}
 
         {%- liquid
           assign pdp_badge = ''

@@ -119,6 +119,10 @@ At the owner's request every level is now **Raleway** (the brand guide sets Inst
 - **Feedback**: add-to-bag button morphs to a drawn tick and "Added" for 1.8 s; the bag count rolls up on a spring; the new bag line slides in with a brief Spring tint.
 - **Quick view and gallery** open with a short rise and fade; the phone gallery follows the finger (swipe, pinch, pan, drag down to close).
 - **Phone dock**: glass bar under 750 px, hides on scroll down with the header.
+- **Morning / evening** (`snippets/ampm-toggle.liquid`): a sun and moon on a sliding night thumb (500 ms spring); the routine section and skin diary re-tint to dusk (wash palette #20271f to #56634a, glass rgba(33,39,33,.45), text white) over 600 ms.
+- **Celebrate** (`window.MoanaCelebrate`): one shimmer sweep (1.1 s) and eight sparks rising 22 px (0.9 s). Used for free delivery, a finished diary session and a waiting reward, never on a timer.
+- **Phones:** long-press (480 ms, 10 px move cancels) opens a glass action sheet; pull to refresh at the top of a page (86 px of pull, half-speed resistance) with a ring drawn around the wave mark.
+- **Mega menu previews**: two image layers crossfade (360 ms) with a 1.04 settle.
 - **No preloader, no smooth-scroll hijacking.**
 - `prefers-reduced-motion` removes every transform, blur and clip and shortens transitions to 0.01 ms.
 

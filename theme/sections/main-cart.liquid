@@ -22,7 +22,7 @@
     {%- else -%}
       <div class="cart-empty cart-page__empty">
         <p class="t-h3">{{ 'cart.empty' | t }}</p>
-        <p class="t-soft">{{ 'cart.empty_text' | t }}</p>
+        <p class="t-soft">{% if settings.kreol %}<span class="kreol" lang="mfe">{{ 'kreol.no_worries' | t }}</span> {% endif %}{{ 'cart.empty_text' | t }}</p>
         <a class="btn" href="{{ collections['skincare'].url | default: routes.all_products_collection_url }}">{{ 'cart.empty_cta' | t }}</a>
       </div>
     {%- endif -%}

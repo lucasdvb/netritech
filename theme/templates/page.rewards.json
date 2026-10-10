@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "rewards",
+      "settings": {
+        "heading": "Glow, <em>rewarded</em>"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

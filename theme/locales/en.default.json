@@ -105,10 +105,14 @@
     "quick_view_named": "Quick view: {{ title }}",
     "quick_view_dialog": "Quick view",
     "full_details": "See full details",
-    "gallery_dialog": "Product photos"
+    "gallery_dialog": "Product photos",
+    "remove_from_wishlist": "Remove from wishlist",
+    "quick_actions": "Quick actions",
+    "pull_refresh": "Release to refresh"
   },
   "routine": {
-    "step_n": "Step {{ n }}"
+    "step_n": "Step {{ n }}",
+    "ampm_label": "Morning or evening routine"
   },
   "collections": {
     "active_filters": "Active filters",
@@ -271,7 +275,15 @@
     "see_all": "See everything for this concern",
     "restart": "Start again",
     "added": "Routine added to your bag",
-    "noscript": "Turn on JavaScript for the quiz, or start from a concern:"
+    "noscript": "Turn on JavaScript for the quiz, or start from a concern:",
+    "q_budget": "What would you like to spend on the whole routine?",
+    "budget_any": "No limit",
+    "budget_upto": "Up to {{ amount }}",
+    "budget_estimate": "Your routine would come to about {{ amount }}",
+    "budget_note": "We'll pick the best match that fits.",
+    "total": "Routine total: {{ amount }}",
+    "over_budget": "This is as close to your budget as the shelf allows today.",
+    "save_diary": "Save to my skin diary"
   },
   "forecast": {
     "label": "Island skin forecast",
@@ -292,5 +304,63 @@
     "tip_humid": "It's {{ h }}% humid: layer light. Gel creams and watery essences sit better than rich creams.",
     "tip_dry": "Drier air today ({{ h }}%): add a hydrating toner or essence before your cream.",
     "source": "Weather data by Open-Meteo.com"
+  },
+  "kreol": {
+    "greeting_am": "Bonzour",
+    "greeting_pm": "Bonswar",
+    "added": "Mersi! Added to your bag.",
+    "no_worries": "Pa bizin traka.",
+    "signup_success": "Mersi! You're on the list. Welcome to Moana.",
+    "welcome": "Byenvini"
+  },
+  "diary": {
+    "title": "My skin diary",
+    "good_am": "Good morning",
+    "good_pm": "Good evening",
+    "streak_label": {
+      "one": "day in a row",
+      "other": "days in a row"
+    },
+    "progress": "[done] of [total] done",
+    "done_am": "Morning routine done. See you tonight.",
+    "done_pm": "Evening routine done. Sleep well.",
+    "feel_q": "How does your skin feel today?",
+    "calendar": "Last four weeks",
+    "edit": "Edit my routine",
+    "none": "Not in my routine",
+    "empty_title": "Let's set up your diary.",
+    "empty_text": "Tick off your routine morning and evening, keep your streak going and note how your skin feels. It all stays on this phone.",
+    "use_quiz": "Use my quiz routine",
+    "find": "Find my routine",
+    "build": "Build it myself",
+    "privacy": "Your diary stays on this device. Nothing is sent anywhere.",
+    "reorder": "Shop again",
+    "step_choose": "Your {{ step }}",
+    "day_label": "[date]: morning [am], evening [pm]",
+    "yes": "done",
+    "no": "not done",
+    "noscript": "The skin diary needs JavaScript switched on.",
+    "link": "My skin diary"
+  },
+  "rewards": {
+    "title": "Moana rewards",
+    "lead": "Points on every order, treats when you reach them. Simple.",
+    "how": "How it works",
+    "step1_title": "Join",
+    "step1_text": "Create your Moana account. It takes a minute.",
+    "step2_title": "Earn",
+    "step2_text": "{{ rate }} points for every Rs 100 you spend.",
+    "step3_title": "Treat yourself",
+    "step3_text": "{{ threshold }} points = {{ value }} on your next order.",
+    "balance": "Your points",
+    "to_next": "{{ n }} more to your next {{ value }}",
+    "ready": "You have a {{ value }} reward waiting.",
+    "join": "Create my account",
+    "sign_in": "Sign in",
+    "guest": "Sign in to see your points.",
+    "earn_line": "Earn {{ n }} Moana points",
+    "cart_line": "This order earns about {{ n }} points",
+    "learn": "How rewards work",
+    "header": "{{ n }} pts"
   }
 }

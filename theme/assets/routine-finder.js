@@ -43,7 +43,30 @@
     wash.dispatchEvent(new CustomEvent('wash:tint', { detail: p }));
   }
 
-  function answer(name) { var c = form.querySelector('input[name="' + name + '"]:checked'); return c ? c.value : ''; }
+  function answer(name) {
+    var r = form.querySelector('input[type="range"][name="' + name + '"]');
+    if (r) return r.value;
+    var c = form.querySelector('input[name="' + name + '"]:checked'); return c ? c.value : '';
+  }
+  function money(cents) {
+    var n = Math.round(cents / 100).toLocaleString('en-US');
+    return (D.moneyFormat || 'Rs {{amount_no_decimals}}').replace(/\{\{\s*amount\w*\s*\}\}/, n);
+  }
+
+  /* budget slider: stops in rupees (0 = no limit); the label, the filled track and a live estimate follow her thumb */
+  var budgetBox = form.querySelector('[data-budget]');
+  var budgetInput = budgetBox && budgetBox.querySelector('input[type="range"]');
+  var STOPS = budgetBox ? budgetBox.getAttribute('data-stops').split(',').map(Number) : [];
+  function budgetCents() { return budgetInput ? (STOPS[+budgetInput.value] || 0) * 100 : 0; }
+  function paintBudget() {
+    if (!budgetInput) return;
+    var rs = STOPS[+budgetInput.value] || 0;
+    budgetBox.querySelector('[data-budget-value]').textContent = rs ? budgetBox.getAttribute('data-upto').replace('[amount]', money(rs * 100)) : budgetBox.getAttribute('data-any');
+    budgetInput.style.setProperty('--fill', (+budgetInput.value / (STOPS.length - 1) * 100) + '%');
+    var r = pick(answer('skin'), answer('concern'), parseInt(answer('steps') || '5', 10), budgetCents());
+    budgetBox.querySelector('[data-budget-estimate]').textContent = r.total ? budgetBox.getAttribute('data-estimate').replace('[amount]', money(r.total)) : '';
+  }
+  if (budgetInput) budgetInput.addEventListener('input', paintBudget);
   function show(k) {
     var leaving = steps[i];
     if (k !== i && leaving && !reduce && leaving.classList.contains('is-current')) {
@@ -55,6 +78,7 @@
   }
   function paintStep(k) {
     i = k;
+    if (steps[k] && steps[k].getAttribute('data-q') === 'budget') paintBudget();
     if (stage) stage.classList.toggle('is-started', k > 0);
     tint(k === 0 ? 'spring' : MOOD[answer(k === 1 ? 'skin' : 'concern')] || 'sage');
     steps.forEach(function (s, j) { s.classList.toggle('is-current', j === i); });
@@ -86,17 +110,45 @@
   }
   function esc(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
 
-  function build() {
-    var skin = answer('skin'), concern = answer('concern'), n = parseInt(answer('steps') || '5', 10);
+  // best product per step; then, while over budget, swap in the cheaper alternative that costs the least fit
+  function pick(skin, concern, n, budget) {
     var wanted = n === 3 ? [D.steps[0], D.steps[1], D.steps[4]] : D.steps.slice(0, 5);
     var used = {};
     var picks = wanted.map(function (step) {
       var pool = D.products.filter(function (p) { return p.available && p.tags.indexOf(step) > -1 && !used[p.handle]; });
-      pool.sort(function (a, b) { return score(b, skin, concern) - score(a, skin, concern); });
+      pool.sort(function (a, b) { return score(b, skin, concern) - score(a, skin, concern) || a.cents - b.cents; });
       var p = pool[0] || null;
       if (p) used[p.handle] = true;
       return { step: step, product: p };
     });
+    var sum = function () { return picks.reduce(function (t, x) { return t + (x.product ? x.product.cents : 0); }, 0); };
+    var total = sum();
+    while (budget && total > budget) {
+      var best = null;
+      picks.forEach(function (x, k) {
+        if (!x.product) return;
+        D.products.forEach(function (p) {
+          if (!p.available || p.tags.indexOf(x.step) === -1 || p.cents >= x.product.cents) return;
+          if (picks.some(function (y) { return y.product && y.product.handle === p.handle; })) return;
+          var cost = score(x.product, skin, concern) - score(p, skin, concern), save = x.product.cents - p.cents;
+          if (!best || cost < best.cost || (cost === best.cost && save > best.save)) best = { k: k, p: p, cost: cost, save: save };
+        });
+      });
+      if (!best) break;
+      picks[best.k].product = best.p;
+      total = sum();
+    }
+    return { wanted: wanted, picks: picks, total: total, over: !!(budget && total > budget) };
+  }
+
+  function build() {
+    var skin = answer('skin'), concern = answer('concern'), n = parseInt(answer('steps') || '5', 10);
+    var res = pick(skin, concern, n, budgetCents());
+    var wanted = res.wanted, picks = res.picks;
+    var totalEl = root.querySelector('[data-finder-total]');
+    if (totalEl) totalEl.textContent = D.strings.total.replace('__A__', money(res.total)) + (res.over ? ' ' + D.strings.over : '');
+    // remember the routine on this device, for the skin diary
+    try { localStorage.setItem('moana:routine', JSON.stringify({ skin: skin, concern: concern, at: Date.now(), picks: picks.filter(function (x) { return x.product; }).map(function (x) { return { step: x.step, handle: x.product.handle }; }) })); } catch (e) {}
     title.textContent = D.strings.title.replace('__N__', wanted.length).replace('__C__', concern.toLowerCase());
     list.innerHTML = picks.map(function (x, k) {
       var label = '<span class="rf__step-name">' + esc(D.strings.stepLabel.replace('__N__', k + 1)) + ' · ' + esc(x.step) + '</span>';
@@ -133,4 +185,15 @@
     var f = form.querySelector('input'); if (f) f.focus();
   });
   paintStep(0);
+  // "Save to my skin diary": the picks become her diary routine, then the diary opens
+  var diaryLink = root.querySelector('[data-finder-diary]');
+  if (diaryLink) diaryLink.addEventListener('click', function () {
+    try {
+      var r = JSON.parse(localStorage.getItem('moana:routine') || 'null');
+      var d = JSON.parse(localStorage.getItem('moana:diary') || 'null') || { v: 1, log: {} };
+      d.routine = {};
+      (r && r.picks || []).forEach(function (x) { d.routine[x.step] = x.handle; });
+      localStorage.setItem('moana:diary', JSON.stringify(d));
+    } catch (e) {}
+  });
 })();
