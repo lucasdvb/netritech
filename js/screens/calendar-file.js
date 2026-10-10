@@ -39,7 +39,7 @@ export function openCalendarFile() {
       'cf-add': ({ sheet }) => {
         const picked = opts.filter((o) => sheet.ui.on[o.key]);
         if (!picked.length) { app.toast('Choose at least one reminder.'); return; }
-        handToCalendar(buildCalendar(picked.map((o) => o.event)), 'life-os-reminders.ics');
+        handToCalendar(buildCalendar(picked.flatMap((o) => o.events || [o.event])), 'life-os-reminders.ics');
         store.setSettings({ calendarPicks: sheet.ui.on, calendarAddedAt: new Date().toISOString() });
         hap.success();
         app.closeSheet(sheet);

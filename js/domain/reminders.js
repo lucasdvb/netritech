@@ -6,6 +6,7 @@
 // isn't and permission was granted. While iOS has the app fully suspended nothing
 // arrives from here; for that there's the calendar file, or the opt-in sender on
 // your own server (push/client.js), which then takes over the timed reminders.
+import { on as planOn } from './day-plans-core.js';
 import * as store from '../data/store.js';
 import * as M from './metrics.js';
 import * as F from './fitness.js';
@@ -43,10 +44,12 @@ const lastFired = (key) => store.onDate('reminderLog', today()).filter((r) => r.
 export function candidates(now) {
   const s = store.settings();
   const nt = s.notifications || {};
-  const p = store.profile();
   const d = today();
+  // The day's plan: its wake, work and training times, and each habit's reminder that day.
+  const o = planOn(d);
+  const p = o.profile;
   const m = minutesOfDay(now);
-  const work = (p.workDays || []).includes(weekday(d));
+  const work = o.base ? (p.workDays || []).includes(weekday(d)) : o.work;
   const inWork = work && m >= parseHM(p.workStart) && m < parseHM(p.workEnd);
   const out = [];
   const at = (cat, time, habitId, title, body, url) => {
@@ -58,9 +61,9 @@ export function candidates(now) {
     out.push({ key: cat, cat, habitId, title, body, url, time });
   };
   const tpl = F.plannedTemplate(d);
-  if (!ritualDone(d, 'morning')) at('morning', nt.morning?.time, LINKED.morning, 'Morning check-in', 'One minute: sleep, how you feel, your three.', './#/today');
-  if (tpl) at('workout', nt.workout?.time, LINKED.workout, `Training at ${p.trainTime}`, tpl.name, './#/plan/training');
-  if (!ritualDone(d, 'evening') && !sealedAt(d)) at('evening', nt.evening?.time, LINKED.evening, 'Close the day', 'What’s left, one win, tomorrow’s first task. Then seal the day.', './#/today');
+  if (!ritualDone(d, 'morning')) at('morning', o.cat('morning', nt.morning?.time), LINKED.morning, 'Morning check-in', 'One minute: sleep, how you feel, your three.', './#/today');
+  if (tpl && o.train) at('workout', o.cat('workout', nt.workout?.time), LINKED.workout, `Training at ${p.trainTime}`, tpl.name, './#/plan/training');
+  if (!ritualDone(d, 'evening') && !sealedAt(d)) at('evening', o.cat('evening', nt.evening?.time), LINKED.evening, 'Close the day', 'What’s left, one win, tomorrow’s first task. Then seal the day.', './#/today');
   if (weekday(d) === 7) at('weeklyReview', nt.weeklyReview?.time, LINKED.weeklyReview, 'Weekly review', 'About three minutes. One change for next week.', './#/reflect/review/week');
 
   const every = (cat, minutes, cond, make) => {
@@ -90,9 +93,10 @@ export function candidates(now) {
     for (const h of activeHabits()) {
       // A habit that feels automatic doesn't need reminding: reminders slow habits becoming automatic.
       if (!h.reminder || Object.values(LINKED).includes(h.id) || feelsAutomatic(h)) continue;
-      const tm = parseHM(h.reminder);
+      const rem = o.reminder(h);
+      const tm = parseHM(rem);
       if (m < tm || m > tm + 90 || !dueOn(h, d) || isDone(h, d)) continue;
-      out.push({ cat: 'habits', key: `habit:${h.id}`, habitId: h.id, title: h.name, body: h.description || 'Still open for today.', url: `./#/habits/${h.id}`, time: h.reminder });
+      out.push({ cat: 'habits', key: `habit:${h.id}`, habitId: h.id, title: h.name, body: h.description || 'Still open for today.', url: `./#/habits/${h.id}`, time: rem });
     }
   }
   return out;

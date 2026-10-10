@@ -3,6 +3,7 @@ import * as store from '../data/store.js';
 import { priorities } from './tasks.js';
 import * as M from './metrics-core.js';
 import { workoutFacts } from './fitness-core.js';
+import { outOfPlan } from './day-plans-core.js';
 import { today, dayAt, weekday, startOfWeek, endOfWeek, startOfMonth, endOfMonth, range, addDays, diffDays, lastNDays, monthKey } from './dates.js';
 
 export const DATA_STORES = ['habits', 'habitLogs', 'waterLogs', 'nutritionLogs', 'stepLogs', 'sleepEntries', 'dailyReviews',
@@ -163,6 +164,8 @@ export function lastDoneBefore(h, date) {
 
 export function isScheduledDay(h, date) {
   const s = h.schedule || { kind: 'daily' };
+  // Your days: a habit that has its place in some plans but not in this day's isn't expected.
+  if (outOfPlan(h.id, date)) return false;
   if (s.kind === 'weekdays') return (s.days || []).includes(weekday(date));
   return s.kind === 'daily';
 }
@@ -178,6 +181,7 @@ export function dueOn(h, date, mode = dayMode(date)) {
   if (mode === 'minimum') return !!h.mvd || (stateOf(h, date) === 'focus' && dueOn(h, date, 'normal'));
   if (mode === 'sick') return keptWhenSick(h);
   if (mode === 'away') return false;
+  if (outOfPlan(h.id, date) && !isDone(h, date)) return false;
   const s = h.schedule || { kind: 'daily' };
   if (s.kind === 'daily' || s.kind === 'weekdays') return isScheduledDay(h, date);
   if (isDone(h, date)) return true;

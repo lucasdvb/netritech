@@ -1,4 +1,5 @@
 import * as store from './data/store.js';
+import { whenReady as whenPlansReady } from './domain/day-plans-core.js';
 import { SEED_VERSION, LATEST_MIGRATION } from './data/schema.js';
 import { patch, settle } from './ui/patch.js';
 import * as router from './ui/router.js';
@@ -549,6 +550,8 @@ async function boot() {
   import('./ui/transitions.js').then((m) => { swap = m.swap; }).catch(() => {});
   loadIcons().then(() => refresh()).catch(() => {});
   import('./ui/keys.js').then((m) => m.attachShortcuts({ places: PLACES, go: (path) => app.go(path), capture: () => globalActions.capture(), search: () => app.search() })).catch(() => {});
+  // Your days: when the full day-plan rules arrive (only once there's more than one plan), draw again with them.
+  whenPlansReady(() => refresh());
   import('./ui/gestures.js').then((m) => m.attachPullToSearch({ enabled: () => current?.route.depth === 0, onSearch: () => app.search() })).catch(() => {});
   import('./domain/reminders.js').then((r) => r.start()).catch((err) => console.warn(err));
   store.complete().then(() => import('./domain/snapshots.js')).then((m) => m.start()).catch((err) => console.warn(err));

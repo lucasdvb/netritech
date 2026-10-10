@@ -1316,3 +1316,27 @@
 .recent-row .row-main { flex: 1; min-width: 0; }
 .recent-row.is-used .row-title { color: var(--text-3); }
 .row--static { pointer-events: none; }
+
+/* Your days: the plan each weekday follows, your plans, the next two weeks */
+.days { display: flex; flex-direction: column; gap: var(--s3); margin-bottom: var(--s4); }
+.days-week { display: grid; grid-template-columns: repeat(auto-fit, minmax(max(72px, 4.5em), 1fr)); gap: 6px; }
+.dw-day { width: 100%; height: 100%; min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 2px;
+  border-radius: var(--r-md); background: var(--surface); color: var(--text); text-align: center; }
+.dw-day.is-today .dw-dow { color: var(--accent-ink); }
+.dw-day.is-on { box-shadow: inset 0 0 0 2px var(--accent); }
+.dw-dow { font-size: var(--text-caption); font-weight: var(--weight-semibold); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+.dw-plan { max-width: 100%; overflow-wrap: break-word; hyphens: auto; color: var(--text-2); font-size: var(--text-micro); font-weight: var(--weight-regular); line-height: var(--leading-micro); letter-spacing: var(--tracking-body); }
+.days-plans { flex-wrap: wrap; }
+.chip--add { color: var(--accent-ink); }
+.days-editing { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px var(--s3); }
+.days-editing-what { flex: 1 1 100%; color: var(--text); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+.days-free { color: var(--text-2); font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+.days-editing-ctl { display: flex; gap: var(--s4); }
+.days-ahead { padding: 0; overflow: hidden; }
+.days-ahead li + li, .pick-plans li + li { border-top: 0.5px solid var(--border); }
+.days-ahead .row.is-on .row-title { color: var(--accent); }
+.pick-plans .row.is-on .row-title { font-weight: var(--weight-semibold); }
+.ds-plan { color: var(--text-2); font-weight: var(--weight-regular); }
+.days-review { margin-top: var(--s4); }
+.rem-plans .block-hint { margin-top: var(--s2); }
+.link-btn--danger { color: var(--danger); }

@@ -3,6 +3,7 @@
 // when the routine was finished, are kept per day in routineRuns.
 import * as store from '../data/store.js';
 import * as H from './habits.js';
+import { on as planOn } from './day-plans-core.js';
 import { today, weekday, parseHM, fmtHM, minutesOfDay, dayEndMinutes, cmp } from './dates.js';
 
 export const runId = (routineId, date) => `${routineId}:${date}`;
@@ -52,10 +53,11 @@ export function progress(r, date = today(), mode = H.dayMode(date)) {
 const minutesNow = (now) => { const m = minutesOfDay(now); return m < dayEndMinutes() ? m + 1440 : m; };
 // A window can run past midnight (21:30–00:30): times before the day boundary count as the
 // evening before, and an end earlier than the start means the next morning.
-function windowOf(r) {
-  if (!r.window?.from || !r.window?.to) return { from: 0, to: 2880 };
-  let from = parseHM(r.window.from);
-  let to = parseHM(r.window.to);
+function windowOf(r, date = today()) {
+  const win = planOn(date).window(r);
+  if (!win?.from || !win?.to) return { from: 0, to: 2880 };
+  let from = parseHM(win.from);
+  let to = parseHM(win.to);
   if (from < dayEndMinutes()) from += 1440;
   if (to < from) to += 1440;
   return { from, to };
@@ -68,7 +70,8 @@ export function windowState(r, now = new Date()) {
   if (m < w.from) return 'before';
   return m <= w.to ? 'now' : 'after';
 }
-export const windowLabel = (r) => `${r.window?.from || ''}–${r.window?.to || ''}`;
+/** The window as words, on a date's plan. */
+export const windowLabel = (r, date = today()) => { const w = planOn(date).window(r); return `${w?.from || ''}–${w?.to || ''}`; };
 
 /** Today's routines with their progress, in order. */
 export function forDay(date = today(), mode = H.dayMode(date)) {

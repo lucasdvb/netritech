@@ -7,7 +7,7 @@
 // (`profile.day`); until you change it, it's built from your profile and habits.
 import * as store from '../data/store.js';
 import { parseHM, fmtHM } from './dates.js';
-import { LINKED } from './reminder-rules.js';
+import { LINKED } from './reminder-links.js';
 
 const DAY = 1440;
 const wrap = (m) => ((Math.round(m) % DAY) + DAY) % DAY;
@@ -111,6 +111,21 @@ export function blocks() {
     .sort((a, b) => sortKey(a.time, wake) - sortKey(b.time, wake) || (a.kind === 'wake' ? -1 : b.kind === 'wake' ? 1 : 0));
 }
 export const block = (id) => blocks().find((b) => b.id === id) || null;
+
+/** A list whose blocks carry their own times (a plan other than Every day), in order, with titles. */
+export function materialize(list) {
+  const wake = list.find((b) => b?.kind === 'wake');
+  const from = parseHM(validTime(wake?.time) ? wake.time : store.profile().wakeTime || '06:00');
+  return list
+    .filter((b) => b && typeof b.id === 'string')
+    .filter((b) => ['plain', 'wake', 'bed', 'train', 'work'].includes(b.kind) || (b.kind === 'routine' ? routine(b.ref) : habit(b.ref)))
+    .map((b) => {
+      const time = validTime(b.time) ? b.time : '12:00';
+      const mins = cleanMins(b.mins, b.kind === 'bed' ? 0 : 15);
+      return { ...b, time, mins, end: shift(time, mins), title: titleOf(b) };
+    })
+    .sort((a, b) => sortKey(a.time, from) - sortKey(b.time, from) || (a.kind === 'wake' ? -1 : b.kind === 'wake' ? 1 : 0));
+}
 
 /* ---------- writes ---------- */
 

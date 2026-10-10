@@ -1,5 +1,6 @@
 // Today, as a "now" instrument (DR-03): one next action, the routine that's open, your three,
 // priorities and tasks, pinned actions, and everything else folded. Edit Today arranges the rest.
+import { on as planOn } from '../domain/day-plans-core.js';
 import * as store from '../data/store.js';
 import * as M from '../domain/metrics-core.js';
 import * as H from '../domain/habits.js';
@@ -41,11 +42,11 @@ function subline(date, ph, mode) {
   const work = isWorkday(date);
   if (ph === 'morning') {
     if (call.kind === 'done') return `${call.title} done. Good start.`;
-    return call.template ? `${call.title} at ${store.profile().trainTime || '06:30'}.` : 'A slower morning. Move a little.';
+    return call.template ? `${call.title} at ${planOn(date).profile.trainTime || '06:30'}.` : 'A slower morning. Move a little.';
   }
   if (ph === 'work') return work ? 'Work block. Move every hour, look away every so often.' : 'A day off work. Walk, family, rest.';
   if (ph === 'evening') return work && !M.review(date)?.shutdown?.done ? 'Time to close the laptop soon.' : 'Life mode. Be present.';
-  return `Day complete. Lights out by ${store.profile().bedTime || '22:00'}.`;
+  return `Day complete. Lights out by ${planOn(date).profile.bedTime || '22:00'}.`;
 }
 
 /** After midnight, before your day ends: say whose day this still is. */

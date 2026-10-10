@@ -1,5 +1,6 @@
 // Routines on Today: the one open now is a numbered sequence with its next step highlighted;
 // the others are one line each ("Evening · 0/6 · 19:00") and open in place.
+import { on as planOn } from '../../domain/day-plans-core.js';
 import * as R from '../../domain/routines.js';
 import * as H from '../../domain/habits.js';
 import { habitColor } from '../../domain/taxonomy.js';
@@ -30,7 +31,7 @@ function step(p, s, i, date) {
 
 function card(p, open, date) {
   const r = p.routine;
-  const when = p.complete ? (p.completedAt ? `Done ${fmtTime(new Date(p.completedAt))}` : 'Done') : `${r.window?.from || ''}`;
+  const when = p.complete ? (p.completedAt ? `Done ${fmtTime(new Date(p.completedAt))}` : 'Done') : `${planOn(date).window(r)?.from || ''}`;
   return html`<section class="${cx('routine', open && 'is-open', p.complete && 'is-complete')}" data-key="r-${r.id}" aria-label="${r.name} routine">
     <button type="button" class="routine-head" data-action="routine" data-id="${r.id}" aria-expanded="${open}">
       <span class="routine-ic">${p.complete ? icon('check', { size: 16, stroke: 2.2 }) : icon(R.iconOf(r), { size: 16 })}</span>

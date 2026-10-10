@@ -8,6 +8,7 @@ import { html } from '../ui/dom.js';
 import { pageHead, infoBtn, tipText } from '../ui/components.js';
 import { num } from '../ui/format.js';
 import { dayPlanner, dayActions } from './day-planner.js';
+import { daysSection, aheadSection, daysActions } from './day-plans-ui.js';
 
 const DAY_NAMES = ['', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const PARTS = [['day', 'Day'], ['week', 'Week'], ['routines', 'Routines'], ['training', 'Training'], ['food', 'Food'], ['rules', 'Rules']];
@@ -52,7 +53,8 @@ export default {
       <p class="plan-motto">Consistency over intensity · Progress over perfection · Systems over motivation · Health over extreme results</p>
       <nav class="chips plan-jump" aria-label="Jump to">${PARTS.map(([id, label]) => html`<button type="button" class="chip" data-action="jump" data-id="${id}">${label}</button>`)}</nav>
 
-      ${sec('day', 'Your day', dayPlanner(), '', 'Each block is linked to the habit, routine or time behind it. Tap one to change its time, length or name, and that habit, routine and its reminders change with it; Today follows. Drag the handle to move a block: it starts when the one before it ends. Moving wake or lights out can carry the morning or the evening with it.')}
+      ${sec('day', 'Your day', html`${daysSection()}${dayPlanner()}`, '', 'Your days can differ: make a plan for each kind of day (a long day, a short day, Saturday) and give each weekday its plan. Every day is the plan whose blocks are linked to the habit, routine or time behind them: change one and that habit, routine and its reminders change with it. Another plan keeps its own times, and on its days Today, the routines and the reminders follow them. Drag the handle to move a block: it starts when the one before it ends.')}
+      ${sec('days', 'Your next two weeks', aheadSection(), '', 'Each date follows its weekday’s plan. Tap one to give that date another plan, or to adjust that day only without changing the plan.')}
 
       ${sec('week', 'Your week', html`<ul class="card plan-week">${weekRows(p).map((r) => html`<li>
         <span class="plan-dow">${r.name.slice(0, 3)}</span>
@@ -119,6 +121,7 @@ export default {
   },
   actions: {
     ...dayActions,
+    ...daysActions,
     jump: ({ data }) => {
       const el = document.getElementById(`plan-${data.id}`);
       if (!el) return;
