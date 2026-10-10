@@ -19,10 +19,44 @@
   var S = (window.theme && window.theme.strings) || {};
   var R = (window.theme && window.theme.routes) || {};
   var i = 0;
+  var stage = document.querySelector('[data-finder-stage]');
+  var wash = stage && stage.querySelector('canvas[data-wash]');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // the wash shifts with each answer: palettes from the brand tints (Spring, Khaki Linen, Mist, Sage)
+  var PAL = {
+    spring: { bg: '#f6f8f0', a: '#eef1e4', b: '#d1d9be', c: '#d6d2bf', d: '#bcc09b' },
+    linen: { bg: '#f8f6f0', a: '#f1ede2', b: '#ddd5bf', c: '#d6cdb4', d: '#c7c2ab' },
+    mist: { bg: '#f4f6f4', a: '#e9ece8', b: '#d4dad3', c: '#dfe0db', d: '#b9c3b6' },
+    sage: { bg: '#f2f4ea', a: '#e6eadb', b: '#c9d0b0', c: '#c7c2ab', d: '#abb086' }
+  };
+  var MOOD = {
+    'Dry skin': 'linen', 'Normal skin': 'linen', 'All skin types': 'spring', 'Sensitive skin': 'spring',
+    'Oily skin': 'mist', 'Combination skin': 'mist', 'Acne-prone skin': 'mist',
+    'Hydration': 'mist', 'Fine lines': 'mist', 'Firmness': 'mist', 'Dark circles': 'mist', 'Puffiness': 'mist',
+    'Dullness': 'linen', 'Dark spots': 'linen', 'Sun protection': 'linen'
+  };
+  function tint(name) {
+    var p = PAL[name] || PAL.sage;
+    if (!wash) return;
+    wash.dataset.bg = p.bg; wash.dataset.a = p.a; wash.dataset.b = p.b; wash.dataset.c = p.c; wash.dataset.d = p.d;
+    wash.dispatchEvent(new CustomEvent('wash:tint', { detail: p }));
+  }
 
   function answer(name) { var c = form.querySelector('input[name="' + name + '"]:checked'); return c ? c.value : ''; }
   function show(k) {
+    var leaving = steps[i];
+    if (k !== i && leaving && !reduce && leaving.classList.contains('is-current')) {
+      leaving.classList.add('is-leaving');
+      setTimeout(function () { leaving.classList.remove('is-leaving'); paintStep(k); }, 200);
+      return;
+    }
+    paintStep(k);
+  }
+  function paintStep(k) {
     i = k;
+    if (stage) stage.classList.toggle('is-started', k > 0);
+    tint(k === 0 ? 'spring' : MOOD[answer(k === 1 ? 'skin' : 'concern')] || 'sage');
     steps.forEach(function (s, j) { s.classList.toggle('is-current', j === i); });
     back.hidden = i === 0;
     bar.style.width = ((i + 1) / steps.length * 100) + '%';
@@ -83,18 +117,20 @@
       fetch((R.cartAdd || '/cart/add') + '.js', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify({ items: ids.map(function (id) { return { id: id, quantity: 1 }; }), sections: C ? C.sections() : [], sections_url: window.location.pathname }) })
         .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
-        .then(function (data) { if (C) return C.afterAdd(data.sections, addAll); })
+        .then(function (data) { addAll.removeAttribute('aria-busy'); if (C) return C.afterAdd(data.sections, addAll, data.items); })
         .catch(function () { alert(S.addError || 'Error'); })
         .then(function () { addAll.removeAttribute('aria-busy'); });
     };
     more.href = D.collectionUrl + '/' + concern.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     form.hidden = true;
     result.hidden = false;
-    result.focus();
+    tint('sage');
+    if (stage) stage.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+    result.focus({ preventScroll: true });
   }
   restart.addEventListener('click', function () {
-    form.reset(); result.hidden = true; form.hidden = false; show(0);
+    form.reset(); result.hidden = true; form.hidden = false; paintStep(0);
     var f = form.querySelector('input'); if (f) f.focus();
   });
-  show(0);
+  paintStep(0);
 })();

@@ -1,0 +1,9 @@
+{%- comment -%} Routine finder: the one-line description for an answer tile. Params: lines (array of "Tag: text"), tag. {%- endcomment -%}
+{%- for line in lines -%}
+  {%- assign parts = line | split: ':' -%}
+  {%- assign key = parts.first | strip -%}
+  {%- if key == tag and parts.size > 1 -%}
+    {%- assign text = line | remove_first: parts.first | remove_first: ':' | strip -%}
+    <small>{{ text }}</small>{%- break -%}
+  {%- endif -%}
+{%- endfor -%}

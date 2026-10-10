@@ -727,12 +727,26 @@
         "brands": "",
         "tint": true
       }
+    },
+    "forecast": {
+      "type": "island-forecast",
+      "settings": {
+        "place": "Port Louis",
+        "lat": "-20.16",
+        "lon": "57.50",
+        "api_key": "",
+        "link1_label": "Shop sunscreen",
+        "link1_url": "shopify://collections/sunscreen",
+        "link2_label": "Light moisturisers",
+        "link2_url": "shopify://collections/moisturisers"
+      }
     }
   },
   "order": [
     "welcome",
     "hero",
     "categories",
+    "forecast",
     "tabs",
     "just",
     "promo2",

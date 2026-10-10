@@ -1,6 +1,6 @@
 # Moana Beauté: handover
 
-October 2026 (v4). Store: `moana-beaute.myshopify.com`.
+October 2026 (v5). Store: `moana-beaute.myshopify.com`.
 
 ## Where things are
 
@@ -10,6 +10,29 @@ October 2026 (v4). Store: `moana-beaute.myshopify.com`.
 | Preview link | `https://moana-beaute.myshopify.com/?preview_theme_id=191582306594` (the storefront password may be needed first) |
 | Theme editor | Shopify admin → Online Store → Themes → *Moana Beauté v2 (preview)* → Customize |
 | Code | `moana/` in this repository (branch `claude/eloquent-bardeen-p6n61a`) |
+
+## What changed in v5 (UI and UX)
+
+Eight interface upgrades, chosen for the biggest jump in "wow" and ease of use. All respect reduced motion, add no layout shift, and move only position and opacity.
+
+1. **Water ripple.** Moving the cursor over the hero and brand-story photos sends soft rings across them, like a fingertip on water. It uses WebGL and is built only on the first hover, on mouse and trackpad devices. Between gestures the real photo shows, so nothing renders while still.
+2. **Card-to-product morph.** Opening a product from a card, the card's photo glides into the product page's main photo; going back, it settles into its card. Other page changes crossfade. This uses the browser's built-in view transitions (Chrome, Edge, Safari 18.2+); other browsers load pages as usual.
+3. **Island skin forecast** (new homepage section, after the categories):
+   - **What it shows:** today's peak UV, humidity and temperature for Port Louis, a one-line skincare tip, and Shop sunscreen / Light moisturisers buttons. The numbers count up and a marker slides along the UV scale.
+   - **Data:** from Open-Meteo, cached for 30 minutes. It never asks for the shopper's location.
+   - **If the data can't load:** a default tip shows in the same layout.
+   - **Licence:** Open-Meteo's free service is for non-commercial use. Before launch, take their commercial plan and paste the API key into the section settings (Theme editor → Island skin forecast).
+4. **Full-screen product gallery.** Tap any product photo:
+   - **Phones:** swipe between photos, pinch or double-tap to zoom, drag to pan, swipe down to close.
+   - **Desktop:** arrows, a thumbnail rail, click to zoom at the pointer, arrow keys and Escape.
+5. **Quick view.** On desktop, hovering a product card shows a Quick view pill. It opens a glass panel with photos, price, skin types, a short description, Add to bag and Save. Adding closes the panel and opens the bag.
+6. **Full-screen routine quiz:**
+   - **Layout:** one question per screen, with big answer tiles. Each tile has a one-line description, editable in the section settings.
+   - **Motion:** the wash behind it shifts colour with each answer, questions rise in, and the intro steps aside once she starts.
+7. **Add-to-bag morph.** The button turns into a tick and "Added", the bag number rolls up, and the new line slides into the bag with a soft spring and a brief tint.
+8. **Phone dock.** An app-style bar on phones: Home, Shop, Routine, Wishlist and Bag, with live counts. It is glass, hides while scrolling down and returns on the way up. On product pages it steps aside for the sticky Add to bag bar.
+
+Also: Raleway's lining figures for counters; the footer watermark is drawn from CSS (purely decorative).
 
 ## What changed in v4
 
@@ -144,6 +167,7 @@ Both are linked from the header and from the footer's Shop column.
    - Shopify accepted every template.
 2. **Against the local preview** (`dev/`): the real theme files, the real catalogue, and Shopify's endpoints emulated (cart, including multi-item adds, section rendering, predictive search, filters, recommendations).
    - `node dev/e2e.mjs`: **40/40** (cart drawer, quantities, free-delivery maths, stock cap, sticky bar, recommendations, filters, sort, predictive search, keyboard, focus traps, no overflow, no-JS forms).
+   - `node dev/ux-test.mjs`: **41/41**. Dock (shows, current page, hides and returns, opens the bag, hidden on desktop); add-to-bag morph, count roll and new line; quick view (hover pill, content, Escape, add and hand-off to the bag); view-transition wiring; gallery (open, arrows, swipe, zoom in and out, thumbnails, drag-down close, focus return); forecast with a simulated Open-Meteo reply and offline; quiz (descriptions, full height, intro, wash tint, result); ripple (built on hover, runs, fades, off under reduced motion).
    - `node dev/cro-test.mjs`: **11/11**. Delivery dates on the product page and in the bag, the weekend arithmetic (Friday, Saturday and Monday orders), next-step pick and add, and recently viewed (newest first, current product excluded).
    - `node dev/new-pages-test.mjs`: **11/11**. The quiz builds a five-step routine; Add the whole routine opens the bag with the products; arrow keys don't skip questions; hearts toggle; the header count updates; the wishlist page shows, removes and clears cards; no console errors.
    - `node dev/sweep.mjs`: 22 pages × 10 widths (320–1440). No horizontal overflow, no console errors, every image has alt text and dimensions, one H1 per page, no skipped heading levels, no duplicate ids.
@@ -151,10 +175,10 @@ Both are linked from the header and from the footer's Shop column.
 
    | Page | Perf | A11y | Best practices | SEO | CLS |
    |---|---|---|---|---|---|
-   | Home | 89–91 | 100 | 100 | 100 | 0 |
-   | Collection | 91 | 100 | 100 | 100 | 0 |
-   | Product | 90 | 100 | 100 | 100 | 0 |
-   | Find my routine | 84 | 100 | 100 | 100 | 0 |
+   | Home | 87–91 | 100 | 100 | 100 | 0 |
+   | Collection | 87 | 100 | 100 | 100 | 0 |
+   | Product | 92 | 100 | 100 | 100 | 0 |
+   | Find my routine | 91–92 | 100 | 100 | 100 | 0 |
    | Wishlist | 91 | 100 | – | noindex | 0 |
 
    Layout shift was traced to zero on every template:
@@ -163,6 +187,8 @@ Both are linked from the header and from the footer's Shop column.
    - the wishlist decides its state while the page is still parsing
 
 **Not tested, because it needs the real store:**
+- the live weather call (the test environment blocks Open-Meteo; the section was tested against a simulated reply in Open-Meteo's documented format)
+- the card-to-product morph on a real phone (Safari 18.2+ and Chrome)
 - a real add to bag and checkout
 - the payment provider you are about to add
 - which filters Search & Discovery exposes

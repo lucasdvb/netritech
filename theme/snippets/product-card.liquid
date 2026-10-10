@@ -5,6 +5,7 @@
           heading (h2|h3, default h3), quick_add (default true).
   Badges come from real data only: sold out, a compare-at price (shown as % off), low stock (under the theme
   threshold), or NEW IN for products published in the last 60 days.
+  A Quick view pill (pointer devices) opens the product's essentials in a glass panel (theme.js).
   Add to bag is a plain POST to /cart/add, so it works with JavaScript off; theme.js turns it into an AJAX add
   that opens the bag drawer. Products with real options link to the product page instead.
 {%- endcomment -%}
@@ -61,6 +62,9 @@
     {%- else -%}
       {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
     {%- endif -%}
+    <button class="card__quick" type="button" data-quick-view="{{ product.url }}" aria-haspopup="dialog" aria-label="{{ 'products.quick_view_named' | t: title: product.title | escape }}">
+      {%- render 'icon', name: 'eye' -%}<span aria-hidden="true">{{ 'products.quick_view' | t }}</span>
+    </button>
   </div>
   <button class="card__heart" type="button" data-wishlist-toggle="{{ product.handle }}" aria-pressed="false">
     {%- render 'icon', name: 'heart' -%}<span class="sr-only">{{ 'wishlist.save' | t: title: product.title }}</span>
