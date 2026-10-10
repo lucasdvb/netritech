@@ -2,6 +2,8 @@
 // what went well and where it slipped (computed, not remembered), one change that is applied to
 // your plan rather than noted, and next week's three. A finished review, or "See it all", shows
 // every number and question on one page.
+import * as P from '../domain/day-plans.js';
+import { nextWeekDays, daysActions } from './day-plans-ui.js';
 import * as store from '../data/store.js';
 import { saver, applyPatches } from '../ui/save-later.js';
 import * as H from '../domain/habits.js';
@@ -63,6 +65,7 @@ function nextWeek(ws) {
         <label class="field"><span class="field-label">When it does, I will…</span>
           <input class="input" value="${next.ifThen || ''}" data-change="wk-ob" data-f="ifThen" placeholder="e.g. Do the first one before email" maxlength="100"></label>
       </div>
+      ${P.plans().length > 1 ? nextWeekDays(nw) : ''}
     </div>
   </section>`;
 }
@@ -231,6 +234,7 @@ export default {
     },
   },
   actions: {
+    'dp-date': daysActions['dp-date'],
     'rv-next': async ({ params, ui }) => {
       const ws = weekOf(params);
       store.put('weeklyReviews', collect(ws));

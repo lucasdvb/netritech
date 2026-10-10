@@ -1,5 +1,5 @@
 // Rows shared by every block on Today: habit rows, metric tiles, counters and weekly chips.
-import * as store from '../../data/store.js';
+import { on as planOn } from '../../domain/day-plans-core.js';
 import * as M from '../../domain/metrics-core.js';
 import * as H from '../../domain/habits.js';
 import { trainingCall } from '../../domain/day-plan.js';
@@ -63,25 +63,25 @@ export function habitRow(h, date, mode, ui, { focus = false } = {}) {
   let sub = '';
   if (h.id === 'h-training') {
     const call = trainingCall(date);
-    sub = call.kind === 'done' ? `${call.title} · logged` : mode === 'minimum' ? 'Basic movement' : `${call.title} · ${store.profile().trainTime || h.time}`;
+    sub = call.kind === 'done' ? `${call.title} · logged` : mode === 'minimum' ? 'Basic movement' : `${call.title} · ${planOn(date).profile.trainTime || planOn(date).habitTime(h)}`;
   } else if (h.source === 'sleep') {
     const sl = M.sleep(date);
     sub = sl ? `${durationHM(sl.hours * 60)}${sl.quality ? ` · quality ${sl.quality}/10` : ''}` : 'From your morning check-in';
   } else if (h.checklist?.length) {
     const n = h.checklist.filter((_, i) => l?.checklist?.[i]).length;
-    sub = done ? 'Done' : n ? `${n} of ${h.checklist.length} steps` : h.time ? h.time : `${h.checklist.length} steps`;
+    sub = done ? 'Done' : n ? `${n} of ${h.checklist.length} steps` : planOn(date).habitTime(h) || `${h.checklist.length} steps`;
   } else if (h.source === 'mind') {
     const m = M.mindMinutes(date);
-    sub = m ? `${m} of ${h.target} min logged` : `${h.target} min${h.time ? ` · ${h.time}` : ''}`;
+    sub = m ? `${m} of ${h.target} min logged` : `${h.target} min${planOn(date).habitTime(h) ? ` · ${planOn(date).habitTime(h)}` : ''}`;
   } else if (h.source?.startsWith('rel:')) {
     const n = M.relationship(date, h.source.slice(4)).length;
-    sub = n ? 'Logged' : h.mvd && mode === 'minimum' ? '' : h.time ? `${h.time} · phone away` : '';
+    sub = n ? 'Logged' : h.mvd && mode === 'minimum' ? '' : planOn(date).habitTime(h) ? `${planOn(date).habitTime(h)} · phone away` : '';
   } else if (h.type === 'check') {
     sub = H.value(h, date) === 0 ? 'Not today' : 'Yes / no';
   } else if (H.isFlexible(h)) {
     sub = H.periodLabel(h, date);
   } else {
-    sub = h.time || '';
+    sub = planOn(date).habitTime(h) || '';
   }
   if (lv === 'tiny') sub = tiny?.label ? `Tiny version · ${tiny.label}` : 'Tiny version';
   else if (focus && !lv) {

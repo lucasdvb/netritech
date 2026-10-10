@@ -56,7 +56,9 @@ await step('a phone starts sync: the server checks out, a key is made, and every
   if (!(await phone.p.locator('.sync-key-val').textContent()).includes(key.slice(0, 5))) throw new Error('the new key is not shown');
   const rows = srv.env.DB.raw.prepare('SELECT COUNT(*) AS n FROM items').get().n;
   if (rows < 50) throw new Error(`only ${rows} records on the server`);
-  const plain = srv.env.DB.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE data LIKE '%bank%' OR k LIKE '%tasks%'").get().n;
+  // Sealed data is base64, which never holds a quote mark; any JSON that slipped through would. (A word
+  // like "bank" can turn up in random base64 by chance, so it isn't a fair test.)
+  const plain = srv.env.DB.raw.prepare("SELECT COUNT(*) AS n FROM items WHERE data LIKE '%\"%' OR k LIKE '%tasks%'").get().n;
   if (plain) throw new Error('something reached the server unencrypted');
 });
 

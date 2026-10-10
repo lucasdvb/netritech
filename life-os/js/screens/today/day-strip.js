@@ -3,6 +3,7 @@
 // the real habit, routine, workout or time behind it, so what's done here is done there.
 // Loaded just after the first screen.
 import * as D from '../../domain/day-blocks.js';
+import * as P from '../../domain/day-plans.js';
 import * as H from '../../domain/habits.js';
 import * as M from '../../domain/metrics-core.js';
 import * as R from '../../domain/routines.js';
@@ -50,7 +51,7 @@ function stateOf(b, date) {
 
 export function dayBlock(date, ui, now = new Date()) {
   if (date !== today()) return '';
-  const list = D.blocks();
+  const list = P.blocksOn(date);
   if (!list.length) return '';
   const at = D.dayMinutes(fmtHM(minutesOfDay(now)));
   const rows = list.map((b) => {
@@ -76,7 +77,7 @@ export function dayBlock(date, ui, now = new Date()) {
     return html`<li class="ds-now" aria-hidden="true" data-key="ds-now"><span class="tnum">${fmtHM(minutesOfDay(now))}</span></li>`;
   };
   return html`<section class="dstrip" data-key="day" aria-label="Your day">
-    <div class="block-head"><h2 class="block-title">Your day</h2>
+    <div class="block-head"><h2 class="block-title">Your day${P.inUse() ? html`<span class="ds-plan"> · ${P.on(date).name}</span>` : ''}</h2>
       <span class="block-meta tnum">${countable ? `${doneN} of ${countable}` : ''}</span>
       <button type="button" class="link-btn" data-action="nav" data-to="plan/playbook">Edit</button></div>
     <ol class="ds-list">

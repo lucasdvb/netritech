@@ -129,7 +129,7 @@ await step('paste a copied picture onto an exercise', async () => {
     const c = document.createElement('canvas'); c.width = 120; c.height = 80;
     c.getContext('2d').fillRect(10, 10, 60, 40);
     const blob = await new Promise((r) => c.toBlob(r, 'image/png'));
-    await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+    await navigator.clipboard.write([new window.ClipboardItem({ 'image/png': blob })]);
   });
   await ev(p, async (id) => (await import('./js/screens/exercise-media-ui.js')).openMedia(id), eid);
   await p.waitForSelector('.sheet [data-action="exm-paste"]');

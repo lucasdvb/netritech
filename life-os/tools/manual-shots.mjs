@@ -301,6 +301,70 @@ flow('s-day', async () => {
   await ctx.close();
 });
 
+// Set up: when your days differ, a plan for each kind of day.
+flow('s-days', async () => {
+  const { ctx, p } = await at('2026-10-07T10:30:00', { before: async () => {
+    const P = await import('./js/domain/day-plans.js');
+    const { id } = P.create('Short day');
+    P.setWeekday(2, id);
+    P.setWeekday(4, id);
+    const wake = P.blocksOf({ plan: id }).find((b) => b.kind === 'wake');
+    P.edit({ plan: id }, wake.id, { time: '07:30' }, { carry: true });
+    const { id: sat } = P.create('Saturday');
+    P.setWeekday(6, sat);
+  } });
+  await go(p, '#/plan/playbook', '.days-week');
+  await p.locator('.days-plans .chip', { hasText: 'Short day' }).click();
+  await p.waitForSelector('.days-plans .chip.is-active:has-text("Short day")');
+  await p.locator('[data-key="plan-day"]').scrollIntoViewIfNeeded();
+  await ev(p, () => { const el = document.querySelector('[data-key="plan-day"]'); window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 70); });
+  const a = await screen(p, 's-days-1', [
+    { sel: '.days-week', n: 1, at: 'tl', pad: 4 },
+    { sel: '.days-plans', n: 2, at: 'tl', pad: 4 },
+    { sel: '.days-editing', n: 3, at: 'tl', pad: 4 },
+  ]);
+  await ev(p, () => { const el = document.querySelector('[data-key="days-ahead"]'); window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 140); });
+  await p.locator('[data-key="days-ahead"] .row').nth(2).click();
+  await p.waitForSelector('.sheet [data-action="dp-adjust"]'); await settle(p);
+  const b = await screen(p, 's-days-2', [
+    { sel: '.sheet .pick-plans', n: 4, at: 'tl', pad: 4 },
+    { sel: '.sheet [data-action="dp-adjust"]', n: 5, at: 'tl', pad: 3 },
+  ]);
+  await pair('s-days', [a, b], ['Plan › Your plan: Your days', 'Next two weeks: one date']);
+  await ctx.close();
+});
+
+// Going further: a picture of how an exercise is done, and gym mode showing it.
+flow('f-pictures', async () => {
+  const { ctx, p } = await at('2026-10-09T06:30:00');
+  await go(p, '#/plan/training/exercises', '[data-action="new"]');
+  await p.locator('[data-action="new"]').click();
+  await p.waitForSelector('.sheet input[name="name"]');
+  await p.fill('.sheet input[name="name"]', 'Cossack squat');
+  await p.locator('.sheet [data-change="pp-add"]').setInputFiles(new URL('../tests/fixtures/squat.gif', import.meta.url).pathname);
+  await p.waitForSelector('.sheet [data-key^="pp-"] img');
+  await ev(p, () => document.querySelector('.sheet .exm-thumbs--edit')?.scrollIntoView({ block: 'center' }));
+  const a = await screen(p, 'f-pictures-1', [
+    { sel: '.sheet .exm-thumbs--edit .exm-add', n: 1, at: 'tl', pad: 3 },
+    { sel: '.sheet [data-action="pp-paste"]', n: 2, at: 'tr', pad: 3 },
+  ]);
+  await p.locator('.sheet button[type="submit"]').click();
+  await p.waitForFunction(() => window.__lifeos.store.all('exercises').find((x) => x.name === 'Cossack squat')?.photos?.length === 1);
+  const wid = await ev(p, async () => {
+    const { store } = window.__lifeos;
+    const e = store.all('exercises').find((x) => x.name === 'Cossack squat');
+    const w = (await import('./js/screens/workout-actions.js')).startWorkout('t-upper');
+    const first = (await import('./js/domain/fitness.js')).setsOf(w.id)[0].exerciseId;
+    store.update('exercises', first, { photos: e.photos, note: 'Chest up, sit back into the heel.' });
+    return w.id;
+  });
+  await go(p, `#/workout/${wid}/gym`, '.exm-line--gym img[src]');
+  await ev(p, () => document.querySelector('.gym-warn')?.remove());
+  const b = await screen(p, 'f-pictures-2', [{ sel: '.exm-line--gym .exm-thumb', n: 3, at: 'tr', pad: 4 }]);
+  await pair('f-pictures', [a, b], ['Exercises › + : New exercise', 'Gym mode']);
+  await ctx.close();
+});
+
 // Set up: a new habit, and a routine.
 flow('s-habit', async () => {
   const { ctx, p } = await at('2026-10-07T10:30:00');
