@@ -1,4 +1,4 @@
-// Reflect › Your year (13f): the year in numbers, its picture, three questions, and one word for the
+// Review › Your year (13f): the year in numbers, its picture, three questions, and one word for the
 // year ahead. Saved as you type; Complete marks it done, and the word goes to the top of Plan.
 import * as Y from '../domain/year-review.js';
 import { today } from '../domain/dates.js';
@@ -29,7 +29,7 @@ export default {
       n.steps ? ['Steps a day', num(Math.round(n.steps))] : null,
     ].filter(Boolean);
     return html`
-      ${pageHead({ title: `Your ${y}`, eyebrow: 'Yearly review', back: { to: 'reflect', label: 'Reflect' } })}
+      ${pageHead({ title: `Your ${y}`, eyebrow: 'Yearly review', back: { to: 'review', label: 'Review' } })}
       ${r.completedAt ? html`<p class="notice">${icon('check', { size: 16 })} Done. ${r.word ? html`Your word for ${y + 1}: <b>${r.word}</b>, at the top of Plan.` : ''}</p>` : html`<p class="lead">About ten minutes, once a year. Look back, then choose one word to carry into ${y + 1}.</p>`}
       <section class="block" data-key="numbers"><div class="block-head"><h2 class="block-title">The year in numbers</h2></div>
         <dl class="facts">${facts.map(([k, v]) => html`<div><dt>${k}</dt><dd class="tnum">${v}</dd></div>`)}</dl>

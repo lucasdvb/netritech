@@ -1,4 +1,5 @@
-// Global search across habits, tasks, journal, workouts, measurements, goals, books and reviews.
+// Global search: go to any screen or setting, and find anything you've logged (habits, tasks,
+// journal, workouts, measurements, goals, books and reviews).
 import * as store from '../data/store.js';
 import { relativeDay, fmtMDY, fmtMD, fmtMonth } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
@@ -7,6 +8,40 @@ import { app } from '../ui/app-api.js';
 import { dueLabel, repeatLabel } from '../domain/tasks.js';
 
 const norm = (s) => String(s || '').toLowerCase();
+
+// Every place, with the everyday words people use for it.
+const SCREENS = [
+  ['Today', 'today', 'calendar-check', 'home now cockpit'], ['Plan', 'plan', 'map', ''], ['Review', 'review', 'chart-spline', 'progress reflect week story'],
+  ['Habits', 'plan/habits', 'list-checks', 'routines'], ['Your three', 'plan/habits/sort', 'target', 'focus in focus'],
+  ['Your plan', 'plan/playbook', 'scroll-text', 'your day schedule playbook routines rules'], ['Goals', 'plan/goals', 'target', ''],
+  ['Projects', 'plan/projects', 'layers', ''], ['Tasks', 'plan/tasks', 'list-todo', 'to do todo chores'], ['Lists', 'plan/lists', 'list-checks', 'shopping packing groceries checklist'],
+  ['Brain dump', 'plan/notes', 'brain', 'notes ideas'], ['Training', 'plan/training', 'dumbbell', 'workouts gym sessions plan'],
+  ['Exercises', 'plan/training/exercises', 'activity', 'lifts movements'], ['Books', 'plan/books', 'book-open', 'reading'],
+  ['Money', 'plan/money', 'wallet', 'spending spent budget expenses'], ['Dates', 'plan/dates', 'calendar-heart', 'birthdays anniversaries countdown events'],
+  ['Moodboard', 'plan/moodboard', 'image', 'pictures images'], ['Commitments', 'plan/commitments', 'hand', 'pledges'], ['Rewards', 'plan/rewards', 'trophy', ''],
+  ['Body', 'progress/body', 'activity', 'health'], ['Weight', 'progress/body/weight', 'scale', 'weigh-in scale'],
+  ['Food', 'progress/body/nutrition', 'utensils', 'nutrition calories protein meals'], ['Sleep', 'progress/body/sleep', 'bed', ''],
+  ['Measurements', 'progress/body/measurements', 'ruler', 'waist body fat'], ['Progress photos', 'progress/body/photos', 'camera', 'pictures'],
+  ['Trends', 'progress/trends', 'chart-spline', 'charts graphs'], ['Calendar', 'progress/calendar', 'calendar', 'history days'],
+  ['Records & mastery', 'progress/records', 'medal', 'personal bests pb'], ['Season', 'progress/season', 'flag', ''], ['Your year', 'progress/year', 'sun', 'artwork print'],
+  ['Journal', 'reflect/journal', 'notebook-pen', 'diary entries writing'], ['Reviews', 'reflect/reviews', 'calendar-days', 'weekly monthly yearly review'],
+  ['Insights', 'reflect/insights', 'lightbulb', 'patterns'], ['Mind', 'progress/areas/mind', 'brain', 'learning meditation'],
+  ['Spirit', 'progress/areas/spirit', 'church', 'faith prayer scripture'], ['Relationships', 'progress/areas/relationships', 'heart', 'family people'],
+  ['Work', 'progress/areas/work', 'briefcase', 'deep work focus'], ['Settings', 'you/settings', 'settings', 'preferences options'],
+  ['Data & backup', 'you/data', 'database', 'export import backup restore csv'], ['Privacy', 'you/privacy', 'shield-check', ''], ['Sync', 'you/sync', 'refresh-cw', 'devices server'],
+];
+// Every setting, by the label it has in Settings.
+const SETTINGS = ['Name', 'Age', 'Height', 'Wake', 'Training', 'Work starts', 'Work ends', 'Lights out', 'My day ends at', 'Work days', 'Habits in focus',
+  'Targets', 'Weight', 'Length', 'Theme', 'Show explanations', 'Haptics', 'Sound', 'Race against', 'Safety nets', 'Reminders', 'In your calendar',
+  'Cues from your iPhone', 'When Life OS is closed', 'Badge on the app icon'];
+
+/** Screens and settings matching what's typed. */
+function places(t) {
+  const out = SCREENS.filter(([name, , , words]) => norm(name).includes(t) || norm(words).split(' ').some((w) => w.startsWith(t)) || norm(words).includes(t))
+    .map(([name, to, ic]) => ({ ic, title: name, sub: 'Go to', to }));
+  const sets = SETTINGS.filter((x) => norm(x).includes(t)).map((x) => ({ ic: 'sliders-horizontal', title: x, sub: 'Setting', to: `you/settings?find=${encodeURIComponent(x)}` }));
+  return [...out, ...sets];
+}
 
 function search(q) {
   const t = norm(q).trim();
@@ -20,6 +55,7 @@ function search(q) {
   };
   const groups = [];
   const add = (title, items) => { if (items.length) groups.push({ title, items: items.slice(0, 8) }); };
+  add('Go to', places(t));
   add('Habits', store.all('habits').filter((h) => hit(h.name, h.description)).map((h) => ({ ic: h.icon, title: h.name, sub: h.archived ? 'Archived' : h.description, to: `plan/habits/${h.id}` })));
   add('Tasks', store.all('tasks').filter((x) => hit(x.title, x.notes)).sort((a, b) => Number(a.done) - Number(b.done) || (a.date || '9999').localeCompare(b.date || '9999'))
     .map((x) => ({ ic: x.done ? 'circle-check' : 'list-todo', title: x.title, sub: `${x.done ? 'Done' : dueLabel(x.date)}${x.repeat ? ` · ${repeatLabel(x.repeat)}` : ''}`, to: 'plan/tasks' })));
@@ -51,7 +87,7 @@ export function openSearch() {
     render: (s) => {
       const groups = search(s.ui.q);
       return html`<div class="form">
-        <div class="search-field search-field--lg">${icon('search', { size: 18 })}<input type="search" placeholder="Habits, journal, workouts, books…" value="${s.ui.q}" data-input="q" autofocus aria-label="Search everything" enterkeyhint="search"></div>
+        <div class="search-field search-field--lg">${icon('search', { size: 18 })}<input type="search" placeholder="Anything: a screen, a setting, a habit, a note…" value="${s.ui.q}" data-input="q" autofocus aria-label="Search everything" enterkeyhint="search"></div>
         ${s.ui.q.trim().length < 2 ? html`<p class="muted small center">Search everything you’ve logged. It all stays on this device.</p>`
           : !groups.length ? html`<p class="muted center">Nothing matches “${s.ui.q}”.</p>`
             : groups.map((g) => html`<section><p class="section-label">${g.title}</p><ul class="list">${g.items.map((it) => html`<li><button type="button" class="row" data-action="go" data-to="${it.to}">

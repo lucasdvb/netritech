@@ -118,7 +118,7 @@ await step('offline: reload with the network off', async () => {
   await page.reload();
   await page.waitForFunction(() => window.__lifeos?.ready, null, { timeout: 15000 });
   await page.goto(base + '#/progress');
-  await page.waitForSelector('[data-view="progress"]');
+  await page.waitForSelector('[data-view="review"]');
   await shot('62-offline-progress');
   // the self-hosted font must work with the network off
   await page.goto(base + '#/today');
@@ -138,7 +138,7 @@ await step('a year of data stays fast', async () => {
     await new Promise((res) => { const f = () => (document.querySelector(s) ? res() : requestAnimationFrame(f)); f(); });
     return Math.round(performance.now() - t0);
   }, [hash, sel]);
-  for (const [h, s] of [['#/today', '[data-view="today"] .now'], ['#/progress', '[data-view="progress"] .story'], ['#/progress/trends', '[data-view="trends"] .chart-line'], ['#/progress/calendar', '.cal-grid'], ['#/habits', '[data-view="habits"] .row'], ['#/body/weight', '[data-view="weight"] .chart-line'], ['#/more/review/week', '[data-view="review-week"] .guide, [data-view="review-week"] .review-grid']]) {
+  for (const [h, s] of [['#/today', '[data-view="today"] .now'], ['#/progress', '[data-view="review"] .story'], ['#/progress/trends', '[data-view="trends"] .chart-line'], ['#/progress/calendar', '.cal-grid'], ['#/habits', '[data-view="habits"] .row'], ['#/body/weight', '[data-view="weight"] .chart-line'], ['#/more/review/week', '[data-view="review-week"] .guide, [data-view="review-week"] .review-grid']]) {
     await time('#/plan', '[data-view="plan"]');
     timings.push([h, await time(h, s)]);
   }

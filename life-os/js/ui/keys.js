@@ -1,10 +1,10 @@
-// Keyboard shortcuts. 1–4 switch place, J and K move through items, X or Space completes,
+// Keyboard shortcuts. 1–3 switch place, J and K move through items, X or Space completes,
 // E edits, N logs something, / or ⌘K searches, ? shows them all. Typing in a field always wins.
 import { html } from './dom.js';
 import * as sheet from './sheet.js';
 
 export const SHORTCUTS = [
-  ['1 – 4', 'Today, Plan, Progress, Reflect'],
+  ['1 – 3', 'Today, Plan, Review'],
   ['J / K', 'Next or previous item'],
   ['X or Space', 'Complete the selected item'],
   ['E', 'Edit what you’re looking at'],

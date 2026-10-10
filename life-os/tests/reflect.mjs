@@ -157,6 +157,7 @@ await step('the monthly review, one question per screen', async () => {
 
 await step('reminders in your calendar: one file, an alert on every event', async () => {
   const { ctx, p } = await at('2026-10-07T09:00:00', { hash: '#/you/settings' });
+  await p.locator('details.set-advanced > summary').click(); // reminder delivery lives under Advanced
   await p.locator('[data-action="calendar-file"]').click();
   await p.waitForSelector('.sheet .cal-file');
   await p.screenshot({ path: `${OUT}/p8-calendar-file.png` });
@@ -184,7 +185,9 @@ await step('the app-icon badge counts what is left of today, and follows as you 
   await p.waitForFunction((was) => window.__badge === was + 1, n);
   await ev(p, async () => { const T = await import('./js/domain/tasks.js'); T.toggle(T.priorities('2026-10-07')[0].id); });
   await p.waitForFunction((was) => window.__badge === was, n);
-  await go(p, '#/you/settings', '[data-key="n-badge"]');
+  await go(p, '#/you/settings', '[data-view="settings"]');
+  await p.locator('details.set-advanced > summary').click(); // reminder delivery lives under Advanced
+  await p.waitForSelector('[data-key="n-badge"]');
   await p.locator('[data-key="n-badge"] [role="switch"]').click();
   await p.waitForFunction(() => window.__badge === 0);
   await ctx.close();

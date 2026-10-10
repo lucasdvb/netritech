@@ -2,9 +2,12 @@
 // Loaded only when an address looks old, so start-up doesn't carry it.
 
 /** Paths worth checking against the table below. */
-export const LEGACY = /^(habits|body|more)(\/|$)|^you$|^progress\/(areas|overview|insights)$|^plan\/habits\/[^/]+\/edit$/;
+export const LEGACY = /^(habits|body|more)(\/|$)|^you$|^progress$|^reflect$|^progress\/(areas|overview|insights)$|^plan\/habits\/[^/]+\/edit$/;
 
 export const REDIRECTS = [
+  // Progress and Reflect became one place, Review (October 2026).
+  ['progress', 'review'],
+  ['reflect', 'review'],
   ['habits/new', 'plan/habits?new=1'],
   ['habits/sort', 'plan/habits/sort'],
   ['habits/:id/edit', 'plan/habits/:id?edit=1'],
@@ -39,7 +42,7 @@ export const REDIRECTS = [
   ['more/privacy', 'you/privacy'],
   ['more', 'plan'],
   ['you', 'today?you=1'],
-  ['progress/areas', 'progress'],
+  ['progress/areas', 'review'],
   ['progress/overview', 'progress/trends'],
   ['progress/insights', 'reflect/insights'],
 ].map(([path, to]) => ({ path, to }));

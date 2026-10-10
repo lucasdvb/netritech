@@ -111,7 +111,7 @@ export const actions = {
   'log-weight': open(pads, 'weightPad'),
   'pin-workout': async ({ params }) => {
     const active = F.activeWorkout();
-    if (active) return app.go(`workout/${active.id}`);
+    if (active) return app.go(`workout/${active.id}/gym`);
     (await workouts()).openStartSheet(params.date || today());
   },
   'pin-journal': async () => (await import('../journal.js')).newEntry('free'),
@@ -119,7 +119,8 @@ export const actions = {
   'pin-money': async () => (await import('../money.js')).openExpense(),
   'pin-reading': open(sheets, 'openSession', 'reading'),
   'pin-meditation': open(sheets, 'openSession', 'meditation'),
-  'start-workout': async ({ data, params }) => (await workouts()).startWorkout(data.template, params.date || today()),
+  // From Today, a workout opens in gym mode: one tap from the plan to the first set.
+  'start-workout': async ({ data, params }) => (await workouts()).startWorkout(data.template, params.date || today(), { gym: true }),
   'set-mode': async ({ data, params }) => (await sheets()).setMode(params.date || today(), data.mode),
   mode: open(sheets, 'openMode'),
   'go-today': () => app.replace('today'),

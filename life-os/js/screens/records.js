@@ -37,7 +37,7 @@ export default {
     const habits = H.activeHabits().filter((h) => !['paused'].includes(H.stateOf(h))).map((h) => ({ h, m: L.mastery(h) })).filter((x) => x.m.count)
       .sort((a, b) => (b.m.level?.at || 0) - (a.m.level?.at || 0) || b.m.count - a.m.count);
     return html`
-      ${pageHead({ title: 'Records & mastery', back: { to: 'progress', label: 'Progress' } })}
+      ${pageHead({ title: 'Records & mastery', back: { to: 'review', label: 'Review' } })}
       <section class="block block--first" data-key="shelf">
         <div class="block-head"><h2 class="block-title">Records</h2><span class="block-meta">from your own data</span></div>
         ${shelf.length ? html`<ul class="record-shelf">${shelf.slice(0, ui.allRecords ? shelf.length : SHOW.shelf).map((r) => html`<li class="record" data-key="rec-${r.id}">

@@ -1,6 +1,7 @@
-// Progress: how it's going, as a story rather than a dashboard (A12). This week in one sentence
-// and its score against the same point last week, what's moving (each with what to do), the few
-// measures that drive a decision, then Body and the areas. Charts live one level down.
+// Progress's sections, shown in Review: how it's going, as a story rather than a dashboard (A12).
+// This week in one sentence and its score against the same point last week, what's moving (each
+// with what to do), the few measures that drive a decision, then Body and the areas. Charts live
+// one level down.
 import * as S from '../domain/story.js';
 import { areaList } from './area.js';
 import { seasonLine } from './season.js';
@@ -8,7 +9,6 @@ import * as Se from '../domain/seasons.js';
 import { today, fmtDayLetter, fmtDay, fmtLong, fmtMD } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { pageHead } from '../ui/components.js';
 import { pct } from '../ui/format.js';
 
 function story(w) {
@@ -57,19 +57,21 @@ function measures(list) {
   </section>`;
 }
 
-export default {
-  id: 'progress',
-  title: 'Progress',
-  render() {
-    const w = S.week();
-    const ms = S.measures();
-    return html`
-      ${pageHead({ title: 'Progress', sub: 'How it’s going.',
-        actions: html`<button type="button" class="icon-btn" data-action="open-search" aria-label="Search" aria-keyshortcuts="/">${icon('search', { size: 20 })}</button>` })}
+/** Progress's sections, now part of Review: the week's story, what's moving, the measures. */
+export function progressTop() {
+  const w = S.week();
+  const ms = S.measures();
+  return html`
       ${seasonLine()}
       ${story(w)}
       ${moving(S.moving(today(), ms))}
       ${measures(ms)}
+`;
+}
+
+/** Body, the areas, and the rest of what Progress held (records, trends, your year, the calendar). */
+export function progressMore() {
+  return html`
       <section class="block" data-key="body-link">
         <div class="block-head"><h2 class="block-title">Body</h2></div>
         <a class="card card--link sort-cta" href="#/progress/body" data-action="nav" data-to="progress/body">
@@ -90,5 +92,4 @@ export default {
         <li><a class="row" href="#/reflect/insights" data-action="nav" data-to="reflect/insights"><span class="row-ic">${icon('lightbulb', { size: 18 })}</span>
           <span class="row-main"><span class="row-title">Insights</span><span class="row-sub">Patterns in your logs, each with one change to make</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
       </ul></section>`;
-  },
-};
+}

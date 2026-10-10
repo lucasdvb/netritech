@@ -1013,7 +1013,7 @@
 /* ---------- Reflect: the page you write on, insights, guided reviews (Phase 8) ---------- */
 .write { display: flex; flex-direction: column; gap: var(--s3); }
 .write-prompt { font-size: var(--text-h3); font-weight: var(--weight-semibold); line-height: var(--leading-h3); letter-spacing: var(--tracking-h3); max-width: var(--measure); }
-.write-area { width: 100%; max-width: var(--measure); min-height: 132px; border: 0; border-radius: var(--r-lg); background: var(--surface); padding: 14px 16px; resize: none; outline: none; overflow: hidden; color: var(--text);
+.write-area { field-sizing: content; width: 100%; max-width: var(--measure); min-height: 132px; border: 0; border-radius: var(--r-lg); background: var(--surface); padding: 14px 16px; resize: none; outline: none; overflow: hidden; color: var(--text);
   font-size: var(--text-journal-input); font-weight: var(--weight-regular); line-height: var(--leading-relaxed); letter-spacing: var(--tracking-body); }
 .write-area:focus { box-shadow: 0 0 0 2px var(--focus); }
 .write-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s2) var(--s3); max-width: var(--measure); }

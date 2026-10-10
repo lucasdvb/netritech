@@ -256,7 +256,9 @@ await step('Mobility & posture is a workout: tapped on Today it starts, finishin
   const { ctx, p } = await at('2026-10-09T06:20:00');
   await p.goto(`${base}#/today`);
   await p.locator('button.rstep-main[data-id="h-mobility"]').click();
-  await p.waitForFunction(() => /#\/workout\//.test(location.hash));
+  // From Today it opens straight in gym mode; the full session page is one step away.
+  await p.waitForFunction(() => /#\/workout\/[^/]+\/gym$/.test(location.hash));
+  await p.evaluate(() => { location.hash = location.hash.replace(/\/gym$/, ''); });
   await p.waitForSelector('.ex-card');
   if ((await p.textContent('.page-title')).trim() !== 'Mobility & posture' || (await p.locator('.ex-card').count()) !== 8) throw new Error('not the mobility workout');
   if (await p.locator('.ex-step').count()) throw new Error('mobility suggests progression');

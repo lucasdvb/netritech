@@ -153,3 +153,16 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .split-list a[aria-current='page'] { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--accent); --text-3: var(--text-2); }
   .split-list .foot-note { display: none; }
 }
+
+/* A workout under way, one tap back: above the tab bar on a phone, at the foot of the screen beside the rail */
+.wbar { position: fixed; z-index: 39; left: 50%; transform: translateX(-50%); bottom: calc(var(--safe-bottom) + var(--tabbar-gap) + var(--tabbar-h) + 8px);
+  width: min(calc(100% - 32px), 420px); border-radius: var(--r-pill); background: var(--accent); color: var(--on-accent); box-shadow: 0 10px 30px -12px rgba(0, 0, 0, .45); }
+.wbar-link { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 6px 14px 6px 8px; color: inherit; }
+.wbar-ic { width: 36px; height: 36px; flex: none; display: grid; place-items: center; border-radius: 50%; background: rgba(255, 255, 255, .18); }
+.wbar-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.wbar-title { font-size: var(--text-body); font-weight: var(--weight-semibold); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wbar-sub { font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+@media (min-width: 600px) { .wbar { bottom: calc(var(--safe-bottom) + 16px); } }
+/* The bar never covers the end of a page: the page grows by its height while it's up. */
+.has-wbar .main { padding-bottom: calc(var(--tabbar-h) + var(--tabbar-gap) + var(--safe-bottom) + 28px + 60px); }
+@media (min-width: 600px) { .has-wbar .main { padding-bottom: 108px; } }

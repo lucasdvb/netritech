@@ -191,7 +191,7 @@ export default {
     const isCurrent = ws === startOfWeek(today());
     const showAll = ui.all || (r.completedAt && !ui.guided);
     return html`
-      ${pageHead({ title: 'Weekly review', eyebrow: `${fmtMD(ws)} – ${fmtMD(endOfWeek(ws))}${isCurrent ? ' · this week' : ''}`, back: { to: 'reflect', label: 'Reflect' },
+      ${pageHead({ title: 'Weekly review', eyebrow: `${fmtMD(ws)} – ${fmtMD(endOfWeek(ws))}${isCurrent ? ' · this week' : ''}`, back: { to: 'review', label: 'Review' },
         actions: html`<div class="seg-mini"><button type="button" class="icon-btn icon-btn--sm" data-action="week" data-delta="-7" aria-label="Previous week">${icon('chevron-left', { size: 18 })}</button>
           <button type="button" class="icon-btn icon-btn--sm" data-action="week" data-delta="7" aria-label="Next week" ${ws >= startOfWeek(today()) ? 'disabled' : ''}>${icon('chevron-right', { size: 18 })}</button></div>` })}
       ${showAll ? full(ws, r) : guided(ws, r, ui)}
