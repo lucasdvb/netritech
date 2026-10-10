@@ -30,10 +30,20 @@ const SCREENS = [
   ['Work', 'progress/areas/work', 'briefcase', 'deep work focus'], ['Settings', 'you/settings', 'settings', 'preferences options'], ['Reminders', 'you/reminders', 'bell', 'notifications alerts times timeline'],
   ['Data & backup', 'you/data', 'database', 'export import backup restore csv'], ['Privacy', 'you/privacy', 'shield-check', ''], ['Sync', 'you/sync', 'refresh-cw', 'devices server'],
   ['Set up your days', 'you/setup', 'sparkles', 'setup start onboarding wizard begin first time'],
+  ['Your calendar', 'plan/calendar', 'calendar', 'icloud google outlook ics meetings events subscribe import'],
+  ['Energy', 'progress/energy', 'zap', 'energy peak tired alert chronotype focus hours'],
+  ['Bills & subscriptions', 'plan/money/bills', 'receipt', 'bills subscriptions renewals rent utilities due pay netflix insurance'],
+  ['Net worth & savings', 'plan/money/worth', 'piggy-bank', 'net worth savings goal accounts balance assets debt loan'],
+  ['Supplements & medication', 'progress/body/supplements', 'pill', 'supplements medication meds pills vitamins creatine dose reorder stock'],
+  ['Meals', 'plan/meals', 'chef-hat', 'meal plan recipes groceries grocery shopping list cooking protein'],
+  ['Trips', 'plan/trips', 'map', 'trip travel holiday vacation packing flight away'],
+  ['Decisions', 'reflect/decisions', 'scale', 'decision journal choices review judgement'],
+  ['Life wheel', 'reflect/wheel', 'compass', 'wheel of life balance areas quarter radar'],
+  ['Takeaways', 'reflect/takeaways', 'lightbulb', 'takeaways ideas lessons quotes remember spaced repetition'],
 ];
 // Every setting, by the label it has in Settings.
 const SETTINGS = ['Name', 'Age', 'Height', 'Wake', 'Training', 'Work starts', 'Work ends', 'Lights out', 'My day ends at', 'Work days', 'Habits in focus',
-  'Targets', 'Weight', 'Length', 'Theme', 'Show explanations', 'Haptics', 'Sound', 'Race against', 'Safety nets', 'Reminders', 'In your calendar',
+  'Targets', 'Weight', 'Length', 'Theme', 'Show explanations', 'Morning briefing on Today', 'Haptics', 'Sound', 'Race against', 'Safety nets', 'Reminders', 'In your calendar',
   'Cues from your iPhone', 'When Life OS is closed', 'Badge on the app icon'];
 
 /** Screens and settings matching what's typed. */

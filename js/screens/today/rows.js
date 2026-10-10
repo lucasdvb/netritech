@@ -4,7 +4,7 @@ import * as M from '../../domain/metrics-core.js';
 import * as H from '../../domain/habits.js';
 import { trainingCall } from '../../domain/day-plan.js';
 import { habitColor } from '../../domain/taxonomy.js';
-import { durationHM, cmp } from '../../domain/dates.js';
+import { durationHM, cmp, diffDays } from '../../domain/dates.js';
 import { html, raw, cx } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
 import { ring, check } from '../../ui/controls.js';
@@ -48,6 +48,13 @@ export function counterRow(h, date, mode) {
 // time one is on Today; until then it holds its place.
 let limitRow = null;
 const loadLimitRow = () => import('./limit-row.js').then((m) => { limitRow = m.limitRow; app.refresh(); });
+
+/** For one of your three: the day you're on in building it, against the usual 66 (habit-timeline.js). */
+const building = (h, date, focus) => {
+  if (!focus || !h.focusSince || h.focusSince > date) return '';
+  const day = diffDays(date, h.focusSince) + 1;
+  return day <= 90 ? `day ${day} of ~66` : '';
+};
 
 export function habitRow(h, date, mode, ui, { focus = false } = {}) {
   if (H.isLimit(h)) {
@@ -101,7 +108,7 @@ export function habitRow(h, date, mode, ui, { focus = false } = {}) {
       : check(done, { action: 'toggle', data: { id: h.id }, label: `${name}${done ? ', done' : lv === 'tiny' ? ', tiny version done' : ''}`, color: habitColor(h), state })}
     <button type="button" class="hrow-main" data-action="habit" data-id="${h.id}">
       <span class="hrow-name">${name}</span>
-      ${sub ? html`<span class="hrow-sub">${sub}</span>` : ''}
+      ${sub || building(h, date, focus) ? html`<span class="hrow-sub">${[sub, building(h, date, focus)].filter(Boolean).join(' · ')}</span>` : ''}
     </button>
     ${canTiny || h.checklist?.length ? html`<span class="hrow-tools">
       ${canTiny ? html`<button type="button" class="tiny-btn" data-action="tiny" data-id="${h.id}" aria-label="Log the tiny version of ${h.name}${tiny.label ? `: ${tiny.label}` : ''}">Tiny</button>` : ''}

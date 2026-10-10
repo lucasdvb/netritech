@@ -16,12 +16,15 @@ import { today, minutesOfDay, parseHM, weekday, fmtHM } from './dates.js';
 import { html } from '../ui/dom.js';
 import { LINKED, learned, ignoredStreak } from './reminder-rules.js';
 import { ritualDone, sealedAt } from './rituals.js';
+import * as SU from './supplements.js';
+import { remindersPaused } from './trips.js';
+import { short as briefingLine } from './briefing.js';
 export { stats, suggestions } from './reminder-rules.js';
 import { icon } from '../ui/icons.js';
 
 let timer = null;
 let banner = null;
-const SERVER_CATS = new Set(['morning', 'evening', 'weeklyReview', 'workout', 'habits']);
+const SERVER_CATS = new Set(['morning', 'evening', 'weeklyReview', 'workout', 'habits', 'supplements']);
 const pushOn = () => { try { return !!JSON.parse(localStorage.getItem('lifeos.push'))?.on; } catch { return false; } };
 
 export const permissionState = () => (!('Notification' in window) ? 'unsupported' : Notification.permission);
@@ -61,7 +64,8 @@ export function candidates(now) {
     out.push({ key: cat, cat, habitId, title, body, url, time });
   };
   const tpl = F.plannedTemplate(d);
-  if (!ritualDone(d, 'morning')) at('morning', o.cat('morning', nt.morning?.time), LINKED.morning, 'Morning check-in', 'One minute: sleep, how you feel, your three.', './#/today');
+  // The morning reminder carries the first lines of the day's briefing.
+  if (!ritualDone(d, 'morning')) at('morning', o.cat('morning', nt.morning?.time), LINKED.morning, 'Morning check-in', briefingSafe(d) || 'One minute: sleep, how you feel, your three.', './#/today');
   // Temptation bundling: the pairing you keep for training rides along with its reminder.
   const pair = (id) => habit(id)?.bundle;
   if (tpl && o.train) at('workout', o.cat('workout', nt.workout?.time), LINKED.workout, `Training at ${p.trainTime}`, `${tpl.name}${pair(LINKED.workout) ? ` · with ${pair(LINKED.workout)}` : ''}`, './#/plan/training');
@@ -101,7 +105,23 @@ export function candidates(now) {
       out.push({ cat: 'habits', key: `habit:${h.id}`, habitId: h.id, title: h.name, body: `${h.description || 'Still open for today.'}${h.bundle ? ` With ${h.bundle}.` : ''}`, url: `./#/habits/${h.id}`, time: rem });
     }
   }
-  return out;
+  // Supplements and medication: one reminder per time with doses still to take (on unless turned off).
+  if (nt.supplements?.on !== false) {
+    const times = [...new Set(SU.doses(d).filter((x) => !x.taken).map((x) => x.time))];
+    for (const t of times) {
+      const tm = parseHM(t);
+      if (m < tm || m > tm + 90) continue;
+      const due = SU.dueAt(t, d);
+      const med = due.some((x) => x.s.kind === 'medication');
+      out.push({ cat: 'supplements', key: `supp:${t}`, title: med ? 'Medication' : 'Supplements', body: due.map((x) => `${x.s.name}${x.s.dose ? ` (${x.s.dose})` : ''}`).join(', '), url: './#/progress/body/supplements', time: t, medication: med });
+    }
+  }
+  // On a trip that pauses reminders, only medication still reminds.
+  return remindersPaused(d) ? out.filter((c) => c.medication) : out;
+}
+
+function briefingSafe(d) {
+  try { return briefingLine(d); } catch (err) { console.warn(err); return null; }
 }
 
 function record(c, outcome) {
@@ -121,7 +141,7 @@ async function tick() {
     if (firedToday(c.key)) continue;
     const baseKey = c.cat === 'habits' ? c.key : c.cat;
     if (c.habitId && c.time && learned(c.habitId, c.time)) { record(c, 'skipped'); continue; }
-    if (ignoredStreak(baseKey)) { record(c, 'skipped'); continue; }
+    if (!c.medication && ignoredStreak(baseKey)) { record(c, 'skipped'); continue; }
     await deliver(c);
     return; // one at a time, never a pile-up
   }

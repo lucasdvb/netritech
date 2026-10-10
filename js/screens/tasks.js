@@ -1,4 +1,5 @@
 import * as store from '../data/store.js';
+import * as ES from '../domain/estimates.js';
 import * as T from '../domain/tasks-more.js';
 import { today, addDays, fmtDay, fmtMD } from '../domain/dates.js';
 import { html } from '../ui/dom.js';
@@ -35,6 +36,7 @@ export default {
     return html`
       ${pageHead({ title: 'Tasks', back: { to: 'plan', label: 'Plan' }, info: 'One-off jobs and weekly chores. Your Top 3 lives on Today.',
         actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="new" aria-label="New task">${icon('plus', { size: 20 })}</button>` })}
+      ${ES.summaryLine() ? html`<p class="lead" data-key="est-summary">${ES.summaryLine()}</p>` : ''}
       ${!total ? empty({ ic: 'list-todo', title: 'No tasks yet', body: 'Add the one-off things that don’t belong in a habit: an appointment to book, a chore, a call to make.', cta: 'Add a task', action: 'new' }) : ''}
       ${late.length ? html`<section class="block tgroup" data-key="g-overdue">
         <div class="block-head"><h2 class="block-title">Overdue</h2><span class="block-meta">${late.length}</span>

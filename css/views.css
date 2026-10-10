@@ -1466,3 +1466,23 @@
 .takeaway { display: flex; flex-direction: column; gap: var(--s3); }
 .takeaway-text { font-size: var(--text-body-lg); font-weight: var(--weight-medium); line-height: var(--leading-body-lg); letter-spacing: var(--tracking-body); }
 .takeaway-go { display: flex; flex-wrap: wrap; gap: var(--s2); }
+
+/* Your day: calendar events, timed tasks, free time */
+.ds-allday { display: flex; align-items: center; gap: 6px; margin: 0 0 var(--s2); color: var(--text-2); font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+.ds-row.is-event .ds-mark { border-radius: 4px; box-shadow: inset 0 0 0 1.5px var(--text-3); }
+.ds-row.is-event .ds-title { color: var(--text-2); }
+.ds-gaps { margin-top: var(--s2); }
+.ds-gap { display: grid; grid-template-columns: 46px 18px minmax(0, 1fr) auto; align-items: center; gap: 8px; min-height: 48px; padding: 6px 0; }
+.ds-gap + .ds-gap { box-shadow: inset 0 0.5px 0 var(--border); }
+.ds-gap .ds-mark { box-shadow: inset 0 0 0 1.5px var(--border); border-style: dashed; }
+.ds-gap .ds-title { color: var(--text-2); }
+.ds-gap.is-peak .ds-sub { color: var(--accent-ink); }
+.today-brief { margin-bottom: 12px; }
+.brief { display: flex; flex-direction: column; gap: var(--s2); }
+.brief-head { display: flex; justify-content: space-between; align-items: center; }
+.brief-list { display: flex; flex-direction: column; }
+.brief-list a { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; color: var(--text); font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+.brief-list li + li a { box-shadow: inset 0 0.5px 0 var(--border); }
+.brief-list .ic { flex: none; margin-top: 3px; color: var(--text-2); }
+.brief .takeaway { background: var(--surface-2); padding: var(--s4); }
+.habit-timeline { display: flex; flex-direction: column; gap: var(--s2); margin-bottom: var(--s4); }

@@ -12,7 +12,7 @@ import * as hap from '../ui/haptics.js';
 
 export function taskRow(t, { showDue = true, ref = today() } = {}) {
   const late = !t.done && t.date && t.date < ref;
-  const meta = [showDue || late ? T.dueLabel(t.date, ref) : '', t.repeat ? T.repeatLabel(t.repeat) : '', catLabel(t.area)].filter(Boolean);
+  const meta = [showDue || late ? T.dueLabel(t.date, ref) : '', t.time || '', t.estimate ? `~${t.estimate} min` : '', t.repeat ? T.repeatLabel(t.repeat) : '', catLabel(t.area)].filter(Boolean);
   return html`<li class="${cx('trow', t.done && 'is-done', late && 'is-late')}" data-key="t-${t.id}" style="--ic:${catColor(t.area)}">
     ${check(t.done, { action: 'task-check', data: { id: t.id }, label: `${t.title}${t.done ? ', done' : ''}`, color: catColor(t.area), cls: 'check--sm' })}
     <button type="button" class="trow-main" data-action="task-open" data-id="${t.id}">

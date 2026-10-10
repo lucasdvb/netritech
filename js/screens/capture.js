@@ -29,6 +29,9 @@ const ACTIONS = [
   { id: 'reading', ic: 'book-open', label: 'Reading', run: async () => (await sheets()).openSession('reading', today()) },
   { id: 'measure', ic: 'ruler', label: 'Measurements', run: () => app.go('progress/body/measurements') },
   { id: 'health', ic: 'heart-pulse', label: 'From Health', run: async () => (await import('./health.js')).openHealthPaste() },
+  { id: 'energy', ic: 'zap', label: 'Energy', sub: 'right now', run: async () => (await import('./energy.js')).openEnergy() },
+  { id: 'takeaway', ic: 'lightbulb', label: 'Takeaway', run: async () => (await import('./takeaways.js')).openTakeaway() },
+  { id: 'decision', ic: 'scale', label: 'Decision', run: async () => (await import('./decisions.js')).openDecision() },
 ];
 
 const HISTORY = 'captureHistory';

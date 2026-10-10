@@ -102,7 +102,7 @@ export function toggle(id) {
     if (t.repeat) {
       const base = t.date && t.date > today() ? t.date : today();
       nextId = store.uid();
-      const { id: _i, createdAt: _c, updatedAt: _u, doneAt: _d, nextId: _n, ...rest } = t;
+      const { id: _i, createdAt: _c, updatedAt: _u, doneAt: _d, nextId: _n, spent: _s, ...rest } = t;
       ops.push({ store: 'tasks', value: { ...rest, id: nextId, date: nextDate(t.repeat, base), done: false, doneAt: null } });
     }
     ops.unshift({ store: 'tasks', value: { ...t, done: true, doneAt: new Date().toISOString(), nextId } });

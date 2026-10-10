@@ -266,7 +266,7 @@ test('the morning briefing brings the day together', async () => {
   ICS.save('cal', [{ id: 'cal:x', date: T, start: '11:00', end: '12:00', allDay: false, title: 'Client call', source: 'cal' }]);
   const l = BR.lines(T);
   const text = l.map((x) => x.text).join('\n');
-  assert.match(text, /up at/);
+  assert.match(text, /Up at/);
   assert.match(text, /1 in your calendar: 11:00 Client call/);
   assert.match(text, /Electricity due today/);
   assert.match(text, /Creatine this morning/);

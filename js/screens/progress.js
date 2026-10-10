@@ -89,6 +89,14 @@ export function progressMore() {
           <span class="row-main"><span class="row-title">Your year</span><span class="row-sub">Every day as one picture, to keep or print</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
         <li><a class="row" href="#/progress/calendar" data-action="nav" data-to="progress/calendar"><span class="row-ic">${icon('calendar', { size: 18 })}</span>
           <span class="row-main"><span class="row-title">Calendar</span><span class="row-sub">Every day, and what happened on it</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
+        <li><a class="row" href="#/progress/energy" data-action="nav" data-to="progress/energy"><span class="row-ic">${icon('zap', { size: 18 })}</span>
+          <span class="row-main"><span class="row-title">Energy</span><span class="row-sub">Check in, and see when you’re at your sharpest</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
+        <li><a class="row" href="#/reflect/takeaways" data-action="nav" data-to="reflect/takeaways"><span class="row-ic">${icon('lightbulb', { size: 18 })}</span>
+          <span class="row-main"><span class="row-title">Takeaways</span><span class="row-sub">Ideas worth keeping, brought back as you’d forget them</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
+        <li><a class="row" href="#/reflect/decisions" data-action="nav" data-to="reflect/decisions"><span class="row-ic">${icon('scale', { size: 18 })}</span>
+          <span class="row-main"><span class="row-title">Decisions</span><span class="row-sub">A journal of your calls, reviewed three months on</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
+        <li><a class="row" href="#/reflect/wheel" data-action="nav" data-to="reflect/wheel"><span class="row-ic">${icon('compass', { size: 18 })}</span>
+          <span class="row-main"><span class="row-title">Life wheel</span><span class="row-sub">Eight areas once a quarter; the weakest sets your next season</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
         <li><a class="row" href="#/reflect/insights" data-action="nav" data-to="reflect/insights"><span class="row-ic">${icon('lightbulb', { size: 18 })}</span>
           <span class="row-main"><span class="row-title">Insights</span><span class="row-sub">Patterns in your logs, each with one change to make</span></span><span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
       </ul></section>`;
