@@ -56,7 +56,7 @@ export default {
     const first = startOfMonth(month), last = endOfMonth(month);
     const cells = [...Array(weekday(first) - 1).fill(null), ...range(first, last)];
     return html`
-      ${pageHead({ title: 'Calendar', back: { to: 'progress', label: 'Progress' } })}
+      ${pageHead({ title: 'Calendar', back: { to: 'review', label: 'Review' } })}
       <section class="block block--first" data-key="cal">
         <div class="cal-head">
           <button type="button" class="icon-btn" data-action="month" data-delta="-1" aria-label="Previous month">${icon('chevron-left', { size: 20 })}</button>

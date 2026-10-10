@@ -58,7 +58,7 @@ function renderTabbar() {
 const ctxOf = (c) => ({ params: c.params, query: c.query, ui: c.ui, route: c.route, path: c.path });
 
 // Older addresses land on their new homes, keeping any query. The table loads only when needed.
-const LEGACY = /^(habits|body|more)(\/|$)|^you$|^progress\/(areas|overview|insights)$|^plan\/habits\/[^/]+\/edit$/;
+const LEGACY = /^(habits|body|more)(\/|$)|^you$|^progress$|^reflect$|^progress\/(areas|overview|insights)$|^plan\/habits\/[^/]+\/edit$/;
 async function redirect() {
   const { parts, query, path } = router.parse();
   if (!LEGACY.test(path)) return false;
@@ -197,6 +197,7 @@ async function navigate() {
     markSelected();
     growAll(main);
     renderTabbar();
+    syncWorkoutBar();
     document.title = view.title ? `${typeof view.title === 'function' ? view.title(ctxOf(current)) : view.title} · ${APP_NAME}` : APP_NAME;
     if (prev) {
       const h1 = (isList ? pane.el : el).querySelector('h1');
@@ -226,6 +227,14 @@ async function navigate() {
 }
 wide.addEventListener?.('change', () => { if (current?.route.list) navigate(); });
 
+// A workout under way, and you've left it: the bar back to it (ui/workout-bar.js, loaded only then).
+let workoutBar = null;
+function syncWorkoutBar() {
+  const away = !current?.route.path.startsWith('workout/');
+  if (!workoutBar && !(away && store.all('workouts').some((w) => w.status === 'active'))) return;
+  (workoutBar ||= import('./ui/workout-bar.js')).then((m) => m.sync(away)).catch(() => {});
+}
+
 function refresh() {
   if (refreshQueued) return;
   refreshQueued = true;
@@ -252,6 +261,7 @@ function refresh() {
       console.error(err);
     }
     sheet.refreshAll();
+    syncWorkoutBar();
   }));
 }
 
@@ -496,6 +506,7 @@ async function boot() {
       stick('Life OS was updated in another window. Reload to carry on; everything saved is safe.', { tone: 'danger', icon: 'refresh-cw', action: { label: 'Reload', fn: () => location.reload() } });
       return;
     }
+    if (ev.quiet) return; // saved as you type, already on screen
     if (ev.stores.has('settings')) applyTheme();
     if (ev.stores.has('profile')) setDayEnd(store.profile()?.dayEndsAt);
     // Background summaries rebuilding don't change what's on screen.

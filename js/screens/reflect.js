@@ -1,13 +1,12 @@
-// Reflect: what you learned. It opens on today's page, ready to write (saved as you type, mood one
-// optional tap), then the reviews that are due (day, week, month), insights that each end in one
-// change to your plan, and the journal.
+// Reflect's sections, shown in Review: today's page, ready to write (saved as you type, mood one
+// optional tap), the reviews that are due (day, week, month), insights that each end in one change
+// to your plan, and the journal.
 import * as store from '../data/store.js';
 import * as I from '../domain/insights.js';
 import * as Rt from '../domain/rituals.js';
 import { today, relativeDay, fmtMD, fmtLong, endOfWeek, monthKey, fmtMonth, weekday, addDays, diffDays, fmtTime, cmp } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
-import { pageHead } from '../ui/components.js';
 import * as hap from '../ui/haptics.js';
 import { app } from '../ui/app-api.js';
 import { newEntry, KIND_LABEL } from './journal.js';
@@ -15,6 +14,7 @@ import { defaultWeek } from './review-week.js';
 import { insightCard, insightActions } from './insight-ui.js';
 import { filmMonths, monthFilm } from '../domain/film.js';
 import { memoryCard, experimentBlock, experimentActions } from './experiment-ui.js';
+export { memoryCard, experimentBlock };
 import { due as dueYear, review as yearReview } from '../domain/year-review.js';
 
 const PROMPTS = {
@@ -46,10 +46,17 @@ function save(patch) {
 }
 function flush() {
   clearTimeout(timer);
-  if (pending != null) { const v = pending; pending = null; if ((todayEntry()?.text || '') !== v) save({ text: v }); }
+  if (pending == null) return;
+  const v = pending;
+  pending = null;
+  const was = todayEntry()?.text || '';
+  if (was === v) return;
+  // More words on a page that's already there: on screen already, so no redraw while you write.
+  if (was.trim() && v.trim()) store.quietly(() => save({ text: v }));
+  else save({ text: v });
 }
 
-function write() {
+export function write() {
   const t = today();
   const j = todayEntry(t);
   const guided = store.onDate('journalEntries', t).filter((e) => e.kind !== 'free');
@@ -69,7 +76,7 @@ function write() {
   </section>`;
 }
 
-function reviewsDue() {
+export function reviewsDue() {
   const t = today();
   const ws = defaultWeek();
   const wk = store.get('weeklyReviews', ws);
@@ -104,7 +111,7 @@ function reviewsDue() {
   </section>`;
 }
 
-function insights() {
+export function insights() {
   const list = I.insights(today());
   if (!list.length) return '';
   return html`<section class="block" data-key="insights">
@@ -116,7 +123,7 @@ function insights() {
 const preview = (j) => [j.mood ? `Mood: ${MOODS.find(([v]) => v === j.mood)?.[1]}` : '', ...Object.values(j.answers || {}), j.text || ''].map((s) => (s || '').trim()).filter(Boolean).join(' · ').slice(0, 120);
 
 /** Monthly films (G10): each month as a short story, at your request. */
-function films() {
+export function films() {
   const months = filmMonths(4);
   if (!months.length) return '';
   const cur = monthKey(today());
@@ -129,7 +136,7 @@ function films() {
   </section>`;
 }
 
-function recent() {
+export function recent() {
   const t = today();
   const list = store.all('journalEntries').filter((j) => !(j.date === t && j.kind === 'free'))
     .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : cmp(b.createdAt || '', a.createdAt || ''))).slice(0, 4);
@@ -142,26 +149,25 @@ function recent() {
   </section>`;
 }
 
-export default {
-  id: 'reflect',
-  title: 'Reflect',
-  render() {
-    return html`
-      ${pageHead({ title: 'Reflect', sub: 'What you learned.',
-        actions: html`<button type="button" class="icon-btn" data-action="open-search" aria-label="Search" aria-keyshortcuts="/">${icon('search', { size: 20 })}</button>` })}
-      ${write()}
-      ${memoryCard()}
-      ${reviewsDue()}
-      ${insights()}
-      ${experimentBlock()}
-      ${recent()}
-      ${films()}`;
-  },
+// What Reflect does (today's page saving as you type, moods, reviews, insights, films), now in Review.
+export const behaviour = {
   mount(el) {
     stopHelps = I.onHelps(() => app.refresh());
-    const grow = (t) => { t.style.height = 'auto'; t.style.height = `${Math.max(t.scrollHeight, 132)}px`; };
-    el.querySelectorAll('.write-area').forEach(grow);
-    el.addEventListener('input', (e) => { if (e.target.matches?.('.write-area')) grow(e.target); });
+    // The page grows with what you write: by itself where the browser can (field-sizing), otherwise
+    // measured, and only measured from scratch when text was taken away (a full measure is slow on a long page).
+    if (CSS.supports?.('field-sizing', 'content')) return;
+    const grow = (t, shrink = true) => {
+      if (shrink) t.style.height = 'auto';
+      const h = Math.max(t.scrollHeight, 132);
+      if (shrink || h > t.offsetHeight) t.style.height = `${h}px`;
+    };
+    el.querySelectorAll('.write-area').forEach((t) => grow(t));
+    el.addEventListener('input', (e) => {
+      const t = e.target;
+      if (!t.matches?.('.write-area')) return;
+      grow(t, t.value.length < (t.lastLength ?? 0));
+      t.lastLength = t.value.length;
+    });
   },
   unmount() { flush(); stopHelps?.(); stopHelps = null; },
   inputs: {

@@ -14,7 +14,7 @@ await step('load sample data', async () => {
 });
 
 await step('progress trends', async () => {
-  await go('#/progress', '[data-view="progress"] .story');
+  await go('#/progress', '[data-view="review"] .story');
   await shot('41-progress');
   await a11y('progress');
   await go('#/progress/trends', '[data-view="trends"] .chart-line');

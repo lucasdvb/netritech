@@ -94,10 +94,10 @@ async function check(p, name) {
 const ROUTES = ['today', 'plan', 'plan/habits', 'plan/habits/h-prayer', 'plan/tasks', 'plan/goals', 'plan/goals/g-body', 'plan/projects', 'plan/books',
   'plan/training', 'plan/training/exercises', 'plan/training/workouts/t-upper', 'plan/playbook', 'plan/commitments', 'plan/rewards',
   'plan/moodboard', 'plan/lists', 'plan/money', 'plan/dates',
-  'progress', 'progress/trends', 'progress/calendar', 'progress/records', 'progress/season', 'progress/year', 'progress/body', 'progress/body/weight',
+  'review', 'progress/trends', 'progress/calendar', 'progress/records', 'progress/season', 'progress/year', 'progress/body', 'progress/body/weight',
   'progress/body/nutrition', 'progress/body/measurements', 'progress/body/sleep', 'progress/areas/mind', 'progress/areas/spirit',
   'progress/areas/relationships', 'progress/areas/work', 'progress/areas/health',
-  'reflect', 'reflect/journal', 'reflect/insights', 'reflect/reviews', 'reflect/review/week', 'reflect/review/month',
+  'reflect/journal', 'reflect/insights', 'reflect/reviews', 'reflect/review/week', 'reflect/review/month',
   'you/settings', 'you/data', 'you/privacy'];
 const SHEETS = [
   ['capture', './js/screens/capture.js', 'openCapture', ['walked 30 min']],
@@ -130,7 +130,7 @@ for (const scheme of ['light', 'dark']) {
 
 await step('a fresh install matches its baseline', async () => {
   const { ctx, p } = await open('light', 0);
-  for (const r of ['today', 'plan', 'progress', 'reflect']) {
+  for (const r of ['today', 'plan', 'review']) {
     await p.evaluate((h) => { location.hash = `#/${h}`; }, r);
     await p.waitForTimeout(300);
     await check(p, `fresh-${r}`);

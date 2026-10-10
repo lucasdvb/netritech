@@ -193,9 +193,9 @@ const SCREENS = [
   ['#/today', '.today'], ['#/plan', '[data-view="plan"]'], ['#/plan/habits', '[data-view="habits"]'], ['#/plan/habits/h-protein', '[data-view="habit"]'],
   ['#/plan/habits/sort', '[data-view="habit-sort"]'], ['#/plan/tasks', '[data-view="tasks"]'], ['#/plan/goals', '[data-view="goals"]'],
   ['#/plan/training', '[data-view="training"]'], ['#/plan/playbook', '[data-view="playbook"]'],
-  ['#/progress', '[data-view="progress"]'], ['#/progress/body', '[data-view="body"]'], ['#/progress/body/weight', '[data-view="weight"]'],
+  ['#/review', '[data-view="review"]'], ['#/progress/body', '[data-view="body"]'], ['#/progress/body/weight', '[data-view="weight"]'],
   ['#/progress/areas/mind', '[data-view="mind"]'], ['#/progress/areas/health', '[data-view="area"]'],
-  ['#/reflect', '[data-view="reflect"]'], ['#/reflect/journal', '[data-view="journal"]'],
+  ['#/reflect/journal', '[data-view="journal"]'],
   ['#/you/settings', '[data-view="settings"]'], ['#/you/data', '[data-view="data"]'],
 ];
 for (const [label, size] of [['85', '90.3125%'], ['200', '212.5%']]) {

@@ -1,5 +1,5 @@
 // On this day (13e): what you wrote a year ago, or else a month ago, when there's something: a
-// journal entry, or the day's win. Shown on Reflect; nothing when there's nothing.
+// journal entry, or the day's win. Shown on Review; nothing when there's nothing.
 import * as store from '../data/store.js';
 import { addDays, today } from './dates.js';
 

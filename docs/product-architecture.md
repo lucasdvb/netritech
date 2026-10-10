@@ -1482,6 +1482,18 @@ Partway through, the owner made automatic sync between devices a must, so it was
 - **Speed.** Today's handlers (`screens/today/actions.js`) and the sheet code load right after the first frame; a tap in the first instant waits for them. First-screen JavaScript went from 222 KB with the new features back to 208 KB, still 8 KB over the 200 KB target (limit 240 KB). The cold-start budget in `tests/hardening.mjs` enforces speed: Today interactive at a 536 ms median with the CPU 4× slower and a year of data (budget 600 ms; 564 ms before this change).
 - **Tested:** `tests/cockpit.mjs`. It covers the learned quick row, water in one tap, a weigh-in in two, the strip's current block and its action, folding, the after-midnight line, speaking then saving, and undoing from Recent changes.
 
+**A simpler structure, phase 2 of the plan (October 2026).**
+- **Tabs: Today · Plan · + · Review** (`routes.js` `PLACES`; shortcuts 1–3). Review (`screens/review.js`) is one screen made of what Progress and Reflect were.
+  - Its order: today's page, a memory, this week's story, what's moving, the measures, the reviews due, insights, experiments, then Body, the areas, the rest of Progress, the journal and the films.
+  - `progress.js` and `reflect.js` now export those sections; Reflect's autosave, moods, insight and experiment actions come with them (`behaviour`).
+  - Every page under them keeps its address (`progress/…`, `reflect/…`) and belongs to the Review tab. `#/progress` and `#/reflect` redirect to `#/review`, and back buttons say "Review".
+- **Plan in five groups, one list each** (`plan-home.js`): Habits & routines (your three, all habits, Your plan), Goals (goals, projects, commitments, rewards, the side quest), Training, Tasks & notes, and Life (money, dates, books, moodboard). Tomorrow and this week stay above them.
+- **Search goes to screens and settings** (`search.js`). Every screen has its everyday words ("spending", "weigh-in"). A setting opens `you/settings?find=…`: Settings scrolls to the row and points it out for two seconds, re-applied after redraws.
+- **Settings › Advanced** (folded): reminders when Life OS is closed (calendar file, iPhone cues, server push, app badge) and the safety nets. A search for one of them opens it.
+- **Gym mode from Today.** `startWorkout(…, { gym: true })` from Today's actions, Your day and the mobility habit. Training's own screens still open the list.
+- **The workout bar** (`ui/workout-bar.js`, loaded only while a workout is under way). It sits above the tab bar on every screen but the workout's own. It shows the rest still to go, or the session time (paused while you're away), and goes back to gym mode in one tap.
+- **Tested:** `tests/structure.mjs`.
+
 **Handover audit (October 2026).** A full audit before handover: security, calculations, persistence and every form, then crawlers over every screen and sheet at seven widths. What was found, fixed and proven, and what is still open, is in [`handover-audit.md`](handover-audit.md).
 
 **Left out on purpose:** points and pets, money stakes, "21 days" countdowns, willpower budgets, more default notifications, a barcode food database, a timeline planner. Each is either unsupported by the evidence or adds weight without value.

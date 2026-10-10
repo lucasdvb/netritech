@@ -45,8 +45,10 @@ await step('every screen is three levels or fewer from a place', async () => {
       const m = match(ROUTES, path.split('?')[0].split('/'));
       if (!m || seen.has(m.route.path)) continue;
       seen.set(m.route.path, depth);
-      await go(`#/${path}`, '#main .view');
-      await page.waitForTimeout(150);
+      // A hash-only change keeps the old view up for a moment: wait for the new one, filled in.
+      await ev(() => { const v = document.querySelector('#main .view'); if (v) v.dataset.crawled = '1'; });
+      await go(`#/${path}`, '#main .view:not([data-crawled])');
+      await page.waitForFunction(() => !document.querySelector('#main .block--later'));
       const links = await ev(() => [...document.querySelectorAll('#main a[href^="#/"], #main [data-to]')]
         .map((a) => a.dataset.to || a.getAttribute('href').slice(2)).filter(Boolean));
       next.push(...links);
@@ -124,13 +126,13 @@ await step('N opens capture; Escape closes it and returns focus; ? lists the sho
 });
 
 await step('pinned capture: Log weight and Start workout are one tap from +', async () => {
-  await go('#/reflect', '[data-view="reflect"]');
+  await go('#/reflect', '[data-view="review"]');
   await page.locator('.tab--capture').click();
   await page.locator('.capture-big', { hasText: 'Log weight' }).click();
   await page.waitForFunction(() => [...document.querySelectorAll('.sheet-wrap.is-open .sheet-title')].some((t) => /weight|weigh/i.test(t.textContent)));
   await page.keyboard.press('Escape');
   await page.waitForSelector('.sheet-wrap', { state: 'detached' });
-  if (!(await hash()).startsWith('#/reflect')) throw new Error('capture moved you away');
+  if (!(await hash()).startsWith('#/review')) throw new Error('capture moved you away');
 });
 
 await step('You opens from Today and leads to settings, data and privacy', async () => {
@@ -244,7 +246,7 @@ await step('wide screens: list and detail side by side, the list keeps its place
     if (st.cur !== '#/plan/habits/h-water') throw new Error('selected ' + st.cur);
     await p.waitForTimeout(500);
     await p.screenshot({ path: `${OUT}/p2-desktop-split-${scheme}.png` });
-    for (const [h, n] of [['#/plan', 'plan'], ['#/reflect', 'reflect'], ['#/progress', 'progress'], ['#/today', 'today']]) {
+    for (const [h, n] of [['#/plan', 'plan'], ['#/review', 'review'], ['#/today', 'today']]) {
       await p.goto(base + h);
       await p.waitForSelector(`[data-view="${n}"]`);
       await p.waitForTimeout(600);
@@ -262,7 +264,7 @@ await step('tablet rail and phone screenshots, light and dark', async () => {
     for (const [ctxOpts, tag] of [[{ viewport: { width: 820, height: 1180 } }, 'tablet'], [devices['iPhone 14'], 'phone']]) {
       const c = await browser.newContext({ ...ctxOpts, colorScheme: scheme });
       const p = await c.newPage();
-      for (const [h, n] of [['#/plan', 'plan'], ['#/reflect', 'reflect'], ['#/progress/areas/mind', 'mind']]) {
+      for (const [h, n] of [['#/plan', 'plan'], ['#/review', 'review'], ['#/progress/areas/mind', 'mind']]) {
         await p.goto(base + h);
         await p.waitForFunction(() => window.__lifeos?.ready, null, { timeout: 15000 });
         await p.waitForSelector(`[data-view="${n}"]`);

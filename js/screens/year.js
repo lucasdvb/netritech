@@ -30,7 +30,7 @@ export default {
     const data = yearData(y);
     const first = Number(trackingStart().slice(0, 4));
     return html`
-      ${pageHead({ title: `Your ${y}`, back: { to: 'progress', label: 'Progress' },
+      ${pageHead({ title: `Your ${y}`, back: { to: 'review', label: 'Review' },
         actions: html`<div class="seg-mini"><button type="button" class="icon-btn icon-btn--sm" data-action="yr" data-d="-1" aria-label="Previous year" ${y <= first ? 'disabled' : ''}>${icon('chevron-left', { size: 18 })}</button>
           <button type="button" class="icon-btn icon-btn--sm" data-action="yr" data-d="1" aria-label="Next year" ${y >= Number(today().slice(0, 4)) ? 'disabled' : ''}>${icon('chevron-right', { size: 18 })}</button></div>`, info: 'One line a day around the circle, as long as the day was full; a blue point for every sealed day. The same days always make the same picture. The print is 3600 × 4500 pixels: 12 × 15 inches at 300 dpi.' })}
       <div class="year-frame" data-key="art-${y}"><canvas class="year-art" role="img" aria-label="Your ${y}: ${data.logged} days you showed up, ${data.sealed} sealed"></canvas></div>

@@ -1,4 +1,4 @@
-// Experiments on Reflect (13e): the one under way with how it's going, its verdict when it ends
+// Experiments on Review (13e): the one under way with how it's going, its verdict when it ends
 // (keep or drop), and the sheet that starts one.
 import * as X from '../domain/experiments.js';
 import * as H from '../domain/habits.js';

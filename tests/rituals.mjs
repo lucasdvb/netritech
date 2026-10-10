@@ -254,6 +254,8 @@ await step('weekly tidy-up: untouched habits, keep / smaller / pause / archive, 
 await step('every net can be turned off for good in Settings', async () => {
   const { ctx, p } = await at('2026-10-07T08:00:00');
   await p.goto(base + '#/you/settings');
+  // The nets live under Advanced, closed until you open it.
+  await p.locator('details.set-advanced > summary').click();
   await p.waitForSelector('[data-key="net-catchUp"]');
   await p.locator('[data-key="net-catchUp"] [data-action="net"]').click();
   const off = await ev(p, () => window.__lifeos.store.settings().nets?.catchUp);

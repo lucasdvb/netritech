@@ -33,7 +33,7 @@ export default {
     const all = [...reading.map((r) => ({ ...r, k: 'reading' })), ...learning.map((r) => ({ ...r, k: 'learning' })), ...meditation.map((r) => ({ ...r, k: 'meditation' }))]
       .sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 15);
     return html`
-      ${pageHead({ title: 'Mind', back: { to: 'progress', label: 'Progress' } })}
+      ${pageHead({ title: 'Mind', back: { to: 'review', label: 'Review' } })}
       <div class="quick-row quick-row--top">
         <button type="button" class="btn btn--primary btn--sm" data-action="log" data-kind="reading">${icon('book-open', { size: 16 })} Reading</button>
         <button type="button" class="btn btn--soft btn--sm" data-action="log-learning">${icon('graduation-cap', { size: 16 })} Learning</button>

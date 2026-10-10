@@ -104,7 +104,7 @@ await step('the ghost: a quiet marker for your past self, chosen in Settings', a
 
 await step('a pledge sealed with a hold; ending early offers a smaller one', async () => {
   const { ctx, p } = await at('2026-10-07T09:00:00', { hash: '#/plan' });
-  await p.locator('[data-key="keep"] a[data-to="plan/commitments"]').click();
+  await p.locator('[data-key="goals"] a[data-to="plan/commitments"]').click();
   await p.waitForSelector('[data-view="commitments"] [data-action="pg-new"]');
   await p.locator('[data-view="commitments"] .page-head [data-action="pg-new"]').click();
   await p.waitForSelector('.sheet .pledge-new');

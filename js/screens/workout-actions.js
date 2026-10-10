@@ -9,9 +9,10 @@ import { trainingCall } from '../domain/coach.js';
 import { nextStep, parseRange } from '../domain/next-step.js';
 import { weightUnit } from '../ui/format.js';
 
-export function startWorkout(templateId, date = today()) {
+/** Start a workout from a template. From Today it opens in gym mode ({ gym: true }): big buttons, one set at a time. */
+export function startWorkout(templateId, date = today(), { gym = false } = {}) {
   const active = F.activeWorkout();
-  if (active) { app.go(`workout/${active.id}`); return active; }
+  if (active) { app.go(`workout/${active.id}${gym ? '/gym' : ''}`); return active; }
   const tpl = F.template(templateId);
   const call = trainingCall(date);
   const lighter = tpl && call.kind === 'lighter' && call.template?.id === tpl.id;
@@ -49,7 +50,7 @@ export function startWorkout(templateId, date = today()) {
     });
     store.batch(ops);
   }
-  app.go(`workout/${w.id}`);
+  app.go(`workout/${w.id}${gym ? '/gym' : ''}`);
   return w;
 }
 

@@ -70,6 +70,7 @@ await step('a task goes into the calendar at a time, for a length, with an alert
 await step('iPhone cues: one per focus habit and routine, the right event for each, and the words to copy', async () => {
   const { ctx, p } = await at();
   await p.goto(`${base}#/you/settings`);
+  await p.locator('details.set-advanced > summary').click(); // reminder delivery lives under Advanced
   await p.locator('[data-action="cues"]').click();
   await p.waitForSelector('.cues .row');
   const rows = await p.locator('.cues .row').allTextContents();
@@ -144,6 +145,7 @@ await step('reminders when the app is closed: turned on from Settings, sent at t
   });
   // Sync first: the sheet says so.
   await p.goto(`${base}#/you/settings`);
+  await p.locator('details.set-advanced > summary').click(); // reminder delivery lives under Advanced
   await p.locator('[data-action="push"]').click();
   await p.waitForSelector('[data-action="ps-sync"]');
   await sheetGone(p);
@@ -155,6 +157,7 @@ await step('reminders when the app is closed: turned on from Settings, sent at t
   await p.locator('[data-action="sy-start"]').click();
   await p.waitForFunction(() => /Synced/.test(document.querySelector('.sync-state')?.textContent || ''), null, { timeout: 30000 });
   await p.goto(`${base}#/you/settings`);
+  await p.locator('details.set-advanced > summary').click(); // reminder delivery lives under Advanced
   await p.locator('[data-action="push"]').click();
   await p.waitForSelector('.push-sheet .push-list');
   const list = await p.locator('.push-list').textContent();
@@ -192,6 +195,7 @@ await step('reminders when the app is closed: turned on from Settings, sent at t
 await step('on an iPhone in Safari, reminders point to the Home Screen app', async () => {
   const { ctx, p } = await at({ demo: false });
   await p.goto(`${base}#/you/settings`);
+  await p.locator('details.set-advanced > summary').click(); // reminder delivery lives under Advanced
   await p.locator('[data-action="push"]').click();
   await p.waitForSelector('text=reach only the Life OS on your Home Screen');
   await ctx.close();

@@ -121,7 +121,7 @@ export default {
     const f = monthFacts(month);
     const showAll = ui.all || (r.completedAt && !ui.guided);
     return html`
-      ${pageHead({ title: fmtMonth(`${month}-01`), eyebrow: 'Monthly review', back: { to: 'reflect', label: 'Reflect' },
+      ${pageHead({ title: fmtMonth(`${month}-01`), eyebrow: 'Monthly review', back: { to: 'review', label: 'Review' },
         actions: html`<div class="seg-mini"><button type="button" class="icon-btn icon-btn--sm" data-action="month" data-delta="-1" aria-label="Previous month">${icon('chevron-left', { size: 18 })}</button>
           <button type="button" class="icon-btn icon-btn--sm" data-action="month" data-delta="1" aria-label="Next month" ${month >= monthKey(today()) ? 'disabled' : ''}>${icon('chevron-right', { size: 18 })}</button></div>` })}
       ${showAll ? full(r, f) : guided(month, r, f, ui)}

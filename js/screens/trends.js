@@ -20,7 +20,7 @@ const TREND_READS = [...H.DATA_STORES, 'weightEntries', 'bodyFatEstimates', 'moo
 const RANGES = [{ id: '30', label: '30d' }, { id: '60', label: '60d' }, { id: '90', label: '90d' }];
 const pctFmt = (v) => `${Math.round(v * 100)}%`;
 const axisPct = (v) => `${Math.round(v * 100)}`;
-// A metric opened from Progress, and the charts that belong to it.
+// A metric opened from Review, and the charts that belong to it.
 const FOCUS = { consistency: { title: 'Consistency', keys: ['cons'] }, steps: { title: 'Steps', keys: ['steps'] }, training: { title: 'Training', keys: ['train', 'strength'] } };
 
 function avgLine(span, fn, unit) {
@@ -130,7 +130,7 @@ export default {
     // (background work such as records and levels redraws the screen it is on).
     const chart = (k) => () => raw(store.memo(`trends:${k}:${ui.range || 30}:${ui.ex || ''}`, TREND_READS, () => String(all[k]())));
     return html`
-      ${pageHead({ title: focus ? focus.title : 'All trends', morph: focus ? `metric-${params.metric}` : null, back: { to: 'progress', label: 'Progress' } })}
+      ${pageHead({ title: focus ? focus.title : 'All trends', morph: focus ? `metric-${params.metric}` : null, back: { to: 'review', label: 'Review' } })}
       ${keys.map((k, i) => (focus || i < 2 ? chart(k)() : later(k, chart(k))))}
       ${focus ? html`<a class="btn btn--soft btn--block block" href="#/progress/trends" data-action="nav" data-to="progress/trends">All trends</a>` : later('pb', bests, 560)}`;
   },
