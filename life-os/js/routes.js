@@ -1,12 +1,12 @@
-// The map of Life OS: four places (Today, Plan, Progress, Reflect), the You pages, and where
-// every older address now lives. Routes match in order; ':name?' marks an optional segment.
+// The map of Life OS: three places (Today, Plan, Review; the + sits between Plan and Review), the
+// You pages, and where every older address now lives. Review holds what Progress and Reflect were:
+// their pages keep their addresses (progress/…, reflect/…) and belong to the Review tab. Routes match in order; ':name?' marks an optional segment.
 // `list` names the list a detail belongs to, so wide screens can show them side by side.
 
 export const PLACES = [
   { id: 'today', label: 'Today', icon: 'calendar-check', path: 'today', key: '1' },
   { id: 'plan', label: 'Plan', icon: 'map', path: 'plan', key: '2' },
-  { id: 'progress', label: 'Progress', icon: 'chart-spline', path: 'progress', key: '3' },
-  { id: 'reflect', label: 'Reflect', icon: 'notebook-pen', path: 'reflect', key: '4' },
+  { id: 'review', label: 'Review', icon: 'chart-spline', path: 'review', key: '3' },
 ];
 
 const v = (name) => () => import(`./screens/${name}.js`);
@@ -30,6 +30,7 @@ export const ROUTES = [
   { path: 'plan/training/workouts/:id', tab: 'plan', depth: 2, load: v('template') },
   { path: 'plan/training/exercises/:id', tab: 'plan', depth: 3, load: v('exercise') },
   { path: 'plan/training/exercises', tab: 'plan', depth: 2, load: v('exercises') },
+  { path: 'plan/training/programmes', tab: 'plan', depth: 2, load: v('programmes') },
   { path: 'plan/training', tab: 'plan', depth: 1, load: v('training') },
   { path: 'plan/playbook', tab: 'plan', depth: 1, load: v('playbook') },
   { path: 'plan/moodboard', tab: 'plan', depth: 1, load: v('moodboard') },
@@ -41,34 +42,35 @@ export const ROUTES = [
   { path: 'plan/commitments', tab: 'plan', depth: 1, load: v('commitments') },
   { path: 'plan/rewards', tab: 'plan', depth: 1, load: v('rewards') },
 
-  { path: 'progress/body/weight', tab: 'progress', depth: 2, load: v('weight') },
-  { path: 'progress/body/nutrition/:date?', tab: 'progress', depth: 2, load: v('nutrition') },
-  { path: 'progress/body/measurements', tab: 'progress', depth: 2, load: v('measurements') },
-  { path: 'progress/body/photos', tab: 'progress', depth: 2, load: v('photos') },
-  { path: 'progress/body/sleep', tab: 'progress', depth: 2, load: v('sleep') },
-  { path: 'progress/body', tab: 'progress', depth: 1, load: v('body') },
-  { path: 'progress/areas/mind', tab: 'progress', depth: 1, load: v('mind') },
-  { path: 'progress/areas/spirit', tab: 'progress', depth: 1, load: v('faith') },
-  { path: 'progress/areas/relationships', tab: 'progress', depth: 1, load: v('relationships') },
-  { path: 'progress/areas/work', tab: 'progress', depth: 1, load: v('work') },
-  { path: 'progress/areas/:id', tab: 'progress', depth: 1, load: v('area') },
-  { path: 'progress/trends/:metric?', tab: 'progress', depth: 1, load: v('trends') },
-  { path: 'progress/calendar', tab: 'progress', depth: 1, load: v('calendar') },
-  { path: 'progress/records', tab: 'progress', depth: 1, load: v('records') },
-  { path: 'progress/season', tab: 'progress', depth: 1, load: v('season') },
-  { path: 'progress/year/:year?', tab: 'progress', depth: 1, load: v('year') },
-  { path: 'progress', tab: 'progress', depth: 0, load: v('progress') },
+  { path: 'progress/body/weight', tab: 'review', depth: 2, load: v('weight') },
+  { path: 'progress/body/nutrition/:date?', tab: 'review', depth: 2, load: v('nutrition') },
+  { path: 'progress/body/measurements', tab: 'review', depth: 2, load: v('measurements') },
+  { path: 'progress/body/photos', tab: 'review', depth: 2, load: v('photos') },
+  { path: 'progress/body/sleep', tab: 'review', depth: 2, load: v('sleep') },
+  { path: 'progress/body', tab: 'review', depth: 1, load: v('body') },
+  { path: 'progress/areas/mind', tab: 'review', depth: 1, load: v('mind') },
+  { path: 'progress/areas/spirit', tab: 'review', depth: 1, load: v('faith') },
+  { path: 'progress/areas/relationships', tab: 'review', depth: 1, load: v('relationships') },
+  { path: 'progress/areas/work', tab: 'review', depth: 1, load: v('work') },
+  { path: 'progress/areas/:id', tab: 'review', depth: 1, load: v('area') },
+  { path: 'progress/trends/:metric?', tab: 'review', depth: 1, load: v('trends') },
+  { path: 'progress/calendar', tab: 'review', depth: 1, load: v('calendar') },
+  { path: 'progress/records', tab: 'review', depth: 1, load: v('records') },
+  { path: 'progress/season', tab: 'review', depth: 1, load: v('season') },
+  { path: 'progress/year/:year?', tab: 'review', depth: 1, load: v('year') },
 
-  { path: 'reflect', tab: 'reflect', depth: 0, load: v('reflect') },
-  { path: 'reflect/journal/:id', tab: 'reflect', depth: 2, load: v('journal-entry'), list: 'reflect/journal' },
-  { path: 'reflect/journal', tab: 'reflect', depth: 1, load: v('journal'), list: 'reflect/journal', emptyIcon: 'notebook-pen', emptyText: 'Choose an entry to read it, or start today’s.' },
-  { path: 'reflect/review/week/:date?', tab: 'reflect', depth: 1, load: v('review-week') },
-  { path: 'reflect/review/month/:month?', tab: 'reflect', depth: 1, load: v('review-month') },
-  { path: 'reflect/review/year/:year?', tab: 'reflect', depth: 1, load: v('review-year') },
-  { path: 'reflect/reviews', tab: 'reflect', depth: 1, load: v('reviews') },
-  { path: 'reflect/insights', tab: 'reflect', depth: 1, load: v('insights') },
+  { path: 'review', tab: 'review', depth: 0, load: v('review') },
+  { path: 'reflect/journal/:id', tab: 'review', depth: 2, load: v('journal-entry'), list: 'reflect/journal' },
+  { path: 'reflect/journal', tab: 'review', depth: 1, load: v('journal'), list: 'reflect/journal', emptyIcon: 'notebook-pen', emptyText: 'Choose an entry to read it, or start today’s.' },
+  { path: 'reflect/review/week/:date?', tab: 'review', depth: 1, load: v('review-week') },
+  { path: 'reflect/review/month/:month?', tab: 'review', depth: 1, load: v('review-month') },
+  { path: 'reflect/review/year/:year?', tab: 'review', depth: 1, load: v('review-year') },
+  { path: 'reflect/reviews', tab: 'review', depth: 1, load: v('reviews') },
+  { path: 'reflect/insights', tab: 'review', depth: 1, load: v('insights') },
 
   { path: 'you/settings', tab: 'you', depth: 1, load: v('settings') },
+  { path: 'you/setup', tab: 'you', depth: 1, load: v('setup') },
+  { path: 'you/reminders', tab: 'you', depth: 1, load: v('reminders') },
   { path: 'you/data', tab: 'you', depth: 1, load: v('data') },
   { path: 'you/privacy', tab: 'you', depth: 1, load: v('privacy') },
   { path: 'you/sync', tab: 'you', depth: 1, load: v('sync') },

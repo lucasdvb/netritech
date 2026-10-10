@@ -46,7 +46,7 @@ export default {
       ${!entries.length ? empty({ ic: 'scale', title: 'Give us a starting point.', body: 'Weigh in tomorrow morning after the bathroom. Daily readings feed a 7-day average, which is the number decisions are based on.', cta: 'Log first weigh-in', action: 'add' }) : html`
       <div class="metric-top">
         <p class="section-label">7-day average</p>
-        <p class="big-num tnum">${num(kgOut(s.avg7), 1)}<span>${weightUnit()}</span></p>
+        <button type="button" class="explain big-num tnum" data-action="explain" data-what="weight" aria-label="7-day average ${num(kgOut(s.avg7), 1)} ${weightUnit()}: how it’s worked out">${num(kgOut(s.avg7), 1)}<span>${weightUnit()}</span></button>
         <p class="hero-meta">${s.latest ? `Latest ${fw(s.latest.kg)} · ${dayInline(s.latest.date)}` : ''}</p>
       </div>
       ${segmented(RANGES, String(range), { action: 'range', name: 'Range' })}

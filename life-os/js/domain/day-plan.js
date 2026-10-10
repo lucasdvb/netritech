@@ -4,11 +4,12 @@ import * as store from '../data/store.js';
 import * as M from './metrics-core.js';
 import * as F from './fitness-core.js';
 import { dayMode } from './habits.js';
+import { on as planOn } from './day-plans-core.js';
 import { today, minutesOfDay, parseHM, weekday } from './dates.js';
 import { num } from '../ui/format.js';
 
 export function phase(now = new Date()) {
-  const p = store.profile() || {};
+  const p = planOn(today()).profile || {};
   const m = minutesOfDay(now);
   const wake = parseHM(p.wakeTime || '06:00');
   const work = parseHM(p.workStart || '10:00');
@@ -21,7 +22,12 @@ export function phase(now = new Date()) {
   return 'evening';
 }
 
-export const isWorkday = (date) => (store.profile()?.workDays || [1, 2, 3, 4, 5]).includes(weekday(date));
+/** A workday: on Every day, one of your work days; on another plan, a day whose plan has work in it. */
+export function isWorkday(date) {
+  const o = planOn(date);
+  if (!o.base) return o.work;
+  return (store.profile()?.workDays || [1, 2, 3, 4, 5]).includes(weekday(date));
+}
 
 /** What training makes sense today, from the plan and this morning's check-in. */
 export function trainingCall(date = today()) {

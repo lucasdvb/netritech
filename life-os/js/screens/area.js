@@ -59,11 +59,11 @@ export default {
   title: ({ params }) => catLabel(params.id),
   render({ params }) {
     const c = CATEGORIES.find((x) => x.id === params.id);
-    if (!c) return html`${pageHead({ title: 'Not found', back: { to: 'progress', label: 'Progress' } })}${empty({ ic: 'compass', title: 'There’s no area with that name.' })}`;
+    if (!c) return html`${pageHead({ title: 'Not found', back: { to: 'review', label: 'Review' } })}${empty({ ic: 'compass', title: 'There’s no area with that name.' })}`;
     const links = LINKS[c.id] || [];
     const body = areaBlocks(c.id);
     return html`
-      ${pageHead({ title: c.label, eyebrow: 'Area', back: { to: 'progress', label: 'Progress' } })}
+      ${pageHead({ title: c.label, eyebrow: 'Area', back: { to: 'review', label: 'Review' } })}
       ${links.length ? html`<section class="block block--first"><ul class="list">${links.map(([to, ic, t]) => link(to, ic, t))}</ul></section>` : ''}
       ${String(body).trim() ? body : empty({ ic: c.icon, title: `Nothing in ${c.label.toLowerCase()} yet`, body: 'Habits and goals you give this area show up here.' })}`;
   },

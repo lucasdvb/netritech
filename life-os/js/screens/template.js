@@ -8,6 +8,8 @@ import { icon } from '../ui/icons.js';
 import { pageHead, empty, segmented } from '../ui/components.js';
 import { num, kgOut, kgIn, weightUnit, fieldNum } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
+import { safeDelete } from '../ui/safe-delete.js';
+import { linkedBlock } from '../ui/linked.js';
 import * as hap from '../ui/haptics.js';
 import { startWorkout } from './workout-actions.js';
 
@@ -55,6 +57,7 @@ export default {
         })}</ol>` : html`<p class="muted">No exercises yet. Add them in the order you’ll do them; you can drag to change it later.</p>`}
         <button type="button" class="btn btn--soft btn--block block-tight" data-action="add">${icon('plus', { size: 16 })} Add exercises</button>
       </section>
+      ${linkedBlock('workout', t.id, t.name)}
       <section class="block stack-sm">
         <button type="button" class="btn btn--soft btn--block" data-action="duplicate">${icon('copy', { size: 16 })} Duplicate</button>
         <button type="button" class="btn btn--ghost btn--block btn--danger-text" data-action="delete">${icon('trash-2', { size: 16 })} Delete workout</button>
@@ -75,9 +78,10 @@ export default {
     },
     delete: ({ params }) => {
       const t = F.template(params.id);
-      const undo = TP.remove(params.id);
-      app.replace('plan/training');
-      app.toast(`${t.name} deleted`, { action: { label: 'Undo', fn: undo } });
+      if (!t) return;
+      // On days of your week, or started by a habit: it says so, and can hand those to another workout.
+      safeDelete({ kind: 'workout', id: t.id, name: t.name, records: [{ store: 'templates', id: t.id }], after: () => app.replace('plan/training'),
+        message: (to) => `${t.name} deleted${to ? `. ${to} takes its place` : ''}` });
     },
   },
   inputs: {

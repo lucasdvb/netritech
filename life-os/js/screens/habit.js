@@ -2,7 +2,8 @@
 import * as store from '../data/store.js';
 import * as HS from '../domain/habit-system.js';
 import * as R from '../domain/routines.js';
-import { deleteWithUndo } from '../ui/undo.js';
+import { safeDelete } from '../ui/safe-delete.js';
+import { linkedBlock } from '../ui/linked.js';
 import * as H from '../domain/habits-more.js';
 import * as U from '../domain/urges.js';
 import { catLabel, sectionLabel, habitColor } from '../domain/taxonomy.js';
@@ -140,16 +141,16 @@ export default {
 
       <section class="run-card" data-key="run" aria-label="Run">
         <div class="run-main">
-          <p class="run-val tnum">${r.current}<span> ${unitOf(r, r.current)}</span></p>
+          <button type="button" class="explain run-val tnum" data-action="explain" data-what="run" data-id="${h.id}" aria-label="Current run ${r.current} ${unitOf(r, r.current)}: how it’s counted">${r.current}<span> ${unitOf(r, r.current)}</span></button>
           <p class="run-label">Current run</p>
         </div>
         <dl class="run-facts">
-          <div><dt>Strength</dt><dd class="tnum">${strength}%</dd></div>
-          <div><dt>Best</dt><dd class="tnum">${r.best}</dd></div>
-          <div><dt>Comebacks</dt><dd class="tnum">${r.comebacks}</dd></div>
+          <div><dt>Strength</dt><dd class="tnum"><button type="button" class="explain" data-action="explain" data-what="strength" data-id="${h.id}" aria-label="Strength ${strength}%: how it’s worked out">${strength}%</button></dd></div>
+          <div><dt>Best</dt><dd class="tnum"><button type="button" class="explain" data-action="explain" data-what="run" data-id="${h.id}" aria-label="Best run ${r.best}: how runs are counted">${r.best}</button></dd></div>
+          <div><dt>Comebacks</dt><dd class="tnum"><button type="button" class="explain" data-action="explain" data-what="run" data-id="${h.id}" aria-label="${r.comebacks} comebacks: what counts as one">${r.comebacks}</button></dd></div>
         </dl>
         <p class="run-note">${runNote(r)}${r.comebacks ? ` ${plural(r.comebacks, 'comeback')} in the last 30 days.` : ''}${reserveNote(h)}</p>
-        <p class="run-note run-note--quiet">Strength builds each time it counts. A miss dips it a little and never resets it.${!h.archived && !H.isLimit(h) ? html` <button type="button" class="link-btn" data-action="auto-check">Does it feel automatic?</button>` : ''}</p>
+        <p class="run-note run-note--quiet">Strength builds each time it counts. A miss dips it a little and never resets it. Tap any number to see how it’s worked out.${!h.archived && !H.isLimit(h) ? html` <button type="button" class="link-btn" data-action="auto-check">Does it feel automatic?</button>` : ''}</p>
       </section>
 
       ${H.isLimit(h) ? urgesBlock(h) : ''}
@@ -178,9 +179,9 @@ export default {
       <section class="block" data-key="stats">
         <div class="block-head"><h2 class="block-title">Consistency</h2></div>
         <div class="stat-row stat-row--3">
-          <div class="stat"><p class="stat-value tnum">${pct(c7.ratio)}</p><p class="stat-label">7 days</p><p class="stat-sub">${c7.expected ? `${Math.round(c7.done)} of ${Math.round(c7.expected) || 1}` : 'starting'}</p></div>
-          <div class="stat"><p class="stat-value tnum">${pct(c30.ratio)}</p><p class="stat-label">30 days</p><p class="stat-sub">${c30.expected ? `${Math.round(c30.done)} of ${Math.round(c30.expected) || 1}` : '—'}</p></div>
-          <div class="stat"><p class="stat-value tnum">${pct(c90.ratio)}</p><p class="stat-label">90 days</p><p class="stat-sub">${c90.expected ? `${Math.round(c90.done)} of ${Math.round(c90.expected) || 1}` : '—'}</p></div>
+          <div class="stat"><button type="button" class="explain stat-value tnum" data-action="explain" data-what="consistency" data-days="7" data-id="${h.id}" aria-label="7-day consistency ${pct(c7.ratio)}: how it’s worked out">${pct(c7.ratio)}</button><p class="stat-label">7 days</p><p class="stat-sub">${c7.expected ? `${Math.round(c7.done)} of ${Math.round(c7.expected) || 1}` : 'starting'}</p></div>
+          <div class="stat"><button type="button" class="explain stat-value tnum" data-action="explain" data-what="consistency" data-days="30" data-id="${h.id}" aria-label="30-day consistency ${pct(c30.ratio)}: how it’s worked out">${pct(c30.ratio)}</button><p class="stat-label">30 days</p><p class="stat-sub">${c30.expected ? `${Math.round(c30.done)} of ${Math.round(c30.expected) || 1}` : '—'}</p></div>
+          <div class="stat"><button type="button" class="explain stat-value tnum" data-action="explain" data-what="consistency" data-days="90" data-id="${h.id}" aria-label="90-day consistency ${pct(c90.ratio)}: how it’s worked out">${pct(c90.ratio)}</button><p class="stat-label">90 days</p><p class="stat-sub">${c90.expected ? `${Math.round(c90.done)} of ${Math.round(c90.expected) || 1}` : '—'}</p></div>
         </div>
         ${numeric && h.type !== 'rating' ? html`<div class="card block-tight">${barChart({
           labels: days30.map((d) => fmtDayShort(d).slice(0, 1)), tipLabels: days30.map((d) => fmtMD(d)),
@@ -194,6 +195,8 @@ export default {
         <dl class="facts">${facts.map(([k, v]) => html`<div><dt>${k}</dt><dd>${v}</dd></div>`)}</dl>
         ${h.checklist?.length ? html`<div class="card steps-card"><p class="section-label">Steps</p><ol class="steps">${h.checklist.map((x) => html`<li>${x}</li>`)}</ol></div>` : ''}
       </section>
+
+      ${linkedBlock('habit', h.id, h.name)}
 
       ${notes.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Notes</h2></div>
         <ul class="list">${notes.map((n) => html`<li class="row"><span class="row-main"><span class="row-title">${n.note}</span><span class="row-sub">${relativeDay(n.date)}</span></span></li>`)}</ul></section>` : ''}
@@ -247,9 +250,10 @@ export default {
     delete: ({ params }) => {
       const h = H.habit(params.id);
       const logs = store.where('habitLogs', (l) => l.habitId === h.id);
-      app.replace('plan/habits');
-      deleteWithUndo([{ store: 'habits', id: h.id }, ...logs.map((l) => ({ store: 'habitLogs', id: l.id }))],
-        `${h.name} deleted, with ${logs.length} logged day${logs.length === 1 ? '' : 's'}`);
+      // Linked to goals, a routine or Your day: it says so first, and can hand those links to another habit.
+      safeDelete({ kind: 'habit', id: h.id, name: h.name, records: [{ store: 'habits', id: h.id }, ...logs.map((l) => ({ store: 'habitLogs', id: l.id }))],
+        after: () => app.replace('plan/habits'),
+        message: (to) => `${h.name} deleted, with ${logs.length} logged day${logs.length === 1 ? '' : 's'}${to ? `. Its links went to ${to}` : ''}` });
     },
   },
 };

@@ -50,7 +50,7 @@ const ROUTES = (ids) => ['today', 'plan', 'plan/habits', `plan/habits/${ids.habi
   'progress/body', 'progress/body/weight', 'progress/body/nutrition', 'progress/body/measurements', 'progress/body/photos', 'progress/body/sleep',
   'progress/areas/mind', 'progress/areas/spirit', 'progress/areas/relationships', 'progress/areas/work', 'progress/areas/health',
   'reflect', 'reflect/journal', `reflect/journal/${ids.journal}`, 'reflect/insights', 'reflect/reviews', 'reflect/review/week', 'reflect/review/month',
-  'you/settings', 'you/data', 'you/privacy', `workout/${ids.workout}`];
+  'you/settings', 'you/reminders', 'you/data', 'you/privacy', `workout/${ids.workout}`];
 
 const idsOf = (p) => p.evaluate(() => {
   const s = window.__lifeos.store;
@@ -231,10 +231,10 @@ await step('a morning with the keyboard alone, with focus always visible', async
   if (!(await p.evaluate(() => document.activeElement?.tagName === 'H1'))) throw new Error('focus did not land on the habit’s title');
   await tab(10);
   await p.keyboard.press('3');
-  await p.waitForSelector('[data-view="progress"]');
+  await p.waitForSelector('[data-view="review"]');
   await tab(10);
   await p.keyboard.press('4');
-  await p.waitForSelector('[data-view="reflect"]');
+  await p.waitForSelector('[data-view="review"]');
   await p.locator('.write-area').focus();
   await p.keyboard.type('Written without a mouse.');
   await p.keyboard.press('Shift+Tab');

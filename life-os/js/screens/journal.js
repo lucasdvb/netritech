@@ -33,7 +33,7 @@ export default {
     const list = all.filter((j) => filter === 'all' || j.kind === filter);
     const hour = new Date().getHours();
     return html`
-      ${pageHead({ title: 'Journal', back: { to: 'reflect', label: 'Reflect' } })}
+      ${pageHead({ title: 'Journal', back: { to: 'review', label: 'Review' } })}
       <p class="privacy-line">${icon('lock', { size: 14 })} Private. Stored only on this device.</p>
       <div class="write-row">
         <button type="button" class="write-btn${hour < 14 ? ' is-suggested' : ''}" data-action="new" data-kind="morning">${icon('sunrise', { size: 18 })}<span>Morning</span></button>

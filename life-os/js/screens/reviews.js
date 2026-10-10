@@ -18,7 +18,7 @@ export default {
     const yr = Y.due(today()) ?? Number(today().slice(0, 4));
     const months = store.all('monthlyReviews').filter((r) => r.completedAt).sort((a, b) => (a.id < b.id ? 1 : -1));
     return html`
-      ${pageHead({ title: 'Reviews', back: { to: 'reflect', label: 'Reflect' } })}
+      ${pageHead({ title: 'Reviews', back: { to: 'review', label: 'Review' } })}
       <div class="stack">
         <a class="card card--link review-cta" href="#/reflect/review/week/${ws}" data-action="nav" data-to="reflect/review/week/${ws}">
           <span class="row-ic" style="--ic:var(--c-life)">${icon('calendar-days', { size: 18 })}</span>

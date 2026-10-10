@@ -1,12 +1,19 @@
 import * as store from './data/store.js';
+import { whenReady as whenPlansReady } from './domain/day-plans-core.js';
 import { SEED_VERSION, LATEST_MIGRATION } from './data/schema.js';
 import { patch, settle } from './ui/patch.js';
 import * as router from './ui/router.js';
-import * as sheet from './ui/sheet.js';
 import { toast, stick, retract } from './ui/toast.js';
 import { icon, loadIcons } from './ui/icons.js';
 import { html } from './ui/dom.js';
 import { toggleTip } from './ui/tips.js';
+import * as usage from './ui/usage.js';
+
+// Sheets load straight after the first screen (Today's first frame has none). Until then there's no
+// sheet to look after, and a tap that would open one waits the moment it takes to arrive.
+let sheet = { sheets: () => [], top: () => null, close() {}, closeAll() {}, refreshAll() {}, trapFocus() {}, open: null };
+let sheetLoad = null;
+const sheetReady = () => (sheetLoad ||= import('./ui/sheet.js').then((m) => { sheet = m; }));
 import { firstRender, fill, waitingKeys } from './ui/later.js';
 import { app, APP_NAME } from './ui/app-api.js';
 import { today, setDayEnd } from './domain/dates.js';
@@ -52,7 +59,7 @@ function renderTabbar() {
 const ctxOf = (c) => ({ params: c.params, query: c.query, ui: c.ui, route: c.route, path: c.path });
 
 // Older addresses land on their new homes, keeping any query. The table loads only when needed.
-const LEGACY = /^(habits|body|more)(\/|$)|^you$|^progress\/(areas|overview|insights)$|^plan\/habits\/[^/]+\/edit$/;
+const LEGACY = /^(habits|body|more)(\/|$)|^you$|^progress$|^reflect$|^progress\/(areas|overview|insights)$|^plan\/habits\/[^/]+\/edit$/;
 async function redirect() {
   const { parts, query, path } = router.parse();
   if (!LEGACY.test(path)) return false;
@@ -115,6 +122,7 @@ async function navigate() {
   wentBack = false;
   const { parts, query, path } = router.parse();
   const found = router.match(ROUTES, parts) || router.match(ROUTES, ['today']);
+  usage.track(`r:${found.route.path}`);
   const listRoute = found.route.list && wide.matches ? ROUTES.find((r) => r.path === found.route.list) : null;
   let mod, listMod;
   try {
@@ -190,6 +198,7 @@ async function navigate() {
     markSelected();
     growAll(main);
     renderTabbar();
+    syncWorkoutBar();
     document.title = view.title ? `${typeof view.title === 'function' ? view.title(ctxOf(current)) : view.title} · ${APP_NAME}` : APP_NAME;
     if (prev) {
       const h1 = (isList ? pane.el : el).querySelector('h1');
@@ -219,6 +228,14 @@ async function navigate() {
 }
 wide.addEventListener?.('change', () => { if (current?.route.list) navigate(); });
 
+// A workout under way, and you've left it: the bar back to it (ui/workout-bar.js, loaded only then).
+let workoutBar = null;
+function syncWorkoutBar() {
+  const away = !current?.route.path.startsWith('workout/');
+  if (!workoutBar && !(away && store.all('workouts').some((w) => w.status === 'active'))) return;
+  (workoutBar ||= import('./ui/workout-bar.js')).then((m) => m.sync(away)).catch(() => {});
+}
+
 function refresh() {
   if (refreshQueued) return;
   refreshQueued = true;
@@ -245,6 +262,7 @@ function refresh() {
       console.error(err);
     }
     sheet.refreshAll();
+    syncWorkoutBar();
   }));
 }
 
@@ -278,6 +296,12 @@ const globalActions = {
   'open-search': () => app.search(),
   capture: async () => (await import('./screens/capture.js')).openCapture(),
   you: async () => (await import('./screens/you.js')).openYou(),
+  // Any number with data-action="explain": how it was worked out, with your numbers in the sum.
+  explain: async ({ data }) => (await import('./screens/explain.js')).openExplain(data.what, data),
+  // An @Name in your writing: everything you've written about them.
+  person: async ({ data }) => (await import('./screens/people.js')).openPerson(data.name),
+  // "All n mentions" under Linked to.
+  mentions: async ({ data }) => (await import('./ui/linked.js')).mentionsSheet(app, data.kind, data.id, data.title || 'this'),
   // An ⓘ beside a title: open or fold the explanation it stands for, then redraw where it lives.
   tip: ({ data, sheet: s }) => {
     toggleTip(data.tip);
@@ -318,6 +342,12 @@ document.addEventListener('click', (e) => {
   const handler = resolve(el, 'action', el.dataset.action);
   if (!handler) return;
   if (el.tagName === 'A') e.preventDefault();
+  if (!sheet.open) { sheetReady().then(() => run(handler, el, e)); return; }
+  // The usage meter (this device only): the action, and the Today section it came from.
+  usage.track(`a:${el.dataset.action}`);
+  if (el.dataset.q) usage.track(`q:${el.dataset.q}`);
+  const section = el.closest('.tblock[data-key]')?.dataset.key;
+  if (section) usage.track(`b:${section.slice(2)}`);
   if (el.tagName === 'BUTTON') settle(el.closest('[data-sheet]') || main);
   // A check or switch flips at once; the redraw that follows shows what was really saved.
   const flip = el.matches('[role="checkbox"], [role="switch"]') && ['true', 'false'].includes(el.getAttribute('aria-checked'));
@@ -368,6 +398,14 @@ function grow(el) {
   el.style.height = `${el.scrollHeight + 2}px`;
 }
 document.addEventListener('input', (e) => { if (e.target.matches?.('textarea[data-grow]')) grow(e.target); }, true);
+// Writing #… or @… in a note or the journal suggests what to mention (ui/mention-input.js, loaded on first use).
+let mentionInput = null;
+document.addEventListener('input', (e) => {
+  const el = e.target;
+  if (!el.matches?.('[data-mentions]')) return;
+  if (!mentionInput && !/[#@]/.test(el.value)) return;
+  (mentionInput ||= import('./ui/mention-input.js')).then((m) => m.check(el)).catch(() => {});
+}, true);
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter' || e.isComposing || !e.target.matches?.('textarea[data-grow]')) return;
   e.preventDefault();
@@ -482,6 +520,7 @@ async function boot() {
       stick('Life OS was updated in another window. Reload to carry on; everything saved is safe.', { tone: 'danger', icon: 'refresh-cw', action: { label: 'Reload', fn: () => location.reload() } });
       return;
     }
+    if (ev.quiet) return; // saved as you type, already on screen
     if (ev.stores.has('settings')) applyTheme();
     if (ev.stores.has('profile')) setDayEnd(store.profile()?.dayEndsAt);
     // Background summaries rebuilding don't change what's on screen.
@@ -490,6 +529,7 @@ async function boot() {
 
   if (!location.hash) history.replaceState(null, '', '#/today');
   await navigate();
+  sheetReady().catch((err) => console.warn(err));
   import('./ui/updates.js').then((m) => m.registerSW()).catch((err) => console.warn(err));
   import('./data/journal.js').then((m) => m.watch()).catch((err) => console.warn(err));
   // The rest of the workout history, straight after the first screen.
@@ -510,6 +550,8 @@ async function boot() {
   import('./ui/transitions.js').then((m) => { swap = m.swap; }).catch(() => {});
   loadIcons().then(() => refresh()).catch(() => {});
   import('./ui/keys.js').then((m) => m.attachShortcuts({ places: PLACES, go: (path) => app.go(path), capture: () => globalActions.capture(), search: () => app.search() })).catch(() => {});
+  // Your days: when the full day-plan rules arrive (only once there's more than one plan), draw again with them.
+  whenPlansReady(() => refresh());
   import('./ui/gestures.js').then((m) => m.attachPullToSearch({ enabled: () => current?.route.depth === 0, onSearch: () => app.search() })).catch(() => {});
   import('./domain/reminders.js').then((r) => r.start()).catch((err) => console.warn(err));
   store.complete().then(() => import('./domain/snapshots.js')).then((m) => m.start()).catch((err) => console.warn(err));

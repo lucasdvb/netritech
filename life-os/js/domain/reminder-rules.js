@@ -3,8 +3,9 @@
 import * as store from '../data/store.js';
 import { habit, isDone, logId } from './habits.js';
 import { today, dayAt, minutesOfDay, parseHM, lastNDays } from './dates.js';
+import { LINKED } from './reminder-links.js';
 
-export const LINKED = { morning: 'h-morning-reset', workout: 'h-training', evening: 'h-evening', weeklyReview: 'h-weekly-review' };
+export { LINKED };
 
 export const logsFor = (key) => store.all('reminderLog').filter((r) => r.key === key).sort((a, b) => (a.at < b.at ? 1 : -1));
 

@@ -8,6 +8,7 @@ import * as R from './routines.js';
 import * as T from './tasks.js';
 import { dayScore, planHabits } from './scoring.js';
 import { phase as phaseOf, isWorkday, trainingCall } from './day-plan.js';
+import { on as planOn } from './day-plans-core.js';
 
 // The coach's suggestions join in once coach.js has loaded (right after the first screen).
 let coachTips = null;
@@ -83,7 +84,7 @@ export function nextActions(date = today(), now = new Date()) {
   if (cur?.next) {
     const s = cur.next;
     add(20, { id: `step-${cur.routine.id}-${s.id}`, kind: 'routine', eyebrow: `${cur.routine.name} · ${cur.done + 1} of ${cur.total}`,
-      title: s.kind === 'habit' ? s.habit.name : s.label, sub: s.kind === 'habit' ? tinySub(s.habit) || s.habit.time || '' : '',
+      title: s.kind === 'habit' ? s.habit.name : s.label, sub: s.kind === 'habit' ? tinySub(s.habit) || planOn(date).habitTime(s.habit) || '' : '',
       primary: s.kind === 'habit' ? habitAction(s.habit, date) : act('Done', 'step-label', { r: cur.routine.id, s: s.id }),
       secondary: cur.total - cur.done > 1 ? act('Did it all', 'did-it-all', { r: cur.routine.id }) : null,
       routine: cur.routine.id, habitId: s.habitId || null });
@@ -91,18 +92,19 @@ export function nextActions(date = today(), now = new Date()) {
 
   // Training, around its time, when it isn't a routine step already shown.
   const call = trainingCall(date);
-  const train = parseHM(store.profile()?.trainTime || '06:30');
-  if (call.template && ['planned', 'lighter', 'recovery'].includes(call.kind) && mins >= train - 60 && mins <= train + 180
+  const train = parseHM(planOn(date).profile?.trainTime || '06:30');
+  if (call.template && planOn(date).train && ['planned', 'lighter', 'recovery'].includes(call.kind) && mins >= train - 60 && mins <= train + 180
       && !(cur?.next?.habitId === 'h-training')) {
     add(25, { id: 'training', kind: 'training', eyebrow: 'Training', title: call.title, sub: call.reason, primary: act('Start', 'start-workout', { template: call.template.id }) });
   }
 
   // Your three (and, on a minimum day, the essentials), by their time.
   const plan = planHabits(date, mode).filter((h) => !H.counts(h, date, mode) && h.source !== 'top3')
-    .sort((a, b) => cmp(a.time || '99', b.time || '99'));
+    .sort((a, b) => cmp(planOn(date).habitTime(a) || '99', planOn(date).habitTime(b) || '99'));
   for (const h of plan) {
     if (cur?.next?.habitId === h.id) continue;
-    const late = h.time && mins >= parseHM(h.time);
+    const at = planOn(date).habitTime(h);
+    const late = at && mins >= parseHM(at);
     add(late ? 22 : 32, { id: `habit-${h.id}`, kind: 'focus', eyebrow: mode === 'minimum' ? 'Minimum day' : `Your ${H.focusWord()}`,
       title: mode === 'minimum' && H.tinyOf(h)?.label && !h.source ? H.tinyOf(h).label : h.name, sub: mode === 'minimum' ? '' : tinySub(h),
       primary: habitAction(h, date), secondary: mode !== 'minimum' && H.tinyOf(h) && !h.source && h.type !== 'check' ? act('Tiny', 'tiny', { id: h.id }) : null, habitId: h.id });
@@ -147,7 +149,7 @@ export function doneState(date = today(), now = new Date()) {
   return {
     id: 'done', kind: 'done', eyebrow: sealed ? 'Day sealed' : 'Done for today',
     title: ph === 'night' ? 'Time to wind down' : s.total && s.done === s.total ? 'Everything you planned is done' : 'Nothing needs you right now',
-    sub: first ? `Tomorrow starts with: ${first}` : ph === 'night' ? `Lights out by ${store.profile()?.bedTime || '22:00'}.` : 'Enjoy the space.',
+    sub: first ? `Tomorrow starts with: ${first}` : ph === 'night' ? `Lights out by ${planOn(date).profile?.bedTime || '22:00'}.` : 'Enjoy the space.',
     primary: late && !sealed && date === today() ? act('Close the day', 'ritual', { which: 'evening' }) : null,
   };
 }

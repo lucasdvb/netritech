@@ -1469,6 +1469,60 @@ Partway through, the owner made automatic sync between devices a must, so it was
   - A list arriving from a backup or another device is read defensively: bad times read as noon, missing habits drop out.
 - **Tested:** `tests/unit/workout-notes.test.mjs`, `tests/unit/mobility.test.mjs` and `tests/workout-notes.mjs`, `tests/unit/day-blocks.test.mjs` and `tests/day-plan.mjs` (the planner through the interface: change, Undo, carry the morning, drag, add, remove, reload), which covers typing to log, same as last time, warm-ups, add and remove set, the clock across gym mode, leaving, a manual pause and the finish, and the brain dump end to end in light and dark.
 
+**The cockpit, phase 1 of the owner's simplification plan (October 2026).** The owner chose 47 changes in six phases; phases 1–3 are being built first.
+- **Usage meter** (`ui/usage.js`). Counts screens (`r:`), actions (`a:`), Today sections (`b:`) and quick-row logs (`q:`, with an hour-of-day histogram) in `localStorage`, on this device only: never synced, never in backups. It teaches the quick row and folds unused sections; You › Your usage shows it.
+- **Today as the cockpit.**
+  - A **Log anything** field. (It had a microphone button; the owner asked for it to go, since the keyboard's own microphone does the same.)
+  - The Now card, then the **quick row** (the old pinned actions): the four actions logged most within an hour of now, or the part of the day's starters until there's data (Edit Today turns learning off).
+  - **Your day** (`screens/today/day-strip.js`, loaded after the first frame): the day blocks with a line at now. The block you're in is the latest-started one that isn't done (blocks can overlap); it shows its one action. Blocks behind you that are done fold away.
+  - New blocks take their default place in a saved layout instead of going to the end.
+- **Folding.** After 14 days of counting, a Today section with no taps in 14 days shows as one line. Never the quick row or Your day.
+- **After midnight**, before `dayEndsAt`, Today says "Still Friday · your day ends at 03:00".
+- **Recent changes.** Every toast with Undo is kept for the session (`ui/toast.js`), so You › Recent changes can undo it later. A change that commits for good when its toast leaves (`onExpire`) isn't kept.
+- **Speed.** Today's handlers (`screens/today/actions.js`) and the sheet code load right after the first frame; a tap in the first instant waits for them. First-screen JavaScript went from 222 KB with the new features back to 208 KB, still 8 KB over the 200 KB target (limit 240 KB). The cold-start budget in `tests/hardening.mjs` enforces speed: Today interactive at a 536 ms median with the CPU 4× slower and a year of data (budget 600 ms; 564 ms before this change).
+- **Tested:** `tests/cockpit.mjs`. It covers the learned quick row, water in one tap, a weigh-in in two, the strip's current block and its action, folding, the after-midnight line, speaking then saving, and undoing from Recent changes.
+
+**A simpler structure, phase 2 of the plan (October 2026).**
+- **Tabs: Today · Plan · + · Review** (`routes.js` `PLACES`; shortcuts 1–3). Review (`screens/review.js`) is one screen made of what Progress and Reflect were.
+  - Its order: today's page, a memory, this week's story, what's moving, the measures, the reviews due, insights, experiments, then Body, the areas, the rest of Progress, the journal and the films.
+  - `progress.js` and `reflect.js` now export those sections; Reflect's autosave, moods, insight and experiment actions come with them (`behaviour`).
+  - Every page under them keeps its address (`progress/…`, `reflect/…`) and belongs to the Review tab. `#/progress` and `#/reflect` redirect to `#/review`, and back buttons say "Review".
+- **Plan in five groups, one list each** (`plan-home.js`): Habits & routines (your three, all habits, Your plan), Goals (goals, projects, commitments, rewards, the side quest), Training, Tasks & notes, and Life (money, dates, books, moodboard). Tomorrow and this week stay above them.
+- **Search goes to screens and settings** (`search.js`). Every screen has its everyday words ("spending", "weigh-in"). A setting opens `you/settings?find=…`: Settings scrolls to the row and points it out for two seconds, re-applied after redraws.
+- **Settings › Advanced** (folded): reminders when Life OS is closed (calendar file, iPhone cues, server push, app badge) and the safety nets. A search for one of them opens it.
+- **Gym mode from Today.** `startWorkout(…, { gym: true })` from Today's actions, Your day and the mobility habit. Training's own screens still open the list.
+- **The workout bar** (`ui/workout-bar.js`, loaded only while a workout is under way). It sits above the tab bar on every screen but the workout's own. It shows the rest still to go, or the session time (paused while you're away), and goes back to gym mode in one tap.
+- **Tested:** `tests/structure.mjs`.
+
+**Everything linked, phase 3 of the plan (October 2026).**
+- **Linked to (50)** (`domain/links.js`, `ui/linked.js`). Habits, goals, workouts, routines and projects each end with what they're linked to, each a tap away: a habit's goals, routine, block in Your day, the workout it starts, its reminder, a pledge, an experiment, the season it's in; a workout's days of the week and the habits that start it; a routine's place in Your day. Mentions are listed under it.
+- **Safe delete (51)** (`ui/safe-delete.js`). Deleting something with links lists them first and offers to move them to another of the same kind (`links.relink`), or to let them go without leaving references behind. The delete and every link it touched are one batch with one Undo. Nothing linked: it goes at once with Undo, as before. A routine's habits and a reminder are not counted as links here, since they stay or go with it.
+- **Every number explains itself (56)** (`screens/explain.js`, global action `explain`). A habit's run, strength, best, comebacks and 7/30/90-day consistency; a goal's percentage; the week on Review; the 7-day weight average. Each opens a sheet with the sum in your own numbers and the days that went into it, read from the same functions the screens use.
+- **One time for everything (52, 27)** (`screens/reminders.js`, `you/reminders`). Every timed reminder on one timeline in the order of your day, plus the nudges that repeat. A reminder that hangs off a block in Your day shows it, and changing its time moves the block (`day-blocks.edit`), which already carries the habit, the routine window and the reminders with it; so the plan, Today, the calendar file and the cues never disagree. Undo puts it all back. Reached from You, Settings and search.
+- **Goals measured by anything (54)** (`domain/goals.js`). New measures: a habit's total (km, minutes, pages: any habit logged with a number), several habits added together, a body measurement, your sleep and your steps (7-day averages). Each gets a projection like the rest; the start fills in from what's logged.
+- **#mentions and @mentions (53)** (`domain/mentions.js`, `ui/mention-input.js`, `ui/mention-text.js`). In the brain dump and the journal, #Name names a habit, goal, routine, workout or project (case, spaces and punctuation ignored); @Name names a person. Typing # or @ suggests; notes show mentions highlighted, a note or entry lists them as chips, the item's page lists where it was mentioned, and Relationships lists the people you write about. Mentions are read from the text each time, so nothing can break when something is renamed or deleted.
+- **Tested:** `tests/linking.mjs` and `tests/unit/links.test.mjs`.
+
+**Owner requests after phase 3 (October 2026).**
+- **Your days: a plan for each kind of day** (`domain/day-plans.js`, `screens/day-plans-ui.js`). The owner's days differ but are fixed in advance. *Every day* stays the linked day of `day-blocks.js` (its times live on the habits, routines and profile, as before). Other plans (`profile.dayPlans`) keep their own block times; each weekday follows a plan (`profile.week`); any date can follow another plan or be adjusted on its own (`profile.planDates`, tidied after 45 days). All of it is on the profile, so backups and sync carry it with no schema change.
+  - **One question, everywhere:** `on(date)` gives that day's wake, work, training and lights-out times, each habit's time and reminder (moved by the same amount as its block), each routine's window, and the ritual reminders' times (check-in with wake, training with its block, close the day with the evening habit). Today's Your day, the Now card, routines, rows, the phase of the day, workdays, in-app reminders, the push plan (one item per time, on its dates), the calendar file (weekly events per time, EXDATE plus one-off events for changed dates in the next four weeks) and the Reminders screen (a timeline per plan) all read it.
+  - **What's expected follows the plan:** a habit that has its place in some plan but not in a day's plan isn't due that day (`outOfPlan` in `isScheduledDay` and `dueOn`), so it doesn't count as missed.
+  - **Decisions:** a new plan starts as a copy of another; editing Every day keeps its old linked behaviour; a plan on a weekday with a workout but no training block says so and offers to add one; the weekly review's last step lists next week's days to change; free time per plan is shown (awake time less planned minutes, each counted once). With only Every day, nothing changes.
+  - `LINKED` moved to `domain/reminder-links.js` so the day's plan can be read without loading the habit rules.
+- **Swipe a message away** (`ui/toast.js`): sideways or down, with a spring back for a short drag; the change stays in Recent changes.
+- **Back stays put** (`ui/components.js` `pageHead`): Back is in its own sticky bar above the header.
+- **Exercise pictures and GIFs** (`domain/exercise-media.js`, `screens/exercises.js`): New exercise takes up to two pictures, picked or pasted (`navigator.clipboard.read`); a GIF is stored as it is (6 MB cap) so it plays; gym mode shows the picture large.
+- **No microphone on Today**: the button and `ui/speech.js` are gone; the keyboard's microphone does the same.
+- **Tested:** `tests/day-plans.mjs`, `tests/touches.mjs`, `tests/unit/day-plans.test.mjs`.
+
+**The owner's second list, phase A: updates, setup, programmes (October 2026).** The owner chose 13 + 6 ideas plus proven programmes and a way to update without losing data; they're built in five phases (A–E), each ending green and pushed.
+- **Updating keeps your data** (`screens/updating.js`, README *Keep one address*). The data loss was hosting, not the app: each Netlify Drop is a new site at a new address, and a browser keeps data per address. The fix is one address that never changes (Netlify linked to GitHub, or new uploads to the same site); the offline worker already updates in place. You › *Updating Life OS* (also Settings › About) shows the address, explains it, and backs up for a one-time move (restore at the new address).
+- **The 5-minute setup** (`domain/setup.js`, `screens/setup.js`, `you/setup`). Seven short steps; nothing is written until the last one. It goes through the same rules as editing by hand: wake and lights out via `day-blocks.edit(…, { carry: true })` (the morning and evening move with them), work via `setTime`/`add`/`remove`, a Weekend plan via `day-plans` (reused if it exists), training via `programmes.follow` or nothing, the habits in focus via `applyStates` (out of focus first, so the limit holds), reminder times from the day. One snapshot of profile, settings, habits, routines, templates and exercises makes *Undo the setup* exact; a failure half-way restores it too. A fresh install shows it as a banner above Today (`settings.welcomed`/`setupDone`); *Not now* puts it in You.
+- **Proven programmes, optional** (`domain/programmes.js`, `screens/programmes.js`, `plan/training/programmes`). Five programmes with fixed workout and exercise ids (`t-pg-<id>-<n>`, gym lifts added to the library the first time). Following one sets the training week and keeps recovery and cardio days; your own week is kept on `profile.programme.prevPlan` and comes back on *Stop*; Undo removes the workouts and exercises it added unless you've trained with them. Each programme's "why" cites the evidence (frequency, Schoenfeld 2016; volume, Schoenfeld 2017; minimum dose, Androulakis-Korakakis 2020).
+- **Schema v10** adds the stores the rest of the list needs (energy logs, calendar events (this device only), recipes and the meal plan, bills, accounts, balances, savings goals, supplements and their logs, trips, takeaways, decisions, life-wheel checks).
+- **Budgets:** the precache budget now measures the compressed download (section 16.2).
+- **Tested:** `tests/setup.mjs`, `tests/unit/programmes-setup.test.mjs`.
+
 **Handover audit (October 2026).** A full audit before handover: security, calculations, persistence and every form, then crawlers over every screen and sheet at seven widths. What was found, fixed and proven, and what is still open, is in [`handover-audit.md`](handover-audit.md).
 
 **Left out on purpose:** points and pets, money stakes, "21 days" countdowns, willpower budgets, more default notifications, a barcode food database, a timeline planner. Each is either unsupported by the evidence or adds weight without value.
@@ -1499,11 +1553,13 @@ Partway through, the owner made automatic sync between devices a must, so it was
 | Any view render with a year of data | under 70 ms (as today) |
 | Long tasks during flows | none over 50 ms |
 | Motion | 60 fps; any animation that drops frames is simplified |
-| Precache total | under 1.75 MB, never over 2 MB (was 1.5 MB until Phase 13) |
+| Precache download (compressed, as hosts serve it) | under 896 KB, never over 1 MB (was 1.75 MB / 2 MB uncompressed until the day-plans release) |
 | JavaScript needed for first render | under 200 KB (screens stay lazy-loaded) |
 | Runtime dependencies | none |
 
 The precache budget was raised in Phase 13. The 1.5 MB figure was set when the app had about half its features. The precache is only the app's code and fonts, never your data; it downloads compressed (about a quarter of its size) once per version; and "everything works offline" means every screen has to be in it. Speed is held by the budgets that measure it: first-screen JavaScript, cold start, render and tap times.
+
+Since the day-plans release the precache budget measures what is actually downloaded: text files gzipped the way a host serves them, fonts and images as they are (already compressed). That was about 726 KB when the change was made (1.94 MB uncompressed), and the owner's chosen features (setup, programmes, meal plan, money, supplements, trips, decisions, the life wheel) all need to work offline. `tools/check-budgets.mjs` prints the uncompressed size alongside.
 
 **Techniques**
 - Optimistic rendering.

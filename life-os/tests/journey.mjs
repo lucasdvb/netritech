@@ -78,7 +78,7 @@ await step('log it for today and take it back: the log is saved, then reversed',
 
 await step('leave, come back, reload: everything is still there, once', async () => {
   await ev(async (hid) => { const H = await import('./js/domain/habits.js'); const D = await import('./js/domain/dates.js'); H.setLog(H.habit(hid), D.today(), { value: 1 }); }, id);
-  await go('#/progress', '[data-view="progress"]');
+  await go('#/progress', '[data-view="review"]');
   await go(`#/plan/habits/${id}`, '[data-view="habit"]');
   await reload();
   await go(`#/plan/habits/${id}`, '[data-view="habit"] .page-title');
@@ -129,12 +129,12 @@ await step('a task: add, edit, tick, untick, delete, across a reload', async () 
 });
 
 await step('the journal: today’s page saves as you write and survives a reload', async () => {
-  await go('#/reflect', '[data-view="reflect"] .write-area');
+  await go('#/reflect', '[data-view="review"] .write-area');
   const area = p.locator('.write-area').first();
   await area.fill('Good day. Café at 7 ☕ — <script>window.__xss=1</script>');
   await area.press('Tab');
   await reload();
-  await go('#/reflect', '[data-view="reflect"] .write-area');
+  await go('#/reflect', '[data-view="review"] .write-area');
   const v = await p.locator('.write-area').first().inputValue();
   if (!v.includes('Café at 7 ☕')) throw new Error(`journal after reload: ${v}`);
   if (await xss()) throw new Error('script ran');

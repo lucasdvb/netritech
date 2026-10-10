@@ -39,8 +39,9 @@ export function empty({ ic = 'sparkle', title, body = '', cta, action, data = {}
 
 export function pageHead({ title, eyebrow, back, actions = '', sub, morph, info }) {
   const key = info && `page:${typeof title === 'string' ? title : eyebrow || 'page'}`;
-  return html`<header class="page-head${back ? ' page-head--child' : ''}">
-    ${back ? html`<button type="button" class="back-btn" data-action="go-back" data-fallback="${back.to}" aria-label="Back to ${back.label}">${icon('chevron-left', { size: 22 })}<span>${back.label}</span></button>` : ''}
+  // Back sits in its own bar before the header, so it stays at the top of the screen as you scroll.
+  return html`${back ? html`<div class="back-bar"><button type="button" class="back-btn" data-action="go-back" data-fallback="${back.to}" aria-label="Back to ${back.label}">${icon('chevron-left', { size: 22 })}<span>${back.label}</span></button></div>` : ''}
+  <header class="page-head${back ? ' page-head--child' : ''}">
     <div class="page-head-row">
       <div>
         ${eyebrow ? html`<p class="eyebrow">${eyebrow}</p>` : ''}

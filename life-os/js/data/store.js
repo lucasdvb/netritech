@@ -121,7 +121,18 @@ export function subscribe(fn) {
   return () => listeners.delete(fn);
 }
 
+// Writes made inside quietly() don't ask the screen to redraw: text you're typing that's already on
+// screen, saved as you go. Everything else (memos, sync, the outbox) treats them as any change.
+let quietDepth = 0;
+let loud = false;
+/** Run writes that need no redraw. */
+export function quietly(fn) {
+  quietDepth += 1;
+  try { return fn(); } finally { quietDepth -= 1; }
+}
+
 function emit(store, records = []) {
+  if (!quietDepth) loud = true;
   changed.add(store);
   versions[store] = (versions[store] || 0) + 1;
   delete dateIndex[store];
@@ -136,9 +147,11 @@ function emit(store, records = []) {
     scheduled = false;
     const stores = changed;
     const dates = changedDates;
+    const quiet = !loud;
     changed = new Set();
     changedDates = new Set();
-    for (const fn of listeners) fn({ type: 'change', stores, dates });
+    loud = false;
+    for (const fn of listeners) fn({ type: 'change', stores, dates, quiet });
   });
 }
 

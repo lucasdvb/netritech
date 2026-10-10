@@ -12,6 +12,7 @@ import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 import { taskRow, taskActions } from './task-ui.js';
 import { projectSheet } from './projects.js';
+import { linkedBlock } from '../ui/linked.js';
 
 export default {
   id: 'project',
@@ -37,6 +38,7 @@ export default {
         </div>
         ${done.length ? html`<details class="disclosure block-tight" ${ui.showDone ? 'open' : ''}><summary>Done · ${done.length}</summary><ul class="tlist card">${done.map((t) => taskRow(t))}</ul></details>` : ''}
       </section>
+      ${linkedBlock('project', p.id, p.name, { except: ['Tasks'] })}
       <div class="danger-zone">
         <button type="button" class="btn btn--soft" data-action="p-status" data-v="${p.status === 'done' ? 'active' : 'done'}">${p.status === 'done' ? 'Make active' : 'Mark done'}</button>
         ${p.status === 'active' ? html`<button type="button" class="btn btn--soft" data-action="p-status" data-v="paused">Pause</button>` : ''}

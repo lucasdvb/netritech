@@ -2,6 +2,7 @@
 // notifications without a push server (which would see your data), but your calendar can: this
 // builds an iCalendar file (RFC 5545) of repeating events, each with an alert at its time and a
 // link back into Life OS. Times are "floating" (no time zone), so they follow the phone's clock.
+import * as P from './day-plans.js';
 import * as store from '../data/store.js';
 import * as H from './habits-more.js';
 import * as F from './fitness.js';
@@ -45,11 +46,12 @@ export function buildCalendar(events, { name = 'Life OS', now = new Date() } = {
     const desc = [e.note, e.url ? `Open Life OS: ${e.url}` : ''].filter(Boolean).join('\n');
     lines.push('BEGIN:VEVENT', `UID:${e.uid}`, `DTSTAMP:${stamp(now)}`, `DTSTART:${local(e.start, e.time)}`, `DURATION:PT${e.minutes || 5}M`);
     if (e.rrule) lines.push(`RRULE:${e.rrule}`);
+    if (e.rrule && e.exdates?.length) lines.push(`EXDATE:${e.exdates.map((d) => local(d, e.time)).join(',')}`);
     lines.push(`SUMMARY:${escapeText(e.title)}`);
     if (desc) lines.push(`DESCRIPTION:${escapeText(desc)}`);
     if (e.url) lines.push(`URL:${e.url}`);
     const before = Math.max(0, Math.round(e.alarm || 0));
-    lines.push(`TRANSP:${e.rrule ? 'TRANSPARENT' : 'OPAQUE'}`, 'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${escapeText(e.title)}`, `TRIGGER:${before ? `-PT${before}M` : 'PT0S'}`, 'END:VALARM', 'END:VEVENT');
+    lines.push(`TRANSP:${e.rrule || e.reminder ? 'TRANSPARENT' : 'OPAQUE'}`, 'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${escapeText(e.title)}`, `TRIGGER:${before ? `-PT${before}M` : 'PT0S'}`, 'END:VALARM', 'END:VEVENT');
   }
   lines.push('END:VCALENDAR');
   return `${lines.map(fold).join('\r\n')}\r\n`;
@@ -67,6 +69,31 @@ const rruleFor = (h) => {
   if (s.kind === 'interval' && s.every > 1) return { rrule: `FREQ=DAILY;INTERVAL=${s.every}` };
   return { rrule: 'FREQ=DAILY' };
 };
+
+/**
+ * Your days on different plans: one event per time, repeating on the weekdays whose plan puts the
+ * reminder there, and one-off events for the dates of the next four weeks you've changed (the
+ * repeating one skips them). `timeFor(view)` is the reminder's time on a plan (null: not that day).
+ */
+function byPlan(ev, timeFor, weekdays, date) {
+  if (!P.inUse()) return [ev];
+  const w = P.week();
+  const groups = new Map();
+  for (const wd of weekdays) { const t = timeFor(P.onPlan(w[wd])); if (parseHM(t) != null) groups.set(t, [...(groups.get(t) || []), wd]); }
+  const uid = (tag) => ev.uid.replace('@', `-${tag}@`);
+  const out = [...groups].map(([t, wds]) => ({ ...ev, uid: t === ev.time ? ev.uid : uid(t.replace(':', '')), time: t, start: firstOn(wds, date),
+    rrule: wds.length === 7 ? 'FREQ=DAILY' : `FREQ=WEEKLY;BYDAY=${wds.map((d) => BYDAY[d]).join(',')}`, exdates: [] }));
+  for (let i = 0; i < 28; i++) {
+    const d = addDays(date, i);
+    if (!weekdays.includes(weekday(d))) continue;
+    const usual = timeFor(P.onPlan(w[weekday(d)]));
+    const t = timeFor(P.on(d));
+    if (t === usual) continue;
+    out.find((e) => e.rrule && e.time === usual)?.exdates.push(d);
+    if (parseHM(t) != null) out.push({ ...ev, uid: uid(d.replace(/-/g, '')), time: t, start: d, rrule: null, exdates: [], reminder: true });
+  }
+  return out.length ? out : [ev];
+}
 
 /**
  * Everything Life OS can remind you about, each { key, label, hint, event, on } where `on` is the
@@ -106,6 +133,18 @@ export function reminderOptions(base, date = today()) {
     out.push({ key: `habit-${h.id}`, label: h.name, hint: `${H.scheduleLabel(h)} at ${h.reminder}`, on: true,
       event: { uid: `lifeos-habit-${h.id}@life-os`, title: h.name, time: h.reminder, start: r.days ? firstOn(r.days, date) : date, rrule: r.rrule,
         note: h.tiny?.label ? `Tiny version: ${h.tiny.label}` : h.description || '', url: link(`plan/habits/${h.id}`) } });
+  }
+  // Your days: each reminder at its time on each kind of day (`events`; `event` is the usual one).
+  const ALL = [1, 2, 3, 4, 5, 6, 7];
+  for (const o of out) {
+    const e = o.event;
+    if (o.key === 'morning') o.events = byPlan(e, (v) => v.cat('morning', e.time), ALL, date);
+    else if (o.key === 'evening') o.events = byPlan(e, (v) => v.cat('evening', e.time), ALL, date);
+    else if (o.key.startsWith('train-')) o.events = byPlan(e, (v) => (v.train ? v.cat('workout', e.time) : null), [Number(o.key.slice(6))], date);
+    else if (o.key.startsWith('habit-') && !/INTERVAL/.test(e.rrule)) {
+      const h = H.habit(o.key.slice(6));
+      if (h) o.events = byPlan(e, (v) => (v.out(h.id) ? null : v.reminder(h)), rruleFor(h).days || ALL, date);
+    }
   }
   return out;
 }

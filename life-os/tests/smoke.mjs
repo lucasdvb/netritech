@@ -72,7 +72,7 @@ await step('check-in sheet', async () => {
 });
 
 await step('tabs render', async () => {
-  for (const t of ['plan', 'progress', 'reflect', 'today']) {
+  for (const t of ['plan', 'review', 'today']) {
     await page.locator(`a.tab[href="#/${t}"]`).click();
     await page.waitForSelector(`[data-view="${t}"]`);
   }

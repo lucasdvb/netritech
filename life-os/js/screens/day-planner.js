@@ -1,8 +1,12 @@
 // Your plan › Your day: the day as blocks you can change. Each block is linked to the habit, routine
 // or time behind it (domain/day-blocks.js), so a change here is a change there: Today, the Now card
 // and your reminders follow. Tap a block to change its time, length or name; drag one to move it;
-// add any habit, routine or a plain block like "Lunch".
+// add any habit, routine or a plain block like "Lunch". It edits the plan or the date chosen above
+// it (Your days, day-plans-ui.js): Every day is the linked day itself; another plan, or one date,
+// keeps its own times, and those days follow them.
 import * as D from '../domain/day-blocks.js';
+import * as P from '../domain/day-plans.js';
+import { target, targetName } from './day-plans-ui.js';
 import { parseHM } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
@@ -15,7 +19,7 @@ const lengthText = (m) => (!m ? '' : m < 60 ? `${m} min` : m % 60 ? `${Math.floo
 
 /** The list on Your plan. */
 export function dayPlanner() {
-  const list = D.blocks();
+  const list = P.blocksOf(target());
   return html`<ol class="card plan-day plan-day--edit sort-list" data-reorder="day-move" aria-label="Your day">${list.map((b) => html`<li class="${cx('plan-block', ANCHORS.has(b.kind) && 'is-anchor')}" data-key="${b.id}">
       ${ANCHORS.has(b.kind) ? html`<span class="drag-gap" aria-hidden="true"></span>`
         : html`<button type="button" class="drag-handle" data-drag aria-label="Move ${b.title}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>`}
@@ -30,20 +34,25 @@ export function dayPlanner() {
     </div>`;
 }
 
+const blockOf = (t, id) => P.blocksOf(t).find((x) => x.id === id) || null;
+
 function editSheet(id) {
-  const b = D.block(id);
+  const t = target();
+  const b = blockOf(t, id);
   if (!b) return;
   const anchor = ANCHORS.has(b.kind);
   const part = b.kind === 'wake' ? 'morning' : b.kind === 'bed' ? 'evening' : null;
-  const carried = part ? D.partOf(part) : [];
+  const carried = part ? D.partOf(part, P.blocksOf(t)) : [];
+  const base = !t.date && (!t.plan || t.plan === P.BASE);
   app.sheet({
     title: b.title,
     size: 'detent',
     ui: { carry: carried.length > 0, error: '' },
     render: (s) => {
-      const cur = D.block(id) || b;
+      const cur = blockOf(t, id) || b;
       return html`<form class="form" data-submit="day-save">
-        ${D.linkedTo(cur) ? html`<p class="sheet-note">Linked to ${D.linkedTo(cur)}. A change here changes it there too, and its reminders move with it.</p>` : html`<p class="sheet-note">A plain block: it’s in your plan, not on Today.</p>`}
+        ${!base ? html`<p class="sheet-note">${t.date ? `For ${targetName(t)} only.` : `On ${P.nameOf(t.plan)} days.`} ${D.linkedTo(cur) ? `Linked to ${D.linkedTo(cur)}: that day, its reminders follow this time.` : 'A plain block: it’s in your plan, not on Today.'}</p>`
+          : D.linkedTo(cur) ? html`<p class="sheet-note">Linked to ${D.linkedTo(cur)}. A change here changes it there too, and its reminders move with it.${P.inUse() ? ' Days on other plans keep their own times.' : ''}</p>` : html`<p class="sheet-note">A plain block: it’s in your plan, not on Today.</p>`}
         <div class="grid-2">
           <label class="field"><span class="field-label">Starts</span><input class="input" type="time" name="time" value="${cur.time}" required></label>
           ${cur.kind === 'bed' ? '' : html`<label class="field"><span class="field-label">${cur.kind === 'work' ? 'Length (min)' : 'Minutes'}</span>
@@ -58,33 +67,34 @@ function editSheet(id) {
         ${s.ui.error ? html`<p class="field-error" role="alert">${s.ui.error}</p>` : ''}
         <button type="submit" class="btn btn--primary btn--block">Save</button>
         ${cur.kind === 'habit' ? html`<button type="button" class="btn btn--ghost btn--block" data-action="nav" data-to="plan/habits/${cur.ref}">Open the habit</button>` : ''}
-        ${anchor ? '' : html`<button type="button" class="btn btn--ghost btn--block btn--danger-text" data-action="day-remove">Remove from my day</button>`}
+        ${anchor ? '' : html`<button type="button" class="btn btn--ghost btn--block btn--danger-text" data-action="day-remove">${base ? 'Remove from my day' : `Remove from ${t.date ? 'this day' : P.nameOf(t.plan)}`}</button>`}
       </form>`;
     },
     actions: {
       'day-carry': ({ sheet }) => { sheet.ui.carry = !sheet.ui.carry; sheet.refresh(); },
       'day-save': ({ form, sheet }) => {
         if (!D.validTime(form.time)) { sheet.ui.error = 'Choose a time.'; sheet.refresh(); return; }
-        const cur = D.block(id) || b;
+        const cur = blockOf(t, id) || b;
         if (cur.kind === 'plain' && !String(form.label || '').trim()) { sheet.ui.error = 'Give the block a name.'; sheet.refresh(); return; }
-        const undo = D.edit(id, { time: form.time, mins: form.mins, label: form.label, detail: form.detail }, { carry: sheet.ui.carry });
+        const undo = P.edit(t, id, { time: form.time, mins: form.mins, label: form.label, detail: form.detail }, { carry: sheet.ui.carry });
         hap.success();
         app.closeSheet(sheet);
         const moved = parseHM(form.time) !== parseHM(cur.time);
         app.toast(moved ? `${cur.title} now at ${form.time}` : 'Saved', { action: { label: 'Undo', fn: undo } });
       },
       'day-remove': ({ sheet }) => {
-        const undo = D.remove(id);
+        const undo = P.removeBlock(t, id);
         hap.tap();
         app.closeSheet(sheet);
-        app.toast(`${b.title} taken out of your day`, { action: { label: 'Undo', fn: undo } });
+        app.toast(`${b.title} taken out of ${base ? 'your day' : t.date ? 'this day' : P.nameOf(t.plan)}`, { action: { label: 'Undo', fn: undo } });
       },
     },
   });
 }
 
 function addSheet() {
-  const can = D.addable();
+  const t = target();
+  const can = P.addable(t);
   const kinds = [
     { id: 'plain', label: 'Block' },
     ...(can.habits.length ? [{ id: 'habit', label: 'Habit' }] : []),
@@ -93,7 +103,7 @@ function addSheet() {
     ...(can.work ? [{ id: 'work', label: 'Work' }] : []),
   ];
   app.sheet({
-    title: 'Add to your day',
+    title: `Add to ${t.date || (t.plan && t.plan !== P.BASE) ? targetName(t) : 'your day'}`,
     size: 'detent',
     ui: { kind: 'plain', error: '' },
     render: (s) => {
@@ -122,7 +132,7 @@ function addSheet() {
         if (!D.validTime(form.time)) { sheet.ui.error = 'Choose a time.'; sheet.refresh(); return; }
         if (k === 'plain' && !String(form.label || '').trim()) { sheet.ui.error = 'Give the block a name.'; sheet.refresh(); return; }
         if ((k === 'habit' || k === 'routine') && !form.ref) { sheet.ui.error = 'Choose one.'; sheet.refresh(); return; }
-        const { undo } = D.add({ kind: k, ref: form.ref, label: form.label, time: form.time, mins: form.mins });
+        const { undo } = P.add(t, { kind: k, ref: form.ref, label: form.label, time: form.time, mins: form.mins });
         hap.success();
         app.closeSheet(sheet);
         app.toast('Added to your day', { action: { label: 'Undo', fn: undo } });
@@ -135,11 +145,12 @@ export const dayActions = {
   'day-edit': ({ data }) => editSheet(data.id),
   'day-add': () => addSheet(),
   'day-move': ({ from, to }) => {
-    const list = D.blocks();
+    const t = target();
+    const list = P.blocksOf(t);
     const b = list[from];
-    const undo = D.move(from, to);
+    const undo = P.move(t, from, to);
     hap.tap();
-    const now = b && D.block(b.id);
+    const now = b && blockOf(t, b.id);
     if (now) app.toast(`${now.title} now at ${now.time}`, { action: { label: 'Undo', fn: undo } });
   },
 };

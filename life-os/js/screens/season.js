@@ -121,7 +121,7 @@ export default {
         <button type="button" class="btn btn--primary" data-action="sn-new">Start a season</button></section>`;
     }
     return html`
-      ${pageHead({ title: 'Season', back: { to: 'progress', label: 'Progress' } })}
+      ${pageHead({ title: 'Season', back: { to: 'review', label: 'Review' } })}
       ${main}
       ${past.length ? html`<section class="block" data-key="past"><div class="block-head"><h2 class="block-title">Past seasons</h2></div>
         ${past.map((p) => html`<div class="card season-past" data-key="sp-${p.id}"><p class="card-title">${p.name}</p>

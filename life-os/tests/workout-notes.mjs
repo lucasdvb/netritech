@@ -217,7 +217,7 @@ await step('exercise photos and a note: two at most, shown in the list and gym m
   // Three pictures picked: two are kept, and it says why.
   const files = ['assets/icons/icon-192.png', 'assets/icons/apple-touch-icon.png', 'assets/icons/icon-512.png'].map((f) => new URL(`../${f}`, import.meta.url).pathname);
   await p.locator('.exm-editor input[type="file"]').setInputFiles(files);
-  await p.waitForSelector('.toast:has-text("keeps 2 photos")');
+  await p.waitForSelector('.toast:has-text("keeps 2 pictures")');
   await p.waitForFunction((e) => (window.__lifeos.store.get('exercises', e).photos || []).length === 2, exId);
   if (await p.locator('.exm-editor input[type="file"]').count()) throw new Error('still offers to add a third');
   await p.fill('.exm-editor textarea[data-change="exm-note"]', '  Seat on 4, grip just outside the shoulders  ');
@@ -256,7 +256,9 @@ await step('Mobility & posture is a workout: tapped on Today it starts, finishin
   const { ctx, p } = await at('2026-10-09T06:20:00');
   await p.goto(`${base}#/today`);
   await p.locator('button.rstep-main[data-id="h-mobility"]').click();
-  await p.waitForFunction(() => /#\/workout\//.test(location.hash));
+  // From Today it opens straight in gym mode; the full session page is one step away.
+  await p.waitForFunction(() => /#\/workout\/[^/]+\/gym$/.test(location.hash));
+  await p.evaluate(() => { location.hash = location.hash.replace(/\/gym$/, ''); });
   await p.waitForSelector('.ex-card');
   if ((await p.textContent('.page-title')).trim() !== 'Mobility & posture' || (await p.locator('.ex-card').count()) !== 8) throw new Error('not the mobility workout');
   if (await p.locator('.ex-step').count()) throw new Error('mobility suggests progression');

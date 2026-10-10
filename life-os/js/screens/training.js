@@ -1,4 +1,5 @@
 import * as store from '../data/store.js';
+import { programmeCard } from './programmes.js';
 import * as F from '../domain/fitness.js';
 import * as H from '../domain/habits.js';
 import * as M from '../domain/metrics.js';
@@ -105,6 +106,7 @@ export default {
         ${weekStrip()}
         <p class="quiet-line">${weekLine(w)}</p>
       </section>
+      <div class="block">${programmeCard()}</div>
       ${workoutsBlock()}
       <section class="block stack">${calfCard()}${coreCard()}${postureCard()}</section>
       <section class="block"><div class="block-head"><h2 class="block-title">Personal bests</h2></div>

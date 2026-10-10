@@ -3,7 +3,7 @@
 // future sync can learn about deletions. Date-keyed records also carry `date` ('YYYY-MM-DD',
 // indexed) and `tz`, the time zone they were first written in.
 export const DB_NAME = 'life-os';
-export const DB_VERSION = 9;
+export const DB_VERSION = 10;
 // Version of the built-in habit system (the seed); seed.js brings older installs up to date.
 export const SEED_VERSION = 2;
 /** The newest migration (data/migrations.js). Start-up loads migrations only when it isn't applied. */
@@ -59,6 +59,20 @@ export const STORES = {
   experiments: { indexes: [] },              // "try it for 14 days": a habit, what to watch, and the verdict at the end
   yearlyReviews: { indexes: [] },            // the year in review (id = the year) and the theme word for the next one
   notes: { indexes: [] },                    // brain dump: a note's text, its category ('' is Unsorted) and a pin
+  energyLogs: { indexes: ['date'] },         // energy check-ins (1–5) at a time of day, for your peak hours
+  calendarEvents: { indexes: ['date'] },     // busy times from your own calendar (subscribed or imported), this device only
+  recipes: { indexes: [] },                  // meals you cook: ingredients (for the grocery list) and protein per serving
+  mealPlan: { indexes: ['date'] },           // a meal planned on a date (id = date:slot)
+  bills: { indexes: [] },                    // bills, subscriptions and renewals: amount, how often, next due
+  accounts: { indexes: [] },                 // what you own and owe, for net worth
+  balances: { indexes: ['date'] },           // an account's balance on a date (net worth snapshots)
+  savingsGoals: { indexes: [] },             // a target, a date and what's put aside so far
+  supplements: { indexes: [] },              // supplements and medication: dose, times, stock and when to reorder
+  supplementLogs: { indexes: ['date'] },     // a dose taken (id = date:supplement:time)
+  trips: { indexes: [] },                    // trips: dates, where, the travel plan and packing list
+  takeaways: { indexes: [] },                // ideas worth keeping (from books, notes, reviews), brought back spaced
+  decisions: { indexes: [] },                // the decision journal: what, why, expected, and the review three months on
+  wheelChecks: { indexes: [] },              // the quarterly life wheel (id = the quarter): a score per area
   daySnapshots: { indexes: [] },             // derived per-day summary (id = date), rebuilt from the logs
   outbox: { indexes: [] },                   // latest change per record ('store:id'), for a future sync
   localBackups: { indexes: [] },             // automatic copies taken before data migrations (last three)
@@ -71,7 +85,7 @@ export const CACHED = Object.keys(STORES).filter((s) => !UNCACHED.has(s));
 
 // Stores that describe this device rather than your life: never synced. Of these, only meta
 // goes into backups, because it records which migrations the data has already had.
-export const LOCAL_ONLY = new Set(['meta', 'daySnapshots', 'reminderLog', 'outbox', 'localBackups']);
+export const LOCAL_ONLY = new Set(['meta', 'daySnapshots', 'reminderLog', 'outbox', 'localBackups', 'calendarEvents']);
 
 // Derived stores: rebuilt from other data, so their writes don't count as changes to your day.
 export const DERIVED = new Set(['daySnapshots']);

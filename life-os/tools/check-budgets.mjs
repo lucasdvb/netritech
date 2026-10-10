@@ -3,19 +3,23 @@
 // it and of the Today screen). Each has a target, which warns, and a hard limit, which
 // fails. Run: node tools/check-budgets.mjs   (exits 1 when a hard limit is broken)
 import { readFileSync, statSync } from 'node:fs';
+import { gzipSync } from 'node:zlib';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const KB = 1024;
 const BUDGETS = {
-  precache: { target: 1792 * KB, limit: 2048 * KB }, // raised in Phase 13: see the plan, section 16.2
+  // What a phone downloads once per version: the precache compressed (as hosts serve it). See the plan, section 16.2.
+  precache: { target: 896 * KB, limit: 1024 * KB },
   firstRenderJs: { target: 200 * KB, limit: 240 * KB },
 };
 
 const sw = readFileSync(join(root, 'sw.js'), 'utf8');
 const assets = JSON.parse(/const ASSETS = (\[[\s\S]*?\]);/.exec(sw)[1]).filter((a) => a !== './');
-const precache = assets.reduce((sum, a) => sum + statSync(join(root, a)).size, 0);
+const precacheRaw = assets.reduce((sum, a) => sum + statSync(join(root, a)).size, 0);
+// Fonts and images are already compressed; text files are gzipped the way a host serves them.
+const precache = assets.reduce((sum, a) => sum + (/\.(woff2|png|jpe?g|gif|webp)$/.test(a) ? statSync(join(root, a)).size : gzipSync(readFileSync(join(root, a)), { level: 6 }).length), 0);
 
 // Follow static imports only: screens other than Today load on demand.
 const seen = new Set();
@@ -30,7 +34,7 @@ walk(join(root, 'js/screens/today.js'));
 const firstRenderJs = [...seen].reduce((sum, f) => sum + statSync(f).size, 0);
 
 const rows = [
-  ['Precache (works offline)', precache, BUDGETS.precache],
+  [`Precache download (works offline; ${(precacheRaw / KB).toFixed(0)} KB uncompressed)`, precache, BUDGETS.precache],
   [`JS for first render (${seen.size} files)`, firstRenderJs, BUDGETS.firstRenderJs],
 ];
 let ok = true;

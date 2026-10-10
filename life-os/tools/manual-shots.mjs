@@ -246,28 +246,345 @@ flow('04-checkin', async () => {
   await ctx.close();
 });
 
-// SOP 5: during the day: Now, tick, tiny, and the + button
-flow('05-day', async () => {
+
+// Today at a glance: the top of the cockpit, then Your day.
+flow('a-today', async () => {
+  const { ctx, p } = await at('2026-10-07T13:00:00', { before: CHECKED });
+  await p.waitForSelector('.dstrip');
+  if (await p.locator('.catchup-foot button').count()) { await p.locator('.catchup-foot button').first().click(); await settle(p); }
+  await ev(p, () => window.scrollTo(0, 0));
+  const a = await screen(p, 'a-today-1', [
+    { sel: '.logbar [data-action="capture"]', n: 1, at: 'tl', pad: 3, radius: 24 },
+    { sel: '.now', n: 2, at: 'tr', pad: 4, radius: 26 },
+    { sel: '.you-btn', n: 3, at: 'bl', pad: 3, radius: 24 },
+  ]);
+  const b = await screen(p, 'a-today-2', [
+    { sel: '.pins--quick', n: 4, at: 'tr', pad: 4 },
+    { sel: '.ds-row.is-current', n: 5, at: 'tr', pad: 4 },
+    { sel: '.tab--capture', n: 6, at: 'tr', pad: 3, radius: 30, fixed: true },
+  ]);
+  await pair('a-today', [a, b], ['Today, top', 'Today: quick row and Your day']);
+  await ctx.close();
+});
+
+// Plan and Review: what you're building, and how it's going.
+flow('a-places', async () => {
+  const { ctx, p } = await at('2026-10-07T13:00:00', { before: CHECKED });
+  await go(p, '#/plan', '[data-view="plan"] [data-key="habits"]');
+  await p.waitForFunction(() => !document.querySelector('.block--later'));
+  const a = await screen(p, 'a-places-1', [
+    { sel: '[data-view="plan"] .plan-group[data-key="habits"] .block-title', n: 1, at: 'r', pad: 4 },
+    { sel: '[data-view="plan"] .plan-group[data-key="habits"] .list', n: 2, at: 'tr', pad: 4 },
+  ]);
+  await go(p, '#/review', '.write-area');
+  const b = await screen(p, 'a-places-2', [
+    { sel: '.write-area', n: 3, at: 'tr', pad: 4 },
+    { sel: '.story .story-sentence', n: 4, at: 'tr', pad: 4 },
+  ]);
+  await pair('a-places', [a, b], ['Plan', 'Review']);
+  await ctx.close();
+});
+
+// Set up: your times, then Your day.
+flow('s-day', async () => {
+  const { ctx, p } = await at('2026-10-07T10:30:00');
+  await go(p, '#/you/settings', '[data-k="wakeTime"]');
+  const a = await screen(p, 's-day-1', [
+    { sel: '[data-k="wakeTime"]', closest: '.set-list', n: 1, at: 'tr', pad: 4 },
+  ]);
+  await go(p, '#/plan/playbook', '.plan-day--edit');
+  const b = await screen(p, 's-day-2', [
+    { sel: '.plan-day--edit .plan-block-main', nth: 1, n: 2, at: 'tr', pad: 3 },
+    { sel: '.plan-day--edit .drag-handle', nth: 1, n: 3, at: 'l', pad: 3 },
+  ]);
+  await pair('s-day', [a, b], ['You › Settings: Day', 'Plan › Your plan: Your day']);
+  await ctx.close();
+});
+
+// Set up: when your days differ, a plan for each kind of day.
+flow('s-days', async () => {
+  const { ctx, p } = await at('2026-10-07T10:30:00', { before: async () => {
+    const P = await import('./js/domain/day-plans.js');
+    const { id } = P.create('Short day');
+    P.setWeekday(2, id);
+    P.setWeekday(4, id);
+    const wake = P.blocksOf({ plan: id }).find((b) => b.kind === 'wake');
+    P.edit({ plan: id }, wake.id, { time: '07:30' }, { carry: true });
+    const { id: sat } = P.create('Saturday');
+    P.setWeekday(6, sat);
+  } });
+  await go(p, '#/plan/playbook', '.days-week');
+  await p.locator('.days-plans .chip', { hasText: 'Short day' }).click();
+  await p.waitForSelector('.days-plans .chip.is-active:has-text("Short day")');
+  await p.locator('[data-key="plan-day"]').scrollIntoViewIfNeeded();
+  await ev(p, () => { const el = document.querySelector('[data-key="plan-day"]'); window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 70); });
+  const a = await screen(p, 's-days-1', [
+    { sel: '.days-week', n: 1, at: 'tl', pad: 4 },
+    { sel: '.days-plans', n: 2, at: 'tl', pad: 4 },
+    { sel: '.days-editing', n: 3, at: 'tl', pad: 4 },
+  ]);
+  await ev(p, () => { const el = document.querySelector('[data-key="days-ahead"]'); window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - 140); });
+  await p.locator('[data-key="days-ahead"] .row').nth(2).click();
+  await p.waitForSelector('.sheet [data-action="dp-adjust"]'); await settle(p);
+  const b = await screen(p, 's-days-2', [
+    { sel: '.sheet .pick-plans', n: 4, at: 'tl', pad: 4 },
+    { sel: '.sheet [data-action="dp-adjust"]', n: 5, at: 'tl', pad: 3 },
+  ]);
+  await pair('s-days', [a, b], ['Plan › Your plan: Your days', 'Next two weeks: one date']);
+  await ctx.close();
+});
+
+// Going further: a picture of how an exercise is done, and gym mode showing it.
+flow('f-pictures', async () => {
+  const { ctx, p } = await at('2026-10-09T06:30:00');
+  await go(p, '#/plan/training/exercises', '[data-action="new"]');
+  await p.locator('[data-action="new"]').click();
+  await p.waitForSelector('.sheet input[name="name"]');
+  await p.fill('.sheet input[name="name"]', 'Cossack squat');
+  await p.locator('.sheet [data-change="pp-add"]').setInputFiles(new URL('../tests/fixtures/squat.gif', import.meta.url).pathname);
+  await p.waitForSelector('.sheet [data-key^="pp-"] img');
+  await ev(p, () => document.querySelector('.sheet .exm-thumbs--edit')?.scrollIntoView({ block: 'center' }));
+  const a = await screen(p, 'f-pictures-1', [
+    { sel: '.sheet .exm-thumbs--edit .exm-add', n: 1, at: 'tl', pad: 3 },
+    { sel: '.sheet [data-action="pp-paste"]', n: 2, at: 'tr', pad: 3 },
+  ]);
+  await p.locator('.sheet button[type="submit"]').click();
+  await p.waitForFunction(() => window.__lifeos.store.all('exercises').find((x) => x.name === 'Cossack squat')?.photos?.length === 1);
+  const wid = await ev(p, async () => {
+    const { store } = window.__lifeos;
+    const e = store.all('exercises').find((x) => x.name === 'Cossack squat');
+    const w = (await import('./js/screens/workout-actions.js')).startWorkout('t-upper');
+    const first = (await import('./js/domain/fitness.js')).setsOf(w.id)[0].exerciseId;
+    store.update('exercises', first, { photos: e.photos, note: 'Chest up, sit back into the heel.' });
+    return w.id;
+  });
+  await go(p, `#/workout/${wid}/gym`, '.exm-line--gym img[src]');
+  await ev(p, () => document.querySelector('.gym-warn')?.remove());
+  const b = await screen(p, 'f-pictures-2', [{ sel: '.exm-line--gym .exm-thumb', n: 3, at: 'tr', pad: 4 }]);
+  await pair('f-pictures', [a, b], ['Exercises › + : New exercise', 'Gym mode']);
+  await ctx.close();
+});
+
+// Set up: a new habit, and a routine.
+flow('s-habit', async () => {
+  const { ctx, p } = await at('2026-10-07T10:30:00');
+  await ev(p, async () => (await import('./js/screens/habit-new.js')).openNewHabit());
+  await p.waitForSelector('.new-habit [data-f="name"]');
+  await p.locator('.new-habit [data-f="name"]').fill('Read 10 pages');
+  await p.locator('.new-habit [data-action="anchor"]').nth(2).click();
+  await p.locator('.new-habit [data-f="tiny"]').fill('Read one page');
+  await settle(p);
+  const a = await screen(p, 's-habit-1', [
+    { sel: '.new-habit [data-f="name"]', n: 1, at: 'tr', pad: 3 },
+    { sel: '.new-habit .chips', n: 2, at: 'tr', pad: 4 },
+    { sel: '.new-habit [data-f="tiny"]', n: 3, at: 'tr', pad: 3 },
+    { sel: '.new-habit button[type="submit"]', n: 4, at: 'tl', pad: 3 },
+  ]);
+  await p.keyboard.press('Escape');
+  await p.waitForSelector('.sheet-wrap', { state: 'detached' });
+  await ev(p, async () => (await import('./js/screens/routine-edit.js')).openRoutineEditor('r-morning'));
+  await p.waitForSelector('.sheet .re-steps'); await settle(p);
+  const last = (await p.locator('.sheet .re-step').count()) - 1;
+  const b = await screen(p, 's-habit-2', [
+    { sel: '.sheet .re-step', nth: last, n: 5, at: 'tr', pad: 3 },
+    { sel: '.sheet [data-change="add-habit"]', n: 6, at: 'tr', pad: 3 },
+  ]);
+  await pair('s-habit', [a, b], ['Plan › Habits › +', 'A routine: Morning']);
+  await ctx.close();
+});
+
+// Set up: a task (one-off or repeating), and the day's priorities.
+flow('s-task', async () => {
+  const { ctx, p } = await at('2026-10-07T10:30:00', { before: CHECKED });
+  await p.waitForSelector('.prio');
+  const a = await screen(p, 's-task-1', [{ sel: '.prio', n: 1, at: 'tr', pad: 4 }]);
+  await ev(p, async () => (await import('./js/screens/task-sheet.js')).openTask());
+  await p.waitForSelector('.task-form [data-input="title"]');
+  await p.locator('.task-form [data-input="title"]').fill('Water the plants');
+  await p.locator('.task-form [aria-label="Repeat"] .chip').nth(1).click().catch(() => {});
+  await settle(p);
+  const b = await screen(p, 's-task-2', [
+    { sel: '.task-form [data-input="title"]', n: 2, at: 'tr', pad: 3 },
+    { sel: '.task-form [aria-label="Repeat"]', n: 3, at: 'tr', pad: 4 },
+  ]);
+  await pair('s-task', [a, b], ['Today: priorities and tasks', 'A new task']);
+  await ctx.close();
+});
+
+// Set up: a goal in three questions, and what it then tells you.
+flow('s-goal', async () => {
+  const { ctx, p } = await at('2026-10-07T10:30:00');
+  await ev(p, async () => (await import('./js/screens/goals.js')).newGoal());
+  await p.waitForSelector('.sheet .goal-new');
+  await p.fill('.sheet [data-f="name"]', 'Run 100 km by Christmas');
+  await p.locator('.sheet [data-action="gn-next"]').click();
+  await p.locator('.sheet [data-action="gn-next"]').click();
+  await p.waitForSelector('.sheet [data-action="gn-how"]'); await settle(p);
+  const a = await screen(p, 's-goal-1', [{ sel: '.sheet .goal-new .chips', n: 1, at: 'tr', pad: 4 }]);
+  await p.keyboard.press('Escape');
+  await p.waitForSelector('.sheet-wrap', { state: 'detached' });
+  await go(p, '#/plan/goals/g-body', '.goal-hero');
+  const b = await screen(p, 's-goal-2', [
+    { sel: '.goal-hero', n: 2, at: 'tr', pad: 4 },
+    { sel: '.goal-projection', n: 3, at: 'tr', pad: 4 },
+  ]);
+  await pair('s-goal', [a, b], ['Plan › Goals › +: how you’ll know', 'A goal’s page']);
+  await ctx.close();
+});
+
+// Set up: your training week and a workout.
+flow('s-training', async () => {
+  const { ctx, p } = await at('2026-10-07T10:30:00');
+  await go(p, '#/plan/training', '.week-strip');
+  const a = await screen(p, 's-training-1', [{ sel: '.week-strip', n: 1, at: 'tr', pad: 4 }]);
+  const tid = await ev(p, async () => (await import('./js/domain/fitness-core.js')).templates()[0].id);
+  await go(p, `#/plan/training/workouts/${tid}`, '[data-view="template"] .sort-list');
+  const b = await screen(p, 's-training-2', [
+    { sel: '[data-view="template"] .sort-list', n: 2, at: 'tr', pad: 4 },
+    { sel: '[data-view="template"] [data-action="start"]', n: 3, at: 'bl', pad: 3, radius: 24 },
+  ]);
+  await pair('s-training', [a, b], ['Plan › Training', 'A workout']);
+  await ctx.close();
+});
+
+// Set up: every reminder on one timeline.
+flow('s-reminders', async () => {
+  const { ctx, p } = await at('2026-10-07T10:30:00', { before: () => { const s = window.__lifeos.store; s.setSettings({ notifications: { ...s.settings().notifications, enabled: true } }); } });
+  await p.locator('.you-btn[data-action="you"]').click();
+  await p.waitForSelector('.you'); await settle(p);
+  const a = await screen(p, 's-reminders-1', [{ sel: '.you .row', text: 'Reminders', n: 1, at: 'r', pad: 2 }]);
+  await p.locator('.you .row', { hasText: 'Every reminder on one timeline' }).click();
+  await p.waitForSelector('.rem-list'); await settle(p);
+  const b = await screen(p, 's-reminders-2', [
+    { sel: '.rem-row .rem-time', n: 2, at: 'tl', pad: 3, radius: 24 },
+    { sel: '.rem-row .row-sub', n: 3, at: 'bl', pad: 3 },
+    { sel: '.rem-row [role="switch"]', n: 4, at: 'br', pad: 3, radius: 20 },
+  ]);
+  await pair('s-reminders', [a, b], ['You', 'You › Reminders']);
+  await ctx.close();
+});
+
+// Every day: the Now card, a tick, and the + button.
+flow('d-day', async () => {
   const { ctx, p } = await at('2026-10-07T13:00:00', { before: CHECKED });
   await p.waitForSelector('.today .now');
-  // yesterday's catch-up card is answered first, as you would
   if (await p.locator('.catchup-foot button').count()) { await p.locator('.catchup-foot button').first().click(); await settle(p); }
-  const a = await screen(p, '05a', [
+  await ev(p, () => window.scrollTo(0, 0));
+  const a = await screen(p, 'd-day-1', [
     { sel: '.now .now-body', n: 1, at: 'tr', pad: 6 },
     { sel: '.now .btn--primary', n: 2, at: 'bl', pad: 3, radius: 24 },
     { sel: '.now button', text: 'Tiny', n: 3, at: 'br', pad: 3, radius: 24 },
-    { sel: '.routine-head', n: 4, at: 'tr', pad: 3, radius: 22 },
-    { sel: '.tab--capture', n: 5, at: 'tr', pad: 3, radius: 30, fixed: true },
   ]);
   await p.locator('.tab--capture').click();
   await p.waitForSelector('.cap-input');
   await p.locator('.cap-input').fill('water 750');
   await p.waitForSelector('.cap-preview'); await settle(p);
-  const b = await screen(p, '05b', [
-    { sel: '.cap-input', n: 6, at: 'tr', pad: 4 },
-    { sel: '.cap-preview', n: 7, at: 'tr', pad: 4 },
+  const b = await screen(p, 'd-day-2', [
+    { sel: '.cap-input', n: 4, at: 'tr', pad: 4 },
+    { sel: '.cap-preview', n: 5, at: 'tr', pad: 4 },
   ]);
-  await pair('05-day', [a, b], ['Today', 'The + button']);
+  await pair('d-day', [a, b], ['Today', 'The + button']);
+  await ctx.close();
+});
+
+// Every day: training in gym mode, and the bar that brings you back.
+flow('d-gym', async () => {
+  const { ctx, p } = await at('2026-10-07T06:40:00', { before: CHECKED });
+  await ev(p, async () => {
+    const F = await import('./js/domain/fitness-core.js');
+    const d = (await import('./js/domain/dates.js')).today();
+    const t = F.plannedTemplate(d) || F.templates()[0];
+    (await import('./js/screens/workout-actions.js')).startWorkout(t.id, d, { gym: true });
+  });
+  await p.waitForSelector('.gym-card'); await settle(p, 900);
+  // The test browser can't keep the screen awake; on the phone this note isn't there.
+  await ev(p, () => document.querySelectorAll('.gym-warn').forEach((e) => e.remove()));
+  const a = await screen(p, 'd-gym-1', [
+    { sel: '.gym-card', n: 1, at: 'tr', pad: 4 },
+    { sel: '[data-action="g-done"]', n: 2, at: 'tl', pad: 3, radius: 30 },
+  ]);
+  await go(p, '#/today', '.wbar');
+  const b = await screen(p, 'd-gym-2', [{ sel: '.wbar', n: 3, at: 'tr', pad: 3, radius: 30, fixed: true }]);
+  await pair('d-gym', [a, b], ['Gym mode', 'Left the workout: the bar back']);
+  await ctx.close();
+});
+
+// Going further: what a habit is linked to, and deleting it safely.
+flow('f-linked', async () => {
+  const { ctx, p } = await at('2026-10-07T10:30:00');
+  await go(p, '#/plan/habits/h-prayer', '[data-key="linked"]');
+  const a = await screen(p, 'f-linked-1', [{ sel: '[data-key="linked"] .list', n: 1, at: 'tr', pad: 4 }]);
+  await p.locator('.danger-zone [data-action="delete"]').click();
+  await p.waitForSelector('.sheet .safe-delete');
+  await p.selectOption('.sheet [data-change="sd-to"]', 'h-scripture'); await settle(p);
+  const b = await screen(p, 'f-linked-2', [
+    { sel: '.sheet [data-change="sd-to"]', n: 2, at: 'tr', pad: 3 },
+    { sel: '.sheet [data-action="sd-go"]', n: 3, at: 'tl', pad: 3, radius: 30 },
+  ]);
+  await pair('f-linked', [a, b], ['A habit: Linked to', 'Delete: move its links']);
+  await ctx.close();
+});
+
+// Going further: tap any number to see how it's worked out.
+flow('f-explain', async () => {
+  const { ctx, p } = await at('2026-10-07T20:00:00', { before: CHECKED });
+  await go(p, '#/plan/habits/h-prayer', '.run-card');
+  const a = await screen(p, 'f-explain-1', [
+    { sel: '.run-card .run-val', n: 1, at: 'tr', pad: 4 },
+    { sel: '.run-card [data-what="strength"]', n: 2, at: 'tr', pad: 4 },
+  ]);
+  await p.locator('[data-what="consistency"][data-days="30"]').click();
+  await p.waitForSelector('.sheet .explain-sum'); await settle(p);
+  const b = await screen(p, 'f-explain-2', [
+    { sel: '.sheet .explain-sum', n: 3, at: 'tr', pad: 4 },
+    { sel: '.sheet .explain-days', n: 4, at: 'tr', pad: 4 },
+  ]);
+  await pair('f-explain', [a, b], ['A habit’s numbers', 'How 30 days is worked out']);
+  await ctx.close();
+});
+
+// Going further: #mentions and @mentions.
+flow('f-mentions', async () => {
+  const { ctx, p } = await at('2026-10-07T10:30:00');
+  await go(p, '#/plan/notes', '.dump-input');
+  await p.locator('.dump-input').click();
+  await p.keyboard.type('Prayed early with @Sarah, #pray', { delay: 15 });
+  await p.waitForSelector('.mention-bar .mention-chip'); await settle(p);
+  const a = await screen(p, 'f-mentions-1', [
+    { sel: '.dump-input', n: 1, at: 'tr', pad: 4 },
+    { sel: '.mention-bar', n: 2, at: 'tl', pad: 3, fixed: true },
+  ]);
+  await p.locator('.dump-input').focus();
+  await p.keyboard.press('End');
+  await p.keyboard.type('e');
+  await p.waitForSelector('.mention-bar .mention-chip');
+  await p.locator('.mention-bar .mention-chip').first().click();
+  await p.locator('[data-action="save"]').click();
+  await p.waitForSelector('.note-card .mention');
+  await go(p, '#/plan/habits/h-prayer', '[data-key="linked"]');
+  const b = await screen(p, 'f-mentions-2', [{ sel: '[data-key="linked"] .linked-label', n: 3, at: 'tr', pad: 4 }]);
+  await pair('f-mentions', [a, b], ['Plan › Brain dump', 'The habit: Mentioned in']);
+  await ctx.close();
+});
+
+// Going further: search, and undoing later.
+flow('f-search', async () => {
+  const { ctx, p } = await at('2026-10-07T10:30:00');
+  await ev(p, () => window.__lifeos.app.search());
+  await p.waitForSelector('.sheet [data-input="q"]');
+  await p.locator('.sheet [data-input="q"]').fill('spending'); await settle(p);
+  const a = await screen(p, 'f-search-1', [
+    { sel: '.sheet [data-input="q"]', closest: '.search-field', n: 1, at: 'tr', pad: 3 },
+    { sel: '.sheet .list', n: 2, at: 'tr', pad: 4 },
+  ]);
+  await p.keyboard.press('Escape');
+  await p.waitForSelector('.sheet-wrap', { state: 'detached' });
+  await ev(p, async () => { const d = (await import('./js/domain/dates.js')).today(); (await import('./js/screens/sheets.js')).addWater(d, 500); });
+  await settle(p);
+  await ev(p, async () => (await import('./js/screens/recent.js')).openRecent());
+  await p.waitForSelector('.sheet .recent-row'); await settle(p);
+  const b = await screen(p, 'f-search-2', [{ sel: '.sheet [data-action="rc-undo"]', n: 3, at: 'tl', pad: 3, radius: 20 }]);
+  await pair('f-search', [a, b], ['Search (pull down)', 'You › Recent changes']);
   await ctx.close();
 });
 
@@ -343,7 +660,7 @@ flow('08-weekly', async () => {
     { sel: '[data-key="next-week"] ol', n: 3, at: 'tr', pad: 6 },
     { sel: '[data-action="complete"]', n: 4, at: 'tl', pad: 3 },
   ]);
-  await pair('08-weekly', [a, b], ['Reflect › Review the week', 'The last step: next week’s three']);
+  await pair('08-weekly', [a, b], ['Review › Review the week', 'The last step: next week’s three']);
   await ctx.close();
 });
 
@@ -363,7 +680,7 @@ flow('09-monthly', async () => {
     { sel: '.auto-scale', n: 2, at: 'tl', pad: 4 },
     { sel: '[data-action="ac-save"]', n: 3, at: 'tl', pad: 3 },
   ]);
-  await pair('09-monthly', [a, b], ['Reflect › Review the month', 'Does it feel automatic?']);
+  await pair('09-monthly', [a, b], ['Review › Review the month', 'Does it feel automatic?']);
   await ctx.close();
 });
 
@@ -412,7 +729,7 @@ flow('11-body', async () => {
     { sel: '.btn[data-action="start"]', n: 2, at: 'tl', pad: 3 },
     { sel: '.btn[data-action="food"]', n: 3, at: 'tl', pad: 3 },
   ]);
-  await pair('11-body', [a, b], ['Progress › Body', 'Further down: food and training']);
+  await pair('11-body', [a, b], ['Review › Body', 'Further down: food and training']);
   await ctx.close();
 });
 

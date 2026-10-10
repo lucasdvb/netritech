@@ -1,3 +1,10 @@
+/* ---------- a number that explains itself: looks like the number, opens how it's worked out ---------- */
+.explain { appearance: none; display: block; background: none; border: 0; padding: 0; margin: 0; color: inherit; font: inherit; letter-spacing: inherit;
+  text-align: inherit; cursor: pointer; border-radius: var(--r-sm); -webkit-tap-highlight-color: transparent; }
+dd .explain { display: inline; }
+.explain:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.explain:active { opacity: .7; }
+
 /* ---------- typography helpers ---------- */
 .eyebrow { font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); color: var(--text-2); }
 .section-label {
@@ -8,7 +15,10 @@
 
 /* ---------- page head ---------- */
 .page-head { padding: calc(var(--s5) + 4px) 0 var(--s5); }
-.page-head--child { padding-top: var(--s3); }
+.page-head--child { padding-top: 0; }
+/* Back stays put while the page scrolls: a sticky bar of its own, so it's always one tap away. */
+.back-bar { position: sticky; top: calc(var(--safe-top) + 8px); z-index: 20; height: 46px; margin-top: var(--s3); pointer-events: none; }
+.back-bar .back-btn { pointer-events: auto; box-shadow: var(--shadow-md); }
 .page-head-row { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s4); }
 .page-title { font-size: var(--text-h1); font-weight: var(--weight-semibold); line-height: var(--leading-h1); letter-spacing: var(--tracking-h1); }
 .page-head--child .page-title { font-size: var(--text-h1); margin-top: var(--s4); }
@@ -168,7 +178,9 @@
 @media (prefers-color-scheme: dark) { :root[data-theme='system'] .seg-btn[aria-selected='true'], :root[data-theme='system'] .seg-btn[aria-checked='true'], :root[data-theme='system'] .chip.is-active { background: var(--text); color: var(--text-inv); } }
 .seg--wrap { flex-wrap: wrap; background: none !important; padding: 0; gap: 6px; }
 .seg--wrap .seg-btn { flex: none; background: var(--surface-2); --text-3: var(--text-2); min-height: 40px; }
-.seg--wrap .seg-btn[aria-selected='true'] { background: var(--ink); color: var(--on-ink); }
+.seg--wrap .seg-btn[aria-selected='true'], .seg--wrap .seg-btn[aria-checked='true'], .seg--wrap .seg-btn[aria-pressed='true'] { background: var(--ink); color: var(--on-ink); font-weight: var(--weight-semibold); }
+:root[data-theme='dark'] .seg--wrap .seg-btn[aria-pressed='true'] { background: var(--text); color: var(--text-inv); }
+@media (prefers-color-scheme: dark) { :root[data-theme='system'] .seg--wrap .seg-btn[aria-pressed='true'] { background: var(--text); color: var(--text-inv); } }
 
 /* ---------- chips ---------- */
 .chip {
@@ -364,6 +376,10 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
   animation: toast-in 280ms var(--spring-snappy) both;
 }
 .toast.is-leaving { animation: toast-out 200ms var(--ease-standard) both; }
+/* Swipe a message away: it follows the finger, then flies off the way it was pushed. */
+.toast { touch-action: none; user-select: none; -webkit-user-select: none; transition: transform 220ms var(--spring-snappy), opacity 220ms var(--ease-standard); }
+.toast.is-dragging { transition: none; }
+.toast.is-swiped { animation: none; transition: transform 180ms var(--ease-standard), opacity 180ms var(--ease-standard); }
 .toast--danger { background: var(--danger); color: #fff; }
 .toast-ic { display: grid; place-items: center; color: currentColor; }
 .toast-msg { flex: 1; padding-right: 8px; }
@@ -668,3 +684,40 @@ select.input { background-image: linear-gradient(45deg, transparent 50%, var(--t
 .focus-own input { height: 40px; }
 .set-update { margin-top: var(--s3); justify-content: flex-start; }
 .set-update .btn { flex: 0 0 auto; }
+/* a setting opened from search, pointed out for a moment */
+.is-found { box-shadow: inset 0 0 0 2px var(--accent); border-radius: var(--r-lg); transition: box-shadow var(--dur-med) var(--ease-standard); }
+/* Settings › Advanced: what most people set once, or never */
+.set-advanced > summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; min-height: 44px; }
+.set-advanced > summary::-webkit-details-marker { display: none; }
+.set-advanced > summary::after { content: ''; width: 9px; height: 9px; border-right: 2px solid var(--text-3); border-bottom: 2px solid var(--text-3); transform: rotate(45deg); margin-right: 6px; }
+.set-advanced[open] > summary::after { transform: rotate(-135deg); }
+.set-sub { margin: var(--s4) 0 var(--s2) 2px; color: var(--text-2);
+  font-size: var(--text-caption); font-weight: var(--weight-semibold); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+
+/* Explanations (56): the sum with your numbers, then the days that went into it */
+.explain-sum { padding: var(--s4); border-radius: var(--r-md); background: var(--surface-2); margin-bottom: var(--s4);
+  font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-body); letter-spacing: var(--tracking-body); }
+.explain-sum strong { font-weight: var(--weight-semibold); }
+.explain .section-label { margin-top: var(--s4); }
+.explain-days { display: grid; gap: 2px; margin: 0 0 var(--s4); }
+.explain-day { display: flex; justify-content: space-between; gap: var(--s3); padding: 8px 0; border-bottom: 1px solid var(--border);
+  font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
+.explain-day.is-done span:last-child { color: var(--accent-ink); font-weight: var(--weight-semibold); }
+.explain-day.is-rest { color: var(--text-3); }
+
+/* Mentions (53): a #thing or @person in your writing, and the chips that suggest one while you type */
+.mention { color: var(--accent-ink); font-weight: var(--weight-medium); }
+button.mention { appearance: none; background: none; border: 0; padding: 0; font: inherit; letter-spacing: inherit; cursor: pointer; }
+.mention-bar { position: fixed; z-index: 70; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 4px 0; }
+.mention-chip { flex: none; display: inline-flex; align-items: baseline; gap: 6px; box-shadow: 0 6px 18px -10px rgba(0, 0, 0, .35); }
+.mention-chip small { font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); color: var(--text-3); }
+.linked-label { margin-top: var(--s4); }
+.linked-snippet { white-space: normal; }
+
+/* Reminders on one timeline (27, 52) */
+.rem-row { display: flex; align-items: center; gap: var(--s3); min-height: 62px; padding: 10px var(--s4); }
+.rem-row + .rem-row { box-shadow: inset 0 1px 0 var(--border); }
+.rem-row .row-main { flex: 1; min-width: 0; }
+.rem-row .rem-time { width: 9em; flex: none; padding: 0 10px; }
+.rem-row.is-off .row-title, .rem-row.is-off .rem-time { color: var(--text-3); }
+.rem-row .row-sub svg { display: inline; vertical-align: -1px; margin-right: 3px; }

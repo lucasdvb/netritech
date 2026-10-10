@@ -11,6 +11,7 @@ import { html } from '../ui/dom.js';
 import { icon, hasIcon } from '../ui/icons.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
+import * as usage from '../ui/usage.js';
 import { weightUnit, lengthUnit } from '../ui/format.js';
 
 const sheets = () => import('./sheets.js');
@@ -83,6 +84,7 @@ function preview(r, ctx) {
   </div>`;
 }
 
+/** The capture sheet. */
 export function openCapture(initial = '') {
   const active = F.activeWorkout?.();
   // Fresh numbers each time it opens (a weight logged a minute ago is the new "last weight").
@@ -149,6 +151,9 @@ async function commit(items, sheet, ctx) {
   sheet.ui.saving = true;
   const { save } = await import('../domain/capture-save.js');
   const res = save(items, ctx);
+  // What you log teaches Today's quick row (this device only).
+  const Q = { water: 'water', food: 'food', steps: 'steps', weight: 'weight', workout: 'workout', note: 'journal', reading: 'reading', meditation: 'meditation', task: 'task' };
+  for (const i of items) if (Q[i.kind]) usage.track(`q:${Q[i.kind]}`);
   remember(sheet.ui.text, items);
   app.closeSheet(sheet);
   if (res.saved) {

@@ -6,6 +6,7 @@ import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead } from '../ui/components.js';
 import { openRelationship, PEOPLE_LABELS } from './sheets.js';
+import { people } from '../domain/mentions.js';
 
 const PEOPLE = [
   { id: 'fiancee', habit: 'h-fiancee', icon: 'heart', prompt: '10–20 minutes, phone away. “How are you really doing?”' },
@@ -22,7 +23,7 @@ export default {
     const wk = startOfWeek(today());
     const moments = store.all('relationshipEntries').sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : cmp(b.createdAt || '', a.createdAt || '')));
     return html`
-      ${pageHead({ title: 'Relationships', back: { to: 'progress', label: 'Progress' }, info: 'Presence, not performance. Notes here are for remembering, not scoring.' })}
+      ${pageHead({ title: 'Relationships', back: { to: 'review', label: 'Review' }, info: 'Presence, not performance. Notes here are for remembering, not scoring.' })}
       <div class="people">${PEOPLE.map((p) => {
         const h = H.habit(p.habit);
         const thisWeek = moments.filter((m) => m.person === p.id && m.date >= wk).length;
@@ -37,6 +38,10 @@ export default {
         ${moments.length ? html`<ul class="list">${moments.slice(0, 20).map((m) => html`<li><button type="button" class="row" data-action="edit" data-id="${m.id}">
           <span class="row-main"><span class="row-title">${PEOPLE_LABELS[m.person]} · ${m.kind}</span><span class="row-sub">${relativeDay(m.date)}${m.minutes ? ` · ${m.minutes} min` : ''}${m.note ? ` · ${m.note}` : ''}</span></span></button></li>`)}</ul>`
           : html`<p class="muted">Ticking “Time with your fiancée” on Today is enough. Log a moment when there’s something worth remembering.</p>`}
+      </section>
+      <section class="block" data-key="people-mentioned"><div class="block-head"><h2 class="block-title">People you write about</h2></div>
+        ${people().length ? html`<div class="chips">${people().slice(0, 12).map((x) => html`<button type="button" class="chip" data-action="person" data-name="${x.name}">@${x.name} <span class="chip-n tnum">${x.count}</span></button>`)}</div>`
+          : html`<p class="muted">Write @ and a name in a note or your journal, and everything you’ve written about them collects here.</p>`}
       </section>
       ${areaBlocks('relationships')}`;
   },

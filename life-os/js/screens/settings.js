@@ -49,6 +49,19 @@ const NETS = [
 
 const pushOn = () => { try { return !!JSON.parse(localStorage.getItem('lifeos.push'))?.on; } catch { return false; } };
 
+// A setting opened from search: which one, and until when it's pointed out.
+let found = null;
+function pointOut(el) {
+  const hit = [...el.querySelectorAll('.set-label, .set-section, .set-sub, .field-label')].find((x) => x.textContent.trim().toLowerCase() === found.label);
+  if (!hit) return;
+  const inside = hit.closest('details');
+  if (inside) inside.open = true;
+  const row = hit.closest('.set-row, .field, .block') || hit;
+  row.classList.add('is-found');
+  if (!found.scrolled) { found.scrolled = true; row.scrollIntoView({ block: 'center' }); }
+  setTimeout(() => { if (Date.now() >= found.until) row.classList.remove('is-found'); }, found.until - Date.now() + 20);
+}
+
 // The version running: the offline copy's name (from sw.js), shown in About.
 let build = '';
 async function readBuild() {
@@ -118,13 +131,26 @@ export default {
           ${settingRow('Show explanations', toggle(s.showTips === true, { action: 'tips', label: 'Show explanations' }), { hint: 'Keep the text behind every ⓘ open. Off, tap an ⓘ to read one.', key: 'tips' })}
           ${settingRow('Haptics', toggle(s.haptics !== false, { action: 'haptics', label: 'Haptics' }), { hint: 'Subtle taps where the device supports them.' })}
           ${settingRow('Sound', toggle(s.sound === true, { action: 'sound', label: 'Sound' }), { hint: 'Soft sounds made on the phone for completions, moments and sealing the day. Off by default.', key: 'sound' })}
-          ${settingRow('Race against', segmented([{ id: 'four', label: 'A month ago' }, { id: 'best', label: 'Best week' }, { id: 'last', label: 'Last week' }], s.ghost || 'four', { action: 'ghost', name: 'Race against', cls: 'seg--compact' }), { hint: 'Your past self at the same point of the week, on Progress. A quiet marker, never an alarm.', key: 'ghost' })}
-        </div></section>
-      <section class="block"><h2 class="set-section">Safety nets</h2>
-        <div class="set-list">
-          ${NETS.map(([k, label, hint]) => settingRow(label, toggle(s.nets?.[k] !== false, { action: 'net', data: { k }, label }), { hint, key: `net-${k}` }))}
+          ${settingRow('Race against', segmented([{ id: 'four', label: 'A month ago' }, { id: 'best', label: 'Best week' }, { id: 'last', label: 'Last week' }], s.ghost || 'four', { action: 'ghost', name: 'Race against', cls: 'seg--compact' }), { hint: 'Your past self at the same point of the week, on Review. A quiet marker, never an alarm.', key: 'ghost' })}
         </div></section>
       <section class="block"><h2 class="set-section">Reminders</h2>
+        <div class="card block-tight">
+          <p class="card-lead" style="margin-top:0">Quiet and adaptive: if you already do something without the nudge, Life OS stops nudging. If you keep dismissing one, it asks whether a different time would suit you better.</p>
+          <p class="fine-print">${perm === 'unsupported' ? 'This browser doesn’t support notifications. Reminders show inside the app while it’s open.'
+            : pushOn() ? 'Your server sends the timed reminders below, even when Life OS is closed. The nudges (move, eyes, water) arrive while it’s open or recently used.'
+              : 'In-app reminders arrive while Life OS is open or recently used. For when it’s closed, use your calendar, or turn on reminders from your own server above.'}</p>
+        </div>
+        <a class="card card--link sort-cta block-tight" href="#/you/reminders" data-action="nav" data-to="you/reminders">
+          <span class="sort-cta-text"><span class="card-title">All your reminders, in one timeline</span><span class="row-sub">In the order of your day, each moving with Your day</span></span>
+          ${icon('chevron-right', { size: 18 })}</a>
+        <div class="set-list block-tight">
+          ${settingRow('Reminders', toggle(nt.enabled, { action: 'notif-master', label: 'Reminders' }), { hint: perm === 'granted' ? 'System notifications allowed' : perm === 'denied' ? 'Notifications are blocked in system settings — in-app only' : 'In-app, plus system notifications if you allow them' })}
+          ${nt.enabled ? NOTIFS.map(([k, label, kind]) => settingRow(label, html`${kind === 'time' && nt[k]?.on ? html`<input class="input input--inline" type="time" value="${nt[k].time}" data-change="notif-time" data-k="${k}" aria-label="${label} time">` : ''}
+            ${kind === 'every' && nt[k]?.on ? html`<select class="input input--inline" data-change="notif-every" data-k="${k}" aria-label="${label} interval">${(k === 'eyes' ? [20, 30, 45] : k === 'water' ? [90, 120, 180] : [45, 50, 60]).map((m) => html`<option value="${m}" ${raw(nt[k].every === m ? 'selected' : '')}>every ${m} min</option>`)}</select>` : ''}
+            ${toggle(nt[k]?.on, { action: 'notif', data: { k }, label })}`, { key: `n-${k}`, hint: rs[k]?.note || '' })) : ''}
+        </div></section>
+      <details class="block set-advanced" data-key="advanced"><summary class="set-section">Advanced</summary>
+        <h3 class="set-sub">Reminders when Life OS is closed</h3>
         <div class="set-list">
           ${settingRow('In your calendar', html`<button type="button" class="btn btn--soft btn--sm" data-action="calendar-file">${s.calendarAddedAt ? 'Add again' : 'Set up'}</button>`,
             { hint: 'The way that always works on iPhone: your calendar alerts you, even when Life OS is closed, and nothing is sent anywhere.', key: 'n-cal' })}
@@ -135,18 +161,11 @@ export default {
           ${badge.supported() ? settingRow('Badge on the app icon', toggle(s.badge !== false, { action: 'badge', label: 'Badge on the app icon' }),
             { hint: perm === 'granted' ? 'How much of today’s plan is still open.' : 'How much of today’s plan is still open. On iPhone it needs notifications allowed for Life OS.', key: 'n-badge' }) : ''}
         </div>
-        <div class="card block-tight">
-          <p class="card-lead" style="margin-top:0">Quiet and adaptive: if you already do something without the nudge, Life OS stops nudging. If you keep dismissing one, it asks whether a different time would suit you better.</p>
-          <p class="fine-print">${perm === 'unsupported' ? 'This browser doesn’t support notifications. Reminders show inside the app while it’s open.'
-            : pushOn() ? 'Your server sends the timed reminders below, even when Life OS is closed. The nudges (move, eyes, water) arrive while it’s open or recently used.'
-              : 'In-app reminders arrive while Life OS is open or recently used. For when it’s closed, use your calendar, or turn on reminders from your own server above.'}</p>
-        </div>
-        <div class="set-list block-tight">
-          ${settingRow('Reminders', toggle(nt.enabled, { action: 'notif-master', label: 'Reminders' }), { hint: perm === 'granted' ? 'System notifications allowed' : perm === 'denied' ? 'Notifications are blocked in system settings — in-app only' : 'In-app, plus system notifications if you allow them' })}
-          ${nt.enabled ? NOTIFS.map(([k, label, kind]) => settingRow(label, html`${kind === 'time' && nt[k]?.on ? html`<input class="input input--inline" type="time" value="${nt[k].time}" data-change="notif-time" data-k="${k}" aria-label="${label} time">` : ''}
-            ${kind === 'every' && nt[k]?.on ? html`<select class="input input--inline" data-change="notif-every" data-k="${k}" aria-label="${label} interval">${(k === 'eyes' ? [20, 30, 45] : k === 'water' ? [90, 120, 180] : [45, 50, 60]).map((m) => html`<option value="${m}" ${raw(nt[k].every === m ? 'selected' : '')}>every ${m} min</option>`)}</select>` : ''}
-            ${toggle(nt[k]?.on, { action: 'notif', data: { k }, label })}`, { key: `n-${k}`, hint: rs[k]?.note || '' })) : ''}
+      <section class="block-tight"><h3 class="set-sub">Safety nets</h3>
+        <div class="set-list">
+          ${NETS.map(([k, label, hint]) => settingRow(label, toggle(s.nets?.[k] !== false, { action: 'net', data: { k }, label }), { hint, key: `net-${k}` }))}
         </div></section>
+      </details>
       <section class="block"><h2 class="set-section">About</h2>
         <dl class="facts">
           <div><dt>Version</dt><dd><span class="tnum" data-key="sw-version">${build || '…'}</span></dd></div>
@@ -154,10 +173,17 @@ export default {
           <div><dt>Equipment</dt><dd>${p.equipment}</dd></div>
           <div><dt>Food</dt><dd>${p.diet}</dd></div>
         </dl>
-        <div class="btn-row set-update"><button type="button" class="btn btn--soft btn--sm" data-action="check-update">${icon('refresh-cw', { size: 16 })} Check for updates</button></div>
+        <div class="btn-row set-update"><button type="button" class="btn btn--soft btn--sm" data-action="check-update">${icon('refresh-cw', { size: 16 })} Check for updates</button>
+          <button type="button" class="btn btn--ghost btn--sm" data-action="updating">Updating without losing data</button></div>
       </section>`;
   },
-  mount() { readBuild(); },
+  mount(el, { query }) {
+    readBuild();
+    // From search: open on the setting asked for, and point it out for a moment.
+    if (query?.find) { found = { label: String(query.find).toLowerCase(), until: Date.now() + 2400, scrolled: false }; pointOut(el); }
+  },
+  // A redraw replaces the row's classes, so the pointer is put back while it's meant to show.
+  update(el) { if (found && Date.now() < found.until) pointOut(el); },
   actions: {
     'check-update': async () => {
       const reg = 'serviceWorker' in navigator ? await navigator.serviceWorker.getRegistration() : null;
@@ -167,6 +193,7 @@ export default {
       // A new version takes over by itself and the app reloads into it; nothing new means none.
       setTimeout(() => { if (!reg.installing && !reg.waiting) app.toast(`You have the latest version (${build || 'this one'}).`); }, 2500);
     },
+    updating: async () => (await import('./updating.js')).openUpdating(),
     'calendar-file': async () => (await import('./calendar-file.js')).openCalendarFile(),
     cues: async () => (await import('./cues.js')).openCues(),
     push: async () => (await import('./push-sheet.js')).openPushSheet({ onDone: () => app.refresh() }),

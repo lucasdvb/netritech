@@ -134,7 +134,7 @@ export default {
   title: 'Body',
   render() {
     return html`
-      ${pageHead({ title: 'Body', back: { to: 'progress', label: 'Progress' }, sub: 'Lose fat, keep the muscle, feel good doing it.' })}
+      ${pageHead({ title: 'Body', back: { to: 'review', label: 'Review' }, sub: 'Lose fat, keep the muscle, feel good doing it.' })}
       <div class="body-grid">
         <div class="stack">${weightCard()}${compositionLink()}${measureCard()}</div>
         <div class="stack">

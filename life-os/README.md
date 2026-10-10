@@ -19,15 +19,34 @@ To install from Safari, a PWA has to be served over **HTTPS**. Hosting only serv
 
 The first time you open it from the Home Screen, go to **You → Data** (the initial at the top of Today) and make a backup habit of it. Safari can clear website storage for sites that aren't used for weeks. Installing to the Home Screen and taking regular backups avoids that.
 
-### Hosting options (any of these works)
+### Keep one address (this is what keeps your data)
 
-| Host | How |
+Your data lives in the phone's storage **for one web address**. Open Life OS at a different address and it is a different, empty app; the old one still has your data, but the new one can't see it. So:
+
+- **Host it once, at an address that never changes,** and always update that same site. Updates then arrive by themselves (see *Updating* below) and your data stays exactly where it is.
+- **Don't use Netlify Drop for updates.** Each drop on app.netlify.com/drop creates a *new* site with a *new* address, which is why an "update" that way opened an empty app.
+
+| Host | How (one-time setup, then updates keep the same address) |
 |---|---|
-| **Netlify Drop** | Run `sh tools/pack-site.sh` to make `life-os-site.zip` (only the files the app serves), then drop that zip, or the `life-os` folder, on app.netlify.com/drop. `netlify.toml` turns Netlify's build off: the app has no build step, and `package.json`'s scripts are developer checks that must not run there. |
-| **Cloudflare Pages** | Create a project, choose "Direct upload" and upload the `life-os` folder. |
+| **Netlify, linked to GitHub (recommended)** | In Netlify: *Add new site → Import an existing project → GitHub*, pick this repository and set **Base directory** to `life-os` (the publish directory is `.` from `netlify.toml`). Every push to the branch you choose deploys to the same address automatically. |
+| **Netlify, same site by hand** | Open your existing site in Netlify → **Deploys** → drag the new `life-os-site.zip` (from `sh tools/pack-site.sh`) onto *"Need to update your site? Drag and drop your site output folder here"*. Same site, same address. |
+| **Cloudflare Pages** | Connect the repository (root `life-os`), or use *Direct upload* to the same project each time. |
 | **GitHub Pages** | Enable Pages for the repo and point it at the branch. The app lives at `https://<user>.github.io/<repo>/life-os/`. Paths are all relative, so a sub-path is fine. |
 
-Hosting makes the app's code reachable at that URL, but not your data. Each device keeps its own data in its own browser storage.
+`netlify.toml` turns Netlify's build off: the app has no build step, and `package.json`'s scripts are developer checks that must not run there.
+
+Each device keeps its own data in its own browser storage (Sync, below, keeps devices the same).
+
+### Moving to a new address (once)
+
+If you already use Life OS at an old address (for example an earlier Netlify Drop) and set up a fixed one:
+
+1. At the **old** address: **You → Data & backup → Back up my Life OS** (or **You → Updating Life OS → Back up now**). Save the file to Files.
+2. Open the **new** address in Safari, **Add to Home Screen**, open it from the new icon.
+3. **You → Data & backup → Choose backup file** under Restore, and pick the file. Everything comes across: habits, history, workouts, plans, settings.
+4. Delete the old Home Screen icon. From now on only the site at the new address is updated.
+
+The 5-minute setup (Today, first open) also offers **Restore** as its first step.
 
 ### Updating
 
@@ -56,16 +75,30 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
 
 ## What's inside
 
-**Four places and a +.** The tab bar is *Today · Plan · + · Progress · Reflect*. **Plan** is what you're building (tomorrow, habits, goals, tasks, training, the playbook). **Progress** is how it's going (trends, calendar, insights, Body, and one page per area of life). **Reflect** is what you learned (today's journal, reviews, the archive). **+** logs anything from anywhere: type one line, or tap one of the shortcuts (*Log weight* and *Start workout* first). **You** (the initial on Today, or the rail on wider screens) holds settings, data and privacy. Older addresses (bookmarks, Home Screen shortcuts) land on their new homes.
+**The 5-minute setup** (*You › Set up your days*, offered on Today the first time): your name, your usual day (up, lights out, work hours and days), whether weekends differ (a Weekend plan), how you train (days, gym or home: the programme that fits, or your own), the habits you build first, and your reminders. Nothing changes until the last step, it goes through the same linked rules as changing each thing by hand, and *Undo the setup* puts everything back. Moving from another address? Its first step points to *Restore*.
 
-- **Moving around:** screens hand over with a View Transition, and the habit, goal or entry you tapped grows into the next screen's title. Back returns to exactly where you were. Pull down at the top of a place to search. Sheets follow your finger: a flick or a long pull closes them, and the habit editor opens at half height and pulls up. Reduced motion turns all of this into simple fades.
-- **Keyboard:** 1–4 switch place, J/K move through items, X or Space completes, E edits, N logs something, / or ⌘K searches, ? shows the list.
+**Three places and a +.** The tab bar is *Today · Plan · + · Review*. **Plan** is what you're building, in five groups (Habits & routines, Goals, Training, Tasks & notes, Life) after tomorrow and this week. **Review** is how it's going and what you learned, on one screen: today's page to write, this week's story, the reviews that are due, what's moving and why, insights, then Body, the areas and the journal (the pages under it keep their old addresses, *progress/…* and *reflect/…*). **+** logs anything from anywhere: type one line, or tap one of the shortcuts (*Log weight* and *Start workout* first). **You** (the initial on Today, or the rail on wider screens) holds settings, data and privacy. Older addresses (bookmarks, Home Screen shortcuts) land on their new homes.
+- **Search** (pull down, or / and ⌘K) goes to any screen by its everyday word ("spending" finds Money) and to any setting, opening Settings on that row; Settings keeps the rarely used (reminders when the app is closed, safety nets) under *Advanced*.
+- **Everything linked.** A habit, goal, workout, routine or project ends with *Linked to*: its goals, routine, place in Your day, workout, reminder, pledge, and where you mentioned it. Deleting something linked says so first and offers to hand its links to another; one Undo puts it all back.
+- **Every number explains itself.** Tap a run, a strength, a consistency, a goal's percentage, the week on Review or the weight average to see the sum with your own numbers.
+- **Reminders on one timeline** (You › Reminders): every reminder in the order of your day. One linked to Your day moves its block when you change it, so everything keeps the same time.
+- **Goals measured by anything:** a habit's total (km, minutes, pages), several habits together, a body measurement, sleep or steps, as well as weight, workouts, pages and your own number.
+- **#mentions and @mentions** in the brain dump and the journal: #Prayer links to the habit (suggested as you type), @Sarah collects everything you've written about Sarah (Relationships lists them).
+- **Training from Today** opens straight in gym mode. While a workout is running and you've left it, a bar above the tab bar shows it (and the rest still to go) and takes you back in one tap.
+
+- **Moving around:** screens hand over with a View Transition, and the habit, goal or entry you tapped grows into the next screen's title. Back returns to exactly where you were, and stays at the top of the screen however far down a page you scroll. Pull down at the top of a place to search. Sheets follow your finger: a flick or a long pull closes them, and the habit editor opens at half height and pulls up. Reduced motion turns all of this into simple fades.
+- **Keyboard:** 1–3 switch place, J/K move through items, X or Space completes, E edits, N logs something, / or ⌘K searches, ? shows the list.
 - **Tablet and desktop:** an icon rail from 600 px, a labelled rail from 1024 px. Habits, goals and the journal show the list and the selected item side by side; the list keeps its place.
 - **Logging in one line:** type what happened ("water 500", "slept 11pm to 6:30", "read 20 pages of Atomic Habits", "2 fruit and 3 veg", "called mum 20 min") or what's next ("call mum Friday"). It's read on your phone and shown back (what, how much, which day) before anything is saved; when a line could mean two things ("chicken", "1500") it asks, and something that hasn't happened yet ("run 5k tomorrow") becomes a task. Suggestions complete what you type, and the keyboard's microphone works for dictation. Every save has Undo.
 - **Hold and swipe:** hold a habit to enter an amount on the number pad (last value already there) or to log its tiny version; swipe it left for *Not today*, which takes it out of today's plan and score (it counts as the run's one allowed miss). *Not today* habits wait at the bottom of Today to be brought back. The same choices are buttons in the habit's sheet, and right-click is the hold on a computer. Weight and steps open on the number pad too.
 - **Explanations:** text that explains a screen or a card sits behind an ⓘ beside its title, so the screens stay short. Tap it to read, tap again to fold. Settings › *Show explanations* keeps them all open.
-- **Edits and deletes:** editing happens in sheets, and a habit's changes save as you go, with Undo when you close. Deleting a habit, goal, entry, photo or session happens at once with Undo; only whole-device actions (restore, erase) ask first.
+- **Edits and deletes:** editing happens in sheets, and a habit's changes save as you go, with Undo when you close. Deleting a habit, goal, entry, photo or session happens at once with Undo (swipe the message away, sideways or down, to clear it sooner; the change stays undoable in You › Recent changes); something linked to other things shows its links first and can hand them on. Only whole-device actions (restore, erase) ask first.
 
+- **Today is the cockpit.** At the top, one **Log anything** field (to speak instead, use the keyboard's own microphone). Then the Now card (score and one next action), the **quick row** and **Your day**.
+  - The **quick row** shows the four things you log most around this hour, learned on this device (Edit Today › *Quick row learns from me*; off, you choose its actions). Water is one tap, a weigh-in two.
+  - **Your day** is your plan from Your plan › Your day: every block in order, a line at the time it is now, the block you're in open with its one action (Check in, Done, Start, Log, Close the day), and the ones behind you folded. It's the real habit, routine or workout behind each block, so done here is done everywhere.
+  - Sections you haven't used in two weeks **fold to one line** (tap to open; Edit Today › *Fold sections I don't use*). After midnight, before your day ends, Today says so: "Still Friday · your day ends at 03:00".
+  - **You › Recent changes** lists everything this session offered Undo for, so it can be undone after its message has gone. **You › Your usage** shows what the usage meter counted (on this device only, never synced or backed up) and, after 30 days, what you haven't opened.
 - **Today** answers "what now?". The **Now card** holds today's score (tap it to see exactly what counts) and one next action, picked from the time of day: the check-in in the morning, the next step of the routine that's open, your priorities during work, your three, anything overdue, closing the work day in the evening, and at most one coach suggestion. *Not now* moves to the next one; when nothing is left it says you're done for today, with a line for your win.
   - **Routines** are habits linked into a sequence with a window of time (Morning and Evening to start). The one that's open shows its steps in order with the next one marked; tick a step, or **Did it all** for the whole routine in one tap (with Undo). The others are one line each.
   - **Your three** (when they aren't steps of a routine; two to five if you change it in Settings), **Priorities and tasks** in one card (the day's Top 3 are tasks with a rank, so there is one list), your **moodboard** as a quiet collage, **Coming up** (birthdays, anniversaries and countdowns in the next two weeks), up to six **pinned actions**, and **Other habits** on autopilot, folded.
@@ -96,7 +129,7 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
 - **Ceremonies**, only at their moment or when you ask, always skippable with a tap and shown as a still card when the phone asks for reduced motion:
   - **Seal the day:** after the hold, the day's card folds into its tile in the week and fills.
   - **Season finale:** offered when a season ends (and replayable from the season page): the name and intention, six weeks filling, the numbers counting up, the plates and records it earned.
-  - **Monthly film:** your month as a short story (days sealed, plan done, strongest habit, a record, training, weight, a win), in *Reflect › Monthly films*; *Save video* records it on the phone and hands it to the share sheet.
+  - **Monthly film:** your month as a short story (days sealed, plan done, strongest habit, a record, training, weight, a win), in *Review › Monthly films*; *Save video* records it on the phone and hands it to the share sheet.
   - **Your year:** every day as one ray around a circle, as long as the day was full, a blue point for each sealed day. The same days always make the same picture; *Save print* makes a 3600 × 4500 PNG (12 × 15 in at 300 dpi). In *Progress › Your year*.
   - Black, white and one blue; no confetti. An optional **sound** palette (soft, made on the phone, off by default) lives in Settings.
   - The timing was approved from a HyperFrames preview kept in `videos/life-os-moments/` (not shipped).
@@ -114,17 +147,19 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
   - Workout logger prefilled from last time, with progressive-overload comparison.
   - **Gym mode:** one set at a time with large controls for one hand (every target at least 56 px, black for gym lighting), the screen kept awake (or a plain warning where the browser can't), and a rest timer that starts when you log a set and stays right to the second across app switches and reloads. The next set is prefilled from the one you just did; the full list is one tap away.
   - Exercise library with history; dedicated calf, core and posture tracking.
+  - **Proven programmes, optional** (*Plan › Training › Programmes*): Full body (3 days), Upper / lower (4), Push / pull / legs (6, or 3), Minimum dose (2) and Home dumbbells (3). Each says who it suits, how long it takes, why it works (the research behind it) and how it progresses. *Follow* adds its workouts to your library and sets your training week; recovery and cardio days you had stay. *Stop* puts your own week back; the workouts stay yours to edit. Your own workouts keep working exactly as before if you never choose one.
 - **Tasks**: one-off jobs and repeating ones (every day or every few days, chosen weekdays, monthly on a day, yearly on a date), grouped into Overdue, Today, the next six days, Later and Anytime.
   - Ticking a repeating task schedules the next one, so a missed week never piles up.
   - The evening shutdown can move unfinished tasks to tomorrow.
-- **Progress** is a story, not a dashboard: this week in one sentence ("Ahead of last week: 82% of your plan done, 3 training sessions and weight down 0.3 kg."), the score against the same point last week, a strip of the week's days (sealed ones marked), **what's moving** (the biggest changes on last week, each with what to do) and **measures** (consistency, weight, sleep, protein, steps and training, each with a decision line; a measure with no data isn't shown). Body and the areas follow; every chart, personal bests, wins and the calendar of every day are one level down.
-- **Reflect** opens on today's page, ready to type: a prompt for the time of day, saved as you write, mood one optional tap, and the morning and evening questions a tap away. Below it are the reviews that are due (close the day, the week, the month), **insights** and the journal.
+- **Review › this week** (what was Progress) is a story, not a dashboard: this week in one sentence ("Ahead of last week: 82% of your plan done, 3 training sessions and weight down 0.3 kg."), the score against the same point last week, a strip of the week's days (sealed ones marked), **what's moving** (the biggest changes on last week, each with what to do) and **measures** (consistency, weight, sleep, protein, steps and training, each with a decision line; a measure with no data isn't shown). Body and the areas follow; every chart, personal bests, wins and the calendar of every day are one level down.
+- **Review › today's page** (what was Reflect) is ready to type: a prompt for the time of day, saved as you write, mood one optional tap, and the morning and evening questions a tap away. Below it are the reviews that are due (close the day, the week, the month), **insights** and the journal.
   - **Insights end in one tap.** Each states what your logs show and carries one change to your plan, with Undo: your weakest routine gets its least-done step made tiny for two weeks; your hardest weekday gets a Minimum day planned; short nights get a wind-down reminder; a training day that rarely happens becomes the 20-minute minimum; a habit that has become automatic moves to autopilot; a flat weight trend lowers the calorie target by 150 kcal (never below the floor); a protein or steps gap adds one step to a routine. *Not now* keeps one quiet for two weeks. An insight you can't act on is never shown. The rules sit behind an engine interface, so a smarter engine can be added later without changing the screens.
   - **The weekly review** takes about three minutes as five short screens: the week in a sentence, what went well and where it slipped (both computed from your logs), one change (pick an insight and it's applied, or write your own) and next week's three. On Sunday from 17:00 the Now card offers it. The monthly review is guided the same way. "See it all on one page" shows every number and question.
-- **Areas** (*Progress › Areas*): Health, Mind (reading, learning, meditation), Spirit, Relationships and Work (deep work, shutdown), each a view over the same habits, goals and sessions.
+- **Areas** (*Review › Areas*): Health, Mind (reading, learning, meditation), Spirit, Relationships and Work (deep work, shutdown), each a view over the same habits, goals and sessions.
   - **Focus timer** (from Work, the + sheet, or a Today tile): 25, 50 or 90 minutes or your own, with what it's for. A small pill above the tab bar follows you with the time left and pause; when time is up the block counts as a focus block for that day, even if the app was closed. *Finish now* counts the minutes so far; *Stop* counts nothing.
   - **The playbook** (*Plan › Playbook*) is the workbook's Plan & Routines playbook: your day, your week, routines, training templates, food targets and the rules. It is built from your live habits, templates and targets, so editing them updates it.
   - **Your day** on the playbook is the day as blocks you can change: wake, prayer, mobility, training, work, the evening routine, lights out, and anything you add. Each block is linked to the habit, routine or time behind it, so tapping one to change its time or length changes that habit, routine and its reminders, and Today follows (routines keep their steps in time order). Drag a block's handle to move it: it starts when the one before it ends. Add any habit, routine, training, work or a plain block like *Lunch*; remove one with Undo. Moving wake or lights out can carry the whole morning or evening with it. Settings' wake, training, work and lights-out times are the same links.
+  - **Your days**: your day can differ from day to day. On Your plan, make a plan for each kind of day (*Long day*, *Short day*, *Saturday*: a copy of another to start), give each weekday its plan, and in the next two weeks give any date another plan or adjust that day only. *Every day* is the linked day above; another plan keeps its own times, and on its days Today, the Now card, the routines, the reminders (in the app, from your server and in the calendar file) follow them. A habit that's in some plan but not in a day's plan isn't expected that day. Each plan shows how much free time it leaves; the weekly review sets out next week's days. With only Every day, nothing changes.
   - **You** holds Settings (units, theme, targets, reminders, safety nets), Data and Privacy. Search is a pull down at the top of any place, or / and ⌘K.
 
 ### Preloaded on first launch
@@ -176,7 +211,7 @@ The **app-icon badge** shows how much of today's plan is still open and updates 
 - **Sample data:** opt-in, clearly labelled and removable in one tap. Every sample record carries `demo: true` and never overwrites a real entry.
 - **Erase:** You → Data → *Erase everything on this device* (asks twice). Sync is turned off first, so the fresh start never replaces your records on your other devices.
 - **Brain dump:** Plan → Brain dump keeps notes by category; they're in backups, sync and the CSV export.
-- **Exercise photos and notes:** up to two photos and a note per exercise (⋯ › Photos and note). They're always in backups, like the moodboard.
+- **Exercise pictures and notes:** up to two pictures and a note per exercise, added when you make the exercise (+ on Exercises) or later (⋯ › Photos and note). A picture can be a photo or a GIF of the movement (kept as it is, up to 6 MB, so it plays), picked or pasted straight from a web page. Gym mode shows it large, so the form is on screen during the set. They're always in backups, like the moodboard; a GIF over 1.8 MB stays off sync.
 
 **Security.** The app runs only its own code: a Content Security Policy (`index.html`) allows scripts from this site alone (plus the one-line theme script, allowed by its hash; change that script and its hash in the policy together), so even a damaged or hostile record can't run anything. Everything you type is shown as text, and colours or categories that reach markup are checked against known values. A backup is checked in full before anything changes, and a restore that fails part-way changes nothing. CSV cells that a spreadsheet would treat as formulas are exported as text.
 
@@ -315,6 +350,12 @@ NODE_PATH=$(npm root -g) node tests/journey.mjs http://localhost:4173/ ./test-sh
                                                                                     # edit, log, reload, delete; tasks, journal, settings, ⓘ
 NODE_PATH=$(npm root -g) node tests/day-plan.mjs http://localhost:4173/ ./test-shots # your day: change a block and Today and the
                                                                                     # reminders follow, carry the morning, drag, add, remove
+NODE_PATH=$(npm root -g) node tests/cockpit.mjs http://localhost:4173/ ./test-shots  # the cockpit: learned quick row, 1-tap water, your day
+                                                                                    # with a line at now, folding, speaking, Recent changes
+NODE_PATH=$(npm root -g) node tests/structure.mjs http://localhost:4173/ ./test-shots # Today · Plan · + · Review, Plan's five groups,
+                                                                                    # search to screens and settings, gym from Today
+NODE_PATH=$(npm root -g) node tests/linking.mjs http://localhost:4173/ ./test-shots  # linked to, safe delete with Undo, numbers that
+                                                                                    # explain, reminders timeline, goals, #/@mentions
 NODE_PATH=$(npm root -g) node tests/update.mjs x ./test-shots                         # a phone with the app gets a new release: applied on
                                                                                     # the next open, or offered with Update mid-session
 NODE_PATH=$(npm root -g) node tests/a11y.mjs http://localhost:4173/ ./test-shots     # axe (WCAG 2.2 AA) on every screen, sheet and

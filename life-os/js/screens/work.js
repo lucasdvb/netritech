@@ -23,7 +23,7 @@ export default {
     const priSet = pri.length;
     const deep = weekDays.reduce((a, d) => a + (M.review(d)?.deepWork || 0), 0);
     return html`
-      ${pageHead({ title: 'Work', back: { to: 'progress', label: 'Progress' }, info: 'Do the important work in the day, then close it so the evening belongs to people.' })}
+      ${pageHead({ title: 'Work', back: { to: 'review', label: 'Review' }, info: 'Do the important work in the day, then close it so the evening belongs to people.' })}
       <div class="stat-row stat-row--3 block-tight">
         <div class="stat"><p class="stat-label">Focus today</p><p class="stat-value tnum">${r.deepWork || 0}<span class="stat-unit">/ 2–3</span></p>
           <div class="mini-ctl"><button type="button" class="icon-btn icon-btn--sm" data-action="deep" data-delta="-1" aria-label="One less focus block">${icon('minus', { size: 15 })}</button><button type="button" class="icon-btn icon-btn--sm icon-btn--filled" data-action="deep" data-delta="1" aria-label="Add a focus block">${icon('plus', { size: 15 })}</button></div></div>

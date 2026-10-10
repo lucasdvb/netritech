@@ -32,7 +32,8 @@ await step('07:00: the check-in first, the morning routine open, the next action
   if (!(await nowText(p)).includes('check-in')) throw new Error('now: ' + await nowText(p));
   await p.waitForSelector('.routine.is-open[data-key="r-r-morning"]');
   const n = await blocks(p);
-  if (n > 6) throw new Error(`${n} blocks on first load`);
+  // The cockpit: the next action, the quick row and your day, then at most four more.
+  if (n > 7) throw new Error(`${n} blocks on first load`);
   const fold = await p.evaluate(() => document.querySelector('.now-actions').getBoundingClientRect().bottom <= innerHeight);
   if (!fold) throw new Error('the next action is below the fold');
   await p.screenshot({ path: `${OUT}/t3-0700.png`, fullPage: true });
@@ -115,6 +116,8 @@ await step('Edit Today: hide a block, move one to the top with the keyboard, pin
   await p.locator('.sheet [data-key="et-priorities"] [data-drag]').focus();
   await p.keyboard.press('Home');
   await p.waitForFunction(() => document.activeElement?.closest('[data-key="et-priorities"]') && document.querySelector('.sheet .et-list > :first-child')?.dataset.key === 'et-priorities');
+  // The quick row learns by itself; choosing your own actions starts by turning that off.
+  await p.locator('.sheet [data-action="et-learn"]').click();
   await p.locator('.sheet [data-action="et-pin"][data-k="weight"]').click();
   await p.screenshot({ path: `${OUT}/t3-edit-today.png` });
   await p.keyboard.press('Escape');
@@ -122,7 +125,7 @@ await step('Edit Today: hide a block, move one to the top with the keyboard, pin
   if (await p.locator('.more-today').count()) throw new Error('Other habits still shown');
   if (!(await p.locator('.pin[data-key="pin-weight"]').count())) throw new Error('weight not pinned');
   if (!(await p.locator('.pin[data-key="pin-water"]').count())) throw new Error('water was unpinned');
-  if (!(await p.locator('.pins.pins--2').count())) throw new Error('four pins should sit two by two');
+  if (!(await p.locator('.pins.pins--q4').count())) throw new Error('four pins should sit in one quick row');
   const order = await p.evaluate(() => ['priorities', 'three'].map((id) => Number(getComputedStyle(document.querySelector(`[data-key="b-${id}"]`) || document.body).order)));
   if (!(order[0] < (order[1] || 99))) throw new Error('order ' + order);
   await ctx.close();

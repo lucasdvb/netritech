@@ -2,6 +2,8 @@
 // what went well and where it slipped (computed, not remembered), one change that is applied to
 // your plan rather than noted, and next week's three. A finished review, or "See it all", shows
 // every number and question on one page.
+import * as P from '../domain/day-plans.js';
+import { nextWeekDays, daysActions } from './day-plans-ui.js';
 import * as store from '../data/store.js';
 import { saver, applyPatches } from '../ui/save-later.js';
 import * as H from '../domain/habits.js';
@@ -63,6 +65,7 @@ function nextWeek(ws) {
         <label class="field"><span class="field-label">When it does, I will…</span>
           <input class="input" value="${next.ifThen || ''}" data-change="wk-ob" data-f="ifThen" placeholder="e.g. Do the first one before email" maxlength="100"></label>
       </div>
+      ${P.plans().length > 1 ? nextWeekDays(nw) : ''}
     </div>
   </section>`;
 }
@@ -191,7 +194,7 @@ export default {
     const isCurrent = ws === startOfWeek(today());
     const showAll = ui.all || (r.completedAt && !ui.guided);
     return html`
-      ${pageHead({ title: 'Weekly review', eyebrow: `${fmtMD(ws)} – ${fmtMD(endOfWeek(ws))}${isCurrent ? ' · this week' : ''}`, back: { to: 'reflect', label: 'Reflect' },
+      ${pageHead({ title: 'Weekly review', eyebrow: `${fmtMD(ws)} – ${fmtMD(endOfWeek(ws))}${isCurrent ? ' · this week' : ''}`, back: { to: 'review', label: 'Review' },
         actions: html`<div class="seg-mini"><button type="button" class="icon-btn icon-btn--sm" data-action="week" data-delta="-7" aria-label="Previous week">${icon('chevron-left', { size: 18 })}</button>
           <button type="button" class="icon-btn icon-btn--sm" data-action="week" data-delta="7" aria-label="Next week" ${ws >= startOfWeek(today()) ? 'disabled' : ''}>${icon('chevron-right', { size: 18 })}</button></div>` })}
       ${showAll ? full(ws, r) : guided(ws, r, ui)}
@@ -231,6 +234,7 @@ export default {
     },
   },
   actions: {
+    'dp-date': daysActions['dp-date'],
     'rv-next': async ({ params, ui }) => {
       const ws = weekOf(params);
       store.put('weeklyReviews', collect(ws));
