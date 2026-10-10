@@ -5,6 +5,8 @@ Every value below is a token in `theme/assets/base.css`; nothing in a section us
 
 ## Colour
 
+- **Footer ground `--c-abyss` #101611**: Pantone Black 3 C (#212721) deepened towards black, keeping its green tint. Black 3 C is Pantone's darkest green-black, so there is no darker standard Pantone to quote; print uses Black 3 C. Buttons stay on `--c-night` (Black 3 C).
+
 The guide names five colours but gives **no hex or Pantone codes**. The hex values below were sampled from the guide's palette page and logo pages. **Pantone references are not in the guide**; ask Disruptive Dodo for them rather than guessing.
 
 | Token | Hex | Name in the guide | Used for | Contrast on white |

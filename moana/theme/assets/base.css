@@ -19,7 +19,8 @@
   --c-frost: #ebebeb;
   --c-forest: #283106;      /* logo green: wordmark + logomark */
   --c-mist: #dfe0db;        /* logo colour on dark grounds */
-  --c-night: #212721;       /* Pantone Black 3 C: the green-black at the dark end of the logo green (footer) */
+  --c-night: #212721;       /* Pantone Black 3 C: the green-black at the dark end of the logo green (buttons) */
+  --c-abyss: #101611;       /* footer: Pantone Black 3 C deepened towards black, keeping its green tint */
   --c-white: #ffffff;
 
   /* roles */

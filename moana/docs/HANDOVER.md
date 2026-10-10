@@ -11,6 +11,18 @@ October 2026 (v6). Store: `moana-beaute.myshopify.com`.
 | Theme editor | Shopify admin → Online Store → Themes → *Moana Beauté v2 (preview)* → Customize |
 | Code | `moana/` in this repository (branch `claude/eloquent-bardeen-p6n61a`) |
 
+## Footer v2 (October 2026)
+
+- **Layout:** rebuilt on the GetLayers **Artist** footer composition, minimal and bold, in three registers:
+  1. a quiet row (logo, italic tagline and a single-line email sign-up | Shop | Help | Talk to us)
+  2. **MOANA** set in Raleway Bold across the full width
+  3. a hairline bar (copyright, legal links, language, "Built by Disruptive Dodo")
+- **The big word:** sized from the column width, so it is flush with both edges and never cropped, from 320 to 1920 px wide. Each letter rises in when the footer arrives. Change the word in the editor (Footer → Footer word).
+- **Ground:** a green-tinted near-black, **#101611** (`--c-abyss`).
+  - Pantone Black 3 C (#212721) is already Pantone's darkest green-black; no standard Pantone in that green family is darker. So the screen colour is Black 3 C deepened towards black, keeping its green tint.
+  - For print, Black 3 C remains the matching Pantone.
+- **Unchanged:** buttons keep Black 3 C. The footer is now square, like the rest of the site.
+
 ## What changed in v6 (ideas 1, 17, 26, 33, 38, 41, 43, 44, 45)
 
 1. **My skin diary** (`/pages/skin-diary`, new page):
