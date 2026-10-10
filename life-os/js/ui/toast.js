@@ -63,12 +63,63 @@ export function toast(message, options = {}) {
       close();
     });
   }
+  let timer = 0;
+  const arm = (ms) => { clearTimeout(timer); if (duration) timer = setTimeout(close, ms); };
+  swipeAway(el, close, () => clearTimeout(timer), () => arm(1500));
   while (active.length >= 2) active[0]();
   layer.appendChild(el);
   active.push(close);
   showing.set(message, close);
   recent.push({ at: Date.now(), tone, close });
   if (recent.length > 8) recent.shift();
-  if (duration) setTimeout(close, duration);
+  arm(duration);
   return close;
+}
+
+/**
+ * Swipe a message away (left, right or down) to clear it before its time is up. While a finger is on
+ * it the timer waits; let go short of the threshold and it springs back and leaves soon after. A change
+ * swiped away stays undoable from You › Recent changes.
+ */
+function swipeAway(el, close, hold, release) {
+  let start = null;
+  let dx = 0;
+  let dy = 0;
+  el.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0 || e.target.closest('.toast-btn')) return;
+    start = { x: e.clientX, y: e.clientY, t: performance.now() };
+    dx = 0; dy = 0;
+    el.setPointerCapture?.(e.pointerId);
+    el.classList.add('is-dragging');
+    hold();
+  });
+  el.addEventListener('pointermove', (e) => {
+    if (!start) return;
+    dx = e.clientX - start.x;
+    dy = Math.max(0, e.clientY - start.y);
+    const sideways = Math.abs(dx) >= dy;
+    const d = sideways ? Math.abs(dx) : dy;
+    el.style.transform = sideways ? `translateX(${dx}px)` : `translateY(${dy}px)`;
+    el.style.opacity = String(Math.max(0.2, 1 - d / 220));
+  });
+  const end = () => {
+    if (!start) return;
+    const ms = Math.max(1, performance.now() - start.t);
+    const sideways = Math.abs(dx) >= dy;
+    const d = sideways ? Math.abs(dx) : dy;
+    start = null;
+    el.classList.remove('is-dragging');
+    if (d > 72 || (d > 24 && d / ms > 0.5)) {
+      el.style.transform = sideways ? `translateX(${Math.sign(dx) * (el.offsetWidth + 40)}px)` : `translateY(${el.offsetHeight + 40}px)`;
+      el.style.opacity = '0';
+      el.classList.add('is-swiped');
+      close();
+      return;
+    }
+    el.style.transform = '';
+    el.style.opacity = '';
+    release();
+  };
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
 }

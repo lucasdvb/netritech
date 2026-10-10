@@ -147,7 +147,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .split > .view { max-width: none; margin: 0; padding: 0; }
   .split-list { position: sticky; top: 0; max-height: 100vh; max-height: 100dvh; overflow-y: auto; overscroll-behavior: contain; padding-bottom: var(--s6); scrollbar-width: thin; }
   .split-detail { min-width: 0; max-width: 760px !important; }
-  .split-detail .back-btn { display: none; }
+  .split-detail .back-bar { display: none; }
   .split-detail .page-head--child { padding-top: calc(var(--s5) + 4px); }
   .split-empty { min-height: 70vh; display: grid; place-items: center; }
   .split-list a[aria-current='page'] { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--accent); --text-3: var(--text-2); }

@@ -1,7 +1,7 @@
 // Today as the cockpit: the quick row learns what you log at each hour (and water is one tap, a
 // weigh-in two), Your day shows the plan with a line at now and the block you're in open, sections
-// you haven't used in two weeks fold, after midnight it says whose day it still is, you can speak
-// instead of typing, and every change with an Undo can be undone later from Recent changes.
+// you haven't used in two weeks fold, after midnight it says whose day it still is, logging is one
+// field (no microphone button: the keyboard has one), and every change with an Undo can be undone later from Recent changes.
 import { createRequire } from 'node:module';
 import { setup } from './helpers.mjs';
 const { devices } = createRequire(import.meta.url)('playwright');
@@ -10,25 +10,14 @@ const { step, finish, base, browser, errors } = t;
 const OUT = process.argv[3] || './test-shots';
 const DAY = 86400000;
 
-/** A fresh device at a chosen time. `usage` seeds the usage meter; `speech` stands in for the microphone. */
-async function at(clock, { scheme = 'light', usage = null, speech = null } = {}) {
+/** A fresh device at a chosen time. `usage` seeds the usage meter. */
+async function at(clock, { scheme = 'light', usage = null } = {}) {
   const ctx = await browser.newContext({ ...devices['iPhone 14'], colorScheme: scheme });
   const p = await ctx.newPage();
   p.setDefaultTimeout(8000);
   p.on('pageerror', (e) => errors.push(`${clock}: pageerror: ${e.message}`));
   p.on('console', (m) => { if (m.type() === 'error') errors.push(`${clock}: console: ${m.text()}`); });
-  await p.addInitScript(([u, said]) => {
-    if (u) localStorage.setItem('lifeos.usage', JSON.stringify(u));
-    if (said != null) {
-      // Speech recognition that "hears" a fixed sentence, then stops.
-      const Fake = class {
-        start() { setTimeout(() => { this.onresult?.({ results: [[{ transcript: said }]] }); setTimeout(() => this.onend?.(), 50); }, 50); }
-        stop() { this.onend?.(); }
-      };
-      window.SpeechRecognition = Fake;
-      window.webkitSpeechRecognition = Fake;
-    }
-  }, [usage, speech]);
+  await p.addInitScript((u) => { if (u) localStorage.setItem('lifeos.usage', JSON.stringify(u)); }, usage);
   await p.clock.setFixedTime(new Date(clock));
   await p.goto(base + '#/today');
   await p.waitForFunction(() => window.__lifeos?.ready, null, { timeout: 15000 });
@@ -105,12 +94,14 @@ await step('after midnight, before the day ends, Today says whose day it still i
   await ctx.close();
 });
 
-await step('speak to log: the microphone fills the field, and saving logs it', async () => {
-  const { ctx, p } = await at('2026-10-07T13:00:00', { speech: 'water 500' });
-  await p.locator('.logbar-mic').click();
-  await p.waitForFunction(() => document.querySelector('.sheet .cap-input')?.value === 'water 500');
+await step('log anything: one field on Today (no microphone; the keyboard has one), typed and saved', async () => {
+  const { ctx, p } = await at('2026-10-07T13:00:00');
+  if (await p.locator('.logbar-mic, .cap-mic').count()) throw new Error('a microphone button is still on Today');
+  await p.locator('.logbar-field').click();
+  await p.locator('.sheet .cap-input').fill('water 500');
+  if (await p.locator('.sheet .cap-mic').count()) throw new Error('a microphone button is still in the capture sheet');
   await p.waitForSelector('.sheet .cap-live .cap-prev, .sheet .cap-live [data-action="save"], .sheet .cap-live button');
-  await p.screenshot({ path: `${OUT}/cockpit-speak.png` });
+  await p.screenshot({ path: `${OUT}/cockpit-log.png` });
   const before = await p.evaluate(async () => (await import('./js/domain/metrics-core.js')).waterMl((await import('./js/domain/dates.js')).today()));
   await p.locator('.sheet .cap-input').press('Enter');
   await p.waitForFunction((b) => import('./js/domain/metrics-core.js').then(async (M) => M.waterMl((await import('./js/domain/dates.js')).today()) === b + 500), before);

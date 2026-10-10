@@ -1195,7 +1195,11 @@
 .exm-note svg { flex: none; margin-top: 1px; color: var(--text-3); }
 .exm-line--gym .exm-note { color: var(--gym-dim); font-size: var(--text-body); line-height: var(--leading-body); }
 .exm-line--gym .exm-note svg { color: var(--gym-dim); }
-.exm-line--gym .exm-thumb { width: 64px; height: 64px; background: var(--gym-surface); }
+/* In gym mode the picture is large, so the form is on screen while you do the set; a GIF plays. */
+.exm-line--gym .exm-thumbs { flex-wrap: nowrap; }
+.exm-line--gym .exm-thumb-wrap { flex: 1 1 0; min-width: 0; display: flex; justify-content: center; }
+.exm-line--gym .exm-thumb { width: auto; max-width: 100%; height: auto; aspect-ratio: var(--ar, 4 / 3); max-height: 24vh; background: var(--gym-surface); }
+.exm-line--gym .exm-thumb img { object-fit: contain; }
 .gym-media-link { align-self: flex-start; gap: 8px; }
 .exm-viewer { display: flex; flex-direction: column; gap: var(--s3); }
 .exm-full { width: 100%; max-height: 70vh; object-fit: contain; border-radius: var(--r-lg); background: var(--surface-2); }
@@ -1300,18 +1304,11 @@
 .still-day { display: inline-flex; align-items: center; gap: 6px; margin-top: var(--s2); color: var(--text-2);
   font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
 
-/* Capture: the microphone, and what it heard */
-.cap-mic { flex: none; color: var(--text-2); }
-.cap-mic.is-on { background: var(--accent); color: var(--on-accent); }
-.cap-listening { display: flex; align-items: center; gap: 6px; margin-top: var(--s2); color: var(--text-2);
-  font-size: var(--text-caption); font-weight: var(--weight-regular); line-height: var(--leading-caption); letter-spacing: var(--tracking-body); }
-
-/* Today: one field for logging anything, with the microphone a tap away */
+/* Today: one field for logging anything */
 .logbar { display: flex; gap: 8px; margin-top: var(--s4); }
 .logbar-field { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 16px; border-radius: var(--r-lg); background: var(--surface); color: var(--text-3);
   font-size: var(--text-body); font-weight: var(--weight-regular); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); text-align: left; }
-.logbar-mic { flex: none; width: 52px; height: 52px; display: grid; place-items: center; border-radius: var(--r-lg); background: var(--surface); color: var(--text); }
-.logbar-field:active, .logbar-mic:active { transform: scale(.98); }
+.logbar-field:active { transform: scale(.98); }
 
 /* Recent changes and Your usage */
 .recent-row { display: flex; align-items: center; gap: var(--s3); min-height: 56px; padding: 8px var(--s4); }

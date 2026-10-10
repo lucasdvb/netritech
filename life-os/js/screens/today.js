@@ -17,7 +17,6 @@ import { routinesBlock } from './today/routines.js';
 import { prioritiesBlock } from './today/priorities.js';
 import { threeBlock, pinnedBlock, moodboardBlock, moreBlock, notTodayBlock, lifeMode, essentials, layoutOf, BLOCKS, NEVER_FOLD } from './today/blocks.js';
 import * as usage from '../ui/usage.js';
-import { canListen } from '../ui/speech.js';
 // Sheets load on first use, and are fetched in the background once Today is on screen.
 const sheets = () => import('./sheets.js');
 const workouts = () => import('./workout-actions.js');
@@ -70,8 +69,7 @@ function header(date, ph, mode, isToday) {
     </div>
     ${isToday
       ? html`<h1 class="greet">${greeting()}, ${store.profile().name}.</h1>${stillYesterday(date)}<p class="greet-sub">${subline(date, ph, mode)}</p>${lifeMode(date)}
-        <div class="logbar" data-key="logbar"><button type="button" class="logbar-field" data-action="capture">${icon('plus', { size: 18 })}<span>Log anything…</span></button>
-          ${canListen() ? html`<button type="button" class="logbar-mic" data-action="capture-listen" aria-label="Speak to log something">${icon('mic', { size: 20 })}</button>` : ''}</div>`
+        <div class="logbar" data-key="logbar"><button type="button" class="logbar-field" data-action="capture">${icon('plus', { size: 18 })}<span>Log anything…</span></button></div>`
       : html`<h1 class="greet">${relativeDay(date)}</h1><p class="greet-sub">Looking back. Changes save as you go. <button type="button" class="link-btn" data-action="go-today">Back to today</button></p>`}
   </header>`;
 }

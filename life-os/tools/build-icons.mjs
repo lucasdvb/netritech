@@ -16,7 +16,7 @@ feather lightbulb focus hourglass power repeat person-standing bike shirt utensi
 glass-water scan-eye book-heart baby armchair layers orbit circle-dot gauge star move file-json file-spreadsheet
 hard-drive-download database history list sliders-horizontal palette alarm-clock flower-2 sprout heart-pulse
 thermometer log-out sofa scroll-text tally-5 rotate-ccw ellipsis-vertical hand ear list-todo map calendar-check
-copy pause image-plus cake calendar-heart receipt piggy-bank list-plus mic link hash at-sign`.split(/\s+/).filter(Boolean);
+copy pause image-plus cake calendar-heart receipt piggy-bank list-plus link hash at-sign clipboard-paste`.split(/\s+/).filter(Boolean);
 
 const dir = process.argv[2];
 if (!dir) throw new Error('Pass the lucide-static icons directory');

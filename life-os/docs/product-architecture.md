@@ -1472,7 +1472,7 @@ Partway through, the owner made automatic sync between devices a must, so it was
 **The cockpit, phase 1 of the owner's simplification plan (October 2026).** The owner chose 47 changes in six phases; phases 1–3 are being built first.
 - **Usage meter** (`ui/usage.js`). Counts screens (`r:`), actions (`a:`), Today sections (`b:`) and quick-row logs (`q:`, with an hour-of-day histogram) in `localStorage`, on this device only: never synced, never in backups. It teaches the quick row and folds unused sections; You › Your usage shows it.
 - **Today as the cockpit.**
-  - A **Log anything** field with a microphone (`ui/speech.js`, the browser's own recognition; hidden where there's none).
+  - A **Log anything** field. (It had a microphone button; the owner asked for it to go, since the keyboard's own microphone does the same.)
   - The Now card, then the **quick row** (the old pinned actions): the four actions logged most within an hour of now, or the part of the day's starters until there's data (Edit Today turns learning off).
   - **Your day** (`screens/today/day-strip.js`, loaded after the first frame): the day blocks with a line at now. The block you're in is the latest-started one that isn't done (blocks can overlap); it shows its one action. Blocks behind you that are done fold away.
   - New blocks take their default place in a saved layout instead of going to the end.
