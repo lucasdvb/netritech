@@ -19,15 +19,34 @@ To install from Safari, a PWA has to be served over **HTTPS**. Hosting only serv
 
 The first time you open it from the Home Screen, go to **You → Data** (the initial at the top of Today) and make a backup habit of it. Safari can clear website storage for sites that aren't used for weeks. Installing to the Home Screen and taking regular backups avoids that.
 
-### Hosting options (any of these works)
+### Keep one address (this is what keeps your data)
 
-| Host | How |
+Your data lives in the phone's storage **for one web address**. Open Life OS at a different address and it is a different, empty app; the old one still has your data, but the new one can't see it. So:
+
+- **Host it once, at an address that never changes,** and always update that same site. Updates then arrive by themselves (see *Updating* below) and your data stays exactly where it is.
+- **Don't use Netlify Drop for updates.** Each drop on app.netlify.com/drop creates a *new* site with a *new* address, which is why an "update" that way opened an empty app.
+
+| Host | How (one-time setup, then updates keep the same address) |
 |---|---|
-| **Netlify Drop** | Run `sh tools/pack-site.sh` to make `life-os-site.zip` (only the files the app serves), then drop that zip, or the `life-os` folder, on app.netlify.com/drop. `netlify.toml` turns Netlify's build off: the app has no build step, and `package.json`'s scripts are developer checks that must not run there. |
-| **Cloudflare Pages** | Create a project, choose "Direct upload" and upload the `life-os` folder. |
+| **Netlify, linked to GitHub (recommended)** | In Netlify: *Add new site → Import an existing project → GitHub*, pick this repository and set **Base directory** to `life-os` (the publish directory is `.` from `netlify.toml`). Every push to the branch you choose deploys to the same address automatically. |
+| **Netlify, same site by hand** | Open your existing site in Netlify → **Deploys** → drag the new `life-os-site.zip` (from `sh tools/pack-site.sh`) onto *"Need to update your site? Drag and drop your site output folder here"*. Same site, same address. |
+| **Cloudflare Pages** | Connect the repository (root `life-os`), or use *Direct upload* to the same project each time. |
 | **GitHub Pages** | Enable Pages for the repo and point it at the branch. The app lives at `https://<user>.github.io/<repo>/life-os/`. Paths are all relative, so a sub-path is fine. |
 
-Hosting makes the app's code reachable at that URL, but not your data. Each device keeps its own data in its own browser storage.
+`netlify.toml` turns Netlify's build off: the app has no build step, and `package.json`'s scripts are developer checks that must not run there.
+
+Each device keeps its own data in its own browser storage (Sync, below, keeps devices the same).
+
+### Moving to a new address (once)
+
+If you already use Life OS at an old address (for example an earlier Netlify Drop) and set up a fixed one:
+
+1. At the **old** address: **You → Data & backup → Back up my Life OS** (or **You → Updating Life OS → Back up now**). Save the file to Files.
+2. Open the **new** address in Safari, **Add to Home Screen**, open it from the new icon.
+3. **You → Data & backup → Choose backup file** under Restore, and pick the file. Everything comes across: habits, history, workouts, plans, settings.
+4. Delete the old Home Screen icon. From now on only the site at the new address is updated.
+
+The 5-minute setup (Today, first open) also offers **Restore** as its first step.
 
 ### Updating
 
@@ -55,6 +74,8 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
 ---
 
 ## What's inside
+
+**The 5-minute setup** (*You › Set up your days*, offered on Today the first time): your name, your usual day (up, lights out, work hours and days), whether weekends differ (a Weekend plan), how you train (days, gym or home: the programme that fits, or your own), the habits you build first, and your reminders. Nothing changes until the last step, it goes through the same linked rules as changing each thing by hand, and *Undo the setup* puts everything back. Moving from another address? Its first step points to *Restore*.
 
 **Three places and a +.** The tab bar is *Today · Plan · + · Review*. **Plan** is what you're building, in five groups (Habits & routines, Goals, Training, Tasks & notes, Life) after tomorrow and this week. **Review** is how it's going and what you learned, on one screen: today's page to write, this week's story, the reviews that are due, what's moving and why, insights, then Body, the areas and the journal (the pages under it keep their old addresses, *progress/…* and *reflect/…*). **+** logs anything from anywhere: type one line, or tap one of the shortcuts (*Log weight* and *Start workout* first). **You** (the initial on Today, or the rail on wider screens) holds settings, data and privacy. Older addresses (bookmarks, Home Screen shortcuts) land on their new homes.
 - **Search** (pull down, or / and ⌘K) goes to any screen by its everyday word ("spending" finds Money) and to any setting, opening Settings on that row; Settings keeps the rarely used (reminders when the app is closed, safety nets) under *Advanced*.
@@ -126,6 +147,7 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
   - Workout logger prefilled from last time, with progressive-overload comparison.
   - **Gym mode:** one set at a time with large controls for one hand (every target at least 56 px, black for gym lighting), the screen kept awake (or a plain warning where the browser can't), and a rest timer that starts when you log a set and stays right to the second across app switches and reloads. The next set is prefilled from the one you just did; the full list is one tap away.
   - Exercise library with history; dedicated calf, core and posture tracking.
+  - **Proven programmes, optional** (*Plan › Training › Programmes*): Full body (3 days), Upper / lower (4), Push / pull / legs (6, or 3), Minimum dose (2) and Home dumbbells (3). Each says who it suits, how long it takes, why it works (the research behind it) and how it progresses. *Follow* adds its workouts to your library and sets your training week; recovery and cardio days you had stay. *Stop* puts your own week back; the workouts stay yours to edit. Your own workouts keep working exactly as before if you never choose one.
 - **Tasks**: one-off jobs and repeating ones (every day or every few days, chosen weekdays, monthly on a day, yearly on a date), grouped into Overdue, Today, the next six days, Later and Anytime.
   - Ticking a repeating task schedules the next one, so a missed week never piles up.
   - The evening shutdown can move unfinished tasks to tomorrow.

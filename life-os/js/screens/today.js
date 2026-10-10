@@ -97,6 +97,15 @@ let soon = null;
 const loadSoon = () => { if (!soon && store.all('events').length) import('./today/upcoming.js').then((m) => { soon = m; app.refresh(); }).catch(() => {}); };
 
 /** The moodboard's pictures come from the device store, after the first frame. */
+// A fresh install opens with the 5-minute setup offered first (until it's done or put off).
+const setupCard = () => {
+  const s = store.settings();
+  if (s.welcomed || s.setupDone) return '';
+  return html`<section class="card setup-card" data-key="setup-card">${icon('sparkles', { size: 20 })}
+    <span class="row-main"><span class="card-title">Set up your days in 5 minutes</span><span class="row-sub">Your times, training, the habits you start with and reminders, all linked. Moving from another phone? Restore your backup there.</span>
+      <span class="setup-card-go"><button type="button" class="btn btn--primary btn--sm" data-action="nav" data-to="you/setup">Start</button>
+        <button type="button" class="btn btn--ghost btn--sm" data-action="setup-later">Not now</button></span></span></section>`;
+};
 const showMoodboard = (el) => { if (el.querySelector('img[data-mb]:not([src])')) import('../domain/moodboard.js').then((m) => m.hydrate(el)).catch(() => {}); };
 
 // Today's buttons and fields act through today/actions.js, fetched just after the first frame. A tap
@@ -107,7 +116,7 @@ const ACTIONS = [
   'wchip', 'counter', 'more-today', 'day-all', 'unfold', 'skip', 'unskip', 'plan',
   'focus-later', 'edit-today', 'pick-day', 'add-water', 'open-checkin', 'ritual', 'open-shutdown', 'log-steps',
   'log-food', 'log-weight', 'pin-workout', 'pin-journal', 'pin-focus', 'pin-money', 'pin-reading', 'pin-meditation',
-  'start-workout', 'set-mode', 'mode', 'go-today', 'top3-check',
+  'start-workout', 'set-mode', 'mode', 'go-today', 'top3-check', 'setup-later',
 ];
 const INPUTS = [
   'task-add', 'top3-text', 'win',
@@ -152,8 +161,10 @@ const view = {
     const notToday = notTodayBlock(date, mode);
     const catchUp = isToday && nets ? netCards.catchUpBlock(nets.catchUp(date), ui) : '';
     const tidy = isToday && nets && [7, 1].includes(weekday(date)) ? netCards.tidyBlock(nets.tidyDue(date)) : '';
+    const setup = isToday ? setupCard() : '';
     return html`<div class="today" data-phase="${ph}" data-mode="${mode}">
       ${header(date, ph, mode, isToday)}
+      ${setup ? html`<div class="today-setup" data-key="b-setup">${setup}</div>` : ''}
       <div class="today-grid">
         <div class="today-col today-col--now">
           <div class="tblock" data-key="b-now" style="order:0">${nowCard(date, isToday, ui)}</div>

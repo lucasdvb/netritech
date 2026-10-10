@@ -173,7 +173,8 @@ export default {
           <div><dt>Equipment</dt><dd>${p.equipment}</dd></div>
           <div><dt>Food</dt><dd>${p.diet}</dd></div>
         </dl>
-        <div class="btn-row set-update"><button type="button" class="btn btn--soft btn--sm" data-action="check-update">${icon('refresh-cw', { size: 16 })} Check for updates</button></div>
+        <div class="btn-row set-update"><button type="button" class="btn btn--soft btn--sm" data-action="check-update">${icon('refresh-cw', { size: 16 })} Check for updates</button>
+          <button type="button" class="btn btn--ghost btn--sm" data-action="updating">Updating without losing data</button></div>
       </section>`;
   },
   mount(el, { query }) {
@@ -192,6 +193,7 @@ export default {
       // A new version takes over by itself and the app reloads into it; nothing new means none.
       setTimeout(() => { if (!reg.installing && !reg.waiting) app.toast(`You have the latest version (${build || 'this one'}).`); }, 2500);
     },
+    updating: async () => (await import('./updating.js')).openUpdating(),
     'calendar-file': async () => (await import('./calendar-file.js')).openCalendarFile(),
     cues: async () => (await import('./cues.js')).openCues(),
     push: async () => (await import('./push-sheet.js')).openPushSheet({ onDone: () => app.refresh() }),

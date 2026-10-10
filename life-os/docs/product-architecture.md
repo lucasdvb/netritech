@@ -1515,6 +1515,14 @@ Partway through, the owner made automatic sync between devices a must, so it was
 - **No microphone on Today**: the button and `ui/speech.js` are gone; the keyboard's microphone does the same.
 - **Tested:** `tests/day-plans.mjs`, `tests/touches.mjs`, `tests/unit/day-plans.test.mjs`.
 
+**The owner's second list, phase A: updates, setup, programmes (October 2026).** The owner chose 13 + 6 ideas plus proven programmes and a way to update without losing data; they're built in five phases (A–E), each ending green and pushed.
+- **Updating keeps your data** (`screens/updating.js`, README *Keep one address*). The data loss was hosting, not the app: each Netlify Drop is a new site at a new address, and a browser keeps data per address. The fix is one address that never changes (Netlify linked to GitHub, or new uploads to the same site); the offline worker already updates in place. You › *Updating Life OS* (also Settings › About) shows the address, explains it, and backs up for a one-time move (restore at the new address).
+- **The 5-minute setup** (`domain/setup.js`, `screens/setup.js`, `you/setup`). Seven short steps; nothing is written until the last one. It goes through the same rules as editing by hand: wake and lights out via `day-blocks.edit(…, { carry: true })` (the morning and evening move with them), work via `setTime`/`add`/`remove`, a Weekend plan via `day-plans` (reused if it exists), training via `programmes.follow` or nothing, the habits in focus via `applyStates` (out of focus first, so the limit holds), reminder times from the day. One snapshot of profile, settings, habits, routines, templates and exercises makes *Undo the setup* exact; a failure half-way restores it too. A fresh install shows it as a banner above Today (`settings.welcomed`/`setupDone`); *Not now* puts it in You.
+- **Proven programmes, optional** (`domain/programmes.js`, `screens/programmes.js`, `plan/training/programmes`). Five programmes with fixed workout and exercise ids (`t-pg-<id>-<n>`, gym lifts added to the library the first time). Following one sets the training week and keeps recovery and cardio days; your own week is kept on `profile.programme.prevPlan` and comes back on *Stop*; Undo removes the workouts and exercises it added unless you've trained with them. Each programme's "why" cites the evidence (frequency, Schoenfeld 2016; volume, Schoenfeld 2017; minimum dose, Androulakis-Korakakis 2020).
+- **Schema v10** adds the stores the rest of the list needs (energy logs, calendar events (this device only), recipes and the meal plan, bills, accounts, balances, savings goals, supplements and their logs, trips, takeaways, decisions, life-wheel checks).
+- **Budgets:** the precache budget now measures the compressed download (section 16.2).
+- **Tested:** `tests/setup.mjs`, `tests/unit/programmes-setup.test.mjs`.
+
 **Handover audit (October 2026).** A full audit before handover: security, calculations, persistence and every form, then crawlers over every screen and sheet at seven widths. What was found, fixed and proven, and what is still open, is in [`handover-audit.md`](handover-audit.md).
 
 **Left out on purpose:** points and pets, money stakes, "21 days" countdowns, willpower budgets, more default notifications, a barcode food database, a timeline planner. Each is either unsupported by the evidence or adds weight without value.
@@ -1545,11 +1553,13 @@ Partway through, the owner made automatic sync between devices a must, so it was
 | Any view render with a year of data | under 70 ms (as today) |
 | Long tasks during flows | none over 50 ms |
 | Motion | 60 fps; any animation that drops frames is simplified |
-| Precache total | under 1.75 MB, never over 2 MB (was 1.5 MB until Phase 13) |
+| Precache download (compressed, as hosts serve it) | under 896 KB, never over 1 MB (was 1.75 MB / 2 MB uncompressed until the day-plans release) |
 | JavaScript needed for first render | under 200 KB (screens stay lazy-loaded) |
 | Runtime dependencies | none |
 
 The precache budget was raised in Phase 13. The 1.5 MB figure was set when the app had about half its features. The precache is only the app's code and fonts, never your data; it downloads compressed (about a quarter of its size) once per version; and "everything works offline" means every screen has to be in it. Speed is held by the budgets that measure it: first-screen JavaScript, cold start, render and tap times.
+
+Since the day-plans release the precache budget measures what is actually downloaded: text files gzipped the way a host serves them, fonts and images as they are (already compressed). That was about 726 KB when the change was made (1.94 MB uncompressed), and the owner's chosen features (setup, programmes, meal plan, money, supplements, trips, decisions, the life wheel) all need to work offline. `tools/check-budgets.mjs` prints the uncompressed size alongside.
 
 **Techniques**
 - Optimistic rendering.

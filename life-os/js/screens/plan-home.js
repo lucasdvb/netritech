@@ -129,7 +129,8 @@ function trainingGroup() {
       <span class="row-main"><span class="row-title">Workouts and your week</span>
         <span class="row-sub plan-week-strip" aria-label="This week’s sessions">${sessions.map((s) => html`<span class="${cx('pws', s.done && 'is-done', s.d === today() && 'is-today', !s.tpl && 'is-rest')}" title="${fmtDay(s.d)}: ${s.tpl ? s.tpl.name : 'Rest'}">${fmtDayShort(s.d).slice(0, 1)}</span>`)}</span></span>
       <span class="row-chev">${icon('chevron-right', { size: 18 })}</span></a></li>
-    ${linkRow('plan/training/exercises', 'activity', 'Exercises', 'Each one’s history, your photos and notes')}`);
+    ${linkRow('plan/training/exercises', 'activity', 'Exercises', 'Each one’s history, your photos and notes')}
+    ${linkRow('plan/training/programmes', 'trophy', 'Programmes', 'Proven plans, optional. Or keep your own')}`);
 }
 
 /** Tasks & notes: one-off jobs, checklists and the brain dump. */

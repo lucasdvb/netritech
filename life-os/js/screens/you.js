@@ -21,11 +21,13 @@ export function openYou() {
           <span><span class="you-name">${p.name || 'You'}</span><span class="you-sub">${icon('lock', { size: 13 })} ${syncOn() ? 'Synced, encrypted, to your own server.' : 'Everything stays on this device.'}</span></span></div>
         ${demo ? html`<p class="notice notice--warn">${icon('info', { size: 16 })} Sample data is loaded. <button type="button" class="link-btn" data-action="data">Remove it</button></p>` : ''}
         <ul class="list">
+          <li>${row({ ic: 'sparkles', title: 'Set up your days', sub: store.settings()?.setupDone ? 'Run the 5-minute setup again' : 'Five minutes: your days, training, habits and reminders', action: 'setup' })}</li>
           <li>${row({ ic: 'settings', title: 'Settings', sub: 'Profile, targets, reminders, appearance', action: 'settings' })}</li>
           <li>${row({ ic: 'bell', title: 'Reminders', sub: 'Every reminder on one timeline, in the order of your day', action: 'reminders' })}</li>
           <li>${row({ ic: 'calendar-check', title: 'Reminders in your calendar', sub: 'Alerts that arrive even when Life OS is closed', action: 'calendar' })}</li>
           <li>${row({ ic: 'refresh-cw', title: 'Sync', sub: syncOn() ? 'On: your devices stay the same' : 'Your Life OS on every device', action: 'sync' })}</li>
           <li>${row({ ic: 'database', title: 'Data & backup', sub: 'Export, import, safety copies', action: 'data' })}</li>
+          <li>${row({ ic: 'download', title: 'Updating Life OS', sub: 'Updates keep your data at one address. Moving to a new one', action: 'updating' })}</li>
           <li>${row({ ic: 'shield-check', title: 'Privacy', sub: 'What is stored, and where', action: 'privacy' })}</li>
           <li>${row({ ic: 'history', title: 'Recent changes', sub: 'Undo anything you changed this session', action: 'recent' })}</li>
           <li>${row({ ic: 'chart-column', title: 'Your usage', sub: 'What you use, and what you haven’t opened in 30 days', action: 'usage' })}</li>
@@ -35,6 +37,7 @@ export function openYou() {
       </div>`;
     },
     actions: {
+      setup: go('you/setup'),
       settings: go('you/settings'),
       reminders: go('you/reminders'),
       data: go('you/data'),
@@ -42,6 +45,7 @@ export function openYou() {
       sync: go('you/sync'),
       recent: async ({ sheet }) => { app.closeSheet(sheet); (await import('./recent.js')).openRecent(); },
       usage: async ({ sheet }) => { app.closeSheet(sheet); (await import('./recent.js')).openUsage(); },
+      updating: async ({ sheet }) => { app.closeSheet(sheet); (await import('./updating.js')).openUpdating(); },
       calendar: async ({ sheet }) => { app.closeSheet(sheet); (await import('./calendar-file.js')).openCalendarFile(); },
       install: async ({ sheet }) => {
         const m = await import('../ui/install.js');

@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = '99da019644';
+const VERSION = 'dc60dde4d7';
 const ASSETS = [
   "./",
   "./index.html",
@@ -70,6 +70,7 @@ const ASSETS = [
   "./js/domain/next-action.js",
   "./js/domain/next-step.js",
   "./js/domain/notes.js",
+  "./js/domain/programmes.js",
   "./js/domain/progression.js",
   "./js/domain/projects.js",
   "./js/domain/push-plan.js",
@@ -85,6 +86,7 @@ const ASSETS = [
   "./js/domain/scoring.js",
   "./js/domain/seasons.js",
   "./js/domain/session-clock.js",
+  "./js/domain/setup.js",
   "./js/domain/snapshots.js",
   "./js/domain/story.js",
   "./js/domain/tasks-more.js",
@@ -147,6 +149,7 @@ const ASSETS = [
   "./js/screens/plan-home.js",
   "./js/screens/playbook.js",
   "./js/screens/privacy.js",
+  "./js/screens/programmes.js",
   "./js/screens/progress.js",
   "./js/screens/project.js",
   "./js/screens/projects.js",
@@ -167,6 +170,7 @@ const ASSETS = [
   "./js/screens/search.js",
   "./js/screens/season.js",
   "./js/screens/settings.js",
+  "./js/screens/setup.js",
   "./js/screens/sheets.js",
   "./js/screens/sleep.js",
   "./js/screens/sync.js",
@@ -193,6 +197,7 @@ const ASSETS = [
   "./js/screens/today.js",
   "./js/screens/training.js",
   "./js/screens/trends.js",
+  "./js/screens/updating.js",
   "./js/screens/weight.js",
   "./js/screens/work.js",
   "./js/screens/workout-actions.js",
