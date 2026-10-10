@@ -17,7 +17,7 @@ function story(w) {
     <p class="section-label">This week</p>
     <p class="story-sentence">${S.sentence(w)}</p>
     <div class="story-score">
-      <p class="story-pct tnum">${w.ratio != null ? pct(w.ratio) : '—'}</p>
+      <button type="button" class="explain story-pct tnum" data-action="explain" data-what="week" aria-label="${w.ratio != null ? pct(w.ratio) : 'Nothing yet'} of your plan this week: how it’s worked out">${w.ratio != null ? pct(w.ratio) : '—'}</button>
       <p class="story-label">of your plan so far</p>
       <p class="story-ghost">${w.ghostOf ? html`${w.ghostOf.label}${w.ghostOf.id === 'best' ? ` (week of ${fmtMD(w.ghostOf.from)})` : ''} by ${fmtDay(t)}: <span class="tnum">${pct(w.ghost)}</span>` : 'Your past self appears here once there’s a week to compare.'}</p>
     </div>

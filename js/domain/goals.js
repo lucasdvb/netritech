@@ -2,14 +2,15 @@
 // consistency for habit-driven ones. Nothing is forced into a fake percentage.
 import * as store from '../data/store.js';
 import * as M from './metrics.js';
-import { habit, consistency, counts } from './habits.js';
-import { today, dayAt, addDays, diffDays } from './dates.js';
+import { habit, consistency, counts, value as habitValue } from './habits.js';
+import { today, dayAt, addDays, diffDays, range } from './dates.js';
 
 export const goals = () => store.all('goals').sort((a, b) => (a.order ?? 99) - (b.order ?? 99));
 
 export function currentValue(g) {
   const m = measureOf(g);
-  if (m === 'habitCount' || m === 'workouts' || m === 'pages') { const s = series(g); return s.length ? s[s.length - 1].value : 0; }
+  if (isCount(m)) { const s = series(g); return s.length ? s[s.length - 1].value : 0; }
+  if (LEVELS_FROM_SERIES.has(m)) return series(g).at(-1)?.value ?? null;
   if (g.metric === 'bodyFat' || m === 'bodyFat') return g.metric === 'bodyFat' ? M.bodyComposition().bodyFat : series(g).at(-1)?.value ?? null;
   if (g.metric === 'weight' || m === 'weight') return M.weightAvg(today(), 7);
   if (g.metric === 'waist') return M.latestMeasurement('waist')?.waist ?? null;
@@ -28,13 +29,14 @@ export function progress(g) {
   if (g.type === 'numeric') {
     const cur = currentValue(g);
     const m = measureOf(g);
-    if (m === 'habitCount' || m === 'workouts' || m === 'pages') {
-      const unit = m === 'habitCount' ? 'times' : m;
-      return { kind: 'numeric', ratio: g.target ? Math.min(1, cur / g.target) : null, current: cur, label: `${fmt(cur)} of ${fmt(g.target)} ${unit}` };
+    if (isCount(m)) {
+      const unit = unitOf(g);
+      return { kind: 'numeric', ratio: g.target ? Math.min(1, cur / g.target) : null, current: cur, label: `${fmt(cur)} of ${fmt(g.target)}${unit ? ` ${unit}` : ''}` };
     }
     if (cur == null || g.start == null || g.target == null || g.start === g.target) return { kind: 'numeric', ratio: null, current: cur };
     const r = (g.start - cur) / (g.start - g.target);
-    return { kind: 'numeric', ratio: Math.max(0, Math.min(1, r)), current: cur, label: `${fmt(cur)}${g.unit} → ${fmt(g.target)}${g.unit}` };
+    const u = LEVELS_FROM_SERIES.has(m) ? ` ${unitOf(g)}` : g.unit || '';
+    return { kind: 'numeric', ratio: Math.max(0, Math.min(1, r)), current: cur, label: `${fmt(cur)}${u} → ${fmt(g.target)}${u}` };
   }
   if (g.type === 'milestones') {
     const ms = g.milestones || [];
@@ -56,8 +58,36 @@ export const MEASURES = [
   { id: 'habitCount', label: 'Times a habit is done', unit: 'times', kind: 'count' },
   { id: 'workouts', label: 'Workouts', unit: 'workouts', kind: 'count' },
   { id: 'pages', label: 'Pages read', unit: 'pages', kind: 'count' },
+  // Goals measured by anything (54): any habit's total, several habits together, any body
+  // measurement, your sleep or your steps.
+  { id: 'habitTotal', label: 'A habit’s total (km, minutes, pages…)', unit: '', kind: 'count' },
+  { id: 'habits', label: 'Several habits, added together', unit: 'times', kind: 'count' },
+  { id: 'measurement', label: 'A body measurement', unit: 'cm', kind: 'level' },
+  { id: 'sleep', label: 'Your sleep (7-day average)', unit: 'h', kind: 'level' },
+  { id: 'steps', label: 'Your steps (7-day average)', unit: 'steps', kind: 'level' },
   { id: 'number', label: 'A number you update', unit: '', kind: 'level' },
 ];
+const isCount = (m) => MEASURES.find((x) => x.id === m)?.kind === 'count';
+const LEVELS_FROM_SERIES = new Set(['measurement', 'sleep', 'steps']);
+/** The body measurements a goal can follow. */
+export const MEASUREMENT_FIELDS = [['waist', 'Waist'], ['chest', 'Chest'], ['arms', 'Arms'], ['thighs', 'Thighs'], ['calves', 'Calves'], ['neck', 'Neck']];
+/** The unit a goal's numbers are in ("times", "km", "h"…). */
+export function unitOf(g) {
+  const m = measureOf(g);
+  if (m === 'habitTotal') return habit(g.habitId)?.unit || g.unit || '';
+  if (m === 'number') return g.unit || '';
+  return MEASURES.find((x) => x.id === m)?.unit ?? g.unit ?? '';
+}
+/** 7-day rolling average of a daily value, on each day that has one: [{ date, value }]. */
+function rolling7(daily, from, to) {
+  const out = [];
+  for (const d of range(from, to)) {
+    if (daily(d) == null) continue;
+    const vals = range(addDays(d, -6), d).map(daily).filter((v) => v != null);
+    out.push({ date: d, value: vals.reduce((a, b) => a + b, 0) / vals.length });
+  }
+  return out;
+}
 export const measureOf = (g) => g.measure || (g.metric === 'bodyFat' ? 'bodyFat' : g.metric === 'weight' ? 'weight' : g.type === 'numeric' ? 'number' : null);
 const startOfGoal = (g) => g.since || dayAt(g.createdAt) || today();
 
@@ -68,7 +98,12 @@ export function series(g, date = today()) {
   if (m === 'weight') return byDate(store.all('weightEntries'), (r) => r.kg);
   if (m === 'bodyFat') return byDate(store.all('bodyFatEstimates'), (r) => r.percent);
   if (m === 'number') return byDate([...(g.history || []), ...(g.current != null && !(g.history || []).length ? [{ date: dayAt(g.updatedAt) || date, value: g.current }] : [])], (r) => r.value);
-  if (m === 'habitCount' || m === 'workouts' || m === 'pages') {
+  if (m === 'measurement') return byDate(store.all('measurements').filter((r) => r[g.field] != null), (r) => r[g.field]);
+  if (m === 'sleep' || m === 'steps') {
+    const daily = m === 'sleep' ? (d) => M.sleepHours(d) : (d) => M.steps(d);
+    return rolling7(daily, addDays(date, -120), date);
+  }
+  if (isCount(m)) {
     const from = startOfGoal(g);
     const per = new Map();
     const add = (d, n) => { if (d >= from && d <= date) per.set(d, (per.get(d) || 0) + n); };
@@ -78,6 +113,15 @@ export function series(g, date = today()) {
     }
     if (m === 'workouts') for (const w of store.all('workouts')) if (w.status === 'done' && w.kind !== 'mobility') add(w.date, 1);
     if (m === 'pages') for (const r of store.all('readingSessions')) if (r.pages) add(r.date, Number(r.pages) || 0);
+    if (m === 'habitTotal') {
+      // Every day's amount, from your logs or from what it's tracked from (steps, sleep…).
+      const h = habit(g.habitId);
+      if (h) for (const d of range(from, date)) { const v = Number(habitValue(h, d)); if (v > 0) add(d, v); }
+    }
+    if (m === 'habits') {
+      const hs = new Map((g.habitIds || []).map((id) => [id, habit(id)]).filter(([, h]) => h));
+      for (const l of store.all('habitLogs')) { const h = hs.get(l.habitId); if (h && counts(h, l.date)) add(l.date, 1); }
+    }
     let total = 0;
     return [{ date: from, value: 0 }, ...[...per.keys()].sort().map((d) => ({ date: d, value: (total += per.get(d)) }))];
   }
@@ -137,7 +181,8 @@ export function projection(g, date = today()) {
   const down = g.direction ? g.direction === 'down' : (g.start ?? current) > target;
   if (current != null && (down ? current <= target : current >= target)) return { status: 'done', current, target };
   if (recent.length < 3 || span < 7) {
-    const what = m === 'weight' ? 'Log your weight 3 times over a week' : m === 'bodyFat' ? 'Two more body-fat estimates, a week or more apart,' : 'Update the number 3 times over a week';
+    const what = m === 'weight' ? 'Log your weight 3 times over a week' : m === 'bodyFat' ? 'Two more body-fat estimates, a week or more apart,'
+      : m === 'measurement' ? 'Measure 3 times over a week or more' : m === 'sleep' ? 'Log your sleep for a week' : m === 'steps' ? 'A week of steps' : 'Update the number 3 times over a week';
     return { status: 'needs', current, target, needs: `${what} to see a projection.` };
   }
   const rate = slope(recent);

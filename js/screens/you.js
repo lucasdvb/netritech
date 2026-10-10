@@ -22,6 +22,7 @@ export function openYou() {
         ${demo ? html`<p class="notice notice--warn">${icon('info', { size: 16 })} Sample data is loaded. <button type="button" class="link-btn" data-action="data">Remove it</button></p>` : ''}
         <ul class="list">
           <li>${row({ ic: 'settings', title: 'Settings', sub: 'Profile, targets, reminders, appearance', action: 'settings' })}</li>
+          <li>${row({ ic: 'bell', title: 'Reminders', sub: 'Every reminder on one timeline, in the order of your day', action: 'reminders' })}</li>
           <li>${row({ ic: 'calendar-check', title: 'Reminders in your calendar', sub: 'Alerts that arrive even when Life OS is closed', action: 'calendar' })}</li>
           <li>${row({ ic: 'refresh-cw', title: 'Sync', sub: syncOn() ? 'On: your devices stay the same' : 'Your Life OS on every device', action: 'sync' })}</li>
           <li>${row({ ic: 'database', title: 'Data & backup', sub: 'Export, import, safety copies', action: 'data' })}</li>
@@ -35,6 +36,7 @@ export function openYou() {
     },
     actions: {
       settings: go('you/settings'),
+      reminders: go('you/reminders'),
       data: go('you/data'),
       privacy: go('you/privacy'),
       sync: go('you/sync'),

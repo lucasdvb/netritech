@@ -179,6 +179,8 @@ await step('pulling down at the top of a place opens search', async () => {
 await step('deleting a goal offers Undo, and Undo brings it back', async () => {
   await go('#/plan/goals/g-strength', '[data-view="goal"]');
   await page.locator('[data-action="delete"]').click();
+  // Habits carry it, so it says so first (phase 3: safe delete).
+  await page.locator('.sheet [data-action="sd-go"]').click();
   await page.waitForSelector('[data-view="goals"]');
   if (await ev(() => !!window.__lifeos.store.get('goals', 'g-strength'))) throw new Error('not deleted');
   await page.locator('.toast-btn', { hasText: 'Undo' }).click();

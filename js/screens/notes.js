@@ -9,6 +9,7 @@ import { icon } from '../ui/icons.js';
 import { pageHead, empty } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
+import { mentionText, mentionChips } from '../ui/mention-text.js';
 
 const label = (c) => c || 'Unsorted';
 const when = (n) => relativeDay((n.updatedAt || n.createdAt || '').slice(0, 10) || today());
@@ -25,7 +26,7 @@ function picker(current, action, { withAll = false, counts = null, add = false }
 }
 
 const noteCard = (n) => html`<li data-key="${n.id}"><button type="button" class="card note-card" data-action="open" data-id="${n.id}">
-  <span class="note-text">${n.text}</span>
+  <span class="note-text">${mentionText(n.text)}</span>
   <span class="note-meta">${n.pinned ? html`${icon('star', { size: 13 })} ` : ''}${label(n.category)} · ${when(n)}</span>
 </button></li>`;
 
@@ -43,7 +44,7 @@ export default {
       ${pageHead({ title: 'Brain dump', back: { to: 'plan', label: 'Plan' },
         actions: html`<button type="button" class="icon-btn icon-btn--filled" data-action="cats" aria-label="Categories">${icon('ellipsis', { size: 20 })}</button>` })}
       <section class="card dump-add" data-key="add">
-        <textarea class="dump-input" rows="3" data-input="draft" placeholder="What’s on your mind?" aria-label="New note" maxlength="4000">${ui.draft || ''}</textarea>
+        <textarea class="dump-input" rows="3" data-mentions data-input="draft" placeholder="What’s on your mind?" aria-label="New note" maxlength="4000">${ui.draft || ''}</textarea>
         <p class="field-label dump-file">File under</p>
         ${picker(ui.file, 'file', { add: true })}
         <button type="button" class="btn btn--primary btn--block btn--sm" data-action="save">${icon('plus', { size: 16 })} Save note</button>
@@ -145,7 +146,8 @@ export function openNote(id) {
       const n = N.note(id);
       if (!n) return '';
       return html`<div class="form note-sheet">
-        <textarea class="input note-edit" rows="8" data-change="text" aria-label="Note" maxlength="4000">${n.text}</textarea>
+        <textarea class="input note-edit" rows="8" data-mentions data-change="text" aria-label="Note" maxlength="4000">${n.text}</textarea>
+        ${mentionChips(n.text)}
         <div><p class="field-label">Category</p>${picker(n.category || N.UNSORTED, 'move')}</div>
         <div class="btn-row">
           <button type="button" class="btn btn--soft" data-action="pin">${icon('star', { size: 16 })} ${n.pinned ? 'Unpin' : 'Pin to the top'}</button>

@@ -296,6 +296,12 @@ const globalActions = {
   capture: async () => (await import('./screens/capture.js')).openCapture(),
   'capture-listen': async () => (await import('./screens/capture.js')).openCapture('', { listen: true }),
   you: async () => (await import('./screens/you.js')).openYou(),
+  // Any number with data-action="explain": how it was worked out, with your numbers in the sum.
+  explain: async ({ data }) => (await import('./screens/explain.js')).openExplain(data.what, data),
+  // An @Name in your writing: everything you've written about them.
+  person: async ({ data }) => (await import('./screens/people.js')).openPerson(data.name),
+  // "All n mentions" under Linked to.
+  mentions: async ({ data }) => (await import('./ui/linked.js')).mentionsSheet(app, data.kind, data.id, data.title || 'this'),
   // An ⓘ beside a title: open or fold the explanation it stands for, then redraw where it lives.
   tip: ({ data, sheet: s }) => {
     toggleTip(data.tip);
@@ -392,6 +398,14 @@ function grow(el) {
   el.style.height = `${el.scrollHeight + 2}px`;
 }
 document.addEventListener('input', (e) => { if (e.target.matches?.('textarea[data-grow]')) grow(e.target); }, true);
+// Writing #… or @… in a note or the journal suggests what to mention (ui/mention-input.js, loaded on first use).
+let mentionInput = null;
+document.addEventListener('input', (e) => {
+  const el = e.target;
+  if (!el.matches?.('[data-mentions]')) return;
+  if (!mentionInput && !/[#@]/.test(el.value)) return;
+  (mentionInput ||= import('./ui/mention-input.js')).then((m) => m.check(el)).catch(() => {});
+}, true);
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Enter' || e.isComposing || !e.target.matches?.('textarea[data-grow]')) return;
   e.preventDefault();

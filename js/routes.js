@@ -68,6 +68,7 @@ export const ROUTES = [
   { path: 'reflect/insights', tab: 'review', depth: 1, load: v('insights') },
 
   { path: 'you/settings', tab: 'you', depth: 1, load: v('settings') },
+  { path: 'you/reminders', tab: 'you', depth: 1, load: v('reminders') },
   { path: 'you/data', tab: 'you', depth: 1, load: v('data') },
   { path: 'you/privacy', tab: 'you', depth: 1, load: v('privacy') },
   { path: 'you/sync', tab: 'you', depth: 1, load: v('sync') },

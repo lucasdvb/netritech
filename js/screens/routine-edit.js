@@ -8,7 +8,8 @@ import { html, raw, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
-import { deleteWithUndo } from '../ui/undo.js';
+import { safeDelete } from '../ui/safe-delete.js';
+import { linkedBlock } from '../ui/linked.js';
 
 const DAYS = [[1, 'M', 'Monday'], [2, 'T', 'Tuesday'], [3, 'W', 'Wednesday'], [4, 'T', 'Thursday'], [5, 'F', 'Friday'], [6, 'S', 'Saturday'], [7, 'S', 'Sunday']];
 
@@ -61,6 +62,7 @@ export function openRoutineEditor(id, { isNew = false } = {}) {
             <input class="input" data-change="add-label" placeholder="e.g. Make the bed" maxlength="60" enterkeyhint="done"></label>
         </div>
         <p class="field-hint">${icon('check', { size: 14, cls: 'inline-ic' })} Changes save as you go. A habit can be in one routine at a time.</p>
+        ${isNew ? '' : linkedBlock('routine', id, R.routine(id)?.name, { except: ['Habit'] })}
         <button type="button" class="btn btn--ghost btn--danger-text" data-action="delete">${icon('trash-2', { size: 18 })} Delete routine</button>
       </div>`;
     },
@@ -88,7 +90,8 @@ export function openRoutineEditor(id, { isNew = false } = {}) {
         const r = R.routine(id);
         changed = false;
         app.closeSheet(sheet);
-        deleteWithUndo([{ store: 'routines', id }], `${r.name} deleted. Its habits are still there.`);
+        safeDelete({ kind: 'routine', id, name: r.name, records: [{ store: 'routines', id }],
+          message: (to) => `${r.name} deleted. Its habits are still there${to ? `, and ${to} takes its place in Your day` : ''}.` });
       },
     },
     inputs: {

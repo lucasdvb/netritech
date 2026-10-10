@@ -63,7 +63,7 @@ export function write() {
   return html`<section class="write" data-key="write" aria-label="Today’s page">
     <p class="section-label">${fmtLong(t)}</p>
     <p class="write-prompt">${j?.prompt || promptFor(t)}</p>
-    <textarea class="write-area" data-input="write" rows="5" placeholder="Start writing. A sentence is enough." aria-label="Today’s reflection" enterkeyhint="enter">${j?.text || ''}</textarea>
+    <textarea class="write-area" data-mentions data-input="write" rows="5" placeholder="Start writing. A sentence is enough." aria-label="Today’s reflection" enterkeyhint="enter">${j?.text || ''}</textarea>
     <div class="write-foot">
       <div class="mood-row" role="group" aria-label="Mood, optional">${MOODS.map(([v, label]) => html`<button type="button" class="${cx('mood-chip', j?.mood === v && 'is-on')}" data-action="mood" data-v="${v}" aria-pressed="${j?.mood === v}">${label}</button>`)}</div>
       <p class="write-saved" aria-live="polite">${j?.updatedAt ? `Saved ${fmtTime(new Date(j.updatedAt))}` : ''}</p>
@@ -173,8 +173,9 @@ export const behaviour = {
   inputs: {
     write: ({ value }) => {
       clearTimeout(timer);
-      // The first words make the page; after that, saving waits for a pause in typing.
-      if (!todayEntry() && value.trim()) { pending = null; save({ text: value }); return; }
+      // The first words make the page (quietly: they're on screen already); after that, saving
+      // waits for a pause in typing.
+      if (!todayEntry() && value.trim()) { pending = null; store.quietly(() => save({ text: value })); return; }
       pending = value;
       timer = setTimeout(flush, 350);
     },
