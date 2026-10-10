@@ -64,23 +64,23 @@ await step('a release that finished downloading in a closed session is applied o
   await p.close();
   // Next open: the waiting version takes over and the page shows it.
   p = await open();
-  await p.waitForFunction(() => document.body.dataset.release === 'r2', null, { timeout: 20000 });
+  await p.waitForFunction(() => document.body?.dataset.release === 'r2', null, { timeout: 20000 });
   if (!(await version(p)).includes('lifeos-r2')) throw new Error(await version(p));
   await p.close();
 });
 
 await step('mid-session: idle, the app reloads into the new release by itself', async () => {
   const p = await open();
-  await p.waitForFunction(() => document.body.dataset.release === 'r2');
+  await p.waitForFunction(() => document.body?.dataset.release === 'r2');
   await release('r3');
   await p.evaluate(async () => (await navigator.serviceWorker.getRegistration()).update());
-  await p.waitForFunction(() => document.body.dataset.release === 'r3', null, { timeout: 20000 });
+  await p.waitForFunction(() => document.body?.dataset.release === 'r3', null, { timeout: 20000 });
   await p.close();
 });
 
 await step('mid-session while typing: nothing reloads under you; Reload is offered and switches', async () => {
   const p = await open();
-  await p.waitForFunction(() => document.body.dataset.release === 'r3');
+  await p.waitForFunction(() => document.body?.dataset.release === 'r3');
   await p.evaluate(() => { const i = document.createElement('input'); i.id = 'typing'; i.setAttribute('aria-label', 'typing'); document.body.append(i); i.focus(); });
   await p.keyboard.type('half a thought');
   await release('r4');
@@ -89,7 +89,7 @@ await step('mid-session while typing: nothing reloads under you; Reload is offer
   await btn.waitFor({ timeout: 20000 });
   if ((await p.inputValue('#typing')) !== 'half a thought') throw new Error('reloaded while typing');
   await btn.click();
-  await p.waitForFunction(() => document.body.dataset.release === 'r4', null, { timeout: 20000 });
+  await p.waitForFunction(() => document.body?.dataset.release === 'r4', null, { timeout: 20000 });
   await p.close();
 });
 

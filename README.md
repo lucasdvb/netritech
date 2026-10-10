@@ -66,6 +66,11 @@ node tests/serve.mjs 4173          # → http://localhost:4173/
 - **Explanations:** text that explains a screen or a card sits behind an ⓘ beside its title, so the screens stay short. Tap it to read, tap again to fold. Settings › *Show explanations* keeps them all open.
 - **Edits and deletes:** editing happens in sheets, and a habit's changes save as you go, with Undo when you close. Deleting a habit, goal, entry, photo or session happens at once with Undo; only whole-device actions (restore, erase) ask first.
 
+- **Today is the cockpit.** At the top, a **Log anything** field with a **microphone** (speak it the way you'd type it). Then the Now card (score and one next action), the **quick row** and **Your day**.
+  - The **quick row** shows the four things you log most around this hour, learned on this device (Edit Today › *Quick row learns from me*; off, you choose its actions). Water is one tap, a weigh-in two.
+  - **Your day** is your plan from Your plan › Your day: every block in order, a line at the time it is now, the block you're in open with its one action (Check in, Done, Start, Log, Close the day), and the ones behind you folded. It's the real habit, routine or workout behind each block, so done here is done everywhere.
+  - Sections you haven't used in two weeks **fold to one line** (tap to open; Edit Today › *Fold sections I don't use*). After midnight, before your day ends, Today says so: "Still Friday · your day ends at 03:00".
+  - **You › Recent changes** lists everything this session offered Undo for, so it can be undone after its message has gone. **You › Your usage** shows what the usage meter counted (on this device only, never synced or backed up) and, after 30 days, what you haven't opened.
 - **Today** answers "what now?". The **Now card** holds today's score (tap it to see exactly what counts) and one next action, picked from the time of day: the check-in in the morning, the next step of the routine that's open, your priorities during work, your three, anything overdue, closing the work day in the evening, and at most one coach suggestion. *Not now* moves to the next one; when nothing is left it says you're done for today, with a line for your win.
   - **Routines** are habits linked into a sequence with a window of time (Morning and Evening to start). The one that's open shows its steps in order with the next one marked; tick a step, or **Did it all** for the whole routine in one tap (with Undo). The others are one line each.
   - **Your three** (when they aren't steps of a routine; two to five if you change it in Settings), **Priorities and tasks** in one card (the day's Top 3 are tasks with a rank, so there is one list), your **moodboard** as a quiet collage, **Coming up** (birthdays, anniversaries and countdowns in the next two weeks), up to six **pinned actions**, and **Other habits** on autopilot, folded.
@@ -315,6 +320,8 @@ NODE_PATH=$(npm root -g) node tests/journey.mjs http://localhost:4173/ ./test-sh
                                                                                     # edit, log, reload, delete; tasks, journal, settings, ⓘ
 NODE_PATH=$(npm root -g) node tests/day-plan.mjs http://localhost:4173/ ./test-shots # your day: change a block and Today and the
                                                                                     # reminders follow, carry the morning, drag, add, remove
+NODE_PATH=$(npm root -g) node tests/cockpit.mjs http://localhost:4173/ ./test-shots  # the cockpit: learned quick row, 1-tap water, your day
+                                                                                    # with a line at now, folding, speaking, Recent changes
 NODE_PATH=$(npm root -g) node tests/update.mjs x ./test-shots                         # a phone with the app gets a new release: applied on
                                                                                     # the next open, or offered with Update mid-session
 NODE_PATH=$(npm root -g) node tests/a11y.mjs http://localhost:4173/ ./test-shots     # axe (WCAG 2.2 AA) on every screen, sheet and

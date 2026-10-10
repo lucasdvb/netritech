@@ -2,11 +2,17 @@ import * as store from './data/store.js';
 import { SEED_VERSION, LATEST_MIGRATION } from './data/schema.js';
 import { patch, settle } from './ui/patch.js';
 import * as router from './ui/router.js';
-import * as sheet from './ui/sheet.js';
 import { toast, stick, retract } from './ui/toast.js';
 import { icon, loadIcons } from './ui/icons.js';
 import { html } from './ui/dom.js';
 import { toggleTip } from './ui/tips.js';
+import * as usage from './ui/usage.js';
+
+// Sheets load straight after the first screen (Today's first frame has none). Until then there's no
+// sheet to look after, and a tap that would open one waits the moment it takes to arrive.
+let sheet = { sheets: () => [], top: () => null, close() {}, closeAll() {}, refreshAll() {}, trapFocus() {}, open: null };
+let sheetLoad = null;
+const sheetReady = () => (sheetLoad ||= import('./ui/sheet.js').then((m) => { sheet = m; }));
 import { firstRender, fill, waitingKeys } from './ui/later.js';
 import { app, APP_NAME } from './ui/app-api.js';
 import { today, setDayEnd } from './domain/dates.js';
@@ -115,6 +121,7 @@ async function navigate() {
   wentBack = false;
   const { parts, query, path } = router.parse();
   const found = router.match(ROUTES, parts) || router.match(ROUTES, ['today']);
+  usage.track(`r:${found.route.path}`);
   const listRoute = found.route.list && wide.matches ? ROUTES.find((r) => r.path === found.route.list) : null;
   let mod, listMod;
   try {
@@ -277,6 +284,7 @@ const globalActions = {
   'nav': ({ data }) => app.go(data.to),
   'open-search': () => app.search(),
   capture: async () => (await import('./screens/capture.js')).openCapture(),
+  'capture-listen': async () => (await import('./screens/capture.js')).openCapture('', { listen: true }),
   you: async () => (await import('./screens/you.js')).openYou(),
   // An ⓘ beside a title: open or fold the explanation it stands for, then redraw where it lives.
   tip: ({ data, sheet: s }) => {
@@ -318,6 +326,12 @@ document.addEventListener('click', (e) => {
   const handler = resolve(el, 'action', el.dataset.action);
   if (!handler) return;
   if (el.tagName === 'A') e.preventDefault();
+  if (!sheet.open) { sheetReady().then(() => run(handler, el, e)); return; }
+  // The usage meter (this device only): the action, and the Today section it came from.
+  usage.track(`a:${el.dataset.action}`);
+  if (el.dataset.q) usage.track(`q:${el.dataset.q}`);
+  const section = el.closest('.tblock[data-key]')?.dataset.key;
+  if (section) usage.track(`b:${section.slice(2)}`);
   if (el.tagName === 'BUTTON') settle(el.closest('[data-sheet]') || main);
   // A check or switch flips at once; the redraw that follows shows what was really saved.
   const flip = el.matches('[role="checkbox"], [role="switch"]') && ['true', 'false'].includes(el.getAttribute('aria-checked'));
@@ -490,6 +504,7 @@ async function boot() {
 
   if (!location.hash) history.replaceState(null, '', '#/today');
   await navigate();
+  sheetReady().catch((err) => console.warn(err));
   import('./ui/updates.js').then((m) => m.registerSW()).catch((err) => console.warn(err));
   import('./data/journal.js').then((m) => m.watch()).catch((err) => console.warn(err));
   // The rest of the workout history, straight after the first screen.

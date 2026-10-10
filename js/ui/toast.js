@@ -14,6 +14,19 @@ export function stick(message, options) {
 
 const recent = []; // the last few messages: { at, tone, close }
 
+// Recent changes: everything this session offered Undo for, so it can still be undone after its
+// message has gone (You › Recent changes). Kept in memory only; a change whose message commits it
+// for good when it leaves (onExpire) isn't kept.
+const changes = [];
+export const recentChanges = () => changes.slice().reverse();
+/** Undo one recent change (once). */
+export function undoChange(entry) {
+  if (!entry || entry.used) return false;
+  entry.used = true;
+  entry.fn();
+  return true;
+}
+
 /** A save failed: messages about it that already went up ("Saved", "Undo") are taken back. */
 export function retract(ms = 3000) {
   const since = Date.now() - ms;
@@ -32,6 +45,8 @@ export function toast(message, options = {}) {
     <span class="toast-msg">${message}</span>
     ${action ? html`<button class="toast-btn" type="button">${action.label}</button>` : ''}`);
   let used = false;
+  const entry = action && /^undo$/i.test(action.label) && !onExpire ? { message, at: Date.now(), used: false, fn: action.fn } : null;
+  if (entry) { changes.push(entry); if (changes.length > 30) changes.shift(); }
   const close = () => {
     if (!el.isConnected) return;
     if (!used) onExpire?.();
@@ -42,7 +57,11 @@ export function toast(message, options = {}) {
     if (i >= 0) active.splice(i, 1);
   };
   if (action) {
-    el.querySelector('.toast-btn').addEventListener('click', () => { used = true; action.fn(); close(); });
+    el.querySelector('.toast-btn').addEventListener('click', () => {
+      used = true;
+      if (entry) { if (!entry.used) undoChange(entry); } else action.fn();
+      close();
+    });
   }
   while (active.length >= 2) active[0]();
   layer.appendChild(el);

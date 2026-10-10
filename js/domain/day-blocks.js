@@ -91,6 +91,8 @@ export function linkedTo(b) {
 
 /** Minutes since the start of your day (the hours before waking belong to the night before). */
 function sortKey(time, wake) { const m = parseHM(time); return m < wake - 180 ? m + DAY : m; }
+/** A time as minutes into your day, so 00:30 after a 22:00 bedtime comes last, not first. */
+export const dayMinutes = (time, p = store.profile()) => sortKey(time, parseHM(p.wakeTime || '06:00'));
 
 /** Your day, in order: [{ ...block, time, mins, end, title }]. */
 export function blocks() {
