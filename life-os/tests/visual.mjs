@@ -98,7 +98,7 @@ const ROUTES = ['today', 'plan', 'plan/habits', 'plan/habits/h-prayer', 'plan/ta
   'progress/body/nutrition', 'progress/body/measurements', 'progress/body/sleep', 'progress/areas/mind', 'progress/areas/spirit',
   'progress/areas/relationships', 'progress/areas/work', 'progress/areas/health',
   'reflect/journal', 'reflect/insights', 'reflect/reviews', 'reflect/review/week', 'reflect/review/month',
-  'you/settings', 'you/data', 'you/privacy'];
+  'you/settings', 'you/reminders', 'you/data', 'you/privacy'];
 const SHEETS = [
   ['capture', './js/screens/capture.js', 'openCapture', ['walked 30 min']],
   ['you', './js/screens/you.js', 'openYou', []],

@@ -124,6 +124,8 @@ await step('a workout from scratch: name, exercises, order, sets and rest, then 
   await ev(p, () => document.querySelectorAll('.toast').forEach((t) => t.remove())); // "Saved as" can sit over the button
   await ev(p, () => window.scrollTo(0, document.documentElement.scrollHeight)); // the page ends above the workout bar
   await p.locator('[data-action="delete"]').click();
+  // It's on Tuesdays, so it says so first and offers to hand the day on (phase 3: safe delete).
+  await p.locator('.sheet [data-action="sd-go"]').click();
   await p.waitForSelector('.toast [data-toast-action], .toast button');
   if ((await ev(p, () => window.__lifeos.store.profile().plan[2])) !== null) throw new Error('plan not cleared');
   await p.locator('.toast button', { hasText: 'Undo' }).click();

@@ -7,6 +7,7 @@ import { pageHead, empty } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
 import { PROMPTS, KIND_LABEL } from './journal.js';
 import { saver, applyPatches } from '../ui/save-later.js';
+import { mentionChips } from '../ui/mention-text.js';
 
 const saving = saver((id, patches) => {
   const cur = store.get('journalEntries', id);
@@ -26,12 +27,13 @@ export default {
         actions: html`<button type="button" class="icon-btn" data-action="del" aria-label="Delete entry">${icon('trash-2', { size: 19 })}</button>` })}
       <div class="journal-form">
         ${prompts.map((q, i) => html`<label class="prompt"><span class="prompt-q">${q}</span>
-          <textarea class="prompt-a" rows="2" data-input="answer" data-i="${i}" placeholder="A sentence is enough">${j.answers?.[i] || ''}</textarea></label>`)}
+          <textarea class="prompt-a" rows="2" data-mentions data-input="answer" data-i="${i}" placeholder="A sentence is enough">${j.answers?.[i] || ''}</textarea></label>`)}
         ${j.kind === 'evening' ? html`<label class="prompt"><span class="prompt-q">What am I avoiding? <small>optional</small></span>
-          <textarea class="prompt-a" rows="2" data-input="answer" data-i="avoid">${j.answers?.avoid || ''}</textarea></label>` : ''}
+          <textarea class="prompt-a" rows="2" data-mentions data-input="answer" data-i="avoid">${j.answers?.avoid || ''}</textarea></label>` : ''}
         <label class="prompt"><span class="prompt-q">${prompts.length ? 'Anything else' : 'Write freely'}</span>
-          <textarea class="prompt-a prompt-a--free" rows="${prompts.length ? 3 : 10}" data-input="text" placeholder="${prompts.length ? 'Optional' : 'Whatever is on your mind.'}" ${prompts.length ? '' : 'autofocus'}>${j.text || ''}</textarea></label>
-        <p class="fine-print">Saved as you type · ${j.updatedAt ? `last saved ${fmtTime(new Date(j.updatedAt))}` : ''}</p>
+          <textarea class="prompt-a prompt-a--free" rows="${prompts.length ? 3 : 10}" data-mentions data-input="text" placeholder="${prompts.length ? 'Optional' : 'Whatever is on your mind.'}" ${prompts.length ? '' : 'autofocus'}>${j.text || ''}</textarea></label>
+        ${mentionChips([j.text || '', ...Object.values(j.answers || {}).map((a) => (typeof a === 'string' ? a : ''))].join('\n'))}
+        <p class="fine-print">Saved as you type · ${j.updatedAt ? `last saved ${fmtTime(new Date(j.updatedAt))}` : ''} · write #habit or @person to link it</p>
       </div>`;
   },
   mount(el) {

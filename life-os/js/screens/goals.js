@@ -10,7 +10,7 @@ import { icon } from '../ui/icons.js';
 import { pageHead, empty, ring } from '../ui/components.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
-import { num, kgIn, kgOut, weightUnit } from '../ui/format.js';
+import { num, kgIn, kgOut, weightUnit, cmIn, cmOut, lengthUnit } from '../ui/format.js';
 
 /** A goal's value in your units ("76.2 kg", "18%", "34 workouts"). */
 export function valueText(g, v) {
@@ -18,7 +18,9 @@ export function valueText(g, v) {
   const m = G.measureOf(g);
   if (m === 'weight') return `${num(kgOut(v), 1)} ${weightUnit()}`;
   if (m === 'bodyFat') return `${num(v, 1)}%`;
-  const unit = m === 'workouts' ? 'workouts' : m === 'pages' ? 'pages' : m === 'habitCount' ? 'times' : g.unit || '';
+  if (m === 'measurement') return `${num(cmOut(v), 1)} ${lengthUnit()}`;
+  if (m === 'steps') return `${num(Math.round(v), 0)} steps`;
+  const unit = G.unitOf(g);
   return `${num(v, Number.isInteger(v) ? 0 : 1)}${unit ? (unit === '%' ? '%' : ` ${unit}`) : ''}`;
 }
 
@@ -40,6 +42,15 @@ export function projectionLine(g, date = today()) {
   }
 }
 
+/** What a new goal starts from, read from what you've logged (the latest measurement, last week's average). */
+function startFor(how, u) {
+  const r1 = (v) => (v == null ? null : Math.round(v * 10) / 10);
+  if (how === 'weight') { const kg = store.all('weightEntries').reduce((a, b) => (!a || b.date > a.date ? b : a), null)?.kg; return kg != null ? r1(kgOut(kg)) : null; }
+  if (how === 'measurement') { const m = store.all('measurements').filter((x) => x[u.field] != null).sort((a, b) => (a.date < b.date ? 1 : -1))[0]; return m ? r1(cmOut(m[u.field])) : null; }
+  if (how === 'sleep' || how === 'steps') { const pts = G.series({ measure: how }); const v = pts.at(-1)?.value; return v == null ? null : how === 'steps' ? Math.round(v) : r1(v); }
+  return null;
+}
+
 const HOW = [
   ...G.MEASURES.map((m) => ({ id: m.id, label: m.label })),
   { id: 'milestones', label: 'Milestones I tick off' },
@@ -50,7 +61,7 @@ const WHEN = () => [['In a month', addMonths(today(), 1)], ['In 3 months', addMo
 /** A new goal in three questions. */
 export function newGoal() {
   const lastKg = store.all('weightEntries').reduce((a, b) => (!a || b.date > a.date ? b : a), null)?.kg ?? null;
-  const ui = { i: 0, name: '', area: 'body', deadline: addMonths(today(), 3), how: null, target: '', start: lastKg != null ? Math.round(kgOut(lastKg) * 10) / 10 : '', unit: '', habitId: '', milestone: '', obstacle: '', ifThen: '' };
+  const ui = { i: 0, name: '', area: 'body', deadline: addMonths(today(), 3), how: null, target: '', start: lastKg != null ? Math.round(kgOut(lastKg) * 10) / 10 : '', unit: '', habitId: '', habitIds: [], field: 'waist', milestone: '', obstacle: '', ifThen: '' };
   const STEPS = ['What outcome?', 'By when?', 'How will you know?', 'What could get in the way?'];
   app.sheet({
     title: 'New goal',
@@ -77,11 +88,29 @@ export function newGoal() {
         </div>
       </div>`;
     },
-    inputs: { gn: ({ el, value, sheet }) => { sheet.ui[el.dataset.f] = value; if (el.tagName === 'SELECT' || el.type === 'date') sheet.refresh(); } },
+    inputs: { gn: ({ el, value, sheet }) => {
+      sheet.ui[el.dataset.f] = value;
+      // Another measurement: its start is your last one of that.
+      if (el.dataset.f === 'field') sheet.ui.start = startFor('measurement', sheet.ui) ?? '';
+      if (el.tagName === 'SELECT' || el.type === 'date') sheet.refresh();
+    } },
     actions: {
       'gn-area': ({ data, sheet }) => { sheet.ui.area = data.id; sheet.refresh(); },
       'gn-when': ({ data, sheet }) => { sheet.ui.deadline = data.d; sheet.refresh(); },
-      'gn-how': ({ data, sheet }) => { sheet.ui.how = data.id; hap.tap(); sheet.refresh(); },
+      'gn-how': ({ data, sheet }) => {
+        const u = sheet.ui;
+        // The start fills in from what's already logged, where there is something.
+        if (data.id !== u.how) u.start = startFor(data.id, u) ?? '';
+        u.how = data.id;
+        hap.tap();
+        sheet.refresh();
+      },
+      'gn-pick': ({ data, sheet }) => {
+        const set = new Set(sheet.ui.habitIds);
+        set.has(data.id) ? set.delete(data.id) : set.add(data.id);
+        sheet.ui.habitIds = [...set];
+        sheet.refresh();
+      },
       'gn-back': ({ sheet }) => { sheet.ui.i--; sheet.refresh(); },
       'gn-next': ({ sheet }) => {
         if (sheet.ui.i === 0 && !sheet.ui.name.trim()) { app.toast('Name the outcome first.'); return; }
@@ -95,16 +124,19 @@ export function newGoal() {
         const n = (v) => (v === '' || v == null ? null : Number(v));
         const measure = G.MEASURES.some((m) => m.id === u.how) ? u.how : null;
         if (measure && n(u.target) == null) { app.toast('Set the target.'); return; }
-        if (measure === 'habitCount' && !u.habitId) { app.toast('Choose the habit.'); return; }
+        if ((measure === 'habitCount' || measure === 'habitTotal') && !u.habitId) { app.toast('Choose the habit.'); return; }
+        if (measure === 'habits' && u.habitIds.length < 1) { app.toast('Choose the habits.'); return; }
         const weight = measure === 'weight';
-        const start = weight ? kgIn(n(u.start)) : n(u.start);
-        const target = weight ? kgIn(n(u.target)) : n(u.target);
+        const conv = (v) => (weight ? kgIn(n(v)) : measure === 'measurement' ? cmIn(n(v)) : n(v));
+        const start = conv(u.start);
+        const target = conv(u.target);
+        const oneHabit = measure === 'habitCount' || measure === 'habitTotal';
         const g = store.put('goals', {
           name: u.name.trim(), category: u.area, deadline: u.deadline || null, since: today(), status: 'active', order: Math.max(0, ...G.goals().map((x) => x.order ?? 0)) + 1, description: '',
           type: measure ? 'numeric' : u.how, measure, target, start, unit: measure === 'number' ? u.unit.trim() : measure === 'bodyFat' ? '%' : '',
-          direction: start != null && target != null ? (target < start ? 'down' : 'up') : null, habitId: measure === 'habitCount' ? u.habitId : null,
+          direction: start != null && target != null ? (target < start ? 'down' : 'up') : null, habitId: oneHabit ? u.habitId : null,
           history: measure === 'number' && start != null ? [{ date: today(), value: start }] : [], current: measure === 'number' ? start : null,
-          habitIds: measure === 'habitCount' ? [u.habitId] : [],
+          habitIds: oneHabit ? [u.habitId] : measure === 'habits' ? u.habitIds : [], field: measure === 'measurement' ? u.field : null,
           milestones: u.how === 'milestones' && u.milestone.trim() ? [{ id: store.uid(), title: u.milestone.trim(), done: false, doneAt: null }] : [],
           obstacle: u.obstacle.trim() || null, ifThen: u.ifThen.trim() || null,
         });
@@ -139,6 +171,21 @@ function howFields(u) {
     case 'habitCount': return html`<label class="field"><span class="field-label">Habit</span><select class="input" data-change="gn" data-f="habitId"><option value="">Choose…</option>
         ${H.activeHabits().map((h) => html`<option value="${h.id}" ${raw(u.habitId === h.id ? 'selected' : '')}>${h.name}</option>`)}</select></label>
       ${field('How many times', 'target', { unit: 'times' })}`;
+    case 'habitTotal': {
+      const numeric = H.activeHabits().filter((h) => H.isNumeric(h) && h.type !== 'rating');
+      const h = H.habit(u.habitId);
+      return html`<label class="field"><span class="field-label">Habit</span><select class="input" data-change="gn" data-f="habitId"><option value="">Choose…</option>
+        ${numeric.map((x) => html`<option value="${x.id}" ${raw(u.habitId === x.id ? 'selected' : '')}>${x.name}${x.unit ? ` (${x.unit})` : ''}</option>`)}</select></label>
+        ${numeric.length ? field('Total to reach', 'target', { unit: h?.unit || 'in all' }) : html`<p class="ritual-note">This adds up a habit you log with a number (km, minutes, pages). You don’t have one yet.</p>`}`;
+    }
+    case 'habits': return html`<p class="ritual-note">Every time any of these is done counts once.</p>
+      <div class="chips">${H.activeHabits().map((h) => html`<button type="button" class="${cx('chip', u.habitIds.includes(h.id) && 'is-active')}" aria-pressed="${u.habitIds.includes(h.id)}" data-action="gn-pick" data-id="${h.id}">${h.name}</button>`)}</div>
+      ${field('How many times in all', 'target', { unit: 'times' })}`;
+    case 'measurement': return html`<label class="field"><span class="field-label">Measurement</span><select class="input" data-change="gn" data-f="field">
+        ${G.MEASUREMENT_FIELDS.map(([id, label]) => html`<option value="${id}" ${raw(u.field === id ? 'selected' : '')}>${label}</option>`)}</select></label>
+      <div class="grid-2">${field('Now', 'start', { unit: lengthUnit() })}${field('Target', 'target', { unit: lengthUnit() })}</div>`;
+    case 'sleep': return html`<div class="grid-2">${field('Now (average)', 'start', { unit: 'h' })}${field('Target', 'target', { unit: 'h' })}</div>`;
+    case 'steps': return html`<div class="grid-2">${field('Now (average)', 'start', { unit: 'steps' })}${field('Target', 'target', { unit: 'steps' })}</div>`;
     case 'workouts': return field('Workouts', 'target', { unit: 'workouts' });
     case 'pages': return field('Pages', 'target', { unit: 'pages' });
     case 'number': return html`<div class="grid-2">${field('Now', 'start')}${field('Target', 'target')}</div>${field('Unit', 'unit', { type: 'text', ph: 'clients, €, km…' })}`;
@@ -153,7 +200,8 @@ export function goalSheet(existing) {
   if (!existing) return newGoal();
   const m = G.measureOf(existing);
   const weight = m === 'weight';
-  const show = (v) => (v == null ? '' : weight ? Math.round(kgOut(v) * 10) / 10 : v);
+  const cm = m === 'measurement';
+  const show = (v) => (v == null ? '' : weight ? Math.round(kgOut(v) * 10) / 10 : cm ? Math.round(cmOut(v) * 10) / 10 : v);
   app.sheet({
     title: 'Edit goal',
     render: () => html`<form class="form" data-submit="save">
@@ -170,7 +218,7 @@ export function goalSheet(existing) {
     actions: {
       save: ({ form, sheet }) => {
         if (!form.name?.trim()) { app.toast('Give the goal a name.'); return; }
-        const n = (v) => (v === '' || v == null ? null : weight ? kgIn(Number(v)) : Number(v));
+        const n = (v) => (v === '' || v == null ? null : weight ? kgIn(Number(v)) : cm ? cmIn(Number(v)) : Number(v));
         const patch = { name: form.name.trim(), description: form.description || '', category: form.category, deadline: form.deadline || null };
         if (m) {
           const start = n(form.start), target = n(form.target);

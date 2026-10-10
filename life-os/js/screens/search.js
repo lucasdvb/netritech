@@ -27,7 +27,7 @@ const SCREENS = [
   ['Journal', 'reflect/journal', 'notebook-pen', 'diary entries writing'], ['Reviews', 'reflect/reviews', 'calendar-days', 'weekly monthly yearly review'],
   ['Insights', 'reflect/insights', 'lightbulb', 'patterns'], ['Mind', 'progress/areas/mind', 'brain', 'learning meditation'],
   ['Spirit', 'progress/areas/spirit', 'church', 'faith prayer scripture'], ['Relationships', 'progress/areas/relationships', 'heart', 'family people'],
-  ['Work', 'progress/areas/work', 'briefcase', 'deep work focus'], ['Settings', 'you/settings', 'settings', 'preferences options'],
+  ['Work', 'progress/areas/work', 'briefcase', 'deep work focus'], ['Settings', 'you/settings', 'settings', 'preferences options'], ['Reminders', 'you/reminders', 'bell', 'notifications alerts times timeline'],
   ['Data & backup', 'you/data', 'database', 'export import backup restore csv'], ['Privacy', 'you/privacy', 'shield-check', ''], ['Sync', 'you/sync', 'refresh-cw', 'devices server'],
 ];
 // Every setting, by the label it has in Settings.

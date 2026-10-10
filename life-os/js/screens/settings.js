@@ -140,6 +140,9 @@ export default {
             : pushOn() ? 'Your server sends the timed reminders below, even when Life OS is closed. The nudges (move, eyes, water) arrive while it’s open or recently used.'
               : 'In-app reminders arrive while Life OS is open or recently used. For when it’s closed, use your calendar, or turn on reminders from your own server above.'}</p>
         </div>
+        <a class="card card--link sort-cta block-tight" href="#/you/reminders" data-action="nav" data-to="you/reminders">
+          <span class="sort-cta-text"><span class="card-title">All your reminders, in one timeline</span><span class="row-sub">In the order of your day, each moving with Your day</span></span>
+          ${icon('chevron-right', { size: 18 })}</a>
         <div class="set-list block-tight">
           ${settingRow('Reminders', toggle(nt.enabled, { action: 'notif-master', label: 'Reminders' }), { hint: perm === 'granted' ? 'System notifications allowed' : perm === 'denied' ? 'Notifications are blocked in system settings — in-app only' : 'In-app, plus system notifications if you allow them' })}
           ${nt.enabled ? NOTIFS.map(([k, label, kind]) => settingRow(label, html`${kind === 'time' && nt[k]?.on ? html`<input class="input input--inline" type="time" value="${nt[k].time}" data-change="notif-time" data-k="${k}" aria-label="${label} time">` : ''}

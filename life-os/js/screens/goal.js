@@ -1,5 +1,6 @@
 import * as store from '../data/store.js';
-import { deleteWithUndo } from '../ui/undo.js';
+import { safeDelete } from '../ui/safe-delete.js';
+import { linkedBlock } from '../ui/linked.js';
 import * as G from '../domain/goals.js';
 import { catLabel, catColor, habitColor } from '../domain/taxonomy.js';
 import { fmtMDY, today, dayAt, diffDays, fmtMD } from '../domain/dates.js';
@@ -10,8 +11,8 @@ import { lineChart } from '../ui/charts.js';
 import { pct, num } from '../ui/format.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
-import { goalSheet, projectionLine } from './goals.js';
-import { kgOut, weightUnit } from '../ui/format.js';
+import { goalSheet, projectionLine, valueText } from './goals.js';
+import { kgOut, weightUnit, cmOut } from '../ui/format.js';
 
 export default {
   id: 'goal',
@@ -33,13 +34,13 @@ export default {
       ${pageHead({ title: g.name, morph: `goal-${g.id}`, eyebrow: catLabel(g.category), back: { to: 'plan/goals', label: 'Goals' }, actions: html`<button type="button" class="btn btn--soft btn--sm" data-action="edit">Edit</button>` })}
       ${g.description ? html`<p class="lead">${g.description}</p>` : ''}
       <div class="card goal-hero" style="--ic:${catColor(g.category)}">
-        <span class="goal-ring">${ring(p.ratio || 0, { size: 84, stroke: 7, color: 'var(--ic)' })}<span class="goal-pct tnum">${p.ratio != null ? pct(p.ratio) : '—'}</span></span>
-        <div><p class="card-title">${p.label || ''}</p>
+        <span class="goal-ring">${ring(p.ratio || 0, { size: 84, stroke: 7, color: 'var(--ic)' })}<button type="button" class="explain goal-pct tnum" data-action="explain" data-what="goal" data-id="${g.id}" aria-label="${p.ratio != null ? pct(p.ratio) : 'No progress yet'}: how it’s worked out">${p.ratio != null ? pct(p.ratio) : '—'}</button></span>
+        <div><p class="card-title">${['measurement', 'sleep', 'steps'].includes(measure) && p.ratio != null ? `${valueText(g, p.current)} → ${valueText(g, g.target)}` : p.label || ''}</p>
           <p class="muted small">${p.kind === 'numeric' ? (g.metric === 'bodyFat' ? 'From your latest body-fat estimate. An estimate, not a lab value.' : 'Measured value.') : p.kind === 'milestones' ? 'Progress counts finished milestones, not effort.' : 'Average 30-day consistency of the habits below.'}</p>
           ${g.deadline ? html`<p class="muted small">Deadline ${fmtMDY(g.deadline)} · ${Math.max(0, diffDays(g.deadline, today()))} days left</p>` : ''}</div>
       </div>
       <p class="goal-projection" data-key="projection">${icon('trending-up', { size: 16 })}<span>${projectionLine(g)}</span></p>
-      ${pts.length >= 2 ? html`<div class="card chart-card block-tight">${lineChart({ labels: pts.map((e) => fmtMD(e.date)), series: [{ values: pts.map((e) => (kgs ? kgOut(e.value) : e.value)), color: catColor(g.category), area: true, marks: pts.length < 12, label: g.name }], fmt: (v) => (kgs ? `${num(v, 1)} ${weightUnit()}` : num(v, 1)) })}</div>` : ''}
+      ${pts.length >= 2 ? html`<div class="card chart-card block-tight">${lineChart({ labels: pts.map((e) => fmtMD(e.date)), series: [{ values: pts.map((e) => (kgs ? kgOut(e.value) : measure === 'measurement' ? cmOut(e.value) : e.value)), color: catColor(g.category), area: true, marks: pts.length < 12, label: g.name }], fmt: (v) => (kgs ? `${num(v, 1)} ${weightUnit()}` : num(v, 1)) })}</div>` : ''}
       ${g.type === 'numeric' && g.metric == null && (!measure || measure === 'number') ? html`<form class="inline-form block-tight" data-submit="set-current"><span class="input-unit"><input name="v" type="number" step="any" value="${g.current ?? ''}" placeholder="Current value" aria-label="Current value"><span>${g.unit}</span></span><button class="btn btn--soft" type="submit">Update</button></form>` : ''}
       ${est.length >= 2 ? html`<div class="card chart-card block-tight">${lineChart({ labels: est.map((e) => fmtMD(e.date)), series: [{ values: est.map((e) => e.percent), color: catColor(g.category), area: true, marks: true, label: 'Body fat' }], fmt: (v) => `${num(v, 1)}%` })}</div>` : ''}
       ${calves.length >= 2 ? html`<div class="card chart-card block-tight"><p class="section-label">Calf measurement</p>${lineChart({ labels: calves.map((e) => fmtMD(e.date)), series: [{ values: calves.map((e) => e.calves), color: catColor(g.category), area: true, marks: true, label: 'Calves' }], fmt: (v) => `${num(v, 1)} cm` })}</div>` : ''}
@@ -65,6 +66,7 @@ export default {
         ${suggest.length ? html`<div class="goal-suggest"><p class="muted small">Suggested from ${catLabel(g.category)}:</p>
           <div class="chips">${suggest.map((h) => html`<button type="button" class="chip" data-action="link-one" data-id="${h.id}" aria-label="Link ${h.name}">${icon('plus', { size: 14 })}${h.name}</button>`)}</div></div>` : ''}
       </section>
+      ${linkedBlock('goal', g.id, g.name, { except: ['Habit'] })}
       <div class="danger-zone">
         <button type="button" class="btn btn--soft" data-action="status" data-v="${g.status === 'active' ? 'done' : 'active'}">${g.status === 'active' ? 'Mark achieved' : 'Make active'}</button>
         ${g.status === 'active' ? html`<button type="button" class="btn btn--soft" data-action="status" data-v="paused">Pause</button>` : ''}
@@ -128,8 +130,10 @@ export default {
     status: ({ data, params }) => { store.update('goals', params.id, { status: data.v }); hap.tap(); },
     delete: ({ params }) => {
       const g = store.get('goals', params.id);
-      app.replace('plan/goals');
-      deleteWithUndo([{ store: 'goals', id: params.id }], `“${g?.name || 'Goal'}” deleted. Linked habits stay as they are.`);
+      if (!g) return;
+      // Habits that name this goal can be handed to another goal; the habits themselves always stay.
+      safeDelete({ kind: 'goal', id: g.id, name: g.name, records: [{ store: 'goals', id: g.id }], after: () => app.replace('plan/goals'),
+        message: (to) => `“${g.name}” deleted. ${to ? `Its habits now carry ${to}.` : 'Linked habits stay as they are.'}` });
     },
   },
 };
