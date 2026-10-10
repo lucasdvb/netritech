@@ -36,7 +36,11 @@
     "primary_nav": "Main",
     "search": "Search",
     "shop_all": "Shop all",
-    "wishlist": "Wishlist"
+    "wishlist": "Wishlist",
+    "home": "Home",
+    "shop": "Shop",
+    "routine": "Routine",
+    "dock": "Shortcuts"
   },
   "footer": {
     "brn": "BRN",
@@ -95,7 +99,13 @@
     "eta": "Order today, usually with you {{ from }} to {{ to }}.",
     "next_step": "Complete your routine",
     "next_step_label": "Your next step: {{ step }}",
-    "recently_viewed": "Recently viewed"
+    "recently_viewed": "Recently viewed",
+    "added_short": "Added",
+    "quick_view": "Quick view",
+    "quick_view_named": "Quick view: {{ title }}",
+    "quick_view_dialog": "Quick view",
+    "full_details": "See full details",
+    "gallery_dialog": "Product photos"
   },
   "routine": {
     "step_n": "Step {{ n }}"
@@ -262,5 +272,25 @@
     "restart": "Start again",
     "added": "Routine added to your bag",
     "noscript": "Turn on JavaScript for the quiz, or start from a concern:"
+  },
+  "forecast": {
+    "label": "Island skin forecast",
+    "place_date": "{{ place }} · today",
+    "uv": "Peak UV",
+    "humidity": "Humidity",
+    "temp": "Temperature",
+    "level_low": "Low",
+    "level_moderate": "Moderate",
+    "level_high": "High",
+    "level_very_high": "Very high",
+    "level_extreme": "Extreme",
+    "tip_default": "Island sun is strong all year round. SPF goes on last, every morning.",
+    "tip_uv_top": "Peak UV is {{ level }} today. Sunscreen is your last step every morning, and top it up every two hours outdoors.",
+    "tip_uv_high": "High UV today. Sunscreen last thing every morning, and again after the beach.",
+    "tip_uv_moderate": "Moderate sun today. Still, SPF goes on last every morning.",
+    "tip_uv_low": "Gentle sun today. Keep SPF as your morning habit.",
+    "tip_humid": "It's {{ h }}% humid: layer light. Gel creams and watery essences sit better than rich creams.",
+    "tip_dry": "Drier air today ({{ h }}%): add a hydrating toner or essence before your cream.",
+    "source": "Weather data by Open-Meteo.com"
   }
 }

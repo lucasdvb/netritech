@@ -14,6 +14,22 @@
   {% render 'fonts' %}
   {{ 'base.css' | asset_url | stylesheet_tag: preload: true }}
   <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
+  <script>
+    /* card to product morph, the way back: name the card of the product we came from (see theme.js) */
+    window.addEventListener('pagereveal', function (ev) {
+      var a = window.navigation && navigation.activation, from = a && a.from && a.from.url;
+      if (!ev.viewTransition || !from || from.indexOf('/products/') === -1) return;
+      var path = new URL(from).pathname, links = document.querySelectorAll('.card__title a');
+      for (var i = 0; i < links.length; i++) {
+        if (links[i].pathname !== path) continue;
+        var img = links[i].closest('.card').querySelector('.card__img--main');
+        if (!img) return;
+        img.style.viewTransitionName = 'pdp-media';
+        ev.viewTransition.finished.then(function () { img.style.viewTransitionName = ''; });
+        return;
+      }
+    });
+  </script>
 
   {% render 'meta-tags' %}
   {% render 'structured-data' %}
@@ -31,6 +47,7 @@
   </main>
 
   {% sections 'footer-group' %}
+  {% render 'dock' %}
 
   {% section 'cart-drawer' %}
   {% render 'search-modal' %}
@@ -52,6 +69,10 @@
         recommendations: {{ routes.product_recommendations_url | json }}
       },
       strings: {
+        close: {{ 'general.close' | t | json }},
+        galleryLabel: {{ 'products.gallery_dialog' | t | json }},
+        prevSlide: {{ 'general.prev_slide' | t | json }},
+        nextSlide: {{ 'general.next_slide' | t | json }},
         added: {{ 'cart.toast_added' | t | json }},
         addError: {{ 'cart.error_add' | t | json }},
         updateError: {{ 'cart.error_update' | t | json }},
@@ -63,6 +84,7 @@
         contactPrefill: {{ 'contact.prefill' | t: range: '__RANGE__' | json }},
         loading: {{ 'general.loading' | t | json }},
         wishlistAdded: {{ 'wishlist.added' | t | json }},
+        addedShort: {{ 'products.added_short' | t | json }},
         eta: {{ 'products.eta' | t: from: '[from]', to: '[to]' | json }},
         wishlistRemoved: {{ 'wishlist.removed' | t | json }},
         slideN: {{ 'general.slide_n' | t: n: '__N__' | json }},

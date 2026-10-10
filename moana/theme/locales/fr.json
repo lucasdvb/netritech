@@ -36,7 +36,11 @@
     "primary_nav": "Principal",
     "search": "Rechercher",
     "shop_all": "Tout voir",
-    "wishlist": "Favoris"
+    "wishlist": "Favoris",
+    "home": "Accueil",
+    "shop": "Boutique",
+    "routine": "Routine",
+    "dock": "Raccourcis"
   },
   "footer": {
     "brn": "BRN",
@@ -95,7 +99,13 @@
     "eta": "Commandez aujourd'hui, chez vous en général entre le {{ from }} et le {{ to }}.",
     "next_step": "Complétez votre routine",
     "next_step_label": "Votre prochaine étape : {{ step }}",
-    "recently_viewed": "Vus récemment"
+    "recently_viewed": "Vus récemment",
+    "added_short": "Ajouté",
+    "quick_view": "Aperçu",
+    "quick_view_named": "Aperçu : {{ title }}",
+    "quick_view_dialog": "Aperçu du produit",
+    "full_details": "Voir tous les détails",
+    "gallery_dialog": "Photos du produit"
   },
   "routine": {
     "step_n": "Étape {{ n }}"
@@ -262,5 +272,25 @@
     "restart": "Recommencer",
     "added": "Routine ajoutée au panier",
     "noscript": "Activez JavaScript pour le quiz, ou partez d’un besoin :"
+  },
+  "forecast": {
+    "label": "Météo de la peau",
+    "place_date": "{{ place }} · aujourd'hui",
+    "uv": "UV max",
+    "humidity": "Humidité",
+    "temp": "Température",
+    "level_low": "Faible",
+    "level_moderate": "Modéré",
+    "level_high": "Élevé",
+    "level_very_high": "Très élevé",
+    "level_extreme": "Extrême",
+    "tip_default": "Le soleil de l'île est fort toute l'année. Le SPF se met en dernier, chaque matin.",
+    "tip_uv_top": "UV {{ level }} aujourd'hui. La crème solaire en dernier chaque matin, et une nouvelle couche toutes les deux heures dehors.",
+    "tip_uv_high": "UV élevé aujourd'hui. Crème solaire en dernier chaque matin, et encore après la plage.",
+    "tip_uv_moderate": "Soleil modéré aujourd'hui. Le SPF reste la dernière étape du matin.",
+    "tip_uv_low": "Soleil doux aujourd'hui. Gardez le SPF comme réflexe du matin.",
+    "tip_humid": "{{ h }} % d'humidité : misez sur la légèreté. Les gels et les essences aqueuses tiennent mieux que les crèmes riches.",
+    "tip_dry": "Air plus sec aujourd'hui ({{ h }} %) : ajoutez une lotion ou une essence hydratante avant votre crème.",
+    "source": "Données météo : Open-Meteo.com"
   }
 }

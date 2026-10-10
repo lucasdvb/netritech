@@ -89,7 +89,7 @@
     </div>
   </div>
   {%- if section.settings.watermark != blank -%}
-    <p class="footer__watermark" aria-hidden="true">{{ section.settings.watermark }}</p>
+    <p class="footer__watermark" aria-hidden="true" data-text="{{ section.settings.watermark | escape }}"></p>
   {%- endif -%}
 </footer>
 
@@ -168,6 +168,8 @@
   .footer__lang button:hover { border-color: var(--c-mist); }
 
   /* the brand word bleeding off the bottom edge: a texture, not a heading */
+  /* decorative wordmark, drawn from CSS so it is not read or contrast-checked as text */
+  .footer__watermark::before { content: attr(data-text); }
   .footer__watermark {
     position: absolute; left: 50%; bottom: -.24em; z-index: 0; transform: translateX(-50%);
     font: var(--w-extralight) clamp(6rem, 2rem + 22vw, 22rem)/.8 var(--f-body); letter-spacing: -.05em; white-space: nowrap;

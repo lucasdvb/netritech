@@ -1,0 +1,66 @@
+{%- layout none -%}
+{%- comment -%}
+  Quick view: the product's essentials, fetched as /products/<handle>?view=quick and shown in the glass
+  quick-view panel (theme.js). Photos, brand, name, price, badge, skin types, a short description, add to bag
+  and save. Everything comes from the product itself.
+{%- endcomment -%}
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign skin_list = settings.skin_type_tags | split: ','
+  assign skins = ''
+  for raw in skin_list
+    assign t = raw | strip
+    if product.tags contains t
+      assign skins = skins | append: t | append: '|'
+    endif
+  endfor
+  assign skins = skins | split: '|'
+  assign blurb = product.description | strip_html | strip_newlines | truncatewords: 34
+-%}
+<div class="qv__grid" data-qv-product="{{ product.handle }}">
+  <div class="qv__media">
+    <ul class="qv__slides" role="list" data-qv-track aria-label="{{ 'products.gallery_label' | t: title: product.title | escape }}">
+      {%- for media in product.media limit: 6 -%}
+        {%- if media.media_type != 'image' -%}{%- continue -%}{%- endif -%}
+        <li class="qv__slide">
+          {{- media.preview_image | image_url: width: 900 | image_tag: widths: '450, 600, 900', sizes: '(min-width: 750px) 420px, 92vw', loading: 'eager', alt: media.alt | default: product.title -}}
+        </li>
+      {%- else -%}
+        <li class="qv__slide">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</li>
+      {%- endfor -%}
+    </ul>
+    {%- if product.media.size > 1 -%}
+      <div class="qv__dots" aria-hidden="true">{%- for media in product.media limit: 6 -%}<span{% if forloop.first %} class="is-active"{% endif %}></span>{%- endfor -%}</div>
+    {%- endif -%}
+  </div>
+  <div class="qv__info">
+    <p class="qv__vendor">{{ product.vendor }}</p>
+    <h2 class="qv__title" id="qv-title">{{ product.title }}</h2>
+    {%- render 'price', product: product, class: 'qv__price' -%}
+    {%- if skins.size > 0 -%}
+      <div class="qv__facts">
+        <p class="t-label">{{ 'products.suits' | t }}</p>
+        <p class="cluster">{%- for s in skins -%}<span class="pill pill--sm">{{ s }}</span>{%- endfor -%}</p>
+      </div>
+    {%- endif -%}
+    {%- if blurb != blank -%}<p class="qv__blurb">{{ blurb }}</p>{%- endif -%}
+    <div class="qv__buy">
+      {%- if product.available and product.has_only_default_variant -%}
+        {%- form 'product', product, class: 'qv__form', data-product-form: '', novalidate: 'novalidate' -%}
+          <input type="hidden" name="id" value="{{ variant.id }}">
+          <input type="hidden" name="quantity" value="1">
+          <button class="btn btn--brand btn--full" type="submit" name="add">{{ 'products.add_to_cart' | t }}<span aria-hidden="true">&nbsp;–&nbsp;{{ variant.price | money }}</span></button>
+          <div class="notice notice--error" role="alert" data-form-error hidden></div>
+        {%- endform -%}
+      {%- elsif product.available -%}
+        <a class="btn btn--brand btn--full" href="{{ product.url }}">{{ 'products.choose' | t }}</a>
+      {%- else -%}
+        <span class="btn btn--secondary btn--full" aria-disabled="true">{{ 'products.sold_out' | t }}</span>
+      {%- endif -%}
+      <button class="btn btn--secondary btn--full qv__wish" type="button" data-wishlist-toggle="{{ product.handle }}" aria-pressed="false">
+        {%- render 'icon', name: 'heart' -%}<span>{{ 'products.add_to_wishlist' | t }}</span>
+      </button>
+    </div>
+    <a class="link-arrow qv__more" href="{{ product.url }}">{{ 'products.full_details' | t }} {% render 'icon', name: 'arrow-right' %}</a>
+  </div>
+</div>

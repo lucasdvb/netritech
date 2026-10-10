@@ -114,6 +114,11 @@ At the owner's request every level is now **Raleway** (the brand guide sets Inst
   - **Routine**: a hairline beside the five steps fills as you read down them; each step number brightens as its card reaches the middle.
   - **Brand ticker**: the stocked brands (from the catalogue) in two large rows, ExtraLight and Light italic, sliding in opposite directions with the scroll. Decorative, hidden from screen readers; the only marquee on the site.
 - **Pointer sheen** (`data-sheen`): a soft highlight follows the cursor across glass cards and concern tiles, moved by transform, mouse and trackpad only.
+- **Page transitions** (`@view-transition`): pages crossfade in 240 ms; a product card's photo morphs into the product page's main photo (560 ms, house curve) and back.
+- **Water ripple** (`assets/ripple.js`): analytic rings in a fragment shader over the hero and story photos, mouse and trackpad only, canvas fades out when still.
+- **Feedback**: add-to-bag button morphs to a drawn tick and "Added" for 1.8 s; the bag count rolls up on a spring; the new bag line slides in with a brief Spring tint.
+- **Quick view and gallery** open with a short rise and fade; the phone gallery follows the finger (swipe, pinch, pan, drag down to close).
+- **Phone dock**: glass bar under 750 px, hides on scroll down with the header.
 - **No preloader, no smooth-scroll hijacking.**
 - `prefers-reduced-motion` removes every transform, blur and clip and shortens transitions to 0.01 ms.
 

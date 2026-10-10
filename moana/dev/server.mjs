@@ -129,7 +129,7 @@ http.createServer(async (req, res) => {
           if (!pi) return send(res, 404, JSON.stringify({ status: 404, message: 'Cart Error', description: 'Cannot find variant' }), 'application/json');
           const li = lines.find((l) => l.handle === pi.handle);
           if (li) li.qty += Number(it.quantity || 1); else lines.push({ handle: pi.handle, qty: Number(it.quantity || 1) });
-          added.push({ id: pi.variants[0].id, quantity: Number(it.quantity || 1), title: pi.title });
+          added.push({ id: pi.variants[0].id, key: `${pi.variants[0].id}:${lines.findIndex((l) => l.handle === pi.handle)}`, quantity: Number(it.quantity || 1), title: pi.title });
         }
         const out = { items: added };
         if (body.sections) {
@@ -149,7 +149,7 @@ http.createServer(async (req, res) => {
       }
       if (line) line.qty += qty; else lines.push({ handle: pr.handle, qty });
       if (p === '/cart/add') { res.writeHead(302, { Location: '/cart' }); return res.end(); }
-      const out = { id: pr.variants[0].id, quantity: qty, title: pr.title };
+      const out = { id: pr.variants[0].id, key: `${pr.variants[0].id}:${lines.findIndex((l) => l.handle === pr.handle)}`, quantity: qty, title: pr.title };
       if (body.sections) {
         const g = globals({ template: body.sections_url === '/cart' ? 'cart' : 'index', cart: cartObj(), lang });
         out.sections = {};
@@ -220,10 +220,15 @@ http.createServer(async (req, res) => {
     } else if (p === '/password') { template = 'password'; g = globals({ template, cart, lang, url: p }); }
     if (!g) g = globals({ template: '404', cart, lang, url: p });
 
-    if (template === 'product' && u.searchParams.get('view') === 'card') {
+    if (template === 'product' && u.searchParams.get('view')) {
+      // alternate product templates (?view=card, ?view=quick): templates/product.<view>.liquid, layout none
+      const view = u.searchParams.get('view').replace(/[^a-z0-9_-]/gi, '');
+      const file = path.join(THEME, 'templates', `product.${view}.liquid`);
+      if (!fs.existsSync(file)) return send(res, 404, 'no such view');
       const engine = createEngine();
       const all = g.getAll ? g.getAll() : g;
-      return send(res, 200, await engine.parseAndRender("{%- render 'product-card', product: product, heading: 'h2' -%}", all, { globals: g.__globals || all }));
+      const src = fs.readFileSync(file, 'utf8').replace(/\{%-?\s*layout none\s*-?%\}/, '');
+      return send(res, 200, await engine.parseAndRender(src, all, { globals: g.__globals || all }));
     }
     const sid = u.searchParams.get('section_id');
     if (sid) return send(res, 200, await sectionHTML(sid, g));

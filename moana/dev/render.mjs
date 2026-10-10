@@ -29,6 +29,11 @@ export const products = rawProducts.map((p, idx) => {
     img.preview_image = img; img.media_type = 'image'; img.id = idx * 10 + i;
     return img;
   });
+  // the first product gets two extra placeholder photos, so galleries and swipes can be tested locally
+  if (idx === 0) for (let i = media.length; i < 3; i++) {
+    const img = imageObj(`/__img/${p.handle}/${i}.svg`, p.title, 1200, 1200, `${p.handle}:${i}`);
+    img.preview_image = img; img.media_type = 'image'; img.id = idx * 10 + i; media.push(img);
+  }
   const v = p.variants.nodes[0];
   const variant = {
     id: Number(v.id.split('/').pop()), title: v.title, sku: v.sku, price: Math.round(Number(v.price) * 100),

@@ -239,6 +239,24 @@ void main() {
       running = true; prev = performance.now(); requestAnimationFrame(frame);
     };
 
+    // re-tint on request (the routine finder shifts the wash with each answer): a 900 ms blend between palettes
+    const cur = { uBg: hex(CONFIG.bgColor), uColorA: hex(CONFIG.colorA), uColorB: hex(CONFIG.colorB), uColorC: hex(CONFIG.colorC), uColorD: hex(CONFIG.colorD) };
+    const keys = { bg: 'uBg', a: 'uColorA', b: 'uColorB', c: 'uColorC', d: 'uColorD' };
+    let tween = 0;
+    canvas.addEventListener('wash:tint', (ev) => {
+      const from = {}, to = {};
+      for (const k in keys) { const u = keys[k]; from[u] = cur[u].slice(); to[u] = ev.detail && ev.detail[k] ? hex(ev.detail[k]) : cur[u]; }
+      const t1 = performance.now(), dur = reduce.matches ? 0 : 900, id = ++tween;
+      const stepT = (now) => {
+        if (id !== tween) return;
+        const k = dur ? Math.min(1, (now - t1) / dur) : 1, e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+        for (const u in to) { for (let i = 0; i < 3; i++) cur[u][i] = from[u][i] + (to[u][i] - from[u][i]) * e; gl.uniform3f(loc(u), cur[u][0], cur[u][1], cur[u][2]); }
+        if (!running) draw();
+        if (k < 1) requestAnimationFrame(stepT);
+      };
+      requestAnimationFrame(stepT);
+    });
+
     const t0 = performance.now();
     draw();
     gl.finish();

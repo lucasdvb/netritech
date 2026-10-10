@@ -181,8 +181,8 @@
       var y = window.scrollY;
       header.classList.toggle('is-scrolled', y > 8);
       var megaOpen = $('.mega.is-open');
-      if (!megaOpen && !openStack.length && y > 420 && y > lastY + 6) header.classList.add('is-hidden');
-      else if (y < lastY - 6 || y < 420) header.classList.remove('is-hidden');
+      if (!megaOpen && !openStack.length && y > 420 && y > lastY + 6) { header.classList.add('is-hidden'); document.documentElement.classList.add('dock-away'); }
+      else if (y < lastY - 6 || y < 420) { header.classList.remove('is-hidden'); document.documentElement.classList.remove('dock-away'); }
       lastY = y; ticking = false;
     };
     on(window, 'scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
@@ -462,9 +462,12 @@
   function setCount(n) {
     $$('[data-cart-count]').forEach(function (el) {
       var prev = parseInt(el.textContent, 10) || 0;
-      el.textContent = String(n);
       el.hidden = !(n > 0);
-      if (n > prev && !reduceMotion) { el.classList.remove('is-bumped'); void el.offsetWidth; el.classList.add('is-bumped'); }
+      if (n > prev && !reduceMotion) {
+        // the new number rolls up into the badge
+        el.innerHTML = '<span class="count-roll">' + n + '</span>';
+        el.classList.remove('is-bumped'); void el.offsetWidth; el.classList.add('is-bumped');
+      } else { el.textContent = String(n); }
     });
     $$('[data-cart-count-label]').forEach(function (el) { el.textContent = (S.cartCount || '').replace('__COUNT__', n); });
   }
@@ -485,6 +488,31 @@
     toast(text, true);
   }
 
+  /* add-to-bag feedback: the button turns into a tick and "Added" for a moment, and the new line in the bag
+     slides in with a soft spring and a brief tint, so she sees exactly what went in. */
+  var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><path d="m5 12.5 4.5 4.5L19 7.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  function confirmAdded(btn) {
+    if (!btn || btn.dataset.added || !btn.classList.contains('btn')) return;
+    var html = btn.innerHTML;
+    btn.dataset.added = '1';
+    btn.style.minWidth = btn.offsetWidth + 'px';
+    btn.classList.add('is-added');
+    btn.innerHTML = CHECK + (btn.offsetWidth < 90 ? '' : '<span>' + (S.addedShort || '') + '</span>');
+    setTimeout(function () {
+      btn.classList.remove('is-added');
+      btn.innerHTML = html;
+      btn.style.minWidth = '';
+      delete btn.dataset.added;
+    }, 1800);
+  }
+  function markNewLines(keys) {
+    (keys || []).forEach(function (k) {
+      if (!k || !cartDrawer) return;
+      var line = cartDrawer.querySelector('[data-key="' + String(k).replace(/"/g, '') + '"]');
+      if (line) line.classList.add('is-new');
+    });
+  }
+
   document.addEventListener('submit', function (ev) {
     var form = ev.target.closest('form[data-product-form]');
     if (!form || !window.fetch || !window.FormData) return;
@@ -502,6 +530,10 @@
       .then(function (res) {
         if (!res.ok || res.data.status) { throw new Error(res.data.description || res.data.message || S.addError); }
         renderCartSections(res.data.sections);
+        markNewLines([res.data.key]);
+        btns.forEach(function (b) { setBusy(b, false); });
+        confirmAdded(submitter);
+        if (qv && form.closest('.qv')) qvClose(true);
         return refreshCount().then(function () {
           announce(S.added);
           if (cartDrawer) openPanel(cartDrawer, submitter); else toast(S.added);
@@ -514,8 +546,10 @@
   // shared with page scripts (routine finder: "add the whole routine")
   window.MoanaCart = {
     sections: cartSections,
-    afterAdd: function (sections, opener) {
+    afterAdd: function (sections, opener, items) {
       renderCartSections(sections);
+      markNewLines((items || []).map(function (it) { return it.key; }));
+      confirmAdded(opener);
       return refreshCount().then(function () { announce(S.added); if (cartDrawer) openPanel(cartDrawer, opener); else toast(S.added); });
     }
   };
@@ -626,15 +660,7 @@
       }, 60), { passive: true });
     }
 
-    // zoom
-    var lb = $('[data-lightbox]', section), lbImg = $('[data-lightbox-img]', section);
-    if (lb && lb.showModal) {
-      $$('[data-zoom]', section).forEach(function (b) {
-        on(b, 'click', function () { lbImg.src = b.getAttribute('data-zoom'); lbImg.alt = b.getAttribute('data-zoom-alt') || ''; lb.showModal(); });
-      });
-      on($('[data-lightbox-close]', lb), 'click', function () { lb.close(); });
-      on(lb, 'click', function (ev) { if (ev.target === lb || ev.target === lbImg) lb.close(); });
-    }
+    // zoom: the full-screen gallery lives in viewer.js (loaded by the product section)
 
     // sticky purchase bar
     var bar = $('[data-buybar]', section), addMain = $('[data-add-button]', section);
@@ -644,6 +670,7 @@
       var update = function () {
         var show = !addVisible && !footerVisible && addMain.getBoundingClientRect().top < 0;
         bar.classList.toggle('is-visible', show);
+        document.documentElement.classList.toggle('buybar-on', show);
         bar.setAttribute('aria-hidden', String(!show));
         $$('button', bar).forEach(function (b) { b.tabIndex = show ? 0 : -1; });
       };
@@ -838,6 +865,89 @@
       recent.unshift(rh);
       localStorage.setItem('moana:recent', JSON.stringify(recent.slice(0, 12)));
     } catch (e) {}
+  }
+
+  /* ---------------------------------------------------------------- quick view
+     The card's Quick view pill opens a glass panel with the product's essentials (/products/<handle>?view=quick)
+     and a real add-to-bag form, without leaving the page. It opens at once with a skeleton, fills when the
+     markup arrives (cached per product), and closes on Escape, the close button or a click outside. */
+  var CLOSE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><path d="m6 6 12 12M18 6 6 18" stroke-linecap="round"/></svg>';
+  var qv = null, qvBody = null, qvOpener = null, qvCache = {};
+  function qvBuild() {
+    if (qv) return qv;
+    qv = document.createElement('dialog');
+    qv.className = 'qv';
+    qv.setAttribute('aria-labelledby', 'qv-title');
+    qv.innerHTML = '<div class="qv__panel"><button class="icon-btn qv__close" type="button" data-qv-close>' + CLOSE +
+      '<span class="sr-only">' + (S.close || 'Close') + '</span></button><div class="qv__body" data-qv-body></div></div>';
+    document.body.appendChild(qv);
+    qvBody = $('[data-qv-body]', qv);
+    on($('[data-qv-close]', qv), 'click', function () { qvClose(); });
+    on(qv, 'click', function (ev) { if (ev.target === qv) qvClose(); });
+    on(qv, 'cancel', function (ev) { ev.preventDefault(); qvClose(); });
+    return qv;
+  }
+  function qvClose(now) {
+    if (!qv || !qv.open) return;
+    var done = function () { qv.classList.remove('is-open', 'is-closing'); qv.close(); if (qvOpener && !now) qvOpener.focus({ preventScroll: true }); };
+    if (now || reduceMotion) { done(); return; }
+    qv.classList.add('is-closing');
+    setTimeout(done, 240);
+  }
+  function qvSlides() {
+    var track = $('[data-qv-track]', qv), dots = $$('.qv__dots span', qv);
+    if (!track || dots.length < 2) return;
+    on(track, 'scroll', debounce(function () {
+      var i = Math.round(track.scrollLeft / track.clientWidth);
+      dots.forEach(function (d, k) { d.classList.toggle('is-active', k === i); });
+    }, 60), { passive: true });
+  }
+  function qvOpen(url, opener) {
+    qvBuild();
+    qvOpener = opener;
+    qvBody.innerHTML = '<div class="qv__grid qv__grid--ghost" aria-hidden="true"><div class="qv__media"><span></span></div><div class="qv__info"><span></span><span></span><span></span><span></span></div></div>';
+    qv.showModal();
+    requestAnimationFrame(function () { qv.classList.add('is-open'); });
+    var src = url.split('?')[0] + '?view=quick';
+    var get = qvCache[src] || (qvCache[src] = fetch(src).then(function (r) { if (!r.ok) throw new Error(); return r.text(); }));
+    get.then(function (html) {
+      if (!qv.open) return;
+      qvBody.innerHTML = html;
+      qvSlides();
+      paintEta(qvBody);
+      if (window.MoanaWishlist) window.MoanaWishlist.paint();
+      var close = $('[data-qv-close]', qv); if (close) close.focus({ preventScroll: true });
+    }).catch(function () { delete qvCache[src]; qvClose(true); window.location.href = url; });
+  }
+  on(document, 'click', function (ev) {
+    var b = ev.target.closest('[data-quick-view]');
+    if (!b) return;
+    ev.preventDefault();
+    qvOpen(b.getAttribute('data-quick-view'), b);
+  });
+  window.MoanaQuickView = { open: qvOpen, close: qvClose };
+
+  /* ---------------------------------------------------------------- card to product morph (View Transitions)
+     Navigating from a product card, the card's photo glides and grows into the product page's main photo;
+     coming back, it settles into its card again. Cross-document view transitions are enabled in base.css
+     (@view-transition); browsers without them simply load the page as usual. Only one element may carry
+     the name at a time, so it is set on the clicked card just before the page changes. */
+  if ('onpageswap' in window || 'onpagereveal' in window) {
+    var VT = 'pdp-media';
+    var clearVT = function () {
+      $$('.card__img--main, .pdp__slide:first-child img').forEach(function (el) { el.style.viewTransitionName = 'none'; });
+    };
+    on(document, 'click', function (ev) {
+      if (ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+      var a = ev.target.closest('a[href]');
+      var card = a && a.closest('.card');
+      var img = card && $('.card__img--main', card);
+      if (!img) return;
+      clearVT();
+      img.style.viewTransitionName = VT;
+    });
+    // the way back (product page to a list) is handled by a small render-blocking script in layout/theme.liquid,
+    // because pagereveal fires before deferred scripts run
   }
 
   /* ---------------------------------------------------------------- pointer sheen

@@ -1,0 +1,159 @@
+{%- comment -%}
+  Island skin forecast: today's peak UV, humidity and temperature for one place in Mauritius (Port Louis by
+  default, never the shopper's own location), turned into a one-line skincare tip and two shortcuts.
+  Data: Open-Meteo (no account needed; their free tier is for non-commercial use, so add a commercial API key
+  in the section settings for the live shop). Fetched in the browser only when the section nears the screen,
+  cached for 30 minutes. Until then, or if the call fails, it shows a sensible default tip with the same
+  layout, so the page never shifts.
+{%- endcomment -%}
+{%- liquid
+  assign link1 = section.settings.link1_url | default: collections['sunscreen'].url
+  assign link2 = section.settings.link2_url | default: collections['moisturisers'].url
+-%}
+<section class="section section--tight fc ambient" aria-labelledby="fc-{{ section.id }}">
+  <div class="page-width">
+    <div class="fc__card glass" data-sheen data-forecast
+      data-lat="{{ section.settings.lat }}" data-lon="{{ section.settings.lon }}" data-key="{{ section.settings.api_key | escape }}"
+      data-levels="{{ 'forecast.level_low' | t | escape }}|{{ 'forecast.level_moderate' | t | escape }}|{{ 'forecast.level_high' | t | escape }}|{{ 'forecast.level_very_high' | t | escape }}|{{ 'forecast.level_extreme' | t | escape }}"
+      data-tip-top="{{ 'forecast.tip_uv_top' | t: level: '[level]' | escape }}"
+      data-tip-high="{{ 'forecast.tip_uv_high' | t | escape }}"
+      data-tip-moderate="{{ 'forecast.tip_uv_moderate' | t | escape }}"
+      data-tip-low="{{ 'forecast.tip_uv_low' | t | escape }}"
+      data-tip-humid="{{ 'forecast.tip_humid' | t: h: '[h]' | escape }}"
+      data-tip-dry="{{ 'forecast.tip_dry' | t: h: '[h]' | escape }}">
+      <div class="fc__head">
+        <p class="t-label fc__label">{% render 'icon', name: 'sun' %}<span id="fc-{{ section.id }}">{{ 'forecast.label' | t }}</span></p>
+        <p class="fc__place">{{ 'forecast.place_date' | t: place: section.settings.place }}</p>
+      </div>
+
+      <dl class="fc__stats">
+        <div class="fc__stat fc__stat--uv">
+          <dt>{{ 'forecast.uv' | t }}</dt>
+          <dd><span class="fc__num" data-fc-uv>–</span><span class="fc__level" data-fc-level>&nbsp;</span><span class="fc__scale" aria-hidden="true"><span data-fc-marker></span></span></dd>
+        </div>
+        <div class="fc__stat">
+          <dt>{{ 'forecast.humidity' | t }}</dt>
+          <dd><span class="fc__num" data-fc-hum>–</span><span class="fc__unit">%</span></dd>
+        </div>
+        <div class="fc__stat">
+          <dt>{{ 'forecast.temp' | t }}</dt>
+          <dd><span class="fc__num" data-fc-temp>–</span><span class="fc__unit">°C</span></dd>
+        </div>
+      </dl>
+
+      <div class="fc__tip">
+        <p class="fc__text" data-fc-tip aria-live="polite">{{ 'forecast.tip_default' | t }}</p>
+        <div class="fc__links">
+          {%- if section.settings.link1_label != blank and link1 != blank -%}<a class="btn btn--small" href="{{ link1 }}">{{ section.settings.link1_label }}</a>{%- endif -%}
+          {%- if section.settings.link2_label != blank and link2 != blank -%}<a class="btn btn--small btn--secondary" href="{{ link2 }}">{{ section.settings.link2_label }}</a>{%- endif -%}
+        </div>
+      </div>
+      <a class="fc__source" href="https://open-meteo.com/" rel="noopener" target="_blank">{{ 'forecast.source' | t }}</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var card = document.querySelector('[data-forecast]');
+    if (!card || !window.fetch) return;
+    var d = card.dataset, KEY = 'moana:forecast:' + d.lat + ',' + d.lon;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function $(s) { return card.querySelector(s); }
+    function countUp(el, to, decimals) {
+      if (reduce) { el.textContent = to.toFixed(decimals); return; }
+      var t0 = performance.now(), dur = 1100;
+      (function step(now) {
+        var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = (to * e).toFixed(decimals);
+        if (k < 1) requestAnimationFrame(step);
+      })(t0);
+    }
+    function paint(x) {
+      var uv = Math.max(0, x.uv), hum = Math.round(x.hum), temp = Math.round(x.temp);
+      var levels = d.levels.split('|');
+      var li = uv < 3 ? 0 : uv < 6 ? 1 : uv < 8 ? 2 : uv < 11 ? 3 : 4;
+      countUp($('[data-fc-uv]'), uv, uv < 10 ? 1 : 0);
+      countUp($('[data-fc-hum]'), hum, 0);
+      countUp($('[data-fc-temp]'), temp, 0);
+      $('[data-fc-level]').textContent = levels[li];
+      card.style.setProperty('--uv', Math.min(1, uv / 12).toFixed(3));
+      card.classList.add('is-live', 'uv-' + li);
+      var tip = li >= 3 ? d.tipTop.replace('[level]', levels[li].toLowerCase()) : li === 2 ? d.tipHigh : li === 1 ? d.tipModerate : d.tipLow;
+      if (hum >= 75) tip += ' ' + d.tipHumid.replace('[h]', hum);
+      else if (hum < 60) tip += ' ' + d.tipDry.replace('[h]', hum);
+      $('[data-fc-tip]').textContent = tip;
+    }
+    function load() {
+      try {
+        var c = JSON.parse(sessionStorage.getItem(KEY) || 'null');
+        if (c && Date.now() - c.at < 30 * 60 * 1000) return paint(c);
+      } catch (e) {}
+      var host = d.key ? 'https://customer-api.open-meteo.com' : 'https://api.open-meteo.com';
+      var url = host + '/v1/forecast?latitude=' + encodeURIComponent(d.lat) + '&longitude=' + encodeURIComponent(d.lon) +
+        '&current=temperature_2m,relative_humidity_2m&daily=uv_index_max&timezone=Indian%2FMauritius&forecast_days=1' +
+        (d.key ? '&apikey=' + encodeURIComponent(d.key) : '');
+      fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (j) {
+        var x = { uv: j.daily.uv_index_max[0], hum: j.current.relative_humidity_2m, temp: j.current.temperature_2m, at: Date.now() };
+        if (typeof x.uv !== 'number' || typeof x.hum !== 'number') throw new Error('shape');
+        try { sessionStorage.setItem(KEY, JSON.stringify(x)); } catch (e) {}
+        paint(x);
+      }).catch(function () { /* keep the default tip */ });
+    }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: '300px 0px' });
+      io.observe(card);
+    } else { load(); }
+  })();
+</script>
+
+{% stylesheet %}
+  .fc { background: linear-gradient(180deg, var(--c-white), #f3f5ec 55%, var(--c-white)); }
+  .fc__card { position: relative; display: grid; gap: var(--s-5); padding: clamp(1.25rem, .8rem + 2vw, 2.5rem); }
+  .fc__head { display: grid; gap: var(--s-1); }
+  .fc__label { display: inline-flex; align-items: center; gap: .5rem; color: var(--c-forest); }
+  .fc__label svg { width: 18px; height: 18px; }
+  .fc__place { font: var(--type-small); color: var(--ink-soft); }
+  .fc__stats { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: var(--s-4); }
+  .fc__stat { display: grid; align-content: start; gap: var(--s-2); }
+  .fc__stat dt { font: var(--type-label); letter-spacing: var(--ls-label); text-transform: uppercase; color: var(--ink-soft); }
+  .fc__stat dd { display: flex; align-items: baseline; flex-wrap: wrap; gap: .35rem; margin: 0; }
+  .fc__num { font: var(--type-numeral); letter-spacing: var(--ls-display); font-variant-numeric: lining-nums tabular-nums; min-width: 1.6ch; }
+  .fc__unit { font: var(--w-light) var(--fs-lg)/1 var(--f-body); color: var(--ink-soft); }
+  .fc__level { flex-basis: 100%; font: var(--type-ui); color: var(--c-forest); min-height: 1.3em; }
+  .fc__scale { position: relative; flex-basis: 100%; height: 4px; max-width: 12rem; background: linear-gradient(90deg, #d1d9be, #abb086 40%, #c7c2ab 60%, #a35f3d 85%, #8f2d24); }
+  .fc__scale span { position: absolute; top: 50%; left: calc(var(--uv, 0) * 100%); width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--c-white); border: 2px solid var(--c-night); opacity: 0; transition: left 1100ms var(--ease-out), opacity var(--t) var(--ease); }
+  .fc__card.is-live .fc__scale span { opacity: 1; }
+  .fc__tip { display: grid; gap: var(--s-4); }
+  .fc__text { font: var(--type-lead); max-width: 40rem; text-wrap: pretty; min-height: 3.2em; }
+  .fc__links { display: flex; flex-wrap: wrap; gap: var(--s-2); }
+  .fc__source { position: absolute; right: var(--s-4); bottom: 2px; display: inline-block; padding-block: 6px; font-size: var(--fs-2xs); line-height: 1.2; color: var(--ink-soft); }
+  .fc__source:hover { color: var(--ink); }
+  @media (max-width: 749px) {
+    .fc__stats { grid-template-columns: 1fr 1fr 1fr; gap: var(--s-3); }
+    .fc__num { font-size: var(--fs-2xl); }
+    .fc__card { padding-bottom: var(--s-6); }
+  }
+  @media (min-width: 990px) {
+    .fc__card { grid-template-columns: minmax(0, .8fr) minmax(0, 1.25fr) minmax(0, 1.2fr); align-items: center; gap: clamp(2rem, 4vw, 4rem); }
+  }
+  @media (prefers-reduced-motion: reduce) { .fc__scale span { transition: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Island skin forecast",
+  "settings": [
+    { "type": "paragraph", "content": "Today's peak UV, humidity and temperature for one place, with a skincare tip. Data from Open-Meteo: their free tier is for non-commercial use, so add a commercial API key for the live shop." },
+    { "type": "text", "id": "place", "label": "Place name", "default": "Port Louis" },
+    { "type": "text", "id": "lat", "label": "Latitude", "default": "-20.16" },
+    { "type": "text", "id": "lon", "label": "Longitude", "default": "57.50" },
+    { "type": "text", "id": "api_key", "label": "Open-Meteo API key (commercial plan)", "info": "Leave empty to use the free, non-commercial service." },
+    { "type": "text", "id": "link1_label", "label": "First button", "default": "Shop sunscreen" },
+    { "type": "url", "id": "link1_url", "label": "First button link", "info": "Defaults to the Sunscreen collection." },
+    { "type": "text", "id": "link2_label", "label": "Second button", "default": "Light moisturisers" },
+    { "type": "url", "id": "link2_url", "label": "Second button link", "info": "Defaults to the Moisturisers collection." }
+  ],
+  "presets": [{ "name": "Island skin forecast" }]
+}
+{% endschema %}
