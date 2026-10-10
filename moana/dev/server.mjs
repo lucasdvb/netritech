@@ -95,6 +95,8 @@ async function sectionHTML(id, g) {
   const key = id.split('__').pop();
   const tplName = g.template.toString();
   const t = readJSON(`templates/${tplName}.json`);
+  // a section file asked for by name (Section Rendering API: ?section_id=routine-finder) renders with its defaults
+  if (!t.sections[key] && fs.existsSync(path.join(THEME, 'sections', `${id}.liquid`))) return renderSection(engine, id, { type: id, settings: {} }, g, '');
   return renderSection(engine, key, t.sections[key], g);
 }
 
