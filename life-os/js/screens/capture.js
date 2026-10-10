@@ -7,10 +7,12 @@ import * as F from '../domain/fitness.js';
 import { today } from '../domain/dates.js';
 import { trainingCall } from '../domain/day-plan.js';
 import { parse, describe, dayWord, suggest } from '../domain/capture.js';
-import { html } from '../ui/dom.js';
+import { html, cx } from '../ui/dom.js';
 import { icon, hasIcon } from '../ui/icons.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
+import * as usage from '../ui/usage.js';
+import { canListen, listen } from '../ui/speech.js';
 import { weightUnit, lengthUnit } from '../ui/format.js';
 
 const sheets = () => import('./sheets.js');
@@ -83,13 +85,14 @@ function preview(r, ctx) {
   </div>`;
 }
 
-export function openCapture(initial = '') {
+/** The capture sheet. With { listen: true } it starts listening straight away. */
+export function openCapture(initial = '', { listen: speak = false } = {}) {
   const active = F.activeWorkout?.();
   // Fresh numbers each time it opens (a weight logged a minute ago is the new "last weight").
   const ctx = context();
-  app.sheet({
+  const opened = app.sheet({
     title: 'Log something',
-    ui: { text: initial },
+    ui: { text: initial, listening: false, heard: '' },
     render: (s) => {
       const text = s.ui.text;
       const r = text.trim() ? parse(text, ctx) : null;
@@ -98,7 +101,10 @@ export function openCapture(initial = '') {
         <form id="cap-form" class="cap-form" data-submit="save" autocomplete="off">
           <span class="cap-field">${icon('plus', { size: 20 })}
             <input class="cap-input" name="q" value="${text}" data-input="q" placeholder="Log anything…" aria-label="Log anything: type what you did or need to do"
-              autocapitalize="sentences" autocorrect="on" spellcheck="true" enterkeyhint="done" autofocus aria-describedby="cap-live"></span>
+              autocapitalize="sentences" autocorrect="on" spellcheck="true" enterkeyhint="done" ${speak ? '' : 'autofocus'} aria-describedby="cap-live">
+            ${canListen() ? html`<button type="button" class="${cx('icon-btn icon-btn--sm cap-mic', s.ui.listening && 'is-on')}" data-action="listen" aria-pressed="${s.ui.listening}" aria-label="${s.ui.listening ? 'Stop listening' : 'Speak instead of typing'}">${icon('mic', { size: 18 })}</button>` : ''}</span>
+          ${s.ui.listening ? html`<p class="cap-listening" data-key="cap-listening" role="status">${icon('mic', { size: 14 })} Listening… say it the way you’d type it.</p>` : ''}
+          ${s.ui.heard && !s.ui.listening ? html`<p class="cap-listening" data-key="cap-heard" role="status">${s.ui.heard}</p>` : ''}
         </form>
         <div id="cap-live" class="cap-live" aria-live="polite">${r ? preview(r, ctx) : html`<p class="cap-hint" data-key="cap-hint">Try “water 500”, “slept 7h”, “read 20 pages” or “call mum Friday”. Your keyboard’s microphone works here too.</p>`}</div>
         ${sug.length ? html`<div class="cap-sugs" data-key="cap-sugs" aria-label="Suggestions">${sug.map((x) => html`<button type="button" class="chip" data-action="suggest" data-text="${x}">${x}</button>`)}</div>` : ''}
@@ -139,6 +145,34 @@ export function openCapture(initial = '') {
       },
       run: async ({ data, sheet }) => { app.closeSheet(sheet); await ACTIONS.find((a) => a.id === data.id)?.run(); },
       search: ({ sheet }) => { app.closeSheet(sheet); app.search(); },
+      listen: ({ sheet }) => toggleListening(sheet),
+    },
+    onClose: () => opened?.ui.stop?.(),
+  });
+  if (speak && canListen() && opened) toggleListening(opened);
+}
+
+/** Start or stop listening; the words go into the field as they're heard. */
+function toggleListening(sheet) {
+  if (sheet.ui.listening) { sheet.ui.stop?.(); return; }
+  sheet.ui.listening = true;
+  sheet.ui.heard = '';
+  sheet.refresh();
+  sheet.ui.stop = listen({
+    onText: (t) => {
+      sheet.ui.text = t;
+      // The field is yours while you type, so what's heard is written into it directly.
+      const input = sheet.el.querySelector('.cap-input');
+      if (input) input.value = t;
+      sheet.refresh();
+    },
+    onEnd: (why) => {
+      sheet.ui.listening = false;
+      sheet.ui.stop = null;
+      if (why === 'not-allowed' || why === 'service-not-allowed') sheet.ui.heard = 'Microphone not allowed. Use the keyboard’s microphone, or allow it in Settings › Safari.';
+      else if (why !== 'done' && why !== 'aborted' && !sheet.ui.text.trim()) sheet.ui.heard = 'Didn’t catch that. Tap the microphone to try again.';
+      sheet.refresh();
+      sheet.el.querySelector('.cap-input')?.focus();
     },
   });
 }
@@ -149,6 +183,9 @@ async function commit(items, sheet, ctx) {
   sheet.ui.saving = true;
   const { save } = await import('../domain/capture-save.js');
   const res = save(items, ctx);
+  // What you log teaches Today's quick row (this device only).
+  const Q = { water: 'water', food: 'food', steps: 'steps', weight: 'weight', workout: 'workout', note: 'journal', reading: 'reading', meditation: 'meditation', task: 'task' };
+  for (const i of items) if (Q[i.kind]) usage.track(`q:${Q[i.kind]}`);
   remember(sheet.ui.text, items);
   app.closeSheet(sheet);
   if (res.saved) {

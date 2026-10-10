@@ -26,6 +26,8 @@ export function openYou() {
           <li>${row({ ic: 'refresh-cw', title: 'Sync', sub: syncOn() ? 'On: your devices stay the same' : 'Your Life OS on every device', action: 'sync' })}</li>
           <li>${row({ ic: 'database', title: 'Data & backup', sub: 'Export, import, safety copies', action: 'data' })}</li>
           <li>${row({ ic: 'shield-check', title: 'Privacy', sub: 'What is stored, and where', action: 'privacy' })}</li>
+          <li>${row({ ic: 'history', title: 'Recent changes', sub: 'Undo anything you changed this session', action: 'recent' })}</li>
+          <li>${row({ ic: 'chart-column', title: 'Your usage', sub: 'What you use, and what you haven’t opened in 30 days', action: 'usage' })}</li>
           ${!isInstalled() ? html`<li>${row({ ic: 'smartphone', title: 'Add to Home Screen', sub: 'Full screen, works offline', action: 'install' })}</li>` : ''}
         </ul>
         <p class="foot-note">${APP_NAME} · local-first · press ? for keyboard shortcuts</p>
@@ -36,6 +38,8 @@ export function openYou() {
       data: go('you/data'),
       privacy: go('you/privacy'),
       sync: go('you/sync'),
+      recent: async ({ sheet }) => { app.closeSheet(sheet); (await import('./recent.js')).openRecent(); },
+      usage: async ({ sheet }) => { app.closeSheet(sheet); (await import('./recent.js')).openUsage(); },
       calendar: async ({ sheet }) => { app.closeSheet(sheet); (await import('./calendar-file.js')).openCalendarFile(); },
       install: async ({ sheet }) => {
         const m = await import('../ui/install.js');

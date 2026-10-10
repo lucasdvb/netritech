@@ -1,6 +1,6 @@
 /* Life OS service worker: precache the whole app, serve it offline, update on request. */
 // BEGIN GENERATED (node tools/build-sw.mjs)
-const VERSION = 'e5395d169e';
+const VERSION = '24d1d385a5';
 const ASSETS = [
   "./",
   "./index.html",
@@ -143,6 +143,7 @@ const ASSETS = [
   "./js/screens/project.js",
   "./js/screens/projects.js",
   "./js/screens/push-sheet.js",
+  "./js/screens/recent.js",
   "./js/screens/records.js",
   "./js/screens/reflect.js",
   "./js/screens/relationships.js",
@@ -165,8 +166,10 @@ const ASSETS = [
   "./js/screens/tasks.js",
   "./js/screens/template.js",
   "./js/screens/tidy.js",
+  "./js/screens/today/actions.js",
   "./js/screens/today/blocks.js",
   "./js/screens/today/day-picker.js",
+  "./js/screens/today/day-strip.js",
   "./js/screens/today/edit.js",
   "./js/screens/today/limit-row.js",
   "./js/screens/today/modes.js",
@@ -214,12 +217,14 @@ const ASSETS = [
   "./js/ui/save-later.js",
   "./js/ui/sheet.js",
   "./js/ui/sound.js",
+  "./js/ui/speech.js",
   "./js/ui/swipe.js",
   "./js/ui/tips.js",
   "./js/ui/toast.js",
   "./js/ui/transitions.js",
   "./js/ui/undo.js",
   "./js/ui/updates.js",
+  "./js/ui/usage.js",
   "./assets/fonts/Inter-latin-400.woff2",
   "./assets/fonts/Inter-latin-500.woff2",
   "./assets/fonts/Inter-latin-600.woff2",

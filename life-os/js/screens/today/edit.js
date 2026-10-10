@@ -1,12 +1,12 @@
-// Edit Today (U7): drag blocks into order and hide them, and choose and order the pinned
-// actions. Saves as you go.
+// Edit Today (U7): drag blocks into order and hide them, let the quick row learn from what you log
+// or choose its actions yourself, and fold sections you don't use. Saves as you go.
 import * as store from '../../data/store.js';
 import { html, cx } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
 import { toggle } from '../../ui/controls.js';
 import { app } from '../../ui/app-api.js';
 import * as hap from '../../ui/haptics.js';
-import { BLOCKS, PINS, DEFAULT_PINS, MAX_PINS, layoutOf, pinsOf } from './blocks.js';
+import { BLOCKS, PINS, DEFAULT_PINS, MAX_PINS, layoutOf, pinsOf, learning } from './blocks.js';
 
 const saveLayout = (order, hidden) => store.setSettings({ todayLayout: { order, hidden } });
 
@@ -28,14 +28,20 @@ export function openEditToday() {
             ${toggle(shown, { action: 'et-show', data: { id }, label: `Show ${b.label}` })}
           </li>`;
         })}</ol>
-        <div class="field"><span class="field-label">Pinned actions <small class="tnum">${pins.length} of ${MAX_PINS}</small></span>
+        <div class="set-row set-row--plain"><span class="set-text"><span class="set-label">Fold sections I don’t use</span>
+          <span class="set-hint">A section you haven’t touched in two weeks shrinks to one line. Tap it to open.</span></span>
+          ${toggle(store.settings().foldUnused !== false, { action: 'et-fold', label: 'Fold sections I don’t use' })}</div>
+        <div class="set-row set-row--plain"><span class="set-text"><span class="set-label">Quick row learns from me</span>
+          <span class="set-hint">Shows the four things you log most around this hour. Off: the actions you choose below.</span></span>
+          ${toggle(learning(), { action: 'et-learn', label: 'Quick row learns from me' })}</div>
+        ${learning() ? '' : html`<div class="field"><span class="field-label">Quick row <small class="tnum">${pins.length} of ${MAX_PINS}</small></span>
           ${pins.length ? html`<ol class="et-list" data-reorder="et-pin-move">${pins.map((k) => html`<li class="et-row" data-key="pin-${k}">
             <button type="button" class="drag-handle" data-drag aria-label="Move ${PINS[k].label}" aria-describedby="drag-hint">${icon('grip-vertical', { size: 16 })}</button>
             <span class="et-ic">${icon(PINS[k].ic, { size: 16 })}</span><span class="et-label">${PINS[k].label}</span>
             <button type="button" class="icon-btn icon-btn--sm" data-action="et-pin" data-k="${k}" aria-label="Unpin ${PINS[k].label}">${icon('x', { size: 16 })}</button>
           </li>`)}</ol>` : ''}
           ${free.length && pins.length < MAX_PINS ? html`<div class="chips et-add">${free.map((k) => html`<button type="button" class="chip" data-action="et-pin" data-k="${k}">${icon('plus', { size: 15 })}<span>${PINS[k].label}</span></button>`)}</div>` : ''}
-          <span class="field-hint">One tap from Today, in this order. Up to ${MAX_PINS}.</span></div>
+          <span class="field-hint">One tap from Today, in this order. Up to ${MAX_PINS}.</span></div>`}
         <button type="button" class="link-btn" data-action="et-reset">Back to the default layout</button>
       </div>`;
     },
@@ -56,7 +62,9 @@ export function openEditToday() {
         hap.tap();
       },
       'et-pin-move': ({ from, to }) => store.setSettings({ pinned: moved(pinsOf(), from, to) }),
-      'et-reset': () => { store.setSettings({ todayLayout: null, pinned: DEFAULT_PINS }); hap.tap(); },
+      'et-reset': () => { store.setSettings({ todayLayout: null, pinned: DEFAULT_PINS, quickLearn: true, foldUnused: true }); hap.tap(); },
+      'et-learn': () => { store.setSettings({ quickLearn: !learning() }); hap.tap(); },
+      'et-fold': () => { store.setSettings({ foldUnused: store.settings().foldUnused === false }); hap.tap(); },
     },
   });
 }

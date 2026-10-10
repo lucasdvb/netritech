@@ -16,7 +16,7 @@ feather lightbulb focus hourglass power repeat person-standing bike shirt utensi
 glass-water scan-eye book-heart baby armchair layers orbit circle-dot gauge star move file-json file-spreadsheet
 hard-drive-download database history list sliders-horizontal palette alarm-clock flower-2 sprout heart-pulse
 thermometer log-out sofa scroll-text tally-5 rotate-ccw ellipsis-vertical hand ear list-todo map calendar-check
-copy pause image-plus cake calendar-heart receipt piggy-bank list-plus`.split(/\s+/).filter(Boolean);
+copy pause image-plus cake calendar-heart receipt piggy-bank list-plus mic link hash at-sign`.split(/\s+/).filter(Boolean);
 
 const dir = process.argv[2];
 if (!dir) throw new Error('Pass the lucide-static icons directory');
@@ -33,7 +33,7 @@ for (const name of NAMES) {
 }
 
 // The icons Today needs at first render go in icons.js; the rest load right after, from icons-more.js.
-const CORE = new Set(`bed calendar calendar-check chart-spline check chevron-down chevron-right droplet ellipsis footprints grip-vertical map moon notebook-pen orbit plus repeat sliders-horizontal star sun sunrise user-round utensils circle x chevron-left chevron-up minus activity hand-heart book-heart person-standing power heart house eye moon-star sparkles circle-alert list-todo trash-2 search beef dumbbell scale`.split(' '));
+const CORE = new Set(`bed calendar calendar-check chart-spline check chevron-down chevron-right droplet ellipsis footprints grip-vertical map moon notebook-pen orbit plus repeat sliders-horizontal star sun sunrise user-round utensils circle x chevron-left chevron-up minus activity hand-heart book-heart person-standing power heart house eye moon-star sparkles circle-alert list-todo trash-2 search beef dumbbell scale mic`.split(' '));
 const pick = (keep) => Object.fromEntries(Object.entries(out).filter(([n]) => CORE.has(n) === keep));
 const fmt = (o) => JSON.stringify(o, null, 0).replace(/","/g, '",\n  "').replace(/^\{/, '{\n  ').replace(/\}$/, '\n}');
 

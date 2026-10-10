@@ -10,6 +10,8 @@ import { html, cx, dataAttrs } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
 import { num, litres, weight } from '../../ui/format.js';
 import { habitGroup } from './rows.js';
+import { phase } from '../../domain/day-plan.js';
+import * as usage from '../../ui/usage.js';
 
 const WORDS = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve'];
 /** "Eight": the number of minimum-day essentials, in words. */
@@ -43,7 +45,7 @@ export function threeBlock(date, mode, ui) {
   </section>`;
 }
 
-/* ---------- pinned actions (up to six, chosen and ordered in Edit Today) ---------- */
+/* ---------- the quick row: what you log most at this hour, or the actions you chose ---------- */
 export const PINS = {
   water: { ic: 'droplet', label: 'Water', quick: 'adds 500 ml', act: 'add-water', data: { ml: 500 }, value: (d) => litres(M.waterMl(d)) },
   food: { ic: 'utensils', label: 'Protein', act: 'log-food', value: (d) => `${num(M.nutrition(d).protein)} g` },
@@ -62,13 +64,32 @@ export const PINS = {
 export const DEFAULT_PINS = ['water', 'food', 'steps'];
 export const MAX_PINS = 6;
 export const pinsOf = () => (store.settings().pinned || DEFAULT_PINS).filter((k) => PINS[k]).slice(0, MAX_PINS);
+/** Learning is on unless you turned it off (or chose your own actions before it existed). */
+export const learning = () => store.settings().quickLearn ?? (store.settings().pinned == null);
+// Before there's anything to learn from, a sensible row for each part of the day.
+const STARTERS = {
+  morning: ['checkin', 'weight', 'water', 'workout'],
+  work: ['water', 'food', 'task', 'focus'],
+  evening: ['food', 'journal', 'water', 'reading'],
+  night: ['journal', 'water', 'task', 'reading'],
+};
+const LEARNED = 4;
+/** The four things you log most around this hour (yours first, then the part of the day's starters). */
+export function learnedPins(now = new Date()) {
+  const h = now.getHours();
+  const yours = Object.keys(PINS).map((k) => [k, usage.aroundHour(`q:${k}`, h)]).filter(([, n]) => n > 0)
+    .sort((a, b) => b[1] - a[1]).map(([k]) => k);
+  return [...new Set([...yours, ...STARTERS[phase(now)]])].slice(0, LEARNED);
+}
 
 export function pinnedBlock(date) {
-  const pins = pinsOf();
+  const pins = learning() ? learnedPins() : pinsOf();
   if (!pins.length) return '';
-  return html`<section class="pins pins--${pins.length === 4 ? 2 : Math.min(3, pins.length)}" data-key="pinned" aria-label="Pinned actions">${pins.map((k) => {
+  // Up to four sit in one compact row; five or six keep the larger tiles.
+  const layout = pins.length <= 4 ? `quick pins--q${pins.length}` : '3';
+  return html`<section class="pins pins--${layout}" data-key="pinned" aria-label="Quick row">${pins.map((k) => {
     const p = PINS[k];
-    return html`<button type="button" class="pin" data-action="${p.act}"${dataAttrs(p.data)} data-key="pin-${k}">
+    return html`<button type="button" class="pin" data-action="${p.act}"${dataAttrs(p.data)} data-q="${k}" data-key="pin-${k}">
       <span class="pin-top"><span class="pin-ic">${icon(p.ic, { size: 18 })}</span>${p.quick ? html`<span class="pin-quick" aria-hidden="true">${icon('plus', { size: 14 })}</span>` : ''}</span><span class="pin-label">${p.label}</span><span class="pin-val tnum">${p.value(date)}</span>${p.quick ? html`<span class="sr-only">, tap ${p.quick}</span>` : ''}</button>`;
   })}</section>`;
 }
@@ -121,18 +142,22 @@ export const lifeMode = (date) => {
 
 /* ---------- your layout (Edit Today) ---------- */
 export const BLOCKS = [
+  { id: 'pinned', label: 'Quick row', column: 'now' },
+  { id: 'day', label: 'Your day', column: 'now' },
   { id: 'routines', label: 'Routines', column: 'now' },
   { id: 'three', label: 'Habits in focus', column: 'now' },
   { id: 'moodboard', label: 'Moodboard', column: 'now' },
   { id: 'priorities', label: 'Priorities and tasks', column: 'day' },
   { id: 'upcoming', label: 'Coming up', column: 'day' },
-  { id: 'pinned', label: 'Pinned actions', column: 'day' },
   { id: 'more', label: 'Other habits', column: 'day' },
 ];
-/** Block order and hidden blocks, with any block added since you last edited Today at the end. */
+// Sections that never fold away by themselves: the quick row and your day.
+export const NEVER_FOLD = ['pinned', 'day'];
+/** Block order and hidden blocks. A block added since you last edited Today takes its usual place. */
 export function layoutOf() {
   const l = store.settings().todayLayout || {};
   const ids = BLOCKS.map((b) => b.id);
-  const order = [...(l.order || []).filter((id) => ids.includes(id)), ...ids.filter((id) => !(l.order || []).includes(id))];
+  const order = (l.order || []).filter((id) => ids.includes(id));
+  ids.forEach((id, i) => { if (!order.includes(id)) order.splice(Math.min(i, order.length), 0, id); });
   return { order, hidden: (l.hidden || []).filter((id) => ids.includes(id)) };
 }

@@ -1469,6 +1469,19 @@ Partway through, the owner made automatic sync between devices a must, so it was
   - A list arriving from a backup or another device is read defensively: bad times read as noon, missing habits drop out.
 - **Tested:** `tests/unit/workout-notes.test.mjs`, `tests/unit/mobility.test.mjs` and `tests/workout-notes.mjs`, `tests/unit/day-blocks.test.mjs` and `tests/day-plan.mjs` (the planner through the interface: change, Undo, carry the morning, drag, add, remove, reload), which covers typing to log, same as last time, warm-ups, add and remove set, the clock across gym mode, leaving, a manual pause and the finish, and the brain dump end to end in light and dark.
 
+**The cockpit, phase 1 of the owner's simplification plan (October 2026).** The owner chose 47 changes in six phases; phases 1–3 are being built first.
+- **Usage meter** (`ui/usage.js`). Counts screens (`r:`), actions (`a:`), Today sections (`b:`) and quick-row logs (`q:`, with an hour-of-day histogram) in `localStorage`, on this device only: never synced, never in backups. It teaches the quick row and folds unused sections; You › Your usage shows it.
+- **Today as the cockpit.**
+  - A **Log anything** field with a microphone (`ui/speech.js`, the browser's own recognition; hidden where there's none).
+  - The Now card, then the **quick row** (the old pinned actions): the four actions logged most within an hour of now, or the part of the day's starters until there's data (Edit Today turns learning off).
+  - **Your day** (`screens/today/day-strip.js`, loaded after the first frame): the day blocks with a line at now. The block you're in is the latest-started one that isn't done (blocks can overlap); it shows its one action. Blocks behind you that are done fold away.
+  - New blocks take their default place in a saved layout instead of going to the end.
+- **Folding.** After 14 days of counting, a Today section with no taps in 14 days shows as one line. Never the quick row or Your day.
+- **After midnight**, before `dayEndsAt`, Today says "Still Friday · your day ends at 03:00".
+- **Recent changes.** Every toast with Undo is kept for the session (`ui/toast.js`), so You › Recent changes can undo it later. A change that commits for good when its toast leaves (`onExpire`) isn't kept.
+- **Speed.** Today's handlers (`screens/today/actions.js`) and the sheet code load right after the first frame; a tap in the first instant waits for them. First-screen JavaScript went from 222 KB with the new features back to 208 KB, still 8 KB over the 200 KB target (limit 240 KB). The cold-start budget in `tests/hardening.mjs` enforces speed: Today interactive at a 536 ms median with the CPU 4× slower and a year of data (budget 600 ms; 564 ms before this change).
+- **Tested:** `tests/cockpit.mjs`. It covers the learned quick row, water in one tap, a weigh-in in two, the strip's current block and its action, folding, the after-midnight line, speaking then saving, and undoing from Recent changes.
+
 **Handover audit (October 2026).** A full audit before handover: security, calculations, persistence and every form, then crawlers over every screen and sheet at seven widths. What was found, fixed and proven, and what is still open, is in [`handover-audit.md`](handover-audit.md).
 
 **Left out on purpose:** points and pets, money stakes, "21 days" countdowns, willpower budgets, more default notifications, a barcode food database, a timeline planner. Each is either unsupported by the evidence or adds weight without value.
