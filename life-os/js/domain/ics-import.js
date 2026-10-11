@@ -6,7 +6,8 @@
 //
 // The reader covers what calendars actually send: folded lines, all-day and timed events, times in
 // UTC, floating or in a named time zone, DURATION, RRULE (daily, weekly, monthly, yearly with
-// INTERVAL, COUNT, UNTIL and BYDAY), EXDATE, and moved occurrences (RECURRENCE-ID).
+// INTERVAL, COUNT, UNTIL, BYDAY with ordinals like "first Monday", BYMONTHDAY and BYMONTH), EXDATE,
+// moved and cancelled occurrences (RECURRENCE-ID), all stepped through in the event's own time zone.
 import * as store from '../data/store.js';
 import { today, addDays, toISO, fmtHM } from './dates.js';
 
@@ -47,15 +48,46 @@ function zoned(y, mo, d, h, mi, tz) {
   }
 }
 
-/** A DTSTART-like value → { date: Date, allDay }. */
+// Outlook names zones the Windows way; the common ones, as the IANA zones Intl knows.
+const WINDOWS_TZ = {
+  'GMT Standard Time': 'Europe/London', 'W. Europe Standard Time': 'Europe/Berlin', 'Romance Standard Time': 'Europe/Paris',
+  'Central Europe Standard Time': 'Europe/Budapest', 'Central European Standard Time': 'Europe/Warsaw', 'E. Europe Standard Time': 'Europe/Bucharest',
+  'GTB Standard Time': 'Europe/Athens', 'FLE Standard Time': 'Europe/Helsinki', 'Russian Standard Time': 'Europe/Moscow',
+  'Eastern Standard Time': 'America/New_York', 'Central Standard Time': 'America/Chicago', 'Mountain Standard Time': 'America/Denver',
+  'Pacific Standard Time': 'America/Los_Angeles', 'Atlantic Standard Time': 'America/Halifax', 'E. South America Standard Time': 'America/Sao_Paulo',
+  'Arabian Standard Time': 'Asia/Dubai', 'Mauritius Standard Time': 'Indian/Mauritius', 'South Africa Standard Time': 'Africa/Johannesburg',
+  'E. Africa Standard Time': 'Africa/Nairobi', 'Egypt Standard Time': 'Africa/Cairo', 'India Standard Time': 'Asia/Kolkata',
+  'Singapore Standard Time': 'Asia/Singapore', 'China Standard Time': 'Asia/Shanghai', 'Tokyo Standard Time': 'Asia/Tokyo',
+  'AUS Eastern Standard Time': 'Australia/Sydney', 'New Zealand Standard Time': 'Pacific/Auckland', UTC: 'UTC', 'Coordinated Universal Time': 'UTC',
+};
+/** A TZID as Intl knows it: IANA as is, Windows names mapped, prefixed paths ("/…/Europe/London") trimmed. */
+function zoneOf(tzid) {
+  const t = String(tzid || '').trim();
+  if (!t) return null;
+  if (WINDOWS_TZ[t]) return WINDOWS_TZ[t];
+  const m = /([A-Za-z]+\/[A-Za-z_+-]+(?:\/[A-Za-z_+-]+)?)$/.exec(t);
+  return m ? m[1] : t;
+}
+
+/** Wall-clock parts in a zone ('Z' for UTC, a zone name, or null for the device's own) → a Date. */
+function toDate({ y, mo, d, h = 0, mi = 0 }, tz) {
+  if (tz === 'Z') return new Date(Date.UTC(y, mo - 1, d, h, mi));
+  if (tz) return zoned(y, mo, d, h, mi, tz);
+  return new Date(y, mo - 1, d, h, mi);
+}
+
+/** A DTSTART-like value → { date: Date, allDay, wall: { y, mo, d, h, mi }, tz }. */
 function when(value, params) {
   const m = /^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?(Z)?)?$/.exec(value.trim());
   if (!m) return null;
   const [, y, mo, d, h, mi, , z] = m;
-  if (h == null || params.VALUE === 'DATE') return { date: new Date(+y, +mo - 1, +d), allDay: true };
-  if (z) return { date: new Date(Date.UTC(+y, +mo - 1, +d, +h, +mi)), allDay: false };
-  if (params.TZID) return { date: zoned(+y, +mo, +d, +h, +mi, params.TZID), allDay: false };
-  return { date: new Date(+y, +mo - 1, +d, +h, +mi), allDay: false };
+  if (h == null || params.VALUE === 'DATE') {
+    const wall = { y: +y, mo: +mo, d: +d, h: 0, mi: 0 };
+    return { date: toDate(wall, null), allDay: true, wall, tz: null };
+  }
+  const wall = { y: +y, mo: +mo, d: +d, h: +h, mi: +mi };
+  const tz = z ? 'Z' : params.TZID ? zoneOf(params.TZID) : null;
+  return { date: toDate(wall, tz), allDay: false, wall, tz };
 }
 
 function duration(v) {
@@ -66,24 +98,35 @@ function duration(v) {
   return sign === '-' ? -ms : ms;
 }
 
-/** The events in a calendar's text: [{ uid, title, start: Date, end: Date, allDay, rrule, exdates, recurrenceId }]. */
+/**
+ * The events in a calendar's text: [{ uid, title, start: Date, end: Date, allDay, wall, tz, rrule,
+ * exdates, recurrenceId, cancelled }]. Alarms and other blocks inside an event are skipped, so their
+ * SUMMARY or DURATION never overwrite the event's own. Cancelled moved occurrences are kept (they
+ * cancel the occurrence they stand for); other cancelled or free ("transparent") events are left out.
+ */
 export function parse(text) {
   const out = [];
   let ev = null;
+  let depth = 0;
   for (const l of lines(text)) {
-    if (l.name === 'BEGIN' && l.value === 'VEVENT') { ev = { exdates: [] }; continue; }
+    if (l.name === 'BEGIN' && l.value === 'VEVENT' && !ev) { ev = { exdates: [] }; depth = 0; continue; }
+    if (!ev) continue;
+    if (l.name === 'BEGIN') { depth++; continue; }
+    if (l.name === 'END' && depth > 0) { depth--; continue; }
     if (l.name === 'END' && l.value === 'VEVENT') {
-      if (ev?.start && ev.status !== 'CANCELLED' && ev.transp !== 'TRANSPARENT') {
+      const off = ev.status === 'CANCELLED' || ev.transp === 'TRANSPARENT';
+      if (ev.start && (!off || ev.recurrenceId != null)) {
         if (!ev.end) ev.end = new Date(ev.start.getTime() + (ev.dur ?? (ev.allDay ? 86400000 : 0)));
+        if (off) ev.cancelled = true;
         out.push(ev);
       }
       ev = null;
       continue;
     }
-    if (!ev) continue;
+    if (depth > 0) continue;
     if (l.name === 'UID') ev.uid = l.value.trim();
     else if (l.name === 'SUMMARY') ev.title = unescape(l.value).slice(0, 80);
-    else if (l.name === 'DTSTART') { const w = when(l.value, l.params); if (w) { ev.start = w.date; ev.allDay = w.allDay; } }
+    else if (l.name === 'DTSTART') { const w = when(l.value, l.params); if (w) { ev.start = w.date; ev.allDay = w.allDay; ev.wall = w.wall; ev.tz = w.tz; } }
     else if (l.name === 'DTEND') { const w = when(l.value, l.params); if (w) ev.end = w.date; }
     else if (l.name === 'DURATION') ev.dur = duration(l.value);
     else if (l.name === 'RRULE') ev.rrule = Object.fromEntries(l.value.split(';').map((p) => p.split('=')).map(([k, v]) => [k.toUpperCase(), v]));
@@ -95,7 +138,31 @@ export function parse(text) {
   return out;
 }
 
-const isoWeekday = (dt) => ((dt.getDay() + 6) % 7) + 1;
+/* Calendar days as plain numbers (days since 1970 in UTC), so stepping through dates never meets a
+   clock change; each occurrence becomes a real time only at the end, in the event's own zone. */
+const dayNum = (y, mo, d) => Math.floor(Date.UTC(y, mo - 1, d) / 86400000);
+const civil = (n) => { const t = new Date(n * 86400000); return { y: t.getUTCFullYear(), mo: t.getUTCMonth() + 1, d: t.getUTCDate() }; };
+const wdOf = (n) => ((new Date(n * 86400000).getUTCDay() + 6) % 7) + 1;
+const monthLen = (y, mo) => new Date(Date.UTC(y, mo, 0)).getUTCDate();
+const nums = (v) => (v ? String(v).split(',').map(Number).filter((x) => Number.isFinite(x) && x !== 0) : null);
+
+/** The days of a month that a BYDAY / BYMONTHDAY rule picks ("1MO", "-1FR", "MO", 15, -1). */
+function monthDays(y, mo, byday, bymonthday, fallbackDay) {
+  const len = monthLen(y, mo);
+  const first = dayNum(y, mo, 1);
+  let days = [];
+  if (bymonthday) days = bymonthday.map((x) => (x > 0 ? x : len + 1 + x)).filter((x) => x >= 1 && x <= len);
+  else if (byday) {
+    for (const { n, wd } of byday) {
+      const all = [];
+      for (let d = 1; d <= len; d++) if (wdOf(first + d - 1) === wd) all.push(d);
+      if (!n) days.push(...all);
+      else { const pick = n > 0 ? all[n - 1] : all[all.length + n]; if (pick) days.push(pick); }
+    }
+  } else if (fallbackDay <= len) days = [fallbackDay]; // the 31st in a short month is skipped, as calendars do
+  if (bymonthday && byday) days = days.filter((d) => byday.some((b) => b.wd === wdOf(first + d - 1)));
+  return [...new Set(days)].sort((a, b) => a - b).map((d) => first + d - 1);
+}
 
 /** The start times of an event's occurrences between two Dates. */
 function occurrences(ev, from, to) {
@@ -104,50 +171,63 @@ function occurrences(ev, from, to) {
   const freq = r.FREQ;
   const every = Math.max(1, Number(r.INTERVAL) || 1);
   const count = Number(r.COUNT) || Infinity;
-  const until = r.UNTIL ? when(r.UNTIL, {})?.date : null;
-  const byday = r.BYDAY ? r.BYDAY.split(',').map((x) => DAYS[x.slice(-2)]).filter(Boolean) : null;
+  // A date-only UNTIL includes that whole day.
+  const u = r.UNTIL ? when(r.UNTIL, {}) : null;
+  const until = u ? (u.allDay ? toDate({ ...u.wall, h: 23, mi: 59 }, ev.tz) : u.date) : null;
+  const byday = r.BYDAY ? r.BYDAY.split(',').map((x) => ({ n: Number(x.slice(0, -2)) || 0, wd: DAYS[x.slice(-2).toUpperCase()] })).filter((x) => x.wd) : null;
+  const bymonthday = nums(r.BYMONTHDAY);
+  const bymonth = nums(r.BYMONTH);
+  const w = ev.wall || { y: ev.start.getFullYear(), mo: ev.start.getMonth() + 1, d: ev.start.getDate(), h: ev.start.getHours(), mi: ev.start.getMinutes() };
+  const start = dayNum(w.y, w.mo, w.d);
   const len = ev.end - ev.start;
+  const at = (n) => toDate({ ...civil(n), h: w.h, mi: w.mi }, ev.allDay ? null : ev.tz);
   const out = [];
-  let n = 0;
-  const h = ev.start.getHours();
-  const mi = ev.start.getMinutes();
-  const at = (day) => new Date(day.getFullYear(), day.getMonth(), day.getDate(), h, mi);
-  const take = (t) => {
-    if (t < ev.start) return true;
-    if (until && t > until) return false;
-    if (++n > count) return false;
-    if (t.getTime() + len > from.getTime() && t < to && !ev.exdates.includes(t.getTime())) out.push(t);
-    return t < to;
+  let k = 0;
+  // Each period's candidate days, in order: a day for DAILY, a week, a month or a year.
+  const period = (i) => {
+    if (freq === 'DAILY') {
+      const n = start + i * every;
+      if (byday && !byday.some((b) => b.wd === wdOf(n))) return [];
+      if (bymonth && !bymonth.includes(civil(n).mo)) return [];
+      if (bymonthday && !monthDays(civil(n).y, civil(n).mo, null, bymonthday).includes(n)) return [];
+      return [n];
+    }
+    if (freq === 'WEEKLY') {
+      const monday = start - (wdOf(start) - 1) + i * 7 * every;
+      const wds = byday ? byday.map((b) => b.wd) : [wdOf(start)];
+      return [...new Set(wds)].sort((a, b) => a - b).map((wd) => monday + wd - 1).filter((n) => !bymonth || bymonth.includes(civil(n).mo));
+    }
+    if (freq === 'MONTHLY') {
+      const m0 = (w.y * 12 + (w.mo - 1)) + i * every;
+      const y = Math.floor(m0 / 12);
+      const mo = (m0 % 12) + 1;
+      if (bymonth && !bymonth.includes(mo)) return [];
+      return monthDays(y, mo, byday, bymonthday, w.d);
+    }
+    if (freq === 'YEARLY') {
+      const y = w.y + i * every;
+      return (bymonth || [w.mo]).flatMap((mo) => monthDays(y, mo, byday, bymonthday, byday || bymonthday ? null : w.d));
+    }
+    return null;
   };
-  if (freq === 'DAILY' || (freq === 'WEEKLY')) {
-    // Walk day by day from the first occurrence; weekly with BYDAY picks those weekdays in every n-th week.
-    const startDay = new Date(ev.start.getFullYear(), ev.start.getMonth(), ev.start.getDate());
-    const weekStart = new Date(startDay);
-    weekStart.setDate(weekStart.getDate() - (isoWeekday(startDay) - 1));
-    const days = byday || [isoWeekday(startDay)];
-    // Without a COUNT nothing before the window matters: start a little before it.
-    let skip = count === Infinity ? Math.max(0, Math.floor((from - startDay) / 86400000) - 8) : 0;
-    if (freq === 'DAILY') skip -= skip % every;
-    for (let i = skip; i < skip + 3700; i++) {
-      const day = new Date(startDay);
-      day.setDate(day.getDate() + i);
-      if (freq === 'DAILY') {
-        if (i % every) continue;
-      } else {
-        const weeks = Math.floor((day - weekStart) / (7 * 86400000) + 0.01);
-        if (weeks % every || !days.includes(isoWeekday(day))) continue;
-      }
-      if (!take(at(day))) break;
-      if (out.length > 400) break;
+  if (!['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY'].includes(freq)) return ev.start < to && ev.end > from ? [ev.start] : [];
+  // Without a COUNT nothing before the window matters: jump to a little before it.
+  const fromDay = Math.floor(from.getTime() / 86400000) - 2;
+  const per = { DAILY: every, WEEKLY: 7 * every, MONTHLY: 31 * every, YEARLY: 366 * every }[freq]; // never more periods than there are
+  const first = count === Infinity ? Math.max(0, Math.floor((fromDay - start) / per) - 1) : 0;
+  for (let i = first; i < first + 40000; i++) {
+    const days = period(i);
+    let past = false;
+    for (const n of days) {
+      if (n < start) continue;
+      const t = at(n);
+      if (until && t > until) { past = true; break; }
+      if (++k > count) { past = true; break; }
+      if (t >= to) { past = true; break; }
+      if (t.getTime() + len > from.getTime() && !ev.exdates.includes(t.getTime())) out.push(t);
     }
-  } else if (freq === 'MONTHLY' || freq === 'YEARLY') {
-    for (let i = 0; i < 400; i++) {
-      const t = new Date(ev.start);
-      if (freq === 'MONTHLY') t.setMonth(t.getMonth() + i * every); else t.setFullYear(t.getFullYear() + i * every);
-      if (t.getDate() !== ev.start.getDate()) continue; // the 31st in a short month: skipped, as calendars do
-      if (!take(t)) break;
-    }
-  } else if (ev.start < to && ev.end > from) out.push(ev.start);
+    if (past || out.length > 400) break;
+  }
   return out;
 }
 
@@ -156,21 +236,26 @@ export function expand(text, source, now = new Date()) {
   const from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - WINDOW_BACK);
   const to = new Date(now.getFullYear(), now.getMonth(), now.getDate() + WINDOW_AHEAD);
   const events = parse(text);
-  // A moved occurrence replaces the one it moved from.
+  // A moved (or cancelled) occurrence replaces the one it stands for.
   const moved = new Map();
   for (const e of events) if (e.recurrenceId != null && e.uid) moved.set(`${e.uid}@${e.recurrenceId}`, e);
+  const used = new Set();
   const out = [];
   for (const e of events) {
     if (e.recurrenceId != null) continue;
     const len = e.end - e.start;
     for (const t of occurrences(e, from, to)) {
-      const repl = moved.get(`${e.uid}@${t.getTime()}`);
+      const key = `${e.uid}@${t.getTime()}`;
+      const repl = moved.get(key);
+      if (repl) used.add(key);
+      if (repl?.cancelled) continue;
       const s = repl ? repl.start : t;
       const en = repl ? repl.end : new Date(t.getTime() + len);
-      out.push(...rows(repl || e, s, en, source));
+      if (s < to && en > from) out.push(...rows(repl || e, s, en, source));
     }
   }
-  for (const e of moved.values()) if (!events.some((x) => x.uid === e.uid && x.recurrenceId == null)) out.push(...rows(e, e.start, e.end, source));
+  // Moved ones whose original time is outside the window (or whose series isn't here) still count.
+  for (const [key, e] of moved) if (!used.has(key) && !e.cancelled && e.start < to && e.end > from) out.push(...rows(e, e.start, e.end, source));
   const seen = new Set();
   return out.filter((r) => (seen.has(r.id) ? false : seen.add(r.id))).slice(0, MAX_EVENTS);
 }
@@ -209,9 +294,21 @@ export function on(date) {
   return store.onDate('calendarEvents', date).slice().sort((a, b) => Number(b.allDay) - Number(a.allDay) || String(a.start).localeCompare(String(b.start)));
 }
 
-/** Busy intervals on a date in minutes: [[from, to]] (timed events only). */
+/**
+ * The timed events of your day: from three hours before you wake to the same time next morning, so
+ * 00:30 tonight belongs to today (and comes last) while 00:30 this morning was last night's.
+ */
+export function dayEvents(date) {
+  const p = store.profile() || {};
+  const [h, m] = String(p.wakeTime || '06:00').split(':').map(Number);
+  const cut = Math.max(0, h * 60 + (m || 0) - 180);
+  const timed = (d) => on(d).filter((e) => !e.allDay);
+  return [...timed(date).filter((e) => toMin(e.start) >= cut), ...timed(addDays(date, 1)).filter((e) => toMin(e.start) < cut)];
+}
+
+/** Busy intervals of your day in minutes: [[from, to]] (timed events only; after midnight they run past 1440). */
 export function busy(date) {
-  return on(date).filter((e) => !e.allDay).map((e) => [toMin(e.start), e.end === '24:00' ? 1440 : toMin(e.end)]).filter(([a, b]) => b > a);
+  return dayEvents(date).map((e) => [toMin(e.start), e.end === '24:00' ? 1440 : toMin(e.end)]).filter(([a, b]) => b > a);
 }
 const toMin = (hm) => { const [h, m] = String(hm).split(':').map(Number); return h * 60 + (m || 0); };
 

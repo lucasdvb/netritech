@@ -21,18 +21,26 @@ export function current() {
   const p = store.profile() || {};
   const n = store.settings().notifications || {};
   const days = Object.values(p.plan || {}).filter((id) => id && store.get('templates', id)?.kind === 'strength').length;
+  // Where and how often you train come from the programme you follow (or your last answer), so a
+  // rerun with the defaults keeps your programme.
+  const pg = PG.following();
+  const pgDays = pg ? programmeDays(pg) : null;
+  const workDays = p.workDays?.length ? p.workDays : [1, 2, 3, 4, 5];
   return {
     name: p.name || '',
     wake: p.wakeTime || '06:00', bed: p.bedTime || '22:00',
     work: (p.workDays || [1, 2, 3, 4, 5]).length > 0,
-    workStart: p.workStart || '09:00', workEnd: p.workEnd || '17:00', workDays: [...(p.workDays || [1, 2, 3, 4, 5])],
+    workStart: p.workStart || '09:00', workEnd: p.workEnd || '17:00', workDays: [...workDays],
     days: 'same', weekendWake: shiftTime(p.wakeTime || '06:00', 60), weekendBed: p.bedTime || '22:00',
-    trainDays: [0, 2, 3, 4, 6].includes(days) ? days : 3, where: /gym/i.test(p.equipment || '') ? 'gym' : 'home',
+    trainDays: pgDays ?? ([0, 2, 3, 4, 6].includes(days) ? days : 3), where: p.trainWhere || (pg ? (pg.id === 'home-3' ? 'home' : 'gym') : /gym/i.test(p.equipment || '') ? 'gym' : 'home'),
     trainTime: p.trainTime || '06:30', training: PG.following() ? 'programme' : 'own',
     focus: activeHabits().filter((h) => stateOf(h) === 'focus').map((h) => h.id),
     reminders: { morning: !!n.morning?.on, evening: !!n.evening?.on, weekly: !!n.weeklyReview?.on, workout: !!n.workout?.on },
   };
 }
+
+/** Training days a week of the programme you follow (its three-day version counts three). */
+const programmeDays = (pg) => (pg.short ? 3 : { 'minimum-2': 2, 'full-body-3': 3, 'upper-lower-4': 4, 'ppl-6': 6, 'home-3': 3 }[pg.id] ?? null);
 
 /** The programme that fits how often and where you train (null: no training plan). */
 export function recommend(days, where) {
@@ -125,9 +133,14 @@ async function weekPlans(a) {
 
 function training(a) {
   if (valid(a.trainTime)) D.setTime('trainTime', a.trainTime);
+  store.setProfile({ trainWhere: a.where });
+  if (a.training !== 'none' && !D.blocks().some((b) => b.kind === 'train')) D.add({ kind: 'train', time: a.trainTime, mins: 60 });
   if (a.training === 'programme') {
     const r = recommend(a.trainDays, a.where);
-    if (r && PG.following()?.id !== r.id) PG.follow(r.id, { short: !!r.short });
+    const pg = PG.following();
+    // Same days and place as the programme you follow: it stays (the PPL three-day version included).
+    const same = pg && programmeDays(pg) === a.trainDays && (pg.id === 'home-3') === (a.where === 'home');
+    if (r && !same && pg?.id !== r.id) PG.follow(r.id, { short: !!r.short });
   } else if (a.training === 'none') {
     if (PG.following()) PG.stop();
     store.setProfile({ plan: { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 7: null } });

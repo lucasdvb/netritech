@@ -26,6 +26,7 @@ export function startWorkout(templateId, date = today(), { gym = false } = {}) {
   const w = store.put('workouts', {
     date, templateId: tpl?.id || null, title: tpl?.name || 'Workout', kind: tpl?.kind || 'strength',
     status: 'active', startedAt: new Date().toISOString(), notes: '', difficulty: null, rpe: null, activeMs: 0, runningSince: new Date().toISOString(),
+    ...(deload ? { deload: true } : {}),
     adjusted: deload ? 'Deload week: half the sets, 10% lighter. Stop each set with three or more reps in the tank.'
       : lighter ? `Lighter today: one set fewer per exercise. ${call.reason}` : null,
   });

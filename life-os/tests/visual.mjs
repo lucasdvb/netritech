@@ -98,12 +98,17 @@ const ROUTES = ['today', 'plan', 'plan/habits', 'plan/habits/h-prayer', 'plan/ta
   'progress/body/nutrition', 'progress/body/measurements', 'progress/body/sleep', 'progress/areas/mind', 'progress/areas/spirit',
   'progress/areas/relationships', 'progress/areas/work', 'progress/areas/health',
   'reflect/journal', 'reflect/insights', 'reflect/reviews', 'reflect/review/week', 'reflect/review/month',
-  'you/settings', 'you/reminders', 'you/data', 'you/privacy'];
+  'you/settings', 'you/reminders', 'you/data', 'you/privacy',
+  'you/setup', 'plan/training/programmes', 'plan/calendar', 'plan/money/bills', 'plan/money/worth', 'plan/meals', 'plan/trips',
+  'progress/energy', 'progress/body/supplements', 'reflect/decisions', 'reflect/wheel', 'reflect/takeaways'];
 const SHEETS = [
   ['capture', './js/screens/capture.js', 'openCapture', ['walked 30 min']],
   ['you', './js/screens/you.js', 'openYou', []],
   ['morning', './js/screens/ritual.js', 'openRitual', ['morning']],
   ['mode', './js/screens/sheets.js', 'openMode', []],
+  ['bill', './js/screens/bills.js', 'openBill', ['demo-rent']],
+  ['trip', './js/screens/trips.js', 'openTrip', ['demo-trip']],
+  ['decision', './js/screens/decisions.js', 'openDecision', []],
 ];
 
 for (const scheme of ['light', 'dark']) {

@@ -369,7 +369,8 @@ export function openMode(date = today()) {
 }
 
 export function setMode(date, mode) {
-  saveReview(date, { mode: mode === 'normal' ? null : mode });
+  // Setting the day by hand takes it back from a trip, so changing the trip later leaves it alone.
+  saveReview(date, { mode: mode === 'normal' ? null : mode, tripId: null, prevMode: null });
   hap.tap();
   if (mode === 'minimum') app.toast('Minimum day. Just the essentials. That’s enough.', { icon: 'leaf' });
   if (mode === 'sick') app.toast('Sick day. Scoring is paused. Rest well.', { icon: 'thermometer' });

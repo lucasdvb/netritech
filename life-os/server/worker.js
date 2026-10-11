@@ -15,7 +15,7 @@
 // that turned them on, its push address and the times, titles and words of its reminders, plus
 // which were done today so they aren't sent. Nothing else, and no history.
 
-const VERSION = 3;
+const VERSION = 4;
 const PAGE = 400;                 // records per answer when a device catches up
 const MAX_ITEM = 2_600_000;       // an encrypted record (base64): D1 rows stop at 2 MB of data
 const MAX_BODY = 40_000_000;
@@ -279,6 +279,20 @@ async function push(req, env) {
  * server keeps nothing; the calendar's text passes through once per refresh.
  */
 const MAX_ICS = 4_000_000;
+/** An https address on the public internet: no local names, private or reserved IPv4 ranges, or IP literals in other forms. */
+export function publicHttps(u) {
+  if (u.protocol !== 'https:') return false;
+  const h = u.hostname.toLowerCase().replace(/\.$/, '');
+  if (!h || h === 'localhost' || h.endsWith('.localhost') || h.endsWith('.local') || h.endsWith('.internal')) return false;
+  if (h.startsWith('[') || h.includes(':')) return false; // IPv6 literals ([::1], [::ffff:127.0.0.1], …)
+  if (/^\d+$/.test(h) || /^0x/i.test(h)) return false; // 2130706433, 0x7f000001
+  const v4 = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(h);
+  if (v4) {
+    const [a, b] = [Number(v4[1]), Number(v4[2])];
+    if (a === 0 || a === 10 || a === 127 || a >= 224 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127)) return false;
+  }
+  return true;
+}
 async function calendar(req, env) {
   let body;
   try { body = await req.json(); } catch { return bad('Not JSON.'); }
@@ -286,17 +300,41 @@ async function calendar(req, env) {
   if (!HEX64.test(space || '') || !HEX64.test(auth || '')) return bad('Missing or malformed key.');
   let u;
   try { u = new URL(String(url || '').replace(/^webcal:/i, 'https:')); } catch { return bad('That isn’t a calendar link.'); }
-  if (u.protocol !== 'https:' || ['localhost', '127.0.0.1'].includes(u.hostname) || /^(10|127|169\.254|172\.(1[6-9]|2\d|3[01])|192\.168)\./.test(u.hostname)) return bad('A calendar link has to be a public https:// address.');
+  if (!publicHttps(u)) return bad('A calendar link has to be a public https:// address.');
   const db = env.DB;
   if (!db) return bad('The server has no database bound as DB.', 500);
   await ensure(db);
   const a = await admit(db, env, space, auth);
   if (a.error) return bad(a.error, a.status);
+  // Redirects are followed by hand, so every hop is checked to be a public address too.
   let res;
-  try { res = await fetch(u.toString(), { headers: { accept: 'text/calendar, */*' }, redirect: 'follow', cf: { cacheTtl: 0 } }); } catch { return bad('Couldn’t reach that calendar.', 502); }
+  try {
+    for (let hop = 0; ; hop++) {
+      res = await fetch(u.toString(), { headers: { accept: 'text/calendar, */*' }, redirect: 'manual', cf: { cacheTtl: 0 } });
+      if (![301, 302, 303, 307, 308].includes(res.status)) break;
+      const next = res.headers.get('location');
+      if (!next || hop >= 4) return bad('That calendar link redirects too many times.', 502);
+      u = new URL(next, u);
+      if (!publicHttps(u)) return bad('A calendar link has to be a public https:// address.');
+    }
+  } catch { return bad('Couldn’t reach that calendar.', 502); }
   if (!res.ok) return bad(`The calendar answered ${res.status}. Check the link is the calendar’s public or secret address.`, 502);
-  const text = await res.text();
-  if (text.length > MAX_ICS) return bad('That calendar is too large to read.', 413);
+  if (Number(res.headers.get('content-length')) > MAX_ICS) return bad('That calendar is too large to read.', 413);
+  // Read it with a cap, so a huge answer is stopped instead of filling memory.
+  const reader = res.body.getReader();
+  const parts = [];
+  let size = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    size += value.length;
+    if (size > MAX_ICS) { await reader.cancel(); return bad('That calendar is too large to read.', 413); }
+    parts.push(value);
+  }
+  const bytes = new Uint8Array(size);
+  let off = 0;
+  for (const p of parts) { bytes.set(p, off); off += p.length; }
+  const text = new TextDecoder().decode(bytes);
   if (!/BEGIN:VCALENDAR/.test(text)) return bad('That link isn’t a calendar (.ics).', 422);
   return json({ ics: text });
 }

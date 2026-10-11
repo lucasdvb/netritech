@@ -24,12 +24,16 @@ export function saveAccount(id, patch) {
   return store.put('accounts', { kind: 'cash', ...cur, ...patch, order, name: String(patch.name ?? cur?.name ?? 'Account').trim().slice(0, 40) || 'Account' });
 }
 
-/** An account's balance on a date (debts as positive amounts owed). One per account per day. */
+/**
+ * An account's balance on a date. One per account per day. Debts are kept as positive amounts owed;
+ * an account you own can go below zero (an overdrawn current account), and then takes from net worth.
+ */
 export function setBalance(accountId, amount, date = today()) {
   const id = `${accountId}:${date}`;
   const before = store.get('balances', id);
   const v = Math.round((Number(amount) || 0) * 100) / 100;
-  store.put('balances', { id, accountId, date, amount: Math.abs(v) });
+  const a = account(accountId);
+  store.put('balances', { id, accountId, date, amount: a && !isDebt(a) ? v : Math.abs(v) });
   return () => (before ? store.put('balances', before) : store.remove('balances', id));
 }
 
@@ -90,7 +94,8 @@ export function contribute(id, amount, date = today()) {
   if (!g) return () => {};
   const a = Math.round((Number(amount) || 0) * 100) / 100;
   const log = [...(g.log || []), { date, amount: a }].slice(-120);
-  store.put('savingsGoals', { ...g, saved: Math.max(0, (g.saved || 0) + a), log, ...((g.saved || 0) + a >= g.target && !g.reachedOn ? { reachedOn: date } : {}) });
+  const saved = Math.max(0, Math.round(((g.saved || 0) + a) * 100) / 100);
+  store.put('savingsGoals', { ...g, saved, log, ...(saved >= g.target && !g.reachedOn ? { reachedOn: date } : {}) });
   return () => store.put('savingsGoals', g);
 }
 
@@ -104,7 +109,8 @@ export function progress(g, date = today()) {
   const share = g.target ? Math.min(1, (g.saved || 0) / g.target) : 0;
   if (!left) return { left, share: 1, monthsLeft: 0, perMonth: 0, onTrack: true, line: 'Reached.' };
   const monthsLeft = g.by ? Math.max(0, diffDays(g.by, date) / 30.44) : null;
-  const perMonth = monthsLeft ? left / Math.max(1, monthsLeft) : null;
+  // Past its date, everything left is due now.
+  const perMonth = monthsLeft == null ? null : left / Math.max(1, monthsLeft);
   const since = addDays(date, -91);
   const recent = (g.log || []).filter((x) => x.date >= since).reduce((s, x) => s + x.amount, 0) / 3;
   const onTrack = perMonth == null ? null : recent >= perMonth * 0.95;

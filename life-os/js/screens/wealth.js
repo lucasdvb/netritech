@@ -12,7 +12,8 @@ import { lineChart } from '../ui/charts.js';
 import { app } from '../ui/app-api.js';
 import * as hap from '../ui/haptics.js';
 
-function accountSheet(id = null) {
+/** An account; from the monthly prompt (`snapshot`), saving keeps the balance shown even if unchanged. */
+function accountSheet(id = null, { snapshot = false } = {}) {
   const cur = id ? W.account(id) : null;
   const bal = cur ? W.balanceOn(cur.id) : null;
   app.sheet({
@@ -21,18 +22,19 @@ function accountSheet(id = null) {
     render: (s) => html`<form class="form" data-submit="ac-save">
       <label class="field"><span class="field-label">Name</span><input class="input" required maxlength="40" value="${s.ui.name}" data-input="ac-f" data-f="name" placeholder="Current account"></label>
       <label class="field"><span class="field-label">Kind</span><select class="input" data-change="ac-f" data-f="kind">${W.KINDS.map((k) => html`<option value="${k.id}" ${s.ui.kind === k.id ? 'selected' : ''}>${k.label}${k.owe ? ' (owed)' : ''}</option>`)}</select></label>
-      <label class="field"><span class="field-label">${W.KINDS.find((k) => k.id === s.ui.kind)?.owe ? 'Owed today' : 'Balance today'}</span><input class="input" type="number" inputmode="decimal" step="0.01" min="0" value="${s.ui.amount}" data-input="ac-f" data-f="amount"></label>
+      <label class="field"><span class="field-label">${W.KINDS.find((k) => k.id === s.ui.kind)?.owe ? 'Owed today' : 'Balance today'}</span><input class="input" type="number" inputmode="decimal" step="0.01" ${W.KINDS.find((k) => k.id === s.ui.kind)?.owe ? 'min="0"' : ''} value="${s.ui.amount}" data-input="ac-f" data-f="amount"></label>
       ${bal ? html`<p class="field-hint">Last: ${$.fmt(bal.amount)} on ${fmtMD(bal.date)}. A new balance is kept beside the old ones, so the line shows the change.</p>` : ''}
       <button type="submit" class="btn btn--primary btn--block">${cur ? 'Save' : 'Add account'}</button>
       ${cur ? html`<button type="button" class="btn btn--ghost btn--block" data-action="ac-archive">Hide this account</button>` : ''}
     </form>`,
-    inputs: { 'ac-f': ({ el, value, sheet }) => { sheet.ui[el.dataset.f] = value; if (el.tagName === 'SELECT') sheet.refresh(); } },
+    inputs: { 'ac-f': ({ el, value, sheet }) => { sheet.ui[el.dataset.f] = value; if (el.dataset.f === 'amount') sheet.ui.amountTouched = true; if (el.tagName === 'SELECT') sheet.refresh(); } },
     actions: {
       'ac-save': ({ sheet }) => {
         const u = sheet.ui;
         if (!u.name.trim()) { app.toast('Give it a name.'); return; }
         const a = W.saveAccount(cur?.id || null, { name: u.name, kind: u.kind });
-        if (u.amount !== '' && u.amount != null) W.setBalance(a.id, Number(u.amount));
+        // Only a balance you typed is kept: renaming an account doesn't date its old balance today.
+        if (u.amount !== '' && u.amount != null && (!bal || u.amountTouched || snapshot)) W.setBalance(a.id, Number(u.amount));
         hap.success();
         app.closeSheet(sheet);
       },
@@ -95,7 +97,7 @@ export default {
       ${accts.length ? html`<section class="money-hero"><p class="section-label">Net worth</p><p class="money-total tnum">${$.fmt(nw.net, { cents: 0 })}</p>
           <p class="money-left">${$.fmt(nw.own, { cents: 0 })} owned · ${$.fmt(nw.owe, { cents: 0 })} owed${nw.stale.length ? ` · ${nw.stale.join(', ')} not updated in 45 days` : ''}</p></section>
         ${series.length > 1 ? html`<div class="card block-tight">${lineChart({ labels: series.map((x) => x.month.slice(5)), series: [{ values: series.map((x) => x.net), color: 'var(--chart-1)', label: 'Net worth', marks: true }], fmt: (v) => $.fmt(v, { cents: 0 }) })}</div>` : ''}
-        ${due.length ? html`<p class="notice notice--action">${icon('calendar-check', { size: 16 })}<span>${monthKey(today()).slice(5) === '01' ? 'New year' : 'This month'}: ${due.length} account${due.length === 1 ? '' : 's'} without a balance yet.</span><button type="button" class="link-btn" data-action="ac-open" data-id="${due[0].id}">Update ${due[0].name}</button></p>` : ''}
+        ${due.length ? html`<p class="notice notice--action">${icon('calendar-check', { size: 16 })}<span>${monthKey(today()).slice(5) === '01' ? 'New year' : 'This month'}: ${due.length} account${due.length === 1 ? '' : 's'} without a balance yet.</span><button type="button" class="link-btn" data-action="ac-snap" data-id="${due[0].id}">Update ${due[0].name}</button></p>` : ''}
         <section class="block"><div class="block-head"><h2 class="block-title">Accounts</h2><button type="button" class="link-btn" data-action="ac-new">Add</button></div>
           <ul class="list">${accts.map((a) => { const b = W.balanceOn(a.id); return html`<li data-key="ac-${a.id}"><button type="button" class="row" data-action="ac-open" data-id="${a.id}">
             <span class="row-main"><span class="row-title">${a.name}</span><span class="row-sub">${W.KINDS.find((k) => k.id === a.kind)?.label}${b ? ` · ${fmtMD(b.date)}` : ' · no balance yet'}</span></span>
@@ -112,6 +114,7 @@ export default {
   actions: {
     'ac-new': () => accountSheet(),
     'ac-open': ({ data }) => accountSheet(data.id),
+    'ac-snap': ({ data }) => accountSheet(data.id, { snapshot: true }),
     'sg-new': () => goalSheet(),
     'sg-open': ({ data }) => goalSheet(data.id),
   },

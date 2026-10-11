@@ -8,7 +8,7 @@ import * as T from '../domain/tasks.js';
 import * as Rt from '../domain/rituals.js';
 import { dayScore } from '../domain/scoring.js';
 import { nextAction } from '../domain/next-action.js';
-import { today, addDays, parseHM, durationHM, relativeDay } from '../domain/dates.js';
+import { today, addDays, parseHM, durationHM, relativeDay, fmtMD } from '../domain/dates.js';
 import { reviewOf, saveReview } from '../domain/day.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
@@ -88,6 +88,8 @@ function body(step, s, date) {
     case 'recall': {
       const t = TK.one(s.ui.recallId) || TK.forMorning(date);
       if (t) s.ui.recallId = t.id;
+      // Answered (here or on Today): it's done for today, so going back doesn't ask again.
+      if (t && (t.last === date || t.retiredOn === date)) return html`<p class="ritual-note">Done for today. It comes back ${t.retired ? 'no more' : `on ${fmtMD(t.due)}`}.</p>`;
       return t ? takeawayCard(t, { compact: true }) : html`<p class="ritual-note">Nothing to recall today.</p>`;
     }
     case 'start': {

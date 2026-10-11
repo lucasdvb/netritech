@@ -5,7 +5,7 @@
 // already have is what makes adherence stick (implementation intentions: Gollwitzer & Sheeran
 // 2006; WHO 2003 on adherence to long-term therapies).
 import * as store from '../data/store.js';
-import { today, addDays } from './dates.js';
+import { today, addDays, dayAt, fmtHM, minutesOfDay, toISO } from './dates.js';
 
 export const all = () => store.memo('supplements-sorted', ['supplements'], () => store.all('supplements').filter((s) => !s.archived).sort((a, b) => Number(b.kind === 'medication') - Number(a.kind === 'medication') || (a.order ?? 0) - (b.order ?? 0) || a.name.localeCompare(b.name)));
 export const one = (id) => store.get('supplements', id);
@@ -41,8 +41,11 @@ export function toggle(sid, time, date = today()) {
   if (!s) return () => {};
   const id = logId(date, sid, time);
   const was = store.get('supplementLogs', id);
-  const ops = [was ? { store: 'supplementLogs', delete: id } : { store: 'supplementLogs', value: { id, date, supplementId: sid, time, at: new Date().toISOString() } }];
-  if (s.stock != null) ops.push({ store: 'supplements', value: { ...s, stock: Math.max(0, Math.round((s.stock + (was ? 1 : -1) * s.perDose) * 100) / 100) } });
+  // The log keeps how much stock it took (less than a dose when it ran out), so untaking gives back exactly that.
+  const left = s.stock == null ? null : Math.max(0, Math.round((s.stock - s.perDose) * 100) / 100);
+  const took = s.stock == null ? null : Math.round((s.stock - left) * 100) / 100;
+  const ops = [was ? { store: 'supplementLogs', delete: id } : { store: 'supplementLogs', value: { id, date, supplementId: sid, time, at: new Date().toISOString(), ...(took != null ? { took } : {}) } }];
+  if (s.stock != null) ops.push({ store: 'supplements', value: { ...s, stock: was ? Math.round((s.stock + (was.took ?? s.perDose)) * 100) / 100 : left } });
   store.batch(ops);
   return () => store.batch([was ? { store: 'supplementLogs', value: was } : { store: 'supplementLogs', delete: id }, { store: 'supplements', value: s }]);
 }
@@ -69,7 +72,7 @@ export function ensureTasks(date = today()) {
   for (const s of all()) {
     if (!runningLow(s)) continue;
     const id = reorderTaskId(s);
-    if (store.get('tasks', id)) continue;
+    if (store.get('tasks', id) || store.deleted('tasks', id)) continue;
     const d = daysLeft(s);
     ops.push({ store: 'tasks', value: { id, title: `Reorder ${s.name}`, notes: `${d} day${d === 1 ? '' : 's'} left at your dose. Restock it in Body › Supplements when it arrives.`, date, done: false, doneAt: null, area: 'health', repeat: null, order: ++order, source: `supplement:${s.id}` } });
   }
@@ -81,13 +84,20 @@ export function ensureTasks(date = today()) {
 export function adherence(sid, days = 14, end = today()) {
   const s = one(sid);
   if (!s) return null;
-  const since = s.createdAt ? s.createdAt.slice(0, 10) : addDays(end, -(days - 1));
+  const since = s.createdAt ? dayAt(s.createdAt) : addDays(end, -(days - 1));
+  // Today's doses count once their time has come.
+  const nowHM = fmtHM(minutesOfDay());
+  const isToday = end === today() && toISO(new Date()) === end;
   let due = 0;
   let got = 0;
   for (let i = 0; i < days; i++) {
     const d = addDays(end, -i);
     if (d < since) break;
-    for (const t of s.times) { due++; if (taken(s.id, t, d)) got++; }
+    for (const t of s.times) {
+      const tk = taken(s.id, t, d);
+      if (i === 0 && isToday && t > nowHM && !tk) continue;
+      due++; if (tk) got++;
+    }
   }
   return due ? got / due : null;
 }

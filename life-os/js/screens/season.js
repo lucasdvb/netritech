@@ -37,7 +37,10 @@ export function openNewSeason(prefill = {}) {
   const focus = (H.focusHabits().length ? H.focusHabits() : suggestFocus(3)).map((h) => h.id);
   const start = S.nextStart();
   const mon = startOfWeek(today());
-  const ids = prefill.habitIds?.length ? [...prefill.habitIds, ...focus.filter((id) => !prefill.habitIds.includes(id))].slice(0, 3) : focus.slice(0, 3);
+  // Only habits the sheet lists can be picked (an optional one couldn't be seen or taken out).
+  const listed = new Set(H.activeHabits().filter((h) => !h.optional).map((h) => h.id));
+  const pre = (prefill.habitIds || []).filter((id) => listed.has(id));
+  const ids = (pre.length ? [...pre, ...focus.filter((id) => !pre.includes(id))] : focus).filter((id) => listed.has(id)).slice(0, 3);
   const ui = { name: prefill.name || '', intention: prefill.intention || '', ids, start };
   app.sheet({
     title: 'A new season',
@@ -54,7 +57,7 @@ export function openNewSeason(prefill = {}) {
           <div class="chips">${pool.map((h) => html`<button type="button" class="${cx('chip', s.ui.ids.includes(h.id) && 'is-active')}" data-action="sn-pick" data-id="${h.id}" aria-pressed="${s.ui.ids.includes(h.id)}">${h.name}</button>`)}</div>
           ${moving.length ? html`<p class="field-hint">${moving.map((h) => h.name).join(', ')} move${moving.length === 1 ? 's' : ''} to autopilot.</p>` : ''}</div>
         <div class="field"><span class="field-label">Starts</span>
-          <div class="seg seg--compact" role="radiogroup" aria-label="Starts">${[...new Set([start === mon ? mon : null, addDays(mon, 7)].filter(Boolean))].map((d) => html`<button type="button" role="radio" class="seg-btn" aria-checked="${s.ui.start === d}" data-action="sn-start" data-d="${d}">${d === mon ? `This Monday · ${fmtMD(d)}` : `Next Monday · ${fmtMD(d)}`}</button>`)}</div>
+          <div class="seg seg--wrap" role="radiogroup" aria-label="Starts">${[...new Set([start === mon ? mon : null, addDays(mon, 7)].filter(Boolean))].map((d) => html`<button type="button" role="radio" class="seg-btn" aria-checked="${s.ui.start === d}" data-action="sn-start" data-d="${d}">${d === mon ? `This Monday · ${fmtMD(d)}` : `Next Monday · ${fmtMD(d)}`}</button>`)}</div>
           <p class="field-hint">Ends ${fmtLong(addDays(s.ui.start, S.WEEKS * 7 - 1))}.</p></div>
         <button type="button" class="btn btn--primary btn--block" data-action="sn-go" ${s.ui.ids.length ? '' : 'aria-disabled="true"'}>Start the season</button>
       </div>`;

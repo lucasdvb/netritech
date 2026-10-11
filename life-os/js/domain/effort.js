@@ -38,11 +38,19 @@ export function stepLoad(kg, steps, unit = 'kg') {
   if (unit === 'lb') return Math.max(0, (Math.round(kg / LB / 2.5) * 2.5 + 5 * steps) * LB);
   return Math.max(0, Math.round((kg + 2.5 * steps) * 100) / 100);
 }
-/** A load a share lighter, rounded to what you can load (0.5 kg or 2.5 lb). */
+/**
+ * A load a share lighter, rounded to what you can load (0.5 kg or 2.5 lb). When rounding would undo
+ * the drop (a 4 kg or 10 lb dumbbell), it's one of those steps lighter instead.
+ */
 export function lighter(kg, share, unit = 'kg') {
   const v = kg * (1 - share);
-  if (unit === 'lb') return Math.round(v / LB / 2.5) * 2.5 * LB;
-  return Math.round(v * 2) / 2;
+  if (unit === 'lb') {
+    const lb = Math.round(kg / LB / 2.5) * 2.5;
+    const r = Math.round(v / LB / 2.5) * 2.5;
+    return Math.max(0, kg > 0 && r >= lb ? lb - 2.5 : r) * LB;
+  }
+  const r = Math.round(v * 2) / 2;
+  return Math.max(0, kg > 0 && r >= kg ? Math.round((kg - 0.5) * 2) / 2 : r);
 }
 
 /**

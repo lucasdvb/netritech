@@ -20,8 +20,10 @@ export function add({ text, source = '', sourceLabel = '' }, date = today()) {
 
 /** What's due on a date, oldest first. */
 export const due = (date = today()) => all().filter((t) => t.due <= date);
-/** The one for the morning check-in (the most overdue; one a day keeps it light). */
-export const forMorning = (date = today()) => due(date)[0] || null;
+/** The one for the morning check-in (the most overdue; one a day keeps it light, so none once one is answered). */
+export const forMorning = (date = today()) => (answeredOn(date) ? null : due(date)[0] || null);
+/** Has a takeaway been answered (or retired) on this date? */
+export const answeredOn = (date = today()) => store.all('takeaways').some((t) => t.last === date || t.retiredOn === date);
 
 /**
  * Answer it: 'used' (put to use) and 'kept' (still true) move it a step further; 'forgot' goes back

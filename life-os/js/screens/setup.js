@@ -29,7 +29,7 @@ const line = (label, hint, on, action, data = {}) => html`<div class="set-row se
 
 function stepBody(step, a, ui) {
   if (step === 'start') {
-    return html`<p>About five minutes. A few questions, and your days, training, the habits you start with and your reminders are set up together, all linked. Nothing changes until the last step, and one tap undoes it.</p>
+    return html`<p>About five minutes. A few questions, and your days, training, the habits you start with and your reminders are set up together, all linked. Nothing changes until the last step, and one tap right after undoes it.</p>
       <label class="field"><span class="field-label">What should Life OS call you?</span><input class="input" type="text" maxlength="40" autocomplete="given-name" value="${a.name}" data-input="su" data-f="name" placeholder="Your first name"></label>
       <div class="card setup-move">${icon('download', { size: 18 })}<span class="row-main"><span class="row-title">Moving from another phone or address?</span>
         <span class="row-sub">Restore your backup first: your habits, history and settings come with it.</span></span>
@@ -101,6 +101,9 @@ function go(ui, d) {
 export default {
   id: 'setup',
   title: 'Set up your days',
+  // Leaving the page ends the undo: it puts whole stores back, so it may only run before anything
+  // else has changed. The next visit starts a fresh setup from what you have then.
+  unmount(el, { ui }) { Object.assign(ui, { undo: null, lines: null, step: 0, a: null, focus: null }); },
   render({ ui }) {
     ui.a ||= S.current();
     ui.focus ||= S.focusChoices();

@@ -4,6 +4,7 @@
 import * as store from '../data/store.js';
 import { reviewOf, saveReview } from './day.js';
 import { dayOf } from './dates.js';
+import { addSpent } from './estimates.js';
 
 export const LENGTHS = [25, 50, 90];
 
@@ -52,8 +53,7 @@ export function finish({ early = false, now = Date.now() } = {}) {
   const r = reviewOf(date);
   saveReview(date, { deepWork: (r.deepWork || 0) + 1, focusMinutes: (r.focusMinutes || 0) + done });
   // A block for a task counts towards the time it took (estimates.js learns from it).
-  const task = t.taskId && store.get('tasks', t.taskId);
-  if (task) store.put('tasks', { ...task, spent: (Number(task.spent) || 0) + done });
+  if (t.taskId) addSpent(t.taskId, done);
   store.setSettings({ focus: null });
   return { date, minutes: done, label: t.label, blocks: (r.deepWork || 0) + 1 };
 }

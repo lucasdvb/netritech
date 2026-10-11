@@ -20,6 +20,9 @@ dd .explain { display: inline; }
 .back-bar { position: sticky; top: calc(var(--safe-top) + 8px); z-index: 20; height: 46px; margin-top: var(--s3); pointer-events: none; }
 .back-bar .back-btn { pointer-events: auto; box-shadow: var(--shadow-md); }
 .page-head-row { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s4); }
+/* a long title wraps beside its actions instead of pushing them off a narrow screen */
+.page-head-row > div:first-child { min-width: 0; }
+.title-line .page-title { min-width: 0; overflow-wrap: anywhere; }
 .page-title { font-size: var(--text-h1); font-weight: var(--weight-semibold); line-height: var(--leading-h1); letter-spacing: var(--tracking-h1); }
 .page-head--child .page-title { font-size: var(--text-h1); margin-top: var(--s4); }
 /* paragraphs stop at a comfortable line length (45-75 characters) */

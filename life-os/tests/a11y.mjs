@@ -50,7 +50,9 @@ const ROUTES = (ids) => ['today', 'plan', 'plan/habits', `plan/habits/${ids.habi
   'progress/body', 'progress/body/weight', 'progress/body/nutrition', 'progress/body/measurements', 'progress/body/photos', 'progress/body/sleep',
   'progress/areas/mind', 'progress/areas/spirit', 'progress/areas/relationships', 'progress/areas/work', 'progress/areas/health',
   'reflect', 'reflect/journal', `reflect/journal/${ids.journal}`, 'reflect/insights', 'reflect/reviews', 'reflect/review/week', 'reflect/review/month',
-  'you/settings', 'you/reminders', 'you/data', 'you/privacy', `workout/${ids.workout}`];
+  'you/settings', 'you/reminders', 'you/data', 'you/privacy', `workout/${ids.workout}`,
+  'you/setup', 'plan/training/programmes', 'plan/calendar', 'plan/money/bills', 'plan/money/worth', 'plan/meals', 'plan/trips',
+  'progress/energy', 'progress/body/supplements', 'reflect/decisions', 'reflect/decisions/demo-decision', 'reflect/wheel', 'reflect/takeaways'];
 
 const idsOf = (p) => p.evaluate(() => {
   const s = window.__lifeos.store;
@@ -106,6 +108,18 @@ async function auditTheme(scheme) {
     ['measurement', './js/screens/measurements.js', 'openMeasurement', []],
     ['calendar file', './js/screens/calendar-file.js', 'openCalendarFile', []],
     ['shortcuts', './js/ui/keys.js', 'openShortcuts', []],
+    ['bill', './js/screens/bills.js', 'openBill', ['demo-rent']],
+    ['new bill', './js/screens/bills.js', 'openBill', []],
+    ['supplement', './js/screens/supplements.js', 'openSupplement', ['demo-vitd']],
+    ['recipe', './js/screens/meal-plan.js', 'openRecipe', ['demo-curry']],
+    ['trip', './js/screens/trips.js', 'openTrip', ['demo-trip']],
+    ['new trip', './js/screens/trips.js', 'openTrip', []],
+    ['decision', './js/screens/decisions.js', 'openDecision', []],
+    ['decision review', './js/screens/decisions.js', 'openReview', ['demo-decision']],
+    ['takeaway', './js/screens/takeaways.js', 'openTakeaway', [{ text: 'Never miss twice.' }]],
+    ['energy', './js/screens/energy.js', 'openEnergy', []],
+    ['gap', './js/screens/today/gaps.js', 'openGap', ['14:00', 90]],
+    ['season from the wheel', './js/screens/season.js', 'openNewSeason', [{ name: 'Fun & rest', intention: 'Make room for rest.' }]],
     ['number pad', './js/ui/numpad.js', 'openNumpad', [{ title: 'Steps', unit: 'steps', value: 8000, quick: [{ label: '+1,000', value: 9000 }] }]],
   ];
   for (const [label, url, fn, args] of sheets) {
@@ -143,7 +157,8 @@ await step('a fresh install passes too: empty states and first-run screens', asy
   const { ctx, p } = await open({ demo: 0 });
   const found = await auditScreens(p, ['today', 'plan', 'plan/habits', 'plan/tasks', 'plan/goals', 'plan/projects', 'plan/books', 'plan/training',
     'progress', 'progress/trends', 'progress/records', 'progress/season', 'progress/body', 'progress/body/weight', 'progress/body/sleep',
-    'reflect', 'reflect/journal', 'reflect/insights', 'reflect/reviews'], 'fresh');
+    'reflect', 'reflect/journal', 'reflect/insights', 'reflect/reviews', 'you/setup', 'plan/training/programmes', 'plan/calendar', 'plan/money/bills',
+    'plan/money/worth', 'plan/meals', 'plan/trips', 'progress/energy', 'progress/body/supplements', 'reflect/decisions', 'reflect/wheel', 'reflect/takeaways'], 'fresh');
   await ctx.close();
   if (found.length) throw new Error(found.join('\n'));
 });

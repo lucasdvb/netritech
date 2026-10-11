@@ -15,8 +15,7 @@ const act = (label, name, data = {}) => ({ label, act: name, data });
 /** Events and timed tasks as day rows ({ b, s }), to merge with the plan's blocks. */
 export function extraRows(date) {
   const rows = [];
-  for (const e of ICS.on(date)) {
-    if (e.allDay) continue;
+  for (const e of ICS.dayEvents(date)) {
     const [h1, m1] = e.start.split(':').map(Number);
     const [h2, m2] = e.end.split(':').map(Number);
     rows.push({ b: { id: `ev-${e.id}`, kind: 'event', time: e.start, mins: Math.max(5, h2 * 60 + m2 - (h1 * 60 + m1)), title: e.title, detail: `Calendar · until ${e.end}` }, s: { done: null, action: null } });
