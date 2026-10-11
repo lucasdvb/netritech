@@ -46,7 +46,7 @@ export default {
         </div>
       </section>
       ${copies.length ? html`<section class="block"><div class="block-head"><h2 class="block-title">Safety copies${infoBtn('copies', 'safety copies')}</h2></div>
-        ${tipText('copies', 'Saved automatically, on this device, before Life OS updates how your data is stored and before a backup is restored. The last three are kept.')}
+        ${tipText('copies', 'Saved automatically, on this device, before Life OS updates how your data is stored, before a backup is restored, and once a week. The last four are kept.')}
         <ul class="list">${copies.map((c) => html`<li data-key="copy-${c.id}"><button type="button" class="row" data-action="copy-restore" data-id="${c.id}"><span class="row-ic">${icon('history', { size: 16 })}</span><span class="row-main"><span class="row-title">${fmtMDY(dayOf(new Date(c.id)))} · ${fmtTime(new Date(c.id))}</span><span class="row-sub">${c.reason}</span></span><span class="row-right">Restore</span></button></li>`)}</ul>
       </section>` : ''}
       <section class="block"><div class="block-head"><h2 class="block-title">Export as CSV</h2></div>

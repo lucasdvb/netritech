@@ -93,15 +93,53 @@ await step('mid-session while typing: nothing reloads under you; Reload is offer
   await p.close();
 });
 
+await step('everything you entered is there after an update, a weekly safety copy is kept, and a loss would be said at once', async () => {
+  let p = await open();
+  await p.waitForFunction(() => document.body?.dataset.release === 'r4');
+  await p.evaluate(async () => {
+    const { store } = window.__lifeos;
+    for (let i = 0; i < 12; i++) store.put('decisions', { id: `d${i}`, date: '2026-10-01', title: `Decision ${i}`, reviewOn: '2027-01-01', confidence: 3 });
+    for (let i = 0; i < 20; i++) store.put('tasks', { id: `kept-${i}`, title: `Task ${i}`, date: '2026-10-11', done: false, order: i });
+    await store.flush();
+  });
+  const before = await p.evaluate(() => [window.__lifeos.store.count('tasks'), window.__lifeos.store.count('decisions')]);
+  await release('r5');
+  await p.evaluate(async () => (await navigator.serviceWorker.getRegistration()).update());
+  await p.waitForFunction(() => document.body?.dataset.release === 'r5', null, { timeout: 20000 });
+  await p.waitForFunction(() => window.__lifeos?.ready);
+  const after = await p.evaluate(() => [window.__lifeos.store.count('tasks'), window.__lifeos.store.count('decisions')]);
+  if (after.join() !== before.join()) throw new Error(`before ${before}, after ${after}`);
+  // The weekly copy waits for the app to go to the background (or five quiet minutes): run it as that would.
+  await p.evaluate(async () => (await import('./js/data/update-guard.js')).weekly());
+  const copies = await p.evaluate(async () => (await (await import('./js/data/migrations.js')).safetyBackups()).map((c) => c.reason));
+  if (!copies.includes('Weekly copy')) throw new Error(`safety copies: ${copies.join(', ')}`);
+  if (await p.locator('.confirm').count()) throw new Error('a warning after an update that lost nothing');
+  // Now an update that does lose something (the decisions vanish from the database underneath).
+  await p.waitForFunction(() => window.__lifeos.store.get('meta', 'dataCheck')?.version === 'r5', null, { timeout: 10000 });
+  await release('r6');
+  await p.evaluate(() => new Promise((res, rej) => {
+    const r = indexedDB.open('life-os');
+    r.onsuccess = () => { const tx = r.result.transaction('decisions', 'readwrite'); tx.objectStore('decisions').clear(); tx.oncomplete = () => { r.result.close(); res(); }; tx.onerror = rej; };
+    r.onerror = rej;
+  }));
+  await p.evaluate(async () => (await navigator.serviceWorker.getRegistration()).update());
+  await p.waitForFunction(() => document.body?.dataset.release === 'r6', null, { timeout: 20000 });
+  await p.locator('.sheet-wrap.is-open', { hasText: 'Some of your data seems to be missing' }).waitFor({ timeout: 15000 });
+  if (!(await p.locator('.confirm').textContent()).includes('12 decisions')) throw new Error(await p.locator('.confirm').textContent());
+  await p.locator('.confirm [data-action="yes"]').click();
+  await p.waitForFunction(() => location.hash.startsWith('#/you/data'));
+  await p.close();
+});
+
 await ctx.close();
 
 // A phone still on a release from before this fix: its own page code can't switch versions, so the
 // new worker must take over by itself, and the old page reloads into the new version.
-await step('a phone on an older release (a8485f38) gets the current one without tapping anything', async () => {
+await step('a phone on an older release (9cc0858f) gets the current one without tapping anything', async () => {
   const { execSync } = await import('node:child_process');
   await rm(root, { recursive: true, force: true });
   const old = await mkdtemp(join(tmpdir(), 'lifeos-old-'));
-  execSync(`git -C "${src}" archive a8485f38 . | tar -x -C "${old}"`);
+  execSync(`git -C "${src}" archive 9cc0858f | tar -x -C "${old}"`);
   for (const p of ['index.html', 'manifest.webmanifest', 'sw.js', 'css', 'js', 'assets']) await cp(join(old, p), join(root, p), { recursive: true });
   await rm(old, { recursive: true, force: true });
   const c = await browser.newContext({ ...devices['iPhone 14'] });

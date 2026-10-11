@@ -76,7 +76,7 @@ export const STORES = {
   wheelChecks: { indexes: [] },              // the quarterly life wheel (id = the quarter): a score per area
   daySnapshots: { indexes: [] },             // derived per-day summary (id = date), rebuilt from the logs
   outbox: { indexes: [] },                   // latest change per record ('store:id'), for a future sync
-  localBackups: { indexes: [] },             // automatic copies taken before data migrations (last three)
+  localBackups: { indexes: [] },             // automatic copies: before data migrations and restores, and weekly (last four)
 };
 
 // Stores kept fully in memory for instant rendering. Photo data, the outbox and the

@@ -50,15 +50,15 @@ test('a failed write leaves the migration pending for next time', async () => {
   assert.equal(store.profile().flag, undefined);
 });
 
-test('only the last three safety copies are kept, newest first', async () => {
+test('only the last four safety copies are kept, newest first', async () => {
   const disk = await fresh(v2());
   for (let i = 0; i < 5; i++) {
     await safetyBackup(`copy ${i}`);
     await new Promise((r) => setTimeout(r, 2));
   }
-  assert.equal(disk.db.localBackups.size, 3);
+  assert.equal(disk.db.localBackups.size, 4);
   const list = await safetyBackups();
-  assert.deepEqual(list.map((c) => c.reason), ['copy 4', 'copy 3', 'copy 2']);
+  assert.deepEqual(list.map((c) => c.reason), ['copy 4', 'copy 3', 'copy 2', 'copy 1']);
 });
 
 test('a safety copy restores like a backup file', async () => {

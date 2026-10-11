@@ -19,6 +19,16 @@ To install from Safari, a PWA has to be served over **HTTPS**. Hosting only serv
 
 The first time you open it from the Home Screen, go to **You → Data** (the initial at the top of Today) and make a backup habit of it. Safari can clear website storage for sites that aren't used for weeks. Installing to the Home Screen and taking regular backups avoids that.
 
+### Your data through updates
+
+An update replaces the app's code, never your data. The data lives in this address's storage on the device, and new versions only ever add to how it's stored. On top of that:
+
+- **Safety copies on the device:** one before any change to how data is stored, one before a restore or joining Sync, and one a week (taken when the app goes to the background). The last four are kept in *You → Data → Safety copies*, each restorable in one tap.
+- **A check after each update:** the first time a new version opens, it compares what's there with what was there before. If a lot seems to be missing, it says so at once and points to the copy from before, instead of letting it pass unnoticed.
+- **Off the device:** *Back up now* saves a file you keep (Files, iCloud Drive). With Sync on, everything is also on your own server and your other devices, so even a lost phone or a new address loses nothing.
+
+The one thing an update can't protect against is opening Life OS at a **different address**, which is a different, empty app. That's the next section.
+
 ### Keep one address (this is what keeps your data)
 
 Your data lives in the phone's storage **for one web address**. Open Life OS at a different address and it is a different, empty app; the old one still has your data, but the new one can't see it. So:

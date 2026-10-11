@@ -21,6 +21,13 @@ export function openUpdating() {
         <button type="button" class="btn btn--soft btn--sm" data-action="up-copy">${icon('copy', { size: 16 })} Copy</button></p>
       <p class="section-label">Updates</p>
       <p>New versions arrive by themselves at this address: Life OS checks each time you open it, downloads in the background and reloads into the new version. Nothing is wiped, because it’s the same app at the same address. Settings › About › Check for updates looks right away.</p>
+      <p class="section-label">Your data through updates</p>
+      <ul class="steps">
+        <li>An update replaces the app, never your data: it stays in this address’s storage.</li>
+        <li>Before any change to how your data is stored, and once a week, a safety copy is kept on this device (<strong>You → Data → Safety copies</strong>).</li>
+        <li>If an update ever seemed to lose something, you’d be told the first time it opens, with the copy from before.</li>
+        <li>For a copy off this phone too: <strong>Back up now</strong> below now and then, or turn on <strong>Sync</strong> (You → Sync), which keeps everything on your own server and on your other devices.</li>
+      </ul>
       <div class="notice">${icon('info', { size: 16 })}<span>A different address is a different, empty app. Updating by uploading to a new site (for example a new Netlify Drop) gives a new address, so always update the same site.</span></div>
       <p class="section-label">Moving to a new address, once</p>
       <ol class="steps">

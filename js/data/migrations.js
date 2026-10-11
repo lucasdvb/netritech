@@ -1,6 +1,6 @@
 // Data migrations: ordered, idempotent changes to stored data, each applied once and
 // recorded in meta 'migrations'. Before any of them touch existing data, a safety copy of
-// everything you've entered is saved on this device (the last three are kept), so an
+// everything you've entered is saved on this device (the last four are kept), so an
 // update can always be undone from Settings › Data.
 import * as store from './store.js';
 import { BACKUP_STORES, DB_VERSION } from './schema.js';
@@ -86,7 +86,7 @@ export const MIGRATIONS = [
   },
 ];
 
-const KEEP = 3;
+const KEEP = 4; // safety copies kept: before migrations, before restores and joining sync, and weekly
 const metaOf = () => store.get('meta', 'migrations') || { id: 'migrations', applied: [] };
 
 export const pendingMigrations = (list = MIGRATIONS) => {
