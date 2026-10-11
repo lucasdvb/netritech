@@ -19,13 +19,6 @@
 
 - Every generated image for the Disruptive Dodo site follows `dd-site/docs/image-direction.md`: black and white, the base alternating black / white, and one small accent detail in lime #E1FF01 (no blue). Work one image at a time from the client's reference. The generation permission rule above still applies to each one.
 
-# Life OS (`life-os/`)
+# Life OS
 
-- Life OS lives on its own branch, `life-os` (the app at the top level, nothing else in it); it is not in the other branches. To work on it, check that branch out at `life-os/` (`git worktree add life-os life-os`), commit there and push `life-os`. The paths below are relative to that checkout's parent.
-- The owner's master brief is `life-os/docs/master-brief.md`; the agreed architecture and build plan is `life-os/docs/product-architecture.md`. Read both before changing Life OS.
-- Committed scope: the whole brief plus all 30 agreed ideas (U1–U10, H1–H10, G1–G10, listed in section 13 of the plan). Every one gets built; none are optional.
-- Build phase by phase in the plan's order. Each phase ends with all test suites green, light and dark screenshots, a commit and a push.
-- Design rules: brand palette only, solid single-colour cards, one colour per element, blue (#0071E3) as the only accent, red only for delete and errors. Data stays on the device and everything must work offline.
-- Typography: Inter, semantic tokens only, as specified in `life-os/docs/typography.md` (the owner's rules). No hard-coded font sizes or arbitrary weights.
-- The owner asked (2026-10-07) for every phase to be built back to back without stopping to ask, then a full bug-hunt, cleanup and optimisation pass. Make strong product decisions from the brief and report them; don't wait for approval.
-- Moments and ceremonies: render a HyperFrames preview and share it with the owner, then build it into the app without waiting (per the instruction above).
+- Life OS has its own repository, `lucasdvb/life-os` (branch `main`); it is no longer in netritech. Its instructions (brief, plan, design rules) are in that repository's CLAUDE.md.
