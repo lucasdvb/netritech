@@ -30,6 +30,6 @@ The preview renders the real theme files with liquidjs and the real catalogue (`
 The theme lives on Shopify as **Moana Beauté v2 (preview)** (id 191582306594, unpublished). Edit the files under `theme/`, then upload them in one of these ways:
 
 - **Shopify CLI** (on a computer with Shopify access): `shopify theme push --theme 191582306594 --path theme`.
-- **Admin API:** commit and push, then call `themeFilesUpsert` with `URL` bodies pointing at `raw.githubusercontent.com/<repo>/<commit>/moana/theme/<file>`. Upload in this order: snippets, locales, config and assets; then sections; then section groups, templates and layouts. Shopify validates templates against the sections that exist at that moment.
+- **Admin API:** commit and push, then call `themeFilesUpsert` with `URL` bodies pointing at `raw.githubusercontent.com/lucasdvb/netritech/<commit>/theme/<file>`. Upload in this order: snippets, locales, config and assets; then sections; then section groups, templates and layouts. Shopify validates templates against the sections that exist at that moment.
 
 Never edit the live theme directly. Publish only after reviewing the preview.

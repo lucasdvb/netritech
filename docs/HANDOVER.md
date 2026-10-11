@@ -9,7 +9,7 @@ October 2026 (v7). Store: `moana-beaute.myshopify.com`.
 | New theme on Shopify | **Moana Beauté v2 (preview)**, id `191582306594`, **unpublished**. The live theme is untouched |
 | Preview link | `https://moana-beaute.myshopify.com/?preview_theme_id=191582306594` (the storefront password may be needed first) |
 | Theme editor | Shopify admin → Online Store → Themes → *Moana Beauté v2 (preview)* → Customize |
-| Code | `moana/` in this repository (branch `claude/eloquent-bardeen-p6n61a`) |
+| Code | Branch `moana-beaute` of `lucasdvb/netritech`: Moana only, theme at `theme/` |
 
 ## v7: the minimal, premium pass (October 2026)
 
