@@ -12,7 +12,7 @@ Where it's heading: the owner's brief is in [`docs/master-brief.md`](docs/master
 
 To install from Safari, a PWA has to be served over **HTTPS**. Hosting only serves the app's code; your data never leaves the phone.
 
-1. Host the `life-os/` folder on any static host (see below).
+1. Host the app on any static host (see below). It lives on its own branch, **`life-os`**, with nothing else in it.
 2. Open the URL in **Safari** on the iPhone.
 3. Tap **Share → Add to Home Screen**.
 4. Open Life OS from the Home Screen icon. It runs full-screen and works offline.
@@ -28,10 +28,10 @@ Your data lives in the phone's storage **for one web address**. Open Life OS at 
 
 | Host | How (one-time setup, then updates keep the same address) |
 |---|---|
-| **Netlify, linked to GitHub (recommended)** | In Netlify: *Add new site → Import an existing project → GitHub*, pick this repository and set **Base directory** to `life-os` (the publish directory is `.` from `netlify.toml`). Every push to the branch you choose deploys to the same address automatically. |
+| **Netlify, linked to GitHub (recommended)** | In Netlify: *Add new site → Import an existing project → GitHub*, pick this repository, set **Branch to deploy** to `life-os` and leave **Base directory** empty (the publish directory is `.` from `netlify.toml`). Every push to that branch deploys to the same address automatically. |
 | **Netlify, same site by hand** | Open your existing site in Netlify → **Deploys** → drag the new `life-os-site.zip` (from `sh tools/pack-site.sh`) onto *"Need to update your site? Drag and drop your site output folder here"*. Same site, same address. |
-| **Cloudflare Pages** | Connect the repository (root `life-os`), or use *Direct upload* to the same project each time. |
-| **GitHub Pages** | Enable Pages for the repo and point it at the branch. The app lives at `https://<user>.github.io/<repo>/life-os/`. Paths are all relative, so a sub-path is fine. |
+| **Cloudflare Pages** | Connect the repository with production branch `life-os` (root directory empty), or use *Direct upload* to the same project each time. |
+| **GitHub Pages** | Enable Pages for the repo and point it at the `life-os` branch (root). The app lives at `https://<user>.github.io/<repo>/`. Paths are all relative, so a sub-path is fine. |
 
 `netlify.toml` turns Netlify's build off: the app has no build step, and `package.json`'s scripts are developer checks that must not run there.
 
