@@ -12,7 +12,8 @@ const CFG = 'lifeos.sync';
 const FIELDS = 'lifeos.sync.fields';
 const FIELDWISE = { settings: 'app', profile: 'me' };
 /** Settings that belong to this device, not to you: never sent, never replaced. */
-export const DEVICE_KEYS = new Set(['theme', 'notifications', 'installDismissed', 'lastBackupAt', 'push']);
+// Each device reads its own calendars (their events never sync), so the list of them stays put too.
+export const DEVICE_KEYS = new Set(['theme', 'notifications', 'installDismissed', 'lastBackupAt', 'push', 'calendars']);
 const ENVELOPE = new Set(['id', 'createdAt', 'updatedAt', 'rev', 'tz']);
 /** The stores that sync record by record: all of your data but this device's own bookkeeping. */
 export const SYNCED = Object.keys(STORES).filter((s) => !LOCAL_ONLY.has(s) && !DERIVED.has(s) && s !== 'photoBlobs' && !FIELDWISE[s]);

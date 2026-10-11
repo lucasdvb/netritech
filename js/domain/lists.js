@@ -18,7 +18,8 @@ export const rename = (id, name) => { const t = name.trim(); if (t) store.update
 /** Add one item, or several when pasted one per line. */
 export const add = (id, text) => edit(id, (items) => [...items, ...text.split('\n').map((t) => t.trim()).filter(Boolean).map((t) => ({ id: store.uid(), text: t.slice(0, 120), done: false }))]);
 export const toggle = (id, itemId) => edit(id, (items) => items.map((i) => (i.id === itemId ? { ...i, done: !i.done } : i)));
-export const setText = (id, itemId, text) => { const t = text.trim(); if (t) edit(id, (items) => items.map((i) => (i.id === itemId ? { ...i, text: t.slice(0, 120) } : i))); };
+// An item the meal plan wrote that you change becomes yours: the plan won't overwrite or remove it.
+export const setText = (id, itemId, text) => { const t = text.trim(); if (t) edit(id, (items) => items.map((i) => (i.id === itemId && i.text !== t.slice(0, 120) ? { ...i, text: t.slice(0, 120), ...(i.fromPlan ? { edited: true } : {}) } : i))); };
 export const removeItem = (id, itemId) => edit(id, (items) => items.filter((i) => i.id !== itemId));
 export const clearDone = (id) => edit(id, (items) => items.filter((i) => !i.done));
 export const uncheckAll = (id) => edit(id, (items) => items.map((i) => ({ ...i, done: false })));

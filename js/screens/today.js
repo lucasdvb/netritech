@@ -8,7 +8,7 @@ import * as R from '../domain/routines.js';
 import { dayScore } from '../domain/scoring.js';
 import { phase as phaseOf, trainingCall, isWorkday } from '../domain/day-plan.js';
 import { MODES } from '../domain/taxonomy.js';
-import { today, fmtLong, fmtShortDate, fmtDayShort, addDays, relativeDay, weekday } from '../domain/dates.js';
+import { today, fmtLong, fmtShortDate, fmtDayShort, addDays, relativeDay, weekday, toISO } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { app } from '../ui/app-api.js';
@@ -169,7 +169,7 @@ const view = {
     const catchUp = isToday && nets ? netCards.catchUpBlock(nets.catchUp(date), ui) : '';
     const tidy = isToday && nets && [7, 1].includes(weekday(date)) ? netCards.tidyBlock(nets.tidyDue(date)) : '';
     const setup = isToday ? setupCard() : '';
-    const briefing = isToday && !setup && new Date().getHours() < 12 ? (brief ? brief.briefingBlock(date) : loadBrief()) : '';
+    const briefing = isToday && !setup && toISO(new Date()) === date && new Date().getHours() < 12 ? (brief ? brief.briefingBlock(date) : loadBrief()) : '';
     return html`<div class="today" data-phase="${ph}" data-mode="${mode}">
       ${header(date, ph, mode, isToday)}
       ${setup ? html`<div class="today-setup" data-key="b-setup">${setup}</div>` : ''}

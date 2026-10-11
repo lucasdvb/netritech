@@ -48,11 +48,34 @@ export function packingFor(t) {
   return items;
 }
 
-const snapshot = () => [{ store: 'profile', value: store.profile() }];
+/**
+ * What an action changed, so its undo puts back exactly those records (and nothing written since by
+ * anyone else). `note` before each write; the profile keeps only the date entries a trip touched.
+ */
+function journal() {
+  const seen = new Map();
+  const dates = new Map();
+  const note = (s, id) => { const k = `${s}\u0000${id}`; if (!seen.has(k)) { const r = store.get(s, id); seen.set(k, { s, id, was: r ? { ...r } : null }); } };
+  const noteDate = (d) => { if (!dates.has(d)) dates.set(d, store.profile().planDates?.[d]); };
+  const undo = () => {
+    const ops = [...seen.values()].map(({ s, id, was }) => (was ? { store: s, value: was } : { store: s, delete: id }));
+    if (dates.size) {
+      const p = store.profile();
+      const pd = { ...(p.planDates || {}) };
+      for (const [d, v] of dates) { if (v) pd[d] = v; else delete pd[d]; }
+      ops.push({ store: 'profile', value: { ...p, planDates: pd } });
+    }
+    if (ops.length) store.batch(ops);
+  };
+  return { note, noteDate, undo };
+}
+
+/** A leg keeps its id when legs before it are removed, so its task (and whether it's done) stays with it. */
+const legId = () => Math.random().toString(36).slice(2, 8);
 
 /**
  * Save a trip and set it up: the packing list (first time), its days (away or a Travel plan), the
- * "pack" task and its travel legs as tasks. Returns { trip, undo }.
+ * "pack" task and its travel legs as tasks. Returns { trip, undo }; the undo touches only what this did.
  */
 export async function save(id, patch) {
   const cur = id ? trip(id) : null;
@@ -60,62 +83,93 @@ export async function save(id, patch) {
   t.name = String(t.name || t.where || 'Trip').trim().slice(0, 60) || 'Trip';
   if (!t.from) t.from = today();
   if (!t.to || t.to < t.from) t.to = t.from;
-  const touched = ['dailyReviews', 'tasks', 'lists', 'trips'];
-  const before = Object.fromEntries(touched.map((s) => [s, store.all(s).map((r) => ({ ...r }))]));
-  const profileBefore = snapshot();
+  t.legs = (t.legs || []).map((l) => ({ ...l, id: l.id || legId() }));
+  t.id = t.id || store.uid();
+  const j = journal();
+  j.note('trips', t.id);
   const rec = store.put('trips', t);
   if (!rec.packingListId || !L.list(rec.packingListId)) {
     const l = L.create(`Packing · ${rec.name}`);
+    j.note('lists', l.id);
     L.add(l.id, packingFor(rec).join('\n'));
     store.update('trips', rec.id, { packingListId: l.id });
   }
-  await applyDays(trip(rec.id), cur);
-  tasksFor(trip(rec.id));
-  const undo = () => {
-    const ops = [];
-    for (const s of touched) {
-      const was = new Set(before[s].map((r) => r.id));
-      for (const r of before[s]) ops.push({ store: s, value: r });
-      for (const r of store.all(s)) if (!was.has(r.id)) ops.push({ store: s, delete: r.id });
-    }
-    store.batch([...ops, ...profileBefore]);
-  };
-  return { trip: trip(rec.id), undo };
+  await applyDays(trip(rec.id), cur, j);
+  tasksFor(trip(rec.id), j);
+  return { trip: trip(rec.id), undo: j.undo };
 }
 
 /** The trip's days: marked away, or on the Travel plan; a changed trip lets go of its old days first. */
-async function applyDays(t, prev) {
-  if (prev) await releaseDays(prev, t);
+async function applyDays(t, prev, j) {
+  if (prev) await releaseDays(prev, t, j);
   const days = range(t.from, t.to);
   if (t.mode === 'away') {
-    store.batch(days.map((d) => ({ store: 'dailyReviews', value: { ...(store.get('dailyReviews', d) || { id: d, date: d }), mode: 'away', tripId: t.id } })));
+    const ops = [];
+    for (const d of days) {
+      const r = store.get('dailyReviews', d);
+      if (r?.tripId === t.id) continue;
+      // A day you've set yourself (sick, minimum, away, or back to normal during the trip) or another
+      // trip's day stays as it is.
+      if (prev?.mode === 'away' && prev.from <= d && d <= prev.to) continue;
+      if (r?.mode && r.mode !== 'normal') continue;
+      j.note('dailyReviews', d);
+      ops.push({ store: 'dailyReviews', value: { ...(r || { id: d, date: d }), mode: 'away', tripId: t.id, prevMode: r?.mode ?? null } });
+    }
+    if (ops.length) store.batch(ops);
   } else if (t.mode === 'travel') {
     const P = await import('./day-plans.js');
     const id = P.plans().find((p) => p.name === 'Travel' && p.id !== P.BASE)?.id || P.create('Travel').id;
-    for (const d of days) P.setDate(d, id);
+    const prevDates = { ...(trip(t.id)?.prevDates || {}) };
+    for (const d of days) {
+      if (P.planIdFor(d) === id) continue;
+      j.noteDate(d);
+      if (!(d in prevDates)) prevDates[d] = store.profile().planDates?.[d] ?? null;
+      P.setDate(d, id);
+    }
+    j.note('trips', t.id);
+    store.update('trips', t.id, { prevDates });
   }
 }
 
-/** Undo what a trip did to its days (only days it set itself). */
-async function releaseDays(t, next = null) {
+/** Undo what a trip did to its days (only days it set itself): each goes back to what it was before. */
+async function releaseDays(t, next = null, j) {
   const keep = next && next.mode === t.mode ? new Set(range(next.from, next.to)) : new Set();
   const days = range(t.from, t.to).filter((d) => !keep.has(d));
   if (t.mode === 'away') {
     const ops = [];
     for (const d of days) {
       const r = store.get('dailyReviews', d);
-      if (r?.tripId === t.id) { const { tripId, ...rest } = r; ops.push({ store: 'dailyReviews', value: { ...rest, mode: 'normal' } }); }
+      if (r?.tripId !== t.id) continue;
+      j.note('dailyReviews', d);
+      const { tripId, prevMode, ...rest } = r;
+      // Another time-off trip on the same day takes it over.
+      const other = all().find((x) => x.id !== t.id && x.mode === 'away' && x.from <= d && d <= x.to);
+      ops.push({ store: 'dailyReviews', value: other ? { ...r, tripId: other.id } : { ...rest, mode: prevMode ?? null } });
     }
     if (ops.length) store.batch(ops);
   } else if (t.mode === 'travel') {
     const P = await import('./day-plans.js');
     const travel = P.plans().find((p) => p.name === 'Travel' && p.id !== P.BASE)?.id;
-    for (const d of days) if (travel && P.planIdFor(d) === travel) P.setDate(d, null);
+    const prevDates = { ...(t.prevDates || {}) };
+    const p = store.profile();
+    const pd = { ...(p.planDates || {}) };
+    let changed = false;
+    for (const d of days) {
+      if (!travel || P.planIdFor(d) !== travel) continue;
+      if (all().some((x) => x.id !== t.id && x.mode === 'travel' && x.from <= d && d <= x.to)) continue;
+      j.noteDate(d);
+      const was = prevDates[d];
+      if (was) pd[d] = was; else delete pd[d];
+      delete prevDates[d];
+      changed = true;
+    }
+    if (changed) store.put('profile', { ...p, planDates: pd });
+    if (store.get('trips', t.id)) { j.note('trips', t.id); store.update('trips', t.id, { prevDates }); }
   }
 }
 
 /** "Pack" the day before, and each travel leg on its day (stable ids, kept in step with the trip). */
-function tasksFor(t) {
+function tasksFor(t, j) {
   const ops = [];
   let order = store.all('tasks').reduce((m, x) => Math.max(m, x.order ?? 0), 0);
   const base = { done: false, doneAt: null, area: 'life', repeat: null, source: `trip:${t.id}` };
@@ -123,23 +177,27 @@ function tasksFor(t) {
   if (t.from > today()) want.set(`t-trip-${t.id}-pack`, { ...base, title: `Pack for ${t.name}`, notes: 'The packing list is in Lists.', date: addDays(t.from, -1) });
   (t.legs || []).forEach((leg, i) => {
     if (!leg?.date || !leg?.what) return;
-    want.set(`t-trip-${t.id}-leg-${i}`, { ...base, title: `${leg.time ? `${leg.time} · ` : ''}${String(leg.what).slice(0, 80)}`, notes: t.name, date: leg.date });
+    want.set(`t-trip-${t.id}-leg-${leg.id || i}`, { ...base, title: `${leg.time ? `${leg.time} · ` : ''}${String(leg.what).slice(0, 80)}`, notes: t.name, date: leg.date });
   });
-  for (const r of store.all('tasks')) if (r.source === `trip:${t.id}` && !want.has(r.id) && !r.done) ops.push({ store: 'tasks', delete: r.id });
+  for (const r of store.all('tasks')) if (r.source === `trip:${t.id}` && !want.has(r.id) && !r.done) { j.note('tasks', r.id); ops.push({ store: 'tasks', delete: r.id }); }
   for (const [id, v] of want) {
     const cur = store.get('tasks', id);
+    j.note('tasks', id);
     ops.push({ store: 'tasks', value: { ...v, ...(cur ? { done: cur.done, doneAt: cur.doneAt, order: cur.order } : { order: ++order }), id } });
   }
   if (ops.length) store.batch(ops);
 }
 
-/** Delete a trip: its days go back to normal and its open tasks go (the packing list stays). Returns an undo. */
+/** Delete a trip: its days go back to what they were and its open tasks go (the packing list stays). Returns an undo. */
 export async function remove(id) {
   const t = trip(id);
   if (!t) return () => {};
-  const before = ['dailyReviews', 'tasks', 'trips'].flatMap((s) => store.all(s).map((value) => ({ store: s, value: { ...value } })));
-  const profileBefore = snapshot();
-  await releaseDays(t);
-  store.batch([...store.all('tasks').filter((r) => r.source === `trip:${t.id}` && !r.done).map((r) => ({ store: 'tasks', delete: r.id })), { store: 'trips', delete: id }]);
-  return () => store.batch([...before, ...profileBefore]);
+  const j = journal();
+  j.note('trips', id);
+  store.remove('trips', id);
+  await releaseDays(t, null, j);
+  const ops = [];
+  for (const r of store.all('tasks')) if (r.source === `trip:${t.id}` && !r.done) { j.note('tasks', r.id); ops.push({ store: 'tasks', delete: r.id }); }
+  if (ops.length) store.batch(ops);
+  return j.undo;
 }

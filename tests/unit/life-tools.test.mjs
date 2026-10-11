@@ -192,7 +192,7 @@ test('a trip: packing list, away days, the pack task and legs; deleting it gives
   assert.equal(H.dayMode(d(4)), 'away');
   assert.equal(TR.on(d(4)).id, trip.id);
   assert.equal(store.get('tasks', `t-trip-${trip.id}-pack`).date, d(2));
-  assert.equal(store.get('tasks', `t-trip-${trip.id}-leg-0`).title, '07:40 · Flight MK 015');
+  assert.equal(store.get('tasks', `t-trip-${trip.id}-leg-${trip.legs[0].id}`).title, '07:40 · Flight MK 015');
   // Shorter: the last day goes back to normal.
   await TR.save(trip.id, { to: d(5) });
   assert.equal(H.dayMode(d(6)), 'normal');

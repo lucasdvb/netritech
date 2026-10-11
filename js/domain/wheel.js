@@ -65,7 +65,7 @@ export function changes(q = quarterOf()) {
 export function seasonSuggestion(q = quarterOf()) {
   const w = weakest(q);
   if (!w) return null;
-  const habits = store.all('habits').filter((h) => !h.archived && w.cats.includes(h.category)).slice(0, 3).map((h) => h.id);
+  const habits = store.all('habits').filter((h) => !h.archived && !h.optional && w.cats.includes(h.category)).slice(0, 3).map((h) => h.id);
   return { area: w, name: `${w.label.split(' ')[0]} season`, intention: `Lift ${w.label.toLowerCase()} from ${w.score} to ${Math.min(10, w.score + 2)}.`, habitIds: habits };
 }
 

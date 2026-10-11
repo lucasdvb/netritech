@@ -2,7 +2,7 @@
 // why, what you expect, how sure you are); three months later it comes back for a short review of
 // what happened against what you expected, and the scorecard shows how your calls hold up.
 import * as DC from '../domain/decisions.js';
-import { today, fmtMD, relativeDay } from '../domain/dates.js';
+import { today, addDays, fmtMD, relativeDay } from '../domain/dates.js';
 import { html, cx } from '../ui/dom.js';
 import { icon } from '../ui/icons.js';
 import { pageHead, empty } from '../ui/components.js';
@@ -24,7 +24,7 @@ export function openDecision(id = null) {
       <label class="field"><span class="field-label">What you expect to happen</span><textarea class="input" rows="2" data-input="dc-f" data-f="expect" placeholder="In three months: …">${s.ui.expect}</textarea></label>
       <div class="field"><span class="field-label">How sure are you?</span>
         <div class="seg seg--wrap" role="radiogroup" aria-label="How sure are you?">${[1, 2, 3, 4, 5].map((n) => html`<button type="button" role="radio" class="seg-btn" aria-checked="${s.ui.confidence === n}" data-action="dc-sure" data-n="${n}">${SURE[n]}</button>`)}</div></div>
-      <p class="field-hint">It comes back for review on ${fmtMD(cur?.reviewOn || addMonths3())}.</p>
+      <p class="field-hint">It comes back for review on ${fmtMD(cur?.reviewOn || addDays(today(), DC.REVIEW_AFTER))}.</p>
       <button type="submit" class="btn btn--primary btn--block">${cur ? 'Save' : 'Keep it'}</button>
       ${cur ? html`<button type="button" class="btn btn--ghost btn--block btn--danger-text" data-action="dc-delete">${icon('trash-2', { size: 16 })} Delete</button>` : ''}
     </form>`,
@@ -46,11 +46,6 @@ export function openDecision(id = null) {
       },
     },
   });
-}
-function addMonths3() {
-  const d = new Date();
-  d.setDate(d.getDate() + DC.REVIEW_AFTER);
-  return d.toISOString().slice(0, 10);
 }
 
 export function openReview(id) {
@@ -111,7 +106,10 @@ export default {
   // From the morning briefing: reflect/decisions/<id> opens it (its review when due).
   mount(el, { params }) {
     const d = params.id && DC.one(params.id);
-    if (d) (!d.review && d.reviewOn > today() ? openDecision : openReview)(d.id);
+    if (!d) return;
+    (!d.review && d.reviewOn > today() ? openDecision : openReview)(d.id);
+    // Once: going back to this address (or reloading) shouldn't open it again.
+    window.history.replaceState(window.history.state, '', '#/reflect/decisions');
   },
   actions: {
     'dc-new': () => openDecision(),

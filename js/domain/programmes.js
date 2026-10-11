@@ -15,6 +15,7 @@
 //   load) for most lifts; simple linear progression for novices on the main barbell lifts.
 import * as store from '../data/store.js';
 import * as F from './fitness-core.js';
+import { today } from './dates.js';
 
 // Exercises the programmes use. The home ones are already in the library; the gym ones are added
 // the first time a programme needs them (same id every time, so history stays together).
@@ -179,7 +180,7 @@ export function follow(id, { short = false } = {}) {
   store.batch([
     ...exOps,
     ...tpls.map((value) => ({ store: 'templates', value })),
-    { store: 'profile', value: { ...profile, plan, programme: { id: p.id, since: new Date().toISOString().slice(0, 10), short: !!(short && p.short), prevPlan } } },
+    { store: 'profile', value: { ...profile, plan, programme: { id: p.id, since: today(), short: !!(short && p.short), prevPlan } } },
   ]);
   return () => {
     // Everything as it was; the workouts and exercises this added go again unless you've trained with them.

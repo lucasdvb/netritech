@@ -68,14 +68,7 @@ export function candidates(gap, date = today()) {
 export function place(taskId, time, date = today()) {
   const t = store.get('tasks', taskId);
   if (!t || !HM.test(time)) return () => {};
-  store.put('tasks', { ...t, date, time });
-  return () => store.put('tasks', t);
-}
-
-/** Take a task's time away (it stays on its day). Returns an undo. */
-export function unplace(taskId) {
-  const t = store.get('tasks', taskId);
-  if (!t) return () => {};
-  store.put('tasks', { ...t, time: null });
+  // A ranked task from another day isn't one of today's three: it comes over without its rank.
+  store.put('tasks', { ...t, date, time, ...(t.rank && t.date !== date ? { rank: null } : {}) });
   return () => store.put('tasks', t);
 }

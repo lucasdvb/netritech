@@ -2,7 +2,7 @@
 // noon, until you put it away for the day. Loaded only in the morning.
 import * as store from '../../data/store.js';
 import * as BR from '../../domain/briefing.js';
-import { today } from '../../domain/dates.js';
+import { today, toISO } from '../../domain/dates.js';
 import { html } from '../../ui/dom.js';
 import { icon } from '../../ui/icons.js';
 import * as TK from '../../domain/takeaways.js';
@@ -10,9 +10,12 @@ import { takeawayCard } from '../takeaways.js';
 
 const seen = (date) => store.get('dailyReviews', date)?.briefingSeen;
 
-/** The card, or '' when it isn't the morning, it was put away, or there's nothing to say. */
+/**
+ * The card, or '' when it isn't the morning, it was put away, or there's nothing to say. After
+ * midnight but before the day ends (03:00) it's still yesterday, and that isn't morning.
+ */
 export function briefingBlock(date = today(), now = new Date()) {
-  if (date !== today() || now.getHours() >= 12 || seen(date) || store.settings().briefing === false) return '';
+  if (date !== today() || toISO(now) !== date || now.getHours() >= 12 || seen(date) || store.settings().briefing === false) return '';
   const lines = BR.lines(date);
   const tk = TK.forMorning(date);
   if (lines.length < 2 && !tk) return '';

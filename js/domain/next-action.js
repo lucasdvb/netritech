@@ -93,7 +93,7 @@ export function nextActions(date = today(), now = new Date()) {
   // Training, around its time, when it isn't a routine step already shown.
   const call = trainingCall(date);
   const train = parseHM(planOn(date).profile?.trainTime || '06:30');
-  if (call.template && planOn(date).train && ['planned', 'lighter', 'recovery'].includes(call.kind) && mins >= train - 60 && mins <= train + 180
+  if (call.template && planOn(date).train && ['planned', 'lighter', 'recovery', 'deload'].includes(call.kind) && mins >= train - 60 && mins <= train + 180
       && !(cur?.next?.habitId === 'h-training')) {
     add(25, { id: 'training', kind: 'training', eyebrow: 'Training', title: call.title, sub: call.reason, primary: act('Start', 'start-workout', { template: call.template.id }) });
   }

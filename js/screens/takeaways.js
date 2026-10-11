@@ -52,7 +52,7 @@ export const takeawayActions = {
     const undo = TK.answer(data.id, data.how);
     hap.tap();
     const t = TK.one(data.id);
-    app.toast(data.how === 'retire' ? 'Retired' : `Back ${relativeDay(t.due)?.toLowerCase() || `on ${fmtMD(t.due)}`}`, { action: { label: 'Undo', fn: undo } });
+    app.toast(data.how === 'retire' ? 'Retired' : `Back ${relativeDay(t.due) === 'Tomorrow' ? 'tomorrow' : `on ${fmtMD(t.due)}`}`, { action: { label: 'Undo', fn: undo } });
   },
 };
 

@@ -94,7 +94,7 @@ export default {
     return html`
       ${pageHead({ title: 'Supplements & medication', back: { to: 'progress/body', label: 'Body' },
         actions: html`<button type="button" class="btn btn--primary btn--sm" data-action="su-new">${icon('plus', { size: 16 })} Add</button>`,
-        info: 'What you take, when, and how much is left. Taking a dose is one tap and counts the stock down; when what’s left covers fewer days than you chose, a “reorder” task appears once. Reminders: You › Reminders.' })}
+        info: 'What you take, when, and how much is left. Taking a dose is one tap and counts the stock down; when what’s left covers fewer days than you chose, a “reorder” task appears once. Reminders for each time: You › Settings › Notifications.' })}
       ${list.length ? html`
         ${low.length ? html`<p class="notice notice--warn">${icon('pill', { size: 16 })} Running low: ${low.map((s) => `${s.name} (${SU.daysLeft(s)} days)`).join(', ')}.</p>` : ''}
         <section class="block"><div class="block-head"><h2 class="block-title">Today</h2></div>${dosesList()}</section>

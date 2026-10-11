@@ -45,7 +45,7 @@ npx wrangler deploy
 
 Deleting the database deletes everything on the server; your devices keep their own copies.
 
-**Calendar subscriptions (version 3).** `POST /calendar` lets a device that syncs with this server read a calendar subscription link (iCloud, Google, Outlook) that a web page can't read directly. It checks the sync key like `/sync`, accepts public `https://` links only, passes the calendar text back and keeps nothing. Redeploy the Worker (paste the new `worker.js`) to get it; devices fall back to reading the link directly, or to importing a calendar file, without it.
+**Calendar subscriptions (version 3).** `POST /calendar` lets a device that syncs with this server read a calendar subscription link (iCloud, Google, Outlook) that a web page can't read directly. It checks the sync key like `/sync`, accepts public `https://` links only (no local names, private addresses or IP literals, and every redirect is checked the same way), reads at most 4 MB, passes the calendar text back and keeps nothing. Version 4 tightened those checks; redeploy to get them. Redeploy the Worker (paste the new `worker.js`) to get it; devices fall back to reading the link directly, or to importing a calendar file, without it.
 
 ## Or let Claude deploy it
 

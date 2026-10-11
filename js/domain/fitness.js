@@ -42,12 +42,15 @@ export function previousPerformance(exerciseId, { excludeWorkoutId, before } = {
   const e = exercise(exerciseId);
   const family = e?.family;
   const ids = family ? store.all('exercises').filter((x) => x.family === family).map((x) => x.id) : [exerciseId];
-  for (const w of allWorkouts()) {
-    if (w.id === excludeWorkoutId) continue;
-    if (before && w.date > before) continue;
-    for (const id of [exerciseId, ...ids.filter((i) => i !== exerciseId)]) {
-      const p = performance(w.id, id);
-      if (p) return { workout: w, exerciseId: id, ...p };
+  // A deload session is skipped (its lighter loads aren't what to build on), unless it's all there is.
+  for (const deloads of [false, true]) {
+    for (const w of allWorkouts()) {
+      if (w.id === excludeWorkoutId || !!w.deload !== deloads) continue;
+      if (before && w.date > before) continue;
+      for (const id of [exerciseId, ...ids.filter((i) => i !== exerciseId)]) {
+        const p = performance(w.id, id);
+        if (p) return { workout: w, exerciseId: id, ...p };
+      }
     }
   }
   return null;

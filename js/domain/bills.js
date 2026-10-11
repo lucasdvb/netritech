@@ -50,11 +50,18 @@ export const daysTo = (b, from = today()) => diffDays(b.next, from);
 export function save(id, patch) {
   const cur = id ? bill(id) : null;
   const next = patch.next ?? cur?.next ?? today();
-  const value = { kind: 'bill', every: 'month', remindDays: 3, autopay: false, ...cur, ...patch, next, anchorDay: patch.next ? fromISO(patch.next).getDate() : cur?.anchorDay ?? fromISO(next).getDate() };
+  // The day of the month is kept (the 31st after a short month) unless you change the due date.
+  const moved = patch.next && patch.next !== cur?.next;
+  const value = { kind: 'bill', every: 'month', remindDays: 3, autopay: false, ...cur, ...patch, next, anchorDay: moved ? fromISO(patch.next).getDate() : cur?.anchorDay ?? fromISO(next).getDate() };
   value.name = String(value.name || 'Bill').trim().slice(0, 60) || 'Bill';
   value.amount = Math.max(0, Math.round((Number(value.amount) || 0) * 100) / 100);
-  return store.put('bills', value);
+  const rec = store.put('bills', value);
+  if (cur) { const stale = staleTasks(rec); if (stale.length) store.batch(stale.map((t) => ({ store: 'tasks', delete: t.id }))); }
+  return rec;
 }
+
+/** Open reminder tasks of a bill that no longer match its due date (or all of them, for a bill that's gone). */
+const staleTasks = (b, all = false) => store.all('tasks').filter((t) => t.source === `bill:${b.id}` && !t.done && (all || t.id !== taskId(b)));
 
 /**
  * Mark the one due as paid: the expense goes into Money (on the day you pay), the next due date
@@ -78,13 +85,12 @@ export function pay(id, date = today()) {
 export function skip(id) {
   const b = bill(id);
   if (!b) return () => {};
-  store.put('bills', { ...b, next: after(b.next, b.every, b.anchorDay) });
-  return () => store.put('bills', b);
+  const stale = staleTasks(b, true);
+  store.batch([{ store: 'bills', value: { ...b, next: after(b.next, b.every, b.anchorDay) } }, ...stale.map((t) => ({ store: 'tasks', delete: t.id }))]);
+  return () => store.batch([{ store: 'bills', value: b }, ...stale.map((t) => ({ store: 'tasks', value: t }))]);
 }
 
 const taskId = (b) => `t-bill-${b.id}-${b.next}`;
-/** For a subscription or renewal: the last day to decide whether to keep it (a few days before it renews). */
-export const decideBy = (b) => (b.kind === 'bill' ? null : addDays(b.next, -Math.max(1, Number(b.remindDays) || 3)));
 
 /**
  * The reminder tasks: one per bill you pay by hand, dated a few days before it's due; one "keep or
@@ -99,7 +105,8 @@ export function ensureTasks(from = today()) {
     const on = addDays(b.next, -lead);
     if (on > from) continue;
     const id = taskId(b);
-    if (store.get('tasks', id)) continue;
+    // Made once: a reminder you deleted isn't made again.
+    if (store.get('tasks', id) || store.deleted('tasks', id)) continue;
     const money = b.amount ? ` (${fmt(b.amount)})` : '';
     const base = { id, date: on < from ? from : on, done: false, doneAt: null, area: 'life', repeat: null, order: ++order, source: `bill:${b.id}` };
     if (b.kind === 'bill' && !b.autopay) ops.push({ store: 'tasks', value: { ...base, title: `Pay ${b.name}${money}`, notes: `Due ${b.next}. Mark it paid in Money › Bills to log it.` } });
@@ -113,6 +120,7 @@ export function ensureTasks(from = today()) {
 export function remove(id) {
   const b = bill(id);
   if (!b) return () => {};
-  store.remove('bills', id);
-  return () => store.put('bills', b);
+  const stale = staleTasks(b, true);
+  store.batch([{ store: 'bills', delete: id }, ...stale.map((t) => ({ store: 'tasks', delete: t.id }))]);
+  return () => store.batch([{ store: 'bills', value: b }, ...stale.map((t) => ({ store: 'tasks', value: t }))]);
 }

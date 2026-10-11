@@ -22,9 +22,11 @@ export const recipe = (id) => store.get('recipes', id);
 export function parseIngredient(line) {
   const t = String(line || '').trim().replace(/\s+/g, ' ');
   if (!t) return null;
-  const m = /^(\d+(?:[.,]\d+)?|\d+\/\d+)\s*(kg|g|mg|l|ml|cl|tbsp|tsp|cups?|cans?|tins?|packs?|pcs?|x)?\b\s*(?:of\s+)?(.*)$/i.exec(t);
+  const m = /^(\d+\/\d+|\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:[.,]\d+)?)\s*(kg|g|mg|l|ml|cl|tbsp|tsp|cups?|cans?|tins?|packs?|pcs?|x)?\b\s*(?:of\s+)?(.*)$/i.exec(t);
   if (!m || !m[3]) return { qty: null, unit: '', name: t.slice(0, 80) };
-  const q = m[1].includes('/') ? m[1].split('/').reduce((a, b) => Number(a) / Number(b)) : Number(m[1].replace(',', '.'));
+  // "1/2", "1,000" (thousands) and "1,5" (a decimal comma) all read as numbers.
+  const q = m[1].includes('/') ? m[1].split('/').reduce((a, b) => Number(a) / Number(b))
+    : /^\d{1,3}(,\d{3})+/.test(m[1]) ? Number(m[1].replace(/,/g, '')) : Number(m[1].replace(',', '.'));
   const unit = (m[2] || '').toLowerCase().replace(/^x$/, '').replace(/s$/, '').replace(/^pc$/, '');
   return { qty: q, unit, name: m[3].trim().slice(0, 80) };
 }
@@ -123,16 +125,21 @@ export function toList(ws = startOfWeek(today())) {
   }
   const want = groceries(ws);
   const items = [...(l.items || [])];
-  const keyOf = (t) => String(t).split(' · ')[0].toLowerCase();
+  // Each planned line knows which ingredient (name and unit) it stands for; lines from before that
+  // was kept match on the name alone. A line you've edited is yours: it's neither updated nor removed.
+  const keyOf = (i) => i.planKey || `${String(i.text).split(' · ')[0].toLowerCase()}|`;
+  const gKey = (g) => `${g.name.toLowerCase()}|${g.unit}`;
   let added = 0;
   for (const g of want) {
-    const at = items.findIndex((i) => i.fromPlan && keyOf(i.text) === g.name.toLowerCase());
-    if (at >= 0) { if (items[at].text !== g.text) items[at] = { ...items[at], text: g.text }; }
-    else { items.push({ id: store.uid(), text: g.text, done: false, fromPlan: true }); added++; }
+    const k = gKey(g);
+    let at = items.findIndex((i) => i.fromPlan && i.planKey === k);
+    if (at < 0) at = items.findIndex((i) => i.fromPlan && !i.planKey && keyOf(i) === `${g.name.toLowerCase()}|`);
+    if (at >= 0) { if (!items[at].edited && (items[at].text !== g.text || items[at].planKey !== k)) items[at] = { ...items[at], text: g.text, planKey: k }; }
+    else { items.push({ id: store.uid(), text: g.text, done: false, fromPlan: true, planKey: k }); added++; }
   }
-  // Planned items that are no longer in the plan go (if not ticked); your own stay.
-  const names = new Set(want.map((g) => g.name.toLowerCase()));
-  const kept = items.filter((i) => !i.fromPlan || i.done || names.has(keyOf(i.text)));
+  // Planned items that are no longer in the plan go (if not ticked or edited); your own stay.
+  const keys = new Set(want.map(gKey));
+  const kept = items.filter((i) => !i.fromPlan || i.done || i.edited || keys.has(i.planKey));
   store.put('lists', { ...l, items: kept });
   return { list: L.list(id), added };
 }

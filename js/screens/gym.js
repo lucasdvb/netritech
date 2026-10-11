@@ -30,7 +30,8 @@ function sequence(workoutId) {
   return F.setsOf(workoutId).slice().sort((a, b) => a.order - b.order || a.setIndex - b.setIndex).map((s) => ({ s, e: F.exercise(s.exerciseId) }));
 }
 
-const stepFor = (w, s) => w.kind === 'mobility' ? null : nextStep(s.exerciseId, s.target, { excludeWorkoutId: w.id, before: w.date, unit: weightUnit() });
+// No next step on a deload or lighter day: the session is planned lighter on purpose.
+const stepFor = (w, s) => w.kind === 'mobility' || w.adjusted || w.deload ? null : nextStep(s.exerciseId, s.target, { excludeWorkoutId: w.id, before: w.date, unit: weightUnit() });
 
 /** What a set will be logged as: what you've entered, or last time's numbers, or the goal. */
 function suggested(w, s, e) {
@@ -208,8 +209,11 @@ export default {
       const vals = suggested(w, s, e);
       // How it felt moves the sets still to come of this exercise (effort.js): 4+ reps left inside
       // the range → a step heavier; nothing left below it → 5% lighter.
-      const adj = e?.metric === 'reps' ? adjustNext({ ...s, ...vals, completed: true }, s.target, { unit: weightUnit(), bodyweight: !e?.defaultLoad && !(Number(vals.load) > 0) }) : null;
-      const later = adj ? F.setsOf(w.id).filter((x) => x.order === s.order && x.setIndex > s.setIndex && !x.completed && !x.warmup) : [];
+      const raw = e?.metric === 'reps' ? adjustNext({ ...s, ...vals, completed: true }, s.target, { unit: weightUnit(), bodyweight: !e?.defaultLoad && !(Number(vals.load) > 0) }) : null;
+      // A deload or lighter day keeps reps in the tank on purpose: it only ever goes lighter.
+      const adj = raw && (w.deload || w.adjusted) && !(raw.load != null && raw.load < (Number(vals.load) || 0)) ? null : raw;
+      // Sets whose reps you've already typed in are yours and stay as they are.
+      const later = adj ? F.setsOf(w.id).filter((x) => x.order === s.order && x.setIndex > s.setIndex && !x.completed && !x.warmup && x.reps == null) : [];
       const laterBefore = later.map((x) => ({ ...x }));
       store.batch([{ store: 'workoutSets', value: { ...s, ...vals, completed: true } },
         ...later.map((x) => ({ store: 'workoutSets', value: { ...x, ...(adj.load != null ? { load: adj.load } : {}), reps: null, plan: { ...(x.plan || {}), ...(adj.reps != null ? { reps: adj.reps } : {}) }, adjusted: adj.why } }))]);

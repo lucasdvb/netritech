@@ -61,11 +61,12 @@ export function candidates(now) {
     if (m < tm || m > tm + 90) return;
     const h = habitId ? habit(habitId) : null;
     if (h && (!dueOn(h, d) || isDone(h, d))) return;
-    out.push({ key: cat, cat, habitId, title, body, url, time });
+    // A body can be worked out only when it's due (the briefing is too much for every tick).
+    out.push({ key: cat, cat, habitId, title, body: typeof body === 'function' ? body() : body, url, time });
   };
   const tpl = F.plannedTemplate(d);
   // The morning reminder carries the first lines of the day's briefing.
-  if (!ritualDone(d, 'morning')) at('morning', o.cat('morning', nt.morning?.time), LINKED.morning, 'Morning check-in', briefingSafe(d) || 'One minute: sleep, how you feel, your three.', './#/today');
+  if (!ritualDone(d, 'morning')) at('morning', o.cat('morning', nt.morning?.time), LINKED.morning, 'Morning check-in', () => briefingSafe(d) || 'One minute: sleep, how you feel, your three.', './#/today');
   // Temptation bundling: the pairing you keep for training rides along with its reminder.
   const pair = (id) => habit(id)?.bundle;
   if (tpl && o.train) at('workout', o.cat('workout', nt.workout?.time), LINKED.workout, `Training at ${p.trainTime}`, `${tpl.name}${pair(LINKED.workout) ? ` · with ${pair(LINKED.workout)}` : ''}`, './#/plan/training');

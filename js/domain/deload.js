@@ -29,7 +29,7 @@ export function active(date = today()) {
 export const deloadSets = (n) => Math.max(1, Math.ceil(Number(n || 0) / 2));
 
 function strengthSessions(before) {
-  return allWorkouts().filter((w) => w.kind === 'strength' && w.date <= before);
+  return allWorkouts().filter((w) => w.kind === 'strength' && !w.deload && w.date <= before);
 }
 
 /** Lifts whose estimated max hasn't risen over their last three sessions (names). */
