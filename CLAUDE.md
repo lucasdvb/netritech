@@ -21,6 +21,7 @@
 
 # Life OS (`life-os/`)
 
+- Life OS lives on its own branch, `life-os` (the app at the top level, nothing else in it); it is not in the other branches. To work on it, check that branch out at `life-os/` (`git worktree add life-os life-os`), commit there and push `life-os`. The paths below are relative to that checkout's parent.
 - The owner's master brief is `life-os/docs/master-brief.md`; the agreed architecture and build plan is `life-os/docs/product-architecture.md`. Read both before changing Life OS.
 - Committed scope: the whole brief plus all 30 agreed ideas (U1–U10, H1–H10, G1–G10, listed in section 13 of the plan). Every one gets built; none are optional.
 - Build phase by phase in the plan's order. Each phase ends with all test suites green, light and dark screenshots, a commit and a push.
