@@ -13,8 +13,36 @@ export const one = (id) => store.get('supplements', id);
 const HM = /^([01]\d|2[0-3]):[0-5]\d$/;
 const cleanTimes = (ts) => [...new Set((ts || []).filter((t) => HM.test(t)))].sort();
 
+/**
+ * How much is left. The stock you entered (or last restocked to) is kept with the time it was set;
+ * each dose logged after that takes its share. Doses are their own records, so doses taken on two
+ * devices, even offline, all count once they sync: no one device's total overwrites the other's.
+ */
+export function stockOf(s) {
+  if (!s || s.stock == null) return null;
+  const since = s.stockAt || s.updatedAt || '';
+  let used = 0;
+  for (const l of store.all('supplementLogs')) if (l.supplementId === s.id && l.at && l.at > since) used += Number(l.took ?? s.perDose) || 0;
+  return Math.max(0, Math.round((s.stock - used) * 100) / 100);
+}
+/** Times that never repeat on this device, so a dose and a restock in the same millisecond keep their order. */
+let lastStamp = '';
+const stamp = () => {
+  let t = new Date().toISOString();
+  if (t <= lastStamp) t = new Date(Date.parse(lastStamp) + 1).toISOString();
+  lastStamp = t;
+  return t;
+};
+
 export function save(id, patch) {
   const cur = id ? one(id) : null;
+  // A stock you type starts the count again from now; one left as it was keeps counting.
+  if (patch.stock !== undefined) {
+    const was = cur ? stockOf(cur) : null;
+    const want = patch.stock === '' || patch.stock == null ? null : Math.max(0, Number(patch.stock) || 0);
+    if (cur && want === was) { const { stock, ...rest } = patch; patch = { ...rest, stockAt: cur.stockAt || cur.updatedAt || stamp() }; }
+    else patch = { ...patch, stock: want, stockAt: stamp() };
+  } else if (cur && !cur.stockAt) patch = { ...patch, stockAt: cur.updatedAt || stamp() };
   const order = cur?.order ?? Math.max(-1, ...store.all('supplements').map((s) => s.order ?? 0)) + 1;
   const v = { kind: 'supplement', dose: '', perDose: 1, times: ['08:00'], stock: null, reorderDays: 7, ...cur, ...patch, order };
   v.name = String(v.name || 'Supplement').trim().slice(0, 60) || 'Supplement';
@@ -35,30 +63,26 @@ export function doses(date = today()) {
   return out.sort((a, b) => a.time.localeCompare(b.time) || a.s.name.localeCompare(b.s.name));
 }
 
-/** Take (or untake) a dose: logged, and the stock counts down (or back up). Returns an undo. */
+/** Take (or untake) a dose: one record, which counts the stock down (untaking removes it). Returns an undo. */
 export function toggle(sid, time, date = today()) {
   const s = one(sid);
   if (!s) return () => {};
   const id = logId(date, sid, time);
   const was = store.get('supplementLogs', id);
-  // The log keeps how much stock it took (less than a dose when it ran out), so untaking gives back exactly that.
-  const left = s.stock == null ? null : Math.max(0, Math.round((s.stock - s.perDose) * 100) / 100);
-  const took = s.stock == null ? null : Math.round((s.stock - left) * 100) / 100;
-  const ops = [was ? { store: 'supplementLogs', delete: id } : { store: 'supplementLogs', value: { id, date, supplementId: sid, time, at: new Date().toISOString(), ...(took != null ? { took } : {}) } }];
-  if (s.stock != null) ops.push({ store: 'supplements', value: { ...s, stock: was ? Math.round((s.stock + (was.took ?? s.perDose)) * 100) / 100 : left } });
-  store.batch(ops);
-  return () => store.batch([was ? { store: 'supplementLogs', value: was } : { store: 'supplementLogs', delete: id }, { store: 'supplements', value: s }]);
+  if (was) store.remove('supplementLogs', id);
+  else store.put('supplementLogs', { id, date, supplementId: sid, time, at: stamp(), took: s.perDose });
+  return () => (was ? store.put('supplementLogs', was) : store.remove('supplementLogs', id));
 }
 
 /** Days the stock lasts at your dose (null without a stock count). */
-export const daysLeft = (s) => (s.stock == null ? null : Math.floor(s.stock / (s.perDose * Math.max(1, s.times.length))));
+export const daysLeft = (s) => { const st = stockOf(s); return st == null ? null : Math.floor(st / (s.perDose * Math.max(1, s.times.length))); };
 export const runningLow = (s) => { const d = daysLeft(s); return d != null && d <= (Number(s.reorderDays) || 7); };
 
 /** Restock: add what you bought. Returns an undo. */
 export function restock(sid, amount) {
   const s = one(sid);
   if (!s) return () => {};
-  store.put('supplements', { ...s, stock: (s.stock || 0) + Math.max(0, Number(amount) || 0), restockedOn: today() });
+  store.put('supplements', { ...s, stock: (stockOf(s) || 0) + Math.max(0, Number(amount) || 0), stockAt: stamp(), restockedOn: today() });
   const t = store.get('tasks', reorderTaskId(s));
   if (t && !t.done) store.put('tasks', { ...t, done: true, doneAt: new Date().toISOString() });
   return () => { store.put('supplements', s); if (t) store.put('tasks', t); };

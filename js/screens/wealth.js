@@ -106,7 +106,7 @@ export default {
       <section class="block"><div class="block-head"><h2 class="block-title">Savings goals</h2><button type="button" class="link-btn" data-action="sg-new">Add</button></div>
         ${goals.length ? html`<ul class="list">${goals.map((g) => { const p = W.progress(g); return html`<li data-key="sg-${g.id}"><button type="button" class="row savings-row" data-action="sg-open" data-id="${g.id}">
           <span class="row-main"><span class="row-title">${g.name}</span>
-            <span class="row-sub tnum">${$.fmt(g.saved || 0, { cents: 0 })} of ${$.fmt(g.target, { cents: 0 })}${p.left ? (p.perMonth != null ? ` · ${$.fmt(p.perMonth, { cents: 0 })} a month to make ${fmtMD(g.by)}${p.onTrack === false ? ' · behind' : p.onTrack ? ' · on track' : ''}` : '') : ' · reached'}</span>
+            <span class="row-sub tnum">${$.fmt(W.savedOf(g), { cents: 0 })} of ${$.fmt(g.target, { cents: 0 })}${p.left ? (p.perMonth != null ? ` · ${$.fmt(p.perMonth, { cents: 0 })} a month to make ${fmtMD(g.by)}${p.onTrack === false ? ' · behind' : p.onTrack ? ' · on track' : ''}` : '') : ' · reached'}</span>
             ${bar(p.share, { label: `${g.name} saved` })}</span></button></li>`; })}</ul>`
           : html`<p class="muted">A target and a date, and it says what to put aside each month.</p>`}
       </section>`;

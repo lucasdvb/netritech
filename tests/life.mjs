@@ -140,10 +140,11 @@ await step('net worth and a savings goal from their sheets', async () => {
 
 await step('supplements: a dose taken counts the stock down; running low makes a reorder task', async () => {
   const { ctx, p } = await at('2026-10-13T08:10:00', { hash: '#/progress/body/supplements', before: () => {
-    window.__lifeos.store.put('supplements', { id: 's1', name: 'Creatine', kind: 'supplement', times: ['08:00'], perDose: 1, stock: 8, reorderDays: 7, order: 0 });
+    window.__lifeos.store.put('supplements', { id: 's1', name: 'Creatine', kind: 'supplement', times: ['08:00'], perDose: 1, stock: 8, stockAt: '2026-01-01T00:00:00.000Z', reorderDays: 7, order: 0 });
   } });
   await p.locator('[data-action="su-take"]').first().click();
-  await p.waitForFunction(() => window.__lifeos.store.get('supplements', 's1').stock === 7);
+  await p.evaluate(async () => { window.__su = await import('./js/domain/supplements.js'); });
+  await p.waitForFunction(() => window.__su.stockOf(window.__lifeos.store.get('supplements', 's1')) === 7);
   await p.waitForFunction(() => window.__lifeos.store.all('tasks').some((t) => t.source === 'supplement:s1'));
   await p.screenshot({ path: `${OUT}/life-supplements.png` });
   await ctx.close();
