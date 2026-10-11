@@ -396,6 +396,9 @@
 .cal-day.is-today { box-shadow: inset 0 0 0 2px var(--text); }
 .cal-num { position: relative; z-index: 1; font-size: var(--text-body); font-weight: var(--weight-medium); line-height: var(--leading-tight); letter-spacing: var(--tracking-body); }
 .cal-fill { position: absolute; inset: 0; background: color-mix(in srgb, var(--accent) 62%, #fff); }
+/* in dark, a full day mixes towards black so its light number keeps its contrast */
+:root[data-theme='dark'] .cal-fill { background: color-mix(in srgb, var(--accent) 72%, #000); }
+@media (prefers-color-scheme: dark) { :root[data-theme='system'] .cal-fill { background: color-mix(in srgb, var(--accent) 72%, #000); } }
 .cal-day.is-sick .cal-fill { background: var(--warn); opacity: .25 !important; }
 .cal-marks { position: absolute; bottom: 5px; display: flex; gap: 3px; z-index: 1; }
 .cal-marks i, .cal-legend i { width: 5px; height: 5px; border-radius: 50%; display: inline-block; }

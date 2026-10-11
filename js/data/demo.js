@@ -16,6 +16,9 @@ export async function loadDemo(days = 42) {
   let seed = 7;
   const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
   const pick = (p) => rnd() < p;
+  // The newer sample data draws from its own sequence, so everything above stays as it was.
+  let seed2 = 11;
+  const rnd2 = () => ((seed2 = (seed2 * 16807) % 2147483647) / 2147483647);
   const t = today();
   const from = addDays(t, -days);
   const ops = [];
@@ -77,7 +80,7 @@ export async function loadDemo(days = 42) {
       });
     }
     if (n % 14 === 0) put('measurements', { date: d, waist: +(91.5 - n * 0.05).toFixed(1), chest: 99, arms: 32.5, thighs: 56, calves: +(36.2 + n * 0.01).toFixed(1), neck: 38 });
-    if (days - n <= 21) for (const [time, base] of [['08:30', 3], ['10:40', 4.4], ['15:10', 2.4], ['19:20', 3]]) if (pick(0.8)) put('energyLogs', { id: `${d}:${time}`, date: d, time, level: Math.max(1, Math.min(5, Math.round(base + (rnd() - 0.5) * 1.4))) });
+    if (days - n <= 21) for (const [time, base] of [['08:30', 3], ['10:40', 4.4], ['15:10', 2.4], ['19:20', 3]]) if (rnd2() < 0.8) put('energyLogs', { id: `${d}:${time}`, date: d, time, level: Math.max(1, Math.min(5, Math.round(base + (rnd2() - 0.5) * 1.4))) });
     if (n % 3 === 0) put('journalEntries', { date: d, kind: 'evening', answers: { 0: 'Shipped the proposal', 1: 'Skipped the walk', 2: 'Walk after lunch' }, text: '' });
   }
   // A few lists, this month's spending and some dates, to show those pages working.

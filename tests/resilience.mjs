@@ -59,7 +59,11 @@ await step('a backup carries every store, the progression ones included, and res
     C.create({ habitId: H.activeHabits()[0].id, days: 30, stake: 'A coffee for a friend' });
     Q.offer();
     P.run();
-    await window.__lifeos.store.flush();
+    // Records are only marked for yesterday and today, and some days (a Sunday with no training
+    // the day before) have none: one is added so the store always has something to carry.
+    const { store } = window.__lifeos;
+    if (!store.all('records').length) store.put('records', { id: 'test-record', kind: 'steps', value: 12000, date: store.all('stepLogs')[0]?.date || '2026-01-01', previous: 11000, label: 'Steps', text: '12,000' });
+    await store.flush();
   });
   const snap = () => ev(async () => {
     const { BACKUP_STORES } = await import('./js/data/schema.js');
