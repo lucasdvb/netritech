@@ -13,7 +13,7 @@ export function openSupplement(id = null) {
   const cur = id ? SU.one(id) : null;
   app.sheet({
     title: cur ? cur.name : 'New supplement or medication',
-    ui: { name: cur?.name || '', kind: cur?.kind || 'supplement', dose: cur?.dose || '', times: [...(cur?.times || ['08:00'])], perDose: cur?.perDose ?? 1, stock: cur?.stock ?? '', reorderDays: cur?.reorderDays ?? 7, restock: '' },
+    ui: { name: cur?.name || '', kind: cur?.kind || 'supplement', dose: cur?.dose || '', times: [...(cur?.times || ['08:00'])], perDose: cur?.perDose ?? 1, stock: SU.stockOf(cur) ?? '', reorderDays: cur?.reorderDays ?? 7, restock: '' },
     render: (s) => {
       const u = s.ui;
       return html`<form class="form" data-submit="su-save">

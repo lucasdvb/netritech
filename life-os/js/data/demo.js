@@ -7,7 +7,7 @@ import { habitsSeed } from './seed.js';
 const DEMO_STORES = ['tasks', 'habitLogs', 'weightEntries', 'sleepEntries', 'moodEntries', 'nutritionLogs', 'waterLogs', 'stepLogs', 'dailyReviews',
   'workouts', 'workoutSets', 'measurements', 'readingSessions', 'learningSessions', 'meditationSessions', 'spiritualSessions',
   'relationshipEntries', 'journalEntries', 'bodyFatEstimates', 'lists', 'expenses', 'events', 'energyLogs', 'bills', 'accounts', 'balances',
-  'savingsGoals', 'supplements', 'supplementLogs', 'recipes', 'mealPlan', 'trips', 'takeaways', 'decisions', 'wheelChecks'];
+  'savingsGoals', 'savingsLogs', 'supplements', 'supplementLogs', 'recipes', 'mealPlan', 'trips', 'takeaways', 'decisions', 'wheelChecks'];
 
 export const hasDemo = () => !!store.settings()?.demo;
 

@@ -3,7 +3,7 @@
 // future sync can learn about deletions. Date-keyed records also carry `date` ('YYYY-MM-DD',
 // indexed) and `tz`, the time zone they were first written in.
 export const DB_NAME = 'life-os';
-export const DB_VERSION = 10;
+export const DB_VERSION = 11;
 // Version of the built-in habit system (the seed); seed.js brings older installs up to date.
 export const SEED_VERSION = 2;
 /** The newest migration (data/migrations.js). Start-up loads migrations only when it isn't applied. */
@@ -66,7 +66,8 @@ export const STORES = {
   bills: { indexes: [] },                    // bills, subscriptions and renewals: amount, how often, next due
   accounts: { indexes: [] },                 // what you own and owe, for net worth
   balances: { indexes: ['date'] },           // an account's balance on a date (net worth snapshots)
-  savingsGoals: { indexes: [] },             // a target, a date and what's put aside so far
+  savingsGoals: { indexes: [] },             // a target, a date and what was already saved when it was set up
+  savingsLogs: { indexes: ['date'] },        // money put towards (or taken from) a savings goal: one record each, so devices merge
   supplements: { indexes: [] },              // supplements and medication: dose, times, stock and when to reorder
   supplementLogs: { indexes: ['date'] },     // a dose taken (id = date:supplement:time)
   trips: { indexes: [] },                    // trips: dates, where, the travel plan and packing list

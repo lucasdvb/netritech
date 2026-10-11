@@ -149,15 +149,15 @@ test('supplements: a dose counts the stock down (and back up when untaken); runn
   const s = SU.save(null, { name: 'Vitamin D', times: ['08:00'], stock: 8, perDose: 1, reorderDays: 7 });
   const undo = SU.toggle(s.id, '08:00');
   assert.ok(SU.taken(s.id, '08:00'));
-  assert.equal(SU.one(s.id).stock, 7);
+  assert.equal(SU.stockOf(SU.one(s.id)), 7);
   assert.equal(SU.daysLeft(SU.one(s.id)), 7);
   assert.ok(SU.runningLow(SU.one(s.id)));
   assert.equal(SU.ensureTasks(), 1);
   assert.equal(SU.ensureTasks(), 0);
   undo();
-  assert.equal(SU.one(s.id).stock, 8);
+  assert.equal(SU.stockOf(SU.one(s.id)), 8);
   SU.restock(s.id, 60);
-  assert.equal(SU.one(s.id).stock, 68);
+  assert.equal(SU.stockOf(SU.one(s.id)), 68);
   assert.equal(store.all('tasks').filter((t) => t.source === `supplement:${s.id}` && !t.done).length, 0, 'restocking ticks the reorder task');
 });
 

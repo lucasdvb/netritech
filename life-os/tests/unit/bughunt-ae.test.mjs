@@ -134,7 +134,7 @@ test('savings reach the target to the cent; an overdue goal says what it needs; 
   await start();
   const g = WE.saveGoal(null, { name: 'Trip', target: 400, by: d(-10) });
   for (const a of [100.1, 200.2, 99.7]) WE.contribute(g.id, a);
-  assert.equal(WE.goal(g.id).saved, 400);
+  assert.equal(WE.savedOf(WE.goal(g.id)), 400);
   assert.ok(WE.goal(g.id).reachedOn);
   const h = WE.saveGoal(null, { name: 'Car', target: 1000, by: d(-5) });
   assert.equal(WE.progress(WE.goal(h.id)).perMonth, 1000);
@@ -150,9 +150,9 @@ test('supplements: untaking a dose gives back what it took, not a whole dose', a
   await start();
   const s = SU.save(null, { name: 'D3', stock: 0.5, perDose: 1 });
   SU.toggle(s.id, '08:00');
-  assert.equal(SU.one(s.id).stock, 0);
+  assert.equal(SU.stockOf(SU.one(s.id)), 0);
   SU.toggle(s.id, '08:00');
-  assert.equal(SU.one(s.id).stock, 0.5);
+  assert.equal(SU.stockOf(SU.one(s.id)), 0.5);
 });
 
 test('lighter is lighter even for small dumbbells', () => {
@@ -225,4 +225,27 @@ test('the server reads calendars only from public addresses', () => {
   for (const bad of ['http://example.com/a.ics', 'https://localhost/a', 'https://127.0.0.1/a', 'https://0.0.0.0/a', 'https://[::1]/a', 'https://[::ffff:127.0.0.1]/a',
     'https://10.1.2.3/a', 'https://192.168.1.1/a', 'https://169.254.169.254/a', 'https://2130706433/a', 'https://printer.local/a']) assert.equal(publicHttps(new URL(bad)), false, bad);
   assert.equal(publicHttps(new URL('https://calendar.google.com/calendar/ical/x/basic.ics')), true);
+});
+
+test('two devices offline: every dose and every contribution counts once they sync', async () => {
+  await start();
+  const s = SU.save(null, { name: 'Creatine', stock: 30, perDose: 1, times: ['08:00', '20:00'] });
+  const g = WE.saveGoal(null, { name: 'Trip', target: 1000, saved: 100 });
+  // What the other device did while offline arrives as its own records (the way sync adopts them).
+  await new Promise((r) => setTimeout(r, 5));
+  const later = new Date().toISOString();
+  await new Promise((r) => setTimeout(r, 5));
+  store.adopt([
+    { store: 'supplementLogs', value: { id: `${d(0)}:${s.id}:20:00`, date: d(0), supplementId: s.id, time: '20:00', at: later, took: 1, createdAt: later, updatedAt: later, rev: 1 } },
+    { store: 'savingsLogs', value: { id: 'other-device', goalId: g.id, date: d(0), amount: 50, createdAt: later, updatedAt: later, rev: 1 } },
+  ]);
+  // And this device did its own.
+  SU.toggle(s.id, '08:00');
+  WE.contribute(g.id, 25);
+  assert.equal(SU.stockOf(SU.one(s.id)), 28, 'both doses');
+  assert.equal(WE.savedOf(WE.goal(g.id)), 175, 'both contributions');
+  // Restocking counts from what's left.
+  await new Promise((r) => setTimeout(r, 5));
+  SU.restock(s.id, 30);
+  assert.equal(SU.stockOf(SU.one(s.id)), 58);
 });

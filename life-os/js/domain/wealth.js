@@ -88,15 +88,24 @@ export function saveGoal(id, patch) {
   return store.put('savingsGoals', v);
 }
 
+/**
+ * What a goal has: what was already saved when it was set up, plus every contribution. Each
+ * contribution is its own record, so money added on two devices (even offline) all counts once
+ * they sync. Goals from before kept their contributions in `saved` and `log`; those still count.
+ */
+const logsOf = (g) => store.all('savingsLogs').filter((l) => l.goalId === g.id);
+export const savedOf = (g) => Math.max(0, Math.round(((Number(g.saved) || 0) + logsOf(g).reduce((s, l) => s + (Number(l.amount) || 0), 0)) * 100) / 100);
+
 /** Put money towards a goal (or take it out with a negative amount). Returns an undo. */
 export function contribute(id, amount, date = today()) {
   const g = goal(id);
   if (!g) return () => {};
   const a = Math.round((Number(amount) || 0) * 100) / 100;
-  const log = [...(g.log || []), { date, amount: a }].slice(-120);
-  const saved = Math.max(0, Math.round(((g.saved || 0) + a) * 100) / 100);
-  store.put('savingsGoals', { ...g, saved, log, ...(saved >= g.target && !g.reachedOn ? { reachedOn: date } : {}) });
-  return () => store.put('savingsGoals', g);
+  if (!a) return () => {};
+  const rec = store.put('savingsLogs', { goalId: id, date, amount: a });
+  const reached = savedOf(g) >= g.target && !g.reachedOn;
+  if (reached) store.update('savingsGoals', id, { reachedOn: date });
+  return () => { store.remove('savingsLogs', rec.id); if (reached) store.put('savingsGoals', g); };
 }
 
 /**
@@ -105,14 +114,15 @@ export function contribute(id, amount, date = today()) {
  * pace with it.
  */
 export function progress(g, date = today()) {
-  const left = Math.max(0, g.target - (g.saved || 0));
-  const share = g.target ? Math.min(1, (g.saved || 0) / g.target) : 0;
+  const saved = savedOf(g);
+  const left = Math.max(0, Math.round((g.target - saved) * 100) / 100);
+  const share = g.target ? Math.min(1, saved / g.target) : 0;
   if (!left) return { left, share: 1, monthsLeft: 0, perMonth: 0, onTrack: true, line: 'Reached.' };
   const monthsLeft = g.by ? Math.max(0, diffDays(g.by, date) / 30.44) : null;
   // Past its date, everything left is due now.
   const perMonth = monthsLeft == null ? null : left / Math.max(1, monthsLeft);
   const since = addDays(date, -91);
-  const recent = (g.log || []).filter((x) => x.date >= since).reduce((s, x) => s + x.amount, 0) / 3;
+  const recent = [...(g.log || []), ...logsOf(g)].filter((x) => x.date >= since).reduce((s, x) => s + (Number(x.amount) || 0), 0) / 3;
   const onTrack = perMonth == null ? null : recent >= perMonth * 0.95;
   return { left, share, monthsLeft, perMonth, pace: recent, onTrack };
 }
