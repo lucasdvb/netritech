@@ -1,6 +1,6 @@
 # Home Lab: clearer hero copy, "three problems" cards, new card photos
 
-**Status: in draft, not published.**
+**Status: live.**
 
 Goal (client brief): a visitor understands immediately what SPM does. Animations, motion and scrolling are untouched; only text, the card photos and SEO tags change.
 
