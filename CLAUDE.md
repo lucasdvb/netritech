@@ -18,3 +18,7 @@
 # Disruptive Dodo images
 
 - Every generated image for the Disruptive Dodo site follows `dd-site/docs/image-direction.md`: black and white, the base alternating black / white, and one small accent detail in lime #E1FF01 (no blue). Work one image at a time from the client's reference. The generation permission rule above still applies to each one.
+
+# Life OS
+
+- Life OS has its own repository, `lucasdvb/life-os` (branch `main`); it is no longer in netritech. Its instructions (brief, plan, design rules) are in that repository's CLAUDE.md.
