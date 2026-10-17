@@ -291,6 +291,9 @@ function onSceneMessage(m){
 }
 const viewport=()=>({w:window.innerWidth,h:window.innerHeight,dpr:window.devicePixelRatio||1})
 function sceneUrl(){ if(window.__hlabSceneUrl) return window.__hlabSceneUrl; const s=document.querySelector('script[src*="hlab-webgl-scene"]'); return s&&s.src }
+/* the baked meshes, lossless PNGs in the media library */
+const MESH_URLS={woman:'/uploads/YlVL28To98YTRQs9L9F9o-hlab-mesh-woman-data.png',brain:'/uploads/gZ27nmhEPjcV730d-8J3T-hlab-mesh-brain-data.png'}
+const meshUrls=()=>({woman:new URL(MESH_URLS.woman,location.href).href,brain:new URL(MESH_URLS.brain,location.href).href})
 /* three.js: the copy Instatic already serves (the page's import map), minified build */
 function threeUrl(){
   try{ const im=JSON.parse(document.querySelector('script[type="importmap"]').textContent).imports['three']
@@ -302,7 +305,7 @@ function mainThread(){
     scene=create(CANVAS,{...viewport(),noLite:!!window.__hlabNoLite},(type,data)=>onSceneMessage({type,data})) }
   const url=sceneUrl(), tu=threeUrl(); if(!tu) return
   const load=window.__hlabLoadScene?Promise.resolve(window.__hlabLoadScene):url?import(url).then(m=>m.loadScene||window.__hlabLoadScene):Promise.reject()
-  load.then(fn=>fn(tu)).then(go).catch(()=>{})
+  load.then(fn=>fn(tu,meshUrls())).then(go).catch(()=>{})
 }
 function startScene(){
   const url=sceneUrl()
@@ -313,7 +316,7 @@ function startScene(){
       worker=new Worker(url,{type:'module'})
       worker.onmessage=e=>onSceneMessage(e.data)
       worker.onerror=()=>mainThread()
-      worker.postMessage({type:'init',canvas:off,threeUrl:tu,init:{...viewport(),noLite:!!window.__hlabNoLite}},[off])
+      worker.postMessage({type:'init',canvas:off,threeUrl:tu,meshUrls:meshUrls(),init:{...viewport(),noLite:!!window.__hlabNoLite}},[off])
       return
     }catch(e){ worker=null }
   }
@@ -328,14 +331,20 @@ function resize(){
   HERO.style.height=(7*v.h)+'px'   // 6 tracks of travel + the pinned stage (Vesper: 700lvh)
   if(worker) worker.postMessage({type:'resize',...v})
   else if(scene) scene.resize(v.w,v.h,v.dpr)
-  measure()
+  if(heroMeasured) measure(); else requestAnimationFrame(()=>{ heroMeasured=true; measure() })   // no layout read during load
 }
+let heroMeasured=false
 addEventListener('resize',resize,{passive:true})
 addEventListener('load',measure)
 resize()
-/* the scene starts once the hero copy has painted (two frames), so its downloads never
-   compete with the page's first paint */
-requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(startScene,0)))
+/* the scene starts once the page has painted (the browser's first-contentful-paint entry) and
+   the hero copy has had two frames to show, so neither its downloads nor its GPU work (context,
+   shaders) hold back the first paint; 2.5 s at the latest */
+let sceneGo=false, painted=false, framesAfter=0
+const goScene=()=>{ if(sceneGo) return; sceneGo=true; setTimeout(startScene,0) }
+try{ const po=new PerformanceObserver(l=>{ if(l.getEntries().some(e=>e.name==='first-contentful-paint')){ painted=true; po.disconnect() } })
+  po.observe({type:'paint',buffered:true}) }catch(e){ painted=true }
+setTimeout(goScene,2500)
 
 /* ================================================================
    Main loop — sends the scene one frame of state; pauses while the hero is off screen
@@ -349,6 +358,7 @@ function tick(now){
   const clock=timeline.getProgress()
   updateOverlays(clock,loaded)
   paintBeats(clock)
+  if(!sceneGo&&painted&&++framesAfter>=2) goScene()
   if(loaded && (y>7*vh+2 || y<-vh)) return   // hero not on screen: skip the GPU work
   const st={now,progress:clock,outro:getOutro(),px:pointer.x,py:pointer.y,ph:pointerHas}
   if(worker){ if(!busy){ busy=true; worker.postMessage({type:'frame',st}) } }

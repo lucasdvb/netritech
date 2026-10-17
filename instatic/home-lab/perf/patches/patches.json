@@ -1,0 +1,84 @@
+{
+ "hlab-spm-chrome.js": {
+  "from": "6a67e7a4dc27f9b0c8a38f992a759b676a280a0f6efddea2e5a46138b308536d",
+  "to": "2a1d313c485ad6fae902b027792fe5080467ca58b187eadbdff00e8a38c97ea2",
+  "replacements": [
+   {
+    "oldText": "    mountFooterFX(footer.querySelector(\".hlab-ft\"));",
+    "newText": "    // the footer background is set up as the footer nears the viewport (no layout read at load)\n    var ftRoot = footer.querySelector(\".hlab-ft\");\n    if (ftRoot && \"IntersectionObserver\" in window) {\n      var ftIO = new IntersectionObserver(function (es) {\n        if (es.some(function (e) { return e.isIntersecting; })) { ftIO.disconnect(); mountFooterFX(ftRoot); }\n      }, { rootMargin: \"1500px 0px\" });\n      ftIO.observe(ftRoot);\n    } else mountFooterFX(ftRoot);"
+   },
+   {
+    "oldText": "    draw();\n    window.addEventListener(\"resize\", draw, { passive: true });",
+    "newText": "    requestAnimationFrame(draw);   // first draw on the next frame: no layout read during load\n    window.addEventListener(\"resize\", draw, { passive: true });"
+   }
+  ]
+ },
+ "hlab-spm-logos.js": {
+  "from": "49d8aa7078210691f8f6bbd748fabf34e49944d359a614bb05232b5d17c041ad",
+  "to": "93b7936353e5547c6dc41c22f713bc60db075204a6c2922632c8d1bf68cce61b",
+  "replacements": [
+   {
+    "oldText": "    g.el.innerHTML = html;\n    measure(g);",
+    "newText": "    g.el.innerHTML = html;\n    // first build: the ResizeObserver below measures after the browser's own layout\n    if (g.built || !('ResizeObserver' in window)) measure(g);\n    g.built = true;"
+   }
+  ]
+ },
+ "hlab-spm-lazy-video.js": {
+  "from": "74461a15a6864301744b4884f026bf82acdd9c913b5daa122c79e9f2d66c03d7",
+  "to": "e4b9ebbf7ad252797bab556b196c908f14680c06998c81617659be3aaa59451e",
+  "replacements": [
+   {
+    "oldText": "  vids.forEach(function (v) { io.observe(v); });\n})();\n",
+    "newText": "  vids.forEach(function (v) { io.observe(v); });\n})();\n\n/* Section photos (CSS backgrounds) wait until their section is ~1.5 screens away, so the\n   first screen loads without them; the CSS keeps them off until .hlab-bg-in is added. */\n(function () {\n  var secs = Array.prototype.slice.call(document.querySelectorAll('[data-tm2], .hlab-ti-cards3, .hlab-spm-review'));\n  if (!secs.length) return;\n  function show(s) { s.classList.add('hlab-bg-in'); }\n  if (!('IntersectionObserver' in window)) { secs.forEach(show); return; }\n  var lead = Math.max(1000, Math.round((window.innerHeight || 800) * 1.5));\n  var io = new IntersectionObserver(function (entries) {\n    entries.forEach(function (e) { if (e.isIntersecting) { show(e.target); io.unobserve(e.target); } });\n  }, { rootMargin: lead + 'px 0px' });\n  secs.forEach(function (s) { io.observe(s); });\n})();\n"
+   }
+  ]
+ },
+ "hlab-spm-teams.js": {
+  "from": "a4275f2847e57c9bd29b448bdb4fc82b99b4cd46c6c60ee76bf4133fe52595cc",
+  "to": "150276a22556e7f8081343e0c5add90159a1d0cc86de2e8d97f83f36d48d7e1c",
+  "replacements": [
+   {
+    "oldText": "  var current = 0;\n",
+    "newText": "  // Accessible cards: a card holds a heading and a link, so it is not a button itself;\n  // its title is (same look, the whole card stays clickable).\n  Array.prototype.slice.call(root.querySelectorAll('.hlab-tm2-card')).forEach(function (c) {\n    c.removeAttribute('role'); c.removeAttribute('tabindex'); c.removeAttribute('aria-expanded');\n    var t = c.querySelector('.hlab-tm2-title');\n    if (t && !t.querySelector('.hlab-tm2-toggle')) {\n      var b = document.createElement('button');\n      b.type = 'button'; b.className = 'hlab-tm2-toggle';\n      while (t.firstChild) b.appendChild(t.firstChild);\n      t.appendChild(b);\n    }\n  });\n\n  var current = 0;\n"
+   },
+   {
+    "oldText": "      c.setAttribute('aria-expanded', String(on));",
+    "newText": "      var tg = c.querySelector('.hlab-tm2-toggle');\n      if (tg) tg.setAttribute('aria-expanded', String(on));"
+   },
+   {
+    "oldText": "      c.addEventListener('keydown', function (e) {\n        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCard(panel, idx, true); }",
+    "newText": "      c.addEventListener('keydown', function (e) {\n        if (e.target.closest && e.target.closest('a')) return;   // the card's link keeps its own Enter\n        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCard(panel, idx, true); }"
+   }
+  ]
+ },
+ "hlab-spm-feature-sweep.js": {
+  "from": "3f6890e9a0e34764df38615c76dcd1f511b7d5ee5f0c997a007b678c0d26d0ca",
+  "to": "058b5d3dfb448f7611a6f28f8dd343b058f48fca6cec85d0b17c612d7348ee90",
+  "replacements": [
+   {
+    "oldText": "      var text = el.textContent;\n      el.setAttribute('aria-label', text);\n      while (el.firstChild) el.removeChild(el.firstChild);\n",
+    "newText": "      var text = el.textContent;\n      // a heading may carry a label; a paragraph may not, so it keeps a visually hidden copy\n      if (el.tagName !== 'P') el.setAttribute('aria-label', text);\n      if (el.tagName === 'H4') el.setAttribute('aria-level', '3');   // outline: h2 > these feature titles\n      while (el.firstChild) el.removeChild(el.firstChild);\n      if (el.tagName === 'P') {\n        var sr = document.createElement('span');\n        sr.style.cssText = 'position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0';\n        sr.textContent = text;\n        el.style.position = 'relative';   // keeps the hidden copy inside its paragraph\n        el.appendChild(sr);\n      }\n"
+   }
+  ]
+ },
+ "hlab-x5-tm2.css": {
+  "from": "d4f84fd3f3ee9c2f2784ab4530b384f032ae48b8f8dd2e19e667bf2778ae124b",
+  "to": "fdde0ff8d123b18fbb5e679b3d57719dc3a3e67f323cffc823357bad89cedcdd",
+  "replacements": [
+   {
+    "oldText": "m2 .hlab-tm2-card, .hlab-tm2 .hlab-tm2-card::before, .hlab-tm2 .hlab-tm2-card::after { transition: none !important; }\n}\n",
+    "newText": "m2 .hlab-tm2-card, .hlab-tm2 .hlab-tm2-card::before, .hlab-tm2 .hlab-tm2-card::after { transition: none !important; }\n}\n\n/* Accessible card toggle (hlab-spm-teams.js wraps each title in a real button): same look */\n.hlab-tm2 .hlab-tm2-toggle { all: unset; cursor: pointer; }\n.hlab-tm2 .hlab-tm2-toggle:focus-visible { outline: 2px solid rgba(34,128,138,.6); outline-offset: 3px; border-radius: 4px; }\n\n/* Header logo: its width is reserved before the image arrives (no layout shift) */\n.hlab-nav-logo img { aspect-ratio: 640 / 256; }\n\n/* Performance: section photos load as their section nears the viewport\n   (hlab-spm-lazy-video.js adds .hlab-bg-in about 1.5 screens ahead, so they are there before you are) */\n[data-tm2]:not(.hlab-bg-in) .hlab-tm2-card[data-tone],\n[data-tm2]:not(.hlab-bg-in) .hlab-tm2-card[data-tone]::before,\n.hlab-ti-cards3:not(.hlab-bg-in) .hlab-ti-card-media,\n.hlab-spm-review:not(.hlab-bg-in) .hlab-spm-review-bg { background-image: none !important; }\n"
+   }
+  ]
+ },
+ "hlab-spm-seo.js": {
+  "from": "4b3d357868a1121eeb34122f668fdfcbb4d1dcc074559ff31d1a8abe900b631a",
+  "to": "c29ee11f81d7983428b13404c1f50e8cc432b548d39b990e245362a337ae18cb",
+  "replacements": [
+   {
+    "oldText": "    // Home Lab is an experimental page: keep it out of search results until it is promoted.\n    meta('name', 'robots', 'noindex, nofollow');\n",
+    "newText": "    function link(rel, href, sizes) {\n      if (document.querySelector('link[rel=\"' + rel + '\"]')) return;\n      var l = document.createElement('link'); l.rel = rel; l.href = href; if (sizes) l.setAttribute('sizes', sizes); head.appendChild(l);\n    }\n    link('icon', '/uploads/pA0UhXiw9EQPZ6zHnsBay-spm-favicon-192.png', '192x192');\n    link('apple-touch-icon', '/uploads/FiB325gE1ympAW4T8D4tn-spm-apple-touch-icon-180.png', '180x180');\n"
+   }
+  ]
+ }
+}
