@@ -1,0 +1,11 @@
+/* hlab-x9-shell.css — the SPM site's inner pages (shared shell built by hlab-0-shell.js):
+   the homepage menu, contact form, FAQ and footer already come from hlab-styles.css and
+   hlab-x1 … x8; these are the few rules that only make sense around an inner page.
+   Moved from v3f-shell.css (SPM V3), renamed to the site's own classes. */
+
+/* inner pages: clear the floating menu */
+body.hlab-shell > main > :first-child { padding-top: clamp(40px, 5vw, 64px); }
+/* the page body is navy here: square the footer's outer box so no navy shows at its corners */
+body.hlab-shell .hlab-ti-footer { border-radius: 0 !important; background-color: #fff; }
+/* the contact page is itself the form: the shared closing form is hidden there, its FAQ stays */
+body:has(.spx-p-ct) .hlab-shell-tail .hlab-spm-lead { display: none !important; }

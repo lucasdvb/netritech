@@ -13,9 +13,9 @@
 
 const HERO=document.querySelector('.hlab-hero')
 let CANVAS=document.querySelector('.hlab-hero-canvas')
-/* Inside the Instatic editor canvas (an iframe) the WebGL scene is not started,
+/* Inside the Instatic editor canvas (an iframe) and off the homepage the WebGL scene is not started,
    so editing stays light: the hero copy is simply shown. */
-const IN_EDITOR=(()=>{ try{ return window.self!==window.top || !/\/home-lab(\/|\.html)?$/.test(location.pathname) }catch(e){ return true } })()
+const IN_EDITOR=(()=>{ try{ return window.self!==window.top || !/^\/(index\.html)?$|^\/home-lab(\/|\.html)?$/.test(location.pathname) }catch(e){ return true } })()
 if(HERO&&CANVAS&&!window.__hlabVesper){
   window.__hlabVesper=true
   if(IN_EDITOR){ const ov=HERO.querySelector('.hlab-vx-ov-hero'); if(ov){ ov.style.opacity='1'; ov.style.visibility='visible'; ov.classList.add('hlab-vx-static') } }

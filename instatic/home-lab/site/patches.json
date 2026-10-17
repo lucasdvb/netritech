@@ -1,0 +1,322 @@
+{
+ "hlab-buttons.js": {
+  "from": "087a887304f5ed2d7ddd1b90491d966bd9a8d769019a0fd3f6507801fed3ba48",
+  "to": "63cde5a65cb4d3006aa442c0daad8cc6c6a754e66a11cc9ec60df57df35a5515",
+  "replacements": [
+   {
+    "oldText": "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)",
+    "newText": "/^\\/spmv[23](\\/|\\.html)?$/.test(location.pathname)"
+   },
+   {
+    "oldText": "/* hlab: Home Lab page only, inert on every other page */",
+    "newText": "/* hlab: the SPM site (homepage + inner pages), inert on SPM V2 / V3 */"
+   }
+  ]
+ },
+ "hlab-fs.js": {
+  "from": "e2a451a6c267a2ab48ab66806932a5457c30acca507c7eeb17cb7d6b563b7de8",
+  "to": "47468d1c534230f973d99594146bec6e28f55ee88079a182e0074badb1b05206",
+  "replacements": [
+   {
+    "oldText": "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)",
+    "newText": "!/^\\/(index\\.html)?$|^\\/home-lab(\\/|\\.html)?$/.test(location.pathname)"
+   },
+   {
+    "oldText": "/* hlab: Home Lab page only, inert on every other page */",
+    "newText": "/* hlab: SPM homepage only, inert on every other page */"
+   }
+  ]
+ },
+ "hlab-hero-nav.js": {
+  "from": "7a7ad934a3013642177e6d290132d3ec1ca6825f81951965f1787d94e926ee2f",
+  "to": "cfc612ae68075aa3719905e5e5d45443c3a63f5dff4353f46664502cf019c5dc",
+  "replacements": [
+   {
+    "oldText": "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)",
+    "newText": "/^\\/spmv[23](\\/|\\.html)?$/.test(location.pathname)"
+   },
+   {
+    "oldText": "/* hlab: Home Lab page only, inert on every other page */",
+    "newText": "/* hlab: the SPM site (homepage + inner pages), inert on SPM V2 / V3 */"
+   },
+   {
+    "oldText": "    { label: 'Solutions', href: '#', sub: [",
+    "newText": "    { label: 'Solutions', href: '/solutions', sub: ["
+   },
+   {
+    "oldText": "    { label: 'Pourquoi SPM', href: '#' }",
+    "newText": "    { label: 'Pourquoi SPM', href: '/pourquoi-spm' }"
+   },
+   {
+    "oldText": "    { label: 'Clients & Partenaires', href: '#' }",
+    "newText": "    { label: 'Clients & Partenaires', href: '/clients-partenaires' }"
+   },
+   {
+    "oldText": "    { label: 'Secteurs', href: '#' }",
+    "newText": "    { label: 'Secteurs', href: '/secteurs' }"
+   },
+   {
+    "oldText": "    { label: 'Actualités', href: '#' }",
+    "newText": "    { label: 'Actualités', href: '/actualites' }"
+   },
+   {
+    "oldText": "    { label: 'Carrières', href: '#' }",
+    "newText": "    { label: 'Carrières', href: '/carrieres' }"
+   },
+   {
+    "oldText": "    sol.sub.map(function (s) { return '<li><a class=\"hlab-dw-it\" href=\"#\"><span>' + esc(s) + '</span></a></li>'; }).join('');",
+    "newText": "    sol.sub.map(function (s, k) { return '<li><a class=\"hlab-dw-it\" href=\"/solutions#s' + (k + 1) + '\"><span>' + esc(s) + '</span></a></li>'; }).join('');   // the Solutions page sections, in order"
+   },
+   {
+    "oldText": "href=\"#contact\">Prendre rendez-vous</a>' +",
+    "newText": "href=\"/contact\">Prendre rendez-vous</a>' +"
+   },
+   {
+    "oldText": "href=\"#contact\">Nous contacter</a>' +",
+    "newText": "href=\"/contact\">Nous contacter</a>' +"
+   },
+   {
+    "oldText": "href=\"/spmv3\" aria-label=\"SPM, accueil\"",
+    "newText": "href=\"/\" aria-label=\"SPM, accueil\""
+   }
+  ]
+ },
+ "hlab-review.js": {
+  "from": "1fe65708c199c51684efda767d66acc60bacb2d9f94455f34d06dcd4cacd879c",
+  "to": "36aa2e6b8d7692f19f01352577578c3a1b3eec3eeee5500c8251c15b151a60e1",
+  "replacements": [
+   {
+    "oldText": "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)",
+    "newText": "!/^\\/(index\\.html)?$|^\\/home-lab(\\/|\\.html)?$/.test(location.pathname)"
+   },
+   {
+    "oldText": "/* hlab: Home Lab page only, inert on every other page */",
+    "newText": "/* hlab: SPM homepage only, inert on every other page */"
+   }
+  ]
+ },
+ "hlab-sections.js": {
+  "from": "a806f4af44bd1631116d4d185755dc779ae5e771a3b71cbe622bdde4e305c8c7",
+  "to": "4055253a29ab6f377ae94c0c832c7b436df5f2ad638672e6324f316d9efb76d9",
+  "replacements": [
+   {
+    "oldText": "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)",
+    "newText": "/^\\/spmv[23](\\/|\\.html)?$/.test(location.pathname)"
+   }
+  ]
+ },
+ "hlab-spm-a11y.js": {
+  "from": "be085eb2e5ba3763e3923068d9afe5eb4f33a32917a5f0972ddbe2f812716a8c",
+  "to": "59e7417309023b7866786781dc7a1042672176cfabe883077452c45e2fede4cb",
+  "replacements": [
+   {
+    "oldText": "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)",
+    "newText": "!/^\\/(index\\.html)?$|^\\/home-lab(\\/|\\.html)?$/.test(location.pathname)"
+   },
+   {
+    "oldText": "/* hlab: Home Lab page only, inert on every other page */",
+    "newText": "/* hlab: SPM homepage only, inert on every other page */"
+   }
+  ]
+ },
+ "hlab-spm-faq.js": {
+  "from": "e2c380e69547e2be83510de7ad68c48ec66c0fe6aabf0807a89c664cb689fe0b",
+  "to": "532fb516a4bda18c83a78139d69bef1874048482cd1810366b81ae51a7259431",
+  "replacements": [
+   {
+    "oldText": "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)",
+    "newText": "/^\\/spmv[23](\\/|\\.html)?$/.test(location.pathname)"
+   },
+   {
+    "oldText": "/* hlab: Home Lab page only, inert on every other page */",
+    "newText": "/* hlab: the SPM site (homepage + inner pages), inert on SPM V2 / V3 */"
+   }
+  ]
+ },
+ "hlab-spm-footer-fx.js": {
+  "from": "bd29bbc2c164e6ebbb5701dd723e72682b54c89d84e6dfd20cc909f41b7116ea",
+  "to": "4ee7a1389f6ce26eca33654a95964f29870111735f4b281d02afa6b11055162a",
+  "replacements": [
+   {
+    "oldText": "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)",
+    "newText": "!/^\\/(index\\.html)?$|^\\/home-lab(\\/|\\.html)?$/.test(location.pathname)"
+   },
+   {
+    "oldText": "/* hlab: Home Lab page only, inert on every other page */",
+    "newText": "/* hlab: SPM homepage only, inert on every other page */"
+   }
+  ]
+ },
+ "hlab-spm-scroll.js": {
+  "from": "05366312ca971851a6972fe00df39780a24b555e7137bac5a0c3c7ec3069ad6b",
+  "to": "28caf0d707e9a77d59d5db12f55077c2ecf5152ae7c8ead129b079279618338b",
+  "replacements": [
+   {
+    "oldText": "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)",
+    "newText": "!/^\\/(index\\.html)?$|^\\/home-lab(\\/|\\.html)?$/.test(location.pathname)"
+   },
+   {
+    "oldText": "/* hlab: Home Lab page only, inert on every other page */",
+    "newText": "/* hlab: SPM homepage only, inert on every other page */"
+   }
+  ]
+ },
+ "hlab-tm2.js": {
+  "from": "37bb795a06d95f971d440d1ecddd99fc439ed384fd19214f9871f72ddb4e9a3e",
+  "to": "f95eedeab21497ab0f976e5d46ed92d82b4b3223a96423a91db5abdb887eb29c",
+  "replacements": [
+   {
+    "oldText": "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)",
+    "newText": "!/^\\/(index\\.html)?$|^\\/home-lab(\\/|\\.html)?$/.test(location.pathname)"
+   },
+   {
+    "oldText": "/* hlab: Home Lab page only, inert on every other page */",
+    "newText": "/* hlab: SPM homepage only, inert on every other page */"
+   }
+  ]
+ },
+ "hlab-spm-chrome.js": {
+  "from": "2a1d313c485ad6fae902b027792fe5080467ca58b187eadbdff00e8a38c97ea2",
+  "to": "aa8a5d9f5ff96284ca0a5dd27d385414cea2a5de0e85129b12ba0079c469a903",
+  "replacements": [
+   {
+    "oldText": "/* hlab: Home Lab page only, inert on every other page */",
+    "newText": "/* hlab: the SPM site (homepage + inner pages), inert on SPM V2 / V3 */"
+   },
+   {
+    "oldText": "    { label: \"Solutions\", href: \"#\", active: true },\n    { label: \"Pourquoi SPM\", href: \"#\" },\n    { label: \"Clients & Partenaires\", href: \"#\" },\n    { label: \"Secteurs\", href: \"#\" },\n    { label: \"Actualités\", href: \"#\" }\n",
+    "newText": "    { label: \"Solutions\", href: \"/solutions\" },\n    { label: \"Pourquoi SPM\", href: \"/pourquoi-spm\" },\n    { label: \"Clients & Partenaires\", href: \"/clients-partenaires\" },\n    { label: \"Secteurs\", href: \"/secteurs\" },\n    { label: \"Actualités\", href: \"/actualites\" }\n"
+   },
+   {
+    "oldText": "    '<a class=\"hlab-nav-icon\" aria-label=\"Nous appeler\" href=\"#contact\" target=\"_self\">' +",
+    "newText": "    '<a class=\"hlab-nav-icon\" aria-label=\"Nous appeler\" href=\"tel:+33481659845\" target=\"_self\">' +"
+   },
+   {
+    "oldText": "    '<a class=\"hlab-nav-btn hlab-nav-btn-white\" href=\"#contact\" target=\"_self\">Prendre rendez-vous</a>' +\n    '<a class=\"hlab-nav-btn hlab-nav-btn-grey\" href=\"#contact\" target=\"_self\">Nous contacter</a>';",
+    "newText": "    '<a class=\"hlab-nav-btn hlab-nav-btn-white\" href=\"/contact\" target=\"_self\">Prendre rendez-vous</a>' +\n    '<a class=\"hlab-nav-btn hlab-nav-btn-grey\" href=\"/contact\" target=\"_self\">Nous contacter</a>';"
+   },
+   {
+    "oldText": "      '<li><a href=\"#contact\">Nous contacter</a></li>';",
+    "newText": "      '<li><a href=\"/contact\">Nous contacter</a></li>';"
+   },
+   {
+    "oldText": "  var TILES = [\"Accueil\", \"Solutions\", \"Pourquoi SPM\", \"Clients & Partenaires\",\n    \"Secteurs & études de cas\", \"Actualités\", \"Carrières\", \"Contact\"];",
+    "newText": "  var TILES = [[\"Accueil\", \"/\"], [\"Solutions\", \"/solutions\"], [\"Pourquoi SPM\", \"/pourquoi-spm\"],\n    [\"Clients & Partenaires\", \"/clients-partenaires\"], [\"Secteurs & études de cas\", \"/secteurs\"],\n    [\"Actualités\", \"/actualites\"], [\"Carrières\", \"/carrieres\"], [\"Contact\", \"/contact\"]];"
+   },
+   {
+    "oldText": "      return '<a class=\"hlab-ft-tile\" href=\"#\">' + esc(t) + '<span class=\"hlab-ft-ar\" aria-hidden=\"true\">→</span></a>';",
+    "newText": "      return '<a class=\"hlab-ft-tile\" href=\"' + t[1] + '\">' + esc(t[0]) + '<span class=\"hlab-ft-ar\" aria-hidden=\"true\">→</span></a>';"
+   },
+   {
+    "oldText": "            '<a class=\"hlab-ft-cta\" href=\"#\"><span>PRENDRE RENDEZ-VOUS</span>' +",
+    "newText": "            '<a class=\"hlab-ft-cta\" href=\"/contact\"><span>PRENDRE RENDEZ-VOUS</span>' +"
+   },
+   {
+    "oldText": "'<a class=\"hlab-ft-logo\" href=\"#hlab-top\" aria-label=\"SPM\">",
+    "newText": "'<a class=\"hlab-ft-logo\" href=\"/\" aria-label=\"SPM, accueil\">"
+   },
+   {
+    "oldText": "   Runs on SPM V3 and on the inner pages (shared shell). */",
+    "newText": "   Runs on the homepage and on the inner pages (shared shell, hlab-0-shell.js). */"
+   }
+  ]
+ },
+ "hlab-spm-feature-sweep.js": {
+  "from": "058b5d3dfb448f7611a6f28f8dd343b058f48fca6cec85d0b17c612d7348ee90",
+  "to": "f333b6c7b167d4ebdbd5d69d9481c98626ae38f71ac431005801ddec9adab238",
+  "replacements": [
+   {
+    "oldText": "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)",
+    "newText": "!/^\\/(index\\.html)?$|^\\/home-lab(\\/|\\.html)?$/.test(location.pathname)"
+   },
+   {
+    "oldText": "/* hlab: Home Lab page only, inert on every other page */",
+    "newText": "/* hlab: SPM homepage only, inert on every other page */"
+   }
+  ]
+ },
+ "hlab-spm-lazy-video.js": {
+  "from": "e4b9ebbf7ad252797bab556b196c908f14680c06998c81617659be3aaa59451e",
+  "to": "f57201414a4999b8220b55bb1fdcd3f17d7fb043e6e02beab1c88ebaf4cd9b67",
+  "replacements": [
+   {
+    "oldText": "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)",
+    "newText": "!/^\\/(index\\.html)?$|^\\/home-lab(\\/|\\.html)?$/.test(location.pathname)"
+   },
+   {
+    "oldText": "/* hlab: Home Lab page only, inert on every other page */",
+    "newText": "/* hlab: SPM homepage only, inert on every other page */"
+   }
+  ]
+ },
+ "hlab-spm-seo.js": {
+  "from": "c29ee11f81d7983428b13404c1f50e8cc432b548d39b990e245362a337ae18cb",
+  "to": "508015e253206ce39c35f38295e3860b886d883bbc4a7d985c13d88e4b10ebce",
+  "replacements": [
+   {
+    "oldText": "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)",
+    "newText": "!/^\\/(index\\.html)?$|^\\/home-lab(\\/|\\.html)?$/.test(location.pathname)"
+   },
+   {
+    "oldText": "/* hlab: Home Lab page only, inert on every other page */",
+    "newText": "/* hlab: SPM homepage only, inert on every other page */"
+   }
+  ]
+ },
+ "hlab-spm-teams.js": {
+  "from": "150276a22556e7f8081343e0c5add90159a1d0cc86de2e8d97f83f36d48d7e1c",
+  "to": "c6d8b7fe221c730d62131f58adbdb81f3754467e58971819bc7dc3c9e3a66e23",
+  "replacements": [
+   {
+    "oldText": "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)",
+    "newText": "!/^\\/(index\\.html)?$|^\\/home-lab(\\/|\\.html)?$/.test(location.pathname)"
+   },
+   {
+    "oldText": "/* hlab: Home Lab page only, inert on every other page */",
+    "newText": "/* hlab: SPM homepage only, inert on every other page */"
+   },
+   {
+    "oldText": "  Array.prototype.slice.call(root.querySelectorAll('.hlab-tm2-card-inner')).forEach(function (inner) {\n    if (inner.querySelector('.hlab-tm2-cta')) return;\n    var a = document.createElement('a');\n    a.className = 'hlab-tm2-cta';\n    a.href = '#';\n    a.innerHTML = 'En savoir plus <span aria-hidden=\"true\">→</span>';\n    a.addEventListener('click', function (e) {\n      e.preventDefault();\n      var t = document.querySelector('.hlab-spm-lead');\n      if (t) t.scrollIntoView({ behavior: 'smooth' });\n    });\n    inner.appendChild(a);\n",
+    "newText": "  // tabs in order: relation client, back-office, commercial, recrutement -> their section on /solutions\n  var TEAM_HREF = ['/solutions#s1', '/solutions#s4', '/solutions#s2', '/solutions#s6'];\n  Array.prototype.slice.call(root.querySelectorAll('.hlab-tm2-card-inner')).forEach(function (inner) {\n    if (inner.querySelector('.hlab-tm2-cta')) return;\n    var a = document.createElement('a');\n    a.className = 'hlab-tm2-cta';\n    a.href = TEAM_HREF[panels.indexOf(inner.closest('.hlab-tm2-panel'))] || '/solutions';\n    a.innerHTML = 'En savoir plus <span aria-hidden=\"true\">→</span>';\n    inner.appendChild(a);\n"
+   }
+  ]
+ },
+ "hlab-hero-vesper.js": {
+  "from": "6ba2e4b38ff17677030169429bbc271ccf39d0ec6e67514598216cae71666a2e",
+  "to": "c8dc71eca82cb5e7fb4640eba07bb6e56e59fee5ef2dbe70e4c2b09f740b0be7",
+  "replacements": [
+   {
+    "oldText": "let CANVAS=document.querySelector('.hlab-hero-canvas')\n/* Inside the Instatic editor canvas (an iframe) the WebGL scene is not started,\n   so editing stays light: the hero copy is simply shown. */",
+    "newText": "let CANVAS=document.querySelector('.hlab-hero-canvas')\n/* Inside the Instatic editor canvas (an iframe) and off the homepage the WebGL scene is not started,\n   so editing stays light: the hero copy is simply shown. */"
+   },
+   {
+    "oldText": "   so editing stays light: the hero copy is simply shown. */\nconst IN_EDITOR=(()=>{ try{ return window.self!==window.top || !/\\/home-lab(\\/|\\.html)?$/.test(location.pathname) }catch(e){ return true } })()\nif(HERO&&CANVAS&&!window.__hlabVesper){",
+    "newText": "   so editing stays light: the hero copy is simply shown. */\nconst IN_EDITOR=(()=>{ try{ return window.self!==window.top || !/^\\/(index\\.html)?$|^\\/home-lab(\\/|\\.html)?$/.test(location.pathname) }catch(e){ return true } })()\nif(HERO&&CANVAS&&!window.__hlabVesper){"
+   }
+  ]
+ },
+ "hlab-webgl-scene.js": {
+  "from": "f0f37c19e899c8526315ef1a3808dbadc2390e973ebe76f20d212b20e2f22aa0",
+  "to": "2eb568030b4a1867ce991b701655571a48b1a6dee300e085084d3ea2c33f4a7d",
+  "replacements": [
+   {
+    "oldText": "  };\n  const PARAMS = getParams(window.innerWidth);\n  const KEYFRAMES = [",
+    "newText": "  };\n  const PARAMS = { ...getParams(window.innerWidth) };\n  if (window.innerHeight > window.innerWidth * 1.15) PARAMS.orbCameraZ = Math.max(PARAMS.orbCameraZ, 7.2);\n  const KEYFRAMES = ["
+   }
+  ]
+ },
+ "hlab-x8-hero-vesper.css": {
+  "from": "54e961d0a38fa012eab3398f1f856d544f7095acd34f8aa5dfc4085fa0a93870",
+  "to": "a4b8862aaab9901e0729d593606d816b2474ee97af130ac3dc44ca6825618e4c",
+  "replacements": [
+   {
+    "oldText": ".hlab-vx-ov-hero .hlab-vx-title { position: absolute; top: 9.028vw; left: 1.667vw; width: 44vw; font-size: 4.3vw; }",
+    "newText": ".hlab-vx-ov-hero .hlab-vx-title { position: absolute; top: 9.028vw; left: 1.667vw; width: 40vw; font-size: 4.3vw; }   /* 40vw: \"une\" starts the third line, clear of the orb */"
+   },
+   {
+    "oldText": "/* ---------- < 1024px: Vesper's plain stacks ---------- */\n@media (max-width: 1023px) {\n  .hlab-vx-ov .hlab-vx-title, .hlab-vx-ov .hlab-vx-cluster, .hlab-vx-ov .hlab-vx-support, .hlab-vx-ov .hlab-vx-tagline,\n  .hlab-vx-ov-brain .hlab-vx-tl-left, .hlab-vx-ov-brain .hlab-vx-tl-right, .hlab-vx-ov-brain .hlab-vx-flank-left,\n  .hlab-vx-ov-brain .hlab-vx-flank-right, .hlab-vx-ov .hlab-vx-cta, .hlab-vx-ov-hero .hlab-vx-tags { position: static; }\n  .hlab-vx-ov { display: flex; flex-direction: column; justify-content: center; gap: 1.25rem; padding: 6.5rem 1.5rem 2rem; }\n  .hlab-vx-ov .hlab-vx-title, .hlab-vx-ov .hlab-vx-tl-left, .hlab-vx-ov .hlab-vx-tl-right { width: 100% !important; font-size: 2.5rem !important; text-align: left !important; transform: none !important; }\n  .hlab-vx-ov .hlab-vx-support, .hlab-vx-ov .hlab-vx-tagline, .hlab-vx-ov-brain .hlab-vx-flank-left, .hlab-vx-ov-brain .hlab-vx-flank-right {\n    width: 100% !important; font-size: .9375rem !important; text-align: left !important; transform: none !important; justify-content: flex-start !important; }\n  .hlab-vx-ov-galaxy .hlab-vx-cluster, .hlab-vx-ov-hero .hlab-vx-cluster { height: auto; display: flex; flex-direction: column; gap: 1.5rem; }\n  .hlab-vx-ov-hero .hlab-vx-tags { gap: .75rem; font-size: .75rem; flex-wrap: wrap; }\n  .hlab-vx-ov-hero .hlab-vx-tags i { width: 3px; height: 3px; }\n  .hlab-vx-ov-galaxy .hlab-vx-rule, .hlab-vx-ov-galaxy .hlab-vx-vrule { display: none; }\n  .hlab-vx-ov-galaxy .hlab-vx-stat { position: static; width: auto; border-left: 0; padding-left: 0; gap: .25rem; }\n  .hlab-vx-ov-galaxy .hlab-vx-v { font-size: 1.5rem; } .hlab-vx-ov-galaxy .hlab-vx-l { font-size: .75rem; color: rgba(255,255,255,.7); }\n  .hlab-vx-send { height: 3.25rem; gap: .875rem; padding: 0 .3125rem 0 1.5rem; }\n  .hlab-vx-send .hlab-vx-fill { padding: 0; font-size: 1rem; }\n  .hlab-vx-send .hlab-vx-arrow { width: 2.625rem; height: 2.625rem; font-size: 0; }\n}\n",
+    "newText": "/* ---------- < 1024px: an editorial frame around the 3D figure ----------\n   Headline at the top under the menu, the figure free in the middle, the\n   supporting copy and the button anchored at the bottom (above the scroll hint). */\n@media (max-width: 1023px) {\n  .hlab-vx-ov .hlab-vx-title, .hlab-vx-ov .hlab-vx-cluster, .hlab-vx-ov .hlab-vx-support, .hlab-vx-ov .hlab-vx-tagline,\n  .hlab-vx-ov-brain .hlab-vx-tl-left, .hlab-vx-ov-brain .hlab-vx-tl-right, .hlab-vx-ov-brain .hlab-vx-flank-left,\n  .hlab-vx-ov-brain .hlab-vx-flank-right, .hlab-vx-ov .hlab-vx-cta, .hlab-vx-ov-hero .hlab-vx-tags,\n  .hlab-vx-ov-galaxy .hlab-vx-stat { position: static; width: auto !important; transform: none !important; }\n  .hlab-vx-ov { display: flex; flex-direction: column; align-items: flex-start;\n    padding: calc(env(safe-area-inset-top, 0px) + 6.75rem) 1.5rem calc(env(safe-area-inset-bottom, 0px) + 6.5rem); }\n  .hlab-vx-ov .hlab-vx-title, .hlab-vx-ov-brain .hlab-vx-tl-left, .hlab-vx-ov-brain .hlab-vx-tl-right {\n    font-size: clamp(2.25rem, 10vw, 3.5rem) !important; line-height: .96; text-align: left; max-width: 12ch; }\n  .hlab-vx-ov .hlab-vx-support { font-size: .9375rem; line-height: 1.45; max-width: 30ch; text-align: left; color: rgba(255,255,255,.86); }\n  .hlab-vx-ov .hlab-vx-tw.hlab-vx-center { justify-content: flex-start; }\n\n  /* orb: eyebrow + headline | figure | tags, support + button */\n  .hlab-vx-ov-hero .hlab-vx-cluster { display: contents; }\n  .hlab-vx-ov-hero .hlab-vx-tagline { order: 1; max-width: 46ch; margin-bottom: 1rem; font-size: .6875rem; line-height: 1.5;\n    letter-spacing: .14em; color: rgba(255,255,255,.7); }\n  .hlab-vx-ov-hero .hlab-vx-title { order: 2; max-width: 9.6em; }   /* three lines at any size: \"une\" starts the last one */\n  .hlab-vx-ov-hero .hlab-vx-tags { order: 3; margin-top: auto; gap: .625rem; flex-wrap: wrap; font-size: .6875rem; letter-spacing: .06em; color: rgba(255,255,255,.7); }\n  .hlab-vx-ov-hero .hlab-vx-tags i { width: 3px; height: 3px; opacity: .7; }\n  .hlab-vx-ov-hero .hlab-vx-support { order: 4; margin-top: 1rem; }\n  .hlab-vx-ov-hero .hlab-vx-cta { order: 5; margin-top: 1.25rem; }\n\n  /* galaxy: headline | figure | support, then the four services in one row */\n  .hlab-vx-ov-galaxy .hlab-vx-title { font-size: clamp(1.625rem, 6.8vw, 2.75rem) !important; line-height: 1; max-width: 18ch; }\n  .hlab-vx-ov-galaxy .hlab-vx-cluster { margin-top: auto; width: 100%; height: auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem .75rem; }\n  .hlab-vx-ov-galaxy .hlab-vx-support { grid-column: 1 / -1; }\n  .hlab-vx-ov-galaxy .hlab-vx-rule, .hlab-vx-ov-galaxy .hlab-vx-vrule { display: none; }\n  .hlab-vx-ov-galaxy .hlab-vx-stat { border-left: 0; border-top: 1px solid rgba(255,255,255,.28); padding: .625rem 0 0; gap: .3rem; }\n  .hlab-vx-ov-galaxy .hlab-vx-v { font-size: 1.125rem; }\n  .hlab-vx-ov-galaxy .hlab-vx-l { font-size: .6875rem; line-height: 1.3; color: rgba(255,255,255,.72); }\n\n  /* brain: the sentence wraps the figure, top left to bottom right */\n  .hlab-vx-ov-brain .hlab-vx-flank-right { order: 1; margin-bottom: 1rem; font-size: .6875rem; letter-spacing: .14em; color: rgba(255,255,255,.7); justify-content: flex-start; }\n  .hlab-vx-ov-brain .hlab-vx-tl-left { order: 2; }\n  .hlab-vx-ov-brain .hlab-vx-tl-right { order: 3; margin-top: auto; align-self: flex-end; text-align: right; }\n  .hlab-vx-ov-brain .hlab-vx-flank-left { order: 4; align-self: flex-end; max-width: 30ch; margin-top: 1rem; font-size: .75rem; line-height: 1.45;\n    letter-spacing: .04em; text-align: right; justify-content: flex-end; color: rgba(255,255,255,.8); }\n  .hlab-vx-ov-brain .hlab-vx-cta { order: 5; align-self: flex-end; margin-top: 1.25rem; }\n\n  .hlab-vx-send { height: 3.25rem; gap: .875rem; padding: 0 .3125rem 0 1.5rem; }\n  .hlab-vx-send .hlab-vx-fill { padding: 0; font-size: 1rem; }\n  .hlab-vx-send .hlab-vx-arrow { width: 2.625rem; height: 2.625rem; font-size: 0; }\n}\n/* shorter phones (the figure scales with the screen height, the copy does not) */\n@media (max-width: 1023px) and (max-height: 780px) {\n  .hlab-vx-ov { padding-top: calc(env(safe-area-inset-top, 0px) + 6.25rem); padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 5.75rem); }\n  .hlab-vx-ov .hlab-vx-title, .hlab-vx-ov-brain .hlab-vx-tl-left, .hlab-vx-ov-brain .hlab-vx-tl-right { font-size: clamp(1.875rem, 9vw, 2.25rem) !important; }\n  .hlab-vx-ov-galaxy .hlab-vx-title { font-size: clamp(1.5rem, 6.4vw, 1.75rem) !important; }\n  .hlab-vx-ov .hlab-vx-support { font-size: .875rem; }\n  .hlab-vx-ov-hero .hlab-vx-tagline { margin-bottom: .75rem; }\n}\n@media (max-width: 1023px) and (max-height: 700px) {\n  .hlab-vx-ov-hero .hlab-vx-tags { display: none; }\n  .hlab-vx-ov-hero .hlab-vx-support { margin-top: auto; }\n}\n/* phones held sideways: less frame, smaller headline */\n@media (max-width: 1023px) and (max-height: 560px) {\n  .hlab-vx-ov { padding: calc(env(safe-area-inset-top, 0px) + 5.25rem) 1.5rem 1.25rem; }\n  .hlab-vx-ov .hlab-vx-title, .hlab-vx-ov-brain .hlab-vx-tl-left, .hlab-vx-ov-brain .hlab-vx-tl-right { font-size: clamp(1.5rem, 7vh, 2.25rem) !important; max-width: 20ch; }\n  .hlab-vx-ov-hero .hlab-vx-tags, .hlab-vx-ov-brain .hlab-vx-flank-left { display: none; }\n}\n"
+   }
+  ]
+ }
+}

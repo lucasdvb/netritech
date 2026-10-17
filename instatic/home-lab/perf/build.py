@@ -45,6 +45,12 @@ HEADER = lines(1, 8)
 IMPORTS = lines(9, 13)
 HELPERS = lines(27, 37)              # clamp .. linVec
 CONFIG = lines(38, 123)              # palettes, adaptive params, timeline, intro / outro
+# --- portrait screens (phones, tablets held upright): the orb sits further back, so it fits
+#     between the headline at the top and the copy at the bottom
+assert CONFIG.count('const PARAMS=getParams(window.innerWidth)\n') == 1
+CONFIG = CONFIG.replace('const PARAMS=getParams(window.innerWidth)\n',
+  'const PARAMS={...getParams(window.innerWidth)}\n'
+  'if(window.innerHeight>window.innerWidth*1.15) PARAMS.orbCameraZ=Math.max(PARAMS.orbCameraZ,7.2)\n')
 RENDERER = lines(124, 156).replace('const canvas=CANVAS\n', '')
 SCENES = lines(165, 1081)            # shaders, Backdrop .. CameraRig
 DOM = lines(1082, 1216)              # text splitting, sweeps, overlays
@@ -380,6 +386,12 @@ SCENE_FILE = (SCENE.split(IMPORTS)[0].split(HEADER)[1].strip() + "\n"
 # tabs (only inside GLSL strings) become spaces: same shaders, and the file can be written as text reliably
 SCENE_FILE = SCENE_FILE.replace('\t', '  ')
 PAGE = PAGE.replace('\t', '  ')
+# --- the page is the site's homepage now: the scene runs on / (and on /home-lab, its old address)
+OLD_HOME = "!/\\/home-lab(\\/|\\.html)?$/.test(location.pathname)"
+NEW_HOME = "!/^\\/(index\\.html)?$|^\\/home-lab(\\/|\\.html)?$/.test(location.pathname)"
+assert PAGE.count(OLD_HOME) == 1
+PAGE = PAGE.replace(OLD_HOME, NEW_HOME)
+PAGE = PAGE.replace('Inside the Instatic editor canvas (an iframe) the WebGL scene is not started,', 'Inside the Instatic editor canvas (an iframe) and off the homepage the WebGL scene is not started,')
 for name, text in [('hlab-hero-vesper.js', PAGE), ('hlab-webgl-scene.js', SCENE_FILE)]:
     (HERE / name).write_text(text)
     print(name, len(text), 'chars', hashlib.sha256(text.encode()).hexdigest())

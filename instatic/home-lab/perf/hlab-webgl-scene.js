@@ -1012,7 +1012,8 @@ function createScene(canvas, init, emit) {
     for (const e of ADAPTIVE) if (w <= e.point) r = e;
     return r;
   };
-  const PARAMS = getParams(window.innerWidth);
+  const PARAMS = { ...getParams(window.innerWidth) };
+  if (window.innerHeight > window.innerWidth * 1.15) PARAMS.orbCameraZ = Math.max(PARAMS.orbCameraZ, 7.2);
   const KEYFRAMES = [
     { orbOut: 0, galaxyIn: 0, galaxyOut: 0, galaxyDive: 0 },
     { orbOut: 1, galaxyIn: 1, galaxyOut: 0, galaxyDive: 0.5 },
