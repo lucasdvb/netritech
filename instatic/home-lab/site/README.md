@@ -49,3 +49,19 @@
 - Each patch in `patches.json` is reversible: swap `oldText` and `newText`.
 - The `from` hash is the version to return to.
 - Make `/home-lab` the page slug again to undo the homepage move.
+
+## Live check after publishing (2026-10-17)
+
+- `/` serves the homepage, with the 3D scene running in the background worker.
+- `/home-lab` now returns 404.
+- The inner pages each show one menu (the site's own), with no V3 classes, a working form and a working FAQ.
+- `/spmv3` still works as before.
+
+Lighthouse from this sandbox, which is about 212 ms from the server:
+
+| Run | Performance | Every other category |
+|---|---|---|
+| Mobile (5 runs) | 73 (outlier), 83, 85, 87 | 100 |
+| Desktop | 96, 97 | 100 |
+
+That is the same range as before this round (mobile 82 / 88, desktop 96).
