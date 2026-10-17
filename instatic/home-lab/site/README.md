@@ -61,7 +61,7 @@ Lighthouse from this sandbox, which is about 212 ms from the server:
 
 | Run | Performance | Every other category |
 |---|---|---|
-| Mobile (5 runs) | 73 (outlier), 83, 85, 87 | 100 |
+| Mobile (4 runs) | 73 (outlier), 83, 85, 87 | 100 |
 | Desktop | 96, 97 | 100 |
 
 That is the same range as before this round (mobile 82 / 88, desktop 96).
