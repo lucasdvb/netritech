@@ -227,7 +227,10 @@ function startScene(){{
   if(url&&tu&&CANVAS.transferControlToOffscreen&&typeof Worker!=='undefined'&&!window.__hlabNoWorker){{
     try{{
       const off=CANVAS.transferControlToOffscreen()
-      worker=new Worker(url,{{type:'module'}})
+      /* a one-line blob imports the scene: a worker started from the asset URL itself would inherit
+         that file's own CSP (default-src 'none') and could not load three.js or the meshes */
+      const boot=URL.createObjectURL(new Blob(['import '+JSON.stringify(url)],{{type:'text/javascript'}}))
+      worker=new Worker(boot,{{type:'module'}})
       worker.onmessage=e=>onSceneMessage(e.data)
       worker.onerror=()=>mainThread()
       worker.postMessage({{type:'init',canvas:off,threeUrl:tu,meshUrls:meshUrls(),init:{{...viewport(),noLite:!!window.__hlabNoLite}}}},[off])
