@@ -32,7 +32,13 @@ Goal: mobile and desktop Lighthouse into the 90s without changing quality or UX.
 | Accessibility / Best practices / SEO | 96 / 96 / 66 | 100 / 100 / 100 |
 | Agentic browsing | 1/2 | 2/2 |
 
-On mobile, Speed Index (about 6 s) is what's left. It comes from the hero entrance
+After publishing, live testing found that the server sends `content-security-policy: default-src 'none'`
+on every asset. A worker started from the asset URL inherits that policy and fell back to the main
+thread, so the worker is now started from a one-line blob instead. With the mirror sending the
+same header: mobile 91 / 91, desktop 98. Live from this sandbox (about 212 ms RTT to the server):
+mobile 82 / 88, desktop 96, every other category 100.
+
+On mobile, Speed Index is what's left. It comes from the hero entrance
 animations, which are kept on purpose.
 
 ## Rollback
