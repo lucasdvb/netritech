@@ -1,0 +1,21 @@
+Create a portrait Facebook post for NETRI TECH, a structured cabling / network infrastructure company. Reproduce the exact layout, minimal aesthetic, spacing and typography style of IMAGE 1 (the BuzyTeam before/after post): clean warm-white background, bold heavy geometric sans-serif headline, rounded cards, torn-paper split photo, small floating UI cards, bottom wordmark and pill button. Replace ALL purple in IMAGE 1 with DARK BLUE (#0A3D91); use near-black navy (#0B1530) for dark text. No purple anywhere.
+
+TOP (centred): the NETRI TECH logo from IMAGE 3 (light-blue rounded shield mark + "NETRI TECH" wordmark), small, exactly as in IMAGE 3. Directly under it, small dark-blue tagline: "Smarter Networks, Faster Collaboration"
+
+HEADLINE (very large, one line, centred): "Messy ≠ Reliable." — "Messy" in near-black navy, "≠ Reliable." in dark blue #0A3D91.
+
+SUBLINE (medium, bold, near-black, centred): "Your network is only as good as its cabling."
+
+TWO CARDS side by side with a hand-drawn black arrow between them, exactly like IMAGE 1:
+- Left card: light grey rounded rectangle with a dark grey circle holding a white ✕ on its top edge. Text: "The fix isn't" (regular) / "more patch cords." (bold).
+- Right card: very light blue rounded rectangle with thin blue border and a dark-blue circle holding a white ✓ on its top edge. Text: "It's" (regular, near-black) / "structured cabling." (bold, dark blue).
+
+SPLIT PHOTO BAND (middle/lower half, full width, torn-paper vertical divider in the centre like IMAGE 1):
+- LEFT HALF = "BEFORE", BLACK AND WHITE photo: the same kind of server room / raised-floor space and the same camera angle as IMAGE 2, but chaotic: a tangled spaghetti mess of network cables spilling everywhere, cables knotted and looping over the floor, raised-floor tiles pulled up and leaning, loose cables hanging, no cable ties, dusty, cluttered, clearly unprofessional. Photorealistic, desaturated grayscale.
+- RIGHT HALF = "AFTER", FULL COLOUR: IMAGE 2 exactly — the neat bundled blue cable runs dressed down the white wall and along the galvanised cable trays. Keep it faithful to IMAGE 2.
+- Over the right half, four small white rounded floating cards stacked on the right edge (like the dashboard cards in IMAGE 1), each with a small dark-blue line icon and bold short label: "Bundled & dressed", "Routed via cable trays", "Raised-floor distribution", "Tested & certified" (with a green check icon).
+
+BOTTOM (centred, on white): large wordmark "NETRI TECH." with "NETRI" in near-black navy and "TECH." in dark blue. Under it a dark-blue rounded pill button with white text "Book a free site survey" and a small clipboard/calendar icon on the left, plus a circular white badge with a yellow ring icon at the pill's left end like the bell in IMAGE 1.
+
+All text must be spelled exactly as given, crisp and legible. Generous whitespace, premium, minimal. No extra text, no watermark.
+Leave a plain white empty margin of about 5% of the height above the logo and below the button.
