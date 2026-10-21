@@ -11,3 +11,8 @@
 - "La fusion de l'humain et de l'IA, au service de votre croissance" (charter wording): end of the Human & AI block (Pourquoi SPM) and SEO description. Hero subtitle not added (homepage hero left as is).
 - 1.07 margin note ignored. Absence cover: no change, "agents" -> "conseillers" in that answer.
 - Fixed: list items (homepage closing steps, Carrières values) and the Contact phone span had not taken earlier edits; redone with replace_node_html.
+
+Follow-up (same day, user decisions)
+- Growth line wording: "La fusion de l'humain et de l'IA pour votre croissance" (Pourquoi SPM Human & AI block, SEO description and schema).
+- Homepage hero: the tagline under the title now reads that line (the four services still appear in the scroll scene and the hidden H1 text).
+- Secteurs: 17 sectors (new list + previous six, Santé once) in two columns on desktop (>=1025px), column-major order (9 + 8). CSS in spx-base.css (.sec-cat .sec-rows). Hover band follows the hovered row's column (patch in spx-font.js place()). One column on tablet and mobile.
