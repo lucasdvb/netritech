@@ -40,3 +40,14 @@ Licences: Pexels License and Pixabay Content License, free for commercial use, n
 - visuel Expertise: https://pixabay.com/photos/skyscraper-architecture-9226515/ (Pana68)
 
 Sector images get one shared CSS grade (saturate .8, contrast 1.04, light navy wash) so the set reads as one series.
+
+## Round 2 (one photo, one place)
+
+New Pexels photos, same shoots as the library photos so the look stays consistent:
+- Homepage cards: https://www.pexels.com/photo/8867231/ (service client), https://www.pexels.com/photo/8297051/ (back-office), https://www.pexels.com/photo/18848929/ (recrutement)
+- Carrières: 7658375 (formation), 7658383 (collaborateur au poste)
+- Actualités: 7688164 (formation), 8867420 (IA, écran), 8867417 (portrait)
+- Secteurs, études de cas: 7658387 (équipe), 8867441, 7658380
+
+Rule applied: no image appears twice on the site (V2/V3 excluded). The Solutions hover card is switched off because it repeated the card photos.
+Pending: the real SPM team photo (Pourquoi SPM, "Portrait d'équipe") from the client's folder, not received yet.
