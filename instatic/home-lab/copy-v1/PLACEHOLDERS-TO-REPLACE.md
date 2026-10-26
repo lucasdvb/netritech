@@ -82,3 +82,13 @@ Pages: /mentions-legales, /politique-de-confidentialite, /gestion-des-cookies. T
   - No cookies and no third-party requests.
   - One localStorage key, hlab-lang (language choice).
   - If analytics are added, a consent banner and an update to this page are required.
+
+## 2026-10-26, "no empty placeholders anywhere" (user decision: add everything as is, change later if needed)
+
+- Mentions légales, hosting: filled with OVH exactly as on the current site (OVH SAS, capital 10 069 020 €, 2 rue Kellermann, 59100 Roubaix, RCS Roubaix-Tourcoing 424 761 419 00011, 08 203 203 63). Update when the new host is known.
+- Actualités: one article only, "SPM ajoute HUMAN & AI à son nom". The other six cards (including all the lorem ipsum), the category filters and "Voir plus d'articles" are removed. The card no longer links anywhere ("Lire l'article" removed), because the article page has no body text yet.
+- Carrières: the 4 placeholder offers are replaced by one line, "Aucun poste ouvert pour le moment", linking to the spontaneous application. Heading changed to "Rejoins nos équipes."
+- Secteurs: the two case cards (Électroménager, Logiciel) no longer link to "#". They now show the detailed version from SPM's e-mail (need, team, result, 3 figures each). The "[canaux]" and "[année]" gaps from the Électroménager detail were left out.
+- Clients & Partenaires, certifications: the three blank "Label" badges are replaced by the ISO 27001 logo the user supplied (certification in progress). Caption: "Certification ISO 27001 en cours."
+- Contact: the map captions "Google Maps … Carte interactive" are now "Ouvrir dans Google Maps" links to each address.
+- Footer: Facebook and Instagram removed (no accounts given). LinkedIn now links to https://www.linkedin.com/company/service-premium-services/ (from the current site).
