@@ -92,3 +92,10 @@ Pages: /mentions-legales, /politique-de-confidentialite, /gestion-des-cookies. T
 - Clients & Partenaires, certifications: the three blank "Label" badges are replaced by the ISO 27001 logo the user supplied (certification in progress). Caption: "Certification ISO 27001 en cours."
 - Contact: the map captions "Google Maps … Carte interactive" are now "Ouvrir dans Google Maps" links to each address.
 - Footer: Facebook and Instagram removed (no accounts given). LinkedIn now links to https://www.linkedin.com/company/service-premium-services/ (from the current site).
+- Contact maps (update of the line above):
+  - Live Google Maps cannot be embedded: Instatic adds a CSP meta tag with frame-src 'none' to every page.
+  - The three office cards now show real street-map images built from OpenStreetMap tiles. They are recoloured in the site palette, have a teal pin, and carry an "© OpenStreetMap" credit.
+  - Each map and its "Ouvrir dans Google Maps" chip link to Google Maps.
+  - Build script: assets/mkmap.py. Coordinates: SPM Tower -20.1678304, 57.5007173 (from Google), Dardilly 45.8131728, 4.7608091, Rousset 43.4660316, 5.6104430 (from Nominatim).
+- Gestion des cookies: the "Nom" row now reads "SPM France", at the user's request. The technical localStorage key is still hlab-lang.
+- Footer: a new base row shows the copyright on the left and "Réalisé par Disruptive Dodo" on the right, linking to https://www.disruptivedodo.mu. The bar above keeps the logo and the legal links.
