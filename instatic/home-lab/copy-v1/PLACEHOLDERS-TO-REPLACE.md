@@ -9,7 +9,7 @@ The fictional cases (Énergie, SaaS, Mutuelle) are gone. The page now shows SPM'
 1. Featured case, Assistance automobile (4.09 to 4.13)
    - Title: "De 45 % à 92 % d'appels décrochés pour un assisteur européen."
    - Figures: 92 % taux de décroché (contre 45 %), 75 % des appels décrochés en moins de 20 secondes, −20 % d'appels liés aux réitérations.
-   - Testimonial 4.14 NOT published: the client is still validating it ("merci de ne pas le mettre en ligne avant notre confirmation"). Add it back as the case quote once SPM confirms.
+   - Testimonial 4.14 published 2026-10-26 after the user's go-ahead: « Le chiffre qui m'a le plus marquée… » - Directrice générale, acteur européen de l'assistance automobile.
 2. Card, Électroménager (4.15): "De 82 % à 95 % de qualité de service, et des pannes réglées dès le premier appel." Team grown from 5 to 35+ advisors, trained in a dedicated showroom.
    - Missing from the e-mail: the channels ([canaux]) and the start year ([année]) of the detailed version.
 3. Card, Logiciel (4.16): "+15 % de clients signés chaque mois, des commerciaux recentrés sur la vente." SPM team books the meetings: 85 % attended, 35 % signed.
@@ -56,5 +56,5 @@ These quotes name no company, but they are invented and attributed to a client r
 
 ## Still placeholders (not filled, by choice)
 
-- Carrières: 4 job offers ([Intitulé du poste] [Service] [Type de contrat]) and the recruitment e-mail address.
+- Carrières: 4 job offers ([Intitulé du poste] [Service] [Type de contrat]). The spontaneous application button and e-mail now use contact@spmservices.fr (same as Contact), as the user asked on 2026-10-26.
 - Pourquoi SPM team portrait: stock photo until the real SPM team photo arrives.
