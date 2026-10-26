@@ -64,7 +64,6 @@ Each photo is cropped to its slot. The files are in assets/photos/ and in the In
 | Solutions s1 Service client | spm-solutions-service-client-conseillere.webp | Shutterstock 2302678407 |
 | Solutions s2 Commercial | spm-solutions-commercial-echange.webp | SPM shoot, DSC09102 |
 | Solutions s3 Enquêtes | spm-solutions-enquetes-conseillere.webp | Shutterstock 2614190977 |
-| Carrières hero | spm-carrieres-hero-collaboratrice.webp | SPM shoot, LBM09122 |
 | Carrières values, formation | spm-carrieres-formation-session.webp | SPM shoot, LBM09222 |
 | Carrières values, collaborateur | spm-carrieres-collaborateur-casque.webp | Shutterstock 2120269484 |
 | Carrières card 01 Un lieu de vie (new) | spm-carrieres-lieu-de-vie.webp | SPM shoot, LBM09390 |
@@ -76,6 +75,7 @@ Each photo is cropped to its slot. The files are in assets/photos/ and in the In
 | Secteurs, case study logiciel | spm-secteurs-cas-logiciel-rdv.webp | Shutterstock 2363746691 |
 
 Not used yet:
+- LBM09122 (SPM collaborator with lanyard). It was the Carrières hero image; the user had the hero image removed on 2026-10-26.
 - DSC09084 and DSC09126 (SPM portraits).
 - Shutterstock 2761443181 (group seminar). It is generic and not SPM.
 
