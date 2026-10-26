@@ -1,29 +1,43 @@
 # Invented and placeholder content to replace with real material
 
-Added 2026-10-21 at the user's request ("invent until we get real ones"). Everything below is fictional or lorem ipsum. Replace it as soon as SPM sends the real material.
+First written 2026-10-21 at the user's request ("invent until we get real ones"). Updated 2026-10-26 with SPM's real figures and case studies (two client e-mails). Rule from 2026-10-26: no logos, no client or partner names anywhere on the site, figures only.
 
-## Secteurs & études de cas (/secteurs), case studies (fictional, no company names)
+## Secteurs & études de cas (/secteurs): real case studies now in place
 
-1. Featured case, Énergie (customer service)
-   - Title: "Un fournisseur d'énergie répond à ses clients en 6 heures au lieu de 4 jours."
-   - Note: "Client présenté sans son nom, à sa demande : un fournisseur d'énergie en France."
-   - 01 Le besoin: demand doubled in 3 months after a price rise; 10 min phone wait, 4 days for e-mail.
-   - 02 L'équipe: 18 advisors + 2 team leaders, Port Louis, 2 weeks training on the client's CRM, offers and price grid; phone + e-mail 8 h-20 h French time; since 2023; continuous training at each new offer.
-   - 03 Ce qui a changé: AI transcribes each call and prepares the customer file; e-mail answer 4 days -> 6 h, phone wait under 2 min.
-   - Figures: 6 h (délai de réponse), 92 % (taux de résolution), 4,6/5 (satisfaction client).
-   - Quote: "On cherchait du renfort pour l'hiver..." - Responsable de la relation client, fournisseur d'énergie, France.
-2. Card, SaaS (sales): "Un éditeur SaaS triple ses rendez-vous qualifiés en quatre mois" - 6 sales reps trained on the product and CRM, AI summaries before each call.
-3. Card, Assurance mutuelle (back-office): "Une mutuelle confie son back-office et traite ses dossiers 40 % plus vite" - team of 10, AI prepares each file, the team checks and decides.
-- The two cards link to "#" (no case-study pages yet).
+The fictional cases (Énergie, SaaS, Mutuelle) are gone. The page now shows SPM's three real cases, with no client names.
 
-## Clients & Partenaires (/clients-partenaires), testimonials (fictional, roles and sectors only, no names)
+1. Featured case, Assistance automobile (4.09 to 4.13)
+   - Title: "De 45 % à 92 % d'appels décrochés pour un assisteur européen."
+   - Figures: 92 % taux de décroché (contre 45 %), 75 % des appels décrochés en moins de 20 secondes, −20 % d'appels liés aux réitérations.
+   - Testimonial 4.14 NOT published: the client is still validating it ("merci de ne pas le mettre en ligne avant notre confirmation"). Add it back as the case quote once SPM confirms.
+2. Card, Électroménager (4.15): "De 82 % à 95 % de qualité de service, et des pannes réglées dès le premier appel." Team grown from 5 to 35+ advisors, trained in a dedicated showroom.
+   - Missing from the e-mail: the channels ([canaux]) and the start year ([année]) of the detailed version.
+3. Card, Logiciel (4.16): "+15 % de clients signés chaque mois, des commerciaux recentrés sur la vente." SPM team books the meetings: 85 % attended, 35 % signed.
+- The two cards still link to "#". The e-mail gives a detailed version of each case for a page of its own. Proposed page titles (not created yet):
+  - "Assistance automobile : de 45 % à 92 % d'appels décrochés"
+  - "Électroménager : une équipe de 5 à 35 conseillers, 95 % de qualité de service"
+  - "Logiciel : +15 % de clients signés chaque mois grâce à la prise de rendez-vous"
 
-1. Directrice de la relation client - Acteur de la mobilité, France: "Nos clients ne font pas la différence entre notre équipe interne et l'équipe SPM..."
-2. Directeur commercial - Éditeur SaaS, France: "En quatre mois, l'équipe commerciale SPM a triplé nos rendez-vous qualifiés..."
-3. Responsable des opérations - Mutuelle santé, France: "L'IA prépare les dossiers, l'équipe SPM les vérifie et les traite. Nos délais ont baissé de 40 %..."
-- Avatars show role monograms (RC, DC, RO) instead of photos.
-- WARNING: the page still says "Chaque logo et chaque témoignage est publié avec l'accord écrit du client." This is not true for invented testimonials. To decide: remove or reword it until real testimonials arrive.
-- Homepage testimonial (assistance routière, Directrice Relationnel) was already there, also to confirm.
+## Logos and brand names: removed, replaced by figures
+
+- hlab-spm-logos.js is switched off (it rendered the invented names Norvel, Axendo, Meridal, Kalveo, Vanteo, Solvae).
+- Homepage logo strip, homepage "built by" block, homepage and inner-page lead block, Clients hero marquee and Clients partner grid now show figure strips (`.spm-proof`) with the e-mail's figures: 10 ans, 500 collaborateurs, 70 clients, 126 entreprises accompagnées, 4 ans de collaboration moyenne, 95 % n'avaient jamais externalisé, 12 M d'appels/e-mails/dossiers, 97 % de satisfaction, 95 % de décroché (dont 97 % en moins de 20 s), 30 jours pour un premier ROI, 15 jours de formation, 65 % de responsables issus de la promotion interne.
+
+## Testimonials still invented (to confirm or remove)
+
+These quotes name no company, but they are invented and attributed to a client role and sector. They may conflict with "no mentioning clients anywhere, only stats".
+
+1. Clients & Partenaires: Directrice de la relation client, acteur de la mobilité: "Nos clients ne font pas la différence entre notre équipe interne et l'équipe SPM..."
+2. Clients & Partenaires: Directeur commercial, éditeur SaaS: "En quatre mois, l'équipe commerciale SPM a triplé nos rendez-vous qualifiés..."
+3. Clients & Partenaires: Responsable des opérations, mutuelle santé: "L'IA prépare les dossiers, l'équipe SPM les vérifie et les traite. Nos délais ont baissé de 40 %..."
+4. Homepage: Directrice Relationnel, assistance routière: "SPM répond à chaque automobiliste en quelques secondes, 24h/24..."
+- Avatars show role monograms (RC, DC, RO).
+- The Clients note now reads "Nos clients sont présentés sans leur nom." (the old "chaque logo et chaque témoignage est publié avec l'accord écrit du client" is gone).
+
+## ROI calculator (homepage, A.07)
+
+- Method from SPM: cost of a post = (salaire brut × 1,5 + 1 000 €) × 1,15 (absenteeism). Hourly cost = cost / (hours × 52 / 12). SPM works 40 h a week against 35 h in France.
+- Savings shown = cost of the outsourced share × 40 % (the average saving SPM gave earlier). For an exact comparison the calculator needs SPM's own price per post or per hour, which we do not have yet.
 
 ## Actualités (/actualites), dates and lorem ipsum
 
@@ -43,5 +57,4 @@ Added 2026-10-21 at the user's request ("invent until we get real ones"). Everyt
 ## Still placeholders (not filled, by choice)
 
 - Carrières: 4 job offers ([Intitulé du poste] [Service] [Type de contrat]) and the recruitment e-mail address.
-- Partner logos (Clients & Partenaires) and the homepage logo strip.
 - Pourquoi SPM team portrait: stock photo until the real SPM team photo arrives.
