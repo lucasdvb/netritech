@@ -23,9 +23,9 @@ The fictional cases (Énergie, SaaS, Mutuelle) are gone. The page now shows SPM'
 - hlab-spm-logos.js is switched off (it rendered the invented names Norvel, Axendo, Meridal, Kalveo, Vanteo, Solvae).
 - Homepage logo strip, homepage "built by" block, homepage and inner-page lead block, Clients hero marquee and Clients partner grid now show figure strips (`.spm-proof`) with the e-mail's figures: 10 ans, 500 collaborateurs, 70 clients, 126 entreprises accompagnées, 4 ans de collaboration moyenne, 95 % n'avaient jamais externalisé, 12 M d'appels/e-mails/dossiers, 97 % de satisfaction, 95 % de décroché (dont 97 % en moins de 20 s), 30 jours pour un premier ROI, 15 jours de formation, 65 % de responsables issus de la promotion interne.
 
-## Testimonials still invented (to confirm or remove)
+## Testimonials still invented (kept until real ones arrive)
 
-These quotes name no company, but they are invented and attributed to a client role and sector. They may conflict with "no mentioning clients anywhere, only stats".
+These quotes name no company, but they are invented and attributed to a client role and sector. The user decided on 2026-10-26 to keep them until SPM sends real testimonials. Published 2026-10-26.
 
 1. Clients & Partenaires: Directrice de la relation client, acteur de la mobilité: "Nos clients ne font pas la différence entre notre équipe interne et l'équipe SPM..."
 2. Clients & Partenaires: Directeur commercial, éditeur SaaS: "En quatre mois, l'équipe commerciale SPM a triplé nos rendez-vous qualifiés..."
