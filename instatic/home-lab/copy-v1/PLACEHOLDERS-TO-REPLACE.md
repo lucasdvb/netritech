@@ -58,3 +58,27 @@ These quotes name no company, but they are invented and attributed to a client r
 
 - Carrières: 4 job offers ([Intitulé du poste] [Service] [Type de contrat]). The spontaneous application button and e-mail now use contact@spmservices.fr (same as Contact), as the user asked on 2026-10-26.
 - Pourquoi SPM team portrait: stock photo until the real SPM team photo arrives.
+
+## Legal pages (added 2026-10-26): to confirm with SPM
+
+Pages: /mentions-legales, /politique-de-confidentialite, /gestion-des-cookies. They are linked from the footer and from the Contact form's consent line.
+
+- Hébergement: still a placeholder on Mentions légales ("[Nom de l'hébergeur, adresse et téléphone, à confirmer]"). The current site names OVH, but the new site will be hosted elsewhere.
+- Company identity comes from the official registry (recherche-entreprises.api.gouv.fr, SIREN 884 459 512), not from the current site:
+  - SIREN 884 459 512 is "SPM FRANCE", a SAS created on 18 June 2020.
+  - Head office: 8 chemin du Jubin, 69570 Dardilly.
+  - President: Virgile Henaut.
+  - The current site's "SPM Services, RCS Nanterre" is out of date, so the page gives the SIREN only.
+- To confirm with SPM:
+  - Capital social: 10 000 € (from the current site).
+  - RCS city: probably Lyon, given the Dardilly head office.
+  - Directeur de la publication: Léopold Chevallier (from the current site; the registry's president is Virgile Henaut).
+  - Jurisdiction clause: "tribunaux de Paris" (kept from the current site).
+- Privacy policy:
+  - "No transfer outside the EU" is kept from the current site. SPM's teams in Mauritius may handle contact requests, which would be a transfer, so SPM must confirm.
+  - Retention periods: 3 years for prospects (kept close to the current site's 36 months) and 2 years for applications (CNIL guidance).
+- The footer copyright reads "© 2026 Service Plus Monde" while the legal name is SPM France. To align.
+- Cookies page: written from a live check on 2026-10-26.
+  - No cookies and no third-party requests.
+  - One localStorage key, hlab-lang (language choice).
+  - If analytics are added, a consent banner and an update to this page are required.

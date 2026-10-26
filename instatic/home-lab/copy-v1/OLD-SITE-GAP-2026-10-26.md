@@ -59,3 +59,15 @@ Crawled 2026-10-26. The current site is WordPress (Yoast). It has 6 content page
   - the legal pages to their new pages
 - The new site has no /sitemap.xml and no /robots.txt yet (both 404 on staging).
 - No cookie banner is needed today: no analytics or trackers were found on the new site. If analytics are added, a consent banner and the cookies page become mandatory (CNIL).
+
+## Done on 2026-10-26
+
+- Point 1: Mentions légales, Politique de confidentialité and Gestion des cookies pages created and linked from the footer. The shell shows only the footer on these pages, no lead form or FAQ.
+- Point 2: the 6-step method, as a new "Notre méthode" section on Pourquoi SPM (#methode).
+- Point 3: the live wallboard, as a "Vos chiffres en direct" card in that section.
+- Point 4: the audit, in the Solutions "Sur mesure" block, with a "Demander un audit" button.
+- Point 5: "service consommateur" added to Solutions s1, "détection de besoins" and "gestion / fidélisation du portefeuille client" to s2 (overview and detail).
+- Point 6: "un groupe français dont le siège est dans la région lyonnaise" added to the Pourquoi SPM story.
+- Still open:
+  - The LinkedIn, Facebook and Instagram footer links still go to "#".
+  - Redirects, sitemap.xml and robots.txt are not done yet.
