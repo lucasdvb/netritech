@@ -99,3 +99,7 @@ Pages: /mentions-legales, /politique-de-confidentialite, /gestion-des-cookies. T
   - Build script: assets/mkmap.py. Coordinates: SPM Tower -20.1678304, 57.5007173 (from Google), Dardilly 45.8131728, 4.7608091, Rousset 43.4660316, 5.6104430 (from Nominatim).
 - Gestion des cookies: the "Nom" row now reads "SPM France", at the user's request. The technical localStorage key is still hlab-lang.
 - Footer: a new base row shows the copyright on the left and "Réalisé par Disruptive Dodo" on the right, linking to https://www.disruptivedodo.mu. The bar above keeps the logo and the legal links.
+- Port Louis map (2026-10-26):
+  - Re-centred on SPM's own Google Maps place "SPM Services" (-20.1663255, 57.5020682), from the link the user gave: https://maps.app.goo.gl/qmzDn1DcQuawn6At5.
+  - The map and its chip now link to that place.
+  - The caption chips are now above the map images (rule in hlab-x9-shell.css), so the "© OpenStreetMap" credit shows.
