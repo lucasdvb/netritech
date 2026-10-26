@@ -51,3 +51,32 @@ New Pexels photos, same shoots as the library photos so the look stays consisten
 
 Rule applied: no image appears twice on the site (V2/V3 excluded). The Solutions hover card is switched off because it repeated the card photos.
 Pending: the real SPM team photo (Pourquoi SPM, "Portrait d'équipe") from the client's folder, not received yet.
+
+## 2026-10-26 update: SPM's own photos and the user's Shutterstock set (zip "ToWebP")
+
+Each photo is cropped to its slot. The files are in assets/photos/ and in the Instatic media library. No image is used twice.
+
+| Page / slot | File | Source |
+|---|---|---|
+| Pourquoi SPM, wide film | spm-pourquoi-formation-equipe.webp | SPM shoot, LBM09075 |
+| Pourquoi SPM, Notre histoire | spm-pourquoi-histoire-equipe.webp | SPM shoot, LBM09325 |
+| Pourquoi SPM, Notre méthode (new) | spm-pourquoi-methode-manager.webp | Shutterstock 2221299635 (user licence) |
+| Solutions s1 Service client | spm-solutions-service-client-conseillere.webp | Shutterstock 2302678407 |
+| Solutions s2 Commercial | spm-solutions-commercial-echange.webp | SPM shoot, DSC09102 |
+| Solutions s3 Enquêtes | spm-solutions-enquetes-conseillere.webp | Shutterstock 2614190977 |
+| Carrières hero | spm-carrieres-hero-collaboratrice.webp | SPM shoot, LBM09122 |
+| Carrières values, formation | spm-carrieres-formation-session.webp | SPM shoot, LBM09222 |
+| Carrières values, collaborateur | spm-carrieres-collaborateur-casque.webp | Shutterstock 2120269484 |
+| Carrières card 01 Un lieu de vie (new) | spm-carrieres-lieu-de-vie.webp | SPM shoot, LBM09390 |
+| Carrières card 02 Grandir (new) | spm-carrieres-grandir-responsable.webp | SPM shoot, DSC09001 |
+| Carrières card 03 L'IA à tes côtés (new) | spm-carrieres-ia-conseillere.webp | Shutterstock 2300501133 |
+| Actualités, HUMAN & AI article | spm-actualites-human-ai.webp | Shutterstock 2711431487 |
+| Secteurs, case study assistance automobile | spm-secteurs-cas-assistance-auto-pixabay-5397633.webp | Pixabay 5397633 (Pixabay licence) |
+| Secteurs, case study électroménager | spm-secteurs-cas-electromenager-pixabay-2617514.webp | Pixabay 2617514 (Pixabay licence) |
+| Secteurs, case study logiciel | spm-secteurs-cas-logiciel-rdv.webp | Shutterstock 2363746691 |
+
+Not used yet:
+- DSC09084 and DSC09126 (SPM portraits).
+- Shutterstock 2761443181 (group seminar). It is generic and not SPM.
+
+Replaced (still in the media library, no longer on any page): Pexels 7658410, 7580709, 8867198, 2422294, 7658250, 8867405, 7658375, 7658383, 7658387, 8867441, 7658380, and Pixabay 9639806. Four of them (7658410, 7580709, 8867198, 2422294) were duplicates of the homepage team cards.
