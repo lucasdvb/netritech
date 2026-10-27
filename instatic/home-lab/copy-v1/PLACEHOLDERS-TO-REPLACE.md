@@ -103,3 +103,11 @@ Pages: /mentions-legales, /politique-de-confidentialite, /gestion-des-cookies. T
   - Re-centred on SPM's own Google Maps place "SPM Services" (-20.1663255, 57.5020682), from the link the user gave: https://maps.app.goo.gl/qmzDn1DcQuawn6At5.
   - The map and its chip now link to that place.
   - The caption chips are now above the map images (rule in hlab-x9-shell.css), so the "© OpenStreetMap" credit shows.
+
+## 2026-10-27, language toggle removed (English version not decided yet)
+
+- The FR/EN toggles (floating ball in hlab-spm-chrome.js, drawer row in hlab-hero-nav.js) are removed. The page language is fixed to French.
+- Nothing is stored in the browser any more (the hlab-lang key is gone). The Gestion des cookies page now says so, and points to the privacy policy for what visitors type into forms (leads and applications).
+- When the forms are connected, the privacy policy must name the tool that receives the leads and where it is hosted (EU transfer point above).
+- Renaming "hlab" to "spm": it is only an internal prefix (class names, script and style file names). Instatic has no rename or delete for code assets, so a rename means copy-and-disable of about 45 files. Left as is, pending the user's decision.
+- The delivery report (PDF) was updated to match.
