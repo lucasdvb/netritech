@@ -111,3 +111,12 @@ Pages: /mentions-legales, /politique-de-confidentialite, /gestion-des-cookies. T
 - When the forms are connected, the privacy policy must name the tool that receives the leads and where it is hosted (EU transfer point above).
 - Renaming "hlab" to "spm": it is only an internal prefix (class names, script and style file names). Instatic has no rename or delete for code assets, so a rename means copy-and-disable of about 45 files. The user asked for the file names on 2026-10-27. Tried it: site_write_code_asset ignores runtime settings (enabled, priority, scope), so an old file cannot be switched off and a copy cannot keep its load order (it would run twice or after sections.js). Not done; one empty leftover, src/scripts/spm-site-0-shell.js, from the test (delete it in the editor). To do properly, rename each file in the Instatic editor (scripts and styles named hlab-*; the CSS bundle also prints each file name in a comment).
 - The delivery report (PDF) was updated to match.
+
+## 2026-10-27, text changes asked by the user (site edits waiting: Instatic connection was down)
+
+To apply on the site, then re-publish (user approval first):
+1. Proof strips (homepage, Clients, lead blocks): replace "70 entreprises nous font confiance aujourd'hui" with another figure (proposed: "30 jours pour un premier retour sur investissement"), because 70 next to "126 accompagnées depuis 2016" reads as 56 lost clients. Also the lead-block strip in hlab-0-shell.js ("70 entreprises clientes aujourd'hui").
+2. Lead-block strip: "500 collaborateurs à Port-Louis, Lyon et Aix-en-Provence" becomes "500 collaborateurs à Lyon, Aix-en-Provence et à l'île Maurice" (Mauritius last, no Port-Louis). Check the other places that say Port-Louis in visible copy.
+3. FAQ "Est-ce que l'IA remplace vos conseillers ?": answer becomes « Non. Chez SPM, l'IA n'est pas là pour remplacer les équipes, elle est là pour les épauler. Nos conseillers décident, répondent et assurent la relation avec vos clients, qui parlent toujours à une personne. » (hlab-spm-faq.js, and the page copy if the FAQ also lives in the page).
+4. FAQ about how AI helps: "leur laisse le temps de la relation avec vos clients" becomes "leur laisse plus de temps pour vos clients".
+The delivery report text was updated for 1 and 2. Its screenshots (Clients page, homepage) still show the old strip and must be retaken after the site is fixed.
