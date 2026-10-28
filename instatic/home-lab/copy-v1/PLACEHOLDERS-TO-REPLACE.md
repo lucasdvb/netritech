@@ -120,3 +120,8 @@ To apply on the site, then re-publish (user approval first):
 3. FAQ "Est-ce que l'IA remplace vos conseillers ?": answer becomes « Non. Chez SPM, l'IA n'est pas là pour remplacer les équipes, elle est là pour les épauler. Nos conseillers décident, répondent et assurent la relation avec vos clients, qui parlent toujours à une personne. » (hlab-spm-faq.js, and the page copy if the FAQ also lives in the page).
 4. FAQ about how AI helps: "leur laisse le temps de la relation avec vos clients" becomes "leur laisse plus de temps pour vos clients".
 The delivery report text was updated for 1 and 2. Its screenshots (Clients page, homepage) still show the old strip and must be retaken after the site is fixed.
+
+## 2026-10-28
+
+- The four text changes listed on 2026-10-27 (30 jours figure, Mauritius last, the two FAQ answers) are done and published. Port Louis stays only in the postal address (Contact page, footer).
+- Delivery report: the "Avant la mise en ligne / Ce qu'il reste à finaliser" page is removed at the user's request (12 pages now; the checklist of open items is in this file and in the earlier version in git history). Hero screenshots retaken so they no longer show the removed FR/EN button.
