@@ -125,3 +125,35 @@ The delivery report text was updated for 1 and 2. Its screenshots (Clients page,
 
 - The four text changes listed on 2026-10-27 (30 jours figure, Mauritius last, the two FAQ answers) are done and published. Port Louis stays only in the postal address (Contact page, footer).
 - Delivery report: the "Avant la mise en ligne / Ce qu'il reste à finaliser" page is removed at the user's request (12 pages now; the checklist of open items is in this file and in the earlier version in git history). Hero screenshots retaken so they no longer show the removed FR/EN button.
+
+## 2026-10-29, client amendments (batch 1, everything except security)
+
+Done in the editor (publish pending the user's approval):
+- Homepage hero: « Votre première externalisation, sur les métiers que vous pensiez garder en interne. » with the client's subtitle. Scroll panel 2 lists the four families by their solution names and says « Sept solutions ».
+- New homepage sections, in this order under the hero:
+  1. « Votre première externalisation »: five answers (contrôle, qualité, métier, sécurité des données, équipes internes), the 6-step method and the audit band.
+  2. 95 % shown large, with the ambition line (France and the Indian Ocean).
+  3. Figures strip: 30 jours, 126, 4 ans.
+  4. « Le lancement »: onboarding team, one month maximum, three one-hour meetings, everything included in the price.
+  5. « Métiers externalisables »: eight examples taken from the solutions and the case studies.
+  6. « L'IA au service des conseillers »: transcription, summaries, action points.
+  7. « Les équipes SPM »: 500, 15 jours, 65 %, 3 ans. There are no photos yet; the shot list is in SHOT-LIST-SPM.md.
+- Consistency:
+  - « Zéro erreur » became « Une qualité suivie de près ».
+  - « aucun client ne reste sans réponse, jamais » became « chaque appel est pris en charge, avec 95 % d'appels décrochés ».
+  - The homepage quote no longer says 24h/24, and the Solutions hours are now « adaptés aux besoins de chaque client ».
+  - Languages: « en français et dans six autres langues » (matches the 7 languages on Pourquoi SPM).
+  - Clients title: « Des chiffres, pas des promesses. »
+  - Start time: « un mois maximum » everywhere it was « 2 à 6 semaines » for a launch.
+- Vouvoiement on Carrières and on the Contact jobs line.
+- Calculator: a single indicative percentage (part externalisée × 40 %), no euro amounts; « Recevoir le détail du calcul ». The method still needs SPM's validation.
+- FAQ: a new first tab « Première externalisation » (5 questions). The old « 2 à 6 semaines » start answer is removed. The homepage FAQ structured data matches the new tab.
+- Privacy policy:
+  - Section 7 now uses Léo's transfer paragraph (Maurice, chapitre V RGPD, DPA with SCC module 3, TIA, DPA 2017, Convention 108+).
+  - The DPA / sous-traitant / security measures list is held for the security batch, since SPM must validate it.
+
+Still to do (batch 2, held until SPM validates the wording):
+- The « Sécurité & données » page, its menu link and its link from the homepage « Sécurité des données » card.
+- The privacy policy's client-data and security-measures section.
+- The security FAQ.
+- SPM's IT lead must send: the verified list of measures, hosting and data location, the ISO 27001 status, scope and target date, and the AI tools framework.
