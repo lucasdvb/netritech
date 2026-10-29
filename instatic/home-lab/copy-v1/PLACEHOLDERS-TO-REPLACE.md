@@ -157,3 +157,17 @@ Still to do (batch 2, held until SPM validates the wording):
 - The privacy policy's client-data and security-measures section.
 - The security FAQ.
 - SPM's IT lead must send: the verified list of measures, hosting and data location, the ISO 27001 status, scope and target date, and the AI tools framework.
+
+## 2026-10-30, sections rebuilt (in the editor, not published)
+
+- The first-batch homepage sections were replaced by the v2 rebuild (source in sections-v2/). The new sections are:
+  - « Externaliser, sans perdre le contrôle » bento with the audit card.
+  - The 95 % rail with 126 and 4 ans. This replaces the separate figures strip; the 30 jours figure stays in « Des résultats qui se mesurent ».
+  - « Lancé en un mois » dark panel with the 6 steps.
+  - « Ce que vous pensiez impossible à externaliser » (8 jobs).
+  - « L'IA prépare, le conseiller décide ».
+  - The new calculator, with its script in hlab-sections.js and its styles in hlab-x9-shell.css.
+- The old « Les équipes SPM » section stays until the training photos and video arrive.
+- The homepage security card no longer links to /securite-et-donnees. Add the link when SPM validates the security page.
+- The privacy policy security list is back to its three original lines. The edit that emptied it had failed; the new measures are in SECURITE-A-VALIDER.md.
+- Publishing is on hold (user's decision) until SPM validates the security texts, because any publish would also put the security page and its links live.
