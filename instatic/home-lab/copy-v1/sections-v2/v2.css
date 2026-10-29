@@ -47,11 +47,11 @@
 .spm2-foot{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:52px}
 .spm2-foot span{font-size:13px;color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:7px 14px;background:rgba(255,255,255,.04)}
 /* métiers (lumora-services rail, centred masthead): two columns of indexed rows */
-.spm2-list{list-style:none;margin:56px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;column-gap:56px;border-top:1px solid var(--line)}
-.spm2-list li{display:grid;grid-template-columns:44px 1fr;grid-template-rows:auto auto;column-gap:8px;padding:22px 0;border-bottom:1px solid var(--line);text-align:left;transition:background-color .3s ease}
-.spm2-list i{grid-row:1 / span 2;font-style:normal;font-size:12px;letter-spacing:1.6px;color:var(--teal);padding-top:6px}
+.spm2-list{list-style:none;margin:56px auto 0;padding:0;max-width:1040px;display:grid;grid-template-columns:1fr 1fr;column-gap:56px;border-top:1px solid var(--line)}
+.spm2-list li{display:flex;flex-direction:column;align-items:center;gap:4px;padding:24px 12px;border-bottom:1px solid var(--line);text-align:center}
+.spm2-list i{font-style:normal;font-size:12px;letter-spacing:1.6px;color:var(--teal);margin-bottom:4px}
 .spm2-list b{font-size:21px;line-height:1.25;letter-spacing:-.015em;font-weight:600;color:var(--ink)}
-.spm2-list span{font-size:15px;line-height:1.45;color:var(--mut);margin-top:4px}
+.spm2-list span{font-size:15px;line-height:1.45;color:var(--mut)}
 .spm2-jobs .spm2-center{margin-top:40px}
 /* AI (artist-process numerals): three columns, oversized faint index */
 .spm2-tri{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:40px;margin-top:56px}
