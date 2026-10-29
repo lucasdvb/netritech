@@ -171,3 +171,19 @@ Still to do (batch 2, held until SPM validates the wording):
 - The homepage security card no longer links to /securite-et-donnees. Add the link when SPM validates the security page.
 - The privacy policy security list is back to its three original lines. The edit that emptied it had failed; the new measures are in SECURITE-A-VALIDER.md.
 - Publishing is on hold (user's decision) until SPM validates the security texts, because any publish would also put the security page and its links live.
+
+## 2026-10-30, people section, motion, validation report
+
+- People section (« Derrière chaque appel, une équipe formée. »):
+  - SPM's training photos and three trimmed clips (assets/people/).
+  - The clips are served from the GitHub repo (raw.githubusercontent), because the Instatic upload tool takes images only. To do: upload the .mp4 and .webm files to the Instatic media library and switch the data-src URLs.
+  - The smiling-trainee photo was not used: it is already on Pourquoi SPM (story block).
+- Launch panel: the photo the user supplied sits under the gradient, with parallax and a 3D settle on scroll. It is the same image as the Pourquoi SPM method block (spm-pourquoi-methode-manager.webp), so it now appears twice on the site, at the user's request.
+- Motion on all v2 sections, in hlab-sections.js and hlab-x9-shell.css:
+  - Word-by-word headings and count-up figures.
+  - Rules that draw in and steps that appear one after another.
+  - Clip-path reveals on the media tiles, parallax, and cursor tilt with glare on the cards.
+  - Everything is off under reduced motion.
+- Calculator button: « Parler à un expert », linking to the homepage lead form (#parler-a-un-expert).
+- Security links (menu « Sécurité », footer « Sécurité & données », mobile drawer) are commented out in hlab-spm-chrome.js and hlab-hero-nav.js until SPM validates. The page /securite-et-donnees is published but not linked.
+- Validation report for SPM: delivery-report/SPM-points-a-valider.pdf (status of their 22 requests, 3 H1 proposals, texts, calculator method, security texts, information we need).
