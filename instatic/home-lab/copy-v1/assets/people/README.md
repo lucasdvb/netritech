@@ -9,4 +9,6 @@ Source: SPM's own photos and video, from the Drive folder shared by the client o
   - The open-plan office, note taking and two trainees listening.
   - The last shot is cropped so the old-logo backdrop at the right edge does not show.
 - spm-formation-formateur.webp, spm-formation-stagiaire.webp, spm-formation-salle.webp: square crops of the three photos. The room photo drops its left third, which held the old SPM Services banners.
-- mkvid.py rebuilds both videos from v6.mp4 with ffmpeg.
+- spm-equipe-salle.mp4 (5 s): trainees in the room, a trainee arriving and the trainer by the screen. It replaces the smiling-trainee photo, which is already used on Pourquoi SPM.
+- Every clip also has a .webm (VP9) version; the page offers WebM first, then MP4.
+- mkvid.py rebuilds the videos from v6.mp4 with ffmpeg.

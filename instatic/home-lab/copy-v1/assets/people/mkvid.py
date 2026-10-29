@@ -19,3 +19,5 @@ def montage(segs,out,w=1280,h=720,fade=0.4):
 montage([(18.75,20.5),(28.5,31.1),(37.35,39.4),(20.7,22.5),(31.3,34.5),(39.5,41.75)],'media-out/spm-formation-montage.mp4')
 # V2 the teams at work: open-plan office, note taking, listening
 montage([(13.25,16.4),(26.6,28.3),(34.7,37.2,'crop=iw*0.84:ih*0.84:0:ih*0.08,')],'media-out/spm-equipes-plateau.mp4')
+# V3 a team that stays: trainees in the room, a trainee arriving, the trainer by the screen
+montage([(22.6,24.7),(9.35,11.0),(46.6,47.85)],'media-out/spm-equipe-salle.mp4')
