@@ -1,0 +1,69 @@
+/* ===== Homepage depth layer: ambient light, hairlines, layered shading (Apple-style) ===== */
+@property --spm-ga{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes spmGa{to{--spm-ga:360deg}}
+
+/* ambient light: a faint hairline at the top of each light section + two soft glows */
+.spm2-rs,.spm2-proof,.spm2-jobs,.hlab-ti-fix,.hlab-ti-costing,.spm2-calc,.hlab-ti-intro,.spm2-ai,.hlab-ti-modular,.hlab-ti-builtby,.spm2-people,.hlab-spm-lead,.hlab-sf-sec{
+  background-repeat:no-repeat;background-position:center top,0 0,0 0;background-size:min(1100px,86%) 1px,100% 100%,100% 100%}
+.spm2-rs{background-image:linear-gradient(90deg,transparent,rgba(13,20,31,.09),transparent),radial-gradient(48% 42% at 2% 18%,rgba(34,128,138,.09),transparent 72%),radial-gradient(42% 38% at 98% 88%,rgba(67,97,122,.09),transparent 72%)}
+.spm2-proof{background-image:linear-gradient(90deg,transparent,rgba(13,20,31,.09),transparent),radial-gradient(40% 70% at 50% 55%,rgba(34,128,138,.10),transparent 72%),radial-gradient(30% 40% at 95% 20%,rgba(67,97,122,.07),transparent 72%)}
+.spm2-jobs{background-image:linear-gradient(90deg,transparent,rgba(13,20,31,.09),transparent),radial-gradient(45% 45% at 98% 40%,rgba(34,128,138,.09),transparent 72%),radial-gradient(40% 40% at 0% 85%,rgba(67,97,122,.08),transparent 72%)}
+.hlab-ti-fix{background-image:linear-gradient(90deg,transparent,rgba(13,20,31,.09),transparent),radial-gradient(50% 40% at 50% 0%,rgba(34,128,138,.09),transparent 72%),radial-gradient(45% 40% at 100% 100%,rgba(67,97,122,.08),transparent 72%)}
+.hlab-ti-costing{background-image:linear-gradient(90deg,transparent,rgba(13,20,31,.09),transparent),radial-gradient(40% 80% at 50% 100%,rgba(34,128,138,.09),transparent 72%),none}
+.spm2-calc{background-image:none,radial-gradient(50% 50% at 50% 0%,rgba(34,128,138,.09),transparent 72%),radial-gradient(40% 40% at 0% 100%,rgba(67,97,122,.08),transparent 72%)}
+.hlab-ti-intro{background-image:linear-gradient(90deg,transparent,rgba(13,20,31,.09),transparent),radial-gradient(40% 20% at 0% 12%,rgba(34,128,138,.08),transparent 72%),radial-gradient(40% 20% at 100% 70%,rgba(67,97,122,.08),transparent 72%)}
+.spm2-ai{background-image:linear-gradient(90deg,transparent,rgba(13,20,31,.09),transparent),radial-gradient(45% 60% at 100% 30%,rgba(34,128,138,.09),transparent 72%),radial-gradient(40% 50% at 0% 90%,rgba(67,97,122,.07),transparent 72%)}
+.hlab-ti-modular{background-image:linear-gradient(90deg,transparent,rgba(13,20,31,.09),transparent),radial-gradient(45% 40% at 0% 30%,rgba(34,128,138,.08),transparent 72%),radial-gradient(40% 40% at 100% 95%,rgba(67,97,122,.08),transparent 72%)}
+.hlab-ti-builtby{background-image:linear-gradient(90deg,transparent,rgba(13,20,31,.09),transparent),radial-gradient(50% 55% at 50% 70%,rgba(34,128,138,.10),transparent 72%),none}
+.spm2-people{background-image:linear-gradient(90deg,transparent,rgba(13,20,31,.09),transparent),radial-gradient(45% 30% at 100% 15%,rgba(34,128,138,.08),transparent 72%),radial-gradient(45% 30% at 0% 80%,rgba(67,97,122,.08),transparent 72%)}
+.hlab-spm-lead{background-image:linear-gradient(90deg,transparent,rgba(13,20,31,.09),transparent),radial-gradient(45% 50% at 0% 40%,rgba(34,128,138,.09),transparent 72%),radial-gradient(40% 50% at 100% 70%,rgba(67,97,122,.09),transparent 72%)}
+.hlab-sf-sec{background-image:linear-gradient(90deg,transparent,rgba(13,20,31,.09),transparent),radial-gradient(40% 50% at 0% 20%,rgba(34,128,138,.07),transparent 72%),none}
+
+/* light cards: soft top-lit fill, hairline border, layered shadow */
+.spm2-rs .hlab-ti-card,.hlab-ti-fix .hlab-ti-card,.spm2-calc-card,.hlab-ti-sticky-media{
+  background:linear-gradient(180deg,#fff 0%,#f6f8fa 100%);border-color:rgba(13,20,31,.07);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 1px 2px rgba(13,20,31,.04),0 10px 24px -10px rgba(13,20,31,.10),0 34px 64px -34px rgba(13,20,31,.18);
+  transition:box-shadow .45s ease}
+.spm2-rs .hlab-ti-card:hover,.hlab-ti-fix .hlab-ti-card:hover{box-shadow:inset 0 1px 0 #fff,0 2px 4px rgba(13,20,31,.05),0 16px 34px -12px rgba(13,20,31,.16),0 48px 80px -40px rgba(13,20,31,.26)}
+
+/* dark and teal cards: inner light edge */
+.spm2-c--dark,.spm2-c--teal,.hlab-tm2-card,.spm2-calc-out,.hlab-spm-lead .hlab-spm-lead-form,.spm2-mx-stage{
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),inset 0 0 0 1px rgba(255,255,255,.06),0 30px 60px -30px rgba(13,20,31,.55)}
+
+/* Trois problèmes: a slowly moving gradient border on each card (runs only while on screen) */
+.hlab-ti-fix .hlab-ti-card{border:2px solid transparent!important;
+  background:linear-gradient(180deg,#fff 0%,#f6f8fa 100%) padding-box,
+    conic-gradient(from var(--spm-ga),#22808A,#7fcbd1 22%,#43617A 46%,#DADDE0 70%,#7fcbd1 86%,#22808A) border-box!important;
+  animation:spmGa 8s linear infinite;animation-play-state:paused}
+.hlab-ti-fix .hlab-ti-card:nth-child(2){animation-delay:-2.7s}
+.hlab-ti-fix .hlab-ti-card:nth-child(3){animation-delay:-5.4s}
+.hlab-ti-fix.spm-vis .hlab-ti-card{animation-play-state:running}
+
+/* figures: ink-to-steel gradient text */
+.spm2-proof .spm2-big,.spm2-people .spm2-fig,.spm2-proof .spm2-fig,.hlab-ti-builtby .spm-proof-n,.hlab-spm-lead .spm-proof-n{
+  background:linear-gradient(180deg,#0D141F 0%,#2c4256 70%,#43617A 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* figure bands: frosted panels */
+.spm2-proof .spm2-rail,.hlab-ti-builtby .spm-proof,.spm2-people .spm2-hfigs{
+  border-radius:28px;border:1px solid rgba(13,20,31,.06)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.62) 100%);
+  box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(13,20,31,.04),0 24px 48px -28px rgba(13,20,31,.16);
+  padding:clamp(22px,3vw,40px) clamp(18px,3vw,44px)!important}
+
+/* L'IA prépare: the three steps become lit cards */
+.spm2-ai .spm2-tri>div{border:1px solid rgba(13,20,31,.07)!important;border-radius:22px;padding:28px 26px!important;
+  background:linear-gradient(180deg,#fff 0%,#f6f8fa 100%);
+  box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(13,20,31,.04),0 18px 40px -24px rgba(13,20,31,.16);position:relative;overflow:hidden}
+.spm2-ai .spm2-tri>div::before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,transparent,#22808A,#7fcbd1,transparent)}
+.spm2-ai .spm2-tri>div i{background:linear-gradient(180deg,#22808A,#7fcbd1);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* FAQ: answers sit in one lit panel */
+.hlab-sf-panel.hlab-sf-active{border-radius:24px;padding:6px clamp(16px,2vw,28px);
+  background:linear-gradient(180deg,#fff 0%,#f6f8fa 100%);border:1px solid rgba(13,20,31,.07);
+  box-shadow:inset 0 1px 0 #fff,0 1px 2px rgba(13,20,31,.04),0 24px 48px -30px rgba(13,20,31,.18)}
+.hlab-sf-panel.hlab-sf-active .hlab-sf-item:first-child{border-top-color:transparent}
+
+/* active pills: lit dark gradient */
+.hlab-tm2-tab.hlab-is-on,.hlab-sf-tab.hlab-sf-active{background-image:linear-gradient(180deg,#22303f 0%,#0D141F 100%)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),0 8px 20px -10px rgba(13,20,31,.5)!important}
+
+@media (prefers-reduced-motion:reduce){.hlab-ti-fix .hlab-ti-card{animation:none}}
