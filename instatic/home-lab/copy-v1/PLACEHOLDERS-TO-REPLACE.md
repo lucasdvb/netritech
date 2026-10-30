@@ -187,3 +187,14 @@ Still to do (batch 2, held until SPM validates the wording):
 - Calculator button: « Parler à un expert », linking to the homepage lead form (#parler-a-un-expert).
 - Security links (menu « Sécurité », footer « Sécurité & données », mobile drawer) are commented out in hlab-spm-chrome.js and hlab-hero-nav.js until SPM validates. The page /securite-et-donnees is published but not linked.
 - Validation report for SPM: delivery-report/SPM-points-a-valider.pdf (status of their 22 requests, 3 H1 proposals, texts, calculator method, security texts, information we need).
+
+## 2026-10-30, homepage text fixes (SPM-site-fixes-2026-10-30.pdf)
+
+Applied and published:
+1. « Trois problèmes que SPM règle pour vous. » removed (the user's choice): the offers are already in « Métiers externalisables » and in the « Une équipe SPM pensée pour chaque métier » tabs.
+2. Notre approche intro: « On conçoit des équipes qui connaissent vos clients et que l'IA rend plus rapides. »
+3. Développement commercial tab: « Plus de contacts qualifiés, tous traités », « sans distraire vos commerciaux », eyebrow « Montée en puissance ».
+4. « Une donnée qui circule »: « ni angle mort » removed.
+5. Service client & SAV tab: « Un support à coût maîtrisé ».
+6. Assistance administrative, Productivité: « …et on libère vos équipes des tâches à faible valeur ajoutée. »
+7. Assistance administrative, Flexibilité: « …sans surcoût de structure, et sans payer les périodes creuses. »
