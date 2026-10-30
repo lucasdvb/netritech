@@ -191,7 +191,7 @@ Still to do (batch 2, held until SPM validates the wording):
 ## 2026-10-30, homepage text fixes (SPM-site-fixes-2026-10-30.pdf)
 
 Applied and published:
-1. « Trois problèmes que SPM règle pour vous. » removed (the user's choice): the offers are already in « Métiers externalisables » and in the « Une équipe SPM pensée pour chaque métier » tabs.
+1. « Trois problèmes que SPM règle pour vous. » first removed, then rebuilt at the user's request as « Sept problèmes que SPM règle pour vous. »: one card per solution (the seven of /solutions), each with « Parler à un expert ». Layout from GetLayers « ai-studio-portfolio »: on desktop the section pins and the cards slide sideways with scroll, with a progress line and counter; swipe row on touch screens and with reduced motion. The three stock photos are gone (seven cards, line icons instead). Source: sections-v2/fix7-inner.html, fix7.css, fix7.js; old version kept in sections-v2/fix-orig-3cards.html.
 2. Notre approche intro: « On conçoit des équipes qui connaissent vos clients et que l'IA rend plus rapides. »
 3. Développement commercial tab: « Plus de contacts qualifiés, tous traités », « sans distraire vos commerciaux », eyebrow « Montée en puissance ».
 4. « Une donnée qui circule »: « ni angle mort » removed.

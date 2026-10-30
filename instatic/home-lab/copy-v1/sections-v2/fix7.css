@@ -1,0 +1,34 @@
+/* Sept problèmes (GetLayers ai-studio-portfolio, adapted): the card track pans sideways while the section is pinned */
+.hlab-ti-fix.spm-s7-sec{padding:0!important}
+.spm-s7-pin{position:relative;display:flex;flex-direction:column;justify-content:center;gap:clamp(28px,4vh,48px);padding:clamp(56px,9vh,104px) 0 clamp(40px,6vh,72px);overflow:hidden}
+.spm-s7-head{text-align:center}
+.spm-s7-head .hlab-ti-lead{margin:18px auto 0;max-width:640px}
+.spm-s7-vp{position:relative;width:100%;overflow:hidden;padding:10px 0 18px}
+.spm-s7-track{display:flex;gap:22px;padding:0 max(24px,calc((100vw - 1200px)/2));width:max-content;will-change:transform}
+.spm-s7-track .spm-s7-c{flex:none;width:clamp(290px,27vw,380px);min-height:clamp(330px,44vh,400px);display:flex;flex-direction:column;text-align:left;margin:0;
+  transform-origin:50% 60%;transform:translate3d(0,var(--s7y,0px),0) scale(var(--s7s,1));opacity:var(--s7o,1)}
+.spm-s7-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:auto}
+.spm-s7-top .hlab-ti-card-eyebrow{margin:0}
+.spm-s7-ic{order:2;flex:none;display:grid;place-items:center;width:42px;height:42px;border-radius:13px;color:#22808A;background:linear-gradient(160deg,rgba(34,128,138,.15),rgba(34,128,138,.04));box-shadow:inset 0 0 0 1px rgba(34,128,138,.2)}
+.spm-s7-ic svg{width:21px;height:21px}
+.spm-s7-track .hlab-ti-card-title{margin-top:36px;font-size:clamp(23px,1.9vw,28px);line-height:1.15;letter-spacing:-.02em}
+.spm-s7-track .hlab-ti-card-text{margin-top:12px}
+.spm-s7-track .hlab-ti-card-cta{margin-top:24px}
+.hlab-ti-fix .hlab-ti-card:nth-child(4){animation-delay:-1.3s}
+.hlab-ti-fix .hlab-ti-card:nth-child(5){animation-delay:-4s}
+.hlab-ti-fix .hlab-ti-card:nth-child(6){animation-delay:-6.7s}
+.hlab-ti-fix .hlab-ti-card:nth-child(7){animation-delay:-3.3s}
+.spm-s7-foot{display:flex;align-items:center;justify-content:center;gap:18px;padding:0 24px}
+.spm-s7-bar{position:relative;width:min(360px,50vw);height:2px;border-radius:2px;background:rgba(13,20,31,.1);overflow:hidden}
+.spm-s7-fill{position:absolute;inset:0;background:linear-gradient(90deg,#22808A,#7fcbd1);transform-origin:left;transform:scaleX(var(--s7p,.14))}
+.spm-s7-count{font-size:12px;letter-spacing:1.6px;color:rgba(13,20,31,.45);font-variant-numeric:tabular-nums}
+.spm-s7-count b{color:#0D141F;font-weight:600}
+/* pinned mode (desktop, motion allowed): JS sets the section height */
+.spm-s7-sec.is-pin .spm-s7-pin{position:sticky;top:0;height:100vh;padding-top:clamp(72px,10vh,110px)}
+/* swipe mode (touch, small screens, reduced motion) */
+.spm-s7-sec:not(.is-pin) .spm-s7-vp{overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.spm-s7-sec:not(.is-pin) .spm-s7-vp::-webkit-scrollbar{display:none}
+.spm-s7-sec:not(.is-pin) .spm-s7-c{scroll-snap-align:center}
+@media (max-width:640px){.spm-s7-track{gap:14px;padding:0 20px}.spm-s7-track .spm-s7-c{width:82vw;min-height:0}}
+.spm-s7-head{padding:0 clamp(20px,5vw,80px)}
+.spm-s7-track .hlab-ti-card-eyebrow{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:#43617A;line-height:1.4}
