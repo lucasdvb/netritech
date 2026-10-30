@@ -14,7 +14,7 @@
 
   function measure() {
     root.style.height = (100 + (n - 1) * PER) + 'vh';
-    var h = cards[0].offsetHeight || 400;
+    var h = Math.max.apply(null, cards.map(function (c) { return c.offsetHeight; })) || 400;
     R = (h * 1.14) / Math.sin(STEP * Math.PI / 180); // neighbours sit just clear of the focused card
   }
   function pad(i) { return (i < 9 ? '0' : '') + (i + 1); }
